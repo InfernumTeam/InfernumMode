@@ -8,7 +8,7 @@ namespace InfernumMode.Particles
 {
     public class GroundImpactParticle : Particle
     {
-        public float Opacity => Utils.InverseLerp(0f, 0.12f, LifetimeCompletion, true) * Utils.InverseLerp(1f, 0.34f, LifetimeCompletion, true);
+        public float Opacity => Utils.GetLerpValue(0f, 0.12f, LifetimeCompletion, true) * Utils.GetLerpValue(1f, 0.34f, LifetimeCompletion, true);
 
         public override string Texture => "InfernumMode/ExtraTextures/HollowCircleSoftEdge";
 

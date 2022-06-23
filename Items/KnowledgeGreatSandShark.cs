@@ -29,12 +29,11 @@ namespace InfernumMode.Items
 
         public override void AddRecipes()
         {
-            ModRecipe r = new ModRecipe(mod);
-            r.SetResult(this);
+            Recipe r = mod.CreateRecipe(this);
             r.AddTile(TileID.Bookcases);
             r.AddIngredient(ModContent.ItemType<GreatSandSharkBanner>());
             r.AddIngredient(ModContent.ItemType<VictoryShard>(), 10);
-            r.AddRecipe();
+            r.Register();
         }
     }
 }

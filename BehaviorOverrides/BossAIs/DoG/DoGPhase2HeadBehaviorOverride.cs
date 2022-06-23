@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -96,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static bool Phase2AI(NPC npc, ref float phaseCycleTimer, ref float passiveAttackDelay, ref float portalIndex, ref float segmentFadeType)
         {
             // Set music.
-            npc.modNPC.music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
+            npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
 
             ref float performingSpecialAttack = ref npc.Infernum().ExtraAI[14];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
@@ -240,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         // Laugh if this is the first time DoG has performed a special attack in the fight.
                         if (hasPerformedSpecialAttackBefore == 0f && specialAttackTimer == specialAttackDelay - specialAttackTransitionPreparationTime)
                         {
-                            var soundInstance = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), target.Center);
+                            var soundInstance = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), target.Center);
                             if (soundInstance != null)
                                 soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 3f, 0f, 1f);
                             hasPerformedSpecialAttackBefore = 1f;
@@ -374,9 +375,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 for (int a = 0; a < Main.maxNPCs; a++)
                 {
-                    if (Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead") ||
-                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsBody") ||
-                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"))
+                    if (Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead").Type ||
+                        Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type ||
+                        Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type)
                     {
                         Main.npc[a].active = false;
                         Main.npc[a].netUpdate = true;
@@ -394,7 +395,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 if (attackTimer % 120f == 0f && !nearEndOfAttack)
                 {
-                    Main.PlaySound(SoundID.Item12, target.position);
+                    SoundEngine.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 24; i++)
@@ -427,7 +428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
 
                 if (wrappedAttackTimer % 45f == 20f)
-                    Main.PlaySound(SoundID.Item122, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item122, target.Center);
             }
         }
 
@@ -441,9 +442,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             void destroySegment(int index, ref float destroyedSegments)
             {
                 if (Main.rand.NextBool(5))
-                    Main.PlaySound(SoundID.Item94, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item94, npc.Center);
 
-                List<int> segments = new List<int>()
+                List<int> segments = new()
                 {
                     ModContent.NPCType<DevourerofGodsBody>(),
                     ModContent.NPCType<DevourerofGodsTail>()
@@ -470,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.InverseLerp(15f, 210f, deathTimer, true));
+            float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.GetLerpValue(15f, 210f, deathTimer, true));
             ref float destroyedSegmentsCounts = ref npc.Infernum().ExtraAI[34];
             if (npc.velocity.Length() != idealSpeed)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
@@ -484,7 +485,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             if (deathTimer >= 120f && deathTimer < 380f && deathTimer % 4f == 0f)
             {
-                int segmentToDestroy = (int)(Utils.InverseLerp(120f, 380f, deathTimer, true) * 60f);
+                int segmentToDestroy = (int)(Utils.GetLerpValue(120f, 380f, deathTimer, true) * 60f);
                 destroySegment(segmentToDestroy, ref destroyedSegmentsCounts);
             }
 
@@ -501,13 +502,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    var soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
                     if (soundInstance != null)
                         soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
 
                     for (int i = 0; i < 3; i++)
                     {
-                        soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
+                        soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
                         if (soundInstance != null)
                         {
                             soundInstance.Pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
@@ -519,11 +520,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             if (deathTimer >= 410f && deathTimer < 470f && deathTimer % 2f == 0f)
             {
-                int segmentToDestroy = (int)(Utils.InverseLerp(410f, 470f, deathTimer, true) * 10f) + 60;
+                int segmentToDestroy = (int)(Utils.GetLerpValue(410f, 470f, deathTimer, true) * 10f) + 60;
                 destroySegment(segmentToDestroy, ref destroyedSegmentsCounts);
             }
 
-            float light = Utils.InverseLerp(430f, 465f, deathTimer, true);
+            float light = Utils.GetLerpValue(430f, 465f, deathTimer, true);
             MoonlordDeathDrama.RequestLight(light, Main.LocalPlayer.Center);
 
             if (deathTimer >= 485f)
@@ -628,7 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 flySpeedFactor = 1.55f;
             }
 
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
+            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
@@ -683,7 +684,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     // Chomp at the player if they're close enough.
                     if (distanceFromBaseDestination < 112f && chompEffectsCountdown == 0f)
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                         chompEffectsCountdown = 18f;
                     }
                 }
@@ -699,7 +700,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (chompEffectsCountdown == 0f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                     chompEffectsCountdown = 26f;
                 }
             }
@@ -714,7 +715,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float laserWallSpeed = 16f;
             if (attackTimer % 75f == 74f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -857,7 +858,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                         {
                             Main.npc[i].Center = npc.Center;
-                            Main.npc[i].Opacity = Utils.InverseLerp(15f, 0f, segmentCount, true);
+                            Main.npc[i].Opacity = Utils.GetLerpValue(15f, 0f, segmentCount, true);
                             Main.npc[i].netUpdate = true;
                             segmentCount++;
                         }
@@ -883,7 +884,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
                     }
                 }
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
+                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
             }
             if (wrappedAttackTimer > portalTelegraphTime)
             {
@@ -942,7 +943,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     if (specialAttackPortalIndex >= 0f)
                     {
-                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
+                        SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
 
                         npc.Center = Main.projectile[(int)specialAttackPortalIndex].Center;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * 45f;

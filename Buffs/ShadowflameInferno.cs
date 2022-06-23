@@ -5,7 +5,7 @@ namespace InfernumMode.Buffs
 {
     public class ShadowflameInferno : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shadowflame Inferno");
             Description.SetDefault("Rapidly losing life");

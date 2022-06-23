@@ -54,16 +54,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.width = 120;
                     npc.height = 120;
                     npc.frame = new Rectangle(0, 0, 142, 126);
-                    bodyPhase2StartedField?.SetValue(npc.modNPC, true);
-                    bodyPhase2StartedField2?.SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField?.SetValue(npc.ModNPC, true);
+                    bodyPhase2StartedField2?.SetValue(npc.ModNPC, true);
                 }
                 else
                 {
                     npc.width = 100;
                     npc.height = 100;
                     npc.frame = new Rectangle(0, 0, 106, 200);
-                    tailPhase2StartedField?.SetValue(npc.modNPC, true);
-                    tailPhase2StartedField2?.SetValue(npc.modNPC, true);
+                    tailPhase2StartedField?.SetValue(npc.ModNPC, true);
+                    tailPhase2StartedField2?.SetValue(npc.ModNPC, true);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Reset the invicibility time variable used in the vanilla AI.
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                invincibilityTimeField.SetValue(npc.modNPC, 0);
+                invincibilityTimeField.SetValue(npc.ModNPC, 0);
 
             // Decide segment size stuff.
             Vector2 size = npc.Size;
@@ -199,8 +199,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
 
                 // Draw back afterimages when the antimatter effect is ongoing.
-                float backTexturePulse1 = (Main.GlobalTime * 0.43f + npc.whoAmI * 0.13f) % 1f;
-                float backTexturePulse2 = (Main.GlobalTime * 0.31f + npc.whoAmI * 0.09f) % 1f;
+                float backTexturePulse1 = (Main.GlobalTimeWrappedHourly * 0.43f + npc.whoAmI * 0.13f) % 1f;
+                float backTexturePulse2 = (Main.GlobalTimeWrappedHourly * 0.31f + npc.whoAmI * 0.09f) % 1f;
                 Color c1 = Color.Cyan;
                 Color c2 = Color.Fuchsia;
                 c1.A = 84;
@@ -253,8 +253,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 origin2 = tailTexture2.Size() * 0.5f;
 
                 // Draw back afterimages when the antimatter effect is ongoing.
-                float backTexturePulse1 = (Main.GlobalTime * 0.43f + npc.whoAmI * 0.13f) % 1f;
-                float backTexturePulse2 = (Main.GlobalTime * 0.31f + npc.whoAmI * 0.09f) % 1f;
+                float backTexturePulse1 = (Main.GlobalTimeWrappedHourly * 0.43f + npc.whoAmI * 0.13f) % 1f;
+                float backTexturePulse2 = (Main.GlobalTimeWrappedHourly * 0.31f + npc.whoAmI * 0.09f) % 1f;
                 Color c1 = Color.Cyan;
                 Color c2 = Color.Fuchsia;
                 c1.A = 84;

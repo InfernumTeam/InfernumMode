@@ -8,6 +8,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
@@ -147,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 270f))
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
@@ -241,7 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             // Charge once sufficiently slowed down.
                             if (npc.velocity.Length() < 1.25f)
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
                                 for (int i = 0; i < 36; i++)
                                 {
                                     Dust laser = Dust.NewDustPerfect(npc.Center, 182);
@@ -285,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 // Release rockets.
                                 if (adjustedTimer % 15f == 14f && !npc.WithinRange(target.Center, 250f))
                                 {
-                                    Main.PlaySound(SoundID.Item36, target.Center);
+                                    SoundEngine.PlaySound(SoundID.Item36, target.Center);
 
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
@@ -345,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ref float laserDirection = ref npc.Infernum().ExtraAI[3];
                 ref float hasInitialized = ref npc.Infernum().ExtraAI[4];
 
-                Vector2 hoverDestination = new Vector2(hoverDestinationX, hoverDestinationY);
+                Vector2 hoverDestination = new(hoverDestinationX, hoverDestinationY);
 
                 // Define a hover destination if one is yet to be initialized.
                 if (hoverDestinationX == 0f || hoverDestinationY == 0f || wrappedAttackTimer == 1f)
@@ -384,7 +385,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Create chargeup visuals before firing.
                 if (aresSlowdownPreparationInProgress)
                 {
-                    float chargeupPower = Utils.InverseLerp(redirectTime + chargeupTime * 0.35f, redirectTime + chargeupTime, wrappedAttackTimer, true);
+                    float chargeupPower = Utils.GetLerpValue(redirectTime + chargeupTime * 0.35f, redirectTime + chargeupTime, wrappedAttackTimer, true);
                     for (int i = 0; i < 1f + chargeupPower * 3f; i++)
                     {
                         Vector2 laserDustSpawnPosition = npc.Center + Vector2.UnitY * 26f + Main.rand.NextVector2CircularEdge(20f, 20f);
@@ -424,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Release the laserbeams.
                 if (wrappedAttackTimer == redirectTime + chargeupTime + laserTelegraphTime)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         laserDirection = Main.rand.NextBool().ToDirectionInt();
@@ -444,7 +445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (deathraysHaveBeenFired)
                 {
                     float laserbeamRelativeTime = wrappedAttackTimer - (redirectTime + chargeupTime + laserTelegraphTime);
-                    float deathraySpeed = Utils.InverseLerp(0f, 180f, laserbeamRelativeTime, true) * maxLaserTurnSpeed;
+                    float deathraySpeed = Utils.GetLerpValue(0f, 180f, laserbeamRelativeTime, true) * maxLaserTurnSpeed;
                     laserRotationalOffset += laserDirection * deathraySpeed;
 
                     // Get very pissed if the target leaves the deathray area.
@@ -536,7 +537,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
-                            Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -548,7 +549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         }
                         else
                         {
-                            Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {

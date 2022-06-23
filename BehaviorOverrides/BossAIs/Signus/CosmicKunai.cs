@@ -4,6 +4,8 @@ using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
     public class CosmicKunai : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cosmic Kunai");
@@ -19,40 +21,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 32;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 240;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 32;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 240;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 6f, Time, true) * Utils.InverseLerp(0f, 6f, projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Time, true) * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true);
 
-            Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Time < 30f)
             {
-                float spinSlowdown = Utils.InverseLerp(28f, 15f, Time, true);
-                projectile.velocity *= 0.85f;
-                projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
+                float spinSlowdown = Utils.GetLerpValue(28f, 15f, Time, true);
+                Projectile.velocity *= 0.85f;
+                Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
                 if (spinSlowdown < 1f)
-                    projectile.rotation = projectile.rotation.AngleLerp(projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
             }
 
             if (Time == 30f)
             {
-                projectile.velocity = projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
+                Projectile.velocity = Projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
                 if (BossRushEvent.BossRushActive)
-                    projectile.velocity *= 1.75f;
-                Main.PlaySound(SoundID.Item73, projectile.Center);
+                    Projectile.velocity *= 1.75f;
+                SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
             }
-            if (Time > 30f && projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
-                projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.0185f;
+            if (Time > 30f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
+                Projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.0185f;
 
-            Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity * 0.4f);
+            Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.4f);
             Time++;
         }
 
@@ -63,31 +65,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.InverseLerp(8f, 24f, Time, true)) * projectile.Opacity;
+            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.GetLerpValue(8f, 24f, Time, true)) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             // Draw afterimages.
             for (int i = 0; i < 5; i++)
             {
-                Vector2 afterimageOffset = projectile.velocity.SafeNormalize(Vector2.Zero) * i * -20f;
+                Vector2 afterimageOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * i * -20f;
                 Color afterimageColor = new Color(198, 118, 204, 0) * (1f - i / 5f) * 0.7f;
-                spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, projectile.GetAlpha(afterimageColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale * 0.7f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.7f, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public override bool CanDamage() => projectile.alpha < 20;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

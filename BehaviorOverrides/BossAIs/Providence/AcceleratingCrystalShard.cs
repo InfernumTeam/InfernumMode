@@ -11,48 +11,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Crystal Shard");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 32;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.Opacity = 0f;
-            projectile.timeLeft = 300;
+            Projectile.width = Projectile.height = 32;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.Opacity = 0f;
+            Projectile.timeLeft = 300;
         }
 
         public override void AI()
         {
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (projectile.velocity.Length() < 33f)
-                projectile.velocity *= 1.035f;
+            if (Projectile.velocity.Length() < 33f)
+                Projectile.velocity *= 1.035f;
 
-            Lighting.AddLight(projectile.Center, Color.Yellow.ToVector3() * 0.5f);
+            Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            float oldScale = projectile.scale;
-            projectile.scale *= 1.2f;
-            lightColor = Color.Lerp(lightColor, Main.hslToRgb(projectile.identity / 7f % 1f, 1f, 0.5f), 0.9f);
+            float oldScale = Projectile.scale;
+            Projectile.scale *= 1.2f;
+            lightColor = Color.Lerp(lightColor, Main.hslToRgb(Projectile.identity / 7f % 1f, 1f, 0.5f), 0.9f);
             lightColor.A = 128;
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
-            projectile.scale = oldScale;
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Projectile.scale = oldScale;
 
             lightColor = Color.Lerp(lightColor, Color.White, 0.5f);
             lightColor.A = 128;
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
 
             return false;
         }
 
-        public override bool CanDamage() => projectile.alpha < 20;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
     }
 }

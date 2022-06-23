@@ -17,22 +17,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = int.MaxValue;
-            projectile.alpha = 255;
-            projectile.hide = true;
+            Projectile.width = Projectile.height = 2;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = int.MaxValue;
+            Projectile.alpha = 255;
+            Projectile.hide = true;
         }
 
         public override void AI()
         {
             if (InfernumMode.ProvidenceArenaTimer <= 0)
-                projectile.Kill();
+                Projectile.Kill();
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.GetTexture(Texture);
 
@@ -48,24 +48,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             bottom = bottom * 16f + new Vector2(8f, 52f);
             float distanceToBottom = MathHelper.Distance(top.Y, bottom.Y);
-            float distancePerSegment = MathHelper.Max(texture.Height, 8f) * projectile.scale;
+            float distancePerSegment = MathHelper.Max(texture.Height, 8f) * Projectile.scale;
             for (float y = 0f; y < distanceToBottom; y += distancePerSegment)
             {
                 Rectangle frame = texture.Frame();
                 if (y + frame.Height >= distanceToBottom)
                     frame.Height = (int)(distanceToBottom - y);
 
-                Vector2 drawPosition = new Vector2(top.X, top.Y + y + (1f - arenaFallCompletion) * distanceToBottom);
+                Vector2 drawPosition = new(top.X, top.Y + y + (1f - arenaFallCompletion) * distanceToBottom);
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16), (int)(drawPosition.Y / 16));
                 color = Color.Lerp(color, Color.White, 0.6f);
                 drawPosition -= Main.screenPosition;
-                Main.spriteBatch.Draw(texture, drawPosition, frame, color, 0f, Vector2.Zero, projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, frame, color, 0f, Vector2.Zero, Projectile.scale, 0, 0f);
             }
 
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
         }

@@ -22,36 +22,34 @@ namespace InfernumMode.Items
 
         public override void SetDefaults()
         {
-            item.width = 38;
-            item.height = 54;
-            item.rare = ItemRarityID.Green;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.consumable = false;
+            Item.width = 38;
+            Item.height = 54;
+            Item.rare = ItemRarityID.Green;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.SkeletronHead) && !Main.dayTime;
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
             recipe.AddIngredient(ItemID.Vertebrae, 7);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
 
-            recipe = new ModRecipe(mod);
+            recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
             recipe.AddIngredient(ItemID.RottenChunk, 7);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frameI, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             Texture2D texture = ModContent.GetTexture("InfernumMode/Items/DungeonsCurse_Animated");
-            Rectangle f = item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5);
+            Rectangle f = Item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5);
             spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * new Vector2(0.16f, 0.25f), scale, SpriteEffects.None, 0);
             return false;
         }
@@ -59,16 +57,16 @@ namespace InfernumMode.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = ModContent.GetTexture("InfernumMode/Items/DungeonsCurse_Animated");
-            spriteBatch.Draw(texture, item.position - Main.screenPosition, item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             return false;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center - Vector2.UnitY * 800f;
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.SkeletronHead);
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.SkeletronHead);
             }
             return true;
         }

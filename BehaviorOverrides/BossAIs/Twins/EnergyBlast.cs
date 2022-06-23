@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,21 +16,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 140;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 30;
+            Projectile.width = Projectile.height = 140;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 30;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, 0.55f, 0.25f, 0f);
-            if (projectile.localAI[0] == 0f)
+            Lighting.AddLight(Projectile.Center, 0.55f, 0.25f, 0f);
+            if (Projectile.localAI[0] == 0f)
             {
-                Main.PlaySound(SoundID.Item20, projectile.position);
-                projectile.localAI[0] += 1f;
+                SoundEngine.PlaySound(SoundID.Item20, Projectile.position);
+                Projectile.localAI[0] += 1f;
             }
 
             if (Main.dedServ)
@@ -37,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             for (int i = 0; i < 8; i++)
             {
-                Dust redEnergy = Dust.NewDustPerfect(projectile.Center, 130);
+                Dust redEnergy = Dust.NewDustPerfect(Projectile.Center, 130);
                 redEnergy.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f, 18f);
                 redEnergy.scale = Main.rand.NextFloat(1.3f, 1.55f);
             }

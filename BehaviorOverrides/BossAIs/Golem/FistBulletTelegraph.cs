@@ -7,7 +7,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
     public class FistBulletTelegraph : ModProjectile
     {
-        public ref float Time => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -16,25 +16,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.hostile = false;
-            projectile.friendly = false;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 45;
+            Projectile.width = Projectile.height = 2;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 45;
         }
 
         public override void AI()
         {
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / 45f);
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / 45f);
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 start = projectile.Center;
-            Vector2 end = projectile.Center + projectile.velocity * 7000f;
-            spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, projectile.scale * 4f);
+            Vector2 start = Projectile.Center;
+            Vector2 end = Projectile.Center + Projectile.velocity * 7000f;
+            spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, Projectile.scale * 4f);
             return false;
         }
 

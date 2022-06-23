@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -19,88 +20,88 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Molten Blast");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 42;
-            projectile.height = 42;
-            projectile.hostile = true;
-            projectile.penetrate = 1;
-            projectile.timeLeft = 180;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = 42;
+            Projectile.height = 42;
+            Projectile.hostile = true;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 180;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.frameCounter++;
-            projectile.frame = (projectile.frameCounter / 6) % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = (Projectile.frameCounter / 6) % Main.projFrames[Projectile.type];
 
-            if (projectile.wet || projectile.lavaWet)
-                projectile.Kill();
+            if (Projectile.wet || Projectile.lavaWet)
+                Projectile.Kill();
 
-            projectile.localAI[0]++;
-            if (projectile.localAI[0] % 30f == 29f)
+            Projectile.localAI[0]++;
+            if (Projectile.localAI[0] % 30f == 29f)
             {
                 int dustType = (Main.dayTime && !CalamityWorld.malice) ? (int)CalamityDusts.ProfanedFire : (int)CalamityDusts.Nightwither;
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 spawnOffset = Vector2.UnitX * -projectile.width / 2f;
+                    Vector2 spawnOffset = Vector2.UnitX * -Projectile.width / 2f;
                     spawnOffset += -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 12f) * new Vector2(8f, 16f);
-                    spawnOffset = spawnOffset.RotatedBy(projectile.rotation - MathHelper.PiOver2);
+                    spawnOffset = spawnOffset.RotatedBy(Projectile.rotation - MathHelper.PiOver2);
 
-                    Dust fire = Dust.NewDustDirect(projectile.Center, 0, 0, dustType, 0f, 0f, 160, default, 1f);
+                    Dust fire = Dust.NewDustDirect(Projectile.Center, 0, 0, dustType, 0f, 0f, 160, default, 1f);
                     fire.scale = 1.1f;
                     fire.noGravity = true;
-                    fire.position = projectile.Center + spawnOffset;
-                    fire.velocity = projectile.velocity * 0.1f;
-                    fire.velocity = (projectile.Center - projectile.velocity * 3f - fire.position).SafeNormalize(Vector2.UnitY) * 1.25f;
+                    fire.position = Projectile.Center + spawnOffset;
+                    fire.velocity = Projectile.velocity * 0.1f;
+                    fire.velocity = (Projectile.Center - Projectile.velocity * 3f - fire.position).SafeNormalize(Vector2.UnitY) * 1.25f;
                 }
             }
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return (Main.dayTime && !CalamityWorld.malice) ? new Color(250, 150, 0, projectile.alpha) : new Color(100, 200, 250, projectile.alpha);
+            return (Main.dayTime && !CalamityWorld.malice) ? new Color(250, 150, 0, Projectile.alpha) : new Color(100, 200, 250, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = Main.dayTime ? ModContent.GetTexture(Texture) : ModContent.GetTexture("CalamityMod/Projectiles/Boss/MoltenBlastNight");
-            int height = ModContent.GetTexture(Texture).Height / Main.projFrames[projectile.type];
-            int top = height * projectile.frame;
-            Vector2 drawPosition = projectile.Center - Main.screenPosition + Vector2.UnitY * projectile.gfxOffY;
-            Rectangle frame = new Rectangle(0, top, texture.Width, height);
-            Main.spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, frame.Size() * 0.5f, projectile.scale, 0, 0);
+            int height = ModContent.GetTexture(Texture).Height / Main.projFrames[Projectile.type];
+            int top = height * Projectile.frame;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY;
+            Rectangle frame = new(0, top, texture.Width, height);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            int blobCount = (int)projectile.ai[0];
-            if (projectile.owner == Main.myPlayer)
+            int blobCount = (int)Projectile.ai[0];
+            if (Projectile.owner == Main.myPlayer)
             {
                 for (int i = 0; i < blobCount; i++)
                 {
                     Vector2 velocity = Main.rand.NextVector2Circular(9f, 9f);
-                    Projectile.NewProjectile(projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(projectile.damage * 0.75), 0f, projectile.owner);
+                    Projectile.NewProjectile(Projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
 
                 float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 velocity = (MathHelper.TwoPi * i / 8f + offsetAngle).ToRotationVector2() * 4f;
-                    Projectile.NewProjectile(projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(projectile.damage * 0.75), 0f, projectile.owner);
+                    Projectile.NewProjectile(Projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
             }
-            Main.PlaySound(SoundID.Item20, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(projectile.Center, 18f, targetHitbox);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 18f, targetHitbox);
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
@@ -110,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

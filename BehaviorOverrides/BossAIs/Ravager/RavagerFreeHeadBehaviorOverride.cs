@@ -5,6 +5,7 @@ using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 // Shoot the cinder.
                 if (attackTimer % cinderShootRate == cinderShootRate - 1f)
                 {
-                    Main.PlaySound(SoundID.Item72, cinderShootPosition);
+                    SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
                     if (Main.netMode != NetmodeID.MultiplayerClient && !dontFire)
                     {
                         Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 15f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
@@ -79,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                 if (attackTimer % cinderShootRate == cinderShootRate - 1f)
                 {
-                    Main.PlaySound(SoundID.Item72, cinderShootPosition);
+                    SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 3; i++)
@@ -93,10 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             // Hover into position.
-            float acceleration = 0.7f;
-            Item heldItem = target.ActiveItem();
-            if (heldItem.melee && (heldItem.shoot == ProjectileID.None || heldItem.Calamity().trueMelee))
-                acceleration = 0.2f;
+            float acceleration = target.HoldingTrueMeleeWeapon() ? 0.2f : 0.7f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, acceleration);
 
             attackTimer++;

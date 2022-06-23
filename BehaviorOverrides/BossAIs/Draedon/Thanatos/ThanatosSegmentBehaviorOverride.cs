@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -91,8 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 int fireDelay = (int)MathHelper.Lerp(segmentFireCountdown * -0.32f, segmentFireCountdown * 0.32f, segmentAttackIndex / SegmentCount);
 
                 frameType = (int)ThanatosFrameType.Open;
-                npc.frameCounter = Utils.InverseLerp(0f, segmentFireTime * 0.5f + fireDelay, segmentFireCountdown, true);
-                npc.frameCounter *= Utils.InverseLerp(segmentFireTime, segmentFireTime * 0.5f + fireDelay, segmentFireCountdown, true);
+                npc.frameCounter = Utils.GetLerpValue(0f, segmentFireTime * 0.5f + fireDelay, segmentFireCountdown, true);
+                npc.frameCounter *= Utils.GetLerpValue(segmentFireTime, segmentFireTime * 0.5f + fireDelay, segmentFireCountdown, true);
                 npc.frameCounter = (int)Math.Round(npc.frameCounter * (Main.npcFrameCount[npc.type] - 1f));
 
                 if (segmentFireCountdown == (int)(segmentFireTime / 2) + fireDelay)
@@ -103,11 +105,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     if (willShootProjectile)
                     {
                         string soundType = "LaserCannon";
-                        SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
+                        SoundEffectInstance sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
                         if (sound != null)
                             sound.Volume *= 0.5f;
                     }
-                    SoundEffectInstance ventSound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
+                    SoundEffectInstance ventSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
                     if (ventSound != null)
                         ventSound.Volume *= 0.1f;
 
@@ -179,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (npc.frameCounter > Main.npcFrameCount[npc.type] - 1f)
                 {
                     npc.frameCounter = Main.npcFrameCount[npc.type] - 1f;
-                    SoundEffectInstance ventSound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
+                    SoundEffectInstance ventSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
                     if (ventSound != null)
                         ventSound.Volume *= 0.25f;
                 }
@@ -250,7 +252,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.ModNPC<ThanatosTail>().SmokeDrawer.Update();
 
             // Become vulnerable on the map.
-            npc.modNPC.GetType().GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
+            npc.ModNPC.GetType().GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, frameType == (int)ThanatosFrameType.Open);
         }
 
         public override void FindFrame(NPC npc, int frameHeight)
@@ -264,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;
@@ -302,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;
@@ -340,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;

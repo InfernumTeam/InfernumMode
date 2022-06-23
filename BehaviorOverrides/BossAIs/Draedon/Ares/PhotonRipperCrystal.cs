@@ -15,52 +15,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Supercharged Exo Crystal");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 20;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 34;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.hostile = true;
-            projectile.timeLeft = 360;
-            projectile.Opacity = 0f;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 34;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.hostile = true;
+            Projectile.timeLeft = 360;
+            Projectile.Opacity = 0f;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (projectile.velocity.Length() < 14f)
-                projectile.velocity *= 1.0225f;
+            if (Projectile.velocity.Length() < 14f)
+                Projectile.velocity *= 1.0225f;
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public float WidthFunction(float completionRatio)
         {
-            float squishFactor = Utils.InverseLerp(1f, 0.7f, completionRatio, true) * Utils.InverseLerp(0f, 0.12f, completionRatio, true);
-            return projectile.scale * squishFactor * 24f + 1f;
+            float squishFactor = Utils.GetLerpValue(1f, 0.7f, completionRatio, true) * Utils.GetLerpValue(0f, 0.12f, completionRatio, true);
+            return Projectile.scale * squishFactor * 24f + 1f;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            float hue = (projectile.identity % 9f / 9f + completionRatio * 0.7f) % 1f;
-            return Color.Lerp(Color.White, Main.hslToRgb(hue, 0.95f, 0.55f), 0.35f) * projectile.Opacity;
+            float hue = (Projectile.identity % 9f / 9f + completionRatio * 0.7f) % 1f;
+            return Color.Lerp(Color.White, Main.hslToRgb(hue, 0.95f, 0.55f), 0.35f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TrailDrawer is null)
                 TrailDrawer = new PrimitiveTrail(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
 
             GameShaders.Misc["CalamityMod:PrismaticStreak"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
-            TrailDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 32);
+            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
             return true;
         }
     }

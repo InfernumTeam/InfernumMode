@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -12,8 +13,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
     public class TwinsEnergyExplosion : ModProjectile
     {
-        public ref float OwnerType => ref projectile.ai[0];
-        public ref float Radius => ref projectile.ai[1];
+        public ref float OwnerType => ref Projectile.ai[0];
+        public ref float Radius => ref Projectile.ai[1];
         public const int Lifetime = 80;
 
         public override void SetStaticDefaults()
@@ -23,42 +24,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override void SetDefaults()
         {
-            projectile.width = 72;
-            projectile.height = 72;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = Lifetime;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 10;
-            projectile.scale = 0.001f;
+            Projectile.width = 72;
+            Projectile.height = 72;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = Lifetime;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+            Projectile.scale = 0.001f;
         }
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), projectile.Center);
-                projectile.localAI[0] = 1f;
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
+                Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 14f + 2f;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
             Radius = MathHelper.Lerp(Radius, 3516f, 0.15f);
-            projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
-            CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
+            Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             spriteBatch.EnterShaderRegion();
 
-            float pulseCompletionRatio = Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true);
-            Vector2 scale = new Vector2(1.5f, 1f);
-            DrawData drawData = new DrawData(ModContent.GetTexture("Terraria/Misc/Perlin"),
-                projectile.Center - Main.screenPosition + projectile.Size * scale * 0.5f,
-                new Rectangle(0, 0, projectile.width, projectile.height),
-                new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * projectile.Opacity,
-                projectile.rotation,
-                projectile.Size,
+            float pulseCompletionRatio = Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true);
+            Vector2 scale = new(1.5f, 1f);
+            DrawData drawData = new(ModContent.GetTexture("Terraria/Misc/Perlin"),
+                Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
+                new Rectangle(0, 0, Projectile.width, Projectile.height),
+                new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
+                Projectile.rotation,
+                Projectile.Size,
                 scale,
                 SpriteEffects.None, 0);
 

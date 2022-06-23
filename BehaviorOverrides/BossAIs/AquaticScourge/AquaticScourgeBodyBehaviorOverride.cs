@@ -5,6 +5,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -55,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             bool canShoot = !npc.WithinRange(Main.player[npc.target].Center, 380f) && lifeRatio < 0.25f;
             if (canShoot && attackTimer > Main.rand.NextFloat(320f, 415f) && Utilities.AllProjectilesByID(ModContent.ProjectileType<SlowerSandTooth>()).Count() < 5)
             {
-                Main.PlaySound(SoundID.Item17, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item17, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 toothVelocity = Main.rand.NextVector2CircularEdge(7.2f, 7.2f);

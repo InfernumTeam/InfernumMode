@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class SupremeCalamitasBrotherPortal : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
 
         public const int Lifetime = 360;
 
@@ -19,20 +19,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 34;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 360;
-            projectile.scale = 0f;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 34;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 360;
+            Projectile.scale = 0f;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.scale = Utils.InverseLerp(0f, 24f, Time, true);
-            projectile.Opacity = projectile.scale;
+            Projectile.scale = Utils.GetLerpValue(0f, 24f, Time, true);
+            Projectile.Opacity = Projectile.scale;
 
             // Create a lot of light particles around the portal.
             float particleSpawnChance = Utilities.Remap(Time, 0f, 60f, 0.1f, 0.9f);
@@ -43,29 +43,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 float scale = Main.rand.NextFloat(0.5f, 0.66f);
                 Color particleColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.1f, 0.9f));
-                Vector2 particleSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.15f, 1f) * projectile.scale * 512f;
+                Vector2 particleSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.15f, 1f) * Projectile.scale * 512f;
                 Vector2 particleVelocity = particleSpawnOffset * -0.05f;
-                SquishyLightParticle light = new SquishyLightParticle(projectile.Center + particleSpawnOffset, particleVelocity, scale, particleColor, 40, 1f, 7f);
+                SquishyLightParticle light = new(Projectile.Center + particleSpawnOffset, particleVelocity, scale, particleColor, 40, 1f, 7f);
                 GeneralParticleHandler.SpawnParticle(light);
             }
 
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             spriteBatch.EnterShaderRegion();
 
-            float fade = Utils.InverseLerp(0f, 45f, Time, true) * Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+            float fade = Utils.GetLerpValue(0f, 45f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
             Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
-            Vector2 drawPosition2 = projectile.Center - Main.screenPosition;
+            Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Violet);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Red);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, projectile.scale * 4f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, Projectile.scale * 4f, SpriteEffects.None, 0f);
             spriteBatch.ExitShaderRegion();
             return false;
         }

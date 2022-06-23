@@ -2,6 +2,7 @@ using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
@@ -68,7 +69,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float intensity = GetIntensity();
-                spriteBatch.Draw(Main.blackTileTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * intensity);
+                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * intensity);
             }
         }
 

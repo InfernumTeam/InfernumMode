@@ -6,6 +6,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -155,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 // Roar and begin carpet bombing.
-                Main.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
             }
 
             if (attackTimer > redirectTime)
@@ -176,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     shootVelocity += bombOffsetDirectionAngle.ToRotationVector2() * 2.12f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                 }
-                Main.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);
             }
 
             if (attackTimer > redirectTime + carpetBombTime)
@@ -235,7 +236,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
-                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
 
                         // Release fireballs upward if alone and charging down.
@@ -283,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void SelectNewAttack(NPC npc)
         {
-            List<CatastropheAttackType> possibleAttacks = new List<CatastropheAttackType>
+            List<CatastropheAttackType> possibleAttacks = new()
             {
                 CatastropheAttackType.BrimstoneCarpetBombing,
                 CatastropheAttackType.VerticalCharges

@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -28,9 +29,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public override float MaxScale => 1f;
         public override float MaxLaserLength => 3600f;
         public override float Lifetime => LaserLifetime;
-        public override Color LaserOverlayColor => new Color(250, 180, 100, 100);
+        public override Color LaserOverlayColor => new(250, 180, 100, 100);
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[projectile.type].Value;
         public override Texture2D LaserMiddleTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/AresLaserBeamMiddle");
         public override Texture2D LaserEndTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/AresLaserBeamEnd");
         public override string Texture => "CalamityMod/Projectiles/Boss/AresLaserBeamStart";
@@ -121,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Sin(Main.GlobalTime * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.67f);
         }
 

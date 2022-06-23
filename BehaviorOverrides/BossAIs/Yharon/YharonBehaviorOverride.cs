@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.Chat;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -246,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FinalDyingRoar,
         };
 
-        public static readonly Dictionary<YharonAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<YharonAttackType[], Func<NPC, bool>>()
+        public static readonly Dictionary<YharonAttackType[], Func<NPC, bool>> SubphaseTable = new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.9375f && npc.Infernum().ExtraAI[2] == 0f,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.775f && npc.life / (float)npc.lifeMax <= 0.9375f && npc.Infernum().ExtraAI[2] == 0f,
@@ -331,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode == NetmodeID.SinglePlayer)
                     Utilities.DisplayText(text, Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
                 // Reset the attack cycle index.
                 npc.Infernum().ExtraAI[0] = 0f;
@@ -348,8 +351,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
                 Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                 if (calamityModMusic != null)
-                    npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/DragonGod");
-                else npc.modNPC.music = MusicID.LunarBoss;
+                    npc.ModNPC.Music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/DragonGod");
+                else npc.ModNPC.Music = MusicID.LunarBoss;
                 invincibilityTime = phase2InvincibilityTime;
             }
 
@@ -421,14 +424,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.15f);
                 npc.velocity *= 0.96f;
-                fireIntensity = Utils.InverseLerp(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true);
+                fireIntensity = Utils.GetLerpValue(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
                 if (subphaseTransitionTimer < 18f)
                 {
                     specialFrameType = (int)YharonFrameDrawingType.Roar;
                     if (subphaseTransitionTimer == 9)
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
 
                 npc.dontTakeDamage = true;
@@ -486,7 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             Vector2 offsetCenter = npc.SafeDirectionTo(target.Center) * (npc.width * 0.5f + 10) + npc.Center;
-            Vector2 mouthPosition = new Vector2(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);
+            Vector2 mouthPosition = new(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);
 
             bool enraged = ArenaSpawnAndEnrageCheck(npc, target);
             npc.Calamity().CurrentlyEnraged = enraged;
@@ -543,7 +546,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
                     Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
                 }
-                fireIntensity = Utils.InverseLerp(phase2InvincibilityTime, phase2InvincibilityTime - 45f, invincibilityTime, true) * Utils.InverseLerp(0f, 45f, invincibilityTime, true);
+                fireIntensity = Utils.GetLerpValue(phase2InvincibilityTime, phase2InvincibilityTime - 45f, invincibilityTime, true) * Utils.GetLerpValue(0f, 45f, invincibilityTime, true);
                 npc.dontTakeDamage = true;
                 invincibilityTime--;
             }
@@ -696,7 +699,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 npc.netUpdate = true;
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
             }
             else if (attackTimer >= chargeDelay + chargeTime)
                 SelectNextAttack(npc, ref attackType);
@@ -717,7 +720,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 // Transform into a phoenix flame form if doing a phoenix supercharge.
                 if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
-                    fireIntensity = MathHelper.Max(fireIntensity, Utils.InverseLerp(0f, chargeDelay - 1f, attackTimer, true));
+                    fireIntensity = MathHelper.Max(fireIntensity, Utils.GetLerpValue(0f, chargeDelay - 1f, attackTimer, true));
 
                 // Hover to the top left/right of the target and look at them.
                 Vector2 destination = target.Center + new Vector2(xAimOffset, berserkChargeMode ? -480f : -240f);
@@ -735,7 +738,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 specialFrameType = (int)YharonFrameDrawingType.IdleWings;
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
 
                 npc.netUpdate = true;
             }
@@ -744,7 +747,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             else if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge && attackTimer < chargeDelay + chargeTime)
             {
                 fireIntensity = 1f;
-                float competionRatio = Utils.InverseLerp(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
+                float competionRatio = Utils.GetLerpValue(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
                 Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -794,7 +797,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     int fireball = Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 450, 0f);
                     Main.projectile[fireball].tileCollide = false;
                 }
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
             }
 
             if (attackTimer >= fireballBreathShootDelay + fireballBreathShootRate * totalFireballBreaths)
@@ -841,7 +844,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonFire"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonFire"), npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f);
@@ -880,14 +883,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         Utilities.NewProjectileBetter(mouthPosition, tornadoSpawnerShootVelocity, ModContent.ProjectileType<BigFlare>(), 0, 0f, Main.myPlayer, 1f, npc.target + 1);
                     }
                 }
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
             }
 
             // Release detonating flares.
             else if (attackTimer < flarenadoSpawnDelay + 45f)
             {
                 if ((attackTimer - flarenadoSpawnDelay) % 10f == 9f)
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
             }
             else
                 SelectNextAttack(npc, ref attackType);
@@ -954,7 +957,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         int fire = Utilities.NewProjectileBetter(mouthPosition, npc.velocity * 0.667f, ProjectileID.CultistBossFireBall, 450, 0f);
                         Main.projectile[fire].tileCollide = false;
                     }
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
 
                 // Reset the attack timer if an opening for a charge is found, and charge towards the player.
@@ -1026,7 +1029,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (attackTimer >= fireballBreathShootDelay + shotgunBurstFireRate * totalShotgunBursts - 1f)
                     SelectNextAttack(npc, ref attackType);
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
             }
             specialFrameType = (int)YharonFrameDrawingType.Roar;
         }
@@ -1075,7 +1078,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         Utilities.NewProjectileBetter(flareSpawnPosition, angle.ToRotationVector2().RotatedByRandom(0.03f) * Vector2.Zero, ModContent.ProjectileType<ChargeFlare>(), 0, 0f, Main.myPlayer);
                     }
                 }
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 SelectNextAttack(npc, ref attackType);
             }
         }
@@ -1094,7 +1097,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
 
                 if (!target.WithinRange(flareSpawnPosition, 700f))
-                    NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
                 */
             }
 
@@ -1203,7 +1206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.velocity *= 0.95f;
 
             // Transform into a phoenix flame form.
-            fireIntensity = MathHelper.Max(fireIntensity, Utils.InverseLerp(0f, chargeDelay - 1f, attackTimer, true));
+            fireIntensity = MathHelper.Max(fireIntensity, Utils.GetLerpValue(0f, chargeDelay - 1f, attackTimer, true));
 
             // Rapidly approach a 0 rotation.
             npc.rotation = npc.rotation.AngleTowards(0f, 0.7f);
@@ -1211,7 +1214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Create a ring of flames at the zenith of the flash.
             if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay && attackTimer <= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime)
             {
-                float brightness = CalamityUtils.Convert01To010(Utils.InverseLerp(heatFlashIdleDelay + heatFlashStartDelay, heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime, attackTimer, true));
+                float brightness = CalamityUtils.Convert01To010(Utils.GetLerpValue(heatFlashIdleDelay + heatFlashStartDelay, heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime, attackTimer, true));
                 bool atMaximumBrightness = attackTimer == heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime / 2;
 
                 // Immediately create the ring of flames if the brightness is at its maximum.
@@ -1254,7 +1257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             }
                         }
                     }
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
                 MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
@@ -1378,7 +1381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     if (Main.netMode == NetmodeID.SinglePlayer)
                         Utilities.DisplayText("The heat is surging...", Color.Orange);
                     else if (Main.netMode == NetmodeID.Server)
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
+                        ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
                     finalAttackCompletionState = 1f;
                 }
 
@@ -1393,7 +1396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                     // Angularly offset the hover destination based on the time to make it harder to predict.
                     if (attackTimer % 90 >= 20)
-                        offsetAngle = MathHelper.Lerp(0f, MathHelper.ToRadians(25f), Utils.InverseLerp(20f, 45f, attackTimer % 90f));
+                        offsetAngle = MathHelper.Lerp(0f, MathHelper.ToRadians(25f), Utils.GetLerpValue(20f, 45f, attackTimer % 90f));
 
                     Vector2 destination = target.Center + new Vector2(xAimOffset, -890f).RotatedBy(offsetAngle) - npc.Center;
                     Vector2 idealVelocity = Vector2.Normalize(destination - npc.velocity) * 29.5f;
@@ -1408,7 +1411,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.velocity = npc.SafeDirectionTo(target.Center) * confusingChargeSpeed;
                     npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                     specialFrameType = (int)YharonFrameDrawingType.IdleWings;
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
 
                 // Define the total instance count; 2 clones and the original.
@@ -1516,7 +1519,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.velocity = npc.SafeDirectionTo(target.Center) * berserkChargeSpeed;
                     npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                     specialFrameType = (int)YharonFrameDrawingType.IdleWings;
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
             }
 
@@ -1576,7 +1579,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         if (Main.rand.NextBool(12))
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     }
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
                 else if (pulseDeathEffectCooldown > 0)
                 {
@@ -1626,7 +1629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.active = false;
 
                     // YOU SHALL HAVE HEARD MY FINAL DYINNNG ROOOOARRRRR
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
             }
         }
@@ -1746,8 +1749,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             void drawYharon(Vector2 position, float rotationOffset = 0f, bool changeDirection = false)
             {
-                Texture2D texture = Main.npcTexture[npc.type];
-                Vector2 origin = new Vector2(texture.Width / 2, texture.Height / Main.npcFrameCount[npc.type] / 2);
+                Texture2D texture = TextureAssets.Npc[npc.type].Value;
+                Vector2 origin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[npc.type] / 2);
                 Color color = lightColor;
                 YharonAttackType attackType = (YharonAttackType)(int)npc.ai[0];
 
@@ -1780,12 +1783,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     color = Color.Lerp(color, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0), fireIntensity);
 
                     // And then brighten it to a point of searing white flames.
-                    float whiteBlend = MathHelper.Lerp(0.9f, 0.5f, Utils.InverseLerp(0f, 14f, npc.velocity.Length(), true));
+                    float whiteBlend = MathHelper.Lerp(0.9f, 0.5f, Utils.GetLerpValue(0f, 14f, npc.velocity.Length(), true));
                     color = Color.Lerp(color, Color.White, whiteBlend);
 
                     // This effect is reduced if Yharon is moving slowly/standing still, however.
                     if (npc.velocity.Length() < 3f)
-                        color *= MathHelper.Lerp(1f, 0.5f + (float)Math.Cos(Main.GlobalTime) * 0.08f, Utils.InverseLerp(3f, 0f, npc.velocity.Length()));
+                        color *= MathHelper.Lerp(1f, 0.5f + (float)Math.Cos(Main.GlobalTimeWrappedHourly) * 0.08f, Utils.GetLerpValue(3f, 0f, npc.velocity.Length()));
 
                     color.A = 0;
                 }
@@ -1794,7 +1797,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 // The result is still mostly white, however, due to additive coloring.
                 if (doingMajesticCharge)
                 {
-                    color = Color.Lerp(Color.HotPink, Color.Lavender, (float)Math.Cos(Main.GlobalTime * 3f) * 0.5f + 0.5f);
+                    color = Color.Lerp(Color.HotPink, Color.Lavender, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
                     color.A = 0;
                 }
 
@@ -1808,7 +1811,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     if (npc.velocity.Length() < 7f)
                     {
                         float angle = MathHelper.TwoPi * i / afterimageCount;
-                        drawOffset = angle.ToRotationVector2() * MathHelper.Lerp(0.5f, 16f + (float)Math.Cos(Main.GlobalTime) * 4f, Utils.InverseLerp(7f, 0f, npc.velocity.Length()));
+                        drawOffset = angle.ToRotationVector2() * MathHelper.Lerp(0.5f, 16f + (float)Math.Cos(Main.GlobalTimeWrappedHourly) * 4f, Utils.GetLerpValue(7f, 0f, npc.velocity.Length()));
                     }
                     Color afterimageColor = afterimageCount == 1 ? color : color * (i / (float)afterimageCount);
                     Vector2 drawPosition = position + drawOffset - Main.screenPosition;
@@ -1835,13 +1838,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             else
                 drawYharon(npc.Center);
 
-            float giantTwinkleSize = Utils.InverseLerp(2650f, 2000f, npc.life, true) * Utils.InverseLerp(1500f, 2000f, npc.life, true);
+            float giantTwinkleSize = Utils.GetLerpValue(2650f, 2000f, npc.life, true) * Utils.GetLerpValue(1500f, 2000f, npc.life, true);
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 4.75f;
                 Texture2D twinkleTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/LargeStar");
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
-                float secondaryTwinkleRotation = Main.GlobalTime * 7.13f;
+                float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 
                 spriteBatch.SetBlendState(BlendState.Additive);
 

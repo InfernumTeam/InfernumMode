@@ -47,7 +47,7 @@ namespace InfernumMode.Particles
             int trailCount = TrailPositions.Length;
             if (timeLeft < trailCount)
                 trailCount = timeLeft;
-            float opacity = Utils.InverseLerp(0f, 16f, timeLeft, true);
+            float opacity = Utils.GetLerpValue(0f, 16f, timeLeft, true);
             for (int i = 1; i < trailCount; i++)
             {
                 Vector2 position = TrailPositions[i];

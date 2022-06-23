@@ -51,6 +51,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
@@ -76,7 +77,7 @@ namespace InfernumMode.BossRush
                 new Boss(NPCID.SkeletronHead, TimeChangeContext.Night, type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    int sans = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
+                    int sans = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[sans].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(sans);
                 }, permittedNPCs: NPCID.SkeletronHand),
@@ -92,14 +93,14 @@ namespace InfernumMode.BossRush
                 new Boss(NPCID.DukeFishron, spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    int dukeFishron = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
+                    int dukeFishron = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[dukeFishron].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(dukeFishron);
                 }, permittedNPCs: new int[] { NPCID.DetonatingBubble, NPCID.Sharkron, NPCID.Sharkron2, ModContent.NPCType<RedirectingBubble>() }),
 
                 new Boss(NPCID.Golem, TimeChangeContext.Day, type =>
                 {
-                    int shittyStatueBoss = NPC.NewNPC((int)(Main.player[ClosestPlayerToWorldCenter].position.X + Main.rand.Next(-100, 101)), (int)(Main.player[ClosestPlayerToWorldCenter].position.Y - 400f), type, 1);
+                    int shittyStatueBoss = NPC.NewNPC(npc.GetSource_FromAI(), (int)(Main.player[ClosestPlayerToWorldCenter].position.X + Main.rand.Next(-100, 101)), (int)(Main.player[ClosestPlayerToWorldCenter].position.Y - 400f), type, 1);
                     Main.npc[shittyStatueBoss].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(shittyStatueBoss);
                 }, permittedNPCs: new int[] { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead, NPCID.GolemHeadFree }),
@@ -121,7 +122,7 @@ namespace InfernumMode.BossRush
                 new Boss(ModContent.NPCType<CrabulonIdle>(), spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    int thePefectOne = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
+                    int thePefectOne = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[thePefectOne].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(thePefectOne);
                 }, specialSpawnCountdown: 300, permittedNPCs: new int[] { ModContent.NPCType<CrabShroom>(), ModContent.NPCType<FungalClump>() }),
@@ -134,8 +135,8 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(SoundID.Roar, player.position, 2);
-                    int ravager = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
+                    SoundEngine.PlaySound(SoundID.Roar, player.position, 2);
+                    int ravager = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[ravager].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(ravager);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<FlamePillar>(), ModContent.NPCType<RockPillar>(), ModContent.NPCType<RavagerLegLeft>(), ModContent.NPCType<RavagerLegRight>(),
@@ -186,7 +187,7 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSpawn"), player.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSpawn"), player.Center);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>() }),
 
@@ -197,7 +198,7 @@ namespace InfernumMode.BossRush
                 new Boss(ModContent.NPCType<OldDuke>(), spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    int boomerDuke = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
+                    int boomerDuke = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[boomerDuke].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(boomerDuke);
                 }, permittedNPCs: new int[] { ModContent.NPCType<OldDukeToothBall>(), ModContent.NPCType<OldDukeSharkron>() }),
@@ -205,7 +206,7 @@ namespace InfernumMode.BossRush
                 new Boss(NPCID.CultistBoss, spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    int doctorLooneyTunes = NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - 400, type, 1);
+                    int doctorLooneyTunes = NPC.NewNPC(npc.GetSource_FromAI(), (int)player.Center.X, (int)player.Center.Y - 400, type, 1);
                     Main.npc[doctorLooneyTunes].direction = Main.npc[doctorLooneyTunes].spriteDirection = Math.Sign(player.Center.X - player.Center.X - 90f);
                     Main.npc[doctorLooneyTunes].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(doctorLooneyTunes);
@@ -219,8 +220,8 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceSpawn"), player.Center);
-                    int prov = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-500, 501)), (int)(player.position.Y - 250f), type, 1);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceSpawn"), player.Center);
+                    int prov = NPC.NewNPC(npc.GetSource_FromAI(), (int)(player.position.X + Main.rand.Next(-500, 501)), (int)(player.position.Y - 250f), type, 1);
                     Main.npc[prov].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(prov);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<ProvSpawnOffense>(), ModContent.NPCType<ProvSpawnHealer>(), ModContent.NPCType<ProvSpawnDefense>() }),
@@ -239,7 +240,7 @@ namespace InfernumMode.BossRush
                         }
                     }
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), player.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), player.Center);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<DevourerofGodsBody>(), ModContent.NPCType<DevourerofGodsTail>() }),
 
@@ -248,14 +249,14 @@ namespace InfernumMode.BossRush
                 new Boss(ModContent.NPCType<Apollo>(), spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - 2400, type, 1);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)player.Center.X, (int)player.Center.Y - 2400, type, 1);
                 }, permittedNPCs: new int[] { ModContent.NPCType<Artemis>(), ModContent.NPCType<Apollo>(), ModContent.NPCType<AresBody>(),
                     ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(), ModContent.NPCType<AresPulseCannon>(),
                     ModContent.NPCType<ThanatosHead>(), ModContent.NPCType<ThanatosBody1>(), ModContent.NPCType<ThanatosBody2>(), ModContent.NPCType<ThanatosTail>() }),
 
                 new Boss(ModContent.NPCType<SupremeCalamitas>(), spawnContext: type =>
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn"), Main.player[ClosestPlayerToWorldCenter].Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn"), Main.player[ClosestPlayerToWorldCenter].Center);
                     CalamityUtils.SpawnBossBetter(Main.player[ClosestPlayerToWorldCenter].Top - new Vector2(42f, 84f), type);
                 }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SCalWormArm>(), ModContent.NPCType<SCalWormHead>(), ModContent.NPCType<SCalWormBody>(),
                     ModContent.NPCType<SCalWormBodyWeak>(), ModContent.NPCType<SCalWormTail>(),

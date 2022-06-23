@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,31 +10,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
     public class PlanteraPinkTentacle : ModNPC
     {
-        public Player Target => Main.player[npc.target];
-        public ref float Time => ref npc.ai[0];
+        public Player Target => Main.player[NPC.target];
+        public ref float Time => ref NPC.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plantera's Tentacle");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[NPC.type] = 4;
 
             // Ensure that the tentacle always draws, even when far offscreen.
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
+            NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
         }
 
         public override void SetDefaults()
         {
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.damage = 120;
-            npc.width = 28;
-            npc.height = 28;
-            npc.defense = 5;
-            npc.lifeMax = 500;
-            npc.aiStyle = aiType = -1;
-            npc.dontTakeDamage = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.hide = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.damage = 120;
+            NPC.width = 28;
+            NPC.height = 28;
+            NPC.defense = 5;
+            NPC.lifeMax = 500;
+            NPC.aiStyle = AIType = -1;
+            NPC.dontTakeDamage = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.hide = true;
         }
 
         public override void AI()
@@ -40,16 +42,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // Die if Plantera is absent or not using tentacles.
             if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
             {
-                npc.life = 0;
-                npc.HitEffect();
-                npc.checkDead();
-                npc.netUpdate = true;
+                NPC.life = 0;
+                NPC.HitEffect();
+                NPC.checkDead();
+                NPC.netUpdate = true;
                 return;
             }
 
-            float attachAngle = npc.ai[0];
-            ref float attachOffset = ref npc.ai[1];
-            ref float time = ref npc.ai[2];
+            float attachAngle = NPC.ai[0];
+            ref float attachOffset = ref NPC.ai[1];
+            ref float time = ref NPC.ai[2];
 
             // Reel inward prior to snapping.
             if (time > 0f && time < 45f)
@@ -60,26 +62,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
 
             if (time == 180f)
-                Main.PlaySound(SoundID.Item74, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
 
             if (time > 220f)
             {
-                npc.scale *= 0.85f;
+                NPC.scale *= 0.85f;
 
                 // Die once small enough.
-                npc.Opacity = npc.scale;
-                if (npc.scale < 0.01f)
+                NPC.Opacity = NPC.scale;
+                if (NPC.scale < 0.01f)
                 {
-                    npc.life = 0;
-                    npc.HitEffect();
-                    npc.checkDead();
-                    npc.active = false;
+                    NPC.life = 0;
+                    NPC.HitEffect();
+                    NPC.checkDead();
+                    NPC.active = false;
                 }
             }
 
-            npc.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * attachOffset;
-            npc.rotation = attachAngle + MathHelper.Pi;
-            npc.dontTakeDamage = true;
+            NPC.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * attachOffset;
+            NPC.rotation = attachAngle + MathHelper.Pi;
+            NPC.dontTakeDamage = true;
 
             time++;
         }
@@ -91,10 +93,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void FindFrame(int frameHeight)
         {
-            npc.frameCounter += 0.2f;
-            npc.frameCounter %= Main.npcFrameCount[npc.type];
-            int frame = (int)npc.frameCounter;
-            npc.frame.Y = frame * frameHeight;
+            NPC.frameCounter += 0.2f;
+            NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+            int frame = (int)NPC.frameCounter;
+            NPC.frame.Y = frame * frameHeight;
         }
 
         public override void OnHitPlayer(Player player, int damage, bool crit)
@@ -102,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             player.AddBuff(BuffID.Venom, 120, true);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
                 return true;
@@ -110,20 +112,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             NPC plantera = Main.npc[NPC.plantBoss];
 
             Vector2 drawPosition = plantera.Center;
-            float rotation = npc.AngleFrom(plantera.Center) + MathHelper.PiOver2;
+            float rotation = NPC.AngleFrom(plantera.Center) + MathHelper.PiOver2;
             bool canStillDraw = true;
             while (canStillDraw)
             {
                 int moveDistance = 16;
-                if (npc.Distance(drawPosition) < 32f)
+                if (NPC.Distance(drawPosition) < 32f)
                 {
-                    moveDistance = (int)npc.Distance(drawPosition) - 32 + moveDistance;
+                    moveDistance = (int)NPC.Distance(drawPosition) - 32 + moveDistance;
                     canStillDraw = false;
                 }
-                drawPosition += plantera.SafeDirectionTo(npc.Center, Vector2.Zero) * moveDistance;
+                drawPosition += plantera.SafeDirectionTo(NPC.Center, Vector2.Zero) * moveDistance;
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
-                Rectangle frame = new Rectangle(0, 0, Main.chain27Texture.Width, moveDistance);
-                spriteBatch.Draw(Main.chain27Texture, drawPosition - Main.screenPosition, frame, color, rotation, Main.chain27Texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Rectangle frame = new(0, 0, TextureAssets.Chain27.Value.Width, moveDistance);
+                spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - Main.screenPosition, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }
@@ -131,12 +133,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(npc.position, npc.width, npc.height, 2, hitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hitDirection, -1f, 0, default, 1f);
 
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int k = 0; k < 15; k++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, 2, hitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hitDirection, -1f, 0, default, 1f);
             }
         }
     }

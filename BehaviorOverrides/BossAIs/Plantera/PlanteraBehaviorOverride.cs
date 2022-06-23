@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -77,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedHooksFlag == 0f)
             {
                 for (int i = 0; i < hookCount; i++)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 4, NPCID.PlanterasHook, npc.whoAmI);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y + 4, NPCID.PlanterasHook, npc.whoAmI);
 
                 hasCreatedHooksFlag = 1f;
             }
@@ -203,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // They will explode into bursts of petals after some time.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 270f == 269f)
             {
-                List<Vector2> flowerSpawnPositions = new List<Vector2>();
+                List<Vector2> flowerSpawnPositions = new();
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -221,11 +222,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if ((tile.wall > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
+                    if ((tile.WallType > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
-                    if (tile.type == TileID.JungleGrass && tile.nactive())
+                    if (tile.TileType == TileID.JungleGrass && tile.HasUnactuatedTile)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // Stop attempting to spawn more flowers once enough have been decided.
@@ -332,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             if (petalReleaseCountdown > petalReleaseDelay && petalReleaseDelay > 0f)
             {
-                Main.PlaySound(SoundID.Item17, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item17, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -380,7 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // Periodically release gas.
             if (attackTimer % gasReleaseRate == gasReleaseRate - 1f)
             {
-                Main.PlaySound(SoundID.DD2_FlameburstTowerShot, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -418,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int tentacleSpawnDelay = inPhase4 ? 45 : 60;
             int tentacleSummonTime = 45;
             bool canCreateTentacles = attackTimer >= tentacleSpawnDelay && attackTimer < tentacleSpawnDelay + tentacleSummonTime;
-            float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
+            float tentacleAngle = Utils.GetLerpValue(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
             ref float freeAreaAngle = ref npc.Infernum().ExtraAI[0];
             ref float freeAreaAngle2 = ref npc.Infernum().ExtraAI[1];
             ref float snapCount = ref npc.Infernum().ExtraAI[2];
@@ -468,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
                     }
                 }
 
@@ -477,7 +478,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
                     }
                 }
             }
@@ -501,7 +502,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 telegraphPuff.noGravity = true;
             }
             if (attackTimer == tentacleSpawnDelay + tentacleSummonTime)
-                Main.PlaySound(SoundID.Item73, target.Center);
+                SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
             if (attackTimer > tentacleSpawnDelay + tentacleSummonTime + 45f && !NPC.AnyNPCs(NPCID.PlanterasTentacle) && !NPC.AnyNPCs(ModContent.NPCType<PlanteraPinkTentacle>()))
             {
@@ -517,7 +518,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             // Slow down prior to firing the bursts.
-            float idealSpeed = Utils.InverseLerp(120f, 70f, attackTimer, true) * 6f;
+            float idealSpeed = Utils.GetLerpValue(120f, 70f, attackTimer, true) * 6f;
             if (!npc.WithinRange(target.Center, 85f) && idealSpeed > 0f)
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * idealSpeed, 0.15f);
             else
@@ -555,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // They will explode into bursts of petals after some time.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 40f)
             {
-                List<Vector2> flowerSpawnPositions = new List<Vector2>();
+                List<Vector2> flowerSpawnPositions = new();
 
                 for (int tries = 0; tries < 10000; tries++)
                 {
@@ -568,11 +569,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if ((tile.wall > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
+                    if ((tile.WallType > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
-                    if (tile.type == TileID.JungleGrass && tile.nactive())
+                    if (tile.TileType == TileID.JungleGrass && tile.HasUnactuatedTile)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // Stop attempting to spawn more flowers once enough have been decided.
@@ -644,7 +645,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     }
                 }
 
-                Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 
                 npc.netUpdate = true;
             }
@@ -660,19 +661,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         {
             npc.velocity *= 0.95f;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
-            bulbHueInterpolant = Utils.InverseLerp(105f, 30f, transitionCountdown, true);
+            bulbHueInterpolant = Utils.GetLerpValue(105f, 30f, transitionCountdown, true);
 
             // Focus on the boss as it transforms.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(180f, 172f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
             }
 
             // Roar right before transitioning back to attacking.
             if (transitionCountdown == 20f)
-                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
         }
 
         public static void DoPhase3Transition(NPC npc, Player target, float transitionCountdown)
@@ -684,8 +685,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(180f, 172f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
             }
 
             // Roar right and turn into a trap plant thing before transitioning back to attacking.
@@ -695,7 +696,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 for (int i = 378; i <= 380; i++)
                     Gore.NewGore(new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
 
-                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
             }
         }
         #endregion Specific Attacks
@@ -749,7 +750,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DeleteHostileThings()
         {
-            List<int> projectilesToDelete = new List<int>()
+            List<int> projectilesToDelete = new()
             {
                 ProjectileID.PoisonSeedPlantera,
                 ModContent.ProjectileType<ExplodingFlower>(),

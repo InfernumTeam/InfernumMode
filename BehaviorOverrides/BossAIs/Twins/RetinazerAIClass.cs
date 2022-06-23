@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
@@ -25,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 0.9f;
             Color startingColor = Color.Lerp(Color.White, Color.IndianRed, 0.25f);
             Color middleColor = Color.Lerp(Color.Red, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.Crimson, Color.White, 0.47f);
@@ -36,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => FlameTrailWidthFunctionBig(npc, completionRatio),
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
-                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, (float)Math.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTime * 3f) * 0.5f + 0.5f);
+                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, (float)Math.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
                 drawInstance(npc.Center + drawOffset, color, npc.rotation);
             }
             return false;

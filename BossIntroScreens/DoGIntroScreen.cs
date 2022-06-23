@@ -17,7 +17,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float TextScale => MajorBossTextScale;
 
-        public override TextColorData TextColor => new TextColorData(c => Color.Lerp(Color.Cyan, Color.Fuchsia, (float)Math.Sin(AnimationCompletion * 8f + c * MathHelper.Pi * 3f) * 0.5f + 0.5f));
+        public override TextColorData TextColor => new(c => Color.Lerp(Color.Cyan, Color.Fuchsia, (float)Math.Sin(AnimationCompletion * 8f + c * MathHelper.Pi * 3f) * 0.5f + 0.5f));
 
         public override Color ScreenCoverColor => Color.Black;
 

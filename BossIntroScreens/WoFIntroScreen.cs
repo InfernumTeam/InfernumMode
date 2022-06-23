@@ -8,10 +8,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class WoFIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color darkFleshColor = new Color(73, 38, 45);
-            Color fleshColor = new Color(178, 105, 112);
+            Color darkFleshColor = new(73, 38, 45);
+            Color fleshColor = new(178, 105, 112);
             return Color.Lerp(darkFleshColor, fleshColor, (float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f);
         });
 
@@ -35,7 +35,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

@@ -38,7 +38,7 @@ namespace InfernumMode.Balancing
 {
     public static class NPCHPValues
     {
-        public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
+        public static Dictionary<int, int> HPValues => new()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
             [ModContent.NPCType<GiantClam>()] = Main.hardMode ? 16200 : 4100,

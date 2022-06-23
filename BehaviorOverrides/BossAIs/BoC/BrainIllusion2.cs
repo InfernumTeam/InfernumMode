@@ -9,33 +9,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
     public class BrainIllusion2 : ModNPC
     {
-        public Player Target => Main.player[npc.target];
+        public Player Target => Main.player[NPC.target];
         public NPC Owner => Main.npc[NPC.crimsonBoss];
         public float OwnerAttackTime => Owner.ai[1];
-        public ref float AttackTimer => ref npc.ai[1];
+        public ref float AttackTimer => ref NPC.ai[1];
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brain of Cthulhu");
-            Main.npcFrameCount[npc.type] = 8;
-            NPCID.Sets.TrailingMode[npc.type] = 0;
-            NPCID.Sets.TrailCacheLength[npc.type] = 7;
+            Main.npcFrameCount[NPC.type] = 8;
+            NPCID.Sets.TrailingMode[NPC.type] = 0;
+            NPCID.Sets.TrailCacheLength[NPC.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            npc.npcSlots = 1f;
-            npc.aiStyle = aiType = -1;
-            npc.width = 160;
-            npc.height = 110;
-            npc.damage = 0;
-            npc.lifeMax = 2400;
-            npc.knockBackResist = 0f;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.immortal = true;
-            npc.netAlways = true;
-            npc.Calamity().canBreakPlayerDefense = true;
+            NPC.npcSlots = 1f;
+            NPC.aiStyle = AIType = -1;
+            NPC.width = 160;
+            NPC.height = 110;
+            NPC.damage = 0;
+            NPC.lifeMax = 2400;
+            NPC.knockBackResist = 0f;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.immortal = true;
+            NPC.netAlways = true;
+            NPC.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
@@ -43,8 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             // Disappear if the main boss is not present.
             if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.SpinPull)
             {
-                npc.active = false;
-                npc.netUpdate = true;
+                NPC.active = false;
+                NPC.netUpdate = true;
                 return;
             }
 
@@ -54,14 +54,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public void CopyOwnerAttributes()
         {
-            npc.target = Owner.target;
-            npc.frame = Owner.frame;
-            npc.frame.Y += npc.frame.Height * 4;
-            npc.Opacity = Owner.Opacity * Utils.InverseLerp(0f, 10f, AttackTimer, true) * 0.925f;
+            NPC.target = Owner.target;
+            NPC.frame = Owner.frame;
+            NPC.frame.Y += NPC.frame.Height * 4;
+            NPC.Opacity = Owner.Opacity * Utils.GetLerpValue(0f, 10f, AttackTimer, true) * 0.925f;
 
-            npc.life = Owner.life;
-            npc.lifeMax = Owner.lifeMax;
-            npc.dontTakeDamage = Owner.dontTakeDamage;
+            NPC.life = Owner.life;
+            NPC.lifeMax = Owner.lifeMax;
+            NPC.dontTakeDamage = Owner.dontTakeDamage;
         }
 
         public override Color? GetAlpha(Color drawColor) => NPC.crimsonBoss == -1 ? (Color?)null : Owner.GetAlpha(drawColor);

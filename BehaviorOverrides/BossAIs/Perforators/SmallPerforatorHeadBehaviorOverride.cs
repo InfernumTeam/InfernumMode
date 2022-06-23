@@ -6,6 +6,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -69,8 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (wrappedAttackTimer == 180f)
             {
                 target.Calamity().GeneralScreenShakePower = 5f;
-                Main.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
-                Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
             }
 
             // Rise upward.
@@ -82,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Release ichor into the air once above the target and in air.
                 if (hasReleasedFallingIchor == 0f && npc.Top.Y < target.Bottom.Y && !Collision.SolidCollision(npc.position, npc.width, npc.height))
                 {
-                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
+                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient && !npc.WithinRange(target.Center, 170f))
                     {
                         for (int i = 0; i < fallingIchorCount; i++)
@@ -90,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
                             float horizontalSpeed = MathHelper.Lerp(-21f, 21f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 6f;
                             float verticalSpeed = Main.rand.NextFloat(-12f, -11f);
-                            Vector2 ichorVelocity = new Vector2(horizontalSpeed, verticalSpeed);
+                            Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 80, 0f);
                         }
                         npc.netUpdate = true;

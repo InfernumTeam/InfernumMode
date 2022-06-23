@@ -12,6 +12,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -75,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 sideSwitchAttackDelay = 60f;
                 hasDoneInitializations = 1f;
 
-                int artemis = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Artemis>(), npc.whoAmI);
+                int artemis = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Artemis>(), npc.whoAmI);
                 if (Main.npc.IndexInRange(artemis))
                     Main.npc[artemis].realLife = npc.whoAmI;
 
@@ -101,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 SelectNextAttack(npc);
 
                 // Clear away projectiles to prevent lingering, unfair things so that the combo attacks have a clean, open area.
-                List<int> projectilesToDelete = new List<int>()
+                List<int> projectilesToDelete = new()
                 {
                     ModContent.ProjectileType<ArtemisLaser>(),
                     ModContent.ProjectileType<ApolloPlasmaFireball>(),
@@ -286,11 +288,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             frame = (int)Math.Round(MathHelper.Lerp(startingFrame, endingFrame, phaseTransitionAnimationTime / Phase2TransitionTime));
 
             // Create the pupil gore thing.
-            int pupilPopoffTime = (int)(Phase2TransitionTime * Utils.InverseLerp(startingFrame, endingFrame, 37.5f));
-            int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.InverseLerp(startingFrame, endingFrame, 46.5f));
+            int pupilPopoffTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 37.5f));
+            int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 46.5f));
             if (phaseTransitionAnimationTime == pupilPopoffTime)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int lensType = ModContent.ProjectileType<BrokenApolloLens>();
@@ -305,10 +307,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), npc.Center);
 
             if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
@@ -352,9 +354,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
                 // Determine the intensity of the charge visuals.
-                chargeInterpolant = Utils.InverseLerp(chargeupTime - 60f, chargeupTime - 1f, deathAnimationTimer, true);
+                chargeInterpolant = Utils.GetLerpValue(chargeupTime - 60f, chargeupTime - 1f, deathAnimationTimer, true);
 
-                float particleCreationChance = MathHelper.Lerp(0.1f, 0.9f, Utils.InverseLerp(0f, chargeupTime * 0.65f, deathAnimationTimer, true));
+                float particleCreationChance = MathHelper.Lerp(0.1f, 0.9f, Utils.GetLerpValue(0f, chargeupTime * 0.65f, deathAnimationTimer, true));
 
                 for (int i = 0; i < 2; i++)
                 {
@@ -384,7 +386,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Reel back.
             else if (deathAnimationTimer <= chargeupTime + reelBackTime)
             {
-                float reelBackInterpolant = Utils.InverseLerp(0f, reelBackTime * 0.65f, deathAnimationTimer - chargeupTime, true);
+                float reelBackInterpolant = Utils.GetLerpValue(0f, reelBackTime * 0.65f, deathAnimationTimer - chargeupTime, true);
                 hoverDestination -= npc.SafeDirectionTo(target.Center) * reelBackInterpolant * 200f;
                 hoverDestination.X -= reelBackInterpolant * hoverSide * 200f;
                 hoverDestination.Y -= reelBackInterpolant * 120f;
@@ -406,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     for (int i = 0; i < 2; i++)
                         GeneralParticleHandler.SpawnParticle(new PulseRing(tailEnd, Vector2.Zero, Color.Cyan, 0f, 8f, 40));
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 }
@@ -421,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 // Create a massive impact explosion and release sparks everywhere.
                 if (npc.type == ModContent.NPCType<Apollo>())
                 {
-                    var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                    var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
                     if (sound != null)
                         CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
 
@@ -469,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f && npc.type == ModContent.NPCType<Apollo>())
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
         }
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
@@ -524,7 +526,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
-            float projectileShootSpeed = MathHelper.Lerp(3.1f, 6.21f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
+            float projectileShootSpeed = MathHelper.Lerp(3.1f, 6.21f, Utils.GetLerpValue(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination += Vector2.UnitY * hoverSide * 485f;
@@ -553,7 +555,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
                             if (i == 0)
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -569,7 +571,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         else
                         {
                             if (i == 0)
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -662,7 +664,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
 
-                    var flameSound = Main.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
+                    var flameSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
                     if (flameSound != null)
                         flameSound.Volume = MathHelper.Clamp(flameSound.Volume * 1.5f, 0f, 1f);
 
@@ -733,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 475f))
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
@@ -862,7 +864,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     if (npc.type == ModContent.NPCType<Artemis>())
                     {
                         // Create a telegraph.
-                        laserTelegraphInterpolant = Utils.InverseLerp(0f, telegraphTime * 0.65f, attackTimer, true);
+                        laserTelegraphInterpolant = Utils.GetLerpValue(0f, telegraphTime * 0.65f, attackTimer, true);
                         if (attackTimer >= telegraphTime)
                             laserTelegraphInterpolant = 0f;
 
@@ -877,7 +879,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
                         if (attackTimer % plasmaShootRate == plasmaShootRate - 1f)
                         {
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -890,7 +892,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Have Artemis release the laserbeam and some sparks once ready.
                     if (attackTimer == telegraphTime && npc.type == ModContent.NPCType<Artemis>())
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int type = ModContent.ProjectileType<ArtemisBurstLaserbeam>();
@@ -1009,7 +1011,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (Main.netMode != NetmodeID.Server)
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 
@@ -1038,7 +1040,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 36f % 1f));
 
                     // Calculate the charge flash.
-                    npc.ModNPC<Apollo>().ChargeComboFlash = Utils.InverseLerp(chargeTime, chargeTime - 10f, attackTimer, true);
+                    npc.ModNPC<Apollo>().ChargeComboFlash = Utils.GetLerpValue(chargeTime, chargeTime - 10f, attackTimer, true);
 
                     if (attackTimer >= chargeTime)
                     {
@@ -1099,7 +1101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Also determine which direction Artemis will spin in.
                     if (attackTimer == 1f)
                     {
-                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                        SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
                         hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
                         npc.netUpdate = true;
                     }
@@ -1138,7 +1140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         npc.netUpdate = true;
 
                         // Play the moon lord laser sound (cringe).
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 104);
+                        SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 104);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -1243,11 +1245,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), target.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), target.Center);
 
                         // Play the laser fire loop.
                         if (attackTimer >= 15f && attackTimer % 70f == 20f && attackTimer < shootTime)
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
 
                         bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime;
                         if (shouldFire)
@@ -1288,7 +1290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                         if (attackTimer >= 15f && attackTimer % plasmaShootRate == plasmaShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime)
                         {
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * plasmaShootSpeed, ModContent.ProjectileType<AresPlasmaFireballInfernum>(), 550, 0f);
@@ -1410,14 +1412,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static float RibbonTrailWidthFunction(float completionRatio)
         {
-            float baseWidth = Utils.InverseLerp(1f, 0.54f, completionRatio, true) * 5f;
-            float endTipWidth = CalamityUtils.Convert01To010(Utils.InverseLerp(0.96f, 0.89f, completionRatio, true)) * 2.4f;
+            float baseWidth = Utils.GetLerpValue(1f, 0.54f, completionRatio, true) * 5f;
+            float endTipWidth = CalamityUtils.Convert01To010(Utils.GetLerpValue(0.96f, 0.89f, completionRatio, true)) * 2.4f;
             return baseWidth + endTipWidth;
         }
 
         public static Color FlameTrailColorFunction(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * npc.Opacity;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * npc.Opacity;
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.27f);
             Color middleColor = Color.Lerp(Color.Orange, Color.ForestGreen, 0.74f);
             Color endColor = Color.Lime;
@@ -1426,7 +1428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.56f;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 0.56f;
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.25f);
             Color middleColor = Color.Lerp(Color.Blue, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.DarkBlue, Color.White, 0.47f);
@@ -1437,8 +1439,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static Color RibbonTrailColorFunction(NPC npc, float completionRatio)
         {
-            Color startingColor = new Color(34, 40, 48);
-            Color endColor = new Color(40, 160, 32);
+            Color startingColor = new(34, 40, 48);
+            Color endColor = new(40, 160, 32);
             return Color.Lerp(startingColor, endColor, (float)Math.Pow(completionRatio, 1.5D)) * npc.Opacity;
         }
 
@@ -1458,7 +1460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
             int numAfterimages = npc.ModNPC<Apollo>().ChargeComboFlash > 0f ? 0 : 5;
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -1490,7 +1492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 ribbonOffset += Vector2.UnitX.RotatedBy(npc.rotation) * direction * 26f;
 
                 float currentSegmentRotation = npc.rotation;
-                List<Vector2> ribbonDrawPositions = new List<Vector2>();
+                List<Vector2> ribbonDrawPositions = new();
                 for (int i = 0; i < 12; i++)
                 {
                     float ribbonCompletionRatio = i / 12f;
@@ -1499,9 +1501,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     // Add a sinusoidal offset that goes based on time and completion ratio to create a waving-flag-like effect.
                     // This is dampened for the first few points to prevent weird offsets. It is also dampened by high velocity.
-                    float sinusoidalRotationOffset = (float)Math.Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTime * 3.4f) * 1.36f;
-                    float sinusoidalRotationOffsetFactor = Utils.InverseLerp(0f, 0.37f, ribbonCompletionRatio, true) * direction * 24f;
-                    sinusoidalRotationOffsetFactor *= Utils.InverseLerp(24f, 16f, npc.velocity.Length(), true);
+                    float sinusoidalRotationOffset = (float)Math.Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTimeWrappedHourly * 3.4f) * 1.36f;
+                    float sinusoidalRotationOffsetFactor = Utils.GetLerpValue(0f, 0.37f, ribbonCompletionRatio, true) * direction * 24f;
+                    sinusoidalRotationOffsetFactor *= Utils.GetLerpValue(24f, 16f, npc.velocity.Length(), true);
 
                     Vector2 sinusoidalOffset = Vector2.UnitY.RotatedBy(npc.rotation + sinusoidalRotationOffset) * sinusoidalRotationOffsetFactor;
                     Vector2 ribbonSegmentOffset = Vector2.UnitY.RotatedBy(currentSegmentRotation) * ribbonCompletionRatio * 540f + sinusoidalOffset;
@@ -1527,7 +1529,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 float backAfterimageOffset = MathHelper.SmoothStep(0f, 2f, npc.ModNPC<Apollo>().ChargeComboFlash);
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     drawInstance(drawOffset, baseInstanceColor);
                 }
             }

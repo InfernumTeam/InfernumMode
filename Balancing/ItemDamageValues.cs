@@ -11,7 +11,7 @@ namespace InfernumMode.Balancing
 {
     public static class ItemDamageValues
     {
-        public static Dictionary<int, int> DamageValues => new Dictionary<int, int>()
+        public static Dictionary<int, int> DamageValues => new()
         {
             [ModContent.ItemType<StickySpikyBall>()] = 6,
             [ModContent.ItemType<FlashBullet>()] = 4,

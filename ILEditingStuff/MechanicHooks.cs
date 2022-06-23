@@ -14,6 +14,7 @@ using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -26,7 +27,7 @@ namespace InfernumMode.ILEditingStuff
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             cursor.EmitDelegate<Func<bool>>(() =>
             {
@@ -62,7 +63,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void DrawSelectionUI(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.EmitDelegate<Action>(DrawWrapper);
             cursor.Emit(OpCodes.Ret);
         }
@@ -71,10 +72,10 @@ namespace InfernumMode.ILEditingStuff
         {
             Vector2 drawAreaVerticalOffset = Vector2.UnitY * 105f;
             Vector2 baseDrawPosition = Main.LocalPlayer.Top + drawAreaVerticalOffset - Main.screenPosition;
-            Vector2 destroyerIconDrawOffset = new Vector2(-78f, -124f);
-            Vector2 primeIconDrawOffset = new Vector2(0f, -140f);
-            Vector2 twinsIconDrawOffset = new Vector2(78f, -124f);
-            Vector2 athenaIconDrawOffset = new Vector2(78f, -130f);
+            Vector2 destroyerIconDrawOffset = new(-78f, -124f);
+            Vector2 primeIconDrawOffset = new(0f, -140f);
+            Vector2 twinsIconDrawOffset = new(78f, -124f);
+            Vector2 athenaIconDrawOffset = new(78f, -130f);
 
             if (InfernumMode.CanUseCustomAIs)
             {
@@ -162,9 +163,9 @@ namespace InfernumMode.ILEditingStuff
             // Draw the descrption if hovering over the icon.
             if (hoveringOverIcon)
             {
-                drawPosition.X -= Main.fontMouseText.MeasureString(description).X * 0.5f;
+                drawPosition.X -= FontAssets.MouseText.Value.MeasureString(description).X * 0.5f;
                 drawPosition.Y += 36f;
-                Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, description, drawPosition.X, drawPosition.Y, ExoMechSelectionUI.HoverTextColor, Color.Black, Vector2.Zero, 1f);
+                Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.MouseText.Value, description, drawPosition.X, drawPosition.Y, ExoMechSelectionUI.HoverTextColor, Color.Black, Vector2.Zero, 1f);
             }
 
             // And update to reflect the new scale.
@@ -192,12 +193,12 @@ namespace InfernumMode.ILEditingStuff
 
     public class DrawBlackEffectHook : IHookEdit
     {
-        public static List<int> DrawCacheBeforeBlack = new List<int>(Main.maxProjectiles);
-        public static List<int> DrawCacheProjsOverSignusBlackening = new List<int>(Main.maxProjectiles);
-        public static List<int> DrawCacheAdditiveLighting = new List<int>(Main.maxProjectiles);
+        public static List<int> DrawCacheBeforeBlack = new(Main.maxProjectiles);
+        public static List<int> DrawCacheProjsOverSignusBlackening = new(Main.maxProjectiles);
+        public static List<int> DrawCacheAdditiveLighting = new(Main.maxProjectiles);
         internal static void DrawBlackout(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchCall<Main>("DrawBackgroundBlackFill")))
                 return;
@@ -233,7 +234,7 @@ namespace InfernumMode.ILEditingStuff
                 if (fadeToBlack > 0f)
                 {
                     Color color = Color.Black * fadeToBlack;
-                    Main.spriteBatch.Draw(Main.magicPixel, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
+                    Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
                 }
 
                 Main.spriteBatch.End();
@@ -340,7 +341,7 @@ namespace InfernumMode.ILEditingStuff
                 Vector2 bottomRight = (arena.BottomRight() + Vector2.One * 16f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
                 Matrix zoomMatrix = Main.GameViewMatrix.TransformationMatrix;
 
-                Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / Main.magicPixel.Size() * Main.GameViewMatrix.Zoom;
+                Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom;
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uTopLeftFreeArea"].SetValue(topLeft);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uBottomRightFreeArea"].SetValue(bottomRight);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
@@ -348,8 +349,8 @@ namespace InfernumMode.ILEditingStuff
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
-                Vector2 hell = new Vector2(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
-                Main.spriteBatch.Draw(Main.magicPixel, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
+                Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin();

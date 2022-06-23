@@ -10,7 +10,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class QueenBeeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(_ =>
+        public override TextColorData TextColor => new(_ =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Yellow, Color.Orange, colorFadeInterpolant);

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
@@ -301,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             NPC ravagerBody = Main.npc[CalamityGlobalNPC.scavenger];
             Texture2D chainTexture = ModContent.GetTexture("CalamityMod/NPCs/Ravager/RavagerChain");
-            Texture2D npcTexture = Main.npcTexture[npc.type];
+            Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawStart = ravagerBody.Center + new Vector2(-92f * leftclaw.ToDirectionInt(), 46f);
             Vector2 drawPosition = drawStart;
             float chainRotation = npc.AngleFrom(drawStart) - MathHelper.PiOver2;

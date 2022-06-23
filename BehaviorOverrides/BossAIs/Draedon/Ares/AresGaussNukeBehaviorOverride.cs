@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -131,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire the nuke.
             if (attackTimer == (int)chargeDelay)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -161,9 +163,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.ai[0] < npc.ai[1] - 30f)
                 currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / (npc.ai[1] - 30f)));
             else if (npc.ai[0] <= npc.ai[1] + 30f)
-                currentFrame = (int)Math.Round(MathHelper.Lerp(35f, 47f, Utils.InverseLerp(npc.ai[1] - 30f, npc.ai[1] + 30f, npc.ai[0], true)));
+                currentFrame = (int)Math.Round(MathHelper.Lerp(35f, 47f, Utils.GetLerpValue(npc.ai[1] - 30f, npc.ai[1] + 30f, npc.ai[0], true)));
             else
-                currentFrame = (int)Math.Round(MathHelper.Lerp(49f, 107f, Utils.InverseLerp(npc.ai[1] + 30f, npc.ai[1] + npc.ai[2], npc.ai[0], true)));
+                currentFrame = (int)Math.Round(MathHelper.Lerp(49f, 107f, Utils.GetLerpValue(npc.ai[1] + 30f, npc.ai[1] + npc.ai[2], npc.ai[0], true)));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 12), npc.height * (currentFrame % 12), npc.width, npc.height);
         }
@@ -176,7 +178,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;

@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
@@ -45,7 +47,7 @@ namespace InfernumMode.Skies
 
         private bool UpdatePIndex()
         {
-            int ProvType = InfernumMode.CalamityMod.NPCType("HiveMindP2");
+            int ProvType = InfernumMode.CalamityMod.Find<ModNPC>("HiveMindP2").Type;
             if (ProvIndex >= 0 && Main.npc[ProvIndex].active && Main.npc[ProvIndex].type == ProvType)
             {
                 return true;
@@ -67,7 +69,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float intensity = this.GetIntensity();
-                spriteBatch.Draw(Main.blackTileTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * intensity);
+                spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * intensity);
             }
         }
 

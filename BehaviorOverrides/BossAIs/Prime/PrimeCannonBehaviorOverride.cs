@@ -2,6 +2,7 @@ using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -65,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             if (attackTimer >= shootRate)
             {
-                Main.PlaySound(SoundID.Item38, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item38, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (Main.rand.NextBool(2) && canShootNukes)

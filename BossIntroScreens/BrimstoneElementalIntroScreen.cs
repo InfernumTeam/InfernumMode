@@ -11,7 +11,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class BrimstoneElementalIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
             return Color.Lerp(Color.Red, Color.Orange, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.Pi * 5f) * 0.5f + 0.5f) * 0.72f);
         });

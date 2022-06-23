@@ -8,10 +8,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class GolemIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color stoneColor = new Color(130, 68, 8);
-            float sunColorInterpolant = Utils.InverseLerp(0.77f, 1f, (float)Math.Sin(AnimationCompletion * MathHelper.Pi * -4f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f);
+            Color stoneColor = new(130, 68, 8);
+            float sunColorInterpolant = Utils.GetLerpValue(0.77f, 1f, (float)Math.Sin(AnimationCompletion * MathHelper.Pi * -4f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f);
             return Color.Lerp(stoneColor, new Color(255, 170, 0), sunColorInterpolant);
         });
 

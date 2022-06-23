@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -138,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             if (attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.Item20, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item20, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -184,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Periodically shoot small flames.
             if (attackTimer % 120f == 119f)
             {
-                Main.PlaySound(SoundID.Item20, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item20, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -199,7 +200,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
+            offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
             if (!npc.WithinRange(target.Center, 400f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
@@ -214,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.velocity *= 1.018f;
                 if (npc.soundDelay <= 0)
                 {
-                    Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
                     npc.soundDelay = 80;
                 }
             }
@@ -270,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Hover above the player.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f + target.velocity * 25f;
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.InverseLerp(70f, 240f, npc.Distance(hoverDestination), true);
+            offsetAngle *= Utils.GetLerpValue(70f, 240f, npc.Distance(hoverDestination), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12f;
             if (splitCounter == 2f)
@@ -330,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 // Release a shockwave and dark hearts once tiles have been hit.
                 if (inTiles && wasPreviouslyInTiles == 0f)
                 {
-                    Main.PlaySound(SoundID.Item62, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item62, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -368,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public static void DoDefaultMovement(NPC npc, Player target, float flySpeed, float turnSpeedFactor)
         {
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
+            offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.95f;
 
@@ -377,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].type == npc.type && i != npc.whoAmI)
-                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.InverseLerp(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
+                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.GetLerpValue(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
             }
             idealVelocity += pushAway;
 
@@ -400,7 +401,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float splitCounter = npc.ai[2];
             EoWAttackState oldAttackState = (EoWAttackState)(int)npc.ai[0];
 
-            List<EoWAttackState> possibleAttacks = new List<EoWAttackState>
+            List<EoWAttackState> possibleAttacks = new()
             {
                 EoWAttackState.CursedBombBurst,
                 EoWAttackState.VineCharge,
@@ -438,10 +439,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Create new worms with linked HP.
             int wormCount = (int)Math.Pow(2D, splitCounter);
-            int realLife = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+            int realLife = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
             for (int i = 0; i < wormCount - 1; i++)
             {
-                int secondWorm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+                int secondWorm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
                 if (Main.npc.IndexInRange(secondWorm))
                 {
                     Main.npc[secondWorm].realLife = realLife;
@@ -461,9 +462,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 int nextIndex;
                 if (i < segmentCount)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 // The head.
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -127,8 +128,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 npc.Center = target.Center - Vector2.UnitY * 250f;
 
             frameType = (int)BrimmyFrameType.ClosedShell;
-            npc.velocity = Vector2.UnitY * Utils.InverseLerp(135f, 45f, spawnAnimationTimer, true) * -4f;
-            npc.Opacity = Utils.InverseLerp(0f, 40f, spawnAnimationTimer, true);
+            npc.velocity = Vector2.UnitY * Utils.GetLerpValue(135f, 45f, spawnAnimationTimer, true) * -4f;
+            npc.Opacity = Utils.GetLerpValue(0f, 40f, spawnAnimationTimer, true);
 
             // Adjust sprite direction to look at the player.
             if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
@@ -140,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
                 brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                 brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
-                brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.InverseLerp(2f, 5.4f, brimstoneFire.velocity.Y, true));
+                brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
                 brimstoneFire.noGravity = true;
             }
 
@@ -196,7 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
                         brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                         brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
-                        brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.InverseLerp(2f, 5.4f, brimstoneFire.velocity.Y, true));
+                        brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
                         brimstoneFire.noGravity = true;
                     }
 
@@ -223,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     if (attackTimer % fireballShootRate == fireballShootRate - 1f)
                     {
-                        Main.PlaySound(SoundID.Item20, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int skullDamage = shouldBeBuffed ? 310 : 125;
@@ -272,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float roseCreationCounter = ref npc.Infernum().ExtraAI[1];
             ref float circleCenterX = ref npc.Infernum().ExtraAI[2];
             ref float circleCenterY = ref npc.Infernum().ExtraAI[3];
-            Vector2 circleCenter = new Vector2(circleCenterX, circleCenterY);
+            Vector2 circleCenter = new(circleCenterX, circleCenterY);
 
             // Adjust sprite direction to look at the player.
             if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
@@ -336,7 +337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     if (attackTimer >= castingAnimationTime)
                     {
-                        Main.PlaySound(SoundID.Item72, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item72, npc.Center);
 
                         for (int i = 0; i < totalRosesToSpawn; i++)
                         {
@@ -431,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 case 2:
                     if (attackTimer >= burstRate)
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Release waving skulls.
@@ -537,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             shootTimer++;
             if (shootTimer > fireReleaseRate && attackTimer < bulletHellTime + 60f)
             {
-                Main.PlaySound(SoundID.Item100, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item100, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int fireDamage = shouldBeBuffed ? 320 : 130;
@@ -615,7 +616,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     Vector2 maxVelocity = ((hoverDestination - npc.Center) / 30f).ClampMagnitude(0f, 36f);
 
                     // Hover more quickly if far from the destination.
-                    npc.velocity = Vector2.Lerp(minVelocity, maxVelocity, Utils.InverseLerp(150f, 425f, npc.Distance(hoverDestination), true));
+                    npc.velocity = Vector2.Lerp(minVelocity, maxVelocity, Utils.GetLerpValue(150f, 425f, npc.Distance(hoverDestination), true));
                     npc.rotation = npc.velocity.X * 0.04f;
 
                     // Create the charge dust.
@@ -663,7 +664,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                         if (wrappedTime % 120f == 119f)
                         {
-                            Main.PlaySound(SoundID.Item74, npc.Center);
+                            SoundEngine.PlaySound(SoundID.Item74, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f);
@@ -743,7 +744,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.TargetClosest();
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            List<BrimmyAttackType> possibleAttacks = new List<BrimmyAttackType>
+            List<BrimmyAttackType> possibleAttacks = new()
             {
                 BrimmyAttackType.FlameChargeSkullBlasts,
                 BrimmyAttackType.BrimstoneRoseBurst,
@@ -801,7 +802,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             BrimmyAttackType attackState = (BrimmyAttackType)(int)npc.ai[0];
-            UnifiedRandom roseRNG = new UnifiedRandom(npc.whoAmI + 466920161);
+            UnifiedRandom roseRNG = new(npc.whoAmI + 466920161);
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
             {
                 float circleAngle = 0f;
@@ -813,7 +814,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 while (circleAngle < MathHelper.TwoPi)
                 {
                     float vineRotation = circleAngle;
-                    Vector2 drawPosition = new Vector2(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
+                    Vector2 drawPosition = new(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
                     drawPosition += circleAngle.ToRotationVector2() * RoseCircleRadius - Main.screenPosition;
                     spriteBatch.Draw(vineTexture, drawPosition, null, Color.White, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
 

@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                             DD2Event.SpawnMonsterFromGate(npc.Bottom);
                         else if (!NPC.AnyNPCs(minibossID) && minibossID != NPCID.DD2Betsy)
                         {
-                            int miniboss = NPC.NewNPC((int)npc.Bottom.X, (int)npc.Bottom.Y, minibossID);
+                            int miniboss = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Bottom.X, (int)npc.Bottom.Y, minibossID);
                             if (Main.npc.IndexInRange(miniboss))
                                 Main.npc[miniboss].Infernum().ExtraAI[5] = 1f;
                         }
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
             else if (npc.ai[1] == 1f)
             {
                 fadeOutTimer++;
-                npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.InverseLerp(500f, 600f, fadeOutTimer, true));
+                npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(500f, 600f, fadeOutTimer, true));
 
                 // Reset the idle play sound if it didn't get activated before for some reason.
                 if (Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)

@@ -4,6 +4,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.Providence;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
@@ -17,9 +18,9 @@ namespace InfernumMode.Tiles
         public const int Width = 3;
         public const int Height = 2;
 
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
-            minPick = int.MaxValue;
+            MinPick = int.MaxValue;
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
@@ -48,12 +49,12 @@ namespace InfernumMode.Tiles
             return true;
         }
 
-        public override bool NewRightClick(int i, int j)
+        public override bool RightClick(int i, int j)
         {
             Tile tile = Main.tile[i, j];
 
-            int left = i - tile.frameX / 18;
-            int top = j - tile.frameY / 18;
+            int left = i - tile.TileFrameX / 18;
+            int top = j - tile.TileFrameY / 18;
 
             if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCoreUnlimited>()))
                 return true;
@@ -67,7 +68,7 @@ namespace InfernumMode.Tiles
             Vector2 ritualSpawnPosition = new Vector2(left + Width * 0.5f, top).ToWorldCoordinates();
             ritualSpawnPosition += new Vector2(-10f, -24f);
 
-            Main.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
+            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
             Projectile.NewProjectile(ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ProvidenceSummonerProjectile>(), 0, 0f, Main.myPlayer);
 
             return true;
@@ -75,16 +76,16 @@ namespace InfernumMode.Tiles
 
         public override void MouseOver(int i, int j)
         {
-            Main.LocalPlayer.showItemIcon2 = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
             Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.showItemIcon = true;
+            Main.LocalPlayer.cursorItemIconEnabled = true;
         }
 
         public override void MouseOverFar(int i, int j)
         {
-            Main.LocalPlayer.showItemIcon2 = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
             Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.showItemIcon = true;
+            Main.LocalPlayer.cursorItemIconEnabled = true;
         }
     }
 }

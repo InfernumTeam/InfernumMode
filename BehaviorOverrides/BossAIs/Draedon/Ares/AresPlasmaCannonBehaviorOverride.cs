@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -146,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire plasma.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -227,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;

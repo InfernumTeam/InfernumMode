@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,35 +9,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class AcceleratingDarkMagicFlame : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Flame");
-            Main.projFrames[projectile.type] = 5;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 34;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 300;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 34;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 300;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 20f, projectile.timeLeft, true);
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Accelerate quickly.
-            if (projectile.velocity.Length() < 16f)
-                projectile.velocity *= 1.019f;
+            if (Projectile.velocity.Length() < 16f)
+                Projectile.velocity *= 1.019f;
 
             Time++;
         }
@@ -45,16 +46,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             for (int i = 0; i < 5; i++)
             {
-                Dust fire = Dust.NewDustDirect(projectile.Center - Vector2.One * 12f, 6, 6, 267);
+                Dust fire = Dust.NewDustDirect(Projectile.Center - Vector2.One * 12f, 6, 6, 267);
                 fire.color = Color.Lerp(Color.Fuchsia, Color.Orange, Main.rand.NextFloat());
                 fire.scale = Main.rand.NextFloat(1f, 1.3f);
                 fire.noGravity = true;
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, TextureAssets.Projectile[Projectile.type].Value, false);
             return false;
         }
     }

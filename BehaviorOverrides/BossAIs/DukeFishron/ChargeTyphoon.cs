@@ -8,34 +8,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
     public class ChargeTyphoon : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Typhoon");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 8;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 56;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 90;
-            projectile.penetrate = -1;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 56;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 90;
+            Projectile.penetrate = -1;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
             Time++;
-            projectile.rotation += 0.4f * (projectile.velocity.X > 0).ToDirectionInt();
-            projectile.velocity *= 0.987f;
-            projectile.Opacity = Utils.InverseLerp(0f, 20f, Time, true);
+            Projectile.rotation += 0.4f * (Projectile.velocity.X > 0).ToDirectionInt();
+            Projectile.velocity *= 0.987f;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {
@@ -46,14 +46,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 for (int i = 0; i < waveCount; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / waveCount + offsetAngle).ToRotationVector2() * 9f;
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<SmallWave>(), 180, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<SmallWave>(), 180, 0f);
                 }
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return false;
         }
     }

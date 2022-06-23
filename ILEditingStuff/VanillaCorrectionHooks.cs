@@ -5,6 +5,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
@@ -19,13 +20,13 @@ namespace InfernumMode.ILEditingStuff
                 return Main.maxDust;
 
             if (InfernumMode.CanUseCustomAIs && Type == 573)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
+                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore1").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
+                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore3").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 575)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
+                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore2").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 576)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore4");
+                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore4").Type;
 
             return orig(Position, Velocity, Type, Scale);
         }
@@ -57,7 +58,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchLdcR4(3000f));
             cursor.Remove();
             cursor.Emit(OpCodes.Ldc_R4, 6000f);
@@ -73,7 +74,7 @@ namespace InfernumMode.ILEditingStuff
         internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)
         {
             orig(self);
-            self.ZoneDesert = Main.sandTiles > 300;
+            self.ZoneDesert = Main.SceneMetrics.SandTileCount > 300;
         }
 
         public void Load() => On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;
@@ -85,7 +86,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void EarlyReturn(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ret);
         }
 
@@ -108,11 +109,11 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void GetRidOfDesertNuisances(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Player>>(player =>
             {
-                Main.PlaySound(SoundID.Roar, player.position, 0);
+                SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
                 else
@@ -131,7 +132,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void LetAresHitPlayer(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -213,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                     for (int i = 0; i < totalSlimesToSpawn; i++)
                     {
-                        int slime = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCorrupt2>(), npc.whoAmI);
+                        int slime = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCorrupt2>(), npc.whoAmI);
                         if (Main.npc.IndexInRange(slime))
                         {
                             Main.npc[slime].velocity = Main.rand.NextVector2CircularEdge(6f, 6f);
@@ -224,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     }
                 }
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodPossession"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodPossession"), npc.Center);
                 for (int k = 0; k < 50; k++)
                     Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }

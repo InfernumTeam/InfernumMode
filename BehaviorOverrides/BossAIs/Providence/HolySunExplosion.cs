@@ -15,28 +15,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public PrimitiveTrailCopy FireDrawer;
 
-        public ref float Time => ref projectile.ai[0];
-        public ref float Radius => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[0];
+        public ref float Radius => ref Projectile.ai[1];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Explosion");
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 8;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 84;
-            projectile.MaxUpdates = 2;
-            projectile.scale = 1f;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = Projectile.height = 8;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 84;
+            Projectile.MaxUpdates = 2;
+            Projectile.scale = 1f;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.scale += 0.08f;
+            Projectile.scale += 0.08f;
             Radius = MathHelper.Lerp(Radius, MaxRadius, 0.1f);
-            projectile.Opacity = Utils.InverseLerp(8f, 42f, projectile.timeLeft, true) * 0.55f;
+            Projectile.Opacity = Utils.GetLerpValue(8f, 42f, Projectile.timeLeft, true) * 0.55f;
 
             Time++;
         }
@@ -48,10 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public Color SunColorFunction(float completionRatio)
         {
             Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
-            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * projectile.Opacity;
+            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (FireDrawer is null)
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
@@ -59,8 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
             GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
 
-            List<float> rotationPoints = new List<float>();
-            List<Vector2> drawPoints = new List<Vector2>();
+            List<float> rotationPoints = new();
+            List<Vector2> drawPoints = new();
 
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 10f)
             {
@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 16; i++)
                 {
                     rotationPoints.Add(adjustedAngle);
-                    drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * Radius / 2f, projectile.Center + offsetDirection * Radius / 2f, i / 16f));
+                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 16f));
                 }
 
                 FireDrawer.Draw(drawPoints, -Main.screenPosition, 24);

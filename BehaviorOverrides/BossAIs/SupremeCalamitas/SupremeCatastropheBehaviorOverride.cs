@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                     break;
                 case SupremeCataclysmBehaviorOverride.SCalBrotherAnimationType.AttackAnimation:
-                    float slashInterpolant = Utils.InverseLerp(0f, SupremeCatastrophe.SlashCounterLimit * 2f, attackSpecificTimer + (firingFromRight != 0f ? 0f : SupremeCatastrophe.SlashCounterLimit), true);
+                    float slashInterpolant = Utils.GetLerpValue(0f, SupremeCatastrophe.SlashCounterLimit * 2f, attackSpecificTimer + (firingFromRight != 0f ? 0f : SupremeCatastrophe.SlashCounterLimit), true);
                     currentFrame = (int)Math.Round(MathHelper.Lerp(6f, 15f, slashInterpolant));
                     break;
             }

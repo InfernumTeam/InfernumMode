@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -35,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
-            public bool ShouldBeBuffed => CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
+            public bool ShouldBeBuffed => DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive;
 
             public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
             {
@@ -86,11 +87,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Create limbs.
             if (npc.localAI[0] == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int leftLeg = NPC.NewNPC((int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>(), npc.whoAmI);
-                int rightLeg = NPC.NewNPC((int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>(), npc.whoAmI);
+                int leftLeg = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>(), npc.whoAmI);
+                int rightLeg = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>(), npc.whoAmI);
 
-                int leftClaw = NPC.NewNPC((int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>(), npc.whoAmI);
-                int rightClaw = NPC.NewNPC((int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>(), npc.whoAmI);
+                int leftClaw = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>(), npc.whoAmI);
+                int rightClaw = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>(), npc.whoAmI);
 
                 // Make claws and legs share their own distinct HP pools, instead of being separate.
                 if (Main.npc.IndexInRange(leftLeg) && Main.npc.IndexInRange(rightLeg))
@@ -98,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (Main.npc.IndexInRange(leftClaw) && Main.npc.IndexInRange(rightClaw))
                     Main.npc[leftClaw].realLife = rightClaw;
 
-                NPC.NewNPC((int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>(), npc.whoAmI);
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>(), npc.whoAmI);
                 npc.localAI[0] = 1f;
             }
 
@@ -163,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            RavagerPhaseInfo phaseInfo = new RavagerPhaseInfo(leftClawActive && rightClawActive, leftLegActive && rightLegActive, headActive, NPC.AnyNPCs(ModContent.NPCType<RavagerHead2>()), lifeRatio);
+            RavagerPhaseInfo phaseInfo = new(leftClawActive && rightClawActive, leftLegActive && rightLegActive, headActive, NPC.AnyNPCs(ModContent.NPCType<RavagerHead2>()), lifeRatio);
 
             float gravity = 0.625f;
             if (phaseInfo.InPhase2)
@@ -437,7 +438,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             if (attackTimer % bloodShootRate == bloodShootRate - 1f)
             {
-                Main.PlaySound(SoundID.Item45, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item45, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -528,7 +529,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 }
 
                 // Create flame jets.
-                flameJetInterpolant = Utils.InverseLerp(0f, 8f, attackTimer, true) * Utils.InverseLerp(hoverTime, hoverTime - 12f, attackTimer, true);
+                flameJetInterpolant = Utils.GetLerpValue(0f, 8f, attackTimer, true) * Utils.GetLerpValue(hoverTime, hoverTime - 12f, attackTimer, true);
 
                 // Disable cheap hits.
                 npc.damage = 0;
@@ -648,7 +649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 npc.damage = 0;
 
                 // Create flame jets.
-                flameJetInterpolant = Utils.InverseLerp(0f, 8f, attackTimer, true) * Utils.InverseLerp(hoverTime, hoverTime - 12f, attackTimer, true);
+                flameJetInterpolant = Utils.GetLerpValue(0f, 8f, attackTimer, true) * Utils.GetLerpValue(hoverTime, hoverTime - 12f, attackTimer, true);
 
                 npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
                 npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
@@ -681,7 +682,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (attackTimer % fireReleaseRate == fireReleaseRate - 1f)
                 {
                     if (!skipPillar)
-                        Main.PlaySound(SoundID.Item74, target.Center);
+                        SoundEngine.PlaySound(SoundID.Item74, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         flamePillarHorizontalOffset += horizontalStepPerPillar;
@@ -831,7 +832,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             // Play a crash sound.
             // TODO -- Perhaps try to find something stronger for this?
-            Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
+            SoundEngine.PlaySound(SoundID.Item14, npc.Bottom);
 
             // Create dust effects.
             for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
@@ -842,8 +843,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     stompDust.velocity *= 0.2f;
                 }
 
-                Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
-                stompGore.velocity *= 0.4f;
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    Gore stompGore = Gore.NewGoreDirect(npc.GetSource_FromAI(), new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
+                    stompGore.velocity *= 0.4f;
+                }
             }
 
             // Create the particles.
@@ -888,15 +892,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float widthFunction(float completionRatio) => MathHelper.SmoothStep(160f, 10f, completionRatio);
             Color colorFunction(float completionRatio)
             {
-                Color darkFlameColor = new Color(58, 107, 252);
-                Color lightFlameColor = new Color(45, 207, 239);
-                float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTime * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
+                Color darkFlameColor = new(58, 107, 252);
+                Color lightFlameColor = new(45, 207, 239);
+                float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
                 Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
                 return color * npc.Opacity;
             }
 
             float horizontalArenaCenterX = npc.Infernum().ExtraAI[8];
-            Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder");
+            Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder").Value;
 
             // Draw flame jets when hovering.
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
@@ -908,10 +912,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
             GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2");
+            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
 
-            List<Vector2> points = new List<Vector2>();
+            List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(start, end, i / 8f));
 
@@ -928,7 +932,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                     for (int direction = -1; direction <= 1; direction += 2)
                     {
-                        Vector2 drawPosition = new Vector2(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
+                        Vector2 drawPosition = new(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
                         drawPosition.Y -= drawPosition.Y % borderTexture.Height;
                         drawPosition -= Main.screenPosition;
                         spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);

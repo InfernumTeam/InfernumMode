@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
@@ -15,9 +16,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public int LocalLifetime = 250;
         public int OwnerIndex => (int)projectile.ai[1];
         public override float Lifetime => LocalLifetime;
-        public override Color LaserOverlayColor => new Color(79, 150, 21, 50);
+        public override Color LaserOverlayColor => new(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[projectile.type].Value;
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
         public override float MaxLaserLength => 20f;
@@ -84,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             target.AddBuff(ModContent.BuffType<Plague>(), 300);
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
             drawCacheProjsBehindNPCs.Add(index);
         }

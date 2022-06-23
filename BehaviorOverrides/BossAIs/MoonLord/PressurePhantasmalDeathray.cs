@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public ref float AngularVelocity => ref projectile.ai[0];
         public int OwnerIndex => (int)projectile.ai[1];
         public override float Lifetime => LifetimeConstant;
-        public override Color LaserOverlayColor => new Color(1f, 1f, 1f, 0f);
+        public override Color LaserOverlayColor => new(1f, 1f, 1f, 0f);
         public override Color LightCastColor => Color.White;
         public override Texture2D LaserBeginTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/PhantasmalBeamBegin");
         public override Texture2D LaserMiddleTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/PhantasmalBeamMid");

@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -102,7 +103,7 @@ namespace InfernumMode.GlobalInstances
         #endregion
 
         #region Manual Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (InfernumMode.CanUseCustomAIs)
             {
@@ -143,7 +144,7 @@ namespace InfernumMode.GlobalInstances
                             drawPosition.Y += npc.gfxOffY;
                             drawPosition -= Main.screenPosition;
 
-                            spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
+                            spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
                     return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);

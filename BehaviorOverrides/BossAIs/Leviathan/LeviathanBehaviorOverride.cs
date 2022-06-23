@@ -11,11 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
@@ -129,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             });
 
             if (Main.rand.NextBool(600))
-                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, sirenAlive ? soundChoice : soundChoiceRage);
+                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, sirenAlive ? soundChoice : soundChoiceRage);
 
             void goToNextAIState()
             {
@@ -193,7 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                 if (BossRushEvent.BossRushActive)
                                     bubbleVelocity *= 1.6f;
 
-                                int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
+                                int bubble = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
                                 if (Main.npc.IndexInRange(bubble))
                                 {
                                     Main.npc[bubble].velocity = bubbleVelocity;
@@ -203,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                             }
                         }
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
                         attackTimer = shootDelay + 35f;
                     }
 
@@ -238,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         npc.velocity = Vector2.Zero;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            List<Vector2> decidedSpawnPositions = new List<Vector2>();
+                            List<Vector2> decidedSpawnPositions = new();
                             for (int i = 0; i < 2; i++)
                             {
                                 bool shouldSpawnImmediately = true;
@@ -270,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                             }
                         }
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
                         attackTimer = hoverTime + slowdownTime + 35f;
                     }
 
@@ -311,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                             }
                         }
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
                     }
 
                     if (attackTimer % vomitTime >= 50f && attackTimer % vomitTime <= 75f)
@@ -351,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
                         if (outOfOcean)
                             npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), target.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), target.Center);
                     }
 
                     // Slow down after charging.

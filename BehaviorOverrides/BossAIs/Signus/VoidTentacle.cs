@@ -12,58 +12,58 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void SetDefaults()
         {
-            projectile.height = 160;
-            projectile.width = 160;
-            projectile.melee = true;
-            projectile.hostile = true;
-            projectile.MaxUpdates = 3;
-            projectile.penetrate = -1;
+            Projectile.height = 160;
+            Projectile.width = 160;
+            Projectile.melee = true;
+            Projectile.hostile = true;
+            Projectile.MaxUpdates = 3;
+            Projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            Vector2 originalCenter = projectile.Center;
-            projectile.scale = 1f - projectile.localAI[0];
-            projectile.width = (int)(20f * projectile.scale);
-            projectile.height = projectile.width;
-            projectile.position.X = originalCenter.X - (float)(projectile.width / 2);
-            projectile.position.Y = originalCenter.Y - (float)(projectile.height / 2);
+            Vector2 originalCenter = Projectile.Center;
+            Projectile.scale = 1f - Projectile.localAI[0];
+            Projectile.width = (int)(20f * Projectile.scale);
+            Projectile.height = Projectile.width;
+            Projectile.position.X = originalCenter.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = originalCenter.Y - (float)(Projectile.height / 2);
 
-            if (projectile.localAI[0] < 0.1)
+            if (Projectile.localAI[0] < 0.1)
             {
-                projectile.localAI[0] += 0.01f;
+                Projectile.localAI[0] += 0.01f;
             }
             else
             {
-                projectile.localAI[0] += 0.025f;
+                Projectile.localAI[0] += 0.025f;
             }
-            if (projectile.localAI[0] >= 0.95f)
+            if (Projectile.localAI[0] >= 0.95f)
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
-            projectile.velocity.X = projectile.velocity.X + projectile.ai[0] * 1.5f;
-            projectile.velocity.Y = projectile.velocity.Y + projectile.ai[1] * 1.5f;
-            if (projectile.velocity.Length() > 16f)
+            Projectile.velocity.X = Projectile.velocity.X + Projectile.ai[0] * 1.5f;
+            Projectile.velocity.Y = Projectile.velocity.Y + Projectile.ai[1] * 1.5f;
+            if (Projectile.velocity.Length() > 16f)
             {
-                projectile.velocity.Normalize();
-                projectile.velocity *= 16f;
+                Projectile.velocity.Normalize();
+                Projectile.velocity *= 16f;
             }
 
-            projectile.ai[0] *= 1.05f;
-            projectile.ai[1] *= 1.05f;
-            if (projectile.scale < 1f)
+            Projectile.ai[0] *= 1.05f;
+            Projectile.ai[1] *= 1.05f;
+            if (Projectile.scale < 1f)
             {
                 int i = 0;
-                while (i < projectile.scale * 4f)
+                while (i < Projectile.scale * 4f)
                 {
                     int dustID = Main.rand.NextBool(5) ? 199 : 175;
-                    int idx = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, dustID, projectile.velocity.X, projectile.velocity.Y, 100, default, 1.1f);
-                    Main.dust[idx].position = (Main.dust[idx].position + projectile.Center) / 2f;
+                    int idx = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustID, Projectile.velocity.X, Projectile.velocity.Y, 100, default, 1.1f);
+                    Main.dust[idx].position = (Main.dust[idx].position + Projectile.Center) / 2f;
                     Main.dust[idx].noGravity = true;
                     Main.dust[idx].velocity *= 0.1f;
-                    Main.dust[idx].velocity -= projectile.velocity * (1.3f - projectile.scale);
+                    Main.dust[idx].velocity -= Projectile.velocity * (1.3f - Projectile.scale);
                     Main.dust[idx].fadeIn = 100;
-                    Main.dust[idx].scale += projectile.scale * 0.75f;
+                    Main.dust[idx].scale += Projectile.scale * 0.75f;
                     i++;
                 }
             }

@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -250,8 +252,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 4000f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, deathTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(300f, 292f, deathTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(300f, 292f, deathTimer, true);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(36) && deathTimer >= 75f && deathTimer < 210f)
@@ -292,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Create explosions with pillar colors.
             if (canMakeExplosion)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
@@ -312,10 +314,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (transitionTimer == 15f)
-                    Main.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
 
                 // Fade away.
-                npc.Opacity = Utils.InverseLerp(35f, 15f, transitionTimer, true);
+                npc.Opacity = Utils.GetLerpValue(35f, 15f, transitionTimer, true);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && transitionTimer >= 35f)
                 {
@@ -332,11 +334,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             if (phaseState == 1f)
             {
-                npc.Opacity = Utils.InverseLerp(0f, 8f, transitionTimer, true);
+                npc.Opacity = Utils.GetLerpValue(0f, 8f, transitionTimer, true);
 
                 // Create a laugh sound effect.
                 if (transitionTimer == TransitionAnimationTime + 5f)
-                    Main.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
 
                 if (phaseState >= TransitionAnimationTime)
                     frameType = (int)CultistFrameState.Laugh;
@@ -376,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (attackTimer == absorbEffectTime + hoverTime + 15f)
-                    Main.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
                 if (attackTimer > absorbEffectTime + hoverTime + 20f)
                 {
                     // Fade out.
@@ -385,7 +387,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     // And create a bunch of magic at the hitbox when disappearing.
                     if (npc.Opacity < 0.5f)
                     {
-                        int totalDust = (int)MathHelper.Lerp(1f, 4f, Utils.InverseLerp(0.5f, 0.1f, npc.Opacity, true));
+                        int totalDust = (int)MathHelper.Lerp(1f, 4f, Utils.GetLerpValue(0.5f, 0.1f, npc.Opacity, true));
                         for (int i = 0; i < totalDust; i++)
                         {
                             Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 264);
@@ -558,7 +560,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         fire.scale = 1.5f;
                         fire.noGravity = true;
                     }
-                    Main.PlaySound(SoundID.Zombie, npc.Center, 90);
+                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -584,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sount prior to releasing red lightning.
             if (phase2 && attackTimer == attackLength - 275f)
-                Main.PlaySound(SoundID.Zombie, npc.Center, 91);
+                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 91);
 
             // Hover and fly above the player.
             if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
@@ -687,7 +689,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         }
                     }
 
-                    Main.PlaySound(SoundID.Item72, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item72, target.Center);
                     npc.netUpdate = true;
                 }
 
@@ -720,7 +722,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     lightningVelocity *= 0.85f;
 
                     npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
-                    Main.PlaySound(SoundID.Item72, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -853,7 +855,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             shootVelocity *= 1.7f;
 
                         Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
-                        int ancientLight = NPC.NewNPC(lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
+                        int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
                         if (Main.npc.IndexInRange(ancientLight))
                         {
                             Main.npc[ancientLight].velocity = shootVelocity;
@@ -896,10 +898,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sound before fading out.
             if (attackTimer == 15f)
-                Main.PlaySound(SoundID.Zombie, npc.Center, 90);
+                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
             if (attackTimer <= 30f)
             {
-                npc.Opacity = Utils.InverseLerp(30f, 15f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(30f, 15f, attackTimer, true);
                 frameType = (int)CultistFrameState.Laugh;
             }
 
@@ -910,14 +912,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Fade in after summoning a ritual.
             if (fadeCountdown > 0f)
             {
-                npc.Opacity = Utils.InverseLerp(18f, 0f, fadeCountdown, true);
+                npc.Opacity = Utils.GetLerpValue(18f, 0f, fadeCountdown, true);
                 fadeCountdown--;
             }
 
             // Attempt to begin a ritual.
             if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                List<int> cultists = new List<int>();
+                List<int> cultists = new();
 
                 // Ensure that the ritual is not started outside of the arena border and not in tiles.
                 float leftEdgeOfBorder = npc.Infernum().ExtraAI[8] - BorderWidth * 0.5f + 300f;
@@ -937,7 +939,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 for (int i = 0; i < cloneCount; i++)
                 {
-                    int clone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.CultistBossClone, npc.whoAmI);
+                    int clone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.CultistBossClone, npc.whoAmI);
                     if (Main.npc.IndexInRange(clone) && clone < Main.maxNPCs)
                     {
                         Main.npc[clone].Infernum().ExtraAI[0] = npc.whoAmI;
@@ -989,7 +991,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer == waitDelay)
             {
                 // Create a laugh sound effect.
-                Main.PlaySound(SoundID.Zombie, target.Center, 105);
+                SoundEngine.PlaySound(SoundID.Zombie, target.Center, 105);
 
                 frameType = (int)CultistFrameState.Laugh;
 
@@ -997,11 +999,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 {
                     Point ritualCenter = (Main.projectile[(int)ritualIndex].Center + Main.projectile[(int)ritualIndex].SafeDirectionTo(target.Center) * 20f).ToPoint();
                     if (phase2)
-                        NPC.NewNPC(ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead, 1);
+                        NPC.NewNPC(npc.GetSource_FromAI(), ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead, 1);
                     else
                     {
                         for (int i = 0; i < 2; i++)
-                            NPC.NewNPC(ritualCenter.X, ritualCenter.Y, NPCID.AncientCultistSquidhead, 0, i);
+                            NPC.NewNPC(npc.GetSource_FromAI(), ritualCenter.X, ritualCenter.Y, NPCID.AncientCultistSquidhead, 0, i);
                     }
                 }
             }
@@ -1053,7 +1055,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
 
                 // Play an ice sound.
-                Main.PlaySound(SoundID.Item120, target.position);
+                SoundEngine.PlaySound(SoundID.Item120, target.position);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1075,7 +1077,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoAttack_AncientDoom(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
-            float attackPower = Utils.InverseLerp(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
+            float attackPower = Utils.GetLerpValue(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
 
             int burstCount = 3;
             int burstShootRate = (int)MathHelper.Lerp(270f, 215f, attackPower);
@@ -1083,7 +1085,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
 
             if (attackTimer < 30f)
-                npc.Opacity = Utils.InverseLerp(25f, 0f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(25f, 0f, attackTimer, true);
             else
                 npc.Opacity = 1f;
 
@@ -1265,26 +1267,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             float frameState = npc.ai[2];
             float transitionTimer = npc.ai[3];
-            Texture2D cultistTexture = Main.npcTexture[npc.type];
+            Texture2D cultistTexture = TextureAssets.Npc[npc.type].Value;
 
             if (frameState == 1f)
             {
                 // Create a circle of illusions that fade in and collapse on the cultist.
                 for (int i = 0; i < 8; i++)
                 {
-                    float colorInterpolant = (Main.GlobalTime * 0.53f + i / 8f) % 1f;
-                    Color solarColor = new Color(255, 93, 30);
-                    Color nebulaColor = new Color(232, 76, 183);
-                    Color vortexColor = new Color(6, 229, 156);
-                    Color stardustColor = new Color(0, 170, 221);
+                    float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 8f) % 1f;
+                    Color solarColor = new(255, 93, 30);
+                    Color nebulaColor = new(232, 76, 183);
+                    Color vortexColor = new(6, 229, 156);
+                    Color stardustColor = new(0, 170, 221);
                     Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor);
-                    float illusionOpacity = Utils.InverseLerp(0f, 32f, transitionTimer, true) *
-                        Utils.InverseLerp(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
+                    float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) *
+                        Utils.GetLerpValue(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
                     illusionColor.A = (byte)MathHelper.Lerp(125f, 0f, 1f - illusionOpacity);
 
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + MathHelper.TwoPi * 2f / TransitionAnimationTime).ToRotationVector2();
                     drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * transitionTimer / TransitionAnimationTime);
-                    drawOffset *= MathHelper.Lerp(0f, 200f, Utils.InverseLerp(TransitionAnimationTime - 10f, 0f, transitionTimer, true));
+                    drawOffset *= MathHelper.Lerp(0f, 200f, Utils.GetLerpValue(TransitionAnimationTime - 10f, 0f, transitionTimer, true));
                     Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
                     SpriteEffects direction = (drawOffset.X < 0f) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -1296,7 +1298,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (frameState == 2f)
                 glowOpacity = 1f;
             else if (frameState == 1f)
-                glowOpacity = Utils.InverseLerp(TransitionAnimationTime, TransitionAnimationTime + 15f, transitionTimer, true);
+                glowOpacity = Utils.GetLerpValue(TransitionAnimationTime, TransitionAnimationTime + 15f, transitionTimer, true);
 
             // Create an afterimage glow in phase 2.
             for (int i = 0; i < 8; i++)
@@ -1305,8 +1307,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 glowColor.A = 0;
 
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 4f).ToRotationVector2();
-                drawOffset *= MathHelper.Lerp(4f, 5f, (float)Math.Sin(Main.GlobalTime * 1.4f) * 0.5f + 0.5f);
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
+                drawOffset *= MathHelper.Lerp(4f, 5f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.4f) * 0.5f + 0.5f);
                 drawPosition += drawOffset;
                 SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -1324,14 +1326,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float initialXPosition = npc.Infernum().ExtraAI[8];
             float left = initialXPosition - BorderWidth * 0.5f;
             float right = initialXPosition + BorderWidth * 0.5f;
-            float leftBorderOpacity = Utils.InverseLerp(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
-            float rightBorderOpacity = Utils.InverseLerp(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
+            float leftBorderOpacity = Utils.GetLerpValue(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
+            float rightBorderOpacity = Utils.GetLerpValue(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
 
             spriteBatch.SetBlendState(BlendState.Additive);
             if (leftBorderOpacity > 0f && !dying)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.InverseLerp(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, leftBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1346,7 +1348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (rightBorderOpacity > 0f && !dying)
             {
                 Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.InverseLerp(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, rightBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1366,13 +1368,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             else if (deathTimer > 120f)
             {
                 spriteBatch.EnterShaderRegion();
-                GameShaders.Misc["Infernum:CultistDeath"].UseOpacity((1f - Utils.InverseLerp(120f, 305f, deathTimer, true)) * 0.8f);
+                GameShaders.Misc["Infernum:CultistDeath"].UseOpacity((1f - Utils.GetLerpValue(120f, 305f, deathTimer, true)) * 0.8f);
                 GameShaders.Misc["Infernum:CultistDeath"].UseImage("Images/Misc/Perlin");
                 GameShaders.Misc["Infernum:CultistDeath"].Apply();
             }
 
             bool performingRitual = npc.ai[0] == (int)CultistAIState.Ritual && npc.ai[1] >= 30f && !npc.dontTakeDamage;
-            Texture2D baseTexture = Main.npcTexture[npc.type];
+            Texture2D baseTexture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             if (performingRitual)
             {

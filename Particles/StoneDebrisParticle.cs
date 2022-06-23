@@ -1,6 +1,7 @@
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 
 namespace InfernumMode.Particles
@@ -36,7 +37,7 @@ namespace InfernumMode.Particles
 
             if (Collision.SolidCollision(Position, 1, 1) && Time < Lifetime - 1 && Time > 8)
             {
-                Main.PlaySound(SoundID.Item51, Position);
+                SoundEngine.PlaySound(SoundID.Item51, Position);
                 Time = Lifetime - 1;
             }
         }

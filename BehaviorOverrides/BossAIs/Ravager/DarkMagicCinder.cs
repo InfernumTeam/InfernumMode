@@ -13,38 +13,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Cinder");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 18;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 360;
-            projectile.scale = 1.6f;
-            projectile.penetrate = -1;
+            Projectile.width = 18;
+            Projectile.height = 18;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 360;
+            Projectile.scale = 1.6f;
+            Projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, Color.Blue.ToVector3() * 0.64f);
+            Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3() * 0.64f);
 
-            projectile.Opacity = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 360f) * 5f;
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
+            Projectile.Opacity = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 360f) * 5f;
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
 
-            if (projectile.frameCounter++ % 5 == 4)
-                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            if (Projectile.frameCounter++ % 5 == 4)
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
 
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-        public override bool CanDamage() => projectile.Opacity > 0.75f;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.75f;
 
-        public override Color? GetAlpha(Color lightColor) => new Color(1f, 0.1f, 1f, 0.4f) * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => new Color(1f, 0.1f, 1f, 0.4f) * Projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {
@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             for (int i = 0; i < 6; i++)
             {
-                Dust dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<RavagerMagicDust>());
+                Dust dust = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<RavagerMagicDust>());
                 dust.velocity = Main.rand.NextVector2Circular(5f, 5f);
                 dust.noGravity = true;
             }

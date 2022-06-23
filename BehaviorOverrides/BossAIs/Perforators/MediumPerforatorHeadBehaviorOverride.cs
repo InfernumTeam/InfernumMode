@@ -6,6 +6,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             bool readyToFire = attackTimer % toothBallReleaseRate == toothBallReleaseRate - 1f;
             if (!npc.WithinRange(target.Center, 225f) && readyToFire)
             {
-                Main.PlaySound(SoundID.NPCHit20, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 toothBallShootVelocity = npc.SafeDirectionTo(target.Center) * toothBallShootSpeed;

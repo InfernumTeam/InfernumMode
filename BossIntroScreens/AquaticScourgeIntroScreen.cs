@@ -11,10 +11,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class AquaticScourgeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color sulphuricColor = new Color(41, 142, 134);
-            Color fleshColor = new Color(165, 119, 112);
+            Color sulphuricColor = new(41, 142, 134);
+            Color fleshColor = new(165, 119, 112);
             return Color.Lerp(sulphuricColor, fleshColor, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.72f);
         });
 

@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             }
             projectile.velocity = Vector2.Zero;
             projectile.position = projectile.Center;
-            projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.InverseLerp(0f, 9f, projectile.ai[0]));
+            projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.GetLerpValue(0f, 9f, projectile.ai[0]));
             projectile.Center = projectile.position;
             Point topLeftPoint = projectile.TopLeft.ToTileCoordinates();
             Point bottomRightPoint = projectile.BottomRight.ToTileCoordinates();
@@ -35,10 +35,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                         if (Vector2.Distance(projectile.Center, new Vector2(i * 16, j * 16)) <= projectile.width / 2)
                         {
                             Tile tile = Framing.GetTileSafely(i, j);
-                            if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !Main.tileFrameImportant[tile.type])
+                            if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] && !Main.tileFrameImportant[tile.TileType])
                             {
                                 Tile tileAbove = Framing.GetTileSafely(i, j - 1);
-                                if (!tileAbove.active() || !Main.tileSolid[tileAbove.type] || Main.tileSolidTop[tileAbove.type])
+                                if (!tileAbove.HasTile || !Main.tileSolid[tileAbove.TileType] || Main.tileSolidTop[tileAbove.TileType])
                                 {
                                     int dustCount = WorldGen.KillTile_GetTileDustAmount(true, tile, i, j);
                                     for (int k = 0; k < dustCount; k++)

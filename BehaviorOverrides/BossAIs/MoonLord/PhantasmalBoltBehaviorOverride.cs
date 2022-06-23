@@ -1,6 +1,7 @@
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
@@ -16,9 +17,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (projectile.localAI[0] == 0f)
             {
                 if (Main.rand.NextBool(2))
-                    Main.PlaySound(SoundID.Item124, projectile.position);
+                    SoundEngine.PlaySound(SoundID.Item124, projectile.position);
                 else
-                    Main.PlaySound(SoundID.Item125, projectile.position);
+                    SoundEngine.PlaySound(SoundID.Item125, projectile.position);
                 projectile.localAI[0] = 1f;
             }
 

@@ -2,6 +2,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,48 +14,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 44;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 720;
+            Projectile.width = Projectile.height = 44;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 720;
         }
 
         public override void AI()
         {
-            projectile.velocity *= 0.9875f;
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft < 540 && projectile.timeLeft % 80f == 79f)
+            Projectile.velocity *= 0.9875f;
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft < 540 && Projectile.timeLeft % 80f == 79f)
             {
                 Vector2 plasmaVelocity = -Vector2.UnitY.RotatedByRandom(0.56f) * Main.rand.NextFloat(7f, 16f);
-                Utilities.NewProjectileBetter(projectile.Center, plasmaVelocity, ModContent.ProjectileType<PlasmaDrop>(), 160, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, plasmaVelocity, ModContent.ProjectileType<PlasmaDrop>(), 160, 0f);
             }
 
-            projectile.Opacity = Utils.InverseLerp(720f, 700f, projectile.timeLeft, true) * Utils.InverseLerp(5f, 30f, projectile.timeLeft, true);
-            projectile.scale = MathHelper.Lerp(0.65f, 0.25f, Utils.InverseLerp(325f, 30f, projectile.timeLeft, true));
+            Projectile.Opacity = Utils.GetLerpValue(720f, 700f, Projectile.timeLeft, true) * Utils.GetLerpValue(5f, 30f, Projectile.timeLeft, true);
+            Projectile.scale = MathHelper.Lerp(0.65f, 0.25f, Utils.GetLerpValue(325f, 30f, Projectile.timeLeft, true));
         }
 
-        public override bool CanHitPlayer(Player target) => projectile.Opacity > 0.7f;
+        public override bool CanHitPlayer(Player target) => Projectile.Opacity > 0.7f;
 
         public override Color? GetAlpha(Color lightColor)
         {
-            Color color = projectile.identity % 2 == 0 ? new Color(234, 119, 93) : new Color(109, 242, 196);
+            Color color = Projectile.identity % 2 == 0 ? new Color(234, 119, 93) : new Color(109, 242, 196);
             color = Color.Lerp(color, Color.White, 0.35f);
             color.A = 0;
-            return color * projectile.Opacity * 0.45f;
+            return color * Projectile.Opacity * 0.45f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D plasmaTexture = Main.projectileTexture[projectile.type];
+            Texture2D plasmaTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 0; i < 5; i++)
             {
-                Matrix drawOffsetEncoding = Matrix.CreateRotationX(Main.GlobalTime * 2.32f + i * 1.37f);
-                drawOffsetEncoding *= Matrix.CreateRotationZ(Main.GlobalTime * 1.77f - i * 1.83f);
+                Matrix drawOffsetEncoding = Matrix.CreateRotationX(Main.GlobalTimeWrappedHourly * 2.32f + i * 1.37f);
+                drawOffsetEncoding *= Matrix.CreateRotationZ(Main.GlobalTimeWrappedHourly * 1.77f - i * 1.83f);
                 Vector3 vectorizedOffset = Vector3.Transform(Vector3.Forward, drawOffsetEncoding) * 0.5f + new Vector3(0.5f);
                 Vector2 drawOffset = new Vector2(vectorizedOffset.X, vectorizedOffset.Y) * MathHelper.Lerp(1f, 16f, vectorizedOffset.Z);
-                Vector2 drawPosition = projectile.Center - Main.screenPosition + drawOffset;
+                Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
 
-                spriteBatch.Draw(plasmaTexture, drawPosition, null, projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(plasmaTexture, drawPosition, null, Projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

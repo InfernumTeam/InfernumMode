@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
 using Terraria;
+using Terraria.Chat;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
@@ -76,7 +78,7 @@ namespace InfernumMode
 
             Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/Line");
             float rotation = (end - start).ToRotation();
-            Vector2 scale = new Vector2(Vector2.Distance(start, end) / line.Width, width);
+            Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 
             spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
@@ -120,14 +122,14 @@ namespace InfernumMode
         public static void DrawAfterimagesCentered(Projectile proj, Color lightColor, int mode, int typeOneIncrement = 1, Texture2D texture = null, bool drawCentered = true)
         {
             if (texture is null)
-                texture = Main.projectileTexture[proj.type];
+                texture = TextureAssets.Projectile[proj.type].Value;
 
             int frameHeight = texture.Height / Main.projFrames[proj.type];
             int frameY = frameHeight * proj.frame;
             float scale = proj.scale;
             float rotation = proj.rotation;
 
-            Rectangle rectangle = new Rectangle(0, frameY, texture.Width, frameHeight);
+            Rectangle rectangle = new(0, frameY, texture.Width, frameHeight);
             Vector2 origin = rectangle.Size() / 2f;
 
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -210,7 +212,7 @@ namespace InfernumMode
             if (Main.netMode == NetmodeID.SinglePlayer)
                 Main.NewText(text, color ?? Color.White);
             else if (Main.netMode == NetmodeID.Server)
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -92,34 +93,34 @@ namespace InfernumMode
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);
-            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
+            bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type)].Infernum().ExtraAI[8] > 0f);
+            Player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
 
             if (!BossRushEvent.BossRushActive)
             {
-                int hiveMindID = InfernumMode.CalamityMod.NPCType("HiveMind");
+                int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
                 int hiveMind = NPC.FindFirstNPC(hiveMindID);
                 NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
                 bool useHIV = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-                player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
+                Player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
 
-                bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
-                player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
+                bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("AstrumDeusHeadSpectral").Type);
+                Player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
 
                 int oldDukeID = ModContent.NPCType<OldDuke>();
                 int oldDuke = NPC.FindFirstNPC(oldDukeID);
                 NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
                 bool useOD = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
-                player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
+                Player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
 
                 int perforatorHiveID = ModContent.NPCType<PerforatorHive>();
                 int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
                 NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
-                player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f);
+                Player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f);
 
                 bool useDoG = DoGSkyInfernum.CanSkyBeActive;
                 if (useDoG)
-                    SkyManager.Instance.Activate("InfernumMode:DoG", player.Center);
+                    SkyManager.Instance.Activate("InfernumMode:DoG", Player.Center);
                 else
                     SkyManager.Instance.Deactivate("InfernumMode:DoG");
             }
@@ -143,14 +144,14 @@ namespace InfernumMode
             DarkFlames = false;
 
             if (PoDWorld.InfernumMode)
-                player.respawnTimer = Utils.Clamp(player.respawnTimer - 1, 0, 3600);
+                Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }
         #endregion
         #region Pre Hurt
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].Calamity().CurrentlyEnraged)
-                damage = (int)MathHelper.Max(5500f / (1f - player.endurance + 1e-6f), damage);
+                damage = (int)MathHelper.Max(5500f / (1f - Player.endurance + 1e-6f), damage);
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
         #endregion Pre Hurt
@@ -160,9 +161,9 @@ namespace InfernumMode
             if (damage == 10.0 && hitDirection == 0 && damageSource.SourceOtherIndex == 8)
             {
                 if (RedElectrified)
-                    damageSource = PlayerDeathReason.ByCustomReason($"{player.name} could not withstand the red lightning.");
+                    damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} could not withstand the red lightning.");
                 if (DarkFlames)
-                    damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was incinerated by ungodly fire.");
+                    damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} was incinerated by ungodly fire.");
             }
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
@@ -170,7 +171,7 @@ namespace InfernumMode
         #region Kill
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            ExoMechManagement.RecordAttackDeath(player);
+            ExoMechManagement.RecordAttackDeath(Player);
         }
         #endregion Kill
         #region Life Regen
@@ -178,20 +179,20 @@ namespace InfernumMode
         {
             void causeLifeRegenLoss(int regenLoss)
             {
-                if (player.lifeRegen > 0)
-                    player.lifeRegen = 0;
-                player.lifeRegenTime = 0;
-                player.lifeRegen -= regenLoss;
+                if (Player.lifeRegen > 0)
+                    Player.lifeRegen = 0;
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen -= regenLoss;
             }
             if (RedElectrified)
-                causeLifeRegenLoss(player.controlLeft || player.controlRight ? 64 : 16);
+                causeLifeRegenLoss(Player.controlLeft || Player.controlRight ? 64 : 16);
 
             if (ShadowflameInferno)
                 causeLifeRegenLoss(23);
             if (DarkFlames)
             {
                 causeLifeRegenLoss(30);
-                player.statDefense -= 8;
+                Player.statDefense -= 8;
             }
         }
         #endregion
@@ -202,7 +203,7 @@ namespace InfernumMode
             if (drawInfo.shadow != 0f || !drawInfo.drawPlayer.Infernum().RedElectrified)
                 return;
 
-            Texture2D texture2D2 = Main.glowMaskTexture[25];
+            Texture2D texture2D2 = TextureAssets.GlowMask[25].Value;
             int frame = drawInfo.drawPlayer.miscCounter / 5;
             for (int l = 0; l < 2; l++)
             {
@@ -214,9 +215,9 @@ namespace InfernumMode
                     Color lightningColor = Color.Red;
                     lightningColor.A = 0;
 
-                    Rectangle frameRectangle = new Rectangle(0, frame * texture2D2.Height / 7, texture2D2.Width, texture2D2.Height / 7);
+                    Rectangle frameRectangle = new(0, frame * texture2D2.Height / 7, texture2D2.Width, texture2D2.Height / 7);
                     Vector2 fuck = new Vector2((int)(drawInfo.position.X - Main.screenPosition.X - (player.bodyFrame.Width / 2) + (player.width / 2)), (int)(drawInfo.position.Y - Main.screenPosition.Y + player.height - player.bodyFrame.Height + 4f)) + player.bodyPosition + player.bodyFrame.Size() * 0.5f;
-                    DrawData lightningEffect = new DrawData(texture2D2, fuck, frameRectangle, lightningColor, player.bodyRotation, frameRectangle.Size() * 0.5f, 1f, spriteEffects, 0);
+                    DrawData lightningEffect = new(texture2D2, fuck, frameRectangle, lightningColor, player.bodyRotation, frameRectangle.Size() * 0.5f, 1f, spriteEffects, 0);
                     Main.playerDrawData.Add(lightningEffect);
                 }
                 frame += 3;
@@ -250,16 +251,16 @@ namespace InfernumMode
         }
         #endregion
         #region Saving and Loading
-        public override TagCompound Save()
+        public override void SaveData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
         {
-            TagCompound tag = new TagCompound();
+            TagCompound tag = new();
             ThanatosLaserTypeSelector?.Save(tag);
             AresSpecialAttackTypeSelector?.Save(tag);
             TwinsSpecialAttackTypeSelector?.Save(tag);
             return tag;
         }
 
-        public override void Load(TagCompound tag)
+        public override void LoadData(TagCompound tag)
         {
             ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
             AresSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "AresSpecialAttack");
@@ -269,9 +270,9 @@ namespace InfernumMode
         #region Misc Effects
         public override void PostUpdateMiscEffects()
         {
-            if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")) && InfernumMode.CanUseCustomAIs)
+            if (Player.mount.Active && Player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("DesertScourgeHead").Type) && InfernumMode.CanUseCustomAIs)
             {
-                player.mount.Dismount(player);
+                Player.mount.Dismount(Player);
             }
 
             // Ensure that Revengeance Mode is always active while Infernum is active.
@@ -290,17 +291,17 @@ namespace InfernumMode
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active &&
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("Signus") ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverHead")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverBody")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverTail")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedHead")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedBody")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedTail")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("CeaselessVoid")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy2")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy3"))))
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("Signus").Type ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverHead").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverBody").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverTail").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedHead").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedBody").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedTail").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("CeaselessVoid").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy2").Type) ||
+                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy3").Type)))
                     {
                         Main.npc[i].active = false;
                     }
@@ -312,8 +313,8 @@ namespace InfernumMode
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust shadowflame = Dust.NewDustDirect(player.position, player.width, player.height, 28);
-                    shadowflame.velocity = player.velocity.SafeNormalize(Vector2.UnitX * player.direction);
+                    Dust shadowflame = Dust.NewDustDirect(Player.position, Player.width, Player.height, 28);
+                    shadowflame.velocity = Player.velocity.SafeNormalize(Vector2.UnitX * Player.direction);
                     shadowflame.velocity = shadowflame.velocity.RotatedByRandom(0.4f) * -Main.rand.NextFloat(2.5f, 5.4f);
                     shadowflame.scale = Main.rand.NextFloat(0.95f, 1.3f);
                     shadowflame.noGravity = true;
@@ -324,8 +325,8 @@ namespace InfernumMode
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust shadowflame = Dust.NewDustDirect(player.position, player.width, player.height, ModContent.DustType<RavagerMagicDust>());
-                    shadowflame.velocity = player.velocity.SafeNormalize(Vector2.UnitX * player.direction);
+                    Dust shadowflame = Dust.NewDustDirect(Player.position, Player.width, Player.height, ModContent.DustType<RavagerMagicDust>());
+                    shadowflame.velocity = Player.velocity.SafeNormalize(Vector2.UnitX * Player.direction);
                     shadowflame.velocity = shadowflame.velocity.RotatedByRandom(0.4f) * -Main.rand.NextFloat(2.5f, 5.4f);
                     shadowflame.velocity += Main.rand.NextVector2Circular(3f, 3f);
                     shadowflame.scale = Main.rand.NextFloat(0.95f, 1.25f);
@@ -340,10 +341,10 @@ namespace InfernumMode
             if (!ApplyEarlySpeedNerfs)
                 return;
 
-            if (player.armor[0].type == ModContent.ItemType<AuricTeslaCuisses>())
-                player.moveSpeed -= 0.1f;
-            if (player.armor[0].type == ModContent.ItemType<AuricTeslaPlumedHelm>())
-                player.moveSpeed -= 0.15f;
+            if (Player.armor[0].type == ModContent.ItemType<AuricTeslaCuisses>())
+                Player.moveSpeed -= 0.1f;
+            if (Player.armor[0].type == ModContent.ItemType<AuricTeslaPlumedHelm>())
+                Player.moveSpeed -= 0.15f;
         }
         #endregion
     }

@@ -7,9 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
@@ -327,10 +328,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         if (spawnedEnemyCount == 2 || spawnedEnemyCount == 4)
                         {
                             if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
+                                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
                         }
                         else if (NPC.CountNPCS(NPCID.EaterofSouls) < 2)
-                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
+                            NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
                     }
 
                     // Reset to the slowdown state in preparation for the next attack.
@@ -366,7 +367,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             attackTimer++;
             npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
-            spinIncrement += (float)Math.Pow(Utils.InverseLerp(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 0.6D);
+            spinIncrement += (float)Math.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 0.6D);
 
             // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)
@@ -377,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.6f;
-                npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
+                npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.6f, lifeRatio));
                 if (enraged)
                     npc.velocity *= 1.45f;
 
@@ -444,14 +445,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     while (dashDirection == 0f)
                         dashDirection = Main.rand.NextBool().ToDirectionInt();
 
-                    npc.position.Y -= RainDashOffset * MathHelper.Lerp(1f, 1.325f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
+                    npc.position.Y -= RainDashOffset * MathHelper.Lerp(1f, 1.325f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     npc.position.X += RainDashOffset * dashDirection;
                 }
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, true);
                     npc.velocity = Vector2.UnitX * dashDirection * -11f;
-                    npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
+                    npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     if (enraged)
                         npc.velocity *= 1.5f;
                     if (BossRushEvent.BossRushActive)
@@ -526,7 +527,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 4.35f : 4.15f);
 
-                Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
+                Vector2 wallSpawnOffset = new(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
 
                 if (enraged)
@@ -727,8 +728,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if ((int)attackTimer == 120f)
             {
                 Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
-                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
                 if (explosionSound != null)
                 {
                     explosionSound.Volume = 0.2f;
@@ -757,7 +758,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
-                    Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
                 }
             }
             else
@@ -775,7 +776,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             if (highPitched)
             {
-                Main.PlaySound(SoundID.ForceRoar, npc.Center, -1);
+                SoundEngine.PlaySound(SoundID.ForceRoar, npc.Center, -1);
                 return;
             }
 
@@ -785,7 +786,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
                 fire.noGravity = true;
             }
-            Main.PlaySound(SoundID.Roar, npc.Center, 0);
+            SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
         }
 
         public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -793,7 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
             Texture2D texture = ModContent.GetTexture("CalamityMod/NPCs/HiveMind/HiveMindP2");
-            int frame = (int)(Main.GlobalTime * 10f) % 16;
+            int frame = (int)(Main.GlobalTimeWrappedHourly * 10f) % 16;
             Rectangle frameRectangle = texture.Frame(2, 8, frame / 8, frame % 8);
 
             for (int i = 1; i < npc.oldPos.Length; i++)
@@ -802,7 +803,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     break;
 
                 float scale = npc.scale * MathHelper.Lerp(0.9f, 0.45f, i / (float)npc.oldPos.Length);
-                float trailLength = MathHelper.Lerp(70f, 195f, Utils.InverseLerp(3f, 7f, npc.velocity.Length(), true));
+                float trailLength = MathHelper.Lerp(70f, 195f, Utils.GetLerpValue(3f, 7f, npc.velocity.Length(), true));
                 if (npc.velocity.Length() < 1.8f)
                     trailLength = 8f;
 

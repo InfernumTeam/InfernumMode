@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,50 +16,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 7;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 40;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 180;
+            Projectile.width = Projectile.height = 40;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 180;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, 0.55f, 0.25f, 0f);
+            Lighting.AddLight(Projectile.Center, 0.55f, 0.25f, 0f);
 
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            projectile.velocity = (projectile.velocity * 29f + projectile.SafeDirectionTo(target.Center) * 16f) / 30f;
-            projectile.Opacity = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.WithinRange(target.Center, 70f))
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(target.Center) * 16f) / 30f;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.WithinRange(target.Center, 70f))
             {
-                Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 120, 0f);
-                projectile.Kill();
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 120, 0f);
+                Projectile.Kill();
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2[] baseOldPositions = projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
+            Vector2[] baseOldPositions = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
                 return true;
 
-            Texture2D projectileTexture = Main.projectileTexture[projectile.type];
+            Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = projectileTexture.Size() * 0.5f;
             List<Vector2> adjustedOldPositions = new BezierCurve(baseOldPositions).GetPoints(40);
             for (int i = 0; i < adjustedOldPositions.Count; i++)
             {
                 float completionRatio = i / (float)adjustedOldPositions.Count;
-                float scale = projectile.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
-                Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * projectile.Opacity * 0.8f;
-                Vector2 drawPosition = adjustedOldPositions[i] + projectile.Size * 0.5f - Main.screenPosition;
-                spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+                float scale = Projectile.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
+                Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * Projectile.Opacity * 0.8f;
+                Vector2 drawPosition = adjustedOldPositions[i] + Projectile.Size * 0.5f - Main.screenPosition;
+                spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

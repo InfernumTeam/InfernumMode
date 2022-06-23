@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override float Lifetime => LifetimeConst;
 
-        public override Color LaserOverlayColor => new Color(250, 250, 250, 100);
+        public override Color LaserOverlayColor => new(250, 250, 250, 100);
 
         public override Color LightCastColor => Color.White;
 

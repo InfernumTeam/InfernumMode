@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using GiantClamNPC = CalamityMod.NPCs.SunkenSea.GiantClam;
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             {
                 if (npc.Infernum().ExtraAI[5] == 0f)
                 {
-                    typeof(GiantClamNPC).GetField("hasBeenHit", Utilities.UniversalBindingFlags).SetValue(npc.modNPC, true);
+                    typeof(GiantClamNPC).GetField("hasBeenHit", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
                     npc.Infernum().ExtraAI[5] = 1f;
                     npc.netUpdate = true;
                 }
@@ -108,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 case GiantClamAttackState.PearlRain:
                     if (attackTimer == 0f)
                     {
-                        Main.PlaySound(SoundID.Item67, npc.position);
+                        SoundEngine.PlaySound(SoundID.Item67, npc.position);
                         for (float offset = -750f; offset < 750f; offset += 150f)
                         {
                             Vector2 spawnPosition = target.Center + new Vector2(offset, -750f);
@@ -191,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
                             if (npc.velocity.Y == 0f)
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
+                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
                                 slamCount++;
 
                                 if (slamCount < (hardmode ? 6f : 3f))

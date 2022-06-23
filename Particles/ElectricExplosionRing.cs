@@ -43,17 +43,17 @@ namespace InfernumMode.Particles
                 ringCount = 100;
 
             float innerRingScaleFactor = MathHelper.Lerp(0.3f, 0f, Scale / (Scale + 1f));
-            float fadeout = Utils.InverseLerp(0f, 24f, Time, true);
+            float fadeout = Utils.GetLerpValue(0f, 24f, Time, true);
             float scaleFadeout = fadeout;
-            float opacityFadeout = fadeout * Utils.InverseLerp(1f, 0.7f, LifetimeCompletion, true);
+            float opacityFadeout = fadeout * Utils.GetLerpValue(1f, 0.7f, LifetimeCompletion, true);
             if (Scale < 2f)
-                scaleFadeout *= Utils.InverseLerp(1f, 0.7f, LifetimeCompletion, true);
+                scaleFadeout *= Utils.GetLerpValue(1f, 0.7f, LifetimeCompletion, true);
 
             Texture2D texture = ModContent.GetTexture(Texture);
             for (int i = 0; i < ringCount; i++)
             {
                 float scale = MathHelper.Lerp(1f, innerRingScaleFactor, i / (float)(ringCount - 1f)) * scaleFadeout * Scale;
-                Color color = CalamityUtils.MulticolorLerp((i / (float)(ringCount - 1f) + Main.GlobalTime * 0.7f) % 1f, Colors) * opacityFadeout * 0.45f;
+                Color color = CalamityUtils.MulticolorLerp((i / (float)(ringCount - 1f) + Main.GlobalTimeWrappedHourly * 0.7f) % 1f, Colors) * opacityFadeout * 0.45f;
                 float rotation = Rotation * MathHelper.Lerp(0.5f, 1f, i / (float)(ringCount - 1f)) * (i % 2 == 0).ToDirectionInt();
                 Vector2 drawPosition = Position - Main.screenPosition;
                 spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale, 0, 0f);

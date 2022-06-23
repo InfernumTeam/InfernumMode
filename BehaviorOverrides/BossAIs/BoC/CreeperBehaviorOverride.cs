@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.BoC.BoCBehaviorOverride;
@@ -82,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                         Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center + Vector2.UnitY * 480f + target.velocity * 120f, BloodGeyser2.Gravity, 16f, out _);
                         Utilities.NewProjectileBetter(npc.Center, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 100, 0f);
                     }
-                    Main.PlaySound(SoundID.NPCHit20, npc.position);
+                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.position);
                 }
             }
 
@@ -92,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 bool obstanceInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
                 if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 45f == 44f && Main.rand.NextBool(3))
                 {
-                    float aimAwayAngle = Utils.InverseLerp(300f, 150f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
+                    float aimAwayAngle = Utils.GetLerpValue(300f, 150f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
                     Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
                 }
             }
@@ -112,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             float cyanAuraStrength = Main.npc[NPC.crimsonBoss].localAI[1];
 
             void drawInstance(Vector2 drawPosition, Color color, float scale)
@@ -128,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTime * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
+                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
                     drawInstance(drawPosition, auraColor, scale);
                 }
             }

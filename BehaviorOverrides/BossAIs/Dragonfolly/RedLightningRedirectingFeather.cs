@@ -3,6 +3,8 @@ using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,91 +15,91 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         public const int AimTime = 16;
         public const int RedirectDelay = 40;
         public const int FlyTime = 240;
-        public Player Target => Main.player[(int)projectile.ai[1]];
-        public ref float Time => ref projectile.ai[0];
+        public Player Target => Main.player[(int)Projectile.ai[1]];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning Feather");
-            Main.projFrames[projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 20;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = RedirectDelay + FlyTime;
-            projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 20;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = RedirectDelay + FlyTime;
+            Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter % 5 == 4)
-                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter % 5 == 4)
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
 
-            Lighting.AddLight(projectile.Center, Color.Red.ToVector3());
-            projectile.Opacity = Utils.InverseLerp(0f, 20f, projectile.timeLeft, true);
+            Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
 
             if (Time < RedirectDelay - AimTime)
             {
-                if (projectile.velocity.Length() > 0.04f)
-                    projectile.velocity *= 0.945f;
-                projectile.rotation = projectile.velocity.ToRotation();
+                if (Projectile.velocity.Length() > 0.04f)
+                    Projectile.velocity *= 0.945f;
+                Projectile.rotation = Projectile.velocity.ToRotation();
             }
             else if (Time < RedirectDelay)
             {
-                projectile.rotation = projectile.rotation.AngleLerp(projectile.AngleTo(Target.Center), 0.15f);
-                projectile.rotation = projectile.rotation.AngleTowards(projectile.AngleTo(Target.Center), 0.15f);
+                Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), 0.15f);
+                Projectile.rotation = Projectile.rotation.AngleTowards(Projectile.AngleTo(Target.Center), 0.15f);
             }
             else if (Time == RedirectDelay)
             {
-                projectile.velocity = projectile.rotation.ToRotationVector2() * (BossRushEvent.BossRushActive ? 25f : 34f);
-                Main.PlaySound(SoundID.Item109, projectile.Center);
+                Projectile.velocity = Projectile.rotation.ToRotationVector2() * (BossRushEvent.BossRushActive ? 25f : 34f);
+                SoundEngine.PlaySound(SoundID.Item109, Projectile.Center);
                 for (int i = 0; i < 16; i++)
                 {
-                    Vector2 spawnOffset = Vector2.UnitX * projectile.width * -0.5f;
-                    spawnOffset -= Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f + projectile.rotation) * new Vector2(8f, 16f);
-                    Dust redLightning = Dust.NewDustDirect(projectile.Center, 0, 0, 267, 0f, 0f, 160, default, 1f);
-                    redLightning.position = projectile.Center + spawnOffset;
+                    Vector2 spawnOffset = Vector2.UnitX * Projectile.width * -0.5f;
+                    spawnOffset -= Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f + Projectile.rotation) * new Vector2(8f, 16f);
+                    Dust redLightning = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 160, default, 1f);
+                    redLightning.position = Projectile.Center + spawnOffset;
                     redLightning.color = Color.Red;
                     redLightning.velocity = spawnOffset.SafeNormalize(Vector2.UnitY) * new Vector2(1f, 2f);
                     redLightning.scale = 1.1f;
                     redLightning.fadeIn = 1.6f;
                     redLightning.noGravity = true;
                 }
-                projectile.netUpdate = true;
+                Projectile.netUpdate = true;
             }
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, TextureAssets.Projectile[Projectile.type].Value, false);
             return false;
         }
 
-        public override bool CanDamage() => projectile.timeLeft > RedirectDelay;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.timeLeft > RedirectDelay;
 
         public override void Kill(int timeLeft)
         {
-            projectile.position = projectile.Center;
-            projectile.width = projectile.height = 64;
-            projectile.position.X = projectile.position.X - (projectile.width / 2);
-            projectile.position.Y = projectile.position.Y - (projectile.height / 2);
-            projectile.Damage();
+            Projectile.position = Projectile.Center;
+            Projectile.width = Projectile.height = 64;
+            Projectile.position.X = Projectile.position.X - (Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (Projectile.height / 2);
+            Projectile.Damage();
         }
 
-        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
+        public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (projectile.Opacity != 1f)
+            if (Projectile.Opacity != 1f)
                 return;
 
             target.AddBuff(BuffID.Electrified, 90);
@@ -105,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

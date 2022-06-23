@@ -2,6 +2,8 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,54 +15,54 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Psychic Energy Field");
-            Main.projFrames[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.alpha = 255;
-            projectile.timeLeft = 75;
-            projectile.penetrate = -1;
-            cooldownSlot = 1;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.alpha = 255;
+            Projectile.timeLeft = 75;
+            Projectile.penetrate = -1;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(75f, 50f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.Opacity = Utils.GetLerpValue(75f, 50f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (projectile.timeLeft == 45f)
+            if (Projectile.timeLeft == 45f)
             {
                 // Play a bolt sound and release the psionic blast.
-                Main.PlaySound(SoundID.Item75, projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item75, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                    Player closestTarget = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
                     for (int i = 0; i < 3; i++)
                     {
                         float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
-                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
-                        Projectile.NewProjectile(projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), projectile.damage, 0f);
+                        Vector2 blastShootVelocity = Projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
+                        Projectile.NewProjectile(Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
                     }
                 }
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             spriteBatch.EnterShaderRegion();
-            Texture2D noiseTexture = Main.projectileTexture[projectile.type];
-            Vector2 drawPosition2 = projectile.Center - Main.screenPosition;
+            Texture2D noiseTexture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
-            GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseOpacity(projectile.Opacity);
+            GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseOpacity(Projectile.Opacity);
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseColor(Color.Cyan);
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseSecondaryColor(Color.Lerp(Color.Purple, Color.Black, 0.25f));
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].Apply();
@@ -72,9 +74,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

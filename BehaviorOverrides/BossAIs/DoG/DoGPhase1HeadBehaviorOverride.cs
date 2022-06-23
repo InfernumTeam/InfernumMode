@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -117,14 +118,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
 
-                typeof(DoGHead).GetField("phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
-                typeof(DoGHead).GetField("Phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
+                typeof(DoGHead).GetField("phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.ModNPC, true);
+                typeof(DoGHead).GetField("Phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.ModNPC, true);
 
                 return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType);
             }
 
             // Set music.
-            npc.modNPC.music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP1") ?? MusicID.LunarBoss;
+            npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP1") ?? MusicID.LunarBoss;
 
             // Do through the portal once ready to enter the second phase.
             if (CurrentPhase2TransitionState != Phase2TransitionState.NotEnteringPhase2)
@@ -169,9 +170,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         int segment;
                         if (segmentSpawn >= 0 && segmentSpawn < 80)
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBody"), npc.whoAmI);
+                            segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type, npc.whoAmI);
                         else
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"), npc.whoAmI);
+                            segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type, npc.whoAmI);
 
                         Main.npc[segment].realLife = npc.whoAmI;
                         Main.npc[segment].ai[2] = npc.whoAmI;
@@ -217,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Idly release laserbeams.
                 if (phaseCycleTimer % 150f == 0f && passiveAttackDelay >= 300f)
                 {
-                    Main.PlaySound(SoundID.Item12, target.position);
+                    SoundEngine.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 16; i++)

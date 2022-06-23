@@ -2,6 +2,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             // Fade in after appearing from the portal.
             if (fadeInTimer < 60f)
             {
-                npc.Opacity = Utils.InverseLerp(0f, 48f, fadeInTimer, true);
+                npc.Opacity = Utils.GetLerpValue(0f, 48f, fadeInTimer, true);
                 npc.velocity = -Vector2.UnitY * npc.Opacity * 2f;
                 npc.dontTakeDamage = npc.Opacity < 0.7f;
 
@@ -160,11 +161,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 }
 
                 npc.velocity *= 0.5f;
-                currentFrame = MathHelper.Lerp(8f, 12f, Utils.InverseLerp(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
+                currentFrame = MathHelper.Lerp(8f, 12f, Utils.GetLerpValue(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer - moveTime - chargeShootTime) % shootRate == shootRate - 1f)
                 {
                     int darkMagicDamage = isBuffed ? 185 : 90;
-                    float offsetAngle = MathHelper.Lerp(-0.48f, 0.48f, Utils.InverseLerp(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
+                    float offsetAngle = MathHelper.Lerp(-0.48f, 0.48f, Utils.GetLerpValue(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
                     Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
                     Vector2 shootVelocity = (aimDirection + offsetAngle).ToRotationVector2() * 16f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.DD2DarkMageBolt, darkMagicDamage, 0f, Main.myPlayer, 0f, 0f);
@@ -267,7 +268,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             if (attackTimer >= castTime && attackTimer < castTime + shootTime && attackTimer % shootRate == shootRate - 1f)
             {
                 Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
-                Main.PlaySound(SoundID.Item73, target.Center);
+                SoundEngine.PlaySound(SoundID.Item73, target.Center);
                 for (int i = 0; i < 4; i++)
                 {
                     Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), 267);
@@ -307,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
             // Play a cast sound.
             if (attackTimer == castTime)
-                Main.PlaySound(SoundID.DD2_DarkMageCastHeal, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal, npc.Center);
 
             if (attackTimer < castTime)
                 currentFrame = MathHelper.Lerp(29f, 27f, (float)Math.Sin(attackTimer / castTime * MathHelper.TwoPi) * 0.5f + 0.5f);
@@ -323,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = Main.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
+                    var sound = SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
                     sound.Volume = MathHelper.Clamp(sound.Volume * 1.6f, 0f, 1f);
                 }
                 for (int i = 0; i < 20; i++)

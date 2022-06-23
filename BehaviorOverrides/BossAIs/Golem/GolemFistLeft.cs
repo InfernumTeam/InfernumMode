@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,19 +16,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void SetDefaults()
         {
-            npc.lifeMax = 1;
-            npc.defDamage = npc.damage = 75;
-            npc.dontTakeDamage = true;
-            npc.width = 40;
-            npc.height = 40;
-            npc.lavaImmune = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
+            NPC.lifeMax = 1;
+            NPC.defDamage = NPC.damage = 75;
+            NPC.dontTakeDamage = true;
+            NPC.width = 40;
+            NPC.height = 40;
+            NPC.lavaImmune = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
         }
 
-        public override bool PreAI() => DoFistAI(npc, true);
+        public override bool PreAI() => DoFistAI(NPC, true);
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) => DrawFist(npc, spriteBatch, drawColor, true);
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => DrawFist(NPC, spriteBatch, drawColor, true);
 
         public static bool DoFistAI(NPC npc, bool leftFist)
         {
@@ -59,15 +60,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     continueDrawing = false;
                 }
                 Color color = Lighting.GetColor((int)(FistCenterPos.X / 16f), (int)(FistCenterPos.Y / 16f));
-                Texture2D armTexture = Main.chain21Texture;
-                Rectangle frame = new Rectangle(0, 0, armTexture.Width, moveDistance);
+                Texture2D armTexture = TextureAssets.Chain21.Value;
+                Rectangle frame = new(0, 0, armTexture.Width, moveDistance);
                 spriteBatch.Draw(armTexture, FistCenterPos - Main.screenPosition, frame, color, armRotation, armTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 FistCenterPos += (npc.Center - FistCenterPos).SafeNormalize(Vector2.Zero) * moveDistance;
             }
 
             SpriteEffects effect = leftFist ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Texture2D texture = Main.projectileTexture[ModContent.ProjectileType<FistBullet>()];
-            Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = TextureAssets.Projectile[ModContent.ProjectileType<FistBullet>()].Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, effect, 0f);
             return false;
         }

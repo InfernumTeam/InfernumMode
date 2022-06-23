@@ -8,40 +8,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
     public class SmallWave : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wave");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 36;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 180;
-            projectile.penetrate = -1;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 36;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 180;
+            Projectile.penetrate = -1;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
             Time++;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (projectile.velocity.Length() < 25f)
-                projectile.velocity *= 1.02f;
-            projectile.Opacity = Utils.InverseLerp(0f, 10f, Time, true);
+            if (Projectile.velocity.Length() < 25f)
+                Projectile.velocity *= 1.02f;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true);
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return false;
         }
     }

@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -219,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 // Normal boss roar.
-                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
             }
             else if (attackTimer >= hoverTime + chargeTime)
                 SelectNextAttack(npc);
@@ -268,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(120f, 120f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int eye = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
+                        int eye = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
                         Main.npc[eye].target = npc.target;
                         Main.npc[eye].velocity = Main.npc[eye].SafeDirectionTo(target.Center) * servantSpeed;
                     }
@@ -345,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     attackTimer = 0f;
 
                     // High pitched boss roar.
-                    Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                 }
             }
 
@@ -412,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // High pitched boss roar.
-                    Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                 }
                 if (npc.WithinRange(target.Center, 115f))
                     npc.Center -= npc.SafeDirectionTo(target.Center) * 15f;
@@ -518,14 +520,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // High pitched boss roar.
-                    Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                 }
             }
 
             // Spin.
             if (attackSubstate == 1f)
             {
-                spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.InverseLerp(spinTime + 4f, spinTime - 15f, attackTimer, true);
+                spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.GetLerpValue(spinTime + 4f, spinTime - 15f, attackTimer, true);
                 npc.Center = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.rotation = spinAngle;
                 if (attackTimer >= spinTime)
@@ -551,7 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // Normal boss roar.
-                    Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
                 }
             }
 
@@ -590,7 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         npc.netUpdate = true;
 
                         // High pitched boss roar.
-                        Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                     }
                 }
                 else
@@ -705,7 +707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Texture2D eyeTexture = Main.npcTexture[npc.type];
+            Texture2D eyeTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 eyeOrigin = eyeTexture.Size() / new Vector2(1f, Main.npcFrameCount[npc.type]) * 0.5f;
             spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, eyeOrigin, npc.scale, spriteEffects, 0f);
@@ -715,8 +717,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Texture2D pupilStarTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
             Vector2 pupilOrigin = pupilStarTexture.Size() * 0.5f;
 
-            Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.InverseLerp(0f, 8f, gleamTimer, true) * Utils.InverseLerp(GleamTime, GleamTime - 8f, gleamTimer, true); ;
-            Color pupilColor = Color.Red * 0.6f * Utils.InverseLerp(0f, 10f, gleamTimer, true) * Utils.InverseLerp(GleamTime, GleamTime - 10f, gleamTimer, true);
+            Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.GetLerpValue(0f, 8f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 8f, gleamTimer, true); ;
+            Color pupilColor = Color.Red * 0.6f * Utils.GetLerpValue(0f, 10f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 10f, gleamTimer, true);
             spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation, pupilOrigin, pupilScale, SpriteEffects.None, 0f);
             pupilScale = new Vector2(0.7f, 2.7f);
             spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation + MathHelper.PiOver2, pupilOrigin, pupilScale, SpriteEffects.None, 0f);

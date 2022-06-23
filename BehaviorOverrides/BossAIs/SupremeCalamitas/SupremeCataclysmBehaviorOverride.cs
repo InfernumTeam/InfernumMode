@@ -4,6 +4,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -109,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             float distanceFromDestination = npc.Distance(hoverDestination);
             Vector2 closeMoveVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceFromDestination, 24f);
-            npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.0125f, Utils.InverseLerp(360f, 1080f, distanceFromDestination, true));
+            npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.0125f, Utils.GetLerpValue(360f, 1080f, distanceFromDestination, true));
             npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
         }
 
@@ -155,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackSpecificTimer >= projectileFireThreshold)
             {
                 attackSpecificTimer = 0f;
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneHellblastSound"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneHellblastSound"), npc.Center);
 
                 int type = ModContent.ProjectileType<SupremeCataclysmFist>();
                 Vector2 projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 74f;
@@ -246,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (attackSpecificTimer >= projectileFireThreshold)
                 {
                     // Play a firing sound.
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), npc.Center);
+                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), npc.Center);
 
                     // And shoot the projectile serverside.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -305,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                     break;
                 case SCalBrotherAnimationType.AttackAnimation:
-                    float punchInterpolant = Utils.InverseLerp(10f, SupremeCataclysm.PunchCounterLimit * 2f, attackSpecificTimer + (firingFromRight != 0f ? 0f : SupremeCataclysm.PunchCounterLimit), true);
+                    float punchInterpolant = Utils.GetLerpValue(10f, SupremeCataclysm.PunchCounterLimit * 2f, attackSpecificTimer + (firingFromRight != 0f ? 0f : SupremeCataclysm.PunchCounterLimit), true);
                     currentFrame = (int)Math.Round(MathHelper.Lerp(12f, 21f, punchInterpolant));
                     break;
             }

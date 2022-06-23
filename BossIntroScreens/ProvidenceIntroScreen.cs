@@ -9,7 +9,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class ProvidenceIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(_ =>
+        public override TextColorData TextColor => new(_ =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 3f) * 0.5f + 0.5f;
             if (!Main.dayTime)

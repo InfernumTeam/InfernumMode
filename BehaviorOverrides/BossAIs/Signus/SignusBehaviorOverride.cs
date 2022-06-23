@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -65,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (attackDelay < 70f)
             {
                 attackDelay++;
-                npc.Opacity = Utils.InverseLerp(0f, 30f, attackDelay, true);
+                npc.Opacity = Utils.GetLerpValue(0f, 30f, attackDelay, true);
                 return false;
             }
 
@@ -141,7 +143,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     }
 
                     // And fade in.
-                    npc.Opacity = Utils.InverseLerp(fadeInTime / 2f, fadeInTime, attackTimer, true);
+                    npc.Opacity = Utils.GetLerpValue(fadeInTime / 2f, fadeInTime, attackTimer, true);
                     if (attackTimer > fadeInTime)
                     {
                         attackSubstate = 1f;
@@ -152,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
                 // Rise upward prior to charging.
                 case 1:
-                    float riseSpeed = (1f - Utils.InverseLerp(0f, riseTime, attackTimer - 6f, true)) * 15f;
+                    float riseSpeed = (1f - Utils.GetLerpValue(0f, riseTime, attackTimer - 6f, true)) * 15f;
                     npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * riseSpeed, 0.15f);
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.rotation = npc.velocity.X * 0.02f;
@@ -194,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         if (npc.velocity.Length() > 50f)
                             npc.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 50f;
 
-                        npc.Opacity = 1f - Utils.InverseLerp(chargeTime, chargeTime + fadeOutTime, attackTimer, true);
+                        npc.Opacity = 1f - Utils.GetLerpValue(chargeTime, chargeTime + fadeOutTime, attackTimer, true);
                         npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                     }
 
@@ -368,7 +370,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 // Cause the entire screen to melt into black, slash violently in an attempt to kill the target, and then release a bomb that explodes
                 // into kunai after the black screen fade effect is over.
                 case 1:
-                    fadeToBlack = Utils.InverseLerp(0f, telegraphTime, attackTimer, true) * Utils.InverseLerp(telegraphTime + blackTime + 12f, telegraphTime + blackTime, attackTimer, true);
+                    fadeToBlack = Utils.GetLerpValue(0f, telegraphTime, attackTimer, true) * Utils.GetLerpValue(telegraphTime + blackTime + 12f, telegraphTime + blackTime, attackTimer, true);
 
                     // Become invincible once the black screen fade is noticeably strong.
                     npc.dontTakeDamage = fadeToBlack > 0.7f;
@@ -380,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     // Speed up after the initial charge has happened. This does not apply once the black screen fade has concluded.
                     if (attackTimer < telegraphTime + blackTime)
                     {
-                        float chargeSpeed = MathHelper.Lerp(1f, 32f, (float)Math.Pow(Utils.InverseLerp(0f, telegraphTime, attackTimer, true), 2D));
+                        float chargeSpeed = MathHelper.Lerp(1f, 32f, (float)Math.Pow(Utils.GetLerpValue(0f, telegraphTime, attackTimer, true), 2D));
                         npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * chargeSpeed;
                     }
 
@@ -396,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > telegraphTime && attackTimer < telegraphTime + blackTime - 3f && attackTimer % 3f == 2f)
                     {
                         // Play a sound.
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
 
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.
@@ -413,7 +415,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                             npc.netUpdate = true;
                         }
 
-                        Vector2 slashPosition = new Vector2(slashPositionX, slashPositionY);
+                        Vector2 slashPosition = new(slashPositionX, slashPositionY);
                         int slash = Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f);
                         if (Main.projectile.IndexInRange(slash))
                             Main.projectile[slash].ai[0] = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -590,7 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 case 2:
                     if (attackTimer % 8f == 7f && !npc.WithinRange(target.Center, 300f) && attackTimer < 30f)
                     {
-                        Main.PlaySound(SoundID.Item73, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item73, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int i = 0; i < 3; i++)
@@ -619,7 +621,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             {
                 npc.velocity *= 0.95f;
                 npc.rotation = npc.velocity.X * 0.02f;
-                npc.Opacity = Utils.InverseLerp(0f, 35f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(0f, 35f, attackTimer, true);
                 if (attackTimer == 1f)
                     npc.Center = target.Center - Vector2.UnitY * 350f;
                 return;
@@ -632,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % entitySummonRate == entitySummonRate - 1f)
             {
                 Vector2 entitySpawnPosition = npc.Center + Main.rand.NextVector2Circular(250f, 250f);
-                NPC.NewNPC((int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
 
                 entitySummonCounter++;
                 npc.netUpdate = true;
@@ -654,7 +656,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             ref float attackState = ref npc.ai[1];
             float oldAttackState = npc.ai[1];
 
-            WeightedRandom<SignusAttackType> newStatePicker = new WeightedRandom<SignusAttackType>(Main.rand);
+            WeightedRandom<SignusAttackType> newStatePicker = new(Main.rand);
             newStatePicker.Add(SignusAttackType.KunaiDashes);
             newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
             if (!NPC.AnyNPCs(ModContent.NPCType<UnworldlyEntity>()))
@@ -707,11 +709,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 }
                 else
                 {
-                    NPCTexture = Main.npcTexture[npc.type];
+                    NPCTexture = TextureAssets.Npc[npc.type].Value;
                     glowMaskTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusGlow");
                 }
 
-                Vector2 origin = new Vector2(NPCTexture.Width / 2, NPCTexture.Height / frameCount / 2);
+                Vector2 origin = new(NPCTexture.Width / 2, NPCTexture.Height / frameCount / 2);
                 float scale = npc.scale;
                 float rotation = npc.rotation * canDrawAfterimages.ToDirectionInt();
                 float offsetY = npc.gfxOffY;
@@ -759,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             Player target = Main.player[npc.target];
             drawInstance(npc.Center, true, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
 
-            Vector2 cloneDrawPosition = new Vector2(target.Center.X, npc.Center.Y);
+            Vector2 cloneDrawPosition = new(target.Center.X, npc.Center.Y);
             cloneDrawPosition.X += target.Center.X - npc.Center.X;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 

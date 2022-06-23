@@ -19,7 +19,7 @@ namespace InfernumMode.GlobalInstances
             Tile aboveTile = CalamityUtils.ParanoidTileRetrieval(x, y - 1);
 
             // Prevent tiles below invincible tiles from being destroyed. This is like chests in vanilla.
-            return aboveTile.active() && checkTile.type != aboveTile.type && invincibleTiles.Contains(aboveTile.type);
+            return aboveTile.HasTile && checkTile.TileType != aboveTile.TileType && invincibleTiles.Contains(aboveTile.TileType);
         }
 
         public override bool CanExplode(int i, int j, int type)

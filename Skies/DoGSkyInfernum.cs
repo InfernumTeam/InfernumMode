@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,7 +24,7 @@ namespace InfernumMode.Skies
 
         public float BackgroundIntensity;
         public float LightningIntensity;
-        public List<Lightning> LightningBolts = new List<Lightning>();
+        public List<Lightning> LightningBolts = new();
         public static bool CanSkyBeActive
         {
             get
@@ -41,7 +43,7 @@ namespace InfernumMode.Skies
 
             for (int i = 0; i < count; i++)
             {
-                Lightning lightning = new Lightning()
+                Lightning lightning = new()
                 {
                     Lifetime = 30,
                     Depth = Main.rand.NextFloat(1.5f, 10f),
@@ -60,7 +62,7 @@ namespace InfernumMode.Skies
 
             if (playSound && !Main.gamePaused)
             {
-                var lightningSound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThunderStrike"), Main.LocalPlayer.Center);
+                var lightningSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThunderStrike"), Main.LocalPlayer.Center);
                 if (lightningSound != null)
                     lightningSound.Volume *= 0.5f;
             }
@@ -98,15 +100,15 @@ namespace InfernumMode.Skies
                 // Draw lightning in the background based on Main.magicPixel.
                 // It is a long, white vertical strip that exists for some reason.
                 // This lightning effect is achieved by expanding this to fit the entire background and then drawing it as a distinct element.
-                Vector2 scale = new Vector2(Main.screenWidth * 1.1f / Main.magicPixel.Width, Main.screenHeight * 1.1f / Main.magicPixel.Height);
+                Vector2 scale = new(Main.screenWidth * 1.1f / TextureAssets.MagicPixel.Value.Width, Main.screenHeight * 1.1f / TextureAssets.MagicPixel.Value.Height);
                 Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 Color drawColor = Color.White * MathHelper.Lerp(0f, 0.24f, LightningIntensity) * BackgroundIntensity;
 
                 // Draw a grey background as base.
-                spriteBatch.Draw(Main.magicPixel, screenArea, null, OnTileColor(Color.Transparent), 0f, Main.magicPixel.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, OnTileColor(Color.Transparent), 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
 
                 for (int i = 0; i < 2; i++)
-                    spriteBatch.Draw(Main.magicPixel, screenArea, null, drawColor, 0f, Main.magicPixel.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, drawColor, 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
             Texture2D flashTexture = ModContent.GetTexture("Terraria/Misc/VortexSky/Flash");
@@ -115,13 +117,13 @@ namespace InfernumMode.Skies
             // Draw lightning bolts.
             float spaceFade = Math.Min(1f, (Main.screenPosition.Y - 300f) / 300f);
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
-            Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
+            Rectangle rectangle = new(-1000, -1000, 4000, 4000);
 
             LightningBolts.RemoveAll(l => l.Lifetime <= 0);
 
             for (int i = 0; i < LightningBolts.Count; i++)
             {
-                Vector2 boltScale = new Vector2(1f / LightningBolts[i].Depth, 0.9f / LightningBolts[i].Depth);
+                Vector2 boltScale = new(1f / LightningBolts[i].Depth, 0.9f / LightningBolts[i].Depth);
                 Vector2 position = (LightningBolts[i].Position - screenCenter) * boltScale + screenCenter - Main.screenPosition;
                 if (rectangle.Contains((int)position.X, (int)position.Y))
                 {

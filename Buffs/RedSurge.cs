@@ -5,7 +5,7 @@ namespace InfernumMode.Buffs
 {
     public class RedSurge : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Red Surge");
             Description.SetDefault("You cannot move");

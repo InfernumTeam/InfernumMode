@@ -12,24 +12,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 28;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 420;
-            projectile.penetrate = -1;
+            Projectile.width = Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 420;
+            Projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            projectile.velocity.Y = MathHelper.Clamp(projectile.velocity.Y - 0.25f, -20f, 20f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y - 0.25f, -20f, 20f);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<BurningBlood>(), 240);
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }
 }

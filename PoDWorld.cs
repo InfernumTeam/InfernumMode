@@ -10,13 +10,13 @@ using Terraria.GameContent.Generation;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.World.Generation;
 
 using ModInstance = InfernumMode.InfernumMode;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode
 {
-    public class PoDWorld : ModWorld
+    public class PoDWorld : ModSystem
     {
         public static int DraedonAttempts;
         public static int DraedonSuccesses;
@@ -28,19 +28,19 @@ namespace InfernumMode
             set;
         } = Rectangle.Empty;
 
-        public override void Initialize()
+        public override void OnWorldLoad()
         {
             InfernumMode = false;
         }
 
         #region Save
-        public override TagCompound Save()
+        public override void SaveWorldData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
         {
             var downed = new List<string>();
             if (InfernumMode)
                 downed.Add("fuckYouMode");
 
-            TagCompound tag = new TagCompound();
+            TagCompound tag = new();
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
             tag["ProvidenceArenaY"] = ProvidenceArena.Y;
@@ -51,7 +51,7 @@ namespace InfernumMode
         #endregion
 
         #region Load
-        public override void Load(TagCompound tag)
+        public override void LoadWorldData(TagCompound tag)
         {
             var downed = tag.GetList<string>("downed");
             InfernumMode = downed.Contains("fuckYouMode");
@@ -76,7 +76,7 @@ namespace InfernumMode
         #region NetSend
         public override void NetSend(BinaryWriter writer)
         {
-            BitsByte flags = new BitsByte();
+            BitsByte flags = new();
             flags[0] = InfernumMode;
             writer.Write(flags);
             writer.Write(DraedonAttempts);
@@ -95,7 +95,7 @@ namespace InfernumMode
         #endregion
 
         #region Updating
-        public override void PostUpdate()
+        public override void PostUpdateWorld()
         {
             // Disable natural GSS spawns.
             if (ModInstance.CanUseCustomAIs)
@@ -155,8 +155,8 @@ namespace InfernumMode
 
                 int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 840);
 
-                if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.JungleGrass &&
-                    Main.tile[x, y].type != TileID.LihzahrdBrick && Main.tile[x, y].wall != WallID.LihzahrdBrick)
+                if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.JungleGrass &&
+                    Main.tile[x, y].TileType != TileID.LihzahrdBrick && Main.tile[x, y].WallType != WallID.LihzahrdBrick)
                 {
                     success = true;
                     for (int i = 0; i < 4; i++)
@@ -194,8 +194,8 @@ namespace InfernumMode
             {
                 for (int y = top; y < bottom; y++)
                 {
-                    Main.tile[x, y].liquid = 0;
-                    Main.tile[x, y].active(false);
+                    Main.tile[x, y].LiquidAmount = 0;
+                    Main.tile[x, y].HasTile = false;
                 }
             }
 
@@ -203,13 +203,13 @@ namespace InfernumMode
             for (int x = left; x < left + width; x++)
             {
                 int y = bottom - 1;
-                while (!Main.tile[x, y].active())
+                while (!Main.tile[x, y].HasTile)
                 {
-                    Main.tile[x, y].liquid = 0;
-                    Main.tile[x, y].active(true);
-                    Main.tile[x, y].type = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y].slope(0);
-                    Main.tile[x, y].halfBrick(false);
+                    Main.tile[x, y].LiquidAmount = 0;
+                    Main.tile[x, y].HasTile = true;
+                    Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
+                    Main.tile[x, y].Slope = 0;
+                    Main.tile[x, y].IsHalfBlock = false;
 
                     y++;
 
@@ -218,13 +218,13 @@ namespace InfernumMode
                 }
 
                 y = top + 1;
-                while (!Main.tile[x, y].active())
+                while (!Main.tile[x, y].HasTile)
                 {
-                    Main.tile[x, y].liquid = 0;
-                    Main.tile[x, y].active(true);
-                    Main.tile[x, y].type = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y].slope(0);
-                    Main.tile[x, y].halfBrick(false);
+                    Main.tile[x, y].LiquidAmount = 0;
+                    Main.tile[x, y].HasTile = true;
+                    Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
+                    Main.tile[x, y].Slope = 0;
+                    Main.tile[x, y].IsHalfBlock = false;
 
                     y--;
 
@@ -237,17 +237,17 @@ namespace InfernumMode
             for (int y = top; y < bottom + 2; y++)
             {
                 int x = left + width - 1;
-                Main.tile[x, y].liquid = 0;
-                Main.tile[x, y].active(true);
-                Main.tile[x, y].type = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                Main.tile[x, y].slope(0);
-                Main.tile[x, y].halfBrick(false);
+                Main.tile[x, y].LiquidAmount = 0;
+                Main.tile[x, y].HasTile = true;
+                Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
+                Main.tile[x, y].Slope = 0;
+                Main.tile[x, y].IsHalfBlock = false;
             }
 
             // Find the vertical point at which stairs should be placed.
             int stairLeft = left - 1;
             int stairTop = bottom - 1;
-            while (Main.tile[stairLeft, stairTop].liquid > 0 || Main.tile[stairLeft, stairTop].active())
+            while (Main.tile[stairLeft, stairTop].LiquidAmount > 0 || Main.tile[stairLeft, stairTop].HasTile)
                 stairTop--;
 
             // Create stairs until a bottom is reached.
@@ -260,11 +260,11 @@ namespace InfernumMode
 
                 for (int y = -stairHeight; y < 0; y++)
                 {
-                    Main.tile[x, y + bottom].liquid = 0;
-                    Main.tile[x, y + bottom].type = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y + bottom].active(true);
-                    Main.tile[x, y + bottom].slope(0);
-                    Main.tile[x, y + bottom].halfBrick(false);
+                    Main.tile[x, y + bottom].LiquidAmount = 0;
+                    Main.tile[x, y + bottom].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
+                    Main.tile[x, y + bottom].HasTile = true;
+                    Main.tile[x, y + bottom].Slope = 0;
+                    Main.tile[x, y + bottom].IsHalfBlock = false;
                     WorldGen.TileFrame(x, y + bottom);
                 }
             }
@@ -286,7 +286,7 @@ namespace InfernumMode
             for (int x = left - 20; x < Main.maxTilesX; x++)
             {
                 for (int y = top - 15; y < bottom + 8; y++)
-                    Main.tile[x, y].liquid = 0;
+                    Main.tile[x, y].LiquidAmount = 0;
             }
 
             // Create the Providence altar.
@@ -297,13 +297,13 @@ namespace InfernumMode
                 frameY = 0;
                 for (int y = bottom - 3; y < bottom + ProvidenceSummoner.Height - 3; y++)
                 {
-                    Main.tile[x, y].liquid = 0;
-                    Main.tile[x, y].type = provSummonerID;
-                    Main.tile[x, y].frameX = frameX;
-                    Main.tile[x, y].frameY = frameY;
-                    Main.tile[x, y].active(true);
-                    Main.tile[x, y].slope(0);
-                    Main.tile[x, y].halfBrick(false);
+                    Main.tile[x, y].LiquidAmount = 0;
+                    Main.tile[x, y].TileType = provSummonerID;
+                    Main.tile[x, y].TileFrameX = frameX;
+                    Main.tile[x, y].TileFrameY = frameY;
+                    Main.tile[x, y].HasTile = true;
+                    Main.tile[x, y].Slope = 0;
+                    Main.tile[x, y].IsHalfBlock = false;
 
                     frameY += 18;
                 }

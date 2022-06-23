@@ -19,27 +19,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 42;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 30;
+            Projectile.width = Projectile.height = 42;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 30;
         }
 
         public override void AI()
         {
-            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 30f * MathHelper.Pi) * 1.6f;
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
+            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 1.6f;
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 start = projectile.Center - projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
-            Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, projectile.Opacity * 6f + 0.5f);
-            spriteBatch.DrawLineBetter(start, end, Color.Red, (projectile.Opacity * 6f + 0.5f) * 0.5f);
+            Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
+            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, Projectile.Opacity * 6f + 0.5f);
+            spriteBatch.DrawLineBetter(start, end, Color.Red, (Projectile.Opacity * 6f + 0.5f) * 0.5f);
             return false;
         }
 
@@ -50,11 +50,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             int fireDamage = shouldBeBuffed ? 380 : 160;
-            Utilities.NewProjectileBetter(projectile.Center, projectile.velocity, ModContent.ProjectileType<BrimstoneBurst>(), fireDamage, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<BrimstoneBurst>(), fireDamage, 0f);
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

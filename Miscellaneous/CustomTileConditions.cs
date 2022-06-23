@@ -9,12 +9,12 @@ namespace InfernumMode.Miscellaneous
     {
         public class ActiveAndNotActuated : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).nactive();
+            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).HasUnactuatedTile;
         }
 
         public class NotPlatform : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).type];
+            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).TileType];
         }
 
         public class IsSolidOrSolidTop : GenCondition

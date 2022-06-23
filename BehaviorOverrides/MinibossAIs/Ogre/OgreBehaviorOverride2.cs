@@ -21,6 +21,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             npc.frame.Y = (int)Math.Round(npc.localAI[0]);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => OgreBehaviorOverride.DoDrawing(npc, spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => OgreBehaviorOverride.DoDrawing(npc, Main.spriteBatch, lightColor);
     }
 }

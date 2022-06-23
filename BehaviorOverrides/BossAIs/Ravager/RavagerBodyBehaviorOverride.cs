@@ -935,7 +935,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         Vector2 drawPosition = new(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
                         drawPosition.Y -= drawPosition.Y % borderTexture.Height;
                         drawPosition -= Main.screenPosition;
-                        spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                     }
                 }
             }

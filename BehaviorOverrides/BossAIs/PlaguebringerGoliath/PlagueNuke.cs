@@ -58,10 +58,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                 if (DisappearTimer > 360f || NPC.collideX || NPC.collideY)
                 {
-                    if (NPC.collideX || NPC.collideY)
+                    if (Main.netMode != NetmodeID.Server && NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.Find<ModGore>($"Gores/PlagueNuke{i}").Type);
+                            Gore.NewGore(NPC.GetSource_FromAI(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.Find<ModGore>($"Gores/PlagueNuke{i}").Type);
                     }
                     NPC.active = false;
                 }
@@ -150,8 +150,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Color color = NPC.GetAlpha(drawColor);
 
-            spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
             return false;
         }
 

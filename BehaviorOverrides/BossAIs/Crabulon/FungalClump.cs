@@ -6,6 +6,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
     public class FungalClump : ModNPC
@@ -39,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void AI()
         {
             // Die if the main boss is not present.
-            if (!Main.npc.IndexInRange((int)NPC.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>()))
+            if (!Main.npc.IndexInRange((int)NPC.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonNPC>()))
             {
                 NPC.active = false;
                 NPC.netUpdate = true;
@@ -99,8 +101,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Color color = NPC.GetAlpha(drawColor);
-            spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, 0, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
             return false;
         }
 

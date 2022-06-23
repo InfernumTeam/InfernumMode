@@ -66,6 +66,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 74);
+        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
     }
 }

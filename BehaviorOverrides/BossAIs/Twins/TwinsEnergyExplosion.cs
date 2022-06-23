@@ -1,3 +1,4 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             if (Projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
+                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             float pulseCompletionRatio = Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true);
             Vector2 scale = new(1.5f, 1f);
@@ -66,9 +67,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Color pulseColor = OwnerType == NPCID.Spazmatism ? Color.LimeGreen : Color.Red;
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

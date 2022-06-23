@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = telegraphStart + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
 
-            spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, outerTelegraphColor, outerTelegraphScale);
-            spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, innerTelegraphColor, innerTelegraphScale);
+            Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, outerTelegraphColor, outerTelegraphScale);
+            Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, innerTelegraphColor, innerTelegraphScale);
             return false;
         }
 

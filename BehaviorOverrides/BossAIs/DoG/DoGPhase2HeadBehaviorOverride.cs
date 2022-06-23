@@ -1050,14 +1050,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 24f);
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (58f + (float)Math.Sin(jawRotation) * 30f);
-                spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
-                spriteBatch.Draw(jawTextureAntimatter, jawPosition, null, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                Main.spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                Main.spriteBatch.Draw(jawTextureAntimatter, jawPosition, null, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
-            spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(headTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(Color.White) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(headTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(Color.White) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

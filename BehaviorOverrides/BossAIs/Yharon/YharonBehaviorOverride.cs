@@ -1819,7 +1819,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     SpriteEffects spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                     if (changeDirection)
                         spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                    spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor * npc.Opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor * npc.Opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
                 }
             }
             int illusionCount = (int)npc.Infernum().ExtraAI[10];
@@ -1846,14 +1846,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 for (int i = 0; i < 2; i++)
                 {
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
                 }
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
             return false;

@@ -1292,7 +1292,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
                     SpriteEffects direction = (drawOffset.X < 0f) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-                    spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, illusionColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                    Main.spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, illusionColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                 }
             }
 
@@ -1314,7 +1314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 drawPosition += drawOffset;
                 SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-                spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, glowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                Main.spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, glowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             }
         }
 
@@ -1331,7 +1331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float leftBorderOpacity = Utils.GetLerpValue(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
             float rightBorderOpacity = Utils.GetLerpValue(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
 
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             if (leftBorderOpacity > 0f && !dying)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
@@ -1342,9 +1342,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 {
                     float fade = 1f - Math.Abs(i - 40f) / 40f;
                     Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
-                    spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
                 }
-                spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
             }
 
             if (rightBorderOpacity > 0f && !dying)
@@ -1357,19 +1357,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 {
                     float fade = 1f - Math.Abs(i - 40f) / 40f;
                     Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
-                    spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
                 }
-                spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
             }
 
-            spriteBatch.SetBlendState(BlendState.AlphaBlend);
+            Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);
 
             float deathTimer = npc.Infernum().ExtraAI[7];
             if (!dying)
                 ExtraDrawcode(npc, spriteBatch);
             else if (deathTimer > 120f)
             {
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
                 GameShaders.Misc["Infernum:CultistDeath"].UseOpacity((1f - Utils.GetLerpValue(120f, 305f, deathTimer, true)) * 0.8f);
                 GameShaders.Misc["Infernum:CultistDeath"].UseImage1("Images/Misc/Perlin");
                 GameShaders.Misc["Infernum:CultistDeath"].Apply();
@@ -1385,10 +1385,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(baseTexture, npc.Center - Main.screenPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(baseTexture, npc.Center - Main.screenPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             if (deathTimer > 120f)
-                spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

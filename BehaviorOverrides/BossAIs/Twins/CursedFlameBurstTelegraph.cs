@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Utils.DrawLine(spriteBatch, Projectile.Center - Vector2.UnitX * 1600f, Projectile.Center + Vector2.UnitX * 1600f, Color.LimeGreen, Color.LimeGreen, Projectile.Opacity * 1.6f + 0.1f);
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center - Vector2.UnitX * 1600f, Projectile.Center + Vector2.UnitX * 1600f, Color.LimeGreen, Color.LimeGreen, Projectile.Opacity * 1.6f + 0.1f);
             return false;
         }
 

@@ -673,7 +673,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             // Roar right before transitioning back to attacking.
             if (transitionCountdown == 20f)
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
         }
 
         public static void DoPhase3Transition(NPC npc, Player target, float transitionCountdown)
@@ -690,13 +690,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Roar right and turn into a trap plant thing before transitioning back to attacking.
-            if (transitionCountdown == 20f)
+            if (Main.netMode != NetmodeID.Server && transitionCountdown == 20f)
             {
                 Vector2 goreVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.54f) * Main.rand.NextFloat(10f, 16f);
                 for (int i = 378; i <= 380; i++)
-                    Gore.NewGore(new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
+                    Gore.NewGore(npc.GetSource_FromAI(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
 
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
         }
         #endregion Specific Attacks
@@ -811,8 +811,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             Color baseColor = npc.GetAlpha(lightColor);
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
-            spriteBatch.Draw(texture, drawPosition, npc.frame, baseColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(bulbTexture, drawPosition, npc.frame, bulbColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, baseColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(bulbTexture, drawPosition, npc.frame, bulbColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion

@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Color lineColor = Color.Lerp(Color.White, Color.Orange, MathHelper.Lerp(0.15f, 1f, i / 4f));
                 lineColor.A = 0;
 
-                spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 2050f, lineColor, lineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 2050f, lineColor, lineWidth);
             }
             return false;
         }

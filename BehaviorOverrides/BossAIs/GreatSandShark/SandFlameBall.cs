@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             for (int i = 0; i < 3; i++)
             {
                 Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
-                int fuck = Projectile.NewProjectile(Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f);
+                int fuck = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f);
                 Main.projectile[fuck].ai[0] = target.whoAmI;
             }
         }
@@ -75,9 +75,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f;
-                spriteBatch.Draw(texture, drawPosition + drawOffset, frame, Projectile.GetAlpha(new Color(0.84f, 0.19f, 0.87f, 0f)) * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, Projectile.GetAlpha(new Color(0.84f, 0.19f, 0.87f, 0f)) * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

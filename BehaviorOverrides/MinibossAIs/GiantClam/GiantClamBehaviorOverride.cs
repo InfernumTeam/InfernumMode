@@ -192,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
                             if (npc.velocity.Y == 0f)
                             {
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
+                                SoundEngine.PlaySound(GiantClamNPC.SlamSound, npc.Bottom);
                                 slamCount++;
 
                                 if (slamCount < (hardmode ? 6f : 3f))
@@ -309,12 +309,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.Transparent, (i + 1f) / 4f));
                     Vector2 drawOffset = -npc.velocity * i * 0.6f;
-                    spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
     }

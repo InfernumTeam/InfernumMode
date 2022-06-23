@@ -676,7 +676,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                     Vector2 drawPosition = Vector2.Lerp(npc.oldPos[i], npc.oldPos[0], 0.5f);
                     drawPosition += npc.Size * new Vector2(0.5f, 1f) - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     Color afterimageColor = new(127, 0, 255, 0);
-                    spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(afterimageColor), npc.rotation, origin, npc.scale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(afterimageColor), npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
 
@@ -693,12 +693,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             {
                 Color afterimageColor = Color.Lerp(lightColor, light, lightInterpolant);
                 afterimageColor *= 1f - afterimageOpacityFactor;
-                spriteBatch.Draw(texture, baseDrawPosition, frame, afterimageColor, npc.rotation, origin, npc.scale, direction, 0f);
+                Main.spriteBatch.Draw(texture, baseDrawPosition, frame, afterimageColor, npc.rotation, origin, npc.scale, direction, 0f);
             }
-            spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(baseColor), npc.rotation, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(baseColor), npc.rotation, origin, npc.scale, direction, 0f);
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DoDrawing(npc, spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DoDrawing(npc, Main.spriteBatch, lightColor);
     }
 }

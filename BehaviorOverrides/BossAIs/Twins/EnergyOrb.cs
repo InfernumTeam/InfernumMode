@@ -151,9 +151,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 float completionRatio = i / (float)adjustedOldPositions.Count;
                 float scale = NPC.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
-                Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * 0.8f;
+                drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * 0.8f;
                 Vector2 drawPosition = adjustedOldPositions[i] + NPC.Size * 0.5f - Main.screenPosition;
-                spriteBatch.Draw(npcTexture, drawPosition, NPC.frame, drawColor, NPC.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(npcTexture, drawPosition, NPC.frame, drawColor, NPC.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
     public class AstrumDeusBodyBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusBodySpectral>();
+        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusBody>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 

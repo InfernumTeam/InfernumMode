@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -103,15 +104,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                     // Decide what sound to play.
                     if (willShootProjectile)
-                    {
-                        string soundType = "LaserCannon";
-                        SoundEffectInstance sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
-                        if (sound != null)
-                            sound.Volume *= 0.5f;
-                    }
-                    SoundEffectInstance ventSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
-                    if (ventSound != null)
-                        ventSound.Volume *= 0.1f;
+                        SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound with { Volume = 0.5f }, target.Center);
+                    SoundEngine.PlaySound(ThanatosHead.VentSound with { Volume = 0.33f }, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && willShootProjectile)
                     {
@@ -181,9 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (npc.frameCounter > Main.npcFrameCount[npc.type] - 1f)
                 {
                     npc.frameCounter = Main.npcFrameCount[npc.type] - 1f;
-                    SoundEffectInstance ventSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
-                    if (ventSound != null)
-                        ventSound.Volume *= 0.25f;
+                    SoundEngine.PlaySound(ThanatosHead.VentSound with { Volume = 0.5f }, npc.Center);
                 }
                 else if (npc.frameCounter < Main.npcFrameCount[npc.type] - 1f)
                     npc.frameCounter += 0.26f;

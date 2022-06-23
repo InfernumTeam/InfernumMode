@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             float fade = Utils.GetLerpValue(0f, 45f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
             Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
@@ -65,8 +65,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Red);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, Projectile.scale * 4f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, Projectile.scale * 4f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

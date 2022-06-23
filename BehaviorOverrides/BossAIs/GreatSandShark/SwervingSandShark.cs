@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(4, Main.projFrames[Projectile.type], (int)Variant % 4, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            spriteBatch.Draw(texture, drawPosition, frame, Color.White * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

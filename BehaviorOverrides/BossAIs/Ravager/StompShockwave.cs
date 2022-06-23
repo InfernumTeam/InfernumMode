@@ -66,12 +66,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

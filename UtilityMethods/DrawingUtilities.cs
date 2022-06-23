@@ -27,8 +27,8 @@ namespace InfernumMode
         /// <param name="spriteBatch">The sprite batch.</param>
         public static void EnterShaderRegion(this SpriteBatch spriteBatch)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace InfernumMode
         /// <param name="spriteBatch">The sprite batch.</param>
         public static void ExitShaderRegion(this SpriteBatch spriteBatch)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace InfernumMode
         /// <param name="blendState">The blend state to use.</param>
         public static void SetBlendState(this SpriteBatch spriteBatch, BlendState blendState)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, blendState, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, blendState, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace InfernumMode
         /// </summary>
         /// <param name="spriteBatch">The sprite batch.</param>
         /// <param name="blendState">The blend state to use.</param>
-        public static void ResetBlendState(this SpriteBatch spriteBatch) => spriteBatch.SetBlendState(BlendState.AlphaBlend);
+        public static void ResetBlendState(this SpriteBatch spriteBatch) => Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);
 
         /// <summary>
         /// Draws a line significantly more efficiently than <see cref="Utils.DrawLine(SpriteBatch, Vector2, Vector2, Color, Color, float)"/> using just one scaled line texture. Positions are automatically converted to screen coordinates.
@@ -80,7 +80,7 @@ namespace InfernumMode
             float rotation = (end - start).ToRotation();
             Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 
-            spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
         /// <summary>

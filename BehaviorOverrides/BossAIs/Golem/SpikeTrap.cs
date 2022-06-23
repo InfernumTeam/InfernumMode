@@ -1,3 +1,4 @@
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             // Play a sound to accomodate the release of the spear.
             if (Projectile.timeLeft == 595)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SwiftSlice"), Projectile.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound, Projectile.Center);
 
             SpikeReach = 840f;
         }
@@ -69,8 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
                 Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
-                spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
-                spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 origin = rectangle.Size() * 0.5f;
             Color drawColor = Projectile.GetAlpha(lightColor);
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

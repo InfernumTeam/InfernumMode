@@ -8,6 +8,8 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class SupremeCataclysmBehaviorOverride : NPCBehaviorOverride
@@ -156,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackSpecificTimer >= projectileFireThreshold)
             {
                 attackSpecificTimer = 0f;
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneHellblastSound"), npc.Center);
+                SoundEngine.PlaySound(SCalNPC.HellblastSound, npc.Center);
 
                 int type = ModContent.ProjectileType<SupremeCataclysmFist>();
                 Vector2 projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 74f;
@@ -247,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (attackSpecificTimer >= projectileFireThreshold)
                 {
                     // Play a firing sound.
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), npc.Center);
+                    SoundEngine.PlaySound(SCalNPC.BrimstoneShotSound, npc.Center);
 
                     // And shoot the projectile serverside.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

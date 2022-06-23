@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
             if (attackTimer == teleportFadeTime + 25f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer == teleportFadeTime + 10f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -352,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer == teleportFadeTime + 75f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 17f;
                 if (enraged)
@@ -469,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     Main.npc[i].netUpdate = true;
                 }
 
-                SoundEngine.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.ForceRoarPitched, target.Center);
             }
 
             if (attackTimer < (int)(teleportFadeTime * 1.5f) + spinTime)
@@ -586,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             void drawInstance(Vector2 drawPosition, Color color, float scale)
             {
                 drawPosition -= Main.screenPosition;
-                spriteBatch.Draw(texture, drawPosition, frame, color, npc.rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, frame, color, npc.rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
             float cyanAuraStrength = npc.localAI[1];

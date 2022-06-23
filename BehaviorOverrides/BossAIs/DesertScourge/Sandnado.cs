@@ -168,9 +168,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                     afterimageColor.A = (byte)(afterimageColor.A * 0.5f);
                     afterimageColor *= generalOpacity;
-                    spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
                 }
-                spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
             }
             return false;
         }

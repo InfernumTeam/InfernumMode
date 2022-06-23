@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Placeables.Banners;
+using CalamityMod.NPCs.DesertScourge;
 using InfernumMode.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -77,7 +78,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.buffImmune[ModContent.BuffType<Nightwither>()] = false;
             npc.buffImmune[ModContent.BuffType<Plague>()] = false;
             npc.buffImmune[ModContent.BuffType<Shred>()] = false;
-            npc.buffImmune[ModContent.BuffType<WarCleave>()] = false;
             npc.buffImmune[ModContent.BuffType<WhisperingDeath>()] = false;
             npc.behindTiles = true;
             npc.netAlways = true;
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     // Roar.
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(GreatSandSharkNPC.RoarSound, npc.Center);
 
                     npc.netUpdate = true;
                 }
@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (attackTimer >= hoverTime)
                 {
                     // Roar.
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(GreatSandSharkNPC.RoarSound, npc.Center);
 
                     attackTimer = 0f;
                     chargeState = 1f;
@@ -482,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
 
             if (attackTimer == 25f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
 
             // Summon sand sharks.
             if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)
@@ -655,12 +655,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     float afterimageFade = 8f - i;
                     afterimageColor *= afterimageFade / (NPCID.Sets.TrailCacheLength[npc.type] * 1.5f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(averageColor), npc.rotation, origin, npc.scale, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(averageColor), npc.rotation, origin, npc.scale, spriteEffects, 0);
             return false;
         }
     }

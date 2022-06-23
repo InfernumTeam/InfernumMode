@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 float scale = Projectile.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
                 Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * Projectile.Opacity * 0.8f;
                 Vector2 drawPosition = adjustedOldPositions[i] + Projectile.Size * 0.5f - Main.screenPosition;
-                spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

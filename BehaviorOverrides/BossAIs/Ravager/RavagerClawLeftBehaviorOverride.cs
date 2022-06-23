@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreAI(NPC npc) => DoClawAI(npc, true);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawClaw(npc, spriteBatch, lightColor, true);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawClaw(npc, Main.spriteBatch, lightColor, true);
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {
@@ -314,12 +314,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f;
                 Color color = npc.GetAlpha(Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f)));
                 Vector2 screenDrawPosition = drawPosition - Main.screenPosition;
-                spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             Vector2 clawDrawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
     }

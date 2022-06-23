@@ -128,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             for (int i = pillarBodyPiece.Height; i < CurrentHeight + pillarBodyPiece.Height; i += pillarBodyPiece.Height)
             {
                 Vector2 drawPosition = Projectile.Bottom - aimDirection * i - Main.screenPosition;
-                spriteBatch.Draw(pillarBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(pillarBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
         }

@@ -56,7 +56,7 @@ namespace InfernumMode.Particles
                 Color color = CalamityUtils.MulticolorLerp((i / (float)(ringCount - 1f) + Main.GlobalTimeWrappedHourly * 0.7f) % 1f, Colors) * opacityFadeout * 0.45f;
                 float rotation = Rotation * MathHelper.Lerp(0.5f, 1f, i / (float)(ringCount - 1f)) * (i % 2 == 0).ToDirectionInt();
                 Vector2 drawPosition = Position - Main.screenPosition;
-                spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale, 0, 0f);
             }
         }
     }

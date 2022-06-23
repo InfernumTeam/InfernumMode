@@ -68,14 +68,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
+            target.AddBuff(ModContent.BuffType<Dragonfire>(), 600);
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Timer > 60f && Projectile.timeLeft > 60f;
 
         public override bool PreDrawExtras()
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int j = 0; j < 16f; j++)
@@ -84,10 +84,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 offset = angle.ToRotationVector2() * 32f;
                 Color drawColor = Color.White * Projectile.Opacity * 0.08f;
                 drawColor.A = 127;
-                spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
     }

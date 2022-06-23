@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             Vector2 top = Projectile.Center - Vector2.UnitY * 3000f;
             Vector2 bottom = Projectile.Center + Vector2.UnitY * 3000f;
-            spriteBatch.DrawLineBetter(top, bottom, Color.Turquoise, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(top, bottom, Color.Turquoise, Projectile.scale * 4f);
             return false;
         }
 
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (Projectile.WithinRange(closestPlayer.Center, 200f))
                 return;
 
-            int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
+            int shark = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
 
             Main.npc[shark].velocity = Vector2.UnitY * -Projectile.ai[1];
             Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 400;

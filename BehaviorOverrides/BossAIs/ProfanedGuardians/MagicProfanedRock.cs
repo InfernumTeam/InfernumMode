@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             // Disappear if the defender guardian is gone.
-            int defenderGuardianIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianBoss2>());
+            int defenderGuardianIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianDefender>());
             if (defenderGuardianIndex == -1)
             {
                 Projectile.Kill();
@@ -93,10 +93,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float drawOffset = MathHelper.Lerp(16f, 1f, Projectile.Opacity);
                 drawOffset = MathHelper.Lerp(drawOffset, 6f, Utils.GetLerpValue(120f, 135f, GeneralTimer, true));
                 Vector2 drawPosition = baseDrawPosition + (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 0.47f).ToRotationVector2() * drawOffset;
-                spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
 
-            spriteBatch.Draw(texture, baseDrawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
 

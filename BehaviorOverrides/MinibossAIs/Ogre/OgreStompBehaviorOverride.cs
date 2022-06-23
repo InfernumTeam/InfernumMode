@@ -59,10 +59,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                                             dust6.velocity.Y *= Main.rand.NextFloat();
                                         }
                                     }
-                                    if (dustCount > 0 && !Main.rand.NextBool(3))
+                                    if (Main.netMode != NetmodeID.Server && dustCount > 0 && !Main.rand.NextBool(3))
                                     {
                                         float horizontalOffsetFactor = Math.Abs((topLeftPoint.X / 2 + bottomRightPoint.X / 2) - i) / 20f;
-                                        Gore gore = Gore.NewGoreDirect(projectile.position, Vector2.Zero, 61 + Main.rand.Next(3), 1f - lifetimeIncrement * 0.15f + horizontalOffsetFactor * 0.5f);
+                                        Gore gore = Gore.NewGoreDirect(projectile.GetSource_FromAI(), projectile.position, Vector2.Zero, 61 + Main.rand.Next(3), 1f - lifetimeIncrement * 0.15f + horizontalOffsetFactor * 0.5f);
                                         gore.velocity.Y -= 0.1f + lifetimeIncrement * 0.5f + horizontalOffsetFactor * lifetimeIncrement * 1f;
                                         gore.velocity.Y *= Main.rand.NextFloat();
                                         gore.position = new Vector2(i * 16 + 20, j * 16 + 20);

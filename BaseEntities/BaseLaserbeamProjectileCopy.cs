@@ -121,7 +121,7 @@ namespace InfernumMode.BaseEntities
             Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, endFrame);
 
             // Start texture drawing.
-            spriteBatch.Draw(LaserBeginTexture,
+            Main.spriteBatch.Draw(LaserBeginTexture,
                              Projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
@@ -144,7 +144,7 @@ namespace InfernumMode.BaseEntities
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
-                    spriteBatch.Draw(LaserMiddleTexture,
+                    Main.spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
@@ -162,7 +162,7 @@ namespace InfernumMode.BaseEntities
             if (Math.Abs(LaserLength - DetermineLaserLength()) < 30f)
             {
                 Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-                spriteBatch.Draw(LaserEndTexture,
+                Main.spriteBatch.Draw(LaserEndTexture,
                                  laserEndCenter,
                                  endFrameArea,
                                  beamColor,

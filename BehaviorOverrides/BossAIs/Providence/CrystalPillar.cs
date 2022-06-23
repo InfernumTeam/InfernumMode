@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.Miscellaneous;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -77,9 +78,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         new Conditions.IsSolid(),
                         new CustomTileConditions.ActiveAndNotActuated()
                     }), out newBottom);
-                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
                     Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
-                    MaxPillarHeight = (PoDWorld.ProvidenceArena.Bottom - PoDWorld.ProvidenceArena.Top) * 16f;
+                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Bottom - WorldSaveSystem.ProvidenceArena.Top) * 16f;
                 }
                 else
                 {
@@ -88,9 +89,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         new Conditions.IsSolid(),
                         new CustomTileConditions.ActiveAndNotActuated()
                     }), out newBottom);
-                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X - 1, newBottom.Y).halfBrick();
+                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X - 1, newBottom.Y).IsHalfBlock;
                     Projectile.Bottom = newBottom.ToWorldCoordinates(isHalfTile ? 8 : 0, 8);
-                    MaxPillarHeight = (PoDWorld.ProvidenceArena.Right - PoDWorld.ProvidenceArena.Left) * 20f;
+                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Right - WorldSaveSystem.ProvidenceArena.Left) * 20f;
                 }
 
                 CurrentHeight = StartingHeight;
@@ -98,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             // Quickly rise.
-            if (Time >= 60f && Time < 90f)
+            if (Time is >= 60f and < 90f)
             {
                 CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 90f, Time, true));
                 if (Time == 74 || Time % 6 == 0)

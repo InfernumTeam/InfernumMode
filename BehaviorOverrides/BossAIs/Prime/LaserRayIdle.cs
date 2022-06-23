@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -12,13 +13,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     public class LaserRayIdle : BaseLaserbeamProjectile
     {
         public float InitialDirection = -100f;
-        public int OwnerIndex => (int)projectile.ai[1];
+        public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => 260;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamBegin").Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamMid").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamEnd").Value;
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamBegin", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override string Texture => "InfernumMode/ExtraTextures/PrimeBeamBegin";
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
@@ -26,45 +27,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 14;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = (int)Lifetime;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 14;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = (int)Lifetime;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
             writer.Write(InitialDirection);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
             InitialDirection = reader.ReadSingle();
         }
         public override void AttachToSomething()
         {
             if (InitialDirection == -100f)
-                InitialDirection = projectile.velocity.ToRotation();
+                InitialDirection = Projectile.velocity.ToRotation();
 
             if (!Main.npc.IndexInRange(OwnerIndex))
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
-            projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[3]).ToRotationVector2();
-            projectile.Center = Main.npc[OwnerIndex].Center - Vector2.UnitY * 16f + projectile.velocity * 2f;
+            Projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[3]).ToRotationVector2();
+            Projectile.Center = Main.npc[OwnerIndex].Center - Vector2.UnitY * 16f + Projectile.velocity * 2f;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 240);
     }

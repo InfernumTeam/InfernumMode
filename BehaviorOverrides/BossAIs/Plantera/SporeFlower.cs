@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int spore = NPC.NewNPC(npc.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.Spore);
+            int spore = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.Spore);
             if (Main.npc.IndexInRange(spore))
                 Main.npc[spore].velocity = -Vector2.UnitY.RotatedByRandom(0.67f) * Main.rand.NextFloat(3f, 6f);
         }

@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 3f;
                 Vector2 drawPosition = NPC.Center - Main.screenPosition + drawOffset;
-                spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
             }
 
             return false;

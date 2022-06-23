@@ -15,7 +15,7 @@ namespace InfernumMode.Skies
 
         private void UpdatePIndex()
         {
-            int bossType = ModContent.NPCType<AstrumDeusHeadSpectral>();
+            int bossType = ModContent.NPCType<AstrumDeusHead>();
             if (BossIndex >= 0 && Main.npc[BossIndex].active && Main.npc[BossIndex].type == bossType)
                 return;
 

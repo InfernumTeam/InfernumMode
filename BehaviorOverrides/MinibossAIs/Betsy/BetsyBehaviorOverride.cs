@@ -421,13 +421,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 Color afterimageColor = color * (1f - i / 10f) * 0.35f;
                 afterimageColor.A /= 2;
 
-                spriteBatch.Draw(armsTexture, afterimageDrawPosition + armsDrawOffset.RotatedBy(oldRotation), armFrame, afterimageColor, oldRotation, armsOrigin, 1f, direction, 0f);
-                spriteBatch.Draw(npcTexture, afterimageDrawPosition, npc.frame, afterimageColor, oldRotation, npcOrigin, 1f, direction, 0f);
-                spriteBatch.Draw(wingsTexture, afterimageDrawPosition + wingsDrawOffset.RotatedBy(oldRotation), wingsFrame, afterimageColor, oldRotation, wingsOrigin, 1f, direction, 0f);
+                Main.spriteBatch.Draw(armsTexture, afterimageDrawPosition + armsDrawOffset.RotatedBy(oldRotation), armFrame, afterimageColor, oldRotation, armsOrigin, 1f, direction, 0f);
+                Main.spriteBatch.Draw(npcTexture, afterimageDrawPosition, npc.frame, afterimageColor, oldRotation, npcOrigin, 1f, direction, 0f);
+                Main.spriteBatch.Draw(wingsTexture, afterimageDrawPosition + wingsDrawOffset.RotatedBy(oldRotation), wingsFrame, afterimageColor, oldRotation, wingsOrigin, 1f, direction, 0f);
             }
-            spriteBatch.Draw(armsTexture, drawPosition + armsDrawOffset.RotatedBy(npc.rotation), armFrame, color, npc.rotation, armsOrigin, 1f, direction, 0f);
-            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, color, npc.rotation, npcOrigin, 1f, direction, 0f);
-            spriteBatch.Draw(wingsTexture, drawPosition + wingsDrawOffset.RotatedBy(npc.rotation), wingsFrame, color, npc.rotation, wingsOrigin, 1f, direction, 0f);
+            Main.spriteBatch.Draw(armsTexture, drawPosition + armsDrawOffset.RotatedBy(npc.rotation), armFrame, color, npc.rotation, armsOrigin, 1f, direction, 0f);
+            Main.spriteBatch.Draw(npcTexture, drawPosition, npc.frame, color, npc.rotation, npcOrigin, 1f, direction, 0f);
+            Main.spriteBatch.Draw(wingsTexture, drawPosition + wingsDrawOffset.RotatedBy(npc.rotation), wingsFrame, color, npc.rotation, wingsOrigin, 1f, direction, 0f);
             return false;
         }
     }

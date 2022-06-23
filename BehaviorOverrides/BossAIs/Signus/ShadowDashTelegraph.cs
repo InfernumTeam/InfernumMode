@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             Vector2 start = Projectile.Center - AngularOffset.ToRotationVector2() * 2600f;
             Vector2 end = Projectile.Center + AngularOffset.ToRotationVector2() * 5600f;
             float width = Projectile.scale * 5f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkViolet, width);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.DarkViolet, width);
             return false;
         }
 

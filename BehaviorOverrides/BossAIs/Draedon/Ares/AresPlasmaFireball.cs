@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < totalProjectiles; i++)
                 {
                     Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
-                    Projectile.NewProjectile(Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
                 }
             }
 

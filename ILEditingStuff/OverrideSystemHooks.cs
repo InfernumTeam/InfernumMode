@@ -93,16 +93,16 @@ namespace InfernumMode.ILEditingStuff
                 object instance = typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
 
-                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
-                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
+                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, Main.spriteBatch, npc.IsABestiaryIconDummy ? Vector2.Zero : Main.screenPosition, drawColor);
 
                 for (int i = 0; i < arr.Length; i++)
                 {
                     GlobalNPC globalNPC = arr[i];
-                    if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, drawColor))
+                    if (!globalNPC.Instance(npc).PreDraw(npc, Main.spriteBatch, npc.IsABestiaryIconDummy ? Vector2.Zero : Main.screenPosition, drawColor))
                         return false;
                 }
-                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, drawColor);
+                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, npc.IsABestiaryIconDummy ? Vector2.Zero : Main.screenPosition, drawColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }
@@ -125,7 +125,7 @@ namespace InfernumMode.ILEditingStuff
                     npc.GetGlobalNPC<GlobalNPCDrawEffects>().FindFrame(npc, frameHeight);
                     return;
                 }
-                npc.VanillaFindFrame(frameHeight);
+                npc.VanillaFindFrame(frameHeight, npc.isLikeATownNPC, npc.ModNPC?.AnimationType is > 0 ? npc.ModNPC.AnimationType : npc.type);
                 npc.type = type;
                 npc.ModNPC?.FindFrame(frameHeight);
                 object instance = typeof(NPCLoader).GetField("HookFindFrame", Utilities.UniversalBindingFlags).GetValue(null);
@@ -202,21 +202,21 @@ namespace InfernumMode.ILEditingStuff
                 object instance = typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalProjectile[] arr = typeof(ProjectileLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalProjectile[];
                 if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
-                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, spriteBatch, lightColor);
+                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, Main.spriteBatch, lightColor);
                 for (int i = 0; i < arr.Length; i++)
                 {
                     GlobalProjectile globalNPC = arr[i];
-                    if (globalNPC != null &&
-                        globalNPC is CalamityMod.Projectiles.CalamityGlobalProjectile)
+                    if (globalNPC is not null and
+                        CalamityMod.Projectiles.CalamityGlobalProjectile)
                     {
                         continue;
                     }
-                    if (!globalNPC.Instance(projectile).PreDraw(projectile, spriteBatch, lightColor))
+                    if (!globalNPC.Instance(projectile).PreDraw(projectile, ref lightColor))
                     {
                         return false;
                     }
                 }
-                return projectile.ModProjectile == null || projectile.ModProjectile.PreDraw(spriteBatch, lightColor);
+                return projectile.ModProjectile == null || projectile.ModProjectile.PreDraw(ref lightColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }

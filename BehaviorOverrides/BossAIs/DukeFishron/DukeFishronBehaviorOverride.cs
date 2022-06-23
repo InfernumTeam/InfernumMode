@@ -1061,17 +1061,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * drawOffsetFactor;
-                        spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
 
-                spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                 if (hasEyes)
                 {
                     Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[11];
                     eyeColor *= (float)Math.Pow(color.ToVector3().Length() / 1.414f, 0.6);
-                    spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 

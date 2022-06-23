@@ -17,6 +17,7 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using Terraria.WorldBuilding;
 using InfernumMode.Sounds;
 using CalamityMod.Sounds;
+using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -88,9 +89,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Vector2 crystalCenter = npc.Center + new Vector2(8f, 56f);
 
             // Define arena variables.
-            Vector2 arenaTopLeft = PoDWorld.ProvidenceArena.TopLeft() * 16f + new Vector2(68f, 32f);
-            Vector2 arenaBottomRight = PoDWorld.ProvidenceArena.BottomRight() * 16f + new Vector2(8f, 52f);
-            Vector2 arenaCenter = PoDWorld.ProvidenceArena.Center() * 16f + Vector2.One * 8f;
+            Vector2 arenaTopLeft = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(68f, 32f);
+            Vector2 arenaBottomRight = WorldSaveSystem.ProvidenceArena.BottomRight() * 16f + new Vector2(8f, 52f);
+            Vector2 arenaCenter = WorldSaveSystem.ProvidenceArena.Center() * 16f + Vector2.One * 8f;
             Rectangle arenaArea = new((int)arenaTopLeft.X, (int)arenaTopLeft.Y, (int)(arenaBottomRight.X - arenaTopLeft.X), (int)(arenaBottomRight.Y - arenaTopLeft.Y));
 
             // Reset various things every frame. They can be changed later as needed.
@@ -1550,7 +1551,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
 
                 // Draw the wings.
-                DrawProvidenceWings(npc, spriteBatch, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
+                DrawProvidenceWings(npc, Main.spriteBatch, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
 
                 // Draw the crystals. They become more and more rainbow as Providence gets closer to death.
                 // This effect fades away as she burns.

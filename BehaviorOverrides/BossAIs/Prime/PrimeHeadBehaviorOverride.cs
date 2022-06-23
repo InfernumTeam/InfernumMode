@@ -838,7 +838,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 afterimageColor.G = (byte)(afterimageColor.G * (10 - i) / 20);
                 afterimageColor.B = (byte)(afterimageColor.B * (10 - i) / 20);
                 afterimageColor.A = (byte)(afterimageColor.A * (10 - i) / 20);
-                spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             float superchargePower = Utils.GetLerpValue(0f, 30f, npc.Infernum().ExtraAI[1], true);
@@ -854,17 +854,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     Color drawColor = Color.Red * 0.42f;
                     drawColor.A = 0;
 
-                    spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, npc.GetAlpha(drawColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, npc.GetAlpha(drawColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 
             // Draw line telegraphs for the eye attack.
             float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
             if (npc.ai[0] == (int)PrimeAttackType.EyeLaserRays && lineTelegraphInterpolant > 0f)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[2];
                 Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
@@ -877,15 +877,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     Vector2 drawPosition = npc.Center + new Vector2(i * 16f, -8f).RotatedBy(npc.rotation) - Main.screenPosition;
                     Vector2 beamDirection = -(target.Center - (drawPosition + Main.screenPosition)).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
             // Draw line telegraphs for the lightning attack.
             if (npc.ai[0] == (int)PrimeAttackType.LightningSupercharge && lineTelegraphInterpolant > 0f)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[5];
 
@@ -908,12 +908,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset - angularDiscrepancy).ToRotationVector2();
                     Vector2 drawPosition = npc.Center - Vector2.UnitY * 16f + beamDirection * 2f - Main.screenPosition;
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
-            spriteBatch.Draw(eyeGlowTexture, baseDrawPosition, frame, new Color(200, 200, 200, 255), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(eyeGlowTexture, baseDrawPosition, frame, new Color(200, 200, 200, 255), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion Frames and Drawcode

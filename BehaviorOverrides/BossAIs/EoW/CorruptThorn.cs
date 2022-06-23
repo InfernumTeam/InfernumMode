@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 new CustomTileConditions.NotPlatform()
             }), out Point newBottom);
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -116,16 +116,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 float telegraphLineWidth = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 3f;
                 if (telegraphLineWidth > 2f)
                     telegraphLineWidth = 2f;
-                spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Gray, telegraphLineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Gray, telegraphLineWidth);
             }
 
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawVine(spriteBatch, scale, aimDirection, tipTexture, ref tipBottom);
+            DrawVine(Main.spriteBatch, scale, aimDirection, tipTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
-            spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -149,10 +149,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
                     float sideThornRotation = aimDirection.RotatedBy(offsetRotation).ToRotation();
                     Vector2 sideThornPosition = drawPosition + sideThornRotation.ToRotationVector2().RotatedBy(-MathHelper.PiOver2) * 18f;
-                    spriteBatch.Draw(tipTexture, sideThornPosition, null, Projectile.GetAlpha(Color.White), sideThornRotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(tipTexture, sideThornPosition, null, Projectile.GetAlpha(Color.White), sideThornRotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }
 
-                spriteBatch.Draw(thornBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, thornBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(thornBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, thornBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
         }

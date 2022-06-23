@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             for (int i = 0; i < 7; i++)
             {
                 Vector2 drawPosition = NPC.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.1f).ToRotationVector2() * 4f - Main.screenPosition;
-                spriteBatch.Draw(energyTexture, drawPosition, null, drawColor, NPC.rotation, energyTexture.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(energyTexture, drawPosition, null, drawColor, NPC.rotation, energyTexture.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

@@ -226,21 +226,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 npc.velocity *= 0.97f;
 
                 // Go to phase 2 and explode into metal, blood, and gore.
-                if (phase2Timer == (int)(Phase2TransitionTime / 2))
+                if (Main.netMode != NetmodeID.Server && phase2Timer == (int)(Phase2TransitionTime / 2))
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit1, (int)npc.position.X, (int)npc.position.Y);
+                    SoundEngine.PlaySound(SoundID.NPCHit1, npc.Center);
 
                     for (int i = 0; i < 2; i++)
                     {
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 143, 1f);
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 7, 1f);
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 6, 1f);
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 143, 1f);
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 7, 1f);
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 6, 1f);
                     }
 
                     for (int i = 0; i < 20; i++)
                         Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 0, default, 1f);
 
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 }
 
                 chargeFlameTimer = 0f;
@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 if (!Main.npc[i].active)
                     continue;
-                if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
                     continue;
                 if (Main.npc[i].type == npc.type)
                     continue;
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
+                    int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
                     Main.projectile[shield].ai[0] = npc.whoAmI;
                 }
                 Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient && overdriveTimer == 105f)
                         {
-                            int explosion = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                            int explosion = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                             Main.projectile[explosion].ai[0] = npc.type;
 
                             if (npc.type == NPCID.Retinazer)
@@ -451,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
             if (UniversalAttackTimer > chargeDelay)
                 npc.velocity *= 1.007f;
@@ -508,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     npc.netUpdate = true;
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 }
             }
             else if (willCharge)
@@ -600,7 +600,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
 
             if (UniversalAttackTimer >= redirectTime + spinTime + reelbackTime && UniversalAttackTimer < redirectTime + spinTime + reelbackTime + chargeTime)
@@ -672,7 +672,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.noTileCollide = false;
 
                     if (chargingTime == 0f)
-                        SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                     chargingTime++;
                 }
                 else if (chargingTime == 0f)
@@ -1013,7 +1013,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.netUpdate = true;
 
                         // Roar.
-                        SoundEngine.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, Target.Center);
                     }
 
                     // And slow down.
@@ -1033,7 +1033,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 }
                             }
 
-                            SoundEngine.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
+                            SoundEngine.PlaySound(SoundID.Roar, Target.Center);
                             SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, Target.Center);
                         }
 
@@ -1175,7 +1175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                         // Roar and begin carpet bombing.
-                        SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                     }
 
                     if (attackTimer > redirectTime)
@@ -1218,50 +1218,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             if (InPhase2)
             {
-                switch (UniversalStateIndex)
+                CurrentAttackState = UniversalStateIndex switch
                 {
-                    case 0:
-                        CurrentAttackState = TwinsAttackState.ChargeRedirect;
-                        break;
-                    case 1:
-                        CurrentAttackState = TwinsAttackState.DownwardCharge;
-                        break;
-                    case 2:
-                        CurrentAttackState = TwinsAttackState.DownwardCharge;
-                        break;
-                    case 3:
-                        CurrentAttackState = TwinsAttackState.Spin;
-                        break;
-                    case 4:
-                        CurrentAttackState = TwinsAttackState.RedirectingLasersAndFireRain;
-                        break;
-                    case 5:
-                        CurrentAttackState = TwinsAttackState.SwitchCharges;
-                        break;
-                    case 6:
-                        CurrentAttackState = TwinsAttackState.Spin;
-                        break;
-                    case 7:
-                        CurrentAttackState = TwinsAttackState.ChargeRedirect;
-                        break;
-                    case 8:
-                        CurrentAttackState = TwinsAttackState.DownwardCharge;
-                        break;
-                    case 9:
-                        CurrentAttackState = TwinsAttackState.DownwardCharge;
-                        break;
-                    case 10:
-                        CurrentAttackState = TwinsAttackState.SwitchCharges;
-                        break;
-                    case 11:
-                        CurrentAttackState = TwinsAttackState.RedirectingLasersAndFireRain;
-                        break;
-
-                    default:
-                        CurrentAttackState = TwinsAttackState.ChargeRedirect;
-                        break;
-                }
-
+                    0 => TwinsAttackState.ChargeRedirect,
+                    1 => TwinsAttackState.DownwardCharge,
+                    2 => TwinsAttackState.DownwardCharge,
+                    3 => TwinsAttackState.Spin,
+                    4 => TwinsAttackState.RedirectingLasersAndFireRain,
+                    5 => TwinsAttackState.SwitchCharges,
+                    6 => TwinsAttackState.Spin,
+                    7 => TwinsAttackState.ChargeRedirect,
+                    8 => TwinsAttackState.DownwardCharge,
+                    9 => TwinsAttackState.DownwardCharge,
+                    10 => TwinsAttackState.SwitchCharges,
+                    11 => TwinsAttackState.RedirectingLasersAndFireRain,
+                    _ => TwinsAttackState.ChargeRedirect,
+                };
                 if (CombinedLifeRatio < Phase3LifeRatioThreshold && UniversalStateIndex % 4 == 3)
                     CurrentAttackState = TwinsAttackState.RedirectingLasersAndFlameCharge;
             }

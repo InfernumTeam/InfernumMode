@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             void drawInstance(Vector2 drawPosition, Color color, float scale)
             {
                 drawPosition -= Main.screenPosition;
-                spriteBatch.Draw(texture, drawPosition, null, color, npc.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, color, npc.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             if (cyanAuraStrength > 0f)
             {

@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (!Main.npc.IndexInRange((int)OwnerIndex) || !Main.npc[(int)OwnerIndex].active)
                 return false;
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
             DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
@@ -90,9 +90,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             GameShaders.Misc["ForceField"].UseColor(Owner.type == NPCID.Spazmatism ? Color.LimeGreen : Color.Red);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

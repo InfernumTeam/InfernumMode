@@ -74,8 +74,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             colorInner *= 0.85f;
             colorOuter *= 0.7f;
 
-            spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation, origin, scaleOuter, SpriteEffects.None, 0f);
-            spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation, origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation, origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation, origin, scaleInner, SpriteEffects.None, 0f);
             return false;
         }
     }

@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Vector2 start = Projectile.Center;
                 Vector2 end = Projectile.Center + AngularOffset.ToRotationVector2() * 5200f;
                 float width = Projectile.Opacity * 2.75f + 0.25f;
-                spriteBatch.DrawLineBetter(start, end, Color.Fuchsia * Projectile.Opacity, width);
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Fuchsia * Projectile.Opacity, width);
             }
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;

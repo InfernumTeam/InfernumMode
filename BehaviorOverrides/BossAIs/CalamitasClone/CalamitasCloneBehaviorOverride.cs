@@ -917,12 +917,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     Color afterimageColor = Color.Lerp(lightColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Vector2 drawPosition = npc.position + origin - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow").Value;
             Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
@@ -933,11 +933,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     Color afterimageColor = Color.Lerp(afterimageBaseColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion AI

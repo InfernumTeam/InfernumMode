@@ -12,6 +12,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc) => GolemFistLeftBehaviorOverride.DoFistAI(npc, false);
 
-        // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => GolemFistLeftBehaviorOverride.DrawFist(npc, spriteBatch, lightColor, false);
+        // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => GolemFistLeftBehaviorOverride.DrawFist(npc, Main.spriteBatch, lightColor, false);
     }
 }

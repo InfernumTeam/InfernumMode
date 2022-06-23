@@ -229,8 +229,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
                 if (!shouldMoveOnToNextAttack)
                 {
-                    Projectile.NewProjectile(npc.Center + new Vector2(npc.direction * 24f, -40f), Vector2.Zero, ProjectileID.DD2DarkMageRaise, 0, 0f);
-                    DD2Event.RaiseGoblins(npc.Center);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + new Vector2(npc.direction * 24f, -40f), Vector2.Zero, ProjectileID.DD2DarkMageRaise, 0, 0f);
+                    DD2Event.RaiseGoblins(npc, npc.Center);
                 }
             }
 
@@ -323,10 +323,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
 
                 if (Main.netMode != NetmodeID.Server)
-                {
-                    var sound = SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
-                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.6f, 0f, 1f);
-                }
+                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
+
                 for (int i = 0; i < 20; i++)
                 {
                     Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), 267);

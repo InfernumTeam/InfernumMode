@@ -95,14 +95,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
             }
-            if (NPC.life <= 0)
+            if (Main.netMode != NetmodeID.Server && NPC.life <= 0)
             {
                 for (int k = 0; k < 7; k++)
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
                 }
-                Gore.NewGore(NPC.position, NPC.velocity, 6);
-                Gore.NewGore(NPC.position, NPC.velocity, 7);
+                Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 6);
+                Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 7);
             }
         }
     }

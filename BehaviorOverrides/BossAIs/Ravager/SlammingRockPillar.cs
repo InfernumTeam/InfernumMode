@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         for (int i = 0; i < cinderCount; i++)
                         {
                             Vector2 cinderShootVelocity = (MathHelper.TwoPi * i / cinderCount + offsetAngle).ToRotationVector2() * 9f;
-                            Projectile.NewProjectile(Projectile.Center, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
                         }
                     }
 

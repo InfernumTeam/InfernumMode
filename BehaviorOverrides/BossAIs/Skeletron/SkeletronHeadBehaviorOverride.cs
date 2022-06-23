@@ -103,11 +103,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (phaseChangeCountdown == 35f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, target.Center);
                         npc.velocity = -Vector2.UnitY * 4f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (animationTimer == 190f)
             {
                 animationChargeTimer = 70f;
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.GetLerpValue(560f, 1230f, npc.Distance(target.Center), true));
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -348,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             else
             {
                 if (attackTimer % 1050f == 601f)
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 7.75f;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
@@ -443,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             npc.rotation = npc.velocity.X * 0.05f;
 
             if (attackTimer % 160f == 85f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             if (attackTimer >= 305f)
             {
@@ -463,7 +463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             // Roar and charge after enough time has passed.
             if (attackTimer == 50f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             if (attackTimer >= 50f && attackTimer % 45f == 0f)
             {
@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 }
             }
 
-            if (attackTimer > 50f && attackTimer < 270f)
+            if (attackTimer is > 50f and < 270f)
             {
                 float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.25f;
                 if (phase3)
@@ -663,7 +663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade * 0.24f;
                 drawColor.A = 0;
 
-                spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             return true;

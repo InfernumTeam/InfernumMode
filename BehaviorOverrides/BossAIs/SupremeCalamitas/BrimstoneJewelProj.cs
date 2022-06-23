@@ -68,8 +68,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 end = start + Projectile.rotation.ToRotationVector2() * 4000f;
 
             if (Time < ChargeupTime)
-                spriteBatch.DrawLineBetter(start, end, Color.Red * Utils.GetLerpValue(0f, 12f, Time, true), 3f);
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Red * Utils.GetLerpValue(0f, 12f, Time, true), 3f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

@@ -215,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.velocity *= 1.018f;
                 if (npc.soundDelay <= 0)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                     npc.soundDelay = 80;
                 }
             }

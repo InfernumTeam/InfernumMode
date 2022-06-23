@@ -1446,7 +1446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     }
 
                     // Draw the base texture.
-                    spriteBatch.Draw(texture, drawPosition, NPC.frame, duplicateColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, 0, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, duplicateColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, 0, 0f);
                 }
             }
 

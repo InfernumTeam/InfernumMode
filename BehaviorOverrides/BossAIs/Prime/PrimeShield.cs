@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (!Main.npc.IndexInRange((int)OwnerIndex) || !Main.npc[(int)OwnerIndex].active)
                 return false;
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
             DrawData drawData = new(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value,
@@ -73,9 +73,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             GameShaders.Misc["ForceField"].UseColor(Color.Lerp(Color.Orange, Color.Red, 0.84f));
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

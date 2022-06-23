@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 if (phase2 == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
+                    SoundEngine.PlaySound(SoundID.NPCDeath14, npc.Center);
 
                     npc.Calamity().DR = 0f;
                     npc.Calamity().unbreakableDR = false;

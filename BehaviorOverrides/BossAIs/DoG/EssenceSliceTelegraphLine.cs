@@ -49,8 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 offset = Projectile.ai[0].ToRotationVector2() * 4000f;
-            spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.DeepSkyBlue, LineWidth);
-            spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Cyan * 0.6f, LineWidth * 0.5f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.DeepSkyBlue, LineWidth);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Cyan * 0.6f, LineWidth * 0.5f);
             return true;
         }
     }

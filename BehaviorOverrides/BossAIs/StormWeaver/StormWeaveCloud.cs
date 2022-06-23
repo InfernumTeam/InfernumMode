@@ -98,9 +98,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 drawOffset *= MathHelper.Lerp(-1f, 8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.3f) * 0.5f + 0.5f);
 
                 Vector2 afterimageDrawPosition = drawPosition + drawOffset;
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

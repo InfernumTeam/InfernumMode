@@ -75,10 +75,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     fire.alpha = 200;
                 }
             }
-            if (Main.rand.NextBool(5) && Time >= 15f)
+            if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(5) && Time >= 15f)
             {
-                Vector2 vector = Projectile.Center + flameDirection * FireMaxLength * 0.75f + Main.rand.NextVector2Square(-20f, 20f);
-                Gore smoke = Gore.NewGoreDirect(vector, Vector2.Zero, Main.rand.Next(61, 64), 0.5f);
+                Vector2 smokeSpawnPosition = Projectile.Center + flameDirection * FireMaxLength * 0.75f + Main.rand.NextVector2Square(-20f, 20f);
+                Gore smoke = Gore.NewGoreDirect(Projectile.GetSource_FromAI(), smokeSpawnPosition, Vector2.Zero, Main.rand.Next(61, 64), 0.5f);
                 smoke.velocity *= 0.3f;
                 smoke.velocity += flameDirection * 4f;
             }
@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                     Vector2 currentFlameDrawPosition = Vector2.SmoothStep(startOfFlame, endOfFlame, flameDrawInterpolant);
                     Rectangle frame = texture2D5.Frame(1, 7, 0, (int)(flameDrawInterpolant * 7f));
-                    spriteBatch.Draw(texture2D5, currentFlameDrawPosition, frame, flameDrawColor, flameRotation, frame.Size() / 2f, flameScale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture2D5, currentFlameDrawPosition, frame, flameDrawColor, flameRotation, frame.Size() / 2f, flameScale, SpriteEffects.None, 0f);
                 }
             }
             return false;

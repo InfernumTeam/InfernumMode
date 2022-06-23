@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -69,7 +70,7 @@ namespace InfernumMode.ILEditingStuff
                     DrawInfernumModeUI();
             });
 
-            cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
+            cursor.Emit(OpCodes.Call, typeof(WorldSaveSystem).GetProperty("InfernumMode").GetMethod);
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
         }
 

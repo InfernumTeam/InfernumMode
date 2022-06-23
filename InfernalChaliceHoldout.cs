@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -194,10 +195,10 @@ namespace InfernumMode
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * outwardness;
-                    spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, afterimageColor, 0f, origin, Projectile.scale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, afterimageColor, 0f, origin, Projectile.scale, direction, 0f);
                 }
             }
-            spriteBatch.Draw(texture, baseDrawPosition, frame, baseColor, 0f, origin, Projectile.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, baseColor, 0f, origin, Projectile.scale, direction, 0f);
 
             return false;
         }

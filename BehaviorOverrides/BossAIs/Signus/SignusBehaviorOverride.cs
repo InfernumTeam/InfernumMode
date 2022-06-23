@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -398,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > telegraphTime && attackTimer < telegraphTime + blackTime - 3f && attackTimer % 3f == 2f)
                     {
                         // Play a sound.
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
 
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.
@@ -729,14 +730,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
                         afterimageDrawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
                         afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        spriteBatch.Draw(NPCTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
+                        Main.spriteBatch.Draw(NPCTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
                     }
                 }
 
                 Vector2 drawPosition = baseDrawPosition - Main.screenPosition;
                 drawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
                 drawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                spriteBatch.Draw(NPCTexture, drawPosition, new Rectangle?(frame), npc.GetAlpha(lightColor), rotation, origin, scale, direction, 0f);
+                Main.spriteBatch.Draw(NPCTexture, drawPosition, new Rectangle?(frame), npc.GetAlpha(lightColor), rotation, origin, scale, direction, 0f);
 
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.5f);
 
@@ -751,11 +752,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
                         afterimageDrawPosition -= new Vector2(glowMaskTexture.Width, glowMaskTexture.Height / frameCount) * scale / 2f;
                         afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        spriteBatch.Draw(glowMaskTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
+                        Main.spriteBatch.Draw(glowMaskTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
                     }
                 }
 
-                spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
+                Main.spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
             }
 
             Player target = Main.player[npc.target];

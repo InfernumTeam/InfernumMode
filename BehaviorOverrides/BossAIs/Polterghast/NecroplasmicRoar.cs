@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 scale = new Vector2(135f / texture.Height, 1f) * Projectile.scale;
@@ -51,9 +51,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             GameShaders.Misc["Infernum:NecroplasmicRoar"].UseColor(pulseColor);
             GameShaders.Misc["Infernum:NecroplasmicRoar"].Apply();
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Cyan, Projectile.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Cyan, Projectile.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

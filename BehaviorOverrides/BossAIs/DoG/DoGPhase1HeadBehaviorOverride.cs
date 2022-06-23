@@ -249,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 2150f;
-                    portalIndex = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                    portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
 
                     Main.projectile[(int)portalIndex].localAI[0] = 1f;
                     Main.projectile[(int)portalIndex].localAI[1] = DoGPhase2IntroPortalGate.Phase2AnimationTime;
@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
-                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, spriteBatch, lightColor);
+                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, Main.spriteBatch, lightColor);
 
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
@@ -317,14 +317,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + (float)Math.Sin(jawRotation) * 20f));
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + (float)Math.Sin(jawRotation) * 20f);
-                spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                Main.spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
             Rectangle headFrame = headTexture.Frame();
-            spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
 
             Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow").Value;
-            spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

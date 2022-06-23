@@ -57,12 +57,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             while (!Projectile.WithinRange(currentDrawPosition, 36f))
             {
                 Texture2D textureToUse = fuck % 2 == 0 ? body1Texture : body2Texture;
-                spriteBatch.Draw(textureToUse, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, bodyOrigin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(textureToUse, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, bodyOrigin, Projectile.scale, SpriteEffects.None, 0f);
                 currentDrawPosition += (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * body1Texture.Height;
                 fuck++;
             }
 
-            spriteBatch.Draw(tipTexture, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, tipOrigin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tipTexture, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, tipOrigin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

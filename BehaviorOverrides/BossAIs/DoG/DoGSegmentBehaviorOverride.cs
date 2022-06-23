@@ -195,13 +195,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Color c2 = Color.Fuchsia;
                 c1.A = 84;
                 c2.A = 92;
-                spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c1) * antimatterFade * (1f - backTexturePulse1) * 0.84f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse1 * 0.4f), SpriteEffects.None, 0f);
-                spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c2) * antimatterFade * (1f - backTexturePulse2) * 0.6f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse2 * 1.2f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c1) * antimatterFade * (1f - backTexturePulse1) * 0.84f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse1 * 0.4f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c2) * antimatterFade * (1f - backTexturePulse2) * 0.6f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse2 * 1.2f), SpriteEffects.None, 0f);
 
-                spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(glowmaskTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bodyTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
             }
 
@@ -210,8 +210,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = bodyTexture.Size() * 0.5f;
 
-            spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }
@@ -249,13 +249,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Color c2 = Color.Fuchsia;
                 c1.A = 84;
                 c2.A = 92;
-                spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c1) * antimatterFade * (1f - backTexturePulse1) * 0.84f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse1 * 0.4f), SpriteEffects.None, 0f);
-                spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c2) * antimatterFade * (1f - backTexturePulse2) * 0.6f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse2 * 1.2f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c1) * antimatterFade * (1f - backTexturePulse1) * 0.84f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse1 * 0.4f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(c2) * antimatterFade * (1f - backTexturePulse2) * 0.6f, npc.rotation, origin2, npc.scale * (1f + backTexturePulse2 * 1.2f), SpriteEffects.None, 0f);
 
-                spriteBatch.Draw(tailTexture2, drawPosition2, null, npc.GetAlpha(lightColor) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(glowmaskTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tailTexture2, drawPosition2, null, npc.GetAlpha(lightColor) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White) * (1f - antimatterFade), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tailTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture2Antimatter, drawPosition2, null, npc.GetAlpha(Color.White) * antimatterFade, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
             }
 
@@ -264,8 +264,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
 
-            spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

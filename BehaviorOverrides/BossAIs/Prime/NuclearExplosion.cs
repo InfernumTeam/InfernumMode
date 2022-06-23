@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     Vector2 spawnPosition = Projectile.Center + Main.rand.NextVector2Circular(35f, 35f);
                     Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(2.16f) * Main.rand.NextFloat(6f, 29f);
-                    Projectile.NewProjectile(spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
                 }
             }
 
@@ -49,16 +49,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.OrangeRed * Projectile.Opacity * 0.65f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

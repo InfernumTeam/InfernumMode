@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 drawPosition += plantera.SafeDirectionTo(NPC.Center, Vector2.Zero) * moveDistance;
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
                 Rectangle frame = new(0, 0, TextureAssets.Chain27.Value.Width, moveDistance);
-                spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - Main.screenPosition, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - Main.screenPosition, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }

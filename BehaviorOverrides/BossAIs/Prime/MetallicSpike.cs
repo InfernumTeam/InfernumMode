@@ -41,10 +41,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
-                spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

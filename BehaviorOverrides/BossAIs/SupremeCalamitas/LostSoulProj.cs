@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 Color telegraphColor = Color.Red * (float)Math.Sqrt(telegraphInterpolant);
                 float telegraphWidth = CalamityUtils.Convert01To010(telegraphInterpolant) * 3f;
-                spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3600f, telegraphColor, telegraphWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3600f, telegraphColor, telegraphWidth);
             }
 
             float oldScale = Projectile.scale;

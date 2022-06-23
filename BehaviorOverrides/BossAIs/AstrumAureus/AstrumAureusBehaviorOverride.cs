@@ -1046,7 +1046,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 
@@ -1062,12 +1062,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     Color backAfterimageColor = Color.Lerp(new Color(109, 242, 196, 0), new Color(255, 119, 102, 0), colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 
             // Draw the normal texture.
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
 
             // And draw glowmasks (and their afterimages) if not recharging.
             if ((AureusAttackType)(int)npc.ai[0] != AureusAttackType.Recharge && glowmaskTexture != TextureAssets.Npc[npc.type].Value)
@@ -1080,11 +1080,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     {
                         Color afterimageColor = npc.GetAlpha(Color.Lerp(glowmaskColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                        spriteBatch.Draw(glowmaskTexture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(glowmaskTexture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
                     }
                 }
 
-                spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, glowmaskColor, rotation, origin, scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, glowmaskColor, rotation, origin, scale, spriteEffects, 0f);
             }
 
             return false;

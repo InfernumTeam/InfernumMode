@@ -53,13 +53,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 innerAfterimageColor.A = 0;
 
                 Color outerAfterimageColor = Color.Lerp(Color.DarkGray, Color.Black, 0.66f) * Projectile.Opacity * 0.5f;
-                spriteBatch.Draw(shurikenTexture, drawPosition, null, outerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale * 1.085f, SpriteEffects.None, 0f);
-                spriteBatch.Draw(shurikenTexture, drawPosition, null, innerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(shurikenTexture, drawPosition, null, outerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale * 1.085f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(shurikenTexture, drawPosition, null, innerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             Vector2 outlineDrawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(outlineTexture, outlineDrawPosition, null, Color.White * Projectile.Opacity * 0.8f, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale * 1.25f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(shurikenTexture, outlineDrawPosition, null, lightColor * Projectile.Opacity, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(outlineTexture, outlineDrawPosition, null, Color.White * Projectile.Opacity * 0.8f, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale * 1.25f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(shurikenTexture, outlineDrawPosition, null, lightColor * Projectile.Opacity, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

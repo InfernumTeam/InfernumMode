@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             Vector2 start = Projectile.Center;
             Vector2 end = Projectile.Center + Projectile.velocity * 7000f;
-            spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, Projectile.scale * 4f);
             return false;
         }
 

@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                     float scaleFactor = 1f - j / (float)(Projectile.oldPos.Length - 1f);
                     Vector2 drawPosition = Vector2.Lerp(Projectile.oldPos[j], Projectile.oldPos[0], 0.4f) + origin - Main.screenPosition;
                     Color color = Projectile.GetAlpha(new Color(1f, 1f, 1f, 0.5f)) * scaleFactor;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, null, color, orbRotation, origin, Projectile.scale, 0, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, color, orbRotation, origin, Projectile.scale, 0, 0f);
                 }
             }
             return false;

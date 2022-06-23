@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.ILEditingStuff;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -37,11 +38,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
             float arenaFallCompletion = MathHelper.Clamp(InfernumMode.ProvidenceArenaTimer / 120f, 0f, 1f);
-            Vector2 top = PoDWorld.ProvidenceArena.TopLeft() * 16f + new Vector2(8f, 32f);
-            Vector2 bottom = PoDWorld.ProvidenceArena.TopLeft() + Vector2.UnitY * 2f;
+            Vector2 top = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(8f, 32f);
+            Vector2 bottom = WorldSaveSystem.ProvidenceArena.TopLeft() + Vector2.UnitY * 2f;
             for (int i = 0; i < 200; i++)
             {
-                if (CalamityUtils.ParanoidTileRetrieval((int)bottom.X, (int)bottom.Y).active())
+                if (CalamityUtils.ParanoidTileRetrieval((int)bottom.X, (int)bottom.Y).HasTile)
                     break;
                 bottom.Y++;
             }

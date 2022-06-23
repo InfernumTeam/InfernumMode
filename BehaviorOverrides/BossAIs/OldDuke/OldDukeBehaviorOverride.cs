@@ -1000,7 +1000,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(color, afterimageEndColor, rotationalAfterimageFade)) * ((afterimageCount - i) / 15f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
 
                 // Draw eye afterimages.
@@ -1014,7 +1014,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                         afterimageColor *= (afterimageCount - i) / 15f;
 
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                        spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
             }
@@ -1047,7 +1047,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     Color rotationalAfterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade)) * rotationalOffsetFade;
                     Vector2 rotationalDrawPosition = npc.Center - Main.screenPosition;
                     rotationalDrawPosition += (i / (float)rotationalOffsetImageCount * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * rotationalOffsetOutwardness * rotationalOffsetFade;
-                    spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                     Color eyeAfterimageColor = eyeColor;
                     if (!inPhase3)
@@ -1056,16 +1056,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
                     // Draw eye afterimages.
                     if (inPhase2)
-                        spriteBatch.Draw(eyeTexture, rotationalDrawPosition, npc.frame, eyeAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(eyeTexture, rotationalDrawPosition, npc.frame, eyeAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Color phase3Color = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade));
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, npc.frame, inPhase3 ? phase3Color : npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, inPhase3 ? phase3Color : npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             if (inPhase2)
-                spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, inPhase3 ? eyeColor : npc.GetAlpha(eyeColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, inPhase3 ? eyeColor : npc.GetAlpha(eyeColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             return false;
         }

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.World;
@@ -60,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreAI(NPC npc)
         {
             // Use the default AI if SCal and Draedon are not both dead.
-            if (!CalamityWorld.downedExoMechs || !CalamityWorld.downedSCal)
+            if (!DownedBossSystem.downedExoMechs || !DownedBossSystem.downedSCal)
                 return true;
 
             npc.TargetClosest();
@@ -241,7 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                        Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
                     }
                 }
             }
@@ -352,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
 
                     // Release water spears from the tail of the wyrm.
-                    int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
+                    int tail = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmTail>());
                     if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 6f == 5f)
                     {
                         SoundEngine.PlaySound(SoundID.Item66, Main.npc[tail].Center);
@@ -547,7 +548,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.netUpdate = true;
 
                     int explosionDamage = (int)(generalDamageFactor * 900f);
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), tail.Center);
+                    SoundEngine.PlaySound(GaussRifle.FireSound, tail.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(tail.Center, Vector2.Zero, ModContent.ProjectileType<EidolicExplosion>(), explosionDamage, 0f);
                 }

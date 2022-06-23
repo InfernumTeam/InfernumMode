@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (!Main.dedServ)
             {
                 Vector2 dustSpawnPosition = Projectile.Center + Main.rand.NextVector2CircularEdge(30, 30f) * (float)Math.Pow(Projectile.scale, 2f);
-                Dust dust = Dust.NewDustPerfect(dustSpawnPosition, DustID.Fire);
+                Dust dust = Dust.NewDustPerfect(dustSpawnPosition, 6);
                 dust.scale = 0.2f + Projectile.scale;
                 dust.noGravity = true;
                 dust.velocity = Projectile.DirectionFrom(dustSpawnPosition) * 3f;

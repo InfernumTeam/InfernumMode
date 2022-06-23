@@ -458,7 +458,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Release the lasers from eyes.
             if (attackTimer == shootDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = -1; i <= 1; i += 2)
@@ -611,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)

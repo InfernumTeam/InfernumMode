@@ -101,7 +101,7 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == ModContent.NPCType<CalamitasRun3>() && PoDWorld.InfernumMode)
+            if (npc.type == ModContent.NPCType<CalamitasClone>() && PoDWorld.InfernumMode)
             {
                 bool brotherAlive = false;
                 if (CalamityGlobalNPC.cataclysm != -1)
@@ -218,7 +218,7 @@ namespace InfernumMode.GlobalInstances
                     if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))
                     {
                         if (!Main.player[Main.myPlayer].dead && Main.player[Main.myPlayer].active && npc.WithinRange(Main.player[Main.myPlayer].Center, 6400f))
-                            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossZen>(), 2);
+                            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossEffects>(), 2);
                     }
 
                     // Decrement each immune timer if it's greater than 0.
@@ -317,24 +317,6 @@ namespace InfernumMode.GlobalInstances
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
-
-            // Increase GSS yields.
-            if (npc.type == ModContent.NPCType<GreatSandShark>())
-                DropHelper.DropItem(npc, ModContent.ItemType<GrandScale>(), 3);
-
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead").Type)
-            {
-                // Skip the sentinel phase entirely
-                CalamityWorld.DoGSecondStageCountdown = 600;
-
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    var netMessage = InfernumMode.CalamityMod.GetPacket();
-                    netMessage.Write((byte)14);
-                    netMessage.Write(CalamityWorld.DoGSecondStageCountdown);
-                    netMessage.Send();
-                }
-            }
         }
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
@@ -380,7 +362,7 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[32] == 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
                     npc.Infernum().ExtraAI[32] = 1f;
                 }
                 return false;
@@ -393,7 +375,7 @@ namespace InfernumMode.GlobalInstances
                 Main.npc[npc.realLife].netUpdate = true;
             }
 
-            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
             {
                 if (npc.life - realDamage <= 1000)
                 {
@@ -436,8 +418,8 @@ namespace InfernumMode.GlobalInstances
                 {
                     for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
                         Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                    if (Main.npc.IndexInRange(Main.wof))
-                        Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
+                    if (Main.npc.IndexInRange(Main.wofNPCIndex))
+                        Main.npc[Main.wofNPCIndex].StrikeNPC(1550, 0f, 0);
                 }
 
                 npc.life = 1;
@@ -454,7 +436,7 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[20] == 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
                     npc.Infernum().ExtraAI[20] = 1f;
                 }
                 npc.active = true;
@@ -489,14 +471,14 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer))
+            if (npc.type is NPCID.Spazmatism or NPCID.Retinazer)
             {
                 bool otherTwinHasCreatedShield = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (!Main.npc[i].active)
                         continue;
-                    if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                    if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
                         continue;
                     if (Main.npc[i].type == npc.type)
                         continue;
@@ -629,7 +611,7 @@ namespace InfernumMode.GlobalInstances
             if (!PoDWorld.InfernumMode)
                 return;
 
-            if (npc.type == ModContent.NPCType<CrabulonIdle>())
+            if (npc.type == ModContent.NPCType<Crabulon>())
             {
                 target.AddBuff(BuffID.Poisoned, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);

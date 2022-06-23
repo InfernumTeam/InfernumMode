@@ -1050,7 +1050,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         Vector2 fireSpawnPosition = npc.Center + angle.ToRotationVector2() * Main.rand.NextFloat(720f, 900f);
                         Vector2 fireVelocity = (angle - MathHelper.Pi).ToRotationVector2() * (29f + 11f * intensity);
 
-                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Fire, fireVelocity);
+                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6, fireVelocity);
                         fire.scale = 0.9f;
                         fire.fadeIn = 1.15f + intensity * 0.3f;
                         fire.noGravity = true;

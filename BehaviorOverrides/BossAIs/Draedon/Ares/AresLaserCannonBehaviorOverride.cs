@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire lasers.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

@@ -1,3 +1,4 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 // Explode and die after the explosion delay is passed.
                 if (ExistTimer > BuildTime + ExplodeDelay)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), NPC.Center);
+                    SoundEngine.PlaySound(GaussRifle.FireSound, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), 750, 0f);
 

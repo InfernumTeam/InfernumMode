@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             int brotherCount = NPC.CountNPCS(ModContent.NPCType<CalamitasRun>()) + NPC.CountNPCS(ModContent.NPCType<CalamitasRun2>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.Infernum().ExtraAI[7];

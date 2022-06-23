@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
@@ -931,7 +932,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Release the lasers from eyes.
             if (attackTimer == hoverTelegraphTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     freeHead.velocity *= 0.2f;
@@ -1026,7 +1027,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Cast the laser from the core.
             if (attackTimer == laserTelegraphTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int laser = Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f);
@@ -1185,7 +1186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
 
                 otherFist.Center = otherFist.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
             }

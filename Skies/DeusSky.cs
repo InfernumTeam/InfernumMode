@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus;
 using Microsoft.Xna.Framework;
@@ -11,6 +12,16 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class DeusSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player) => NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && !BossRushEvent.BossRushActive;
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", IsSceneEffectActive(player));
+        }
+    }
+
     public class DeusSky : CustomSky
     {
         private struct AstralStar

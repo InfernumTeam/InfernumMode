@@ -55,8 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
+            if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI)
+                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 120);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }

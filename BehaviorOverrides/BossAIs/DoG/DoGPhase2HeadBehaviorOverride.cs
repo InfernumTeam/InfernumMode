@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Center = target.Center - Vector2.UnitY * 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        portalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
                 }
 
                 npc.Opacity = 0f;
@@ -160,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.netUpdate = true;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
 
                     // Reset the special attack portal index to -1.
                     portalIndex = -1f;
@@ -213,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     // Enter a portal before performing a special attack.
                     if (Main.netMode != NetmodeID.MultiplayerClient && specialAttackTimer == specialAttackDelay - specialAttackTransitionPreparationTime)
                     {
-                        portalIndex = Projectile.NewProjectile(npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)portalIndex].localAI[0] = 1f;
                         npc.netUpdate = true;
                     }
@@ -498,11 +498,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (deathTimer == 442f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    var soundInstance = SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
                     if (soundInstance != null)
                         soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
 
@@ -596,7 +596,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool dontChompYet, bool chomping, ref float jawRotation, ref float chompEffectsCountdown, ref float time, ref float flyAcceleration)
         {
             npc.Center = npc.Center.MoveTowards(target.Center, InPhase2 ? 1.8f : 2.4f);
-            bool targetHasDash = target.dash > 0 || target.Calamity().dashMod > 0;
+            bool targetHasDash = target.dash > 0 || target.Calamity().HasCustomDash;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
@@ -715,7 +715,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float laserWallSpeed = 16f;
             if (attackTimer % 75f == 74f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             if (Main.netMode != NetmodeID.Server)
             {
-                var soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), Projectile.Center);
+                var soundInstance = SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, Projectile.Center);
                 if (soundInstance != null)
                     soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
 

@@ -51,12 +51,12 @@ namespace InfernumMode
             }
         }
 
-        internal static void DoGTeleportDenialText(Player player)
+        internal static void DoGTeleportDenialText(Player player, Item item)
         {
             if (!player.chaosState)
             {
-                player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDurationBoss, true);
-                Projectile.NewProjectile(Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
+                player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDuration, true);
+                Projectile.NewProjectile(player.GetSource_ItemUse(item), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
                 string[] possibleEdgyShitToSay = new string[]
                 {
@@ -74,7 +74,7 @@ namespace InfernumMode
             {
                 if (PoDWorld.InfernumMode)
                 {
-                    DoGTeleportDenialText(player);
+                    DoGTeleportDenialText(player, item);
                     return false;
                 }
             }
@@ -84,7 +84,7 @@ namespace InfernumMode
         {
             if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
+                NPC.NewNPC(player.GetSource_ItemUse(item), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
             }
             return base.UseItem(item, player);
         }
@@ -92,7 +92,7 @@ namespace InfernumMode
         public override void RightClick(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<StarterBag>())
-                DropHelper.DropItemCondition(player, ModContent.ItemType<Death2>(), Main.expertMode);
+                DropHelper.DropItemCondition(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<Death2>(), Main.expertMode);
         }
 
         public override void OpenVanillaBag(string context, Player player, int arg)
@@ -104,16 +104,16 @@ namespace InfernumMode
             if (arg == ItemID.EaterOfWorldsBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.DemoniteOre, itemCount);
+                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.EaterOfWorldsBossBag), ItemID.DemoniteOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.ShadowScale, itemCount);
+                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.EaterOfWorldsBossBag), ItemID.ShadowScale, itemCount);
             }
             if (arg == ItemID.BrainOfCthulhuBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.CrimtaneOre, itemCount);
+                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.BrainOfCthulhuBossBag), ItemID.CrimtaneOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.TissueSample, itemCount);
+                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.BrainOfCthulhuBossBag), ItemID.TissueSample, itemCount);
             }
         }
 

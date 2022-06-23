@@ -6,6 +6,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
@@ -487,7 +488,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                         }
                     }
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                 }
 
                 // Accelerate after targeting and enable contact damage.

@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     for (int i = 1; i <= 1; i += 2)
                     {
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
                         fire.velocity = Main.rand.NextVector2Circular(3f, 3f);
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     for (int i = 1; i <= 1; i += 2)
                     {
                         Vector2 fireVelocity = (Time / 6f).ToRotationVector2().RotatedBy(i * MathHelper.PiOver2) * Main.rand.NextFloat(1.7f, 2.2f);
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
                         fire.velocity = fireVelocity;
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -95,12 +95,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             if (!Main.dayTime)
-                texture = ModContent.GetTexture($"{Texture}Night");
+                texture = ModContent.Request<Texture2D>($"{Texture}Night").Value;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor * 1.3f), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor * 1.3f), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

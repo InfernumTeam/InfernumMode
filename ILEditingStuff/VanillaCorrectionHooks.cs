@@ -6,6 +6,7 @@ using MonoMod.Cil;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
@@ -14,7 +15,7 @@ namespace InfernumMode.ILEditingStuff
 {
     public class ReplaceGoresHook : IHookEdit
     {
-        internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        internal static int AlterGores(On.Terraria.Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
                 return Main.maxDust;
@@ -28,12 +29,12 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type == 576)
                 Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore4").Type;
 
-            return orig(Position, Velocity, Type, Scale);
+            return orig(source, Position, Velocity, Type, Scale);
         }
 
-        public void Load() => On.Terraria.Gore.NewGore += AlterGores;
+        public void Load() => On.Terraria.Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += AlterGores;
 
-        public void Unload() => On.Terraria.Gore.NewGore -= AlterGores;
+        public void Unload() => On.Terraria.Gore.NewGore_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
     }
 
     public class AureusPlatformWalkingHook : IHookEdit
@@ -113,7 +114,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Player>>(player =>
             {
-                SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
+                SoundEngine.PlaySound(SoundID.Roar, player.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
                 else

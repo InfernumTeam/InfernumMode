@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int petalDamage = (CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 310 : 140;
+            int petalDamage = (DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 310 : 140;
             for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
             {
                 Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;

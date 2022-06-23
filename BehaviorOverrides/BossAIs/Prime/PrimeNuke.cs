@@ -1,4 +1,5 @@
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -49,14 +50,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             for (int i = 0; i < 4; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * outwardness;
-                spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + drawOffset, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + drawOffset, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), Projectile.Center);
+            SoundEngine.PlaySound(GaussRifle.FireSound, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearExplosion>(), 220, 0f);
         }

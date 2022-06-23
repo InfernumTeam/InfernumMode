@@ -3,11 +3,13 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -77,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f && !BossRushEvent.BossRushActive;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -291,7 +293,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
             {
                 int roseDamage = Main.rand.Next(120, 135);
-                if (CalamityWorld.downedProvidence && ReadyToUseBuffedAI)
+                if (DownedBossSystem.downedProvidence && ReadyToUseBuffedAI)
                     roseDamage = (int)(roseDamage * 1.75);
 
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
@@ -432,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 case 2:
                     if (attackTimer >= burstRate)
                     {
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Release waving skulls.
@@ -674,7 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         }
 
                         IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());
-                        if (Main.netMode != NetmodeID.MultiplayerClient && rays.Count() > 0 && Main.rand.NextBool(2))
+                        if (Main.netMode != NetmodeID.MultiplayerClient && rays.Any() && Main.rand.NextBool(2))
                         {
                             Projectile deathray = rays.First();
                             Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
@@ -806,8 +808,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
             {
                 float circleAngle = 0f;
-                Texture2D vineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine");
-                Texture2D roseTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose");
+                Texture2D vineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine", AssetRequestMode.ImmediateLoad).Value;
+                Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose", AssetRequestMode.ImmediateLoad).Value;
                 Vector2 vineOrigin = vineTexture.Size() * 0.5f;
                 Vector2 roseOrigin = roseTexture.Size() * 0.5f;
 

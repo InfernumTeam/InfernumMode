@@ -246,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Shoot lasers.
                 if (npc.WithinRange(hoverDestination, 200f) && shootTimer >= artemisShootRate)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 laserVelocity = npc.SafeDirectionTo(target.Center) * artemisShootSpeed;
@@ -429,7 +429,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Release lasers.
                 if (canShoot && attackTimer % athenaShootRate == athenaShootRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

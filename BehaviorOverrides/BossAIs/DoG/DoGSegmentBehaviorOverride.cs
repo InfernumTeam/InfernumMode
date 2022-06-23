@@ -90,16 +90,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[10] = 0f;
                             Main.npc[CalamityGlobalNPC.DoGHead].netUpdate = true;
                         }
-
-                        CalamityWorld.DoGSecondStageCountdown = 305;
-
-                        if (Main.netMode == NetmodeID.Server)
-                        {
-                            var netMessage = InfernumMode.CalamityMod.GetPacket();
-                            netMessage.Write((byte)CalamityModMessageType.DoGCountdownSync);
-                            netMessage.Write(CalamityWorld.DoGSecondStageCountdown);
-                            netMessage.Send();
-                        }
                     }
                 }
             }
@@ -191,10 +181,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.scale = 1f;
 
                 float antimatterFade = FadeToAntimatterForm;
-                Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body");
-                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow");
-                Texture2D bodyTexture2Antimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyAntimatter");
-                Texture2D glowmaskTexture2Antimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlowAntimatter");
+                Texture2D bodyTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body").Value;
+                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow").Value;
+                Texture2D bodyTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyAntimatter").Value;
+                Texture2D glowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlowAntimatter").Value;
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
 
@@ -215,8 +205,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            Texture2D bodyTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body");
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
+            Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = bodyTexture.Size() * 0.5f;
 
@@ -245,10 +235,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.scale = 1f;
 
                 float antimatterFade = FadeToAntimatterForm;
-                Texture2D tailTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
-                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow");
-                Texture2D tailTexture2Antimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailAntimatter");
-                Texture2D glowmaskTexture2Antimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlowAntimatter");
+                Texture2D tailTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail").Value;
+                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow").Value;
+                Texture2D tailTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailAntimatter").Value;
+                Texture2D glowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlowAntimatter").Value;
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = tailTexture2.Size() * 0.5f;
 
@@ -269,8 +259,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            Texture2D tailTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail");
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
+            Texture2D tailTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
 

@@ -27,9 +27,9 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
+using CrabulonBoss = CalamityMod.NPCs.Crabulon.Crabulon;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
 using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
@@ -73,14 +73,14 @@ namespace InfernumMode.Balancing
             [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : CalculateMechHP(111000),
             [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
             [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 85515,
-            [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
-            [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
-            [ModContent.NPCType<CalamitasRun2>()] = BossRushEvent.BossRushActive ? 176085 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
+            [ModContent.NPCType<CalamitasClone>()] = BossRushEvent.BossRushActive ? 485000 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
+            [ModContent.NPCType<Cataclysm>()] = BossRushEvent.BossRushActive ? 193380 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
+            [ModContent.NPCType<Catastrophe>()] = BossRushEvent.BossRushActive ? 176085 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
             [ModContent.NPCType<SoulSeeker>()] = BossRushEvent.BossRushActive ? 24000 : 2100,
             [NPCID.Plantera] = BossRushEvent.BossRushActive ? 575576 : 110500,
             [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 116096,
             [ModContent.NPCType<AquaticAberration>()] = BossRushEvent.BossRushActive ? -1 : 900,
-            [ModContent.NPCType<Siren>()] = BossRushEvent.BossRushActive ? 450000 : 71000,
+            [ModContent.NPCType<Anahita>()] = BossRushEvent.BossRushActive ? 450000 : 71000,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
             [ModContent.NPCType<AstrumAureus>()] = BossRushEvent.BossRushActive ? 1230680 : 144074,
             [NPCID.DD2DarkMageT3] = 24500,
@@ -94,9 +94,9 @@ namespace InfernumMode.Balancing
             [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 50000,
             [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 281110 : 61000,
             [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 510000 : 135000,
-            [ModContent.NPCType<ProfanedGuardianBoss>()] = BossRushEvent.BossRushActive ? 620000 : 160000,
-            [ModContent.NPCType<ProfanedGuardianBoss2>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
-            [ModContent.NPCType<ProfanedGuardianBoss3>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
+            [ModContent.NPCType<ProfanedGuardianCommander>()] = BossRushEvent.BossRushActive ? 620000 : 160000,
+            [ModContent.NPCType<ProfanedGuardianDefender>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
+            [ModContent.NPCType<ProfanedGuardianHealer>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 280000,
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 650000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,

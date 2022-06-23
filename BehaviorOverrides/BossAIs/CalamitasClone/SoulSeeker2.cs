@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             NPC.target = calamitas.target;
             NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * RingRadius;
             NPC.Opacity = 1f - calamitas.Opacity;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
 
             float idealRotation = RingAngle;
             if (!Target.WithinRange(calamitas.Center, RingRadius + 60f))

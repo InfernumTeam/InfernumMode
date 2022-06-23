@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         {
             get
             {
-                if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
+                if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
                     return 17f;
                 return 13f;
             }
@@ -95,15 +95,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 180);
+            if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
+                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
+            SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             for (int dust = 0; dust < 6; dust++)
                 Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
         }

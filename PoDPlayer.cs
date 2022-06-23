@@ -73,8 +73,6 @@ namespace InfernumMode
             set => twinsSpecialAttackTypeSelector = value;
         }
 
-        public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
-
         #region Nurse Cheese Death
         public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)
         {
@@ -86,46 +84,6 @@ namespace InfernumMode
             return true;
         }
         #endregion Nurse Cheese Death
-        #region Skies
-        internal static readonly FieldInfo EffectsField = typeof(SkyManager).GetField("_effects", BindingFlags.NonPublic | BindingFlags.Instance);
-        public override void UpdateBiomeVisuals()
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-
-            bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type)].Infernum().ExtraAI[8] > 0f);
-            Player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
-
-            if (!BossRushEvent.BossRushActive)
-            {
-                int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
-                int hiveMind = NPC.FindFirstNPC(hiveMindID);
-                NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
-                bool useHIV = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-                Player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
-
-                bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("AstrumDeusHeadSpectral").Type);
-                Player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
-
-                int oldDukeID = ModContent.NPCType<OldDuke>();
-                int oldDuke = NPC.FindFirstNPC(oldDukeID);
-                NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
-                bool useOD = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
-                Player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
-
-                int perforatorHiveID = ModContent.NPCType<PerforatorHive>();
-                int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
-                NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
-                Player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f);
-
-                bool useDoG = DoGSkyInfernum.CanSkyBeActive;
-                if (useDoG)
-                    SkyManager.Instance.Activate("InfernumMode:DoG", Player.Center);
-                else
-                    SkyManager.Instance.Deactivate("InfernumMode:DoG");
-            }
-        }
-        #endregion
         #region Reset Effects
         public override void ResetEffects()
         {
@@ -196,40 +154,6 @@ namespace InfernumMode
             }
         }
         #endregion
-        #region Drawing
-
-        public static readonly PlayerLayer RedLightningEffect = new PlayerLayer("CalamityMod", "MiscEffectsBack", PlayerLayer.MiscEffectsBack, drawInfo =>
-        {
-            if (drawInfo.shadow != 0f || !drawInfo.drawPlayer.Infernum().RedElectrified)
-                return;
-
-            Texture2D texture2D2 = TextureAssets.GlowMask[25].Value;
-            int frame = drawInfo.drawPlayer.miscCounter / 5;
-            for (int l = 0; l < 2; l++)
-            {
-                frame %= 7;
-                Player player = drawInfo.drawPlayer;
-                SpriteEffects spriteEffects = drawInfo.drawPlayer.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (frame > 1 && frame < 5)
-                {
-                    Color lightningColor = Color.Red;
-                    lightningColor.A = 0;
-
-                    Rectangle frameRectangle = new(0, frame * texture2D2.Height / 7, texture2D2.Width, texture2D2.Height / 7);
-                    Vector2 fuck = new Vector2((int)(drawInfo.position.X - Main.screenPosition.X - (player.bodyFrame.Width / 2) + (player.width / 2)), (int)(drawInfo.position.Y - Main.screenPosition.Y + player.height - player.bodyFrame.Height + 4f)) + player.bodyPosition + player.bodyFrame.Size() * 0.5f;
-                    DrawData lightningEffect = new(texture2D2, fuck, frameRectangle, lightningColor, player.bodyRotation, frameRectangle.Size() * 0.5f, 1f, spriteEffects, 0);
-                    Main.playerDrawData.Add(lightningEffect);
-                }
-                frame += 3;
-            }
-        });
-
-        public override void ModifyDrawLayers(List<PlayerLayer> layers)
-        {
-            layers.Add(RedLightningEffect);
-        }
-
-        #endregion
         #region Screen Shaking
         public override void ModifyScreenPosition()
         {
@@ -244,7 +168,7 @@ namespace InfernumMode
             else
                 return;
 
-            if (CalamityConfig.Instance.DisableScreenShakes)
+            if (!CalamityConfig.Instance.Screenshake)
                 return;
 
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
@@ -253,11 +177,9 @@ namespace InfernumMode
         #region Saving and Loading
         public override void SaveData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
         {
-            TagCompound tag = new();
             ThanatosLaserTypeSelector?.Save(tag);
             AresSpecialAttackTypeSelector?.Save(tag);
             TwinsSpecialAttackTypeSelector?.Save(tag);
-            return tag;
         }
 
         public override void LoadData(TagCompound tag)
@@ -270,7 +192,7 @@ namespace InfernumMode
         #region Misc Effects
         public override void PostUpdateMiscEffects()
         {
-            if (Player.mount.Active && Player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("DesertScourgeHead").Type) && InfernumMode.CanUseCustomAIs)
+            if (Player.mount.Active && Player.mount.Type == MountID.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("DesertScourgeHead").Type) && InfernumMode.CanUseCustomAIs)
             {
                 Player.mount.Dismount(Player);
             }
@@ -284,29 +206,6 @@ namespace InfernumMode
             {
                 CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
                 CalamityWorld.malice = false;
-            }
-
-            if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active &&
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("Signus").Type ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverHead").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverBody").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverTail").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedHead").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedBody").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedTail").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("CeaselessVoid").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy2").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy3").Type)))
-                    {
-                        Main.npc[i].active = false;
-                    }
-                }
-                CalamityWorld.DoGSecondStageCountdown = 599;
             }
 
             if (ShadowflameInferno)
@@ -333,18 +232,6 @@ namespace InfernumMode
                     shadowflame.noGravity = true;
                 }
             }
-        }
-        #endregion
-        #region Fuck
-        public override void UpdateEquips(ref bool wallSpeedBuff, ref bool tileSpeedBuff, ref bool tileRangeBuff)
-        {
-            if (!ApplyEarlySpeedNerfs)
-                return;
-
-            if (Player.armor[0].type == ModContent.ItemType<AuricTeslaCuisses>())
-                Player.moveSpeed -= 0.1f;
-            if (Player.armor[0].type == ModContent.ItemType<AuricTeslaPlumedHelm>())
-                Player.moveSpeed -= 0.15f;
         }
         #endregion
     }

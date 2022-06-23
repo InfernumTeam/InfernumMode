@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
                 spawnPosition.Y -= 1600f;
 
-                bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+                bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
                 int lightningDamage = shouldBeBuffed ? 375 : 160;
                 int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 7f, ModContent.ProjectileType<BrimstoneLightning>(), lightningDamage, 0f);
                 if (Main.projectile.IndexInRange(lightning))

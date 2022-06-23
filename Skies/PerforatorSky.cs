@@ -8,6 +8,22 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class PerforatorScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player)
+        {
+            int perforatorHiveID = ModContent.NPCType<PerforatorHive>();
+            int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
+            NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
+            return perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f;
+        }
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", IsSceneEffectActive(player));
+        }
+    }
+
     public class PerforatorSky : CustomSky
     {
         private bool isActive = false;

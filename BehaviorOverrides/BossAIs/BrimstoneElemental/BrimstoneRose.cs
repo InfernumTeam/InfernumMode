@@ -59,8 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI) || BossRushEvent.BossRushActive)
-                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 180);
+            if ((DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI) || BossRushEvent.BossRushActive)
+                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
@@ -68,15 +68,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void Kill(int timeLeft)
         {
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
+            SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             for (int dust = 0; dust < 5; dust++)
                 Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int petalCount = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 3 : 2;
-                int petalDamage = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 325 : 145;
-                float petalShootSpeed = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 13.5f : 10f;
+                int petalCount = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 3 : 2;
+                int petalDamage = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 325 : 145;
+                float petalShootSpeed = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 13.5f : 10f;
                 if (BossRushEvent.BossRushActive)
                 {
                     petalCount = 3;

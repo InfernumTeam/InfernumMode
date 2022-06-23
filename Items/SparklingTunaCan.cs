@@ -38,7 +38,6 @@ namespace InfernumMode.Items
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<PrismShard>(), 3);
             recipe.AddIngredient(ModContent.ItemType<Navystone>(), 3);
-            recipe.needWater = true;
             recipe.Register();
 
             Recipe recipe1 = Mod.CreateRecipe(Item.type, 3);
@@ -72,7 +71,7 @@ namespace InfernumMode.Items
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center + Vector2.UnitX * player.direction * 300f;
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
+                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
             }
             return true;
         }

@@ -69,12 +69,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.32f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
                 }
             }
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
-                spriteBatch.Draw(texture, drawPosition, frame, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, frame, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

@@ -144,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Select textures to pass to the shader, along with the electricity color.
             GameShaders.Misc["Infernum:ArtemisLaser"].UseColor(Color.Cyan);
             GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 64);
             return false;

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -133,7 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire the nuke.
             if (attackTimer == (int)chargeDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

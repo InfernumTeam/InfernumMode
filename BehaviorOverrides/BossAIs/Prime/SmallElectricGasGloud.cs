@@ -20,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.width = Projectile.height = 80;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.magic = true;
             Projectile.timeLeft = 500;
             Projectile.scale = 1.5f;
             Projectile.hide = true;
@@ -82,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale;
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
 
             return false;
         }

@@ -1,5 +1,7 @@
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -166,10 +168,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             for (int i = 0; i < BodySegmentCount; i++)
             {
                 int newSegment;
-                if (i >= 0 && i < BodySegmentCount - 1f)
-                    newSegment = NPC.NewNPC(npc.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
+                if (i is >= 0 and < (int)(BodySegmentCount - 1f))
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
-                    newSegment = NPC.NewNPC(npc.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
 
                 Main.npc[newSegment].realLife = head.whoAmI;
 
@@ -254,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Release lightning from behind the worm once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = 2;
@@ -391,7 +393,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 45f == 44f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
@@ -486,7 +488,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                     if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
                     {
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                        SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
@@ -552,7 +554,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Periodically release probes.
             if (attackTimer % 75f == 74f && slowdownInterpolant < 0.3f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probe = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
@@ -597,7 +599,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 55f == 54f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 2; i++)

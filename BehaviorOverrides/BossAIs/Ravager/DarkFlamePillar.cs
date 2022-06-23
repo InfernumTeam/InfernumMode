@@ -98,12 +98,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Vector2 start = Projectile.Top;
             Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
             if (Projectile.Opacity < 1f)
-                spriteBatch.DrawLineBetter(start + Projectile.Size * 0.5f, end + Projectile.Size * 0.5f, Color.Cyan * (1f - Projectile.Opacity), Projectile.Opacity * 6f);
+                Main.spriteBatch.DrawLineBetter(start + Projectile.Size * 0.5f, end + Projectile.Size * 0.5f, Color.Cyan * (1f - Projectile.Opacity), Projectile.Opacity * 6f);
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
             GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2")).Value;
+            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
 
             List<Vector2> points = new();

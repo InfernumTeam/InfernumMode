@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.Miscellaneous;
@@ -107,9 +109,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 DoMovement_IdleHoverMovement(npc, target);
             else
             {
-                Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-                if (calamityModMusic != null)
-                    npc.ModNPC.Music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/AquaticScourge");
+                if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/AquaticScourge");
                 else
                     npc.ModNPC.Music = MusicID.Boss2;
                 float wrappedTime = generalTimer % 1040f;
@@ -330,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(10f, 50f, attackTimer, true));
 
             if (attackTimer == 75f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MaulerRoar"), npc.Center);
+                SoundEngine.PlaySound(Mauler.RoarSound, npc.Center);
 
             if (attackTimer % summonRate == summonRate - 1f)
             {
@@ -409,7 +410,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 if (roarSoundCountdown <= 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), npc.Center);
+                    SoundEngine.PlaySound(DesertScourgeHead.RoarSound, npc.Center);
                     roarSoundCountdown = 45f;
                 }
                 npc.velocity *= 1.031f;

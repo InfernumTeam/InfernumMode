@@ -56,7 +56,7 @@ namespace InfernumMode.Tiles
             int left = i - tile.TileFrameX / 18;
             int top = j - tile.TileFrameY / 18;
 
-            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCoreUnlimited>()))
+            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCore>()))
                 return true;
 
             if (NPC.AnyNPCs(ModContent.NPCType<Providence>()) || BossRushEvent.BossRushActive)
@@ -69,21 +69,21 @@ namespace InfernumMode.Tiles
             ritualSpawnPosition += new Vector2(-10f, -24f);
 
             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
-            Projectile.NewProjectile(ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ProvidenceSummonerProjectile>(), 0, 0f, Main.myPlayer);
+            Projectile.NewProjectile(new EntitySource_WorldEvent(), ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ProvidenceSummonerProjectile>(), 0, 0f, Main.myPlayer);
 
             return true;
         }
 
         public override void MouseOver(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCore>();
             Main.LocalPlayer.noThrow = 2;
             Main.LocalPlayer.cursorItemIconEnabled = true;
         }
 
         public override void MouseOverFar(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCore>();
             Main.LocalPlayer.noThrow = 2;
             Main.LocalPlayer.cursorItemIconEnabled = true;
         }

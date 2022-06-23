@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
-            GameShaders.Misc["CalamityMod:Flame"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
 
             float oldGlobalTime = Main.GlobalTimeWrappedHourly;
             Main.GlobalTimeWrappedHourly %= 1f;

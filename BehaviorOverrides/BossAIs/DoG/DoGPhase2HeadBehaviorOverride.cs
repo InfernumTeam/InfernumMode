@@ -1,9 +1,12 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.Skies;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -241,9 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         // Laugh if this is the first time DoG has performed a special attack in the fight.
                         if (hasPerformedSpecialAttackBefore == 0f && specialAttackTimer == specialAttackDelay - specialAttackTransitionPreparationTime)
                         {
-                            var soundInstance = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), target.Center);
-                            if (soundInstance != null)
-                                soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 3f, 0f, 1f);
+                            SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound with { Volume = 3f }, target.Center);
                             hasPerformedSpecialAttackBefore = 1f;
                         }
 
@@ -502,18 +503,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var soundInstance = SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                    if (soundInstance != null)
-                        soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
+                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound with { Volume = 1.6f }, npc.Center);
 
                     for (int i = 0; i < 3; i++)
                     {
-                        soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
-                        if (soundInstance != null)
-                        {
-                            soundInstance.Pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
-                            soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.8f, 0f, 1f);
-                        }
+                        float pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
+                        SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = pitch, Volume = 1.8f }, npc.Center);
                     }
                 }
             }
@@ -659,11 +654,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     speed -= 0.08f;
 
                 // Speed up if close to aiming at the target, but not too close (within a margin of 32-60 degrees).
-                if (targetDirectionAngleDiscrepancy > 32f && targetDirectionAngleDiscrepancy < 60f)
+                if (targetDirectionAngleDiscrepancy is > 32f and < 60f)
                     speed += 0.24f;
 
                 // Slow down if farther to aiming at the target, for the sake of allowing DoG to get back on track again (within a margin of 60-135 degrees).
-                if (targetDirectionAngleDiscrepancy > 60f && targetDirectionAngleDiscrepancy < 135f)
+                if (targetDirectionAngleDiscrepancy is > 60f and < 135f)
                     speed -= 0.1f;
 
                 // Clamp the speed.
@@ -684,7 +679,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     // Chomp at the player if they're close enough.
                     if (distanceFromBaseDestination < 112f && chompEffectsCountdown == 0f)
                     {
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
                         chompEffectsCountdown = 18f;
                     }
                 }
@@ -700,7 +695,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (chompEffectsCountdown == 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
                     chompEffectsCountdown = 26f;
                 }
             }
@@ -769,7 +764,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     Vector2 spawnOffset = (spawnOffsetAngle + MathHelper.TwoPi * i / 6f).ToRotationVector2() * radius;
                     Vector2 spawnPosition = target.Center + spawnOffset;
-                    Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
                 }
             }
         }
@@ -840,7 +835,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 portalIndex = -1f;
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                chargeGatePortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                 Main.projectile[(int)chargeGatePortalIndex].ai[1] = portalTelegraphTime;
                 npc.netUpdate = true;
             }
@@ -879,12 +874,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (!target.dead)
                     {
                         Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                        portalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)portalIndex].localAI[0] = 1f;
                         Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
                     }
                 }
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
+                SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
             }
             if (wrappedAttackTimer > portalTelegraphTime)
             {
@@ -926,7 +921,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     Vector2 portalSpawnPosition = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 450f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        specialAttackPortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        specialAttackPortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)specialAttackPortalIndex].ai[1] = (int)(SpecialAttackPortalSnapDelay * 1.25f);
                     }
 
@@ -943,7 +938,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     if (specialAttackPortalIndex >= 0f)
                     {
-                        SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
+                        SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
 
                         npc.Center = Main.projectile[(int)specialAttackPortalIndex].Center;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * 45f;

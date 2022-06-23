@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.World;

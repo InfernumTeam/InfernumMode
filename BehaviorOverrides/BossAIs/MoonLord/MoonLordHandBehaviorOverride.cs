@@ -187,14 +187,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer == waveTime + 16f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
             {
                 if (Main.netMode != NetmodeID.Server)
-                {
-                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
-                    if (sound != null)
-                    {
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
-                        sound.Pitch = -0.5f;
-                    }
-                }
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.5f }, target.Center);
 
                 foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
                 {
@@ -377,7 +370,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 shoulderOffset = new(220f, -60f);
-            Texture2D armTexture = Main.extraTexture[15];
+            Texture2D armTexture = TextureAssets.Extra[15].Value;
             Vector2 coreCenter = Main.npc[(int)npc.ai[3]].Center;
             Point centerTileCoords = npc.Center.ToTileCoordinates();
             Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
@@ -387,13 +380,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (!isLeftHand)
                 handOrigin.X = texture.Width - handOrigin.X;
 
-            Texture2D scleraTexture = Main.extraTexture[17];
-            Texture2D pupilTexture = Main.extraTexture[19];
+            Texture2D scleraTexture = TextureAssets.Extra[17].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
             Vector2 scleraFrame = new(26f, 42f);
             if (!isLeftHand)
                 scleraFrame.X = scleraTexture.Width - scleraFrame.X;
 
-            Texture2D exposedEyeTexture = Main.extraTexture[26];
+            Texture2D exposedEyeTexture = TextureAssets.Extra[26].Value;
             Rectangle exposedEyeFrame = exposedEyeTexture.Frame(1, 1, 0, 0);
             exposedEyeFrame.Height /= 4;
             Vector2 shoulderCenter = coreCenter + shoulderOffset * directionThing;

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -294,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Create explosions with pillar colors.
             if (canMakeExplosion)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
@@ -314,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (transitionTimer == 15f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
 
                 // Fade away.
                 npc.Opacity = Utils.GetLerpValue(35f, 15f, transitionTimer, true);
@@ -338,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 // Create a laugh sound effect.
                 if (transitionTimer == TransitionAnimationTime + 5f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
 
                 if (phaseState >= TransitionAnimationTime)
                     frameType = (int)CultistFrameState.Laugh;
@@ -378,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (attackTimer == absorbEffectTime + hoverTime + 15f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
                 if (attackTimer > absorbEffectTime + hoverTime + 20f)
                 {
                     // Fade out.
@@ -560,7 +562,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         fire.scale = 1.5f;
                         fire.noGravity = true;
                     }
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
+                    SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -586,7 +588,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sount prior to releasing red lightning.
             if (phase2 && attackTimer == attackLength - 275f)
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 91);
+                SoundEngine.PlaySound(SoundID.Zombie91, npc.Center);
 
             // Hover and fly above the player.
             if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
@@ -898,7 +900,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sound before fading out.
             if (attackTimer == 15f)
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
+                SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
             if (attackTimer <= 30f)
             {
                 npc.Opacity = Utils.GetLerpValue(30f, 15f, attackTimer, true);
@@ -958,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create the actual ritual.
-                ritualIndex = Projectile.NewProjectile(ritualCenter, Vector2.Zero, ModContent.ProjectileType<Ritual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                ritualIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), ritualCenter, Vector2.Zero, ModContent.ProjectileType<Ritual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
 
                 // Prepare to fade back in.
                 fadeCountdown = 18f;
@@ -991,7 +993,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer == waitDelay)
             {
                 // Create a laugh sound effect.
-                SoundEngine.PlaySound(SoundID.Zombie, target.Center, 105);
+                SoundEngine.PlaySound(SoundID.Zombie105, target.Center);
 
                 frameType = (int)CultistFrameState.Laugh;
 
@@ -1162,14 +1164,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 6; i++)
             {
-                int laser = Projectile.NewProjectile(start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
+                int laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
                 Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
                 Main.projectile[laser].timeLeft -= i * 2;
 
                 if (extraUpdates > 0)
                     Main.projectile[laser].extraUpdates = extraUpdates;
 
-                laser = Projectile.NewProjectile(end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
+                laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
                 Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
                 Main.projectile[laser].timeLeft -= i * 2;
 
@@ -1369,7 +1371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 spriteBatch.EnterShaderRegion();
                 GameShaders.Misc["Infernum:CultistDeath"].UseOpacity((1f - Utils.GetLerpValue(120f, 305f, deathTimer, true)) * 0.8f);
-                GameShaders.Misc["Infernum:CultistDeath"].UseImage("Images/Misc/Perlin");
+                GameShaders.Misc["Infernum:CultistDeath"].UseImage1("Images/Misc/Perlin");
                 GameShaders.Misc["Infernum:CultistDeath"].Apply();
             }
 

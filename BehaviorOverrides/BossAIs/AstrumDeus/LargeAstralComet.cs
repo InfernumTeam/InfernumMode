@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, (int)Projectile.position.X, (int)Projectile.position.Y, 103, 1f, 0f);
+            SoundEngine.PlaySound(SoundID.Zombie103, Projectile.Center);
 
             Projectile.position = Projectile.Center;
             Projectile.width = Projectile.height = 96;

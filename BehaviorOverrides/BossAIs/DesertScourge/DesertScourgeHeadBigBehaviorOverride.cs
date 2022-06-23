@@ -322,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                     // Roar as a telegraph.
                     if (attackTimer == 85f)
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                        SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
 
                     // Slam downward.
                     if (attackTimer > 110f)

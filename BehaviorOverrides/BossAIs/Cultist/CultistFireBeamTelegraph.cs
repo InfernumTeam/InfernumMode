@@ -44,10 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            Utils.DrawLine(spriteBatch, Projectile.Center, Projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, Projectile.scale);
-            spriteBatch.ResetBlendState();
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center, Projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, Projectile.scale);
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, Target.Center, 104);
+            SoundEngine.PlaySound(SoundID.Zombie104, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

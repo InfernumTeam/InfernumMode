@@ -52,10 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < MaxLength; i++)
                     {
                         int lol;
-                        if (i >= 0 && i < MinLength)
-                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), NPC.whoAmI);
+                        if (i is >= 0 and < MinLength)
+                            lol = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), NPC.whoAmI);
                         else
-                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), NPC.whoAmI);
+                            lol = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), NPC.whoAmI);
 
                         Main.npc[lol].realLife = NPC.whoAmI;
                         Main.npc[lol].ai[2] = NPC.whoAmI;
@@ -104,8 +104,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 for (int k = 0; k < 10; k++)
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
-
-                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("Gores/AquaticScourgeGores/AquaticSeekerHead").Type, 1f);
             }
         }
 

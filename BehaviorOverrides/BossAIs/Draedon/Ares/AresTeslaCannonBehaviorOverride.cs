@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
@@ -165,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire orbs.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBoltSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

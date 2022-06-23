@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();

@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -61,18 +61,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Black portal.
             Color color = Color.Lerp(baseColor, Color.Black, 0.55f) * Projectile.Opacity * 1.8f;
-            spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(portalTexture, drawPosition, null, color, -Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, -Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
 
             // Cyan portal.
             color = Color.Lerp(baseColor, Color.Cyan, 0.55f) * Projectile.Opacity * 1.6f;
-            spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * 0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * 0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
 
             // Magenta portal.
             color = Color.Lerp(baseColor, Color.Fuchsia, 0.55f) * Projectile.Opacity * 1.6f;
-            spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * -0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * -0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
     }

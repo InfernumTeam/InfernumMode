@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using InfernumMode.OverridingSystem;
@@ -148,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire plasma.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

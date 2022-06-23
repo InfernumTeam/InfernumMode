@@ -96,16 +96,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     // Rise upward and create an explosion sound.
                     if (finalPhaseTransitionTimer == 45f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                        var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                        if (explosionSound != null)
-                        {
-                            CalamityUtils.SafeVolumeChange(ref explosionSound, 2.2f);
-                            explosionSound.Pitch = -0.4f;
-                        }
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 2.2f, Pitch = -0.4f }, npc.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
 
                         npc.velocity = -Vector2.UnitY * 12f;
                         npc.netUpdate = true;
@@ -1123,16 +1118,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Rise upward and create an explosion sound.
                 if (attackTimer == moveDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                    var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                    if (explosionSound != null)
-                    {
-                        CalamityUtils.SafeVolumeChange(ref explosionSound, 2.2f);
-                        explosionSound.Pitch = -0.4f;
-                    }
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 2.2f, Pitch = -0.4f }, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
 
                     npc.velocity = -Vector2.UnitY * 12f;
                     npc.netUpdate = true;
@@ -1202,24 +1192,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int ichorBlastAttackType = inPhase3 ? (int)PerforatorHiveAttackState.IchorRain : (int)(int)PerforatorHiveAttackState.IchorBlasts;
             int ichorFromAboveAttackType = inPhase4 ? (int)PerforatorHiveAttackState.IchorFountainCharge : (int)(int)PerforatorHiveAttackState.DiagonalBloodCharge;
 
-            switch ((PerforatorHiveAttackState)npc.ai[0])
+            npc.ai[0] = (PerforatorHiveAttackState)npc.ai[0] switch
             {
-                case PerforatorHiveAttackState.HorizontalCrimeraSpawnCharge:
-                case PerforatorHiveAttackState.CrimeraWalls:
-                    npc.ai[0] = ichorBlastAttackType;
-                    break;
-                case PerforatorHiveAttackState.IchorBlasts:
-                case PerforatorHiveAttackState.IchorRain:
-                    npc.ai[0] = (int)PerforatorHiveAttackState.IchorSpinDash;
-                    break;
-                case PerforatorHiveAttackState.IchorSpinDash:
-                    npc.ai[0] = ichorFromAboveAttackType;
-                    break;
-                default:
-                    npc.ai[0] = crimeraAttackType;
-                    break;
-            }
-
+                PerforatorHiveAttackState.HorizontalCrimeraSpawnCharge or PerforatorHiveAttackState.CrimeraWalls => ichorBlastAttackType,
+                PerforatorHiveAttackState.IchorBlasts or PerforatorHiveAttackState.IchorRain => (int)PerforatorHiveAttackState.IchorSpinDash,
+                PerforatorHiveAttackState.IchorSpinDash => ichorFromAboveAttackType,
+                _ => crimeraAttackType,
+            };
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

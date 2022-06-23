@@ -31,7 +31,7 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Red.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Orange.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());

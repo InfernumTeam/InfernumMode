@@ -150,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, GameShaders.Misc["Infernum:AresLightningArc"]);
 
-            GameShaders.Misc["Infernum:AresLightningArc"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:AresLightningArc"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["Infernum:AresLightningArc"].Apply();
 
             LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 150);

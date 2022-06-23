@@ -66,7 +66,7 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCID.KingSlime, new PierceResistBalancingRule(0.67f)),
 
                 // Crabulon.
-                new NPCBalancingChange(NPCType<CrabulonIdle>(), Do(new ProjectileResistBalancingRule(0.785f, ProjectileType<SeafoamBubble>()))),
+                new NPCBalancingChange(NPCType<Crabulon>(), Do(new ProjectileResistBalancingRule(0.785f, ProjectileType<SeafoamBubble>()))),
 
                 // Eater of Worlds.
                 new NPCBalancingChange(NPCID.EaterofWorldsBody, Do(eowIsSplitRequirement, new PierceResistBalancingRule(0.45f))),

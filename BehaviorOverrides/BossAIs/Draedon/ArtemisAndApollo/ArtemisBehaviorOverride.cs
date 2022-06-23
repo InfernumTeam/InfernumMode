@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
-            if (apolloAttackType != TwinsAttackType.LaserRayScarletBursts && apolloAttackType != TwinsAttackType.PlasmaCharges)
+            if (apolloAttackType is not TwinsAttackType.LaserRayScarletBursts and not TwinsAttackType.PlasmaCharges)
             {
                 attackState = (int)apollo.ai[0];
                 attackTimer = apollo.ai[1];
@@ -247,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Artemis>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak")).Value;
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
             int numAfterimages = npc.ModNPC<Artemis>().ChargeFlash > 0f ? 0 : 5;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

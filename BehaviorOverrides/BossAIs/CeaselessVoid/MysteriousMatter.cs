@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
             float scale = Projectile.scale;
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
 

@@ -4,7 +4,11 @@ namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
+        public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/AresTeslaShot");
+
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
+
+        public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Sounds/Custom/DoGLaugh");
 
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Sounds/Custom/ExoMechFinalPhaseChargeup");
 
@@ -16,9 +20,13 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
+        public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
+
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom//PlagueSounds/PBGNukeWarning");
+
+        public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/PolterghastDeath");
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
 

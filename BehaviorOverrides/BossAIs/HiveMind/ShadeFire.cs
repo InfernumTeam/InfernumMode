@@ -17,7 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Projectile.height = 6;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            Projectile.ranged = true;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 3;
             Projectile.timeLeft = 80;

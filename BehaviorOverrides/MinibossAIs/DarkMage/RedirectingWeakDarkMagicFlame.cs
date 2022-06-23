@@ -103,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 TrailDrawer = new PrimitiveTrailCopy(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak")).Value;
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             Color color = Projectile.GetAlpha(Color.Lerp(Color.Violet, new Color(1f, 1f, 1f, 1f), Projectile.identity / 5f * 0.6f));
 
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 30);
-            spriteBatch.Draw(texture, drawPosition, frame, color, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, color, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

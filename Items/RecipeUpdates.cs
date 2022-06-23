@@ -20,7 +20,7 @@ namespace InfernumMode.Items
         {
             Main.recipe.Where(x => x.createItem.type == itemType).ToList().ForEach(s =>
             {
-                for (int i = 0; i < s.requiredItem.Length; i++)
+                for (int i = 0; i < s.requiredItem.Count; i++)
                 {
                     if (s.requiredItem[i].type == ingredientType)
                         s.requiredItem[i] = new Item();
@@ -36,7 +36,7 @@ namespace InfernumMode.Items
         internal static void IncreaseBossSummonerYields()
         {
             // Remove ingredients from boss summoners that require the boss be defeated.
-            RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<TrueShadowScale>());
+            RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<RottenMatter>());
             RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<BloodSample>());
         }
     }

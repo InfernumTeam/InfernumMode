@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (CrackDrawer is null)
                 CrackDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
 
-            GameShaders.Misc["Infernum:BrainPsychic"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:BrainPsychic"].UseImage1("Images/Misc/Perlin");
             Vector2[] drawPositions = new Vector2[]
             {
                 Projectile.Center - Projectile.rotation.ToRotationVector2() * CrackLength * 0.5f,
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // This state reset is necessary to ensure that the backbuffer is flushed immediately and the
             // trail is drawn before anything else. Not doing this may cause problems with vertex/index buffers down the line.
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
     }

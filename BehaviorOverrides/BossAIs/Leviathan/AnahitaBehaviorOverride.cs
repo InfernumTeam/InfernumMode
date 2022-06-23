@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class AnahitaBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<Siren>();
+        public override int NPCOverrideType => ModContent.NPCType<Anahita>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -121,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             // Play idle water sounds.
             if (Main.rand.NextBool(180))
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
 
             if (leviathanAlive)
                 npc.ModNPC.Music = Main.npc[CalamityGlobalNPC.leviathan].ModNPC.Music;
@@ -256,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 145, 0f);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
             }
 
             if (attackTimer >= bubbleShootRate * totalBubbles + bubbleShootRate - 2f)
@@ -293,7 +293,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             else if (attackTimer % singClefFireRate == singClefFireRate - 1)
             {
                 destination += (MathHelper.TwoPi * Utils.GetLerpValue(singDelay, singDelay + singClefFireRate * singClefCount, attackTimer, true)).ToRotationVector2() * 360f;
-                Main.harpNote = Main.rand.NextFloat(-0.25f, 0.25f);
+                Main.musicPitch = Main.rand.NextFloat(-0.25f, 0.25f);
                 SoundEngine.PlaySound(SoundID.Item26, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 150, 0f);
 
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
             }
 
             if (attackTimer == (enraged || BossRushEvent.BossRushActive ? 135f : 210f))

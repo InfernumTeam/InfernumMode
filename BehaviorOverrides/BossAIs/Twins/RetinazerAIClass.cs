@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
-                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
+                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
                 Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;

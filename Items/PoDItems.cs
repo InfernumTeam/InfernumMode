@@ -4,6 +4,7 @@ using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -70,13 +71,10 @@ namespace InfernumMode
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if (item.type == ItemID.RodofDiscord && (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>())))
+            if (InfernumMode.CanUseCustomAIs && item.type == ItemID.RodofDiscord && NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
             {
-                if (WorldSaveSystem.InfernumMode)
-                {
-                    DoGTeleportDenialText(player, item);
-                    return false;
-                }
+                DoGTeleportDenialText(player, item);
+                return false;
             }
             return base.CanUseItem(item, player);
         }
@@ -115,15 +113,6 @@ namespace InfernumMode
                 itemCount = Main.rand.Next(10, 20);
                 player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.BrainOfCthulhuBossBag), ItemID.TissueSample, itemCount);
             }
-        }
-
-        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
-        {
-            if (!PoDPlayer.ApplyEarlySpeedNerfs)
-                return;
-
-            if (item.prefix == PrefixID.Quick2)
-                player.moveSpeed -= 0.02f;
         }
     }
 }

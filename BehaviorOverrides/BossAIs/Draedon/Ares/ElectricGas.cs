@@ -20,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.width = Projectile.height = 50;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.magic = true;
             Projectile.timeLeft = 210;
             Projectile.scale = 1.5f;
             Projectile.hide = true;
@@ -83,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
     }

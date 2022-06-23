@@ -207,7 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 // Roar in the middle of animation.
                 if (attackDelay == 30f)
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
 
                 if (attackDelay >= 30f)
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
@@ -232,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 if (phaseTransitionTime == 75f)
                 {
                     hasEyes01Flag = 1f;
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
                 }
 
                 phaseTransitionTime++;
@@ -481,7 +481,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (hoverDirection == 0f)
             {
                 hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
             }
 
             Vector2 hoverVelocity = npc.SafeDirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
@@ -491,7 +491,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Belch bubbles.
             if (attackTimer % bubbleShootRate == 0f)
             {
-                SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.NPCDeath19, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -540,7 +540,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (hoverDirection == 0f)
             {
                 hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
             }
 
             // Hover into position.
@@ -563,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == hoverRedirectTime)
             {
                 npc.velocity = Vector2.UnitX * -npc.spriteDirection * chargeSpeed;
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
             }
 
             // Spin and release bubbles.
@@ -585,7 +585,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.NPCDeath19, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -640,14 +640,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     npc.netUpdate = true;
 
                     // Roar.
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
                 }
             }
 
             // And dash while releasing bubbles.
             else if (attackSubstate == 1f)
             {
-                SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.NPCDeath19, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleShootRate == bubbleShootRate - 1)
                 {
@@ -687,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == slowdownTime)
             {
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
                 List<int> xSpawnPositions = new()
                 {
                     (int)(target.Center.X - (enraged ? 600f : 800f)) / 16,
@@ -764,7 +764,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == redirectTime)
             {
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
                 npc.velocity.Y = Math.Abs(npc.velocity.Y);
@@ -882,7 +882,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.velocity = Vector2.UnitY * initialChargeSpeed;
 
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
 
                 npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
                 npc.netUpdate = true;
@@ -956,7 +956,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
 
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
             }
 
             // Otherwise hover in place.
@@ -1039,7 +1039,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes")).Value;
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes"));
 
             bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[11] > 0f;
             Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask").Value;

@@ -8,6 +8,8 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using TwinsRedLightning = InfernumMode.BehaviorOverrides.BossAIs.Twins.RedLightning;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
     public class LightningCloud : ModProjectile
@@ -58,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
                 spawnPosition.Y -= 2500f;
 
-                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 12f, ModContent.ProjectileType<RedLightning>(), 260, 0f);
+                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 12f, ModContent.ProjectileType<TwinsRedLightning>(), 260, 0f);
                 if (Main.projectile.IndexInRange(lightning))
                 {
                     Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();

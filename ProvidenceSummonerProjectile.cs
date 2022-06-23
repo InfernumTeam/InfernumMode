@@ -4,6 +4,8 @@ using CalamityMod.Particles;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,7 +73,7 @@ namespace InfernumMode
 
             // Play a rumble sound.
             if (Time == 75f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, Projectile.Center);
 
             if (Time >= 210f)
             {
@@ -101,10 +103,13 @@ namespace InfernumMode
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 16f;
 
             // Make the crystal shatter.
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/ProvidenceDeath"), Projectile.Center);
+            SoundEngine.PlaySound(Providence.DeathSound, Projectile.Center);
 
-            for (int i = 1; i <= 4; i++)
-                Gore.NewGore(Projectile.Center, Main.rand.NextVector2Circular(8f, 8f), Mod.Find<ModGore>($"ProfanedCoreGore{i}").Type, Projectile.scale);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                for (int i = 1; i <= 4; i++)
+                    Gore.NewGore(Projectile.GetSource_Death(), Projectile.Center, Main.rand.NextVector2Circular(8f, 8f), Mod.Find<ModGore>($"ProfanedCoreGore{i}").Type, Projectile.scale);
+            }
 
             // Emit fire.
             for (int i = 0; i < 32; i++)
@@ -130,9 +135,9 @@ namespace InfernumMode
                     ModContent.TileType<RunicProfanedBrick>(),
                     ModContent.TileType<ProvidenceSummoner>(),
                 };
-                for (int i = PoDWorld.ProvidenceArena.Left; i < PoDWorld.ProvidenceArena.Right; i++)
+                for (int i = WorldSaveSystem.ProvidenceArena.Left; i < WorldSaveSystem.ProvidenceArena.Right; i++)
                 {
-                    for (int j = PoDWorld.ProvidenceArena.Top; j < PoDWorld.ProvidenceArena.Bottom; j++)
+                    for (int j = WorldSaveSystem.ProvidenceArena.Top; j < WorldSaveSystem.ProvidenceArena.Bottom; j++)
                     {
                         Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
                         if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))

@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
@@ -38,8 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
             Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, Projectile.Opacity * 6f + 0.5f);
-            spriteBatch.DrawLineBetter(start, end, Color.Red, (Projectile.Opacity * 6f + 0.5f) * 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.DarkRed, Projectile.Opacity * 6f + 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Red, (Projectile.Opacity * 6f + 0.5f) * 0.5f);
             return false;
         }
 

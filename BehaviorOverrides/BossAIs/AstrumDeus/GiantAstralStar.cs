@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             Radius = Projectile.scale * MathHelper.Lerp(72f, 90f, AngerOnCreation);
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && Projectile.timeLeft > 30)
+            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && Projectile.timeLeft > 30)
                 Projectile.timeLeft = 30;
 
             if (Projectile.timeLeft < 30f)
@@ -84,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
@@ -110,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 235, 105, 20f, 4.25f);
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

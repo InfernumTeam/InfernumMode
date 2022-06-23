@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 drawOffset = new Vector2(vectorizedOffset.X, vectorizedOffset.Y) * MathHelper.Lerp(1f, 16f, vectorizedOffset.Z);
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
 
-                spriteBatch.Draw(plasmaTexture, drawPosition, null, Projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(plasmaTexture, drawPosition, null, Projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

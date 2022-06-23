@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -70,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (AttackTimer == 0f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), NPC.Center);
+                SoundEngine.PlaySound(Karasawa.FireSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = NPC.SafeDirectionTo(Main.npc[(int)NextProjectorIndex].Center, Vector2.UnitY);

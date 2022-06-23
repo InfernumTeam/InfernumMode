@@ -2,11 +2,12 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using TwinsRedLightning = InfernumMode.BehaviorOverrides.BossAIs.Twins.RedLightning;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
@@ -66,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-7f, 7f);
                 spawnPosition.Y -= 2800f;
 
-                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<RedLightning>(), 305, 0f);
+                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), 305, 0f);
                 if (Main.projectile.IndexInRange(lightning))
                 {
                     Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();

@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void AI()
         {
-            if (Time < 250f && Time > 60f)
+            if (Time is < 250f and > 60f)
             {
                 float oldSpeed = Projectile.velocity.Length();
                 Projectile.velocity = (Projectile.velocity * 24f + Projectile.SafeDirectionTo(Target.Center) * oldSpeed) / 25f;
@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
-            spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

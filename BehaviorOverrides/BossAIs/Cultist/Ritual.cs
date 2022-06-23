@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Texture2D outerRingTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
@@ -87,11 +87,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Color auraColor = Color.White * 0.25f;
             auraColor *= pulse;
 
-            spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, Projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, Projectile.rotation, outerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -Projectile.rotation, innerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, Projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, Projectile.rotation, outerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -Projectile.rotation, innerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

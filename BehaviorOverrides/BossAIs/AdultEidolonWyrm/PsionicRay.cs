@@ -103,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 RayDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
 
             GameShaders.Misc["Infernum:BrainPsychic"].UseSaturation(1f);
-            GameShaders.Misc["Infernum:BrainPsychic"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:BrainPsychic"].UseImage1("Images/Misc/Perlin");
             RayDrawer.Draw(Projectile.oldPos.Where((x, i) => i % 2 == 0), Projectile.Size * 0.5f - Main.screenPosition, 38);
             return false;
         }

@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.dayTime ? ModContent.Request<Texture2D>(Texture) : ModContent.GetTexture("CalamityMod/Projectiles/Boss/MoltenBlastNight").Value;
+            Texture2D texture = Main.dayTime ? ModContent.Request<Texture2D>(Texture).Value : ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/MoltenBlastNight").Value;
             int height = ModContent.Request<Texture2D>(Texture).Value.Height / Main.projFrames[Projectile.type];
             int top = height * Projectile.frame;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY;
@@ -88,14 +88,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < blobCount; i++)
                 {
                     Vector2 velocity = Main.rand.NextVector2Circular(9f, 9f);
-                    Projectile.NewProjectile(Projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
 
                 float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 velocity = (MathHelper.TwoPi * i / 8f + offsetAngle).ToRotationVector2() * 4f;
-                    Projectile.NewProjectile(Projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
             }
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);

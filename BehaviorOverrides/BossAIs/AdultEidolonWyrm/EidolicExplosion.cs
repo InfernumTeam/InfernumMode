@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -40,10 +40,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i < 3; i++)
             {
                 Color explosionColor = Color.Lerp(Color.White, Color.Cyan, i / 2f) * Projectile.Opacity * 0.7f;
-                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

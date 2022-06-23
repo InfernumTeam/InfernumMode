@@ -108,8 +108,8 @@ namespace InfernumMode.Skies
                     spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, drawColor, 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
-            Texture2D flashTexture = ModContent.Request<Texture2D>("Terraria/Misc/VortexSky/Flash").Value;
-            Texture2D boltTexture = ModContent.Request<Texture2D>("Terraria/Misc/VortexSky/Bolt").Value;
+            Texture2D flashTexture = ModContent.Request<Texture2D>("Terraria/Images/Misc/VortexSky/Flash").Value;
+            Texture2D boltTexture = ModContent.Request<Texture2D>("Terraria/Images/Misc/VortexSky/Bolt").Value;
 
             // Draw lightning bolts.
             float spaceFade = Math.Min(1f, (Main.screenPosition.Y - 300f) / 300f);

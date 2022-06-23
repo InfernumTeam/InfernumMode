@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 using Terraria.WorldBuilding;
+using InfernumMode.Sounds;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
@@ -37,19 +38,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
+            // Play a rumble sound.
             if (Projectile.timeLeft == 340)
-            {
-                var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), Projectile.Center);
-                if (sound != null)
-                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
-            }
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound with { Volume = 1.5f }, Projectile.Center);
 
+            // Shake the screen.
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3D) * 20f;
             Main.LocalPlayer.Infernum().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5D)) * 35f;
 
             if (Projectile.timeLeft == 45)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), Projectile.Center);
+                SoundEngine.PlaySound(LeviathanNPC.RoarChargeSound, Projectile.Center);
                 if (Main.netMode != NetmodeID.Server)
                 {
                     WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
@@ -67,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     Main.projectile[wave].Bottom = Projectile.Center + Vector2.UnitY * 700f;
                 }
 
-                int leviathan = NPC.NewNPC(npc.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
+                int leviathan = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
                 if (Main.npc.IndexInRange(leviathan))
                     Main.npc[leviathan].velocity = Vector2.UnitY * -7f;
             }

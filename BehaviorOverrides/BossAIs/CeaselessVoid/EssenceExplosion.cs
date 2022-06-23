@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 Color lightBurstColor = Color.Lerp(Color.Fuchsia, Color.White, 0.4f) * Projectile.Opacity * 0.07f;
                 lightBurstColor.A = 0;
 
-                spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 2.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 2.5f, SpriteEffects.None, 0f);
             }
             return false;
         }

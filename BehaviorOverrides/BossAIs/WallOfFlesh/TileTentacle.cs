@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (TentacleDrawer is null)
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
 
-            GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Misc/Perlin")).Value;
+            GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Images/Misc/Perlin"));
 
             List<Vector2> points = new()
             {

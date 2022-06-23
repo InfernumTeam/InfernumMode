@@ -1,5 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -56,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D doomTexture = TextureAssets.Projectile[Projectile.type].Value;
             Rectangle frame = doomTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
@@ -64,10 +66,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 Color drawColor = Color.Magenta * Projectile.Opacity * 0.18f;
                 Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * 5f;
-                spriteBatch.Draw(doomTexture, drawPosition, frame, drawColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(doomTexture, drawPosition, frame, drawColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             // Make line telegraphs.
             if (Projectile.timeLeft < 40f)
@@ -77,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                     if (Projectile.localAI[1] == 1f)
                         beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                    spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true)) * 2f);
+                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true)) * 2f);
                 }
             }
 
@@ -89,12 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override void Kill(int timeLeft)
         {
             // Make some strong sounds.
-            var sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), Target.Center);
-            if (sound != null)
-                sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
-            sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), Target.Center);
-            if (sound != null)
-                sound.Pitch = -0.21f;
+            SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.61f }, Target.Center);
+            SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = -0.21f }, Target.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

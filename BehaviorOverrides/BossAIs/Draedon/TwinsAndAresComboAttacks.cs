@@ -1,8 +1,10 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using Microsoft.Xna.Framework;
@@ -148,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 270f))
                             {
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
@@ -242,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             // Charge once sufficiently slowed down.
                             if (npc.velocity.Length() < 1.25f)
                             {
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                                SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                                 for (int i = 0; i < 36; i++)
                                 {
                                     Dust laser = Dust.NewDustPerfect(npc.Center, 182);
@@ -407,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int beam = Projectile.NewProjectile(npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
+                            int beam = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
 
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
                             if (Main.projectile.IndexInRange(beam))
@@ -425,7 +427,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Release the laserbeams.
                 if (wrappedAttackTimer == redirectTime + chargeupTime + laserTelegraphTime)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         laserDirection = Main.rand.NextBool().ToDirectionInt();
@@ -537,7 +539,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
-                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -549,7 +551,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         }
                         else
                         {
-                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                            SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {

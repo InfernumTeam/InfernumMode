@@ -1,7 +1,9 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using Microsoft.Xna.Framework;
@@ -92,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Shoot fireballs.
                 if (exoTwinIsShooting)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                    SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -112,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Shoot lasers.
                 if (exoTwinIsShooting)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -172,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         npc.velocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * chargeSpeed;
                         npc.netUpdate = true;
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                     }
 
                     // Release rockets upward.
@@ -321,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             // Charge once sufficiently slowed down.
                             if (npc.velocity.Length() < 1.25f)
                             {
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                                SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                                 for (int i = 0; i < 36; i++)
                                 {
                                     Dust laser = Dust.NewDustPerfect(npc.Center, 182);

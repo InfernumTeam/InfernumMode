@@ -204,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     if (NPC.velocity.Length() < 1.25f)
                     {
                         SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Center);
-                        SoundEngine.PlaySound(SoundID.Zombie, NPC.Center, 68);
+                        SoundEngine.PlaySound(SoundID.Zombie68, NPC.Center);
                         AttackState = 2f;
                         IndividualAttackTimer = 0f;
                         NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (drawThrusters)
                 {
                     // Prepare the flame trail shader with its map texture.
-                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak")).Value;
+                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
                     // Draw a flame trail on the thrusters.
                     for (int direction = -1; direction <= 1; direction += 2)

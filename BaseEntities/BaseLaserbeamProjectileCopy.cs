@@ -56,7 +56,7 @@ namespace InfernumMode.BaseEntities
             LaserLength = MathHelper.Lerp(LaserLength, idealLaserLength, 0.9f); // Very quickly approach the ideal laser length.
 
             DelegateMethods.v3_1 = LightCastColor.ToVector3();
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, new Utils.PerLinePoint(DelegateMethods.CastLight));
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace InfernumMode.BaseEntities
         public override void CutTiles()
         {
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackMelee;
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, new Utils.PerLinePoint(DelegateMethods.CutTiles));
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, DelegateMethods.CutTiles);
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -192,7 +192,7 @@ namespace InfernumMode.BaseEntities
             if (Projectile.velocity == Vector2.Zero)
                 return false;
 
-            DrawBeamWithColor(spriteBatch, LaserOverlayColor, Projectile.scale);
+            DrawBeamWithColor(Main.spriteBatch, LaserOverlayColor, Projectile.scale);
             return false;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

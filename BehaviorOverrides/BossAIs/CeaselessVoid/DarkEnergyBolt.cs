@@ -90,11 +90,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Vector2 start = Projectile.Center;
                 Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5000f;
-                spriteBatch.DrawLineBetter(start, end, Color.Purple, Projectile.Opacity * 7.5f);
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Purple, Projectile.Opacity * 7.5f);
                 return false;
             }
 
-            GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
             Vector2[] drawPositions = new Vector2[]
             {
                 Projectile.oldPos.First(),
@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // This state reset is necessary to ensure that the backbuffer is flushed immediately and the
             // trail is drawn before anything else. Not doing this may cause problems with vertex/index buffers down the line.
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

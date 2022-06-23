@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Vector2 sparkleScale = new Vector2(0.3f, 1f) * Projectile.Opacity * Projectile.scale;
             Vector2 orthogonalsparkleScale = new Vector2(0.3f, 2f) * Projectile.Opacity * Projectile.scale;
 
-            spriteBatch.Draw(sparkleTexture,
+            Main.spriteBatch.Draw(sparkleTexture,
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              sparkleColor,
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                              orthogonalsparkleScale,
                              SpriteEffects.None,
                              0f);
-            spriteBatch.Draw(sparkleTexture,
+            Main.spriteBatch.Draw(sparkleTexture,
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              sparkleColor,
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                              sparkleScale,
                              SpriteEffects.None,
                              0f);
-            spriteBatch.Draw(sparkleTexture,
+            Main.spriteBatch.Draw(sparkleTexture,
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              orthogonalsparkleColor,
@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                              orthogonalsparkleScale * 0.6f,
                              SpriteEffects.None,
                              0f);
-            spriteBatch.Draw(sparkleTexture,
+            Main.spriteBatch.Draw(sparkleTexture,
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              orthogonalsparkleColor,

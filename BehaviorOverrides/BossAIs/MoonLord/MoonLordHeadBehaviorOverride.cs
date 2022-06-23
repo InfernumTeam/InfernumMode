@@ -1,4 +1,6 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -203,14 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer < deathrayTelegraphTime)
             {
                 if (wrappedAttackTimer == 25f)
-                {
-                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
-                    if (sound != null)
-                    {
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
-                        sound.Pitch = -0.2f;
-                    }
-                }
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.2f }, target.Center);
 
                 telegraphInterpolant = Utils.GetLerpValue(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
                 angularOffset += CalamityUtils.Convert01To010(telegraphInterpolant) * MathHelper.TwoPi / 300f;
@@ -228,12 +223,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer == deathrayTelegraphTime)
             {
                 // Make some strong sounds.
-                var sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), target.Center);
-                if (sound != null)
-                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
-                sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
-                if (sound != null)
-                    sound.Pitch = -0.21f;
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.61f }, target.Center);
+                SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = -0.21f }, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -274,19 +265,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
             Texture2D headGlowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask").Value;
             Vector2 headOrigin = new(191f, 130f);
-            Texture2D eyeScleraTexture = Main.extraTexture[18];
-            Texture2D pupilTexture = Main.extraTexture[19];
+            Texture2D eyeScleraTexture = TextureAssets.Extra[18].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
             Vector2 mouthOrigin = new(19f, 34f);
-            Texture2D mouthTexture = Main.extraTexture[25];
+            Texture2D mouthTexture = TextureAssets.Extra[25].Value;
             Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
             Rectangle mouthFrame = mouthTexture.Frame(1, 1, 0, 0);
             mouthFrame.Height /= 3;
-            Texture2D eyeTexture = Main.extraTexture[29];
+            Texture2D eyeTexture = TextureAssets.Extra[29].Value;
             Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
             Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
             eyeFrame.Height /= 4;
             eyeFrame.Y += eyeFrame.Height * (int)(npc.localAI[3] / 5f);
-            Texture2D mouthOutlineTexture = Main.extraTexture[26];
+            Texture2D mouthOutlineTexture = TextureAssets.Extra[26].Value;
             Rectangle mouthOuterFrame = mouthOutlineTexture.Frame(1, 1, 0, 0);
             mouthOuterFrame.Height /= 4;
             Point centerTileCoords = npc.Center.ToTileCoordinates();

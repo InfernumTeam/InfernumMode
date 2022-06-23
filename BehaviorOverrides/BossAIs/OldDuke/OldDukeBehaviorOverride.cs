@@ -214,10 +214,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.cloudLimit;
+                    Main.numCloudsTemp = 160;
                     Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedTemp = 1.04f;
-                    Main.windSpeedSet = Main.windSpeedTemp;
+                    Main.windSpeedCurrent = 1.04f;
+                    Main.windSpeedTarget = Main.windSpeedCurrent;
                     Main.maxRaining = 0.87f;
                 }
 
@@ -379,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             // Roar and summon sharks below the boss.
             if (phaseTransitionTimer == PhaseTransitionTime - 60f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
 
             if (phaseTransitionTimer >= PhaseTransitionTime - 60f)
             {
@@ -387,8 +387,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     phaseTransitionSharkSpawnOffset += 135f;
                     Vector2 spawnOffset = new(phaseTransitionSharkSpawnOffset + 50f, 340f);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<SulphurousSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<SulphurousSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
                 }
             }
         }
@@ -434,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     acid.velocity = npc.SafeDirectionTo(dustSpawnPosition) * 3f;
                 }
 
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
             }
 
             if (attackTimer >= 75f)
@@ -621,7 +621,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
             {
                 if (attackTimer == shootDelay + 1f)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                    SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
 
                 frameType = (int)OldDukeFrameType.Roar;
             }
@@ -705,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.netUpdate = true;
 
                 // Play sounds and spawn Tooth Balls and a Vortex
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
 
                 Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -716,7 +716,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1050f);
-                        int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<OldDukeSharkron>());
+                        int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SulphurousSharkron>());
                         if (Main.npc.IndexInRange(shark))
                         {
                             Main.npc[shark].velocity = Main.rand.NextVector2CircularEdge(8f, 8f);
@@ -764,7 +764,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
             {
                 if (attackTimer == shootDelay + 1f)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                    SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
 
                 frameType = (int)OldDukeFrameType.Roar;
             }
@@ -813,7 +813,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer == 150f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < goreCount; i++)
@@ -859,7 +859,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Teleport.
             if (attackTimer == fadeTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f);

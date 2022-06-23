@@ -1,3 +1,6 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.NPCs.DevourerofGods;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -44,20 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
             {
-                if (Time == 10f || Time == 70f || Time == 130f)
-                {
-                    var soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
-                    if (soundInstance != null)
-                    {
-                        soundInstance.Pitch = 1f;
-                        if (Time == 10f)
-                            soundInstance.Pan = -0.7f;
-                        if (Time == 70f)
-                            soundInstance.Pan = 0.7f;
-                        if (Time == 130f)
-                            soundInstance.Pan = 0f;
-                    }
-                }
+                if (Time is 10f or 70f or 130f)
+                    SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound with { Pitch = 1f }, Projectile.Center);
             }
             Time++;
         }
@@ -92,12 +83,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 while (Vector2.Distance(drawPosition, endingPosition) > 90f)
                 {
                     drawPosition += (endingPosition - drawPosition).SafeNormalize(Vector2.UnitY) * texture.Width * 0.2f;
-                    spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, rendLineColor, rotation, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, Color.Lerp(rendLineColor, Color.White, 0.5f), rotation, texture.Size() * 0.5f, new Vector2(0.5f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, rendLineColor, rotation, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, Color.Lerp(rendLineColor, Color.White, 0.5f), rotation, texture.Size() * 0.5f, new Vector2(0.5f, 1f), SpriteEffects.None, 0f);
                 }
             }
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             float fade = Utils.GetLerpValue(Phase2AnimationTime, Phase2AnimationTime - 45f, Projectile.timeLeft, true);
             if (Projectile.timeLeft <= 45f)
@@ -111,8 +102,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 3.5f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
 
             return false;
         }
@@ -131,22 +122,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             if (Main.netMode != NetmodeID.Server)
             {
-                var soundInstance = SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, Projectile.Center);
-                if (soundInstance != null)
-                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
-
-                soundInstance = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), Main.LocalPlayer.Center);
-                if (soundInstance != null)
-                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 3f, 0f, 1f);
+                SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound with { Volume = 1.6f }, Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound with { Volume = 3f }, Main.LocalPlayer.Center);
 
                 for (int i = 0; i < 3; i++)
                 {
-                    soundInstance = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), Projectile.Center);
-                    if (soundInstance != null)
-                    {
-                        soundInstance.Pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
-                        soundInstance.Volume = 0.21f;
-                    }
+                    float pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = pitch, Volume = 0.46f }, Projectile.Center);
                 }
             }
         }

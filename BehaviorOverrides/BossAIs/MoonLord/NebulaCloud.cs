@@ -20,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.width = Projectile.height = 78;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.magic = true;
             Projectile.timeLeft = 300;
             Projectile.scale = 1.5f;
             Projectile.hide = true;
@@ -83,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 0.9f;
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
             return false;
         }
     }

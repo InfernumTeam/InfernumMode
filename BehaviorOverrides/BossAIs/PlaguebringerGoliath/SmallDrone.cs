@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -67,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             if (AttackTimer == 0f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), NPC.Center);
+                SoundEngine.PlaySound(Karasawa.FireSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = NPC.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);

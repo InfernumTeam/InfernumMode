@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (exploitAttempted)
                 newBottom = Projectile.Bottom.ToTileCoordinates();
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -123,16 +123,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 float telegraphLineWidth = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 3f;
                 if (telegraphLineWidth > 2f)
                     telegraphLineWidth = 2f;
-                spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Cyan, telegraphLineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Cyan, telegraphLineWidth);
             }
 
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawStalk(spriteBatch, scale, aimDirection, mushroomTexture, ref tipBottom);
+            DrawStalk(Main.spriteBatch, scale, aimDirection, mushroomTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
-            spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 

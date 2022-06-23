@@ -76,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * 4500f;
 
-            spriteBatch.DrawLineBetter(start, end, outerColor, Projectile.scale);
-            spriteBatch.DrawLineBetter(start, end, innerColor, Projectile.scale * 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, outerColor, Projectile.scale);
+            Main.spriteBatch.DrawLineBetter(start, end, innerColor, Projectile.scale * 0.5f);
             return false;
         }
 

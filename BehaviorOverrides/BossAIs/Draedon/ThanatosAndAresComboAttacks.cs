@@ -15,6 +15,9 @@ using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehavio
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using Terraria.WorldBuilding;
+using InfernumMode.Sounds;
+using CalamityMod.Sounds;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -177,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Create laser bursts.
                 if (attackTimer == attackDelay)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -244,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float borderOffset = 950f;
             Rectangle borderArea = Utils.CenteredRectangle(aresBody.Center, Vector2.One * borderOffset * 2f);
             int armShootType = -1;
-            string shootSoundPath = null;
+            SoundStyle shootSound = default;
             float armShootSpeed = 10f;
             float perpendicularOffset = 0f;
             bool enraged = aresBody.Infernum().ExtraAI[13] == 1f;
@@ -261,25 +264,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 armShootType = ModContent.ProjectileType<CannonLaser>();
                 hoverOffset = new Vector2(-borderOffset, -borderOffset);
-                shootSoundPath = "Sounds/Item/LaserCannon";
+                shootSound = CommonCalamitySounds.LaserCannonSound;
             }
             if (npc.type == ModContent.NPCType<AresTeslaCannon>())
             {
                 armShootType = ModContent.ProjectileType<TeslaSpark>();
                 hoverOffset = new Vector2(-borderOffset, borderOffset);
-                shootSoundPath = "Sounds/Item/PlasmaBolt";
+                shootSound = CommonCalamitySounds.PlasmaBoltSound;
             }
             if (npc.type == ModContent.NPCType<AresPlasmaFlamethrower>())
             {
                 armShootType = ModContent.ProjectileType<SmallPlasmaSpark>();
                 hoverOffset = new Vector2(borderOffset, borderOffset);
-                shootSoundPath = "Sounds/Item/PlasmaCasterFire";
+                shootSound = PlasmaCaster.FireSound;
             }
             if (npc.type == ModContent.NPCType<AresPulseCannon>())
             {
                 armShootType = ModContent.ProjectileType<AresPulseBlast>();
                 hoverOffset = new Vector2(borderOffset, -borderOffset);
-                shootSoundPath = "Sounds/Item/PulseRifleFire";
+                shootSound = PulseRifle.FireSound;
                 armShootSpeed = 2f;
                 perpendicularOffset = 15f;
             }
@@ -313,8 +316,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (attackTimer % 9f == 8f)
                 {
-                    if (Main.rand.NextBool(5))
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, shootSoundPath), npc.Center);
+                    if (Main.rand.NextBool(5) && shootSound != default)
+                        SoundEngine.PlaySound(shootSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, 500, 0f);
@@ -369,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (aresShouldAttack && attackTimer % aresShootRate == aresShootRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresTeslaShot"), npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
@@ -394,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!target.Hitbox.Intersects(borderArea) && !enraged && attackTimer > attackDelay)
                 {
                     if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), target.Center);
+                        SoundEngine.PlaySound(AresBody.EnragedSound, target.Center);
 
                     // Have Draedon comment on the player's attempts to escape.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

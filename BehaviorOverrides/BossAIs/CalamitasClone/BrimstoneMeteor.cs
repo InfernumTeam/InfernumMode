@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 Vector2 lineDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
                 float lineWidth = (float)Math.Sin(MathHelper.Pi * Time / 30f) * 4f + 1f;
-                spriteBatch.DrawLineBetter(Projectile.Center - lineDirection * 3400f, Projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center - lineDirection * 3400f, Projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
                 return false;
             }
 

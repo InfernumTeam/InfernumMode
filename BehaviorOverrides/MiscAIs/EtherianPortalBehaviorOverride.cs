@@ -24,18 +24,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
             ref float enemySpawnTimer = ref npc.ai[0];
             ref float fadeOutTimer = ref npc.ai[2];
             ref float fadeInTimer = ref npc.localAI[0];
-            ref float idlePlaySoundId = ref npc.localAI[3];
             if (npc.ai[1] == 0f)
             {
                 // Play the portal opening sound at the moment of the portal's creation.
                 if (fadeInTimer == 0f)
-                {
-                    Main.PlayTrackedSound(SoundID.DD2_EtherianPortalOpen, npc.Center);
-                    idlePlaySoundId = SlotId.Invalid.ToFloat();
-                }
-
-                if (fadeInTimer > 150f && Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
-                    idlePlaySoundId = Main.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
+                    SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, npc.Center);
 
                 if (!DD2Event.EnemySpawningIsOnHold)
                     enemySpawnTimer++;
@@ -82,15 +75,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
             {
                 fadeOutTimer++;
                 npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(500f, 600f, fadeOutTimer, true));
-
-                // Reset the idle play sound if it didn't get activated before for some reason.
-                if (Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
-                    idlePlaySoundId = Main.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
-
-                ActiveSound activeSound = Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId));
-                if (activeSound != null)
-                    activeSound.Volume = npc.scale;
-
+                
                 // Kill the portal after enough time has passed.
                 if (fadeOutTimer >= 550f)
                 {
@@ -98,11 +83,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                     npc.life = 0;
                     npc.checkDead();
                     npc.netUpdate = true;
-                    if (activeSound != null)
-                    {
-                        activeSound.Stop();
-                        return false;
-                    }
                 }
             }
             return false;

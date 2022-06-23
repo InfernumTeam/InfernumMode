@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Vector2 origin = new(66f, 86f);
             Vector2 drawPosition = new(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
             Vector2 scale = new(1.4f, 1.6f);
-            Color lightColor = new(205, 10, 205, 0);
+            lightColor = new(205, 10, 205, 0);
             Color coloredLight = new(255, 180, 255, 0);
             float completion = 0f;
             if (Time < 30f)
@@ -57,14 +58,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
             lightColor *= 0.42f;
             coloredLight *= 0.42f;
-            Texture2D texture7 = Main.extraTexture[60];
+            Texture2D texture7 = TextureAssets.Extra[60].Value;
 
             scale.X *= Main.screenWidth / texture7.Width;
-            spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, origin, scale * scaleFactor2, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, origin, scale * scaleFactor2, SpriteEffects.None, 0f);
 
-            Texture2D lightTexture = Main.extraTexture[59];
-            spriteBatch.Draw(lightTexture, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1 * new Vector2(1f, 0.3f), SpriteEffects.None, 0f);
+            Texture2D lightTexture = TextureAssets.Extra[59].Value;
+            Main.spriteBatch.Draw(lightTexture, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1 * new Vector2(1f, 0.3f), SpriteEffects.None, 0f);
 
             return false;
         }

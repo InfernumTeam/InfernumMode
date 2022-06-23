@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
@@ -41,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void AI()
         {
-            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>()) || NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
+            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             brotherIsPresent |= (Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) && Main.npc[CalamityGlobalNPC.calamitas].ai[3] > 0f && Main.npc[CalamityGlobalNPC.calamitas].ai[3] < 50f);
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) || !brotherIsPresent)
             {

@@ -260,11 +260,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (digYPosition < 100f)
                     digYPosition = 100f;
 
-                Gore.NewGore(npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+                if (Main.netMode != NetmodeID.Server)
+                    Gore.NewGore(npc.GetSource_FromAI(), npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+
                 WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
                 {
-                            new CustomTileConditions.IsSolidOrSolidTop(),
-                            new CustomTileConditions.ActiveAndNotActuated()
+                    new CustomTileConditions.IsSolidOrSolidTop(),
+                    new CustomTileConditions.ActiveAndNotActuated()
                 }), out Point newBottom);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -333,8 +335,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (npc.frame.Y == 480)
                     drawOffset.Y -= 6f;
 
+                Texture2D ninjaTexture = TextureAssets.Ninja.Value;
                 Vector2 ninjaDrawPosition = npc.Center - Main.screenPosition + drawOffset;
-                spriteBatch.Draw(Main.ninjaTexture, ninjaDrawPosition, null, lightColor, ninjaRotation, Main.ninjaTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(ninjaTexture, ninjaDrawPosition, null, lightColor, ninjaRotation, ninjaTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
@@ -361,7 +364,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     verticalCrownOffset = 0f;
                     break;
             }
-            Texture2D crownTexture = Main.extraTexture[39];
+            Texture2D crownTexture = TextureAssets.Extra[39].Value;
             Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (56f - verticalCrownOffset) * npc.scale);
             spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;

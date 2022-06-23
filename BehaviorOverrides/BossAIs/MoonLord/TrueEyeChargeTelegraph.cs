@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (TelegraphDrawer is null)
                 TelegraphDrawer = new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
 
-            GameShaders.Misc["CalamityMod:Flame"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.41f);
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)

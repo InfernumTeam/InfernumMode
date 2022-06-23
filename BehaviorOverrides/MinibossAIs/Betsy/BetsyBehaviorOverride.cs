@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 6f == 5f)
                 {
-                    Main.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -317,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             // Do the charge.
             if (attackTimer == hoverRedirectTime)
             {
-                Main.PlayTrackedSound(SoundID.DD2_BetsyFlameBreath, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, npc.Center);
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * horizontalFlySpeed;
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ProjectileID.DD2BetsyFlameBreath, 190, 0f, -1, 0f, npc.whoAmI);
@@ -335,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 10f == 9f)
                 {
-                    Main.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -384,8 +384,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D wingsTexture = Main.extraTexture[81];
-            Texture2D armsTexture = Main.extraTexture[82];
+            Texture2D wingsTexture = TextureAssets.Extra[81].Value;
+            Texture2D armsTexture = TextureAssets.Extra[82].Value;
             SpriteEffects direction = (npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally);
 
             int wingArmFrame = (int)(npc.localAI[1] / 4f) % 9;

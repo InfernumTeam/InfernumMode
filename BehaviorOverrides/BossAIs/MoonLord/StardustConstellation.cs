@@ -65,13 +65,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 float drawOffsetFactor = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.5f + 0.5f) * scaleFactor * fadeToOrange * 8f + 1f;
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * drawOffsetFactor;
-                spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
 
             if (projectileToConnectTo != null)
             {
-                Texture2D lineTexture = Main.extraTexture[47];
+                Texture2D lineTexture = TextureAssets.Extra[47].Value;
                 Vector2 connectionDirection = Projectile.SafeDirectionTo(projectileToConnectTo.Center);
                 Vector2 start = Projectile.Center + connectionDirection * Projectile.scale * 24f;
                 Vector2 end = projectileToConnectTo.Center - connectionDirection * Projectile.scale * 24f;
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Color drawColor = Color.White;
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
 
-                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
             }
 
             return false;

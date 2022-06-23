@@ -20,7 +20,7 @@ namespace InfernumMode.BaseEntities
 
         public virtual float MinScale { get; } = 1.2f;
         public virtual float MaxScale { get; } = 5f;
-        public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
+        public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
         public abstract int Lifetime { get; }
         public abstract float MaxRadius { get; }
         public abstract float RadiusExpandRateInterpolant { get; }
@@ -54,7 +54,7 @@ namespace InfernumMode.BaseEntities
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f;
@@ -71,9 +71,9 @@ namespace InfernumMode.BaseEntities
 
             GameShaders.Misc["ForceField"].UseColor(DetermineExplosionColor(1f - Projectile.timeLeft / (float)Lifetime));
             GameShaders.Misc["ForceField"].Apply(explosionDrawData);
-            explosionDrawData.Draw(spriteBatch);
+            explosionDrawData.Draw(Main.spriteBatch);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

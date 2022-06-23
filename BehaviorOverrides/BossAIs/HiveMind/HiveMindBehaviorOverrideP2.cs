@@ -727,14 +727,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             hoverOffsetAngle += MathHelper.ToRadians(5f);
             if ((int)attackTimer == 120f)
             {
-                Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                if (explosionSound != null)
-                {
-                    explosionSound.Volume = 0.2f;
-                    explosionSound.Pitch = -0.4f;
-                }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
+
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
             }
 
             // Release a bunch of blobs.
@@ -758,7 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 }
             }
             else
@@ -776,7 +773,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             if (highPitched)
             {
-                SoundEngine.PlaySound(SoundID.ForceRoar, npc.Center, -1);
+                SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 return;
             }
 
@@ -786,7 +783,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
                 fire.noGravity = true;
             }
-            SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+            SoundEngine.PlaySound(SoundID.Roar, npc.Center);
         }
 
         public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

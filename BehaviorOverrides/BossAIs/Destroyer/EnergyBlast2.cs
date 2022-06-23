@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 235, 35, 12f, 4.25f);
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

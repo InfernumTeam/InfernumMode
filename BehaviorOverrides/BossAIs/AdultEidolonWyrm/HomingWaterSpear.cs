@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Vector2 drawOffset = -Projectile.velocity.SafeNormalize(Vector2.Zero) * i * 12f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Color backAfterimageColor = Projectile.GetAlpha(lightColor) * ((4f - i) / 4f);
-                spriteBatch.Draw(texture, afterimageDrawPosition, frame, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, frame, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.2f;
@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 9f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 2f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
-                spriteBatch.Draw(texture, afterimageDrawPosition, frame, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, frame, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

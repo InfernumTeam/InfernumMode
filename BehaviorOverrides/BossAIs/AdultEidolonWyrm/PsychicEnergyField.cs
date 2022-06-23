@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                         Vector2 blastShootVelocity = Projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
-                        Projectile.NewProjectile(Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
             Texture2D noiseTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
@@ -67,8 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseSecondaryColor(Color.Lerp(Color.Purple, Color.Black, 0.25f));
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

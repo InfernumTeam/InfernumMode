@@ -82,10 +82,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 Color ringColor = Color.White * 0.425f;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-                spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 1.6f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 1.6f, SpriteEffects.None, 0f);
 
                 float explosionTelegraphFade = Utils.GetLerpValue(0f, 20f, ExplosionTelegraphFade, true) * 0.16f;
-                spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor * explosionTelegraphFade, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor * explosionTelegraphFade, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 5f, SpriteEffects.None, 0f);
                 return false;
             }
 
@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Vector2 scale = new Vector2(0.6f, 1f) * Projectile.scale;
                 scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
 
-                spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

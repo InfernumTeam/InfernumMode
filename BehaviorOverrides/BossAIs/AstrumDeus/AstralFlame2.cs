@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 0.1f);
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Time > 85f && Time < 145f)
+            if (Time is > 85f and < 145f)
                 Projectile.velocity = (Projectile.velocity * 41f + Projectile.SafeDirectionTo(closestPlayer.Center) * 15f) / 42f;
 
             if (Time > 150f && Projectile.velocity.Length() < 20f)
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, (int)Projectile.position.X, (int)Projectile.position.Y, 103, 1f, 0f);
+            SoundEngine.PlaySound(SoundID.Zombie103, Projectile.Center);
 
             Projectile.position = Projectile.Center;
             Projectile.width = Projectile.height = 96;

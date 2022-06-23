@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.9f);
-            GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
             FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition + NPC.velocity * 1.6f, 47);
 
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;

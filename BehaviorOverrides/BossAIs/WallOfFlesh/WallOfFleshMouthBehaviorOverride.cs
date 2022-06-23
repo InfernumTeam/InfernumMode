@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     npc.active = false;
             }
 
-            Main.wof = npc.whoAmI;
+            Main.wofNPCIndex = npc.whoAmI;
 
             if (npc.Center.X <= 160f || npc.Center.X >= Main.maxTilesX * 16f - 160f)
             {
@@ -76,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             if (initialized01Flag == 0f)
             {
-                Main.wofB = -1;
-                Main.wofT = -1;
+                Main.wofDrawAreaBottom = -1;
+                Main.wofDrawAreaTop = -1;
 
                 SetEyePositions(npc);
                 SummonEyes(npc);
@@ -133,19 +133,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
             }
             y += 4;
-            if (Main.wofB == -1)
-                Main.wofB = y * 16;
-            else if (Main.wofB > y * 16)
+            if (Main.wofDrawAreaBottom == -1)
+                Main.wofDrawAreaBottom = y * 16;
+            else if (Main.wofDrawAreaBottom > y * 16)
             {
-                Main.wofB--;
-                if (Main.wofB < y * 16)
-                    Main.wofB = y * 16;
+                Main.wofDrawAreaBottom--;
+                if (Main.wofDrawAreaBottom < y * 16)
+                    Main.wofDrawAreaBottom = y * 16;
             }
-            else if (Main.wofB < y * 16)
+            else if (Main.wofDrawAreaBottom < y * 16)
             {
-                Main.wofB++;
-                if (Main.wofB > y * 16)
-                    Main.wofB = y * 16;
+                Main.wofDrawAreaBottom++;
+                if (Main.wofDrawAreaBottom > y * 16)
+                    Main.wofDrawAreaBottom = y * 16;
             }
 
             tries = 0;
@@ -168,25 +168,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
             y -= 4;
 
-            if (Main.wofT == -1)
-                Main.wofT = y * 16;
-            else if (Main.wofT > y * 16)
+            if (Main.wofDrawAreaTop == -1)
+                Main.wofDrawAreaTop = y * 16;
+            else if (Main.wofDrawAreaTop > y * 16)
             {
-                Main.wofT--;
-                if (Main.wofT < y * 16)
-                    Main.wofT = y * 16;
+                Main.wofDrawAreaTop--;
+                if (Main.wofDrawAreaTop < y * 16)
+                    Main.wofDrawAreaTop = y * 16;
             }
-            else if (Main.wofT < y * 16)
+            else if (Main.wofDrawAreaTop < y * 16)
             {
-                Main.wofT++;
-                if (Main.wofT > y * 16)
-                    Main.wofT = y * 16;
+                Main.wofDrawAreaTop++;
+                if (Main.wofDrawAreaTop > y * 16)
+                    Main.wofDrawAreaTop = y * 16;
             }
         }
 
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
         {
-            float verticalDestination = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
+            float verticalDestination = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2 - npc.height / 2;
             float horizontalSpeed = MathHelper.Lerp(4.35f, 7.4f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
@@ -298,14 +298,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     roarTimer = 660f;
 
+                    // Roar.
                     if (Main.LocalPlayer.Center.Y > (Main.maxTilesY - 300f) * 16f)
-                    {
-                        // Scream.
-                        SoundEngine.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
-
-                        // Roar.
-                        SoundEngine.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
-                    }
+                        SoundEngine.PlaySound(SoundID.NPCDeath10 with { Volume = 1.2f, Pitch = 0.3f }, target.Center);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)

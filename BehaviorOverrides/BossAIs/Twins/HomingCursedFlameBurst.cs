@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(Projectile.velocity.Length() / 13f);
-            GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
             FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
             return false;
         }

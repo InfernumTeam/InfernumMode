@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     if (Main.netMode != NetmodeID.Server && NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(NPC.GetSource_FromAI(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.Find<ModGore>($"Gores/PlagueNuke{i}").Type);
+                            Gore.NewGore(NPC.GetSource_FromAI(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.Find<ModGore>($"PlagueNuke{i}").Type);
                     }
                     NPC.active = false;
                 }

@@ -1,3 +1,4 @@
+using CalamityMod.NPCs.Bumblebirb;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,15 +10,13 @@ namespace InfernumMode.Skies
 {
     public class DragonfollySkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
-        {
-            return NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type) &&
-                (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type)].Infernum().ExtraAI[8] > 0f);
-        }
+        public override bool IsSceneEffectActive(Player player) => true;
 
         public override void SpecialVisuals(Player player)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", IsSceneEffectActive(player));
+            int bumblefuckID = ModContent.NPCType<Bumblefuck>();
+            bool enabled = NPC.AnyNPCs(bumblefuckID) && (Main.npc[NPC.FindFirstNPC(bumblefuckID)].Infernum().ExtraAI[8] > 0f);
+            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", enabled);
         }
     }
 
@@ -48,7 +47,7 @@ namespace InfernumMode.Skies
 
         private bool UpdatePIndex()
         {
-            int ProvType = InfernumMode.CalamityMod.Find<ModNPC>("HiveMindP2").Type;
+            int ProvType = ModContent.NPCType<Bumblefuck>();
             if (BirdbrainIndex >= 0 && Main.npc[BirdbrainIndex].active && Main.npc[BirdbrainIndex].type == ProvType)
             {
                 return true;

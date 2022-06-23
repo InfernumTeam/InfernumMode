@@ -1,3 +1,4 @@
+using CalamityMod.NPCs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,17 +10,15 @@ namespace InfernumMode.Skies
 {
     public class HiveMindSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
+        public override bool IsSceneEffectActive(Player player) => true;
+
+        public override void SpecialVisuals(Player player)
         {
             int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
             int hiveMind = NPC.FindFirstNPC(hiveMindID);
             NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
-            return hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-        }
-
-        public override void SpecialVisuals(Player player)
-        {
-            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", IsSceneEffectActive(player));
+            bool enabled = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
+            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", enabled);
         }
     }
     
@@ -63,7 +62,7 @@ namespace InfernumMode.Skies
 
         private bool UpdatePIndex()
         {
-            int ProvType = InfernumMode.CalamityMod.Find<ModNPC>("HiveMindP2").Type;
+            int ProvType = ModContent.NPCType<HiveMind>();
             if (ProvIndex >= 0 && Main.npc[ProvIndex].active && Main.npc[ProvIndex].type == ProvType)
             {
                 return true;

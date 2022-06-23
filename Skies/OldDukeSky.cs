@@ -10,17 +10,15 @@ namespace InfernumMode.Skies
 {
     public class OldDukeSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
+        public override bool IsSceneEffectActive(Player player) => true;
+
+        public override void SpecialVisuals(Player player)
         {
             int oldDukeID = ModContent.NPCType<OldDuke>();
             int oldDuke = NPC.FindFirstNPC(oldDukeID);
             NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
-            return oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
-        }
-
-        public override void SpecialVisuals(Player player)
-        {
-            player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", IsSceneEffectActive(player));
+            bool enabled = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
+            player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", enabled);
         }
     }
 

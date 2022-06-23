@@ -10,17 +10,15 @@ namespace InfernumMode.Skies
 {
     public class PerforatorScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
+        public override bool IsSceneEffectActive(Player player) => true;
+
+        public override void SpecialVisuals(Player player)
         {
             int perforatorHiveID = ModContent.NPCType<PerforatorHive>();
             int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
             NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
-            return perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f;
-        }
-
-        public override void SpecialVisuals(Player player)
-        {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", IsSceneEffectActive(player));
+            bool enabled = perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f;
+            player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", enabled);
         }
     }
 

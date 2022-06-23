@@ -1,3 +1,4 @@
+using CalamityMod.NPCs.HiveMind;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
@@ -15,7 +16,7 @@ namespace InfernumMode.Skies
 
         private void UpdatePIndex()
         {
-            int ProvType = InfernumMode.CalamityMod.Find<ModNPC>("HiveMindP2").Type;
+            int ProvType = ModContent.NPCType<HiveMind>();
             if (ProvIndex >= 0 && Main.npc[ProvIndex].active && Main.npc[ProvIndex].type == ProvType)
             {
                 return;

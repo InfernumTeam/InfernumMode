@@ -21,13 +21,13 @@ namespace InfernumMode.ILEditingStuff
                 return Main.maxDust;
 
             if (InfernumMode.CanUseCustomAIs && Type == 573)
-                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore1").Type;
+                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore1").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore3").Type;
+                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore3").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 575)
-                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore2").Type;
+                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore2").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 576)
-                Type = InfernumMode.Instance.Find<ModGore>("Gores/DukeFishronGore4").Type;
+                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type;
 
             return orig(source, Position, Velocity, Type, Scale);
         }

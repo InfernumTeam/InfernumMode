@@ -226,7 +226,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Polterghast.ai[2] >= 54f)
                 return false;
 
-            GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value);
+            GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             if (Limbs is null)
                 return false;

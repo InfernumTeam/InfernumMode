@@ -14,11 +14,11 @@ namespace InfernumMode.Skies
 {
     public class DeusSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && !BossRushEvent.BossRushActive;
+        public override bool IsSceneEffectActive(Player player) => true;
 
         public override void SpecialVisuals(Player player)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", IsSceneEffectActive(player));
+            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && !BossRushEvent.BossRushActive);
         }
     }
 

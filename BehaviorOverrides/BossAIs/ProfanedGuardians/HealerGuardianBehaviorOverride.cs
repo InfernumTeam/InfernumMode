@@ -80,8 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
             float gleamInterpolant = Utils.GetLerpValue(100f, 145f, wrappedAttackTimer, true) * Utils.GetLerpValue(165f, 145f, wrappedAttackTimer, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow").Value;
-            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2").Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow").Value;
+            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow2").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

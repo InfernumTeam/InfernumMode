@@ -74,14 +74,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (SCal is null)
                     return 0f;
 
-                return (float)shieldOpacityField.GetValue(SCal.ModNPC);
+                return SCal.ModNPC<SCalBoss>().shieldOpacity;
             }
             set
             {
                 if (SCal is null)
                     return;
 
-                shieldOpacityField.SetValue(SCal.ModNPC, value);
+                SCal.ModNPC<SCalBoss>().shieldOpacity = value;
             }
         }
 
@@ -92,14 +92,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (SCal is null)
                     return 0f;
 
-                return (float)shieldRotationField.GetValue(SCal.ModNPC);
+                return SCal.ModNPC<SCalBoss>().shieldRotation;
             }
             set
             {
                 if (SCal is null)
                     return;
 
-                shieldRotationField.SetValue(SCal.ModNPC, value);
+                SCal.ModNPC<SCalBoss>().shieldRotation = value;
             }
         }
 
@@ -110,14 +110,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (SCal is null)
                     return 0f;
 
-                return (float)forcefieldScaleField.GetValue(SCal.ModNPC);
+                return SCal.ModNPC<SCalBoss>().forcefieldScale;
             }
             set
             {
                 if (SCal is null)
                     return;
 
-                forcefieldScaleField.SetValue(SCal.ModNPC, value);
+                SCal.ModNPC<SCalBoss>().forcefieldScale = value;
             }
         }
 
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.Center = target.Center - Vector2.UnitY * 160f;
                 Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
-                typeof(SCalBoss).GetField("initialRitualPosition", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, npc.Center + Vector2.UnitY * 24f);
+                npc.ModNPC<SCalBoss>().initialRitualPosition = npc.Center + Vector2.UnitY * 24f;
                 attackDelay = 270f;
                 npc.localAI[0] = 2f;
                 npc.netUpdate = true;

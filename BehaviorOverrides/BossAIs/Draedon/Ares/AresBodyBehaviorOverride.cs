@@ -939,13 +939,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.Opacity > 0.05f)
             {
                 if (laserArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[laserArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
                 if (pulseArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[pulseArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
                 if (teslaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[teslaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
                 if (plasmaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[plasmaArm].Center, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[plasmaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
 
                 foreach (NPC photonRipper in photonRippers)
                 {

@@ -722,6 +722,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Decide an initial direction angle and play a sound to accomodate the crystals.
                 if (attackTimer == crystalFireDelay)
                 {
+                    SoundEngine.PlaySound(SoundID.Item164, npc.Center);
                     initialDirection = (target.Center - crystalCenter).ToRotation();
                     npc.netUpdate = true;
                 }

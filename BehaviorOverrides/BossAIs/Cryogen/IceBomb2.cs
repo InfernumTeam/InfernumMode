@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -41,6 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
     }
 }

@@ -5,10 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -114,14 +114,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawPillar(scale, aimDirection, ref tipBottom);
+            DrawPillar(Main.spriteBatch, scale, aimDirection, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawPillar(Vector2 scale, Vector2 aimDirection, ref float tipBottom)
+        public void DrawPillar(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, ref float tipBottom)
         {
             Texture2D pillarBodyPiece = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/IcePillarPiece").Value;
 
@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool? CanDamage() => Time >= 70f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 
         public override void Kill(int timeLeft)
         {

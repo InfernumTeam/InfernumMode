@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -129,28 +129,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 EmitIceParticles(npc.Center, 3.5f, 40);
 
                 // Emit gores at the start as necessary.
-                if (subphaseState == 0f)
+                if (Main.netMode != NetmodeID.Server && subphaseState == 0f)
                 {
                     for (int i = 1; i <= 5; i++)
-                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenChainGore" + i), npc.scale);
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.Center, npc.velocity, InfernumMode.Instance.Find<ModGore>("CryogenChainGore" + i).Type, npc.scale);
 
                     SoundEngine.PlaySound(SoundID.NPCDeath7, npc.Center);
                 }
 
-                if (subphaseState == 1f)
+                if (Main.netMode != NetmodeID.Server && subphaseState == 1f)
                 {
                     for (int i = 1; i <= 7; i++)
-                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenGore" + i), npc.scale);
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.Center, npc.velocity, InfernumMode.Instance.Find<ModGore>("CryogenGore" + i).Type, npc.scale);
                 }
 
                 // Reset everything and sync.
                 npc.frame.Y = 0;
-
-                if (Main.netMode != NetmodeID.Server)
-                {
-                    var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
-                    sound?.Stop();
-                }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -809,15 +803,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 npc.velocity *= 0.96f;
             npc.rotation = npc.velocity.X * 0.02f;
 
-            ref float blizzardSound = ref npc.Infernum().ExtraAI[0];
-
-            // Make the blizzard stronger when the aurora spirits appear.
-            float intensityFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
-
-            bool shouldStopSound = Main.ambientVolume > 0f;
-            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
-                blizzardSound = SoundEngine.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
-
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
             {
@@ -831,24 +816,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 attackTimer = 0f;
                 attackState++;
-                shouldStopSound = true;
                 npc.TargetClosest();
                 npc.netUpdate = true;
-            }
-
-            if (Main.netMode != NetmodeID.Server)
-            {
-                var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound));
-                if (sound != null)
-                {
-                    if (shouldStopSound)
-                    {
-                        blizzardSound = 0f;
-                        sound.Stop();
-                    }
-                    else
-                        sound.Sound.Volume = Main.soundVolume * intensityFactor;
-                }
             }
         }
 

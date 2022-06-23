@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class BrimstoneElementalIntroScreen : BaseIntroScreen
+    public class BrimstoneElementalIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -22,6 +22,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<BrimstoneElemental>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/BrimflameRecharge");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/AbilitySounds/BrimflameRecharge");
     }
 }

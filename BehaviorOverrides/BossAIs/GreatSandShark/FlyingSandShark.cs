@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (AttackTimer >= 360f)
                 {
                     if (NPC.DeathSound != null)
-                        SoundEngine.PlaySound(NPC.DeathSound, NPC.position);
+                        SoundEngine.PlaySound(NPC.DeathSound.Value, NPC.position);
 
                     NPC.life = 0;
                     NPC.HitEffect(0, 10.0);
@@ -175,11 +175,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.frame.Y = (int)(NPC.frameCounter / 5) % Main.npcFrameCount[NPC.type] * NPC.frame.Height;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
-            Vector2 drawPosition = NPC.Center - screenPos;
+            Vector2 drawPosition = NPC.Center - Main.screenPosition;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, direction, 0f);
             return false;

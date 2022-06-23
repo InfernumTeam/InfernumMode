@@ -1,4 +1,4 @@
-﻿using CalamityMod.Items.Materials;
+using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
 using System.Linq;
 using Terraria;
@@ -36,7 +36,7 @@ namespace InfernumMode.Items
         internal static void IncreaseBossSummonerYields()
         {
             // Remove ingredients from boss summoners that require the boss be defeated.
-            RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<TrueShadowScale>());
+            RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<RottenMatter>());
             RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<BloodSample>());
         }
     }

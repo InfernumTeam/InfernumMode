@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
@@ -6,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -19,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override float Lifetime => LocalLifetime;
         public override Color LaserOverlayColor => new(79, 174, 255, 32);
         public override Color LightCastColor => Color.Cyan;
-        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
         public override Texture2D LaserMiddleTexture => TextureAssets.Extra[21].Value;
         public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
         public override float MaxLaserLength => 20f;
@@ -74,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 NPC wyrm = Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead];
                 if (Projectile.Colliding(Projectile.Hitbox, wyrm.Hitbox))
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
+                    SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                     Projectile.Kill();
                 }
             }
@@ -92,9 +93,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCs.Add(index);
+            drawCacheProjsBehindNPCs.Add(index);
         }
     }
 }

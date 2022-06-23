@@ -1,4 +1,4 @@
-﻿using CalamityMod.Items.Materials;
+using CalamityMod.Items.Materials;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -29,11 +29,22 @@ namespace InfernumMode.Items
 
         public override void AddRecipes()
         {
-            CreateRecipe(1).AddIngredient(ItemID.GuideVoodooDoll).AddIngredient(ModContent.ItemType<BloodOrb>(), 5).AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5).AddIngredient(ItemID.ShadowScale, 10).Register();
-            CreateRecipe(1).AddIngredient(ItemID.GuideVoodooDoll).AddIngredient(ModContent.ItemType<BloodOrb>(), 5).AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5).AddIngredient(ItemID.TissueSample, 10).Register();
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.GuideVoodooDoll);
+            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5);
+            recipe.AddIngredient(ItemID.ShadowScale, 10);
+            recipe.Register();
+
+            recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.GuideVoodooDoll);
+            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5);
+            recipe.AddIngredient(ItemID.TissueSample, 10);
+            recipe.Register();
         }
 
-        public override bool? UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 NPC.SpawnWOF(player.Center);

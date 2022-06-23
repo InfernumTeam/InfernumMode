@@ -1,4 +1,4 @@
-﻿using CalamityMod.Dusts;
+using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(ref Color lightColor)
         {
             // Draw the spike.
-            Texture2D spikeTipTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D spikeTipTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
             float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
             float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;

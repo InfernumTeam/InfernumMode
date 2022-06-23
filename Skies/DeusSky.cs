@@ -14,11 +14,11 @@ namespace InfernumMode.Skies
 {
     public class DeusSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && !BossRushEvent.BossRushActive;
+        public override bool IsSceneEffectActive(Player player) => true;
 
         public override void SpecialVisuals(Player player)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", IsSceneEffectActive(player));
+            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && !BossRushEvent.BossRushActive);
         }
     }
 
@@ -52,14 +52,11 @@ namespace InfernumMode.Skies
             else if (!isActive && intensity > 0f)
                 intensity -= 0.01f;
 
-            int deus = NPC.FindFirstNPC(ModContent.NPCType<AstrumDeusHeadSpectral>());
+            int deus = NPC.FindFirstNPC(ModContent.NPCType<AstrumDeusHead>());
             if (isActive && nebulaIntensity < 1f && !Main.dayTime && deus != -1 && Main.npc[deus].life < Main.npc[deus].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
                 nebulaIntensity += 0.01f;
             else if (!isActive && intensity > 0f)
                 nebulaIntensity -= 0.01f;
-
-            if (deus == -1)
-                Deactivate(Array.Empty<object>());
 
             intensity = MathHelper.Clamp(intensity, 0f, 1f);
             nebulaIntensity = MathHelper.Clamp(nebulaIntensity, 0f, 1f);
@@ -77,7 +74,7 @@ namespace InfernumMode.Skies
             if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
                 return;
 
-            Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), Color.Black * GetIntensity());
+            Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * GetIntensity());
 
             // Draw nebulous gas behind everything if Deus is below a certain life threshold.
             Main.spriteBatch.SetBlendState(BlendState.Additive);

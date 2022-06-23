@@ -1,4 +1,4 @@
-﻿using CalamityMod.DataStructures;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -170,7 +170,7 @@ namespace InfernumMode
             return vertices.ToArray();
         }
 
-        public static short[] GetIndicesFromTrailPoints(int pointCount)
+        public short[] GetIndicesFromTrailPoints(int pointCount)
         {
             // What this is doing is basically representing each point on the vertices list as
             // indices. These indices should come together to create a tiny rectangle that acts

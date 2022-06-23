@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release the laserbeam.
             if (Time == LaserTelegraphTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightMagicCast"), Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

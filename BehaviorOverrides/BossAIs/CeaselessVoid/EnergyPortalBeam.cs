@@ -1,10 +1,11 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -53,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D portalTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = portalTexture.Size() * 0.5f;
             Color baseColor = Color.White;

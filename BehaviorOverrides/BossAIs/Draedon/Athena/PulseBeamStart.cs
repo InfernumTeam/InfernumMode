@@ -1,5 +1,5 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod;
+using CalamityMod.Dusts;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,8 +8,6 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ReLogic.Content;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -39,16 +37,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             ModContent.Request<Texture2D>(Texture).Value;
 
         public override Texture2D LaserMiddleTexture =>
-            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle", AssetRequestMode.ImmediateLoad).Value;
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle").Value;
 
-        public override Texture2D LaserEndTexture => 
-            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture =>
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd").Value;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pulse Disintegration Beam");
             Main.projFrames[Projectile.type] = 5;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+
         }
 
         public override void SetDefaults()
@@ -156,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
 
             // Start texture drawing.
-            Main.EntitySpriteDraw(LaserBeginTexture,
+            Main.spriteBatch.Draw(LaserBeginTexture,
                              Projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
@@ -177,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
-                    Main.EntitySpriteDraw(LaserMiddleTexture,
+                    Main.spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
@@ -195,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             }
 
             Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-            Main.EntitySpriteDraw(LaserEndTexture,
+            Main.spriteBatch.Draw(LaserEndTexture,
                              laserEndCenter,
                              endFrameArea,
                              beamColor,

@@ -44,7 +44,7 @@ namespace InfernumMode.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public static DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
+        public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
         public Vector2 DrawPosition => BaseDrawPosition;
 
@@ -64,7 +64,7 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual Effect ShaderToApplyToLetters => null;
 
-        public virtual LegacySoundStyle SoundToPlayWithLetterAddition { get; } = null;
+        public virtual SoundStyle? SoundToPlayWithLetterAddition { get; } = null;
 
         public virtual bool CanPlaySound => AnimationTimer >= (int)(AnimationTime * (TextDelayInterpolant + 0.05f));
 
@@ -72,7 +72,7 @@ namespace InfernumMode.BossIntroScreens
 
         public abstract bool ShouldBeActive();
 
-        public abstract LegacySoundStyle SoundToPlayWithTextCreation { get; }
+        public abstract SoundStyle? SoundToPlayWithTextCreation { get; }
 
         public virtual void PrepareShader(Effect shader) { }
 
@@ -80,7 +80,7 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual void Draw(SpriteBatch sb)
         {
-            bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossZen>());
+            bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossEffects>());
             if (!CalamityConfig.Instance.BossZen)
                 notInvolvedWithBoss = false;
 
@@ -101,8 +101,6 @@ namespace InfernumMode.BossIntroScreens
                 Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
                 float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
                 coverScaleFactor *= Utils.GetLerpValue(1f, 0.84f, AnimationCompletion, true);
-                if (coverScaleFactor > 6f)
-                    coverScaleFactor = 6f;
 
                 Vector2 coverCenter = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.32f);
 
@@ -137,7 +135,7 @@ namespace InfernumMode.BossIntroScreens
             {
                 if (!HasPlayedMainSound)
                 {
-                    SoundEngine.PlaySound(SoundToPlayWithTextCreation, Main.LocalPlayer.Center);
+                    SoundEngine.PlaySound(SoundToPlayWithTextCreation.Value, Main.LocalPlayer.Center);
                     HasPlayedMainSound = true;
                 }
             }
@@ -166,7 +164,7 @@ namespace InfernumMode.BossIntroScreens
                     // Play a sound if a new letter was added and a sound of this effect is initialized.
                     if (totalLettersToDisplay > previousTotalLettersToDisplay && SoundToPlayWithLetterAddition != null && !playedNewLetterSound)
                     {
-                        SoundEngine.PlaySound(SoundToPlayWithLetterAddition, Main.LocalPlayer.Center);
+                        SoundEngine.PlaySound(SoundToPlayWithLetterAddition.Value, Main.LocalPlayer.Center);
                         playedNewLetterSound = true;
                     }
 

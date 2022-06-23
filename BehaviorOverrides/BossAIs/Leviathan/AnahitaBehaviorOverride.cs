@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
@@ -7,17 +7,17 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class AnahitaBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<Siren>();
+        public override int NPCOverrideType => ModContent.NPCType<Anahita>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -95,28 +95,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 {
                     npc.rotation = npc.velocity.X * 0.014f;
 
-                    // Descend back into the ocean.
-                    float moveDirection = 1f;
-                    if (Math.Abs(npc.Center.X - Main.maxTilesX * 16f) > Math.Abs(npc.Center.X))
-                        moveDirection = -1f;
-                    npc.velocity.X = moveDirection * 6f;
-                    npc.spriteDirection = (int)-moveDirection;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
-
-                    if (npc.position.Y > (Main.worldSurface - 90f) * 16.0)
+                    for (int x = 0; x < Main.maxNPCs; x++)
                     {
-                        for (int x = 0; x < Main.maxNPCs; x++)
+                        if (Main.npc[x].type == ModContent.NPCType<LeviathanNPC>())
                         {
-                            if (Main.npc[x].type == ModContent.NPCType<LeviathanNPC>())
-                            {
-                                Main.npc[x].active = false;
-                                Main.npc[x].netUpdate = true;
-                            }
+                            Main.npc[x].active = false;
+                            Main.npc[x].netUpdate = true;
                         }
-                        npc.active = false;
-                        npc.netUpdate = true;
                     }
-
+                    npc.active = false;
+                    npc.netUpdate = true;
                     return false;
                 }
             }
@@ -133,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             // Play idle water sounds.
             if (Main.rand.NextBool(180))
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
 
             if (leviathanAlive)
                 npc.ModNPC.Music = Main.npc[CalamityGlobalNPC.leviathan].ModNPC.Music;
@@ -268,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 145, 0f);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
             }
 
             if (attackTimer >= bubbleShootRate * totalBubbles + bubbleShootRate - 2f)
@@ -332,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 150, 0f);
 
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                SoundEngine.PlaySound(SoundID.Zombie35, npc.Center);
             }
 
             if (attackTimer == (enraged || BossRushEvent.BossRushActive ? 135f : 210f))

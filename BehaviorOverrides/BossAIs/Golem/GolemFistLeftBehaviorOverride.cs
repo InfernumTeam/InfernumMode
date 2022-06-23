@@ -1,4 +1,4 @@
-﻿using InfernumMode.OverridingSystem;
+using InfernumMode.OverridingSystem;
 using Terraria;
 using Terraria.ID;
 
@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc) => DoFistAI(npc, true);
 
-        // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawFist(npc, spriteBatch, lightColor, true);
+        // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawFist(npc, Main.spriteBatch, lightColor, true);
 
         public static bool DoFistAI(NPC npc, bool leftFist)
         {
@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             NPC body = Main.npc[(int)npc.ai[0]];
             SpriteEffects effect = leftFist ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Texture2D texture = Utilities.ProjTexture(ModContent.ProjectileType<FistBullet>());
+            Texture2D texture = Main.projectileTexture[ModContent.ProjectileType<FistBullet>()];
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, npc.rotation, npc.Center, 1f, effect, 0f);
             return false;
         }*/

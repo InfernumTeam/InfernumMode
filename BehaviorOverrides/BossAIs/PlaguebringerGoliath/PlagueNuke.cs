@@ -1,12 +1,13 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
@@ -57,10 +58,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                 if (DisappearTimer > 360f || NPC.collideX || NPC.collideY)
                 {
-                    if (NPC.collideX || NPC.collideY)
+                    if (Main.netMode != NetmodeID.Server && NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(new InfernumSource(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Utilities.GetGoreID($"PlagueNuke{i}"));
+                            Gore.NewGore(NPC.GetSource_FromAI(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.Find<ModGore>($"PlagueNuke{i}").Type);
                     }
                     NPC.active = false;
                 }
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 // Explode and die after the explosion delay is passed.
                 if (ExistTimer > BuildTime + ExplodeDelay)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeMechGaussRifle"), NPC.Center);
+                    SoundEngine.PlaySound(GaussRifle.FireSound, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), 750, 0f);
 
@@ -129,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             NPC.TargetClosest();
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
         public override bool CheckDead()
         {
@@ -141,12 +142,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return true;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask").Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
-            Vector2 drawPosition = NPC.Center - screenPos;
+            Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Color color = NPC.GetAlpha(drawColor);
 
             Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);

@@ -1,13 +1,14 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -38,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             if (Projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
+                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;

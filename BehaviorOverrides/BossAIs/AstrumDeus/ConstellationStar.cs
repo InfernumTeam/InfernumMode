@@ -3,10 +3,10 @@ using CalamityMod.NPCs.AstrumDeus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void AI()
         {
-            if (Projectile.timeLeft > 60 && !NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()))
+            if (Projectile.timeLeft > 60 && !NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()))
                 Projectile.timeLeft = 60;
 
             if (Projectile.timeLeft < 60)
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Color starColor = Projectile.identity % 3 == 0 ? new Color(109, 242, 196) : new Color(255, 132, 66);
             starColor.A = 0;
 
-            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D starTexture = TextureAssets.Projectile[Projectile.type].Value;
             float scaleFactor = Utils.GetLerpValue(0f, 35f, Time, true);
 
             for (int i = 0; i < 8; i++)

@@ -1,10 +1,12 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -40,11 +42,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int damage = CalamityGlobalNPC.DoGHead >= 0 ? 425 : 250;
                     for (int i = 0; i < 3; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 2f);
                         Vector2 shootVelocity = Projectile.SafeDirectionTo(closestTarget.Center).RotatedByRandom(offsetAngle) * 4f;
-                        Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
+                        Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), damage, 0f);
                     }
                 }
             }
@@ -58,11 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return new Color(1f, 1f, 1f, alpha) * Projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
             float scale = Projectile.scale;

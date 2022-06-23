@@ -4,9 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -67,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D starTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 largeScale = new Vector2(0.8f, 4f) * Projectile.Opacity * 0.5f;
             Vector2 smallScale = new Vector2(0.8f, 1.25f) * Projectile.Opacity * 0.5f;
             Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
@@ -105,6 +106,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
 
-        public override bool? CanDamage() => Time > 75f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time > 75f;
     }
 }

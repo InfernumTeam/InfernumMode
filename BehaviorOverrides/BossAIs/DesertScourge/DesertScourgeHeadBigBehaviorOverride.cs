@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Projectiles.Boss;
@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 {
@@ -241,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(22f, 16f, 1f - lifeRatio));
-            float sandParticleSpeed = 11f;
+            float sandParticleSpeed = 9.5f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
             {
@@ -294,9 +294,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int totalSlams = 2;
             float upwardFlySpeed = 16f;
-            float slamSpeed = 23.5f;
-            int sandBurstCount = (int)MathHelper.Lerp(20f, 35f, 1f - lifeRatio);
-            float sandBurstSpeed = MathHelper.Lerp(13.745f, 19f, 1f - lifeRatio);
+            float slamSpeed = 21f;
+            int sandBurstCount = (int)MathHelper.Lerp(20f, 32f, 1f - lifeRatio);
+            float sandBurstSpeed = MathHelper.Lerp(13f, 18f, 1f - lifeRatio);
             if (enraged)
             {
                 sandBurstCount += 10;
@@ -322,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                     // Roar as a telegraph.
                     if (attackTimer == 85f)
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                        SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
 
                     // Slam downward.
                     if (attackTimer > 110f)
@@ -361,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         // Create the tornadoes.
                         for (int i = 0; i < 5; i++)
                         {
-                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 23f, i / 4f);
+                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 20.5f, i / 4f);
                             Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                             Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                         }
@@ -424,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         break;
 
                     Vector2 vultureSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-600f, 600f, i / 2f), -500f);
-                    NPC.NewNPC(new InfernumSource(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
                 }
             }
 
@@ -487,9 +487,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

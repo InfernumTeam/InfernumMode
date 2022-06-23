@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BaseEntities
 {
-	public abstract class BasePrimitiveLightningProjectile : ModProjectile
+    public abstract class BasePrimitiveLightningProjectile : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
@@ -28,7 +29,6 @@ namespace InfernumMode.BaseEntities
         public abstract Color PrimitiveColorFunction(float completionRatio);
 
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning");
@@ -63,8 +63,6 @@ namespace InfernumMode.BaseEntities
 
         public override void AI()
         {
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
-
             // FrameCounter in this context is really just an arbitrary timer
             // which allows random turning to occur.
             Projectile.frameCounter++;

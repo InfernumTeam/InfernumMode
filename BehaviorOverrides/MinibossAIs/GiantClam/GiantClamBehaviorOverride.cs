@@ -1,14 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using GiantClamNPC = CalamityMod.NPCs.SunkenSea.GiantClam;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 {
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     if (attackTimer > 180)
                         hidingInShell = 1f;
 
-                    if (attackTimer is 0 or 180)
+                    if (attackTimer == 0 || attackTimer == 180)
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
                         for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
@@ -192,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
                             if (npc.velocity.Y == 0f)
                             {
-                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
+                                SoundEngine.PlaySound(GiantClamNPC.SlamSound, npc.Bottom);
                                 slamCount++;
 
                                 if (slamCount < (hardmode ? 6f : 3f))

@@ -68,12 +68,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
+            target.AddBuff(ModContent.BuffType<Dragonfire>(), 600);
         }
 
-        public override bool? CanDamage() => Timer > 60f && Projectile.timeLeft > 60f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Timer > 60f && Projectile.timeLeft > 60f;
 
-		public override bool PreDrawExtras()
+        public override bool PreDrawExtras()
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 

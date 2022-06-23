@@ -1,15 +1,17 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-	public class BrimstonePetal2 : ModProjectile
+    public class BrimstonePetal2 : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
@@ -42,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
             for (int i = 0; i < 6; i++)
             {
@@ -60,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
+                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 120);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }

@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs.Ravager;
+using CalamityMod.NPCs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,6 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreAI(NPC npc) => RavagerClawLeftBehaviorOverride.DoClawAI(npc, false);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => RavagerClawLeftBehaviorOverride.DrawClaw(npc, spriteBatch, lightColor, false);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => RavagerClawLeftBehaviorOverride.DrawClaw(npc, Main.spriteBatch, lightColor, false);
     }
 }

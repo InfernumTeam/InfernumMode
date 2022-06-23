@@ -1,4 +1,4 @@
-﻿namespace InfernumMode.Commands
+namespace InfernumMode.Commands
 {
     /*
     class AprilFools : ModCommand

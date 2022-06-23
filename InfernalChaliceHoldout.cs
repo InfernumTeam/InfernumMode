@@ -1,14 +1,15 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.CalPlayer;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod.NPCs.SlimeGod;
-using InfernumMode.Systems;
 
 namespace InfernumMode
 {
@@ -61,23 +62,8 @@ namespace InfernumMode
             SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, Main.LocalPlayer.Center);
 
             bool infernumWasAlreadyActive = WorldSaveSystem.InfernumMode;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && !CalamityPlayer.areThereAnyDamnBosses)
             {
-                for (int doom = 0; doom < 200; doom++)
-                {
-                    if (Main.npc[doom].active && (Main.npc[doom].boss || Main.npc[doom].type == NPCID.EaterofWorldsHead || Main.npc[doom].type == NPCID.EaterofWorldsTail || 
-                        Main.npc[doom].type == ModContent.NPCType<SlimeGodRun>() ||
-                        Main.npc[doom].type == ModContent.NPCType<SlimeGodRunSplit>() || 
-                        Main.npc[doom].type == ModContent.NPCType<SlimeGod>() || 
-                        Main.npc[doom].type == ModContent.NPCType<SlimeGodSplit>()))
-                    {
-                        Owner.KillMe(PlayerDeathReason.ByOther(12), 10000.0, 0, false);
-
-                        Main.npc[doom].active = false;
-                        Main.npc[doom].netUpdate = true;
-                    }
-                }
-
                 Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
                 WorldSaveSystem.InfernumMode = !infernumWasAlreadyActive;
                 CalamityNetcode.SyncWorld();
@@ -183,7 +169,7 @@ namespace InfernumMode
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 baseDrawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = frame.Size() * 0.5f;

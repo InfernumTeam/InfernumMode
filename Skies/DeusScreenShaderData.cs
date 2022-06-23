@@ -2,7 +2,6 @@ using CalamityMod.NPCs.AstrumDeus;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -16,7 +15,7 @@ namespace InfernumMode.Skies
 
         private void UpdatePIndex()
         {
-            int bossType = ModContent.NPCType<AstrumDeusHeadSpectral>();
+            int bossType = ModContent.NPCType<AstrumDeusHead>();
             if (BossIndex >= 0 && Main.npc[BossIndex].active && Main.npc[BossIndex].type == bossType)
                 return;
 
@@ -42,8 +41,6 @@ namespace InfernumMode.Skies
                 Color endColor = Color.Lerp(new Color(237, 93, 83), new Color(109, 242, 196), (float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.7f) * 0.5f + 0.5f);
                 UseColor(Color.Lerp(Color.Lerp(Color.Purple, Color.Black, 0.75f), endColor, Main.npc[BossIndex].Infernum().ExtraAI[6]));
             }
-            else
-                Filters.Scene["InfernumMode:Deus"].Deactivate(Array.Empty<object>());
 
             base.Apply();
         }

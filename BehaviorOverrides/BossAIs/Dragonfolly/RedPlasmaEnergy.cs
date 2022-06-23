@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Time++;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             drawColor = Color.Red * NPC.Opacity * 0.4f;
             drawColor.A = 0;

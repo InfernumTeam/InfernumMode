@@ -36,9 +36,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override bool CheckActive() => false;
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
-		public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
             {
@@ -47,10 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 10; k++)
-                {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
-                }
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AquaticSeekerTail", InfernumMode.CalamityMod), 1f);
             }
         }
     }

@@ -2,9 +2,9 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, Target.Center, 104);
+            SoundEngine.PlaySound(SoundID.Zombie104, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

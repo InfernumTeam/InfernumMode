@@ -1,16 +1,17 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -57,7 +58,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
-                laserCount += 2;
                 totalLasersPerBurst = 12;
                 shootTime += 210;
                 laserShootSpeed *= 1.1f;
@@ -75,9 +75,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase == 4)
             {
                 shootTime += 45;
-                if (laserCount > 4)
-                    laserCount = 4;
-                laserCount--;
                 laserShootSpeed *= 0.8f;
             }
 
@@ -173,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire lasers.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

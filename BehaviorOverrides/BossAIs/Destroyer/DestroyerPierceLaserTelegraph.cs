@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -6,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
-	public class DestroyerPierceLaserTelegraph : ModProjectile
+    public class DestroyerPierceLaserTelegraph : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
@@ -31,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 20f) * 6f;
         }
 
-        public override bool? CanDamage() => false ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
 
         public override bool ShouldUpdatePosition() => false;
 

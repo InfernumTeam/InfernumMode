@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return new Color(1f, 1f, 1f, alpha) * Projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
         public override bool PreDraw(ref Color lightColor)
         {

@@ -1,19 +1,21 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-	public class IceMass : ModProjectile
+    public class IceMass : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
         public const int ShardBurstCount = 9;
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
 
         public override void SetDefaults()

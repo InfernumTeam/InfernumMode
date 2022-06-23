@@ -1,14 +1,16 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-	public class RedLightningRedirectingFeather : ModProjectile
+    public class RedLightningRedirectingFeather : ModProjectile
     {
         public const int AimTime = 16;
         public const int RedirectDelay = 40;
@@ -78,11 +80,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Utilities.ProjTexture(Projectile.type), false);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, TextureAssets.Projectile[Projectile.type].Value, false);
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.timeLeft > RedirectDelay ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.timeLeft > RedirectDelay;
 
         public override void Kill(int timeLeft)
         {

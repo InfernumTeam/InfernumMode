@@ -1,6 +1,8 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.Miscellaneous;
@@ -9,11 +11,11 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -107,7 +109,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 DoMovement_IdleHoverMovement(npc, target);
             else
             {
-                
                 if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
                     npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/AquaticScourge");
                 else
@@ -284,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 parasiteVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.37f) * Main.rand.NextFloat(8.5f, 12f);
-                        int parasite = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
+                        int parasite = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
                         if (Main.npc.IndexInRange(parasite))
                         {
                             Main.npc[parasite].velocity = parasiteVelocity;
@@ -330,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(10f, 50f, attackTimer, true));
 
             if (attackTimer == 75f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/MaulerRoar"), npc.Center);
+                SoundEngine.PlaySound(Mauler.RoarSound, npc.Center);
 
             if (attackTimer % summonRate == summonRate - 1f)
             {
@@ -356,7 +357,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Main.netMode != NetmodeID.MultiplayerClient && potentialSpawnPoints.Count > 0)
                 {
                     Vector2 spawnPoint = Main.rand.Next(potentialSpawnPoints);
-                    NPC.NewNPC(new InfernumSource(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<AquaticSeekerHead2>());
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<AquaticSeekerHead2>());
                 }
             }
 
@@ -409,7 +410,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 if (roarSoundCountdown <= 0f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), npc.Center);
+                    SoundEngine.PlaySound(DesertScourgeHead.RoarSound, npc.Center);
                     roarSoundCountdown = 45f;
                 }
                 npc.velocity *= 1.031f;
@@ -448,9 +449,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

@@ -1,7 +1,8 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -10,16 +11,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.WorldBuilding;
-using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasRun3;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
+using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
+    public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
 
@@ -33,6 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             HorizontalDartRelease,
             BrimstoneMeteors,
             BrimstoneVolcano,
+            BrimstoneLightning,
             BrimstoneFireBurst,
             DiagonalCharge,
             RisingBrimstoneFireBursts,
@@ -79,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
-            int brotherCount = NPC.CountNPCS(ModContent.NPCType<CalamitasRun>()) + NPC.CountNPCS(ModContent.NPCType<CalamitasRun2>());
+            int brotherCount = NPC.CountNPCS(ModContent.NPCType<Cataclysm>()) + NPC.CountNPCS(ModContent.NPCType<Catastrophe>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.Infernum().ExtraAI[7];
             ref float transitionState = ref npc.ai[2];
@@ -106,6 +108,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     ModContent.ProjectileType<BrimstoneBurst>(),
                     ModContent.ProjectileType<HomingBrimstoneBurst>(),
                     ModContent.ProjectileType<BrimstoneGeyser>(),
+                    ModContent.ProjectileType<BrimstoneLightning>(),
+                    ModContent.ProjectileType<BrimstoneLightningTelegraph>(),
                     ModContent.ProjectileType<BrimstoneMeteor>(),
                     ModContent.ProjectileType<ExplodingBrimstoneFireball>(),
                 };
@@ -126,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < 50; i++)
                 {
                     float seekerAngle = MathHelper.TwoPi * i / 50f;
-                    int seeker = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>());
+                    int seeker = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>());
                     if (Main.npc.IndexInRange(seeker))
                         Main.npc[seeker].ai[0] = seekerAngle;
                 }
@@ -149,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 int seekerCount = 7;
                 for (int i = 0; i < seekerCount; i++)
                 {
-                    int spawn = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
+                    int spawn = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
                     Main.npc[spawn].ai[0] = MathHelper.TwoPi / seekerCount * i;
                 }
                 SelectNewAttack(npc);
@@ -185,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     attackTimer = 0f;
                     SelectNewAttack(npc);
 
-                    int explosion = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                    int explosion = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                     Main.projectile[explosion].ai[0] = NPCID.Retinazer;
                 }
 
@@ -226,10 +230,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f && transitionState == 1f)
                 {
                     // Summon Catatrophe and Cataclysm.
-                    int cataclysm = NPC.NewNPC(new InfernumSource(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());
+                    int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
                     CalamityUtils.BossAwakenMessage(cataclysm);
 
-                    int catastrophe = NPC.NewNPC(new InfernumSource(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun2>());
+                    int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
                     CalamityUtils.BossAwakenMessage(catastrophe);
                 }
 
@@ -257,6 +261,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 case CloneAttackType.BrimstoneVolcano:
                     npc.damage = 0;
                     DoBehavior_BrimstoneVolcano(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
+                    break;
+                case CloneAttackType.BrimstoneLightning:
+                    npc.damage = 0;
+                    DoBehavior_BrimstoneLightning(npc, target, inFinalPhase, shouldBeBuffed, ref attackTimer);
                     break;
                 case CloneAttackType.BrimstoneFireBurst:
                     npc.damage = 0;
@@ -485,6 +493,61 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNewAttack(npc);
         }
 
+        public static void DoBehavior_BrimstoneLightning(NPC npc, Player target, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
+        {
+            int attackDelay = 45;
+            int attackTime = 330;
+            int lightningShootRate = 23;
+            float hoverSpeed = 18f;
+
+            if (shouldBeBuffed)
+            {
+                attackTime += 45;
+                lightningShootRate -= 8;
+                hoverSpeed += 6f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                attackTime -= 45;
+                hoverSpeed += 8f;
+                lightningShootRate -= 9;
+            }
+
+            if (inFinalPhase)
+            {
+                attackTime -= 45;
+                lightningShootRate -= 4;
+            }
+
+            // Attempt to hover above the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Create a thunder sound and before the lightning comes down.
+            if (attackTimer == attackDelay - 25f)
+            {
+                SoundEngine.PlaySound(new SoundStyle("CalamityMod/Sounds/Custom/LightningStrike"), target.Center);
+                npc.netUpdate = true;
+            }
+
+            bool canFire = attackTimer > attackDelay && attackTimer < attackTime + attackDelay;
+
+            // Create lightning from the sky. This has a delay at the start and end of the attack.
+            if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lightningShootRate == lightningShootRate - 1f)
+            {
+                Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);
+                if (Math.Abs(target.velocity.X) < 3f)
+                    lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 150f, 40f);
+
+                Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneLightningTelegraph>(), 0, 0f);
+            }
+
+            if (attackTimer > attackTime + attackDelay * 2f)
+                SelectNewAttack(npc);
+        }
+
         public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
         {
             int attackCycleCount = 2;
@@ -624,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
@@ -799,6 +862,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (lifeRatio < Phase2LifeRatio)
                     possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
+                //possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
             }
@@ -820,7 +884,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 possibleAttacks.Add(CloneAttackType.HorizontalBurstCharge);
 
                 if (lifeRatio < Phase4LifeRatio)
+                {
                     possibleAttacks.Add(CloneAttackType.BrimstoneMeteors);
+                    //possibleAttacks.Add(CloneAttackType.BrimstoneLightning);
+                }
             }
 
             if (possibleAttacks.Count > 1)
@@ -857,7 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Vector2 drawPosition = npc.position + origin - Main.screenPosition;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow").Value;
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Calamitas/CalamitasCloneGlow").Value;
             Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
 
             if (CalamityConfig.Instance.Afterimages)

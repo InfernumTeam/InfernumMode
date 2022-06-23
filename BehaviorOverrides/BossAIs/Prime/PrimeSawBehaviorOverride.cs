@@ -1,10 +1,10 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.Audio;
+using Terraria.ID;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {

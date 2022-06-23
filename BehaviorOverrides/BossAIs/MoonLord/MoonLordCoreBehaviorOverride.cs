@@ -1,17 +1,18 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -127,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (introSoundTimer < IntroSoundLength)
             {
                 if (introSoundTimer == 0f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/MoonLordIntro"), target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.MoonLordIntroSound, target.Center);
                 introSoundTimer++;
             }
 
@@ -138,9 +139,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (npc.localAI[3] == 0f)
             {
                 Player closest = Main.player[Player.FindClosest(npc.Center, 1, 1)];
-                if (npc.Infernum().arenaRectangle == null)
-                    npc.Infernum().arenaRectangle = default;
-
                 Point closestTileCoords = closest.Center.ToTileCoordinates();
                 npc.Infernum().arenaRectangle = new Rectangle((int)closest.position.X - ArenaWidth * 8, (int)closest.position.Y - ArenaHeight * 8 + 20, ArenaWidth * 16, ArenaHeight * 16);
                 for (int i = closestTileCoords.X - ArenaWidth / 2; i <= closestTileCoords.X + ArenaWidth / 2; i++)
@@ -168,16 +166,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.Calamity().CurrentlyEnraged = IsEnraged;
             if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged)
             {
-                for (int i = 92; i < 98; i++)
+                var sounds = new SoundStyle[]
                 {
-                    var fuckYou = new LegacySoundStyle(SoundID.Zombie, i);
-                    var roar = SoundEngine.PlaySound(fuckYou, target.Center);
-                    if (roar != null)
-                    {
-                        roar.Volume = MathHelper.Clamp(roar.Volume * 1.85f, 0f, 1f);
-                        roar.Pitch = 0.35f;
-                    }
-                }
+                    SoundID.Zombie92,
+                    SoundID.Zombie93,
+                    SoundID.Zombie94,
+                    SoundID.Zombie95,
+                    SoundID.Zombie96,
+                    SoundID.Zombie97
+                };
+                foreach (var sound in sounds)
+                    SoundEngine.PlaySound(sound with { Volume = 1.85f, Pitch = 0.35f });
             }
             wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 
@@ -229,14 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Clear projectiles, go to the desperation attack, and do some visual effects when ready to enter the final phase.
             if (npc.Infernum().ExtraAI[8] == 0f && InFinalPhase)
             {
-                var fuckYou = new LegacySoundStyle(SoundID.Zombie, 92);
-                var roarSound = SoundEngine.PlaySound(fuckYou, npc.Center);
-                if (roarSound != null)
-                {
-                    roarSound.Volume = MathHelper.Clamp(roarSound.Volume * 2f, 0f, 1f);
-                    roarSound.Pitch = -0.48f;
-                }
-
+                var roarSound = SoundEngine.PlaySound(SoundID.Zombie92 with { Volume = 0.2f, Pitch = -0.48f }, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordWave>(), 0, 0f);
 
@@ -251,14 +243,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 SelectNextAttack(npc);
                 forcefullySwitchAttack = 0f;
             }
-            
+
             // Update other limbs if the core is supposed to sync.
             if (npc.netUpdate)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
+                    bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
                     if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                     {
                         n.netSpam = npc.netSpam;
@@ -277,7 +269,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Roar after a bit of time has passed.
             if (attackTimer == 30f)
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 92, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Zombie92, npc.Center);
 
             if (Main.netMode != NetmodeID.Server && !IntroScreenManager.ScreenIsObstructed)
             {
@@ -294,13 +286,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     int[] bodyPartIndices = new int[3];
                     for (int i = 0; i < 2; i++)
                     {
-                        int handIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, npc.whoAmI);
+                        int handIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, npc.whoAmI);
                         Main.npc[handIndex].ai[2] = i;
                         Main.npc[handIndex].netUpdate = true;
                         bodyPartIndices[i] = handIndex;
                     }
 
-                    int headIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, npc.whoAmI);
+                    int headIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, npc.whoAmI);
                     Main.npc[headIndex].netUpdate = true;
                     bodyPartIndices[2] = headIndex;
 
@@ -380,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 npc.life = 0;
                 npc.NPCLoot();
                 npc.active = false;
-            }                
+            }
 
             attackTimer++;
         }
@@ -539,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC n = Main.npc[i];
-                bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
+                bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
                 if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                 {
                     for (int j = 0; j < 5; j++)

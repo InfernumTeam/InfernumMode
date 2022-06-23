@@ -1,15 +1,16 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-	public class AresPlasmaFireball : ModProjectile
+    public class AresPlasmaFireball : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -137,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < totalProjectiles; i++)
                 {
                     Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
-                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
                 }
             }
 

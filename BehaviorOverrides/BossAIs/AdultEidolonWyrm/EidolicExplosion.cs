@@ -2,6 +2,7 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
@@ -33,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 3; i++)
@@ -51,6 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.45f;
     }
 }

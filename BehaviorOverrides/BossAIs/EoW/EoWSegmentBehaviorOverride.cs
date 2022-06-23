@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;

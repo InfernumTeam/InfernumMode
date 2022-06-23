@@ -6,7 +6,6 @@ using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BaseEntities
@@ -44,8 +43,6 @@ namespace InfernumMode.BaseEntities
 
         public override void AI()
         {
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
-
             // Do screen shake effects.
             float distanceFromPlayer = Projectile.Distance(Main.LocalPlayer.Center);
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = DetermineScreenShakePower(1f - Projectile.timeLeft / (float)Lifetime, distanceFromPlayer);

@@ -10,13 +10,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     public class BrainIllusion2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
-        public static NPC Owner => Main.npc[NPC.crimsonBoss];
+        public NPC Owner => Main.npc[NPC.crimsonBoss];
         public float OwnerAttackTime => Owner.ai[1];
         public ref float AttackTimer => ref NPC.ai[1];
 
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Brain of Cthulhu");
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
@@ -42,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override void AI()
         {
             // Disappear if the main boss is not present.
-            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.IllusionSpinCharge)
+            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.SpinPull)
             {
                 NPC.active = false;
                 NPC.netUpdate = true;

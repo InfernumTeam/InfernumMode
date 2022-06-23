@@ -1,12 +1,12 @@
-﻿using InfernumMode.OverridingSystem;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -41,6 +41,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 circleHoverCount++;
             }
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             // Attack the target independently after being "killed".
             if (npc.Infernum().ExtraAI[2] == 1f)
             {
@@ -60,7 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     hoverDestination = Main.npc[Main.wofNPCIndex].Center;
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * 18f, hoverSpeedFactor * 0.9f);
-                npc.damage = 0;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
                 npc.dontTakeDamage = true;
 

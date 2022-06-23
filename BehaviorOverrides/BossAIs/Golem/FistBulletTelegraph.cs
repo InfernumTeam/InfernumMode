@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
-	public class FistBulletTelegraph : ModProjectile
+    public class FistBulletTelegraph : ModProjectile
     {
         public ref float Time => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";

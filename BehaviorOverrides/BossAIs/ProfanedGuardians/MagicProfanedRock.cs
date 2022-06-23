@@ -4,9 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -33,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             // Disappear if the defender guardian is gone.
-            int defenderGuardianIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianBoss2>());
+            int defenderGuardianIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianDefender>());
             if (defenderGuardianIndex == -1)
             {
                 Projectile.Kill();
@@ -81,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 baseDrawPosition = Projectile.Center - Main.screenPosition;
             Color afterimageColor = Projectile.GetAlpha(Color.Lerp(Color.Orange, Color.Yellow, 0.56f)) * 0.4f;

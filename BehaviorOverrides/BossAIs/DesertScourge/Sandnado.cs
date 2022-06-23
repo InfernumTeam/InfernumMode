@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -125,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Vector2 tornadoArea = Vector2.UnitY * (bottom.Y - top.Y);
             tornadoArea.X = tornadoArea.Y * HorizontalCollisionAreaFactor;
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             float baseRotation = MathHelper.TwoPi / -20f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
             SpriteEffects direction = Projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;

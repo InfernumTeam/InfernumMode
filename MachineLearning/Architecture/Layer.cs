@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Terraria;
 
 namespace InfernumMode.MachineLearning.Architecture

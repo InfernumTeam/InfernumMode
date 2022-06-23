@@ -32,8 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             blood.noGravity = true;
 
             Projectile.velocity.Y += Gravity;
-            if (Projectile.velocity.Y >= 10f)
-                Projectile.velocity.Y = 10f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;

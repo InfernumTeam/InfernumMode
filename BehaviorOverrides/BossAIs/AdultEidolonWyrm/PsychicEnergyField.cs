@@ -2,10 +2,11 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -49,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                         Vector2 blastShootVelocity = Projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
-                        Projectile.NewProjectile(new InfernumSource(), Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
                     }
                 }
             }
@@ -58,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.EnterShaderRegion();
-            Texture2D noiseTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D noiseTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseOpacity(Projectile.Opacity);
@@ -76,6 +77,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool? CanDamage() => false ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

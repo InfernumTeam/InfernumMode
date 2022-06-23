@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -129,14 +129,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawStalk(scale, aimDirection, mushroomTexture, ref tipBottom);
+            DrawStalk(Main.spriteBatch, scale, aimDirection, mushroomTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawStalk(Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
+        public void DrawStalk(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
         {
             Texture2D pillarTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece").Value;
 
@@ -166,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool? CanDamage() => Time >= 70f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

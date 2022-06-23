@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.Tiles;
 using System.Linq;
 using Terraria;

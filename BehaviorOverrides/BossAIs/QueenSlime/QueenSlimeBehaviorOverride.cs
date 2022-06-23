@@ -11,6 +11,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.DataStructures;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
+using CalamityMod.NPCs.SlimeGod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
@@ -143,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     if (OnSolidGround(npc) && npc.Bottom.Y >= target.Top.Y)
                     {
                         // Create a shockwave and bursts of gel that accelerate.
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                        SoundEngine.PlaySound(SlimeGodCore.ExitSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Utilities.NewProjectileBetter(npc.Bottom, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
@@ -255,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     SelectNextAttack(npc);
                 }
 
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                SoundEngine.PlaySound(SlimeGodCore.ExitSound, npc.Center);
                 npc.netUpdate = true;
             }
 
@@ -334,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     if (OnSolidGround(npc) && npc.Bottom.Y >= target.Top.Y)
                     {
                         slamCounter++;
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                        SoundEngine.PlaySound(SlimeGodCore.ExitSound, npc.Center);
                         npc.velocity = Vector2.Zero;
                         attackTimer = hoverTime + slamDelay + slamTime;
                         npc.netUpdate = true;

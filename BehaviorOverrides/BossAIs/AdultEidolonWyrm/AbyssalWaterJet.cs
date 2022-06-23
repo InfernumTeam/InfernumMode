@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 12f;
-                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
                 }
             }
 
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(),
                 targetHitbox.Size(),
                 Projectile.oldPos[5] + Projectile.Size * 0.5f,
-                Projectile.oldPos[Projectile.oldPos.Length - 6] + Projectile.Size * 0.5f,
+                Projectile.oldPos[^6] + Projectile.Size * 0.5f,
                 (int)(Projectile.width * 0.525),
                 ref _) && Projectile.timeLeft < 72f;
         }

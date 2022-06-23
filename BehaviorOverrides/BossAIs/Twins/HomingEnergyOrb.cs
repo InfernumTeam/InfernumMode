@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -36,9 +37,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(target.Center) * 16f) / 30f;
             Projectile.Opacity = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
-            if (Projectile.timeLeft < 40)
-                Projectile.damage = 0;
-
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.WithinRange(target.Center, 70f))
             {
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 120, 0f);
@@ -52,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (baseOldPositions.Length <= 2)
                 return true;
 
-            Texture2D projectileTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = projectileTexture.Size() * 0.5f;
             List<Vector2> adjustedOldPositions = new BezierCurve(baseOldPositions).GetPoints(40);
             for (int i = 0; i < adjustedOldPositions.Count; i++)

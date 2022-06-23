@@ -28,9 +28,9 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.TheDestroyer);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/ThanatosTransition");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Sounds/Custom/ThanatosTransition");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit4;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-	public class AcidFountainBubble : ModProjectile
+    public class AcidFountainBubble : ModProjectile
     {
         public PrimitiveTrailCopy WaterDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -48,9 +49,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 2f).ToRotationVector2() * 9f;
+                Vector2 shootVelocity = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 9f;
                 Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<HomingAcid>(), 275, 0f);
             }
         }

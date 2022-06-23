@@ -1,19 +1,19 @@
 using CalamityMod;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.GlobalInstances;
+using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
-using InfernumMode.Particles;
-using CalamityMod.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -117,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (ExplodeCountdown <= 0)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.Center);
-                    ElectricExplosionRing explosion = new(NPC.Center, Vector2.Zero, CalamityUtils.ExoPalette, 0.4f, 95, 0.8f);
+                    ElectricExplosionRing explosion = new(NPC.Center, Vector2.Zero, CalamityUtils.ExoPalette, 1.4f, 95, 0.8f);
                     GeneralParticleHandler.SpawnParticle(explosion);
                     NPC.active = false;
                 }
@@ -151,17 +151,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             else
                 NPC.dontTakeDamage = true;
 
+            bool enraged = Athena.ModNPC<AthenaNPC>().Enraged;
             switch ((int)AttackState)
             {
                 // Rise upward.
                 case 0:
                     float horizontalOffset = MathHelper.Lerp(350f, 560f, NPC.whoAmI % 7f / 7f);
-                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * horizontalOffset, -240f);
-                    Vector2 idealVelocity = NPC.SafeDirectionTo(flyDestination) * 30f;
-                    NPC.velocity = (NPC.velocity * 29f + idealVelocity) / 29f;
-                    NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.5f);
+                    float flySpeed = 30f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 3)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 5)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 6)
+                        flySpeed += 10f;
+                    if (enraged)
+                        flySpeed += 30f;
 
-                    if (NPC.WithinRange(flyDestination, 40f) || IndividualAttackTimer > 150f)
+                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * horizontalOffset, -240f);
+                    Vector2 idealVelocity = NPC.SafeDirectionTo(flyDestination) * flySpeed;
+                    NPC.velocity = (NPC.velocity * 29f + idealVelocity) / 29f;
+                    NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, enraged ? 8f : 1.5f);
+
+                    if (NPC.WithinRange(flyDestination, 80f) || IndividualAttackTimer > 150f)
                     {
                         AttackState = 1f;
                         NPC.velocity *= 0.65f;
@@ -171,19 +184,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
                 // Slow down and look at the target.
                 case 1:
+                    float chargeSpeed = 40f;
+                    float decelerationFactor = 0.96f;
+                    float predictivenessFactor = 0f;
+                    if (Athena.ModNPC<AthenaNPC>().AttackState == AthenaNPC.AthenaAttackType.ElectricCharge)
+                        chargeSpeed *= 0.67f;
+                    if (enraged)
+                    {
+                        decelerationFactor = 0.9f;
+                        chargeSpeed *= 1.6f;
+                        predictivenessFactor = 13.5f;
+                    }
+
                     NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
-                    NPC.velocity *= 0.96f;
+                    NPC.velocity *= decelerationFactor;
                     NPC.velocity = NPC.velocity.MoveTowards(Vector2.Zero, 0.7f);
 
                     // Charge once sufficiently slowed down.
-                    float chargeSpeed = 40f;
                     if (NPC.velocity.Length() < 1.25f)
                     {
                         SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Center);
-                        SoundEngine.PlaySound(SoundID.Zombie, NPC.Center, 68);
+                        SoundEngine.PlaySound(SoundID.Zombie68, NPC.Center);
                         AttackState = 2f;
                         IndividualAttackTimer = 0f;
-                        NPC.velocity = NPC.SafeDirectionTo(Target.Center) * chargeSpeed;
+                        NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
                         NPC.netUpdate = true;
                     }
                     break;

@@ -25,6 +25,6 @@ namespace InfernumMode.BossIntroScreens
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.DukeFishron);
 
         // Sounds are played in Duke Fishron's AI.
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

@@ -1,4 +1,3 @@
-﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
@@ -9,12 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-	public class RavagerClawLeftBehaviorOverride : NPCBehaviorOverride
+    public class RavagerClawLeftBehaviorOverride : NPCBehaviorOverride
     {
         public enum RavagerClawAttackState
         {
@@ -22,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Punch,
             Hover,
             AccelerationPunch,
-            BlueFireBursts
+            SlamIntoGround
         }
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerClawLeft>();
@@ -31,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreAI(NPC npc) => DoClawAI(npc, true);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => RavagerClawLeftBehaviorOverride.DrawClaw(npc, spriteBatch, lightColor, true);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawClaw(npc, Main.spriteBatch, lightColor, true);
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {
@@ -60,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 reelbackSpeed *= 1.7f;
             }
 
-            float specialAttackDelay = ravagerBody.Infernum().ExtraAI[0];
+            bool shouldSlamIntoGround = ravagerBody.Infernum().ExtraAI[7] == 1f;
             ref float attackState = ref npc.ai[0];
             ref float punchTimer = ref npc.ai[1];
 
@@ -84,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (!free)
                 npc.dontTakeDamage = false;
 
+            // Stay attach to Ravager when it isn't ready to attack yet.
             if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
             {
                 npc.damage = 0;
@@ -91,8 +90,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 attackState = (int)RavagerClawAttackState.StickToBody;
                 punchTimer = 0f;
             }
+
             else if (npc.dontTakeDamage)
                 npc.life = 1;
+
+            // Stay attached to the Ravager unless it explicitly states that arms can punch in the form of an ExtraAI value.
+            else if (ravagerBody.Infernum().ExtraAI[6] == 0f)
+            {
+                npc.damage = 0;
+                attackState = (int)RavagerClawAttackState.StickToBody;
+                punchTimer = 0f;
+            }
+
+            // Slam into the ground if necessary.
+            if (shouldSlamIntoGround)
+            {
+                npc.damage = 0;
+                attackState = (int)RavagerClawAttackState.SlamIntoGround;
+                punchTimer = 0f;
+            }
 
             switch ((RavagerClawAttackState)(int)attackState)
             {
@@ -176,10 +192,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     else
                         npc.velocity *= 0.965f;
                     npc.rotation = npc.AngleTo(target.Center);
-
-                    // Don't punch during a spike barrage.
-                    if (ravagerBody.Infernum().ExtraAI[1] == (int)RavagerBodyBehaviorOverride.RavagerAttackType.SpikeBarrage && specialAttackDelay >= 720f)
-                        punchTimer = 0f;
 
                     // Emit magic as a telegraph to signal that a punch will happen soon.
                     if (punchTimer >= 165f)
@@ -266,43 +278,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                     punchTimer++;
                     break;
-
-                case RavagerClawAttackState.BlueFireBursts:
-                    hoverDestination = target.Center + Vector2.UnitX * leftClaw.ToDirectionInt() * -600f;
-                    hoverDestination.Y += (float)Math.Sin(punchTimer * MathHelper.TwoPi / 65f) * 250f;
-
-                    if (!npc.WithinRange(hoverDestination, 100f))
-                        npc.velocity = npc.SafeDirectionTo(hoverDestination) * 10f;
-                    if (!npc.WithinRange(hoverDestination, 150f) && punchTimer % 30f == 29f)
-                    {
-                        for (int i = 0; i < 18; i++)
-                        {
-                            Vector2 ringOffset = Vector2.UnitX * -npc.width / 2f - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 18f) * new Vector2(8f, 16f);
-                            ringOffset = ringOffset.RotatedBy(npc.rotation);
-                            Dust darkMagicFire = Dust.NewDustDirect(npc.Center, 0, 0, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 160, default, 1f);
-                            darkMagicFire.scale = 1.35f;
-                            darkMagicFire.fadeIn = 1.4f;
-                            darkMagicFire.noGravity = true;
-                            darkMagicFire.position = npc.Center - ringOffset + Main.rand.NextVector2Circular(8f, 8f);
-                            darkMagicFire.velocity = npc.velocity * 0.1f;
-                            darkMagicFire.velocity = Vector2.Normalize(npc.Center - npc.velocity * 3f - darkMagicFire.position) * 1.25f;
-                        }
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int cinderDamage = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive ? 335 : 205;
-
-                            for (int i = 0; i < 3; i++)
-                            {
-                                float offsetAngle = MathHelper.Lerp(-0.47f, 0.47f, i / 2f);
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f).RotatedBy(offsetAngle) * 10f;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
-                            }
-                        }
-                    }
-
-                    npc.rotation = npc.AngleTo(target.Center);
-                    punchTimer++;
+                case RavagerClawAttackState.SlamIntoGround:
+                    npc.velocity = ((npc.Center - ravagerBody.Center) * new Vector2(0.12f, 1f)).SafeNormalize(Vector2.UnitY) * 48f;
+                    npc.rotation = npc.velocity.ToRotation();
+                    if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                        npc.velocity = Vector2.Zero;
                     break;
+            }
+
+            // Inherit HP from the NPC that has the actual HP pool if applicable.
+            if (npc.realLife >= 0 && (Main.npc[npc.realLife].type == ModContent.NPCType<RavagerClawLeft>() || Main.npc[npc.realLife].type == ModContent.NPCType<RavagerClawRight>()))
+            {
+                if (!Main.npc[npc.realLife].active)
+                    npc.active = false;
+                npc.life = Main.npc[npc.realLife].life;
+                npc.lifeMax = Main.npc[npc.realLife].lifeMax;
             }
 
             return false;

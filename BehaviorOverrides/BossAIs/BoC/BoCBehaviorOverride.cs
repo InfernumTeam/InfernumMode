@@ -1,14 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             CreeperBloodDripping,
             DashingIllusions,
             PsionicBombardment,
-            IllusionSpinCharge
+            SpinPull
         }
         #endregion
 
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 for (int i = 0; i < creeperCount; i++)
                 {
                     Point spawnPosition = (npc.position + npc.Size * Main.rand.NextVector2Square(0f, 1f)).ToPoint();
-                    int creeperAwMan = NPC.NewNPC(new InfernumSource(), spawnPosition.X, spawnPosition.Y, NPCID.Creeper, ai0: i / (float)creeperCount);
+                    int creeperAwMan = NPC.NewNPC(npc.GetSource_FromAI(), spawnPosition.X, spawnPosition.Y, NPCID.Creeper, ai0: i / (float)creeperCount);
                     if (Main.npc.IndexInRange(creeperAwMan))
                         Main.npc[creeperAwMan].velocity = Main.rand.NextVector2Circular(3f, 3f);
                 }
@@ -104,8 +104,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 case BoCAttackState.PsionicBombardment:
                     DoAttack_PsionicBombardment(npc, target, enraged, ref attackTimer);
                     break;
-                case BoCAttackState.IllusionSpinCharge:
-                    DoAttack_IllusionSpinCharge(npc, target, enraged, ref attackTimer);
+                case BoCAttackState.SpinPull:
+                    DoAttack_SpinPull(npc, target, enraged, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -140,7 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 floatTime -= 40;
             }
 
-            float teleportOffset = MathHelper.Lerp(540f, 400f, 1f - lifeRatio);
+            float teleportOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.velocity = npc.SafeDirectionTo(target.Center) * floatSpeed;
 
             // Stick to the target if close to them.
-            if (npc.WithinRange(target.Center, 10f))
+            if (npc.WithinRange(target.Center, 100f))
             {
                 npc.velocity = Vector2.Zero;
 
@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
             if (attackTimer == teleportFadeTime + 25f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer == teleportFadeTime + 10f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -259,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     npc.direction = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
 
-                    for (int i = 0; i < 30; i++)
+                    for (int i = 0; i < 24; i++)
                     {
                         Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.42f) * 12f;
                         Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(spawnPosition, target.Center, BloodGeyser2.Gravity, Main.rand.NextFloat(12f, 14f), out _);
@@ -308,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             int tries = 0;
             do
             {
-                teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(340f, 340f);
+                teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(450f, 450f);
                 tries++;
 
                 if (tries > 500f)
@@ -345,14 +345,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 for (int i = 1; i < 8; i++)
                 {
-                    int illusion = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
+                    int illusion = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
                     Main.npc[illusion].ai[1] = MathHelper.TwoPi * i / 8f;
                 }
             }
 
             if (attackTimer == teleportFadeTime + 75f)
             {
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 17f;
                 if (enraged)
@@ -435,7 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public static void DoAttack_IllusionSpinCharge(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoAttack_SpinPull(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int teleportFadeTime = 50;
             float spinRadius = 395f;
@@ -451,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.GetLerpValue(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer % 16f == 15f)
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
             }
 
             npc.localAI[1] = (float)Math.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
@@ -469,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     Main.npc[i].netUpdate = true;
                 }
 
-                SoundEngine.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.ForceRoarPitched, target.Center);
             }
 
             if (attackTimer < (int)(teleportFadeTime * 1.5f) + spinTime)
@@ -519,9 +519,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     newAttackType = BoCAttackState.PsionicBombardment;
                     break;
                 case BoCAttackState.PsionicBombardment:
-                    newAttackType = BoCAttackState.IllusionSpinCharge;
+                    newAttackType = BoCAttackState.SpinPull;
                     break;
-                case BoCAttackState.IllusionSpinCharge:
+                case BoCAttackState.SpinPull:
                     newAttackType = Main.rand.NextBool(2) ? BoCAttackState.DiagonalCharge : BoCAttackState.BloodDashSwoop;
                     break;
             }

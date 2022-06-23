@@ -9,7 +9,7 @@ namespace InfernumMode.Balancing
         public float DamageMultiplier;
         public PierceResistBalancingRule(float damageMultiplier) => DamageMultiplier = damageMultiplier;
 
-        public bool AppliesTo(NPC npc, NPCHitContext hitContext) => hitContext.Pierce is > 1 or (-1);
+        public bool AppliesTo(NPC npc, NPCHitContext hitContext) => hitContext.Pierce > 1 || hitContext.Pierce == -1;
 
         public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
     }

@@ -1,9 +1,9 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 {
@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             Projectile.rotation += Projectile.velocity.X * 0.04f;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.75f;
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class GreatSandSharkIntroScreen : BaseIntroScreen
+    public class GreatSandSharkIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -24,6 +24,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<GreatSandShark>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/GreatSandSharkRoar");
     }
 }

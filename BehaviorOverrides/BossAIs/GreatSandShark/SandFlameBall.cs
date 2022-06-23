@@ -1,9 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -59,14 +60,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             for (int i = 0; i < 3; i++)
             {
                 Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
-                int fuck = Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f);
+                int fuck = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f);
                 Main.projectile[fuck].ai[0] = target.whoAmI;
             }
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
@@ -80,6 +81,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.9f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.9f;
     }
 }

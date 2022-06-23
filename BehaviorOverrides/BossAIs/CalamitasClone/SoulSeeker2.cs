@@ -3,16 +3,17 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class SoulSeeker2 : ModNPC
+    public class SoulSeeker2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
-        public static float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
+        public float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
         public ref float RingAngle => ref NPC.ai[0];
         public ref float AngerTimer => ref NPC.ai[1];
         public ref float AttackTimer => ref NPC.ai[2];
@@ -41,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void AI()
         {
-            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>()) || NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
+            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             brotherIsPresent |= (Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) && Main.npc[CalamityGlobalNPC.calamitas].ai[3] > 0f && Main.npc[CalamityGlobalNPC.calamitas].ai[3] < 50f);
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) || !brotherIsPresent)
             {
@@ -93,6 +94,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / MathHelper.TwoPi * 50f) % Main.npcFrameCount[NPC.type] * frameHeight;
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
     }
 }

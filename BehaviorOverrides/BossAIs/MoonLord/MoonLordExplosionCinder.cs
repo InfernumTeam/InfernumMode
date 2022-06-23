@@ -19,7 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.width = Projectile.height = 4;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 300;
             Projectile.ignoreWater = true;
         }

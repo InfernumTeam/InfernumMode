@@ -1,12 +1,14 @@
+using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
-	public class BombingTelegraph : ModProjectile
+    public class BombingTelegraph : ModProjectile
     {
         public ref float Countdown => ref Projectile.ai[0];
         public Player Target => Main.player[Projectile.owner];
@@ -30,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             else
             {
                 if (Projectile.ai[1] == 1f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TankCannon"), Target.Center);
+                    SoundEngine.PlaySound(HandheldTank.UseSound, Target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

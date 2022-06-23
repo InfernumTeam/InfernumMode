@@ -29,7 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("XM-04 Athena");
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
@@ -70,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             NPC.dontTakeDamage = Owner.dontTakeDamage;
         }
 
-        public override Color? GetAlpha(Color drawColor) => GlobalNPCOverrides.Athena == -1 ? null : Owner.GetAlpha(drawColor);
+        public override Color? GetAlpha(Color drawColor) => GlobalNPCOverrides.Athena == -1 ? (Color?)null : Owner.GetAlpha(drawColor);
 
         // Update these in the illusion NPC's file if this needs changing for some reason.
         // Static methods doesn't easily work in this context, unfortunately.
@@ -98,8 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (FlameTrail is null)
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
-            drawColor = Color.Lerp(drawColor, new(0f, 1f, 1f, 0.7f), 0.65f);
-            DrawBaseNPC(NPC, screenPos, drawColor, FlameTrailPulse, FlameTrail);
+            drawColor = Color.Lerp(drawColor, new Color(0f, 1f, 1f, 0.7f), 0.65f);
+            DrawBaseNPC(NPC, Main.screenPosition, drawColor, FlameTrailPulse, FlameTrail);
             return false;
         }
 

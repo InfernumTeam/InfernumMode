@@ -1,17 +1,22 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
+using CalamityMod.Items.Tools;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -51,12 +56,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             armCycleTimer %= 1800f;
             if (armCycleTimer < 450f)
-                return armType is NPCID.PrimeSaw or NPCID.PrimeVice;
+                return armType == NPCID.PrimeSaw || armType == NPCID.PrimeVice;
             if (armCycleTimer < 900f)
-                return armType is NPCID.PrimeVice or NPCID.PrimeCannon;
+                return armType == NPCID.PrimeVice || armType == NPCID.PrimeCannon;
             if (armCycleTimer < 1350f)
-                return armType is NPCID.PrimeCannon or NPCID.PrimeLaser;
-            return armType is NPCID.PrimeLaser or NPCID.PrimeSaw;
+                return armType == NPCID.PrimeCannon || armType == NPCID.PrimeLaser;
+            return armType == NPCID.PrimeLaser || armType == NPCID.PrimeSaw;
         }
 
         public static void ArmHoverAI(NPC npc)
@@ -97,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create the shield.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
             {
-                int shield = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
+                int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
                 Main.projectile[shield].ai[0] = npc.whoAmI;
                 hasCreatedShield = 1f;
             }
@@ -209,30 +214,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                 if (attackTimer > 210f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[3] == 0f)
                     {
                         npc.TargetClosest();
-                        int arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeCannon, npc.whoAmI);
+                        int arm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeCannon, npc.whoAmI);
                         Main.npc[arm].ai[0] = -1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
+                        arm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
                         Main.npc[arm].ai[0] = 1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeSaw, npc.whoAmI);
+                        arm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeSaw, npc.whoAmI);
                         Main.npc[arm].ai[0] = 1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeVice, npc.whoAmI);
+                        arm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeVice, npc.whoAmI);
                         Main.npc[arm].ai[0] = -1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
@@ -411,7 +416,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         SoundEngine.PlaySound(SoundID.Item101, target.Center);
                     }
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                 }
 
                 frameType = (int)PrimeFrameType.Spikes;
@@ -450,15 +455,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Play a telegraph sound prior to firing.
             if (attackTimer == 5f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             if (attackTimer == shootDelay - 35f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             // Release the lasers from eyes.
             if (attackTimer == shootDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = -1; i <= 1; i += 2)
@@ -536,7 +541,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create a bunch of scenic lightning and decide the laser direction.
             if (attackTimer == lightningCreationDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LightningStrike"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 6; i++)
@@ -597,8 +602,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Roar as a telegraph.
                 if (attackTimer == 130f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 }
                 if (attackTimer > 95f)
                     frameType = (int)PrimeFrameType.OpenMouth;
@@ -611,7 +616,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
@@ -688,7 +693,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Release a bunch of tesla orb bombs around the target.
             if (attackTimer == slowdownTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/MechGaussRifle"), target.Center);
+                SoundEngine.PlaySound(Karasawa.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < bombCount; i++)
@@ -758,7 +763,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     npc.velocity.Y -= 10f;
                     npc.netUpdate = true;
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                 }
 
                 // Release lasers upward.
@@ -833,7 +838,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 afterimageColor.G = (byte)(afterimageColor.G * (10 - i) / 20);
                 afterimageColor.B = (byte)(afterimageColor.B * (10 - i) / 20);
                 afterimageColor.A = (byte)(afterimageColor.A * (10 - i) / 20);
-                Main.spriteBatch.Draw(texture, drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             float superchargePower = Utils.GetLerpValue(0f, 30f, npc.Infernum().ExtraAI[1], true);

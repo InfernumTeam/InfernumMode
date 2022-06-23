@@ -1,7 +1,18 @@
 using CalamityMod.Events;
+using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
@@ -26,7 +37,9 @@ namespace InfernumMode
     public class InfernumMode : Mod
     {
         internal static InfernumMode Instance = null;
+
         internal static Mod CalamityMod = null;
+
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
 
         internal static bool BossRushApplies => true;
@@ -34,6 +47,8 @@ namespace InfernumMode
         internal static readonly Color HiveMindSkyColor = new(53, 42, 81);
 
         public static float BlackFade = 0f;
+
+        public static float DraedonThemeTimer = 0f;
 
         public static float ProvidenceArenaTimer
         {
@@ -65,6 +80,8 @@ namespace InfernumMode
             Filters.Scene["InfernumMode:OldDuke"] = new Filter(new OldDukeScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Lime, Color.Black, 0.9f)).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
 
+            SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
+
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {
@@ -79,10 +96,6 @@ namespace InfernumMode
             if (Main.netMode != NetmodeID.Server)
             {
                 CryogenBehaviorOverride.SetupCustomBossIcon();
-
-                Ref<Effect> portalShader = new(Assets.Request<Effect>("Effects/DoGPortalShader", AssetRequestMode.ImmediateLoad).Value);
-                Filters.Scene["Infernum:DoGPortal"] = new Filter(new ScreenShaderData(portalShader, "ScreenPass"), EffectPriority.High);
-                Filters.Scene["Infernum:DoGPortal"].Load();
 
                 Ref<Effect> aewPsychicEnergyShader = new(Assets.Request<Effect>("Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
@@ -138,15 +151,21 @@ namespace InfernumMode
                 Ref<Effect> rayShader = new(Assets.Request<Effect>("Effects/PrismaticRayShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
 
-                Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
-                Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
-                SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
+                Ref<Effect> darkFlamePillarShader = new(Assets.Request<Effect>("Effects/DarkFlamePillarShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
+
+                Ref<Effect> artemisLaserShader = new(Assets.Request<Effect>("Effects/ArtemisLaserShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:ArtemisLaser"] = new MiscShaderData(artemisLaserShader, "TrailPass");
 
                 Ref<Effect> hologramShader = new(Assets.Request<Effect>("Effects/HologramShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 
-                Ref<Effect> matrixShader = new Ref<Effect>(GetEffect("Effects/LocalLinearTransformationShader"));
+                Ref<Effect> matrixShader = new(Assets.Request<Effect>("Effects/LocalLinearTransformationShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:LinearTransformation"] = new MiscShaderData(matrixShader, "TransformationPass");
+
+                Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
+                Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
+                SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
                 OverrideMusicBox(ItemID.MusicBoxBoss3, MusicLoader.GetMusicSlot(this, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, MusicLoader.GetMusicSlot(this, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
@@ -172,7 +191,7 @@ namespace InfernumMode
 
             SoundLoaderTileToMusic[tileType][tileFrameY] = musicSlot;
         }
-
+        
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
 
         public override void AddRecipes() => RecipeUpdates.Update();

@@ -32,8 +32,6 @@ namespace InfernumMode
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
-        public static Texture2D ProjTexture(int projID) => TextureAssets.Projectile[projID].Value;
-
         /// <summary>
         /// Ends changes to a <see cref="SpriteBatch"/> based on shader-based drawing in favor of typical draw begin states.
         /// </summary>
@@ -83,7 +81,7 @@ namespace InfernumMode
             float rotation = (end - start).ToRotation();
             Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 
-            spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
         /// <summary>
@@ -125,7 +123,7 @@ namespace InfernumMode
         public static void DrawAfterimagesCentered(Projectile proj, Color lightColor, int mode, int typeOneIncrement = 1, Texture2D texture = null, bool drawCentered = true)
         {
             if (texture is null)
-                texture = ProjTexture(proj.type);
+                texture = TextureAssets.Projectile[proj.type].Value;
 
             int frameHeight = texture.Height / Main.projFrames[proj.type];
             int frameY = frameHeight * proj.frame;
@@ -217,14 +215,5 @@ namespace InfernumMode
             else if (Main.netMode == NetmodeID.Server)
                 ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
-
-        public static int GetGoreID(string goreName, Mod mod = null)
-		{
-            mod ??= InfernumMode.Instance;
-            if (Main.netMode == NetmodeID.Server)
-                return 0;
-
-            return mod.Find<ModGore>(goreName).Type;
-		}
     }
 }

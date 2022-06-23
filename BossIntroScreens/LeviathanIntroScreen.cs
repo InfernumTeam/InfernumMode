@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class LeviathanIntroScreen : BaseIntroScreen
+    public class LeviathanIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -25,6 +25,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Leviathan>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LeviathanRoarCharge");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/LeviathanRoarCharge");
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -40,14 +41,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     Projectile.Kill();
             }
             else
-                Projectile.velocity.Y = (float)Math.Sin(Projectile.position.X * MathHelper.TwoPi / 999f) * 2f + 3f;
+                Projectile.velocity.Y = (float)Math.Sin(Projectile.position.X * MathHelper.TwoPi / 999f) + 1.5f;
 
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
 

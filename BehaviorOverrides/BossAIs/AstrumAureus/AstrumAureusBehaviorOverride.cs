@@ -1,23 +1,26 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
 using AureusBoss = CalamityMod.NPCs.AstrumAureus.AstrumAureus;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
@@ -345,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Play a sound as an indicator if doing a meteor slam.
                             if (meteorSlam)
-                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
 
                             npc.noTileCollide = true;
 
@@ -366,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     if (npc.velocity.Y == 0f && attackTimer > 30f)
                     {
                         // Play a stomp sound.
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LegStomp"), npc.Center);
+                        SoundEngine.PlaySound(AureusBoss.StompSound, npc.Center);
 
                         // Reset the jump intensity.
                         jumpIntensity = 0f;
@@ -419,7 +422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                                 for (int i = 0; i < 2; i++)
                                 {
-                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -780f);
+                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -640f);
                                     Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
                                     if (showerDirection.Y < 0.4f)
                                     {
@@ -528,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaBlast"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBlastSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -577,7 +580,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Enrage if the player moves too far away.
             if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f && attackTimer > laserShootDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 enrageCountdown = 360f;
                 npc.netUpdate = true;
             }
@@ -657,7 +660,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 float ringIrregularity = Main.rand.NextFloat(0.5f);
 
                 if (NPC.CountNPCS(ModContent.NPCType<AureusSpawn>()) < 7)
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AureusSpawn>(), npc.whoAmI, ringAngle, ringRadius, ringIrregularity);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AureusSpawn>(), npc.whoAmI, ringAngle, ringRadius, ringIrregularity);
                 npc.netUpdate = true;
             }
 
@@ -702,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Make an explosion prior to the comets being released.
             if (attackTimer == 120f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                 Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
             }
 
@@ -762,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Play a charge sound as a telegraph prior to firing.
             if (attackTimer == laserShootDelay - 155f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Adjust frames.
             frameType = Math.Abs(walkSpeed) > 0f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
@@ -771,7 +774,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (attackTimer == laserShootDelay - 5f)
             {
                 // Create a laserbeam fire sound effect.
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 104);
+                SoundEngine.PlaySound(SoundID.Zombie104, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -909,7 +912,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
-                if (oldAttackState is not AureusAttackType.LeapAtTarget and not AureusAttackType.MeteorSlam)
+                if (oldAttackState != AureusAttackType.LeapAtTarget && oldAttackState != AureusAttackType.MeteorSlam)
                     attackSelector.Add(AureusAttackType.CelestialRain);
             }
 

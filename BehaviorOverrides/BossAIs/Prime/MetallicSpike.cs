@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
@@ -32,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
             Color afterimageColor = new(0.3f, 0f, 0f, 0f);
@@ -47,6 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
     }
 }

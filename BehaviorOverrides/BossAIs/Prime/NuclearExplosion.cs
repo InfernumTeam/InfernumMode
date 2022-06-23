@@ -2,6 +2,7 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -39,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     Vector2 spawnPosition = Projectile.Center + Main.rand.NextVector2Circular(35f, 35f);
                     Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(2.16f) * Main.rand.NextFloat(6f, 29f);
-                    Projectile.NewProjectile(new InfernumSource(), spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
                 }
             }
 
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.OrangeRed * Projectile.Opacity * 0.65f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
@@ -66,6 +67,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.45f;
     }
 }

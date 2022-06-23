@@ -1,11 +1,12 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-	public class CursedGelWave : ModProjectile
+    public class CursedGelWave : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Gel Wave");
 

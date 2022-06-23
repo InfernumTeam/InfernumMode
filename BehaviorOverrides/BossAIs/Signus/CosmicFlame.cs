@@ -3,6 +3,7 @@ using CalamityMod.Buffs.StatDebuffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
@@ -56,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {

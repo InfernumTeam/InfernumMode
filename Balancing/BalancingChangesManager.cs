@@ -58,15 +58,15 @@ namespace InfernumMode.Balancing
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {
                 // Desert Scourge.
-                new NPCBalancingChange(NPCType<DesertScourgeHead>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.375f))),
-                new NPCBalancingChange(NPCType<DesertScourgeBody>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.375f))),
-                new NPCBalancingChange(NPCType<DesertScourgeTail>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.375f))),
+                new NPCBalancingChange(NPCType<DesertScourgeHead>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.425f))),
+                new NPCBalancingChange(NPCType<DesertScourgeBody>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.425f))),
+                new NPCBalancingChange(NPCType<DesertScourgeTail>(), Do(desertScourgeProjResists1, desertScourgeProjResists2, new PierceResistBalancingRule(0.425f))),
 
                 // King Slime.
                 new NPCBalancingChange(NPCID.KingSlime, new PierceResistBalancingRule(0.67f)),
 
                 // Crabulon.
-                new NPCBalancingChange(NPCType<CrabulonIdle>(), Do(new ProjectileResistBalancingRule(0.785f, ProjectileType<SeafoamBubble>()))),
+                new NPCBalancingChange(NPCType<Crabulon>(), Do(new ProjectileResistBalancingRule(0.785f, ProjectileType<SeafoamBubble>()))),
 
                 // Eater of Worlds.
                 new NPCBalancingChange(NPCID.EaterofWorldsBody, Do(eowIsSplitRequirement, new PierceResistBalancingRule(0.45f))),

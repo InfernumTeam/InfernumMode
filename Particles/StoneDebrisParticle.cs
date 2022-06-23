@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using CalamityMod.Particles;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 
-namespace CalamityMod.Particles
+namespace InfernumMode.Particles
 {
     public class StoneDebrisParticle2 : Particle
     {

@@ -1,16 +1,17 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-	public class AresTeslaOrb : ModProjectile
+    public class AresTeslaOrb : ModProjectile
     {
         public ref float Identity => ref Projectile.ai[0];
         public PrimitiveTrail LightningDrawer;
@@ -76,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Projectile.Opacity != 1f)
                 return;
 
-            target.AddBuff(BuffID.Electrified, 300);
+            target.AddBuff(BuffID.Electrified, 240);
         }
 
         public Projectile GetOrbToAttachTo()

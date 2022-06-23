@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             VineCharge,
             ShadowOrbSummon,
             RainHover,
-            EaterOfSoulsSlam
+            DownwardSlam
         }
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
@@ -92,8 +92,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 case EoWAttackState.RainHover:
                     DoAttack_RainHover(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
-                case EoWAttackState.EaterOfSoulsSlam:
-                    DoAttack_EaterOfSoulsSlam(npc, target, splitCounter, enraged, ref attackTimer);
+                case EoWAttackState.DownwardSlam:
+                    DoAttack_DownwardSlam(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
             }
 
@@ -130,9 +130,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int shootRate = (int)(splitCounter * 40f) + 120;
+            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
+            if (splitCounter == TotalSplitsToPerform)
+                shootRate += 18;
+
             if (BossRushEvent.BossRushActive)
-                shootRate = 56;
+                shootRate = 38;
 
             if (attackTimer % shootRate == shootRate - 1f)
             {
@@ -212,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.velocity *= 1.018f;
                 if (npc.soundDelay <= 0)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                     npc.soundDelay = 80;
                 }
             }
@@ -298,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         }
 
 
-        public static void DoAttack_EaterOfSoulsSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+        public static void DoAttack_DownwardSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
@@ -332,20 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 105, 0f);
-
-                        // Release 5 dark hearts if none currently exist.
-                        if (!NPC.AnyNPCs(NPCID.EaterofSouls))
-                        {
-                            for (int i = 0; i < 5; i++)
-                            {
-                                Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
-                                Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                                int seeker = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.EaterofSouls, 1);
-                                if (Main.npc.IndexInRange(seeker))
-                                    Main.npc[seeker].velocity = initialSeekerVelocity;
-                            }
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 125, 0f);
                         wasPreviouslyInTiles = 1f;
                     }
 
@@ -420,7 +410,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
             for (int i = 0; i < 2; i++)
-                possibleAttacks.AddWithCondition(EoWAttackState.EaterOfSoulsSlam, splitCounter >= 2f);
+                possibleAttacks.AddWithCondition(EoWAttackState.DownwardSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
             npc.TargetClosest();
@@ -449,10 +439,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Create new worms with linked HP.
             int wormCount = (int)Math.Pow(2D, splitCounter);
-            int realLife = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+            int realLife = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
             for (int i = 0; i < wormCount - 1; i++)
             {
-                int secondWorm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+                int secondWorm = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
                 if (Main.npc.IndexInRange(secondWorm))
                 {
                     Main.npc[secondWorm].realLife = realLife;
@@ -472,9 +462,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 int nextIndex;
                 if (i < segmentCount)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 // The head.
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
@@ -486,7 +476,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 // Mark an index based on whether it can be split at a specific split counter value.
 
                 // Small worm split indices.
-                if (i is (BaseBodySegmentCount / 4) or (BaseBodySegmentCount * 3 / 4))
+                if (i == BaseBodySegmentCount / 4 || i == BaseBodySegmentCount * 3 / 4)
                     Main.npc[nextIndex].ai[3] = 2f;
 
                 // Medium worm split index.

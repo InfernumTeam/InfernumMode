@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             DisplayName.SetDefault("Essence Slice");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 24;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
         }
 
         public override void SetDefaults()
@@ -41,8 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             Projectile.rotation = Projectile.velocity.ToRotation();
 
-            if (Projectile.velocity.Length() < 50f)
-                Projectile.velocity *= 1.045f;
+            if (Projectile.velocity.Length() < 64f)
+                Projectile.velocity *= 1.049f;
 
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3() * 1.4f);
 
@@ -95,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float opacity = Utils.GetLerpValue(1f, 0.6f, completionRatio, true);
 
             float colorLerpFactor = 0.6f;
-            Color startingColor = Color.Lerp(Color.Magenta, Color.Pink, startingInterpolant * colorLerpFactor);
+            Color startingColor = Color.Lerp(Color.Cyan, Color.DeepSkyBlue, startingInterpolant * colorLerpFactor);
 
-            return Color.Lerp(startingColor, Color.Purple, MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, endFadeRatio, completionRatio, true))) * opacity;
+            return Color.Lerp(startingColor, Color.White, MathHelper.SmoothStep(0f, 0.4f, Utils.GetLerpValue(0f, endFadeRatio, completionRatio, true))) * opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 34);
+            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 23);
             return false;
         }
     }

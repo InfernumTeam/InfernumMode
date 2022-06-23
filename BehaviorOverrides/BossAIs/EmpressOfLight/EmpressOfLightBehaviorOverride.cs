@@ -305,7 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Scream shortly after being summoned.
             if (attackTimer == 10f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightSummon"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item161, npc.Center);
 
             // Hold hands together for the first part of the animation.
             if (attackTimer < spawnAnimationTime * 0.67f)
@@ -365,7 +365,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Play a magic sound.
             if (attackTimer == boltReleaseDelay)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightBoltCast"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item164, npc.Center);
 
             // Fade out and teleport to the opposite side of the target halfway through the attack.
             if (attackTimer >= boltReleaseDelay + boltReleaseTime / 2 - 10 && attackTimer <= boltReleaseDelay + boltReleaseTime / 2)
@@ -499,11 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (wrappedattackTimer == shootRate - 1f)
                 {
                     if (i == 0)
-                    {
-                        var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, npc.Center);
-                        if (sound != null)
-                            sound.Volume = MathHelper.Clamp(sound.Volume * 2.6f, 0f, 1f);
-                    }
+                        SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 2.6f}, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -569,7 +565,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 // Scream prior to charging.
                 if (attackTimer == redirectTime / 2)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item160, npc.Center);
 
                 Vector2 hoverDestination = target.Center + Vector2.UnitX * chargeDirection * -420f;
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12.5f);
@@ -615,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Scream before fading out.
             if (attackTimer == 10f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightSummon"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item161, npc.Center);
 
             // Fade out.
             if (attackTimer <= SecondPhaseFadeoutTime)
@@ -666,7 +662,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release lance telegraphs at the target. They will fire short afterward.
             if (attackTimer % lanceCreationRate == lanceCreationRate - 1f)
             {
-                SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/Sounds/Custom/EmpressOfLightLances"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item162, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -911,7 +907,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 // Summon lances.
                 if (adjustedattackTimer == lanceReleaseRate - 1f)
                 {
-                    SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/Sounds/Custom/EmpressOfLightLances"), npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item162, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float offsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
@@ -982,7 +978,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Create the orb.
             if (attackTimer == hoverTime + orbCastDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightMagicCast"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightOrb>(), 0, 0f);
@@ -1091,7 +1087,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
 
                 // Scream after teleporting.
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item160, npc.Center);
             }
 
             // Hover above the target after teleporting.
@@ -1144,7 +1140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Summon lances.
             if (attackTimer > dissapearTime + handClapDelay && attackTimer % lanceBurstReleaseRate == lanceBurstReleaseRate - 1f)
             {
-                SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/Sounds/Custom/EmpressOfLightLances"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item162, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float universalOffsetAngle = Main.rand.NextBool() ? MathHelper.PiOver4 : 0f;
@@ -1270,7 +1266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release lasers.
             if (attackTimer == telegraphTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
+                SoundEngine.PlaySound(SoundID.Item160, npc.Center);
 
                 int laserDamage = (int)(LaserbeamDamage * 0.7f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1301,7 +1297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 // Release bursts of lances.
                 if (attackTimer % lanceReleaseRate == lanceReleaseRate - 1f)
                 {
-                    SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/Sounds/Custom/EmpressOfLightLances"), target.Center);
+                    SoundEngine.PlaySound(SoundID.Item162, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

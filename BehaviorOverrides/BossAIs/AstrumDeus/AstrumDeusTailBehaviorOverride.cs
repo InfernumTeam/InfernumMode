@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
     public class AstrumDeusTailBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusTailSpectral>();
+        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusTail>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 

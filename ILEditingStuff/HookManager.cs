@@ -96,26 +96,26 @@ namespace InfernumMode.ILEditingStuff
 
         public static event ILContext.Manipulator SepulcherHeadModifyProjectile
         {
-            add => HookEndpointManager.Modify(typeof(SCalWormHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(SCalWormHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => HookEndpointManager.Modify(typeof(SepulcherHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SepulcherHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator SepulcherBodyModifyProjectile
         {
-            add => HookEndpointManager.Modify(typeof(SCalWormBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(SCalWormBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => HookEndpointManager.Modify(typeof(SepulcherBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SepulcherBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator SepulcherTailModifyProjectile
         {
-            add => HookEndpointManager.Modify(typeof(SCalWormTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(SCalWormTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => HookEndpointManager.Modify(typeof(SepulcherTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SepulcherTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator DesertScourgeItemUseItem
         {
-            add => HookEndpointManager.Modify(typeof(DriedSeafood).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(DriedSeafood).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            add => HookEndpointManager.Modify(typeof(DesertMedallion).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DesertMedallion).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator AresBodyCanHitPlayer
@@ -140,6 +140,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator ExoMechDropLoot
+        {
+            add => HookEndpointManager.Modify(typeof(AresBody).GetMethod("DropExoMechLoot", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AresBody).GetMethod("DropExoMechLoot", Utilities.UniversalBindingFlags), value);
         }
     }
 }

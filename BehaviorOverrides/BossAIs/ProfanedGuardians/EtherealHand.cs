@@ -5,10 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -24,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             set => NPC.localAI[2] = value.ToInt();
         }
 
-        public static NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
+        public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         public float AttackTime => AttackerGuardian.ai[1];
         public AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
@@ -35,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Ethereal Hand");
             NPCID.Sets.TrailingMode[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = 15;
@@ -146,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -6,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class CursedFlameBurstTelegraph : ModProjectile
+    public class CursedFlameBurstTelegraph : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -59,6 +60,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => false ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedHooksFlag == 0f)
             {
                 for (int i = 0; i < hookCount; i++)
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y + 4, NPCID.PlanterasHook, npc.whoAmI);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y + 4, NPCID.PlanterasHook, npc.whoAmI);
 
                 hasCreatedHooksFlag = 1f;
             }
@@ -469,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
                     }
                 }
 
@@ -478,7 +478,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
                     }
                 }
             }
@@ -673,7 +673,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             // Roar right before transitioning back to attacking.
             if (transitionCountdown == 20f)
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
         }
 
         public static void DoPhase3Transition(NPC npc, Player target, float transitionCountdown)
@@ -690,13 +690,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Roar right and turn into a trap plant thing before transitioning back to attacking.
-            if (transitionCountdown == 20f)
+            if (Main.netMode != NetmodeID.Server && transitionCountdown == 20f)
             {
                 Vector2 goreVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.54f) * Main.rand.NextFloat(10f, 16f);
                 for (int i = 378; i <= 380; i++)
-                    Gore.NewGore(new InfernumSource(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
+                    Gore.NewGore(npc.GetSource_FromAI(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
 
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
         }
         #endregion Specific Attacks

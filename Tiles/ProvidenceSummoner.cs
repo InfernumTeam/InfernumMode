@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.Providence;
@@ -17,13 +17,13 @@ namespace InfernumMode.Tiles
     {
         public const int Width = 3;
         public const int Height = 2;
+
         public override void SetStaticDefaults()
         {
             MinPick = int.MaxValue;
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
-            TileID.Sets.DisableSmartCursor[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.Width = Width;
@@ -56,7 +56,7 @@ namespace InfernumMode.Tiles
             int left = i - tile.TileFrameX / 18;
             int top = j - tile.TileFrameY / 18;
 
-            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCoreUnlimited>()))
+            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCore>()))
                 return true;
 
             if (NPC.AnyNPCs(ModContent.NPCType<Providence>()) || BossRushEvent.BossRushActive)
@@ -76,14 +76,14 @@ namespace InfernumMode.Tiles
 
         public override void MouseOver(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCore>();
             Main.LocalPlayer.noThrow = 2;
             Main.LocalPlayer.cursorItemIconEnabled = true;
         }
 
         public override void MouseOverFar(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCore>();
             Main.LocalPlayer.noThrow = 2;
             Main.LocalPlayer.cursorItemIconEnabled = true;
         }

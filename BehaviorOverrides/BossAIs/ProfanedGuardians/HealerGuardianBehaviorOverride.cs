@@ -1,19 +1,19 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HealerGuardianBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianBoss3>();
+        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianHealer>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -50,14 +50,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = attackTimer % 360f;
 
             if (Main.netMode != NetmodeID.Server && wrappedAttackTimer == 100f)
-                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal.WithVolume(1.6f), target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 1.6f }, target.Center);
 
             if (wrappedAttackTimer == 145f)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot.WithVolume(1.6f), target.Center);
-                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact.WithVolume(1.6f), target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -80,8 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
             float gleamInterpolant = Utils.GetLerpValue(100f, 145f, wrappedAttackTimer, true) * Utils.GetLerpValue(165f, 145f, wrappedAttackTimer, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow").Value;
-            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2").Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow").Value;
+            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow2").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

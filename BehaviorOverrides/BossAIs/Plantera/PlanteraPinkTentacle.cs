@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             ref float time = ref NPC.ai[2];
 
             // Reel inward prior to snapping.
-            if (time is > 0f and < 45f)
+            if (time > 0f && time < 45f)
                 attachOffset = MathHelper.Lerp(attachOffset, 60f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             player.AddBuff(BuffID.Venom, 120, true);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
                 return true;
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 drawPosition += plantera.SafeDirectionTo(NPC.Center, Vector2.Zero) * moveDistance;
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
                 Rectangle frame = new(0, 0, TextureAssets.Chain27.Value.Width, moveDistance);
-                Main.spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - screenPos, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - Main.screenPosition, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }

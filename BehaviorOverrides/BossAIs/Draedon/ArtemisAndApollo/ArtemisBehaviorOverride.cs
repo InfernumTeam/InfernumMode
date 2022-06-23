@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using InfernumMode.OverridingSystem;
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
-            if (apolloAttackType is not TwinsAttackType.SpecialAttack_LaserRayScarletBursts and not TwinsAttackType.SpecialAttack_PlasmaCharges)
+            if (apolloAttackType is not TwinsAttackType.LaserRayScarletBursts and not TwinsAttackType.PlasmaCharges)
             {
                 attackState = (int)apollo.ai[0];
                 attackTimer = apollo.ai[1];
@@ -159,19 +159,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     case TwinsAttackType.BasicShots:
                         DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.SynchronizedCharges:
-                        DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                    case TwinsAttackType.SingleLaserBlasts:
+                        DoBehavior_SingleLaserBlasts(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
                     case TwinsAttackType.FireCharge:
                         DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.SpecialAttack_PlasmaCharges:
+                    case TwinsAttackType.PlasmaCharges:
                         DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
+                    case TwinsAttackType.LaserRayScarletBursts:
                         DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
+                    case TwinsAttackType.GatlingLaserAndPlasmaFlames:
                         DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
                 }
@@ -336,8 +336,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-
             Main.spriteBatch.ExitShaderRegion();
+
+            // Draw a telegraph line as necessary.
+            if (npc.ai[0] == (int)TwinsAttackType.SingleLaserBlasts)
+            {
+                float telegraphInterpolant = npc.Infernum().ExtraAI[3];
+                Vector2 aimDirection = (npc.rotation - MathHelper.PiOver2).ToRotationVector2();
+                Vector2 telegraphStart = npc.Center + aimDirection * (ExoMechManagement.ExoTwinsAreInSecondPhase ? 112f : 78f);
+                Vector2 telegraphEnd = telegraphStart + aimDirection * 4000f;
+
+                if (telegraphInterpolant > 0f)
+                    Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, Color.Orange * telegraphInterpolant, telegraphInterpolant * 5f);
+            }
 
             // Draw a flame trail on the thrusters if needed. This happens during charges.
             if (npc.ModNPC<Artemis>().ChargeFlash > 0f)

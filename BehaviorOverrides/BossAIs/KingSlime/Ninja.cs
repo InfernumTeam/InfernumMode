@@ -5,10 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
-        public static ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
+        public ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
         public ref float Time => ref NPC.ai[0];
         public ref float ShurikenShootCountdown => ref NPC.ai[1];
         public ref float TimeOfFlightCountdown => ref NPC.ai[2];
@@ -365,17 +365,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             }
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline").Value;
-            Vector2 outlineDrawPosition = NPC.Center - screenPos - Vector2.UnitY * 6f;
+            Vector2 outlineDrawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY * 6f;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
                 Texture2D katanaTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana").Value;
-                Vector2 drawPosition = NPC.Center - screenPos - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
+                Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
                 drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
                 float rotation = MathHelper.PiOver4 + NPC.rotation;
                 SpriteEffects katanaDirection = direction | SpriteEffects.FlipHorizontally;

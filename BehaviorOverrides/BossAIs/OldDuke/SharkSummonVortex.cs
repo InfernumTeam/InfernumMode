@@ -1,16 +1,18 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.OldDuke;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-	public class SharkSummonVortex : ModProjectile
+    public class SharkSummonVortex : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
@@ -45,12 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Lighting.AddLight(Projectile.Center, brightnessFactor, brightnessFactor * 2f, brightnessFactor);
 
             if (Time == 0f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeVortex"), Projectile.Center);
+                SoundEngine.PlaySound(OldDukeVortex.SpawnSound, Projectile.Center);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Time % 12f == 11f)
             {
                 Vector2 sharkVelocity = (MathHelper.TwoPi * Time / 120f).ToRotationVector2() * 8f;
-                int shark = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<OldDukeSharkron>());
+                int shark = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<SulphurousSharkron>());
                 if (Main.npc.IndexInRange(shark))
                 {
                     Main.npc[shark].velocity = sharkVelocity;

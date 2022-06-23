@@ -1,10 +1,12 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.UI;
+using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
-using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,38 +24,13 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-    /*
-    public class MakeGolemRoomInvariableHook : IHookEdit
-    {
-        public static void MakeGolemRoomInvariable(ILContext il)
-        {
-            ILCursor cursor = new(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(106)))
-                return;
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStloc(29)))
-                return;
-
-            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaWidth", Utilities.UniversalBindingFlags));
-            cursor.Emit(OpCodes.Stloc, 31);
-            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaHeight", Utilities.UniversalBindingFlags));
-            cursor.Emit(OpCodes.Stloc, 32);
-        }
-
-        public void Load() => CalamityGenNewTemple += MakeGolemRoomInvariable;
-
-        public void Unload() => CalamityGenNewTemple -= MakeGolemRoomInvariable;
-    }
-    */
-
     public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)
         {
             ILCursor cursor = new(il);
 
-            cursor.EmitDelegate(() =>
+            cursor.EmitDelegate<Func<bool>>(() =>
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
                     return true;
@@ -77,6 +54,144 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => ExoMechIsPresent -= ChangeExoMechIsActiveDefinition;
     }
 
+    public class DrawDraedonSelectionUIWithAthena : IHookEdit
+    {
+        public static float AthenaIconScale
+        {
+            get;
+            set;
+        } = 1f;
+
+        internal static void DrawSelectionUI(ILContext context)
+        {
+            ILCursor cursor = new(context);
+            cursor.EmitDelegate<Action>(DrawWrapper);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public static void DrawWrapper()
+        {
+            Vector2 drawAreaVerticalOffset = Vector2.UnitY * 105f;
+            Vector2 baseDrawPosition = Main.LocalPlayer.Top + drawAreaVerticalOffset - Main.screenPosition;
+            Vector2 destroyerIconDrawOffset = new(-78f, -124f);
+            Vector2 primeIconDrawOffset = new(0f, -140f);
+            Vector2 twinsIconDrawOffset = new(78f, -124f);
+            Vector2 athenaIconDrawOffset = new(78f, -130f);
+
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                destroyerIconDrawOffset = new Vector2(-78f, -130f);
+                primeIconDrawOffset = new Vector2(-26f, -130f);
+                twinsIconDrawOffset = new Vector2(26f, -130f);
+
+                HandleInteractionWithButton(baseDrawPosition + destroyerIconDrawOffset, (int)ExoMech.Destroyer);
+                HandleInteractionWithButton(baseDrawPosition + primeIconDrawOffset, (int)ExoMech.Prime);
+                HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, (int)ExoMech.Twins);
+                HandleInteractionWithButton(baseDrawPosition + athenaIconDrawOffset, 4);
+                return;
+            }
+
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + destroyerIconDrawOffset, ExoMech.Destroyer);
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + primeIconDrawOffset, ExoMech.Prime);
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, ExoMech.Twins);
+        }
+
+        public static void HandleInteractionWithButton(Vector2 drawPosition, int exoMech)
+        {
+            float iconScale;
+            string description;
+            Texture2D iconMechTexture;
+
+            switch (exoMech)
+            {
+                case 1:
+                    iconScale = ExoMechSelectionUI.DestroyerIconScale;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_THanos").Value;
+                    description = "Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.";
+                    break;
+                case 2:
+                    iconScale = ExoMechSelectionUI.PrimeIconScale;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_Ares").Value;
+                    description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
+                    break;
+                case 3:
+                    iconScale = ExoMechSelectionUI.TwinsIconScale;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo").Value;
+                    description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
+                    break;
+                case 4:
+                default:
+                    iconScale = AthenaIconScale;
+                    iconMechTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HeadIcon_Athena").Value;
+                    description = "Athena, a giant supercomputer with multiple mounted pulse turrets.";
+                    drawPosition.Y += 2f;
+                    break;
+            }
+
+            // Check for mouse collision/clicks.
+            Rectangle clickArea = Utils.CenteredRectangle(drawPosition, iconMechTexture.Size() * iconScale * 0.9f);
+
+            // Check if the mouse is hovering over the contact button area.
+            bool hoveringOverIcon = ExoMechSelectionUI.MouseScreenArea.Intersects(clickArea);
+            if (hoveringOverIcon)
+            {
+                // If so, cause the button to inflate a little bit.
+                iconScale = MathHelper.Clamp(iconScale + 0.0375f, 1f, 1.35f);
+
+                // Make the selection known if a click is done.
+                if (Main.mouseLeft && Main.mouseLeftRelease)
+                {
+                    CalamityWorld.DraedonMechToSummon = (ExoMech)exoMech;
+
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        var netMessage = InfernumMode.CalamityMod.GetPacket();
+                        netMessage.Write((byte)CalamityModMessageType.ExoMechSelection);
+                        netMessage.Write((int)CalamityWorld.DraedonMechToSummon);
+                        netMessage.Send();
+                    }
+                }
+                Main.blockMouse = Main.LocalPlayer.mouseInterface = true;
+            }
+
+            // Otherwise, if not hovering, cause the button to deflate back to its normal size.
+            else
+                iconScale = MathHelper.Clamp(iconScale - 0.05f, 1f, 1.2f);
+
+            // Draw the icon with the new scale.
+            Main.spriteBatch.Draw(iconMechTexture, drawPosition, null, Color.White, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
+
+            // Draw the descrption if hovering over the icon.
+            if (hoveringOverIcon)
+            {
+                drawPosition.X -= FontAssets.MouseText.Value.MeasureString(description).X * 0.5f;
+                drawPosition.Y += 36f;
+                Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.MouseText.Value, description, drawPosition.X, drawPosition.Y, ExoMechSelectionUI.HoverTextColor, Color.Black, Vector2.Zero, 1f);
+            }
+
+            // And update to reflect the new scale.
+            switch (exoMech)
+            {
+                case 1:
+                    ExoMechSelectionUI.DestroyerIconScale = iconScale;
+                    break;
+                case 2:
+                    ExoMechSelectionUI.PrimeIconScale = iconScale;
+                    break;
+                case 3:
+                    ExoMechSelectionUI.TwinsIconScale = iconScale;
+                    break;
+                case 4:
+                    AthenaIconScale = iconScale;
+                    break;
+            }
+        }
+
+        public void Load() => ExoMechSelectionUIDraw += DrawSelectionUI;
+
+        public void Unload() => ExoMechSelectionUIDraw -= DrawSelectionUI;
+    }
+
     public class DrawBlackEffectHook : IHookEdit
     {
         public static List<int> DrawCacheBeforeBlack = new(Main.maxProjectiles);
@@ -89,7 +204,7 @@ namespace InfernumMode.ILEditingStuff
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchCall<Main>("DrawBackgroundBlackFill")))
                 return;
 
-            cursor.EmitDelegate(() =>
+            cursor.EmitDelegate<Action>(() =>
             {
                 for (int i = 0; i < DrawCacheBeforeBlack.Count; i++)
                 {
@@ -109,7 +224,7 @@ namespace InfernumMode.ILEditingStuff
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<MoonlordDeathDrama>("DrawWhite")))
                 return;
 
-            cursor.EmitDelegate(() =>
+            cursor.EmitDelegate<Action>(() =>
             {
                 float fadeToBlack = 0f;
                 if (CalamityGlobalNPC.signus != -1)
@@ -182,7 +297,7 @@ namespace InfernumMode.ILEditingStuff
                 return;
 
             c.Index++;
-            c.EmitDelegate(() =>
+            c.EmitDelegate<Action>(() =>
             {
                 if (NPC.AnyNPCs(NPCID.MoonLordCore) && WorldSaveSystem.InfernumMode)
                     Main.LocalPlayer.noBuilding = true;
@@ -215,8 +330,6 @@ namespace InfernumMode.ILEditingStuff
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
-
-            // Why the fuck is this shit not working normally?
             try
             {
                 orig(self);

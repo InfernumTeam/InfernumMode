@@ -1,15 +1,15 @@
-﻿using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-	public class RealityCrack : ModProjectile
+    public class RealityCrack : ModProjectile
     {
         public PrimitiveTrailCopy CrackDrawer = null;
         public ref float Time => ref Projectile.ai[0];

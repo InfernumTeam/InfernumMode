@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Color telegraphColor = Color.Lerp(Color.Purple, Color.DarkRed, 0.375f) * telegraphFade;
                 Vector2 start = Projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = Projectile.Center + Vector2.UnitY * 2000f;
-                Utilities.DrawLineBetter(Main.spriteBatch, start, end, telegraphColor, telegraphWidth);
+                Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
             }
 
             if (LavaDrawer is null)

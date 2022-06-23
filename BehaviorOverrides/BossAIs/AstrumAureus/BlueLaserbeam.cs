@@ -1,11 +1,13 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
@@ -16,9 +18,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override float Lifetime => OrangeLaserbeam.LaserLifetime;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Cyan;
-        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamMid").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamEnd").Value;
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Deathray");

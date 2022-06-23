@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 int effectiveNPCHitboxHeight = Math.Min((int)player.velocity.Y, 0) + (int)Math.Abs(offsetFromPreviousPosition) + 14;
                 if (playerRect.Intersects(new Rectangle((int)NPC.position.X, (int)NPC.position.Y, NPC.width, effectiveNPCHitboxHeight)) && player.position.Y <= NPC.position.Y)
                 {
-                    if (!player.justJumped && player.velocity.Y >= 0)
+                    if (!player.justJumped && player.velocity.Y >= 0 && !Collision.SolidCollision(player.position + player.velocity, player.width, player.height))
                     {
                         player.velocity.Y = 0;
                         player.position.Y = NPC.position.Y - player.height + 4;

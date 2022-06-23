@@ -1,9 +1,8 @@
-﻿using CalamityMod;
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
@@ -29,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pulse Disintegration Beam Telegraph");
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+
         }
 
         public override void SetDefaults()
@@ -71,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override bool ShouldUpdatePosition() => false;
 
-		public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
 
@@ -83,14 +82,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             // Iterate through purple and fuchisa twice and then flash.
             Color colorOuter = Color.Lerp(Color.Purple, Color.Fuchsia, Time / Lifetime * 2f % 1f);
-            colorOuter = Color.Lerp(colorOuter, new(1f, 1f, 1f, 0f), Utils.GetLerpValue(40f, 0f, Projectile.timeLeft, true) * 0.8f);
+            colorOuter = Color.Lerp(colorOuter, new Color(1f, 1f, 1f, 0f), Utils.GetLerpValue(40f, 0f, Projectile.timeLeft, true) * 0.8f);
             Color colorInner = Color.Lerp(colorOuter, Color.White, 0.5f);
 
             colorInner *= 0.85f;
             colorOuter *= 0.7f;
 
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation, origin, scaleOuter, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation, origin, scaleInner, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation, origin, scaleOuter, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation, origin, scaleInner, SpriteEffects.None, 0);
             return false;
         }
     }

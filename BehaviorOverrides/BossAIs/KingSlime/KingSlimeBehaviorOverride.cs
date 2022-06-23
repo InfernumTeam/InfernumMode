@@ -1,4 +1,4 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
-                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
                 hasSummonedNinjaFlag = 1f;
             }
 
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 Dust.QuickDustLine(npc.Top + Vector2.UnitY * 60f, jewelSpawnPosition, 150f, Color.Red);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC(new InfernumSource(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
                 hasSummonedJewelFlag = 1f;
             }
 
@@ -260,11 +260,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (digYPosition < 100f)
                     digYPosition = 100f;
 
-                Gore.NewGore(new InfernumSource(), npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+                if (Main.netMode != NetmodeID.Server)
+                    Gore.NewGore(npc.GetSource_FromAI(), npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+
                 WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
                 {
-                            new CustomTileConditions.IsSolidOrSolidTop(),
-                            new CustomTileConditions.ActiveAndNotActuated()
+                    new CustomTileConditions.IsSolidOrSolidTop(),
+                    new CustomTileConditions.ActiveAndNotActuated()
                 }), out Point newBottom);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -333,8 +335,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (npc.frame.Y == 480)
                     drawOffset.Y -= 6f;
 
+                Texture2D ninjaTexture = TextureAssets.Ninja.Value;
                 Vector2 ninjaDrawPosition = npc.Center - Main.screenPosition + drawOffset;
-                Main.spriteBatch.Draw(TextureAssets.Ninja.Value, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(ninjaTexture, ninjaDrawPosition, null, lightColor, ninjaRotation, ninjaTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             Main.spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);

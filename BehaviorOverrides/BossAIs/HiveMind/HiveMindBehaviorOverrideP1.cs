@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
@@ -88,13 +88,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (hiveBlobSummonTimer >= 540f)
                 {
                     hiveBlobSummonTimer = 0f;
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
                 if (hasSummonedInitialBlobsFlag == 0f)
                 {
                     hasSummonedInitialBlobsFlag = 1f;
                     for (int i = 0; i < 7; i++)
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
             }
 
@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                             if (Main.rand.NextBool(3))
                                 thingToSummon = ModContent.NPCType<DankCreeper>();
 
-                            int summonedThing = NPC.NewNPC(new InfernumSource(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
+                            int summonedThing = NPC.NewNPC(npc.GetSource_FromAI(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
                             Main.npc[summonedThing].SetDefaults(thingToSummon);
                             Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
                             if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
@@ -245,7 +245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             if (npc.Infernum().ExtraAI[20] == 1f)
-                return HiveMindBehaviorOverrideP2.PreDraw(npc, spriteBatch, lightColor);
+                return HiveMindBehaviorOverrideP2.PreDraw(npc, Main.spriteBatch, lightColor);
             return true;
         }
     }

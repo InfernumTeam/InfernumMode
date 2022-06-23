@@ -14,8 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             Projectile.height = 160;
             Projectile.width = 160;
-            Projectile.DamageType = DamageClass.Melee;
             Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 3;
             Projectile.penetrate = -1;
         }

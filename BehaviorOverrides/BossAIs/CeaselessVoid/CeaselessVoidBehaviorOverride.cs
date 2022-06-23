@@ -1,17 +1,18 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -42,18 +43,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.height = 100;
             npc.defense = 0;
             npc.lifeMax = 363000;
+            npc.value = Item.buyPrice(0, 35, 0, 0);
+            
             if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
-                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/ScourgeofTheUniverse");
+                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/Void");
             else
                 npc.ModNPC.Music = MusicID.Boss3;
-            if (CalamityWorld.DoGSecondStageCountdown <= 0)
-            {
-                npc.value = Item.buyPrice(0, 35, 0, 0);
-                if (ModLoader.TryGetMod("CalamityModMusic", out calamityModMusic))
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/Void");
-                else
-                    npc.ModNPC.Music = MusicID.Boss3;
-            }
             npc.aiStyle = -1;
             npc.ModNPC.AIType = -1;
             npc.knockBackResist = 0f;
@@ -108,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Do bullet hells.
-            if (bulletHellTimer is > 0f and < BulletHellTime)
+            if (bulletHellTimer > 0f && bulletHellTimer < BulletHellTime)
             {
                 DoBehavior_DarkEnergyBulletHell(npc, target, lifeRatio, ref bulletHellTimer);
 
@@ -318,7 +313,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create cracks and release a spread of dark energy.
             if (attackTimer == 150f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                 for (int i = 0; i < crackCount; i++)
                 {
                     Vector2 crackSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 990f);
@@ -398,7 +393,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
 
             // Don't fire near the start/end of the attack.
-            if (attackTimer is < 90f or > (BulletHellTime - 120f))
+            if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
                 return;
 
             // Create bursts.

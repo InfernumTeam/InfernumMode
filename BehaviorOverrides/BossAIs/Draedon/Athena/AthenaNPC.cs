@@ -1,20 +1,29 @@
 using CalamityMod;
 using CalamityMod.Items.Potions;
+using CalamityMod.Items.TreasureBags;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Particles;
 using CalamityMod.Skies;
+using CalamityMod.Sounds;
+using CalamityMod.UI;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.GlobalInstances;
+using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -88,6 +97,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             set => NPC.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex] = (!value).ToInt();
         }
 
+        public bool Enraged
+        {
+            get => NPC.Infernum().ExtraAI[ExoMechManagement.Athena_EnragedIndex] == 1f;
+            set => NPC.Infernum().ExtraAI[ExoMechManagement.Athena_EnragedIndex] = value.ToInt();
+        }
+
         public ref float AttackTimer => ref NPC.ai[1];
 
         public ref float MinionRedCrystalGlow => ref NPC.localAI[1];
@@ -99,6 +114,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public ref float ComplementMechIndex => ref NPC.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
 
         public ref float FinalMechIndex => ref NPC.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+
+        public ref float FinalPhaseAnimationTime => ref NPC.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+
+        public ref float DeathAnimationTimer => ref NPC.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
         public static Vector2 UniversalVerticalTurretOffset => Vector2.UnitY * -22f;
 
@@ -125,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             AthenaSetDefaults(NPC);
             NPC.boss = true;
         }
-        
+
         public static void AthenaSetDefaults(NPC npc)
         {
             npc.npcSlots = 5f;
@@ -204,6 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void AI()
         {
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
             float lifeRatio = NPC.life / (float)NPC.lifeMax;
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = ComplementMechIndex >= 0 && Main.npc[(int)ComplementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)ComplementMechIndex]) ? Main.npc[(int)ComplementMechIndex] : null;
@@ -245,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             GlobalNPCOverrides.Athena = NPC.whoAmI;
 
             // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
-            NPC.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
+            NPC.dontTakeDamage = performingDeathAnimation;
             if (ComplementMechIndex >= 0 && Main.npc[(int)ComplementMechIndex].active && Main.npc[(int)ComplementMechIndex].life > Main.npc[(int)ComplementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 NPC.dontTakeDamage = true;
 
@@ -271,33 +291,96 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             TelegraphInterpolant = 0f;
             TurretFrameState = AthenaTurretFrameType.CloseAllTurrets;
 
-            // Handle attacks.
-            switch (AttackState)
+            // Despawn if the target is gone.
+            if (!Target.active || Target.dead)
             {
-                case AthenaAttackType.CircleOfLightning:
-                    DoBehavior_CircleOfLightning();
-                    break;
-                case AthenaAttackType.ExowlHologramSwarm:
-                    DoBehavior_ExowlHologramSwarm();
-                    break;
-                case AthenaAttackType.AimedPulseLasers:
-                    DoBehavior_AimedPulseLasers();
-                    break;
-                case AthenaAttackType.DashingIllusions:
-                    DoBehavior_DashingIllusions();
-                    break;
-                case AthenaAttackType.ElectricCharge:
-                    DoBehavior_ElectricCharge();
-                    break;
-                case AthenaAttackType.IllusionRocketCharge:
-                    DoBehavior_IllusionRocketCharge();
-                    break;
+                NPC.TargetClosest(false);
+                if (!Target.active || Target.dead)
+                    NPC.active = false;
             }
+
+            // Handle the final phase transition.
+            if (FinalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAthenaPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
+            {
+                AttackState = AthenaAttackType.AimedPulseLasers;
+                FinalPhaseAnimationTime++;
+                NPC.dontTakeDamage = true;
+                DoBehavior_DoFinalPhaseTransition();
+                return;
+            }
+
+            // Use combo attacks as necessary.
+            if (ExoMechManagement.TotalMechs >= 2 && (int)AttackState < 100)
+            {
+                AttackTimer = 0f;
+
+                if (initialMech.whoAmI == NPC.whoAmI)
+                    SelectNextAttack();
+
+                AttackState = (AthenaAttackType)(int)initialMech.ai[0];
+                NPC.netUpdate = true;
+            }
+
+            // Reset the attack type if it was a combo attack but the respective mech is no longer present.
+            if (((finalMech != null && finalMech.Opacity > 0f) || ExoMechManagement.CurrentAresPhase >= 6) && (int)AttackState >= 100f)
+            {
+                AttackTimer = 0f;
+                AttackState = AthenaAttackType.AimedPulseLasers;
+                NPC.netUpdate = true;
+            }
+
+            // Handle attacks.
+            if (!performingDeathAnimation)
+            {
+                switch (AttackState)
+                {
+                    case AthenaAttackType.CircleOfLightning:
+                        DoBehavior_CircleOfLightning();
+                        break;
+                    case AthenaAttackType.ExowlHologramSwarm:
+                        DoBehavior_ExowlHologramSwarm();
+                        break;
+                    case AthenaAttackType.AimedPulseLasers:
+                        DoBehavior_AimedPulseLasers();
+                        break;
+                    case AthenaAttackType.DashingIllusions:
+                        DoBehavior_DashingIllusions();
+                        break;
+                    case AthenaAttackType.ElectricCharge:
+                        DoBehavior_ElectricCharge();
+                        break;
+                    case AthenaAttackType.IllusionRocketCharge:
+                        DoBehavior_IllusionRocketCharge();
+                        break;
+                }
+            }
+            else
+                DoBehavior_DeathAnimation();
 
             if (ExoMechComboAttackContent.UseTwinsAthenaComboAttack(NPC, 1f, ref AttackTimer, ref NPC.localAI[0]))
                 SelectNextAttack();
 
             AttackTimer++;
+        }
+
+        public void DoBehavior_DoFinalPhaseTransition()
+        {
+            NPC.velocity *= 0.925f;
+            NPC.rotation = 0f;
+
+            // Determine frames.
+            TurretFrameState = AthenaTurretFrameType.Blinking;
+
+            // Play the transition sound at the start.
+            if (FinalPhaseAnimationTime == 3f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, Target.Center);
+
+            // Clear away all lasers and laser telegraphs.
+            if (FinalPhaseAnimationTime == 3f)
+            {
+                // Destroy all lasers and telegraphs.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<PulseBeamStart>(), ModContent.ProjectileType<PulseBeamTelegraph>());
+            }
         }
 
         public void DoBehavior_CircleOfLightning()
@@ -309,6 +392,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int shootDelay = 38;
             int lightningShootRate = 4;
             int lightningShootTime = 170;
+            float totalArcFactor = 1.56f;
+            float circleRadius = 1100f;
+            ref float aimDirection = ref NPC.Infernum().ExtraAI[0];
+
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                totalArcFactor += 0.06f;
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+                totalArcFactor += 0.06f;
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                totalArcFactor += 0.12f;
+                lightningShootRate++;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+                totalArcFactor += 0.15f;
 
             TurretFrameState = AthenaTurretFrameType.CloseAllTurrets;
             if (AttackTimer >= teleportTime + circleSummonDelay)
@@ -322,7 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.velocity *= 0.5f;
                 NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 0.15f, 0f, 1f);
             }
-            
+
             // Teleport.
             if (AttackTimer == teleportFadeTime)
             {
@@ -344,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // The player can technically teleport out of the circle, but doing so prevents seeing the boss.
             if (AttackTimer == teleportTime + circleSummonDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ThunderStrike"), NPC.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExowlCircleSummonBoom>(), 0, 0f);
@@ -352,11 +450,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     List<int> circle = new();
                     for (int i = 0; i < 15; i++)
                     {
-                        int exowl = NPC.NewNPC(new InfernumSource(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
+                        int exowl = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
                         if (Main.npc.IndexInRange(exowl))
                         {
                             Main.npc[exowl].ModNPC<Exowl>().CircleCenter = NPC.Center;
-                            Main.npc[exowl].ModNPC<Exowl>().CircleRadius = 1100f;
+                            Main.npc[exowl].ModNPC<Exowl>().CircleRadius = circleRadius;
                             Main.npc[exowl].ModNPC<Exowl>().CircleOffsetAngle = MathHelper.TwoPi * i / 15f;
                             Main.npc[exowl].netUpdate = true;
                             circle.Add(exowl);
@@ -370,9 +468,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.netUpdate = true;
             }
 
+            // Determine if Athena should enrage.
+            if (AttackTimer >= teleportTime + circleSummonDelay + 60f && !Target.WithinRange(NPC.Center, circleRadius + 50f) && !Enraged)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, Target.Center);
+                Enraged = true;
+            }
+
             // Determine telegraph variables.
             if (AttackTimer >= teleportTime + circleSummonDelay && AttackTimer < teleportTime + circleSummonDelay + telegraphTime)
-                TelegraphRotation = TelegraphRotation.AngleLerp(NPC.AngleTo(Target.Center + Target.velocity * 15f), 0.3f);
+                TelegraphRotation = TelegraphRotation.AngleLerp(NPC.AngleTo(Target.Center + Target.velocity * 15f), 0.125f);
 
             if (AttackTimer < teleportTime + circleSummonDelay + teleportTime + shootDelay)
                 TelegraphInterpolant = Utils.GetLerpValue(0f, telegraphTime + shootDelay, AttackTimer - (teleportTime + circleSummonDelay), true);
@@ -380,8 +485,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // Release the lightning.
             else if (AttackTimer % lightningShootRate == 0f)
             {
+                if (aimDirection == 0f)
+                    aimDirection = (MathHelper.WrapAngle(NPC.AngleTo(Target.Center) - TelegraphRotation) > 0f).ToDirectionInt();
+
                 if (AttackTimer % (lightningShootRate * 2f) == 0f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), MainTurretCenter);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound, MainTurretCenter);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 lightningShootVelocity = TelegraphRotation.ToRotationVector2() * 8.4f;
@@ -392,7 +500,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         Main.projectile[lightning].ai[1] = Main.rand.Next(100);
                     }
 
-                    TelegraphRotation += MathHelper.TwoPi / lightningShootTime * lightningShootRate * 1.75f;
+                    TelegraphRotation += MathHelper.TwoPi / lightningShootTime * lightningShootRate * aimDirection * totalArcFactor;
                     NPC.netUpdate = true;
                 }
             }
@@ -401,7 +509,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             if (AttackTimer >= teleportTime + circleSummonDelay + teleportTime + shootDelay + lightningShootTime)
             {
+                bool wasEnraged = Enraged;
                 SelectNextAttack();
+                Enraged = wasEnraged;
+
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].type == ModContent.NPCType<Exowl>())
@@ -417,15 +528,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int hologramCreationTime = 150;
             int holographFadeoutTime = 50;
             int hologramAttackTime = 360;
+            int intendedIllusionCount = 13;
             ref float hologramInterpolant = ref NPC.Infernum().ExtraAI[0];
             ref float illusionCount = ref NPC.Infernum().ExtraAI[1];
             ref float hologramSpan = ref NPC.Infernum().ExtraAI[2];
             ref float exowlIllusionFadeInterpolant = ref NPC.Infernum().ExtraAI[3];
             ref float hologramRayDissipation = ref NPC.Infernum().ExtraAI[4];
 
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+            {
+                hologramCreationTime -= 25;
+                hologramAttackTime += 30;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+            {
+                hologramCreationTime -= 10;
+                intendedIllusionCount++;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                hologramCreationTime -= 24;
+                hologramAttackTime += 30;
+                intendedIllusionCount += 6;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+            {
+                hologramCreationTime -= 24;
+                hologramAttackTime += 45;
+                intendedIllusionCount += 4;
+            }
+
             // Initialize the minion illusion count.
             if (illusionCount == 0f)
-                illusionCount = 13f;
+            {
+                illusionCount = intendedIllusionCount;
+                NPC.netUpdate = true;
+            }
 
             // Fade out.
             if (AttackTimer < teleportFadeTime)
@@ -444,7 +582,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     NPC.position.Y -= 120f;
 
                 SoundEngine.PlaySound(SoundID.Item104, NPC.Center);
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/CodebreakerBeam"), NPC.Center);
+                SoundEngine.PlaySound(CodebreakerUI.SummonSound, NPC.Center);
                 NPC.netUpdate = true;
             }
 
@@ -467,14 +605,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // Transform the holograms into true exowls.
             if (AttackTimer == teleportTime + hologramCreationTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeWeaponFire"), NPC.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int realExowlIndex = Main.rand.Next((int)illusionCount);
                     for (int i = 0; i < illusionCount; i++)
                     {
                         Vector2 hologramPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant);
-                        int exowl = NPC.NewNPC(new InfernumSource(), (int)hologramPosition.X, (int)hologramPosition.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
+                        int exowl = NPC.NewNPC(NPC.GetSource_FromAI(), (int)hologramPosition.X, (int)hologramPosition.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
                         if (Main.npc.IndexInRange(exowl))
                         {
                             Main.npc[exowl].ModNPC<Exowl>().UseConfusionEffect = true;
@@ -502,10 +640,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int telegraphTime = PulseBeamTelegraph.Lifetime;
             int laserShootTime = PulseBeamStart.LifetimeConst;
             int pulseLaserReleaseRate = 7;
-            int laserCount = 4;
+            int laserbeamCount = 4;
             float predictionFactor = 16f;
+            float laserSpeed = 10f;
             ref float pulseLaserDirection = ref NPC.Infernum().ExtraAI[0];
             ref float pulseLaserShootCounter = ref NPC.Infernum().ExtraAI[1];
+
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                laserbeamCount++;
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+            {
+                laserbeamCount++;
+                laserSpeed += 3f;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                laserbeamCount += 2;
+                pulseLaserReleaseRate--;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+            {
+                laserbeamCount += 3;
+                laserSpeed += 4f;
+            }
+            if (Enraged)
+            {
+                pulseLaserReleaseRate = 3;
+                laserSpeed += 12f;
+            }
 
             // Fade out.
             if (AttackTimer < teleportFadeTime)
@@ -521,7 +683,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.velocity = Vector2.Zero;
                 NPC.Center = Target.Center - Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 400f;
                 SoundEngine.PlaySound(SoundID.Item104, NPC.Center);
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/CodebreakerBeam"), NPC.Center);
+                SoundEngine.PlaySound(CodebreakerUI.SummonSound, NPC.Center);
                 NPC.netUpdate = true;
             }
 
@@ -534,7 +696,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             {
                 // Play a laser sound.
                 if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && NPC.WithinRange(Main.LocalPlayer.Center, 3200f))
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/THanosLaser"), Main.LocalPlayer.Center);
+                    SoundEngine.PlaySound(ThanatosHead.LaserSound, Main.LocalPlayer.Center);
 
                 // Create a bunch of lightning bolts in the sky.
                 ExoMechsSky.CreateLightningBolt(12);
@@ -544,9 +706,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     pulseLaserDirection = NPC.AngleTo(Target.Center);
 
                     int type = ModContent.ProjectileType<PulseBeamTelegraph>();
-                    for (int i = 0; i < laserCount; i++)
+                    for (int i = 0; i < laserbeamCount; i++)
                     {
-                        Vector2 aimDirection = (pulseLaserDirection + MathHelper.TwoPi * i / laserCount).ToRotationVector2();
+                        Vector2 aimDirection = (pulseLaserDirection + MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
                         for (int b = 0; b < 9; b++)
                         {
                             int beam = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aimDirection, type, 0, 0f, 255, NPC.whoAmI);
@@ -567,32 +729,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 }
             }
 
-            // Fire the laserbeam.
+            // Fire the laserbeams.
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == teleportTime + telegraphTime)
             {
-                for (int i = 0; i < laserCount; i++)
+                for (int i = 0; i < laserbeamCount; i++)
                 {
-                    Vector2 laserbeamDirection = (pulseLaserDirection + MathHelper.TwoPi * i / laserCount).ToRotationVector2();
+                    Vector2 laserbeamDirection = (pulseLaserDirection + MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
                     int laserbeam = Utilities.NewProjectileBetter(NPC.Center, laserbeamDirection, ModContent.ProjectileType<PulseBeamStart>(), 950, 0f);
                     if (Main.projectile.IndexInRange(laserbeam))
                         Main.projectile[laserbeam].ai[1] = NPC.whoAmI;
                 }
             }
-            
+
             // Slowly fly around with the laser and release smaller telegraphed lasers.
             if (AttackTimer >= teleportTime + telegraphTime && AttackTimer < teleportTime + telegraphTime + laserShootTime)
             {
                 // Open turrets.
                 TurretFrameState = AthenaTurretFrameType.OpenAllTurrets;
 
-                Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 425f, -200f);
+                Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 375f, -200f);
                 if (!NPC.WithinRange(hoverDestination, 60f))
-                    NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 6f, 0.1f);
+                    NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 6f, 0.125f);
+
+                // Determine if Athena should enrage.
+                if (!Target.WithinRange(NPC.Center, 2500f) && !Enraged)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, Target.Center);
+                    Enraged = true;
+                }
 
                 // Release pulse lasers.
                 if (AttackTimer % pulseLaserReleaseRate == pulseLaserReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, $"Sounds/Item/LaserCannon"), NPC.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Calculate the turret index.
@@ -602,8 +771,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                             turretIndex++;
 
                         int type = ModContent.ProjectileType<PulseLaser>();
+                        float shootSpeed = laserSpeed;
+                        if (!Target.WithinRange(NPC.Center, 960f))
+                            shootSpeed += (Target.Distance(NPC.Center) - 960f) * 0.01f;
+
                         Vector2 projectileDestination = Target.Center + Target.velocity * predictionFactor;
-                        int laser = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(projectileDestination) * 8f, type, 500, 0f, Main.myPlayer);
+                        int laser = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer);
                         if (Main.projectile.IndexInRange(laser))
                         {
                             Main.projectile[laser].owner = NPC.target;
@@ -620,19 +793,49 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             }
 
             if (AttackTimer >= teleportTime + telegraphTime + laserShootTime + 45f)
+            {
+                bool wasEnraged = Enraged;
                 SelectNextAttack();
+                Enraged = wasEnraged;
+            }
         }
 
         public void DoBehavior_DashingIllusions()
         {
             int attackDelay = 35;
             int chargeDelay = 75;
-            int chargeTime = 36;
+            int chargeTime = 38;
             int illusionCount = 7;
             int chargeCount = 8;
-            float chargeSpeed = 39f;
+            float chargeSpeed = 37.5f;
             float predictivenessFactor = 0f;
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
+
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                chargeSpeed += 2.5f;
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+            {
+                chargeDelay -= 15;
+                chargeSpeed += 2.5f;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                chargeDelay -= 8;
+                illusionCount += 2;
+                chargeCount++;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+            {
+                illusionCount += 3;
+                chargeTime -= 3;
+                chargeSpeed += 10f;
+            }
+            if (Enraged)
+            {
+                chargeDelay /= 2;
+                chargeTime -= 10;
+                chargeSpeed += 20f;
+            }
 
             // Always have all turrets open.
             // This allows the player to distinguish between the real and fake versions of the boss.
@@ -655,7 +858,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             {
                 for (int i = 1; i < 1 + illusionCount; i++)
                 {
-                    int illusion = NPC.NewNPC(new InfernumSource(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AthenaIllusion>());
+                    int illusion = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AthenaIllusion>());
                     Main.npc[illusion].ai[1] = MathHelper.TwoPi * i / (float)(illusionCount + 1f);
                 }
             }
@@ -663,7 +866,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // Charge at the target and release tesla orbs.
             if (AttackTimer == attackDelay + chargeDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeWeaponFire"), NPC.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center) * 8f;
@@ -704,10 +907,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             float chargeSpeed = 42.5f;
             float predictivenessFactor = 6f;
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 540f, -300f);
-
             ref float attackSubstate = ref NPC.Infernum().ExtraAI[0];
             ref float attackDelay = ref NPC.Infernum().ExtraAI[1];
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[2];
+
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                totalCharges++;
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+            {
+                sparkCount += 5;
+                chargeTime += 3;
+                chargeSpeed += 3f;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                chargeTime -= 6;
+                predictivenessFactor = 0f;
+                chargeSpeed += 5f;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+            {
+                chargeTime -= 6;
+                sparkCount += 10;
+                chargeSpeed += 3.5f;
+            }
+            if (Enraged)
+            {
+                chargeTime -= 8;
+                sparkCount += 20;
+                chargeSpeed += 15f;
+            }
 
             switch ((int)attackSubstate)
             {
@@ -738,7 +967,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         if (Main.netMode != NetmodeID.Server)
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ELRFire"), NPC.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, NPC.Center);
 
                         NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
 
@@ -749,6 +978,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                             {
                                 Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
                                 Utilities.NewProjectileBetter(NPC.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 530, 0f);
+                            }
+                            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+                            {
+                                int exowl = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
+                                if (Main.npc.IndexInRange(exowl))
+                                {
+                                    Main.npc[exowl].ModNPC<Exowl>().UseConfusionEffect = true;
+                                    Main.npc[exowl].ModNPC<Exowl>().IsIllusion = false;
+                                }
                             }
                         }
 
@@ -770,7 +1008,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         NPC.netUpdate = true;
 
                         if (chargeCounter >= totalCharges)
+                        {
+                            Exowl.MakeAllExowlsExplode();
                             SelectNextAttack();
+                        }
                     }
                     break;
             }
@@ -790,6 +1031,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             ref float chargeDirection = ref NPC.Infernum().ExtraAI[0];
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[1];
 
+            if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                rocketReleaseRate--;
+            if (ExoMechManagement.CurrentAthenaPhase >= 3)
+            {
+                chargeSpeed += 3f;
+                rocketShootSpeed += 2f;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 5)
+            {
+                chargeTime -= 4;
+                rocketReleaseRate -= 3;
+            }
+            if (ExoMechManagement.CurrentAthenaPhase >= 6)
+            {
+                chargeCount += 2;
+                chargeSpeed += 4.5f;
+                rocketShootSpeed += 7f;
+            }
+            if (Enraged)
+            {
+                chargeSpeed += 9.5f;
+                rocketShootSpeed += 8f;
+            }
+
             if (chargeCounter == 0f)
                 redirectTime += 32;
 
@@ -806,8 +1071,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -420f;
                 NPC.Center = NPC.Center.MoveTowards(hoverDestination, 12.5f);
                 NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.16f);
-                if (AttackTimer == redirectTime)
-                    NPC.velocity *= 0.3f;
             }
             else if (AttackTimer <= redirectTime + chargeTime)
             {
@@ -839,8 +1102,90 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 AttackTimer = 0f;
                 chargeCounter++;
                 if (chargeCounter >= chargeCount)
+                {
+                    Exowl.MakeAllExowlsExplode();
                     SelectNextAttack();
+                }
                 NPC.netUpdate = true;
+            }
+        }
+
+        public void DoBehavior_DeathAnimation()
+        {
+            int implosionRingLifetime = 180;
+            int pulseRingCreationRate = 32;
+            int explosionTime = 240;
+            float implosionRingScale = 1.5f;
+            float explosionRingScale = 4f;
+            Vector2 coreCenter = MainTurretCenter;
+
+            // Slow down dramatically.
+            NPC.velocity *= 0.9f;
+
+            // Use close to the minimum HP.
+            NPC.life = 50000;
+
+            // Disable damage.
+            NPC.damage = 0;
+            NPC.dontTakeDamage = true;
+
+            // Close the boss HP bar.
+            NPC.Calamity().ShouldCloseHPBar = true;
+
+            // Create the implosion ring on the first frame.
+            if (DeathAnimationTimer == 1f)
+            {
+                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, implosionRingScale, implosionRingLifetime));
+                SoundEngine.PlaySound(AresBody.EnragedSound, NPC.Center);
+            }
+
+            // Create particles that fly outward every frame.
+            if (DeathAnimationTimer > 25f && DeathAnimationTimer < implosionRingLifetime - 30f)
+            {
+                float particleScale = Main.rand.NextFloat(0.1f, 0.15f);
+                Vector2 particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 32f);
+                Color particleColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+
+                for (int j = 0; j < 4; j++)
+                    GeneralParticleHandler.SpawnParticle(new StrongBloom(coreCenter, particleVelocity, particleColor, particleScale, 80));
+
+                for (int i = 0; i < 2; i++)
+                {
+                    particleScale = Main.rand.NextFloat(1.5f, 2f);
+                    particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.5f, 10f);
+                    GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(coreCenter, particleVelocity, particleScale, Color.Cyan, 75, 1f, 12f));
+                }
+            }
+
+            // Periodically create pulse rings.
+            if (DeathAnimationTimer > 10f && DeathAnimationTimer < implosionRingLifetime - 30f && DeathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
+            {
+                float finalScale = MathHelper.Lerp(3f, 5f, Utils.GetLerpValue(25f, 160f, DeathAnimationTimer, true));
+                Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+
+                for (int i = 0; i < 3; i++)
+                    GeneralParticleHandler.SpawnParticle(new PulseRing(coreCenter, Vector2.Zero, pulseColor, 0.2f, finalScale, pulseRingCreationRate));
+            }
+
+            // Create an explosion.
+            if (DeathAnimationTimer == implosionRingLifetime)
+            {
+                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, NPC.Center);
+            }
+
+            DeathAnimationTimer++;
+
+            // Fade away as the explosion progresses.
+            float opacityFadeInterpolant = Utils.GetLerpValue(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, DeathAnimationTimer, true);
+            NPC.Opacity = (float)Math.Pow(opacityFadeInterpolant, 6.1);
+
+            if (DeathAnimationTimer == (int)(implosionRingLifetime + explosionTime * 0.5f))
+            {
+                NPC.life = 0;
+                NPC.HitEffect();
+                NPC.StrikeNPC(10, 0f, 1);
+                NPC.checkDead();
             }
         }
 
@@ -875,6 +1220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.ai[0] = (int)newAttack;
 
             AttackTimer = 0f;
+            Enraged = false;
             NPC.netUpdate = true;
         }
 
@@ -943,8 +1289,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public float RayWidthFunction(float completionRatio)
         {
-            float widthOffset = (float)Math.Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) * 
-                Utils.GetLerpValue(0f, 0.1f, completionRatio, true) * 
+            float widthOffset = (float)Math.Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) *
+                Utils.GetLerpValue(0f, 0.1f, completionRatio, true) *
                 Utils.GetLerpValue(1f, 0.9f, completionRatio, true);
             return MathHelper.Lerp(2f, NPC.Infernum().ExtraAI[2] * 0.7f, completionRatio) + widthOffset;
         }
@@ -1027,8 +1373,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/AthenaNPC_Glowmask").Value;
             Vector2 drawPosition = npc.Center - screenPos;
             Vector2 origin = npc.frame.Size() * 0.5f;
+            Color glowmaskColor = Main.npc[GlobalNPCOverrides.Athena].ModNPC<AthenaNPC>().Enraged ? Color.MediumVioletRed : Color.White;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, origin, npc.scale, 0, 0f);
-            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
         }
 
         public Vector2 GetTurretPosition(int i) => NPC.Center + TurretOffsets[i].RotatedBy(NPC.rotation) + Vector2.UnitY * 46f;
@@ -1039,16 +1386,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (FlameTrail is null)
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            float finalPhaseGlowInterpolant = Utils.GetLerpValue(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, FinalPhaseAnimationTime, true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 10f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTimeWrappedHourly * 0.6f) % 1f, 1f, 0.56f);
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawPosition = NPC.Center - Main.screenPosition + drawOffset;
+                    Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(color), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0f);
+                }
+            }
+
             if (AttackState == AthenaAttackType.IllusionRocketCharge || (int)AttackState == (int)ExoMechComboAttackContent.ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance)
             {
-                Texture2D texture = TextureAssets.Npc[NPC.type].Value;
                 for (int i = -3; i <= 8; i++)
                 {
                     if (i == 0)
                         continue;
 
                     Color duplicateColor = Color.White;
-                    Vector2 baseDrawPosition = NPC.Center - screenPos;
+                    Vector2 baseDrawPosition = NPC.Center - Main.screenPosition;
                     Vector2 drawPosition = baseDrawPosition;
 
                     // Create lagging afterimages.
@@ -1085,11 +1446,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     }
 
                     // Draw the base texture.
-                    spriteBatch.Draw(texture, drawPosition, NPC.frame, duplicateColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, 0, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, duplicateColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, 0, 0f);
                 }
             }
 
-            DrawBaseNPC(NPC, screenPos, drawColor, FlameTrailPulse, FlameTrail);
+            DrawBaseNPC(NPC, Main.screenPosition, drawColor, FlameTrailPulse, FlameTrail);
 
             for (int i = 0; i < Turrets.Length; i++)
             {
@@ -1108,7 +1469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 // Even as a full crystal, I'd prefer the texture not be completely fullbright.
                 Color turretColor = Color.Lerp(drawColor, Color.White, Turrets[i].Frame / (float)totalFrames);
                 Rectangle turretFrame = turretTexture.Frame(1, totalFrames, 0, Turrets[i].Frame);
-                Vector2 drawPosition = NPC.Center - screenPos;
+                Vector2 drawPosition = NPC.Center - Main.screenPosition;
                 Vector2 turretOrigin = turretFrame.Size() * 0.5f;
                 Vector2 turretDrawPosition = GetTurretPosition(i) - NPC.Center + drawPosition;
                 Main.spriteBatch.Draw(turretTexture, turretDrawPosition, turretFrame, NPC.GetAlpha(turretColor), 0f, turretOrigin, NPC.scale, 0, 0f);
@@ -1124,7 +1485,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
                 for (float offsetAngle = 0f; offsetAngle < 0.2f; offsetAngle += 0.03f)
                 {
-                    Vector2 telegraphStart = MainTurretCenter + (TelegraphRotation + offsetAngle).ToRotationVector2() * 20f - screenPos;
+                    Vector2 telegraphStart = MainTurretCenter + (TelegraphRotation + offsetAngle).ToRotationVector2() * 20f - Main.screenPosition;
                     Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                     Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                     Color telegraphColor = new Color(74, 255, 204) * (float)Math.Pow(TelegraphInterpolant, 0.79) * ((0.2f - offsetAngle) / 0.2f) * 1.6f;
@@ -1151,7 +1512,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 {
                     int illusionFrame = (int)(Main.GlobalTimeWrappedHourly * 6f + i) % 3;
                     float completionRatio = i / (illusionCount - 1f);
-                    Vector2 hologramDrawPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant) - screenPos;
+                    Vector2 hologramDrawPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant) - Main.screenPosition;
                     DrawExowlHologram(hologramDrawPosition, illusionFrame, hologramInterpolant);
                 }
                 Main.spriteBatch.ExitShaderRegion();
@@ -1168,6 +1529,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             potionType = ModContent.ItemType<OmegaHealingPotion>();
         }
+        
+        public override void ModifyNPCLoot(NPCLoot npcLoot) => AresBody.DefineExoMechLoot(NPC, npcLoot, (int)AresBody.MechType.Thanatos);
 
         public override void HitEffect(int hitDirection, double damage)
         {

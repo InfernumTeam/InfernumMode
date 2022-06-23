@@ -1,10 +1,11 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class YharonHeatFlashFireball : ModProjectile
+    public class YharonHeatFlashFireball : ModProjectile
     {
         public const int Lifetime = 720;
         public override void SetStaticDefaults()
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.gfxOffY = -36;
         }
 
-        public override bool? CanDamage() => Projectile.timeLeft < Lifetime - 30 ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.timeLeft < Lifetime - 30;
 
         public override void Kill(int timeLeft)
         {
@@ -47,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 180);
+            target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
         }
     }
 }

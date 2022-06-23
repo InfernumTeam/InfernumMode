@@ -3,9 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -39,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D telegraphTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D telegraphTexture = TextureAssets.Projectile[Projectile.type].Value;
             Color telegraphColor = Color.White * Projectile.Opacity * 0.2f;
             telegraphColor.A = 0;
 
@@ -73,9 +74,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCsAndTiles.Add(index);
+            drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

@@ -1,20 +1,23 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-	public class AEWHeadBehaviorOverride : NPCBehaviorOverride
+    public class AEWHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AEWAttackType
         {
@@ -45,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const int ShieldHP = 102000;
         public const float Phase2LifeRatio = 0.8f;
 
-        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmHeadHuge").Type;
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmHead").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -103,12 +106,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     if (i is >= 0 and < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBody").Type, npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBodyAlt").Type, npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type, npc.whoAmI + 1);
+                        lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type, npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -240,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                        Projectile.NewProjectile(new InfernumSource(), npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
                     }
                 }
             }
@@ -351,7 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
 
                     // Release water spears from the tail of the wyrm.
-                    int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
+                    int tail = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmTail>());
                     if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 6f == 5f)
                     {
                         SoundEngine.PlaySound(SoundID.Item66, Main.npc[tail].Center);
@@ -362,7 +365,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                             Utilities.NewProjectileBetter(Main.npc[tail].Center, spearShootVelocity, ModContent.ProjectileType<HomingWaterSpear>(), spearDamage, 0f);
                         }
                     }
-                    
+
                     if (attackTimer > chargeTime)
                     {
                         chargeDirection = 0f;
@@ -441,7 +444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Charge.
             if (attackTimer == teleportFadeTime + telegraphTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, target.Center);
                 npc.velocity = aimDirection.ToRotationVector2() * chargeSpeed;
                 npc.Opacity = 1f;
                 npc.netUpdate = true;
@@ -489,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int pissedOffChargeDelay = 20;
             int shieldExplosionDelay = 54;
             int pissedOffChargeTime = 50;
-            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)];
+            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)];
 
             float pissedOffChargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
             ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
@@ -508,7 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.03f);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.03f).MoveTowards(idealVelocity, 3f);
             }
-            
+
             // Move slowly near the target if the shield was destroyed.
             else if (pissedOff == 0f)
             {
@@ -546,7 +549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.netUpdate = true;
 
                     int explosionDamage = (int)(generalDamageFactor * 900f);
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeMechGaussRifle"), tail.Center);
+                    SoundEngine.PlaySound(GaussRifle.FireSound, tail.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(tail.Center, Vector2.Zero, ModContent.ProjectileType<EidolicExplosion>(), explosionDamage, 0f);
                 }
@@ -562,7 +565,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 if (hasRoaredYet == 0f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
                     hasRoaredYet = 1f;
                     pissedOff = 1f;
                     npc.netUpdate = true;
@@ -574,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 if (hasRoaredYet == 0f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
 
                     // Take damage after the shield is destroyed.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -620,7 +623,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Create energy fields.
             if (attackTimer == fieldCreationDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/EidolonWyrmRoarClose"), target.Center);
+                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -629,7 +632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     List<int> drones = new();
                     for (int i = 0; i < droneSummonCount; i++)
                     {
-                        int drone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
+                        int drone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
                         Main.npc[drone].target = npc.target;
                         drones.Add(drone);
                     }
@@ -655,7 +658,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.05f).MoveTowards(chargeVelocity, 2f);
                 if (attackTimer == spinTime + chargePreparationTime - 1f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Release sparks at the target.
@@ -792,7 +795,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Main.spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             // Create the shield for the tail in the Impact Tail attack.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
             {
                 NPC head = Main.npc[npc.realLife];
                 if (head.ai[0] == (int)AEWAttackType.ImpactTail && head.Infernum().ExtraAI[1] == 0f)

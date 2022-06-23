@@ -1,14 +1,14 @@
-﻿using InfernumMode.OverridingSystem;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
-using CalamityMod.NPCs;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.Audio;
-using CalamityMod;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -53,8 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Reset the falling ichor flag for later.
                 hasReleasedFallingIchor = 0f;
 
-                float xDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.3f, 1f);
-                float yDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
+                float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.3f, 1f);
+                float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
                 Vector2 flyDestination = target.Center + Vector2.UnitY * 550f;
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.8f;
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 20f);
@@ -75,8 +75,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Rise upward.
-            if (wrappedAttackTimer is >= 180f and < 255f)
-			{
+            if (wrappedAttackTimer >= 180f && wrappedAttackTimer < 255f)
+            {
                 npc.velocity.X *= 0.96f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -14.5f, 15f);
 
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     }
                     hasReleasedFallingIchor = 1f;
                 }
-			}
+            }
 
             // Fall.
             if (wrappedAttackTimer >= 255f)

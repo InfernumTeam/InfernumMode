@@ -1,18 +1,19 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Placeables.Banners;
+using CalamityMod.NPCs.DesertScourge;
 using InfernumMode.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -70,14 +71,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.buffImmune[BuffID.BetsysCurse] = false;
             npc.buffImmune[ModContent.BuffType<AstralInfectionDebuff>()] = false;
             npc.buffImmune[ModContent.BuffType<GodSlayerInferno>()] = false;
-            npc.buffImmune[ModContent.BuffType<AbyssalFlames>()] = false;
+            npc.buffImmune[ModContent.BuffType<VulnerabilityHex>()] = false;
             npc.buffImmune[ModContent.BuffType<ArmorCrunch>()] = false;
             npc.buffImmune[ModContent.BuffType<DemonFlames>()] = false;
             npc.buffImmune[ModContent.BuffType<HolyFlames>()] = false;
             npc.buffImmune[ModContent.BuffType<Nightwither>()] = false;
             npc.buffImmune[ModContent.BuffType<Plague>()] = false;
             npc.buffImmune[ModContent.BuffType<Shred>()] = false;
-            npc.buffImmune[ModContent.BuffType<WarCleave>()] = false;
             npc.buffImmune[ModContent.BuffType<WhisperingDeath>()] = false;
             npc.behindTiles = true;
             npc.netAlways = true;
@@ -251,14 +251,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     // Roar.
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(GreatSandSharkNPC.RoarSound, npc.Center);
 
                     npc.netUpdate = true;
                 }
                 else if (npc.velocity.Y < 15f)
                     npc.velocity.Y += 0.3f;
 
-                if (chargeInterpolantTimer is > 0f and < 25f)
+                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 25f)
                 {
                     npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, chargeInterpolantTimer / 45f);
                     chargeInterpolantTimer++;
@@ -310,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 float spawnOffsetFactor = MathHelper.Lerp(50f, 340f, attackTimer / 120f);
                 for (int i = -1; i <= 1; i += 2)
                 {
-                    int shark = NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X + spawnOffsetFactor * i), (int)npc.Center.Y, ModContent.NPCType<FlyingSandShark>());
+                    int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + spawnOffsetFactor * i), (int)npc.Center.Y, ModContent.NPCType<FlyingSandShark>());
                     if (Main.npc.IndexInRange(shark))
                         Main.npc[shark].ai[2] = desertTextureVariant;
                 }
@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (attackTimer >= hoverTime)
                 {
                     // Roar.
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(GreatSandSharkNPC.RoarSound, npc.Center);
 
                     attackTimer = 0f;
                     chargeState = 1f;
@@ -482,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
 
             if (attackTimer == 25f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
 
             // Summon sand sharks.
             if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)

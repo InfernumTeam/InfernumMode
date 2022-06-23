@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 return;
 
             int hornetType = Utils.SelectRandom(Main.rand, NPCID.HornetFatty, NPCID.HornetHoney, NPCID.HornetStingy);
-            int hornet = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, hornetType, 1, 0f, 0f, 0f, 0f, 255);
+            int hornet = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, hornetType, 1, 0f, 0f, 0f, 0f, 255);
             Main.npc[hornet].velocity = Main.rand.NextVector2CircularEdge(2.5f, 2.5f);
         }
     }

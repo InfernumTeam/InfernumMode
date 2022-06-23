@@ -1,12 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-	public class StartingIchorBall : ModProjectile
+    public class StartingIchorBall : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor Orb");
@@ -32,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(480f, 470f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * 0.75f;
 
-            if (Time is >= (-10f) and <= 8f)
+            if (Time >= -10f && Time <= 8f)
             {
                 float flySpeed = MathHelper.Lerp(10f, 21f, Utils.GetLerpValue(-10f, 8f, Time, true));
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * flySpeed;

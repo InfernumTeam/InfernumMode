@@ -1,18 +1,19 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
 using SignusBoss = CalamityMod.NPCs.Signus.Signus;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
@@ -172,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         attackSubstate = 2f;
                         attackTimer = 0f;
                         Vector2 chargeDestination = target.Center + npc.SafeDirectionTo(target.Center) * 400f;
-                        npc.velocity = npc.SafeDirectionTo(chargeDestination) * MathHelper.Min(npc.Distance(chargeDestination) / chargeTime * 0.5f + 10f, 55f);
+                        npc.velocity = npc.SafeDirectionTo(chargeDestination) * npc.Distance(chargeDestination) / chargeTime;
                         npc.netUpdate = true;
                     }
                     break;
@@ -398,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > telegraphTime && attackTimer < telegraphTime + blackTime - 3f && attackTimer % 3f == 2f)
                     {
                         // Play a sound.
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LightningStrike"), target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
 
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.
@@ -634,7 +635,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % entitySummonRate == entitySummonRate - 1f)
             {
                 Vector2 entitySpawnPosition = npc.Center + Main.rand.NextVector2Circular(250f, 250f);
-                NPC.NewNPC(new InfernumSource(), (int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
 
                 entitySummonCounter++;
                 npc.netUpdate = true;
@@ -758,7 +759,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Main.spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
             }
 
+            Player target = Main.player[npc.target];
             drawInstance(npc.Center, true, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+
+            Vector2 cloneDrawPosition = new(target.Center.X, npc.Center.Y);
+            cloneDrawPosition.X += target.Center.X - npc.Center.X;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            if (lifeRatio < Phase2LifeRatio)
+                drawInstance(cloneDrawPosition, false, npc.Center.X > target.Center.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
             return false;
         }
         #endregion

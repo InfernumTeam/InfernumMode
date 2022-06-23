@@ -1,4 +1,4 @@
-﻿using InfernumMode.OverridingSystem;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             NPC body = Main.npc[(int)npc.ai[0]];
             float laserRayTelegraphInterpolant = body.Infernum().ExtraAI[10];
 
-            if ((GolemAttackState)body.ai[1] is GolemAttackState.BIGSHOT or GolemAttackState.BadTime or GolemAttackState.SummonDelay)
+            if ((GolemAttackState)body.ai[1] == GolemAttackState.BIGSHOT || (GolemAttackState)body.ai[1] == GolemAttackState.BadTime || (GolemAttackState)body.ai[1] == GolemAttackState.SummonDelay)
             {
                 float DarknessRatio = body.Infernum().ExtraAI[9];
                 Color leftColor;

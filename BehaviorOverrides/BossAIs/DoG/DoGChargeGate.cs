@@ -1,6 +1,7 @@
-﻿using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.DevourerofGods;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
@@ -9,21 +10,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
     public class DoGChargeGate : ModProjectile
     {
+        public int Time;
+
         public Vector2 Destination;
+
         public float TelegraphDelay
         {
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
         }
+
         public bool NoTelegraph => Projectile.localAI[0] == 1f;
+
         public ref float TelegraphTotalTime => ref Projectile.ai[1];
+
         public ref float Lifetime => ref Projectile.localAI[1];
+
         public const float TelegraphFadeTime = 18f;
+
         public const float TelegraphWidth = 6400f;
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Portal");
-        }
+
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
         {
@@ -36,8 +43,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.penetrate = -1;
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Time);
+            writer.WriteVector2(Destination);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Time = reader.ReadInt32();
+            Destination = reader.ReadVector2();
+        }
+
         public override void AI()
         {
+            // Use fallbacks for the telegraph time and lifetime if nothing specific is defined.
             if (TelegraphTotalTime == 0f)
                 TelegraphTotalTime = 75f;
             if (Lifetime == 0f)
@@ -49,13 +69,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return;
             }
 
-            if (Projectile.timeLeft < 600f - Lifetime)
+            if (Time >= Lifetime)
                 Projectile.Kill();
 
             TelegraphDelay++;
+
+            // Make the portal dissipate once ready.
             if (TelegraphDelay > TelegraphTotalTime)
                 Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
+            // Adjust the aim destination such that it approaches the closest player. This stops right before the telegraph line dissipates.
             if (TelegraphDelay < TelegraphTotalTime * 0.8f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -64,12 +87,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     Destination = idealDestination;
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);
             }
+            Time++;
         }
+
+        // TODO -- Potentially try to put the portal drawing code into a utility method of sorts?
         public override bool PreDraw(ref Color lightColor)
         {
-            float fade = Utils.GetLerpValue(600f, 565f, Projectile.timeLeft, true);
-            if (Projectile.timeLeft <= 600f - Lifetime + 45f)
-                fade = Utils.GetLerpValue(600f - Lifetime, 600f - Lifetime + 45f, Projectile.timeLeft, true);
+            float fade = Utils.GetLerpValue(0f, 35f, Time, true);
+            if (Time >= Lifetime - 45f)
+                fade = Utils.GetLerpValue(Lifetime, Lifetime - 45f, Time, true);
 
             Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

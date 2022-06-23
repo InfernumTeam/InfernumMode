@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-	public class PsionicRay : ModProjectile
+    public class PsionicRay : ModProjectile
     {
         public PrimitiveTrailCopy RayDrawer;
         public bool HasHitAnObstacle

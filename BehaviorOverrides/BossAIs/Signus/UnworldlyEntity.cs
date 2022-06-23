@@ -2,9 +2,9 @@ using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         float ai0 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
                         float ai1 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
 
-                        int tentacle = Projectile.NewProjectile(new InfernumSource(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 250, 0f);
+                        int tentacle = Projectile.NewProjectile(NPC.GetSource_FromAI(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 250, 0f);
                         if (Main.projectile.IndexInRange(tentacle))
                         {
                             Main.projectile[tentacle].ai[0] = ai0;
@@ -130,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             }
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
         public override bool CheckDead()
         {

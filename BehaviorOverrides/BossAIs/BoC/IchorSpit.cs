@@ -1,9 +1,9 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override void AI()
         {
-            // Make a blood-like sound on the first frame of this projectile's existance.
+            // Make a blood-like sound on the first frame of this projectile's existence.
             if (Projectile.localAI[0] == 0f)
             {
                 SoundEngine.PlaySound(SoundID.Item17, Projectile.position);

@@ -1,13 +1,14 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-	public class StormChargeTelegraph : ModProjectile
+    public class StormChargeTelegraph : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public int Lifetime => (int)Projectile.ai[1];

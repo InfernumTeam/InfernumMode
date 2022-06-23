@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+
         }
 
         public override void SetDefaults()
@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            Projectile.velocity *= 99f;
+            Projectile.velocity *= 0.99f;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
@@ -82,11 +82,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Do some some mild screen-shake effects to accomodate the explosion.
             // This effect is set instead of added to to ensure separate explosions do not together create an excessive amount of shaking.
-            float screenShakeFactor = Utils.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 5f);
+            float screenShakeFactor = Utilities.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 5f);
             if (Main.LocalPlayer.Calamity().GeneralScreenShakePower < screenShakeFactor)
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }
 
-        public override bool? CanDamage() => false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

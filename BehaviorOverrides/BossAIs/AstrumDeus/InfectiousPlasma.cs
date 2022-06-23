@@ -2,6 +2,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -45,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D plasmaTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D plasmaTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 0; i < 5; i++)
             {
                 Matrix drawOffsetEncoding = Matrix.CreateRotationX(Main.GlobalTimeWrappedHourly * 2.32f + i * 1.37f);

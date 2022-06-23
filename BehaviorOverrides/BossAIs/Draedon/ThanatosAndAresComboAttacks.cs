@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -8,13 +8,16 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
-using Terraria.Audio;
+using Terraria.WorldBuilding;
+using InfernumMode.Sounds;
+using CalamityMod.Sounds;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -84,12 +87,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static bool DoBehavior_ThanatosAres_LaserCircle(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 240;
-            int telegraphTime = 90;
+            int attackDelay = 95;
+            int telegraphTime = 50;
             int attackTime = 780;
             int spinTime = attackTime - attackDelay;
-            int totalLasers = 5;
+            int totalLasers = 8;
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
+            
+            if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
+            {
+                attackDelay -= 24;
+                totalLasers += 4;
+            }
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)
@@ -171,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Create laser bursts.
                 if (attackTimer == attackDelay)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -210,10 +219,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool DoBehavior_ThanatosAres_ElectricCage(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int attackDelay = 150;
-            int aresShootRate = 70;
-            int aresCircularBoltCount = 18;
+            int aresShootRate = 90;
+            int aresCircularBoltCount = 25;
             int aresShotBoltCount = 7;
-            int thanatosShootRate = 85;
+            int thanatosShootRate = 70;
             int lasersPerRotor = 9;
             float rotorSpeed = 23f;
             bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
@@ -224,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
                 aresShootRate -= 8;
-                aresCircularBoltCount += 4;
+                aresCircularBoltCount += 12;
                 aresShotBoltCount += 2;
                 thanatosShootRate -= 10;
             }
@@ -238,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float borderOffset = 950f;
             Rectangle borderArea = Utils.CenteredRectangle(aresBody.Center, Vector2.One * borderOffset * 2f);
             int armShootType = -1;
-            string shootSoundPath = null;
+            SoundStyle shootSound = default;
             float armShootSpeed = 10f;
             float perpendicularOffset = 0f;
             bool enraged = aresBody.Infernum().ExtraAI[13] == 1f;
@@ -255,25 +264,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 armShootType = ModContent.ProjectileType<CannonLaser>();
                 hoverOffset = new Vector2(-borderOffset, -borderOffset);
-                shootSoundPath = "Sounds/Item/LaserCannon";
+                shootSound = CommonCalamitySounds.LaserCannonSound;
             }
             if (npc.type == ModContent.NPCType<AresTeslaCannon>())
             {
                 armShootType = ModContent.ProjectileType<TeslaSpark>();
                 hoverOffset = new Vector2(-borderOffset, borderOffset);
-                shootSoundPath = "Sounds/Item/PlasmaBolt";
+                shootSound = CommonCalamitySounds.PlasmaBoltSound;
             }
             if (npc.type == ModContent.NPCType<AresPlasmaFlamethrower>())
             {
                 armShootType = ModContent.ProjectileType<SmallPlasmaSpark>();
                 hoverOffset = new Vector2(borderOffset, borderOffset);
-                shootSoundPath = "Sounds/Item/PlasmaCasterFire";
+                shootSound = PlasmaCaster.FireSound;
             }
             if (npc.type == ModContent.NPCType<AresPulseCannon>())
             {
                 armShootType = ModContent.ProjectileType<AresPulseBlast>();
                 hoverOffset = new Vector2(borderOffset, -borderOffset);
-                shootSoundPath = "Sounds/Item/PulseRifleFire";
+                shootSound = PulseRifle.FireSound;
                 armShootSpeed = 2f;
                 perpendicularOffset = 15f;
             }
@@ -307,8 +316,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (attackTimer % 9f == 8f)
                 {
-                    if (Main.rand.NextBool(5))
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, shootSoundPath), npc.Center);
+                    if (Main.rand.NextBool(5) && shootSound != default)
+                        SoundEngine.PlaySound(shootSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, 500, 0f);
@@ -355,22 +364,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (attackTimer % aresShootRate >= aresShootRate - 35f)
                     {
-                        telegraphInterpolant = Utils.GetLerpValue(aresShootRate - 35f, aresShootRate - 10f, attackTimer % aresShootRate, true);
-                        if (attackTimer % aresShootRate < aresShootRate - 10f)
+                        telegraphInterpolant = Utils.GetLerpValue(aresShootRate - 50f, aresShootRate - 5f, attackTimer % aresShootRate, true);
+                        if (attackTimer % aresShootRate < aresShootRate - 5f)
                             telegraphRotation = (target.Center - coreCenter).ToRotation();
                     }
                 }
 
                 if (aresShouldAttack && attackTimer % aresShootRate == aresShootRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/AresTeslaShot"), npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
                         float circularSpreadAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                         for (int i = 0; i < aresCircularBoltCount; i++)
                         {
-                            Vector2 boltShootVelocity = (MathHelper.TwoPi * i / aresCircularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 12f;
+                            Vector2 boltShootVelocity = (MathHelper.TwoPi * i / aresCircularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 13f;
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
                             Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
                         }
@@ -378,7 +387,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < aresShotBoltCount; i++)
                         {
                             Vector2 boltShootVelocity = telegraphRotation.ToRotationVector2() * 31f + Main.rand.NextVector2Circular(5f, 5f);
-                            Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
+                            Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 21f;
                             Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
                         }
                     }
@@ -388,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!target.Hitbox.Intersects(borderArea) && !enraged && attackTimer > attackDelay)
                 {
                     if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AresEnraged"), target.Center);
+                        SoundEngine.PlaySound(AresBody.EnragedSound, target.Center);
 
                     // Have Draedon comment on the player's attempts to escape.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

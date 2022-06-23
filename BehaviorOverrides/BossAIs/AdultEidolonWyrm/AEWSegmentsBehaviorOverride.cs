@@ -1,4 +1,4 @@
-﻿using InfernumMode.OverridingSystem;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +8,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
     public class AEWBodyBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type;
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBody").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
 
@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
     public class AEWBody2BehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type;
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBodyAlt").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
 
@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
     public class AEWTailBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type;
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
 

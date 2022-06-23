@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static readonly int[] YharonProjectiles = new int[]
         {
             ProjectileID.CultistBossFireBall, // Not technically a Yharon projectile, but it is used within the fight.
-			ModContent.ProjectileType<Flarenado>(),
+            ModContent.ProjectileType<Flarenado>(),
             ModContent.ProjectileType<Infernado>(),
             ModContent.ProjectileType<Infernado2>(),
             ModContent.ProjectileType<Flare>(),

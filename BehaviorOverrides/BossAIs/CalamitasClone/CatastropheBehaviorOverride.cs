@@ -1,20 +1,21 @@
-﻿using CalamityMod.Events;
+using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class CatastropheBehaviorOverride : NPCBehaviorOverride
+    public class CatastropheBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<CalamitasRun2>();
+        public override int NPCOverrideType => ModContent.NPCType<Catastrophe>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
-            bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>());
+            bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
@@ -156,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 // Roar and begin carpet bombing.
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
 
             if (attackTimer > redirectTime)
@@ -236,7 +237,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
 
                         // Release fireballs upward if alone and charging down.

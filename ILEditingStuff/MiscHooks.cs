@@ -64,13 +64,13 @@ namespace InfernumMode.ILEditingStuff
             cursor.MarkLabel(endOfMethod);
 
             cursor.Index = 0;
-            cursor.EmitDelegate(() =>
+            cursor.EmitDelegate<Action>(() =>
             {
                 if (WorldSaveSystem.InfernumMode)
                     DrawInfernumModeUI();
             });
 
-            cursor.Emit(OpCodes.Call, typeof(WorldSaveSystem).GetMethod("get_InfernumMode", Utilities.UniversalBindingFlags));
+            cursor.Emit(OpCodes.Call, typeof(WorldSaveSystem).GetProperty("InfernumMode").GetMethod);
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
         }
 

@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -28,21 +29,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.rotation += 0.325f;
 
             Time++;
+
+            // Release the laser burst a second after spawning.
             if (Time == 60f)
             {
                 SoundEngine.PlaySound(SoundID.Item12, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Player closest = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                    Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                    float shootInterpolant = Utils.GetLerpValue(600f, 1450f, Projectile.Distance(target.Center), true);
 
-                    float shootInterpolant = Utils.GetLerpValue(600f, 1450f, Projectile.Distance(closest.Center), true);
-                    int shootCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
+                    int laserCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
                     float shootSpeed = MathHelper.Lerp(15f, 25f, shootInterpolant);
-                    for (int i = 0; i < shootCount; i++)
+                    for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 shootVelocity = Projectile.SafeDirectionTo(closest.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(shootCount - 1f))) * shootSpeed;
-                        Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, InfernumMode.CalamityMod.Find<ModProjectile>("DoGDeath").Type, 85, 0f, Projectile.owner);
+                        Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, InfernumMode.CalamityMod.Find<ModProjectile>("DoGDeath").Type, 85, 0f, Projectile.owner);
                     }
                 }
             }
@@ -54,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D portalTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = portalTexture.Size() * 0.5f;
             Color baseColor = Color.White;

@@ -1,7 +1,6 @@
 using CalamityMod.NPCs.Bumblebirb;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -11,15 +10,13 @@ namespace InfernumMode.Skies
 {
     public class DragonfollySkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
-        {
-            return NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type) && 
-                (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type)].Infernum().ExtraAI[8] > 0f);
-        }
+        public override bool IsSceneEffectActive(Player player) => true;
 
         public override void SpecialVisuals(Player player)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", IsSceneEffectActive(player));
+            int bumblefuckID = ModContent.NPCType<Bumblefuck>();
+            bool enabled = NPC.AnyNPCs(bumblefuckID) && (Main.npc[NPC.FindFirstNPC(bumblefuckID)].Infernum().ExtraAI[8] > 0f);
+            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", enabled);
         }
     }
 
@@ -35,8 +32,6 @@ namespace InfernumMode.Skies
                 Intensity += 0.01f;
             else if (!isActive && Intensity > 0f)
                 Intensity -= 0.01f;
-            if (NPC.FindFirstNPC(ModContent.NPCType<Bumblefuck>()) == -1)
-                Deactivate(Array.Empty<object>());
         }
 
         private float GetIntensity()
@@ -74,7 +69,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float Intensity = this.GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), InfernumMode.HiveMindSkyColor * Intensity);
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * Intensity);
             }
         }
 

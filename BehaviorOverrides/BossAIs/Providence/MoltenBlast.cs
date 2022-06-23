@@ -1,15 +1,15 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
-using CalamityMod.Projectiles.Boss;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -88,14 +88,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < blobCount; i++)
                 {
                     Vector2 velocity = Main.rand.NextVector2Circular(9f, 9f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
 
                 float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 velocity = (MathHelper.TwoPi * i / 8f + offsetAngle).ToRotationVector2() * 4f;
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, velocity, ModContent.ProjectileType<MoltenFire>(), (int)Math.Round(Projectile.damage * 0.75), 0f, Projectile.owner);
                 }
             }
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);

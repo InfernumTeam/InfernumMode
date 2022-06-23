@@ -12,13 +12,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
-        public static NPC Owner => Main.npc[NPC.crimsonBoss];
+        public NPC Owner => Main.npc[NPC.crimsonBoss];
         public float OwnerAttackTime => Owner.ai[1];
         public ref float ConvergeOffsetAngle => ref NPC.ai[1];
 
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Brain of Cthulhu");
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.TrailingMode[NPC.type] = 0;

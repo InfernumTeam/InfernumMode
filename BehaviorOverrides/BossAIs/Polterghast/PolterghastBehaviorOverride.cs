@@ -1,20 +1,23 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Armor.OmegaBlue;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using PolterghastBoss = CalamityMod.NPCs.Polterghast.Polterghast;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
@@ -51,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 for (int i = 0; i < 4; i++)
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
                 npc.localAI[3] = 1f;
             }
 
@@ -90,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (dyingTimer > 0f)
             {
                 npc.dontTakeDamage = true;
-                npc.DeathSound = SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/PolterghastDeath");
+                npc.DeathSound = InfernumSoundRegistry.PoltergastDeathEcho;
 
                 // Clear away any clones and legs.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -155,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                     // Make a flame-like sound effect right before dying.
                     if (dyingTimer == 368f)
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), target.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                     else
                     {
                         initialDeathPositionX = npc.Center.X;
@@ -420,14 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // Roar right before impaling.
             if (attackTimer % impaleTime == 90f)
-            {
-                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
-                if (roar != null)
-                {
-                    roar.Pitch = -0.425f;
-                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                }
-            }
+                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.425f, Volume = 1.5f }, target.Center);
         }
 
         public static void DoAttack_SpiritPetal(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls, bool enraged)
@@ -522,7 +518,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Slow down.
-            if (attackTimer is > 80f and < 105f)
+            if (attackTimer > 80f && attackTimer < 105f)
             {
                 npc.velocity *= 0.94f;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -533,12 +529,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
-                if (roar != null)
-                {
-                    roar.Pitch = -0.525f;
-                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                }
+                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -547,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // And release accelerating stones.
-            if (attackTimer is >= 105f and < 160f)
+            if (attackTimer >= 105f && attackTimer < 160f)
             {
                 npc.velocity *= 1.005f;
 
@@ -613,12 +604,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar, shoot spirits, and release a cluster of souls in the form of a roar thing idk lol.
             if (shootCounter >= shootRate)
             {
-                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
-                if (roar != null)
-                {
-                    roar.Pitch = -0.525f;
-                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                }
+                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
 
                 // Release souls and a burst.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -654,7 +640,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer > 60f)
                 npc.velocity *= 0.965f;
 
-            if (attackTimer is <= 145f or > 285f)
+            if (attackTimer <= 145f || attackTimer > 285f)
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
             else
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.0085f);
@@ -662,12 +648,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar.
             if (attackTimer == 145f)
             {
-                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
-                if (roar != null)
-                {
-                    roar.Pitch = -0.525f;
-                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                }
+                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
 
                 middleAngle = npc.AngleTo(target.Center);
                 npc.netUpdate = true;
@@ -760,7 +741,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        int clone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
+                        int clone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
 
                         // An NPC must update once for it to recieve a whoAmI variable.
                         // Without this, the below IEnumerable collection would not incorporate this NPC.
@@ -787,15 +768,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
                 }
-                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
-                if (roar != null)
-                {
-                    roar.Pitch = -0.525f;
-                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                }
+                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
             }
 
-            if (adjustedTimer is > 50f and < 105f)
+            if (adjustedTimer > 50f && adjustedTimer < 105f)
             {
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 npc.velocity *= 1.01f;

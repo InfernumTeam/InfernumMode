@@ -75,6 +75,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return color * Projectile.Opacity;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
     }
 }

@@ -1,6 +1,7 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,11 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -30,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             HoldArmsOut,
             Laugh,
         }
+
         public enum CultistAIState
         {
             SpawnEffects,
@@ -293,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Create explosions with pillar colors.
             if (canMakeExplosion)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
@@ -313,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (transitionTimer == 15f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
 
                 // Fade away.
                 npc.Opacity = Utils.GetLerpValue(35f, 15f, transitionTimer, true);
@@ -337,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 // Create a laugh sound effect.
                 if (transitionTimer == TransitionAnimationTime + 5f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
 
                 if (phaseState >= TransitionAnimationTime)
                     frameType = (int)CultistFrameState.Laugh;
@@ -377,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 // Create a laugh sound effect.
                 if (attackTimer == absorbEffectTime + hoverTime + 15f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 105);
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
                 if (attackTimer > absorbEffectTime + hoverTime + 20f)
                 {
                     // Fade out.
@@ -521,7 +524,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 float adjustedTime = attackTimer - (105 + fireballShootRate * fireballCount);
                 frameType = (int)CultistFrameState.RaiseArmsUp;
-                if (adjustedTime is > 80f and < 140f)
+                if (adjustedTime > 80f && adjustedTime < 140f)
                     frameType = (int)CultistFrameState.Laugh;
 
                 if (adjustedTime == 10f && !npc.WithinRange(target.Center, 720f))
@@ -559,7 +562,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         fire.scale = 1.5f;
                         fire.noGravity = true;
                     }
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
+                    SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -585,7 +588,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sount prior to releasing red lightning.
             if (phase2 && attackTimer == attackLength - 275f)
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 91);
+                SoundEngine.PlaySound(SoundID.Zombie91, npc.Center);
 
             // Hover and fly above the player.
             if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
@@ -640,7 +643,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create a burst of sparks and summon orbs.
-                if (adjustedTime is 30f or 36f)
+                if (adjustedTime == 30f || adjustedTime == 36f)
                 {
                     npc.velocity = Vector2.Zero;
                     for (int i = 0; i < 2; i++)
@@ -749,7 +752,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (phase2)
                 attackLength += 205;
 
-            bool inDelay = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate &&
+            bool waitingBeforeFiring = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate &&
                 attackTimer < shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
             bool performingPhase2Attack = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
 
@@ -812,7 +815,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Release a burst of light.
-            else if (attackTimer > 15f && !inDelay)
+            else if (attackTimer > 15f && !waitingBeforeFiring)
             {
                 Vector2 handPosition = npc.Center + new Vector2(npc.spriteDirection * 20f, 6f);
 
@@ -854,7 +857,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             shootVelocity *= 1.7f;
 
                         Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
-                        int ancientLight = NPC.NewNPC(new InfernumSource(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
+                        int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
                         if (Main.npc.IndexInRange(ancientLight))
                         {
                             Main.npc[ancientLight].velocity = shootVelocity;
@@ -897,7 +900,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Play a chant sound before fading out.
             if (attackTimer == 15f)
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 90);
+                SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
             if (attackTimer <= 30f)
             {
                 npc.Opacity = Utils.GetLerpValue(30f, 15f, attackTimer, true);
@@ -938,7 +941,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 for (int i = 0; i < cloneCount; i++)
                 {
-                    int clone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.CultistBossClone, npc.whoAmI);
+                    int clone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.CultistBossClone, npc.whoAmI);
                     if (Main.npc.IndexInRange(clone) && clone < Main.maxNPCs)
                     {
                         Main.npc[clone].Infernum().ExtraAI[0] = npc.whoAmI;
@@ -957,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create the actual ritual.
-                ritualIndex = Projectile.NewProjectile(new InfernumSource(), ritualCenter, Vector2.Zero, ModContent.ProjectileType<Ritual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                ritualIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), ritualCenter, Vector2.Zero, ModContent.ProjectileType<Ritual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
 
                 // Prepare to fade back in.
                 fadeCountdown = 18f;
@@ -990,7 +993,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer == waitDelay)
             {
                 // Create a laugh sound effect.
-                SoundEngine.PlaySound(SoundID.Zombie, target.Center, 105);
+                SoundEngine.PlaySound(SoundID.Zombie105, target.Center);
 
                 frameType = (int)CultistFrameState.Laugh;
 
@@ -998,11 +1001,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 {
                     Point ritualCenter = (Main.projectile[(int)ritualIndex].Center + Main.projectile[(int)ritualIndex].SafeDirectionTo(target.Center) * 20f).ToPoint();
                     if (phase2)
-                        NPC.NewNPC(new InfernumSource(), ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead, 1);
+                        NPC.NewNPC(npc.GetSource_FromAI(), ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead, 1);
                     else
                     {
                         for (int i = 0; i < 2; i++)
-                            NPC.NewNPC(new InfernumSource(), ritualCenter.X, ritualCenter.Y, NPCID.AncientCultistSquidhead, 0, i);
+                            NPC.NewNPC(npc.GetSource_FromAI(), ritualCenter.X, ritualCenter.Y, NPCID.AncientCultistSquidhead, 0, i);
                     }
                 }
             }
@@ -1048,7 +1051,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
             }
 
-            if (attackTimer is 50f or 210f or 330f)
+            if (attackTimer == 50f || attackTimer == 210f || attackTimer == 330f)
             {
                 Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
@@ -1161,14 +1164,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 6; i++)
             {
-                int laser = Projectile.NewProjectile(new InfernumSource(), start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
+                int laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
                 Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
                 Main.projectile[laser].timeLeft -= i * 2;
 
                 if (extraUpdates > 0)
                     Main.projectile[laser].extraUpdates = extraUpdates;
 
-                laser = Projectile.NewProjectile(new InfernumSource(), end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
+                laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
                 Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
                 Main.projectile[laser].timeLeft -= i * 2;
 
@@ -1279,7 +1282,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Color vortexColor = new(6, 229, 156);
                     Color stardustColor = new(0, 170, 221);
                     Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor);
-                    float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) * 
+                    float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) *
                         Utils.GetLerpValue(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
                     illusionColor.A = (byte)MathHelper.Lerp(125f, 0f, 1f - illusionOpacity);
 

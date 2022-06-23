@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
@@ -18,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public Vector2 IdealPosition;
         public LimbCollection Limbs;
         public PrimitiveTrailCopy LimbDrawer = null;
-        public static NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
+        public NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
         public Player Target => Main.player[NPC.target];
         public int Direction => (NPC.ai[0] >= 2f).ToDirectionInt();
         public ref float IdealPositionTimer => ref NPC.ai[1];
@@ -26,12 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public float AttackTimer => Polterghast.ai[1];
         public bool Enraged => Polterghast.ai[3] == 1f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults()
-        {
-            this.HideFromBestiary();
-            DisplayName.SetDefault("Limb");
-        }
-
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Limb");
 
         public override void SetDefaults()
         {
@@ -264,7 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     for (int k = 0; k < 20; k++)
                         drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 19f));
 
-                    LimbDrawer.Draw(drawPositions, -screenPos, 38);
+                    LimbDrawer.Draw(drawPositions, -Main.screenPosition, 38);
                 }
             }
             return false;

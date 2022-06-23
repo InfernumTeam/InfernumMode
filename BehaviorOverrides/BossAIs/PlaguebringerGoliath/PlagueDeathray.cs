@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override float Lifetime => LocalLifetime;
         public override Color LaserOverlayColor => new(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
-        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
         public override Texture2D LaserMiddleTexture => TextureAssets.Extra[21].Value;
         public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
         public override float MaxLaserLength => 20f;
@@ -85,9 +85,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             target.AddBuff(ModContent.BuffType<Plague>(), 300);
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCs.Add(index);
+            drawCacheProjsBehindNPCs.Add(index);
         }
     }
 }

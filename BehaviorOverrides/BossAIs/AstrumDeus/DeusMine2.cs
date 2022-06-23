@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Projectile.velocity *= 0.99f;
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.timeLeft is < 815 and > 85;
+        public override bool CanHitPlayer(Player target) => Projectile.timeLeft < 815 && Projectile.timeLeft > 85;
 
         public override Color? GetAlpha(Color lightColor)
         {

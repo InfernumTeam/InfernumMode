@@ -1,11 +1,11 @@
-﻿using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 {
@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
                         }
                     }
                 }
-                
+
                 // Make sandnadoes slam into each-other.
                 if (attackTimer >= animationChangeTime + castTime / 2 + 5f && attackTimer <= animationChangeTime + castTime)
                 {

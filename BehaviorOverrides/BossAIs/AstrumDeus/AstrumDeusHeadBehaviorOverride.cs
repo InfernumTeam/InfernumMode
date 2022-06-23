@@ -1,6 +1,8 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
+using CalamityMod.Items.Tools;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -8,10 +10,10 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -32,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public const float Phase2LifeThreshold = 0.55f;
         public const float Phase3LifeThreshold = 0.2f;
 
-        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHeadSpectral>();
+        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -60,11 +62,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             if (beacons.Count == 0)
             {
-                Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
+                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
                 beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             }
 
             Player target = Main.player[npc.target];
+
+            // Allow Calamity's code to drop loot as usual.
+            npc.Calamity().newAI[0] = 3f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float beaconAngerFactor = Utils.GetLerpValue(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
@@ -80,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Create segments and initialize on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
-                CreateSegments(npc, 54, ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>());
+                CreateSegments(npc, 54, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
                 attackType = (int)DeusAttackType.AstralBombs;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
@@ -241,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 if (wrappedTime == crashRiseTime + 8f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSplit"), target.Center);
+                    SoundEngine.PlaySound(AstrumDeusHead.SplitSound, target.Center);
             }
 
             // Adjust rotation.
@@ -279,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             if (attackTimer > 60f && attackTimer % shootRate == shootRate - 1f && starCounter < 30f)
             {
-                int bodyType = ModContent.NPCType<AstrumDeusBodySpectral>();
+                int bodyType = ModContent.NPCType<AstrumDeusBody>();
                 int shootIndex = (int)(starCounter * 2f);
                 Vector2 starSpawnPosition = Vector2.Zero;
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -347,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.456f);
 
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSplit"), target.Center);
+                    SoundEngine.PlaySound(AstrumDeusHead.SplitSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness;
@@ -404,14 +409,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             // Apply the extreme gravity debuff.
             if (Main.netMode != NetmodeID.Server)
-                target.AddBuff(ModContent.BuffType<ExtremeGrav>(), 25);
+                target.AddBuff(ModContent.BuffType<DoGExtremeGravity>(), 25);
 
             float spinSpeed = 34f;
             ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
 
             // Check if any segments are too close to the target.
             bool tooClose = npc.WithinRange(target.Center, 650f);
-            int bodyType = ModContent.NPCType<AstrumDeusBodySpectral>();
+            int bodyType = ModContent.NPCType<AstrumDeusBody>();
             if (!tooClose)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -647,12 +652,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Play an acoustic indicator prior to firing as a charge.
             if (attackTimer == fireDelay - 120f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Release a plasma beam periodically.
             if (!cannotFireAnymore && attackTimer >= fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) == 0)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
+                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int plasmaBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<AstralPlasmaBeam>(), 270, 0f);
@@ -734,9 +739,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = i;
@@ -755,8 +760,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public static void BringAllSegmentsToNPCPosition(NPC npc)
         {
             int segmentCount = 0;
-            int bodyType = ModContent.NPCType<AstrumDeusBodySpectral>();
-            int tailType = ModContent.NPCType<AstrumDeusTailSpectral>();
+            int bodyType = ModContent.NPCType<AstrumDeusBody>();
+            int tailType = ModContent.NPCType<AstrumDeusTail>();
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].active && (Main.npc[i].type == bodyType || Main.npc[i].type == tailType))

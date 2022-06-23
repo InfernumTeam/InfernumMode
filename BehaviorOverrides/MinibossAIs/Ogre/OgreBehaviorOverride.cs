@@ -1,15 +1,15 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 {
@@ -303,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             if (npc.frameCounter >= 4.5f)
             {
                 currentFrame++;
-                if (currentFrame is < 1f or >= 11f)
+                if (currentFrame < 1f || currentFrame >= 11f)
                     currentFrame = 1f;
                 npc.frameCounter = 0;
             }
@@ -699,6 +699,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DoDrawing(npc, spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DoDrawing(npc, Main.spriteBatch, lightColor);
     }
 }

@@ -77,11 +77,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindProjectiles.Add(index);
+            drawCacheProjsBehindProjectiles.Add(index);
         }
 
-        public override bool? CanDamage() => false ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

@@ -1,8 +1,10 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using Microsoft.Xna.Framework;
@@ -11,10 +13,10 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArtemisLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
+using ArtemisLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -74,12 +76,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int artemisChargeTime = 64;
             int artemisLaserReleaseRate = 34;
             int artemisLaserBurstCount = 8;
-            float maxLaserTurnSpeed = MathHelper.TwoPi / 306f;
+            float maxLaserTurnSpeed = MathHelper.TwoPi / 276f;
 
             if (CurrentTwinsPhase != 4)
             {
                 apolloChargeSpeed += 5f;
-                artemisLaserReleaseRate -= 2;
+                artemisLaserReleaseRate -= 12;
             }
 
             if (EnrageTimer > 0f)
@@ -96,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Inherit the attack timer from the initial mech.
             attackTimer = FindInitialMech()?.ai[1] ?? attackTimer;
 
-            // Have Artemis attempt to do horizontal sweep while releasing lasers in bursts. This only happens after Ares has released the laserbeams.
+            // Have Artemis attempt to do a horizontal sweep while releasing lasers in bursts. This only happens after Ares has released the laserbeams.
             if (npc.type == ModContent.NPCType<Artemis>())
             {
                 ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -146,9 +148,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 120f))
+                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 270f))
                             {
-                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), npc.Center);
+                                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
@@ -242,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             // Charge once sufficiently slowed down.
                             if (npc.velocity.Length() < 1.25f)
                             {
-                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ELRFire"), target.Center);
+                                SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                                 for (int i = 0; i < 36; i++)
                                 {
                                     Dust laser = Dust.NewDustPerfect(npc.Center, 182);
@@ -357,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     int tries = 0;
                     do
                     {
-                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 1200f);
+                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 900f);
                         tries++;
 
                         if (tries >= 1000)
@@ -407,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int beam = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
+                            int beam = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
 
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
                             if (Main.projectile.IndexInRange(beam))
@@ -425,7 +427,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Release the laserbeams.
                 if (wrappedAttackTimer == redirectTime + chargeupTime + laserTelegraphTime)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
+                    SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         laserDirection = Main.rand.NextBool().ToDirectionInt();
@@ -475,13 +477,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int attackDelay = 120;
             int normalTwinsAttackTime = 360;
-            int totalNormalShotCount = 8;
-            float normalShotShootSpeed = 10f;
+            int totalNormalShotCount = 11;
+            float normalShotShootSpeed = 7.25f;
 
             if (CurrentTwinsPhase != 4)
             {
                 normalShotShootSpeed += 3f;
-                totalNormalShotCount++;
+                totalNormalShotCount += 3;
             }
 
             if (EnrageTimer > 0f)
@@ -526,7 +528,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         hoverOffsetAngle += MathHelper.Pi;
                     }
 
-                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(700f, 430f);
+                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(800f, 575f);
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 40f, 95f);
 
                     Vector2 aimDestination = target.Center + target.velocity * 11.5f;
@@ -537,7 +539,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
-                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -549,7 +551,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         }
                         else
                         {
-                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), npc.Center);
+                            SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {

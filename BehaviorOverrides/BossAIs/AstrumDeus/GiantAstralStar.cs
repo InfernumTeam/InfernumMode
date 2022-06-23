@@ -2,19 +2,21 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
-	public class GiantAstralStar : ModProjectile
+    public class GiantAstralStar : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -45,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             Radius = Projectile.scale * MathHelper.Lerp(72f, 90f, AngerOnCreation);
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && Projectile.timeLeft > 30)
+            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && Projectile.timeLeft > 30)
                 Projectile.timeLeft = 30;
 
             if (Projectile.timeLeft < 30f)
@@ -109,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 235, 105, 20f, 4.25f);
-            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod,"Sounds/Item/FlareSound"), Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

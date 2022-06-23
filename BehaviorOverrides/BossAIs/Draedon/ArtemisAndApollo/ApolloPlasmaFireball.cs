@@ -1,15 +1,16 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-	public class ApolloPlasmaFireball : ModProjectile
+    public class ApolloPlasmaFireball : ModProjectile
     {
         public bool ShouldExplodeDiagonally => Projectile.ai[0] == 1f;
         public override void SetStaticDefaults()
@@ -136,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
                     if (ShouldExplodeDiagonally)
                         shootVelocity = shootVelocity.RotatedBy(MathHelper.Pi / projectileCount);
-                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
                 }
             }
 

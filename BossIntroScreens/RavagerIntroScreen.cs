@@ -22,7 +22,7 @@ namespace InfernumMode.BossIntroScreens
             if (colorSpan > 1000f)
                 colorSpan = 1000f;
 
-            float colorInterpolant = Utils.GetLerpValue(0f, 0.5f, colorSpan, true);
+            float colorInterpolant = Utils.GetLerpValue(0f, 1.32f, colorSpan, true);
             return Color.Lerp(redFireColor, blueFireColor, colorInterpolant);
         });
 
@@ -34,6 +34,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<RavagerBody>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

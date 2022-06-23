@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using Terraria;
 using Terraria.ID;
 using Terraria.WorldBuilding;
@@ -31,7 +31,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water;
+                return (tile.LiquidAmount >= 200 && !(tile.LiquidType == LiquidID.Honey) && !(tile.LiquidType == LiquidID.Lava));
             }
         }
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.LiquidAmount >= 200 && !(tile.LiquidType == LiquidID.Honey) && !(tile.LiquidType == LiquidID.Lava)) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
             }
         }
 
@@ -49,7 +49,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Lava) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.LiquidAmount >= 200 && (tile.LiquidType == LiquidID.Lava)) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
             }
         }
     }

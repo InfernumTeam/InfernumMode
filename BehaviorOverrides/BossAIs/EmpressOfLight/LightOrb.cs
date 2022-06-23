@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -66,8 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release beams outward once ready.
             if (Time == LaserReleaseDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), Projectile.Center);
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightMagicCast"), Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
 
                 for (int i = 0; i < LaserCount; i++)
                 {
@@ -91,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 speedFactor *= 1.35f;
 
             if (Time >= LaserReleaseDelay && (Time - LaserReleaseDelay) % 140f == 6f)
-                SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/Sounds/Custom/EmpressOfLightBoltCast"), Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item164, Projectile.Center);
 
             // Release prismatic bolts in a spiral.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= LaserReleaseDelay && Time % spiralReleaseRate == spiralReleaseRate - 1f)

@@ -14,7 +14,7 @@ namespace InfernumMode
         public const float DefaultTargetRedecideThreshold = 4000f;
         public static void TargetClosestIfTargetIsInvalid(this NPC npc, float distanceThreshold = DefaultTargetRedecideThreshold)
         {
-            bool invalidTargetIndex = npc.target is < 0 or >= 255;
+            bool invalidTargetIndex = npc.target < 0 || npc.target >= 255;
             if (invalidTargetIndex)
             {
                 npc.TargetClosest();

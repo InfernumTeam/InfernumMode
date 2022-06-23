@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class CalamitasCloneIntroScreen : BaseIntroScreen
+    public class CalamitasCloneIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => Color.Red;
 
@@ -19,11 +19,11 @@ namespace InfernumMode.BossIntroScreens
 
         public override float TextScale => MajorBossTextScale;
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CalamitasRun3>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CalamitasClone>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

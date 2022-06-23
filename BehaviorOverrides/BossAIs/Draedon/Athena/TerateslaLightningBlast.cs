@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +10,10 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
-	public class TerateslaLightningBlast : ModProjectile
+    public class TerateslaLightningBlast : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
@@ -33,7 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             DisplayName.SetDefault("Teratesla Lightning Torrent");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 80;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
         public override void SetDefaults()

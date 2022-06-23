@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
-	public class HoneyBlast : ModProjectile
+    public class HoneyBlast : ModProjectile
     {
         public bool Poisonous => Projectile.ai[0] == 1f;
         public ref float TotalBounces => ref Projectile.ai[1];
@@ -60,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 if (Projectile.velocity.Y != oldVelocity.Y)
                     Projectile.velocity.Y = -oldVelocity.Y;
 
-                if (Projectile.velocity.Y is < 3f and > -3f)
+                if (Projectile.velocity.Y < 3f && Projectile.velocity.Y > -3f)
                     Projectile.velocity = Vector2.Zero;
             }
             else

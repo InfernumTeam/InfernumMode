@@ -81,10 +81,10 @@ namespace InfernumMode
         /// </summary>
         /// <param name="x">The input to the smoothstep. Clamped between 0 and 1.</param>
         public static float UltrasmoothStep(float x)
-		{
+        {
             x = MathHelper.Clamp(x, 0f, 1f);
             return MathHelper.SmoothStep(0f, 1f, MathHelper.SmoothStep(0f, 1f, x));
-		}
+        }
 
         /// <summary>
         /// Rotates a vector's direction towards an ideal angle at a specific incremental rate. Can be returned as a unit vector.
@@ -260,6 +260,11 @@ namespace InfernumMode
                 }
             }
             return index;
+        }
+
+        public static float Remap(float fromValue, float fromMin, float fromMax, float toMin, float toMax, bool clamped = true)
+        {
+            return MathHelper.Lerp(toMin, toMax, Utils.GetLerpValue(fromMin, fromMax, fromValue, clamped));
         }
     }
 }

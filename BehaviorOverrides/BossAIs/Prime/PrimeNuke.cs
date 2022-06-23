@@ -1,10 +1,12 @@
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -37,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             float fadeToRed = Utils.GetLerpValue(65f, 10f, Projectile.timeLeft, true) * 0.8f;
             Color redFade = Color.Red * 0.67f;
             redFade.A = 0;
@@ -55,11 +57,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeMechGaussRifle"), Projectile.Center);
+            SoundEngine.PlaySound(GaussRifle.FireSound, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearExplosion>(), 220, 0f);
         }
 
-        public override bool? CanDamage() => false ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
     }
 }

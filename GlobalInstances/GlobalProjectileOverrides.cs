@@ -1,4 +1,4 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
@@ -10,9 +10,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -21,17 +22,6 @@ namespace InfernumMode.GlobalInstances
         public override bool InstancePerEntity => true;
 
         public float[] ExtraAI = new float[100];
-
-        public override GlobalProjectile Clone(Projectile projectile, Projectile projectileClone)
-        {
-            if (projectile.TryGetGlobalProjectile(out GlobalProjectileOverrides clone))
-            {
-                clone.ExtraAI = projectile.Infernum().ExtraAI;
-                return clone;
-            }
-            return new GlobalProjectileOverrides();
-        }
-
         public override void SetDefaults(Projectile projectile)
         {
             for (int i = 0; i < ExtraAI.Length; i++)
@@ -88,7 +78,7 @@ namespace InfernumMode.GlobalInstances
                     }
                 }
             }
-            if (projectile.type is >= 646 and <= 649)
+            if (projectile.type >= 646 && projectile.type <= 649)
             {
                 Vector3 zero = Vector3.Zero;
                 switch (projectile.type)
@@ -113,9 +103,9 @@ namespace InfernumMode.GlobalInstances
             }
 
             Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
-            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && 
-                (n.type == ModContent.NPCType<GolemArenaPlatform>() || n.type == ModContent.NPCType<ProvArenaPlatform>()))
-                .OrderBy(n => projectile.Distance(n.Center)).ToArray();
+            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>() ||
+                n.type == ModContent.NPCType<ProvArenaPlatform>()).
+                OrderBy(n => projectile.Distance(n.Center)).ToArray();
             NPC[] attachedPlatforms = platforms.Where(p =>
             {
                 Rectangle platformHitbox = p.Hitbox;
@@ -130,7 +120,7 @@ namespace InfernumMode.GlobalInstances
                 {
                     projectile.ai[0] = 1f;
                 }
-                else if (projectile.type is >= 230 and <= 235)
+                else if (projectile.type >= 230 && projectile.type <= 235)
                 {
                     int num73 = 300 + (projectile.type - 230) * 30;
                     if (num72 > (float)num73)
@@ -175,7 +165,7 @@ namespace InfernumMode.GlobalInstances
                         Vector2 vector8;
                         vector8.X = (float)(num78 * 16);
                         vector8.Y = (float)(num79 * 16);
-                        if ((adjustedCenter.X + 10f > vector8.X && adjustedCenter.X < vector8.X + 16f && adjustedCenter.Y + 10f > vector8.Y && adjustedCenter.Y < vector8.Y + 16f && Main.tile[num78, num79].HasUnactuatedTile && 
+                        if ((adjustedCenter.X + 10f > vector8.X && adjustedCenter.X < vector8.X + 16f && adjustedCenter.Y + 10f > vector8.Y && adjustedCenter.Y < vector8.Y + 16f && Main.tile[num78, num79].HasUnactuatedTile &&
                             (Main.tileSolid[(int)Main.tile[num78, num79].TileType] || Main.tile[num78, num79].TileType == 314) && (projectile.type != 403 || Main.tile[num78, num79].TileType == 314)) || platformRequirement)
                         {
                             if (Main.player[projectile.owner].grapCount < 10)
@@ -191,7 +181,7 @@ namespace InfernumMode.GlobalInstances
                                 int num80 = 0;
                                 int num81 = -1;
                                 int num82 = 100000;
-                                if (projectile.type is 73 or 74)
+                                if (projectile.type == 73 || projectile.type == 74)
                                 {
                                     for (int num83 = 0; num83 < 1000; num83 = num3 + 1)
                                     {
@@ -221,7 +211,7 @@ namespace InfernumMode.GlobalInstances
                                     {
                                         num84 = 1;
                                     }
-                                    if (projectile.type is >= 646 and <= 649)
+                                    if (projectile.type >= 646 && projectile.type <= 649)
                                     {
                                         num84 = 4;
                                     }
@@ -247,7 +237,6 @@ namespace InfernumMode.GlobalInstances
                                 }
                             }
                             WorldGen.KillTile(num78, num79, true, true, false);
-                            SoundEngine.PlaySound(0, num78 * 16, num79 * 16, 1, 1f, 0f);
                             projectile.velocity.X = 0f;
                             projectile.velocity.Y = 0f;
                             projectile.ai[0] = 2f;
@@ -291,7 +280,7 @@ namespace InfernumMode.GlobalInstances
                 {
                     num86 = 15f;
                 }
-                if (projectile.type is 73 or 74)
+                if (projectile.type == 73 || projectile.type == 74)
                 {
                     num86 = 17f;
                 }
@@ -303,7 +292,7 @@ namespace InfernumMode.GlobalInstances
                 {
                     num86 = 22f;
                 }
-                if (projectile.type is >= 230 and <= 235)
+                if (projectile.type >= 230 && projectile.type <= 235)
                 {
                     num86 = 11f + (float)(projectile.type - 230) * 0.75f;
                 }
@@ -311,11 +300,11 @@ namespace InfernumMode.GlobalInstances
                 {
                     num86 = 20f;
                 }
-                if (projectile.type is >= 486 and <= 489)
+                if (projectile.type >= 486 && projectile.type <= 489)
                 {
                     num86 = 18f;
                 }
-                if (projectile.type is >= 646 and <= 649)
+                if (projectile.type >= 646 && projectile.type <= 649)
                 {
                     num86 = 24f;
                 }
@@ -420,7 +409,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
             {
-                Texture2D texture = Utilities.ProjTexture(projectile.type);
+                Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
                 float clampedTime = Main.GlobalTimeWrappedHourly % 5f / 5f;
                 Vector2 origin = texture.Size() / 2f;
                 Vector2 baseDrawPosition = projectile.Center - Main.screenPosition;
@@ -480,7 +469,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
-            if (projectile.type == ModContent.ProjectileType<HolyBlast>() && InfernumMode.CanUseCustomAIs)
+            if (projectile.type == ModContent.ProjectileType<HolyBlast>())
             {
                 if (projectile.owner == Main.myPlayer)
                 {
@@ -492,11 +481,11 @@ namespace InfernumMode.GlobalInstances
                     for (int i = 0; i < 2; i++)
                     {
                         offsetAngle = startAngle + deltaAngle * (i + i * i) / 2f + 32f * i;
-                        Projectile.NewProjectile(new InfernumSource(), shootFromVector, offsetAngle.ToRotationVector2() * 5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(new InfernumSource(), shootFromVector, offsetAngle.ToRotationVector2() * -5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(projectile.GetSource_Death(), shootFromVector, offsetAngle.ToRotationVector2() * 5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(projectile.GetSource_Death(), shootFromVector, offsetAngle.ToRotationVector2() * -5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
                     }
                 }
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, projectile.Center);
                 int dustType = (int)CalamityDusts.ProfanedFire;
 
                 for (int i = 0; i < 6; i++)

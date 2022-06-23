@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

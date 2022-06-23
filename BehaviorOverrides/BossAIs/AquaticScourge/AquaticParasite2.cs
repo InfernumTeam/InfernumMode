@@ -5,9 +5,9 @@ using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -125,11 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 15; k++)
-                {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
-                }
-                Gore.NewGore(new InfernumSource(), NPC.Center, NPC.velocity, Utilities.GetGoreID("AquaticParasite1", InfernumMode.CalamityMod), 1f);
-                Gore.NewGore(new InfernumSource(), NPC.Center, NPC.velocity, Utilities.GetGoreID("AquaticParasite2", InfernumMode.CalamityMod), 1f);
             }
         }
     }

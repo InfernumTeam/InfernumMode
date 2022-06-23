@@ -1,12 +1,14 @@
 using CalamityMod;
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -15,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public ref float TotalLasersToFire => ref Projectile.ai[0];
         public ref float LaserShootOffsetAngle => ref Projectile.ai[1];
         public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-        public float PointAtTargetInterpolant => Utils.GetLerpValue(1400f, 2120f, Projectile.Distance(Target.Center), true);
+        public float PointAtTargetInterpolant => Utils.GetLerpValue(1720f, 2500f, Projectile.Distance(Target.Center), true);
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Refraction Rotor");
@@ -58,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask").Value;
             Vector2 origin = texture.Size() * 0.5f;
             float pulseInterpolant = Utils.GetLerpValue(60f, 45f, Projectile.timeLeft, true);
@@ -82,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                     // Determine telegraph line characteristics.
                     Vector2 start = Projectile.Center;
-                    Vector2 end = start + telegraphDirection * 3500f;
+                    Vector2 end = start + telegraphDirection * 1800f;
                     float telegraphWidth = pulseInterpolant * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * 8f;
                     float telegraphColorInterpolant = ((float)Math.Sin(Projectile.identity + telegraphDirection.ToRotation()) * 0.5f + 0.5f) * 0.65f;
                     Color telegraphColor = Color.Lerp(Color.Red, Color.Wheat, telegraphColorInterpolant) * pulseInterpolant * 0.6f;
@@ -116,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaBolt"), Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBoltSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

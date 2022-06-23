@@ -2,6 +2,7 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
@@ -44,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tipTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D tipTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D body1Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody1").Value;
             Texture2D body2Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody2").Value;
             Vector2 bodyOrigin = body1Texture.Size() * new Vector2(0.5f, 1f);

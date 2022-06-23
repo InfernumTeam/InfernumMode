@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
-	public class SharkSummoner : ModProjectile
+    public class SharkSummoner : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public ref float Time => ref Projectile.ai[0];
@@ -48,11 +49,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void Kill(int timeLeft)
         {
-            int shark = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
+            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+
+            if (Projectile.WithinRange(closestPlayer.Center, 200f))
+                return;
+
+            int shark = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
 
             Main.npc[shark].velocity = Vector2.UnitY * -Projectile.ai[1];
-            Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 1200;
+            Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 400;
 
+            Main.npc[shark].noTileCollide = true;
             Main.npc[shark].direction = Projectile.direction;
             Main.npc[shark].spriteDirection = 1;
             Main.npc[shark].ai[0] = 1f;

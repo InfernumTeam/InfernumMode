@@ -1,13 +1,14 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-	public class RedirectingAbyssBall : ModProjectile
+    public class RedirectingAbyssBall : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Abyss Orb");
 
@@ -34,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(360f, 340f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * 0.8f;
 
-            if (Projectile.timeLeft is < 270 and > 225)
+            if (Projectile.timeLeft < 270 && Projectile.timeLeft > 225)
                 Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(target.Center) * 11f, 0.55f);
 
             if (Projectile.timeLeft < 35)

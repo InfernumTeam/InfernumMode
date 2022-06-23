@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Sounds;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-	public class EmpressPrism : ModProjectile
+    public class EmpressPrism : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -41,8 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (Time == 0f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), Projectile.Center);
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightMagicCast"), Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

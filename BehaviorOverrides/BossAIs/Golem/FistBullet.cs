@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -62,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * .5f;
             Color drawColor = Projectile.GetAlpha(lightColor);

@@ -1,19 +1,21 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Sounds;
 using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using Terraria.Audio;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -21,7 +23,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public override int NPCOverrideType => ModContent.NPCType<DraedonNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+
+        public const int IntroSoundLength = 106;
+
+        public const int PostBattleMusicLength = 5120;
 
         public override bool PreAI(NPC npc)
         {
@@ -35,6 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float talkTimer = ref npc.ai[0];
             ref float hologramEffectTimer = ref npc.localAI[1];
             ref float killReappearDelay = ref npc.localAI[3];
+            ref float musicDelay = ref npc.Infernum().ExtraAI[0];
 
             // Decide an initial target and play a teleport sound on the first frame.
             Player playerToFollow = Main.player[npc.target];
@@ -42,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
+                SoundEngine.PlaySound(TeleportSound, playerToFollow.Center);
             }
 
             // Pick someone else to pay attention to if the old target is gone.
@@ -151,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Make the screen rumble and summon the exo mechs.
-            if (talkTimer is > (ExoMechChooseDelay + 8f) and < ExoMechPhaseDialogueTime)
+            if (talkTimer > ExoMechChooseDelay + 8f && talkTimer < ExoMechPhaseDialogueTime)
             {
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(4200f, 1400f, Main.LocalPlayer.Distance(playerToFollow.Center), true) * 18f;
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.GetLerpValue(ExoMechChooseDelay + 5f, ExoMechPhaseDialogueTime, talkTimer, true);
@@ -165,12 +172,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), playerToFollow.Center);
-
-                    if (sound != null)
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.55f, 0f, 1f);
+                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.55f }, playerToFollow.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechIntroSound with { Volume = 1.5f }, playerToFollow.Center);
                 }
             }
+
+            // Increment the music delay.
+            if (talkTimer >= ExoMechChooseDelay + 10f)
+                musicDelay++;
 
             // Dialogue lines depending on what phase the exo mechs are at.
             switch ((int)npc.localAI[0])
@@ -201,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);
                     }
 
@@ -239,7 +248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine * 2f)
                     {
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase6Text3", TextColor);
@@ -250,20 +259,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
             }
 
-            // Disable rage and adrenaline past a point.
-            if (ExoMechManagement.CurrentThanatosPhase >= 3 || ExoMechManagement.CurrentAresPhase >= 3 || ExoMechManagement.CurrentTwinsPhase >= 3)
-                playerToFollow.Infernum().MakeAnxious(45);
-
             if (talkTimer > ExoMechChooseDelay + 10f && !ExoMechIsPresent)
             {
-                npc.ModNPC<DraedonNPC>().HandleDefeatStuff();
+                HandleDefeatStuff(npc, playerToFollow, ref npc.ModNPC<DraedonNPC>().DefeatTimer);
                 npc.ModNPC<DraedonNPC>().DefeatTimer++;
             }
 
-            if (!ExoMechIsPresent && npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
-                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
-            if (ExoMechIsPresent)
-                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Music/ExoMechBosses");
+            if (!ExoMechIsPresent)
+            {
+                if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
+                {
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
+                    InfernumMode.DraedonThemeTimer = 0f;
+                }
+                else
+                {
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Draedon");
+                    InfernumMode.DraedonThemeTimer = 1f;
+                }
+            }
 
             talkTimer++;
             return false;
@@ -301,6 +315,112 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     CalamityUtils.SpawnBossBetter(athenaSpawnPosition, ModContent.NPCType<AthenaNPC>());
                     break;
             }
+        }
+
+        public static void HandleDefeatStuff(NPC npc, Player playerToFollow, ref float defeatTimer)
+        {
+            // Become vulnerable after being defeated after a certain point.
+            bool hasBeenKilled = npc.localAI[2] == 1f;
+            ref float hologramEffectTimer = ref npc.localAI[1];
+            npc.dontTakeDamage = defeatTimer < TalkDelay * 2f + 50f || hasBeenKilled;
+            npc.Calamity().CanHaveBossHealthBar = !npc.dontTakeDamage;
+            npc.Calamity().ShouldCloseHPBar = hasBeenKilled;
+
+            bool leaving = defeatTimer > DelayBeforeDefeatStandup + TalkDelay * 8f + 200f;
+
+            // Fade away and disappear when leaving.
+            if (leaving)
+            {
+                hologramEffectTimer = MathHelper.Clamp(hologramEffectTimer - 1f, 0f, HologramFadeinTime);
+                if (hologramEffectTimer <= 0f)
+                    npc.active = false;
+            }
+
+            // Fade back in as a hologram if the player tried to kill Draedon.
+            else if (hasBeenKilled)
+                hologramEffectTimer = MathHelper.Clamp(hologramEffectTimer + 1f, 0f, HologramFadeinTime - 5f);
+
+            // Adjust opacity.
+            npc.Opacity = hologramEffectTimer / HologramFadeinTime;
+            if (hasBeenKilled)
+                npc.Opacity *= 0.67f;
+
+            // Stand up in awe after a small amount of time has passed.
+            if (defeatTimer > DelayBeforeDefeatStandup && defeatTimer < TalkDelay * 3f + 50f)
+                npc.ModNPC<DraedonNPC>().ShouldStartStandingUp = true;
+
+            if (defeatTimer == DelayBeforeDefeatStandup + 50f)
+                Utilities.DisplayText("Intriguing. Truly, intriguing.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay + 50f)
+                Utilities.DisplayText("My magnum opera, truly and utterly defeated.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 2f + 50f)
+                Utilities.DisplayText("This outcome was not what I had expected.", TextColor);
+
+            // After this point Draedon becomes vulnerable.
+            // He sits back down as well as he thinks for a bit.
+            // Killing him will cause gore to appear but also for Draedon to come back as a hologram.
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 50f)
+                Utilities.DisplayText("...Excuse my introspection. I must gather my thoughts after that display.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 165f)
+                Utilities.DisplayText("It is perhaps not irrational to infer that you are beyond my reasoning.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 4f + 165f)
+                Utilities.DisplayText("Now.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 5f + 165f)
+                Utilities.DisplayText("You would wish to reach the Tyrant. I cannot assist you in that.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 6f + 165f)
+                Utilities.DisplayText("It is not a matter of spite, for I would wish nothing more than to observe such a conflict.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 7f + 165f)
+                Utilities.DisplayText("But now, I must return to my machinery. You may use the Codebreaker if you wish to face my creations once again.", TextColor);
+
+            if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 8f + 165f)
+                Utilities.DisplayText("In the meantime, I bid you farewell, and good luck in your future endeavors.", TextColor);
+        }
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            npc.frame.Width = 100;
+
+            int xFrame = npc.frame.X / npc.frame.Width;
+            int yFrame = npc.frame.Y / frameHeight;
+            int frame = xFrame * Main.npcFrameCount[npc.type] + yFrame;
+
+            // Prepare to stand up if called for and not already doing so.
+            if (npc.ModNPC<DraedonNPC>().ShouldStartStandingUp && frame > 23)
+                frame = 0;
+
+            int frameChangeDelay = 7;
+            bool shouldNotSitDown = npc.ModNPC<DraedonNPC>().DefeatTimer > DelayBeforeDefeatStandup && npc.ModNPC<DraedonNPC>().DefeatTimer < TalkDelay * 3f + 10f;
+
+            npc.frameCounter++;
+            if (npc.frameCounter >= frameChangeDelay)
+            {
+                frame++;
+
+                if (!npc.ModNPC<DraedonNPC>().ShouldStartStandingUp && (frame < 23 || frame > 47))
+                    frame = 23;
+
+                // Do the sit animation infinitely if Draedon should not sit down again.
+                if (shouldNotSitDown && frame >= 16)
+                    frame = 11;
+
+                if (frame >= 23 && npc.ModNPC<DraedonNPC>().ShouldStartStandingUp)
+                {
+                    frame = 0;
+                    npc.ModNPC<DraedonNPC>().ShouldStartStandingUp = false;
+                }
+
+                npc.frameCounter = 0;
+            }
+
+            npc.frame.X = frame / Main.npcFrameCount[npc.type] * npc.frame.Width;
+            npc.frame.Y = frame % Main.npcFrameCount[npc.type] * frameHeight;
         }
     }
 }

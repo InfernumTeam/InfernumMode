@@ -1,9 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 {
@@ -33,11 +34,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
         public override void AI()
         {
             Time++;
-			if (Time >= Lifetime - 8f)
-			{
+            if (Time >= Lifetime - 8f)
+            {
                 Projectile.damage = 0;
                 Projectile.Opacity -= 0.1f;
-			}
+            }
             if (Time >= Lifetime)
                 Projectile.Kill();
 
@@ -49,19 +50,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 
             // Dissipate if touching another sandnado.
             foreach (Projectile sandnado in Utilities.AllProjectilesByID(ModContent.ProjectileType<Sandnado2>()))
-			{
+            {
                 if (sandnado.whoAmI == Projectile.whoAmI)
                     continue;
 
                 if (Projectile.Hitbox.Intersects(sandnado.Hitbox) && Time < Lifetime - 8f)
-				{
+                {
                     if (Projectile.ai[1] == 1f)
                         SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, Projectile.Center);
 
                     Time = Lifetime - 8f;
                     Projectile.netUpdate = true;
-				}
-			}
+                }
+            }
 
             // Create dust.
             if (Time < Lifetime - 30f)
@@ -107,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             Vector2 tornadoArea = Vector2.UnitY * (bottom.Y - top.Y);
             tornadoArea.X = tornadoArea.Y * HorizontalCollisionAreaFactor;
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             float baseRotation = MathHelper.TwoPi / -12f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
             SpriteEffects direction = Projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;

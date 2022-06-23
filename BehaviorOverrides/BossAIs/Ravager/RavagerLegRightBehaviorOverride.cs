@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -36,6 +36,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             if (npc.timeLeft < 1800)
                 npc.timeLeft = 1800;
+
+            // Inherit HP from the NPC that has the actual HP pool if applicable.
+            if (npc.realLife >= 0 && (Main.npc[npc.realLife].type == ModContent.NPCType<RavagerLegLeft>() || Main.npc[npc.realLife].type == ModContent.NPCType<RavagerLegRight>()))
+            {
+                if (!Main.npc[npc.realLife].active)
+                    npc.active = false;
+                npc.life = Main.npc[npc.realLife].life;
+                npc.lifeMax = Main.npc[npc.realLife].lifeMax;
+            }
 
             npc.Center = ravagerBody.Center + new Vector2(70f, 88f);
             npc.Opacity = ravagerBody.Opacity;

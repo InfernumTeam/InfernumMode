@@ -2,10 +2,11 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -71,9 +72,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Explode into a bunch of bolts after enough time has passed.
             if (Main.netMode != NetmodeID.MultiplayerClient && Timer >= 480f)
-			{
+            {
                 for (int i = 0; i < 36; i++)
-				{
+                {
                     Vector2 boltSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(40f, 40f);
                     Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 36).ToRotationVector2() * 5f;
                     boltShootVelocity += Main.rand.NextVector2Circular(0.7f, 0.7f);
@@ -83,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         Utilities.NewProjectileBetter(boltSpawnPosition, Vector2.Zero, ModContent.ProjectileType<MoonLordExplosion>(), 0, 0f);
                 }
                 Projectile.Kill();
-			}
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -93,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D blackHoleTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D blackHoleTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;

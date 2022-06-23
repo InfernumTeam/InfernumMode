@@ -268,12 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 if (npc.justHit)
                 {
                     eyeGleamInterpolant = 0f;
-                    var sound = SoundEngine.PlaySound(SoundID.NPCHit35, npc.Center);
-                    if (sound != null)
-                    {
-                        CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
-                        sound.Pitch = -0.85f;
-                    }
+                    SoundEngine.PlaySound(SoundID.NPCHit35 with { Volume = 1.75f, Pitch = -0.85f }, npc.Center);
 
                     attackTimer = slowdownTime + summonTime + phaseTransitionDelay - 45f;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * -27f;
@@ -326,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                                 Vector2 potentialSpawnPosition = target.Center + new Vector2(horizontalOffset, verticalOffset);
                                 if (!Collision.SolidCollision(potentialSpawnPosition - Vector2.One * 50f, 100, 100) && Collision.CanHit(potentialSpawnPosition, 1, 1, target.Center, 1, 1))
                                 {
-                                    NPC.NewNPC(new InfernumSource(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, NPCID.EyeballFlyingFish, npc.whoAmI);
+                                    NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, NPCID.EyeballFlyingFish, npc.whoAmI);
                                     break;
                                 }
                             }
@@ -776,7 +771,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.life > 0)
                     {
-                        NPC.NewNPC(new InfernumSource(), (int)bloodSpawnPosition.X, (int)bloodSpawnPosition.Y, NPCID.BloodSquid, npc.whoAmI);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)bloodSpawnPosition.X, (int)bloodSpawnPosition.Y, NPCID.BloodSquid, npc.whoAmI);
                         npc.velocity = -splatterDirection * 7f;
                         npc.netUpdate = true;
                     }

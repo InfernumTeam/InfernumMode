@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
@@ -36,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.scale = Projectile.scale * 1.018f + 0.055f;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.75f;
 
         public override void Kill(int timeLeft)
         {
@@ -66,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
@@ -79,9 +80,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             return Utils.CenteredRectangle(Projectile.Center, Scale * new Vector2(670f, 440f)).Intersects(targetHitbox);
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCsAndTiles.Add(index);
+            drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
     }
 }

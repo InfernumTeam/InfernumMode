@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
@@ -17,7 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Projectile.height = 6;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 3;
             Projectile.timeLeft = 80;

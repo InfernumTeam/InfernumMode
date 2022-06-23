@@ -1,13 +1,13 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 if (phase2 == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
+                    SoundEngine.PlaySound(SoundID.NPCDeath14, npc.Center);
 
                     npc.Calamity().DR = 0f;
                     npc.Calamity().unbreakableDR = false;

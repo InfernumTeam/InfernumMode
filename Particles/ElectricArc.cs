@@ -1,9 +1,8 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Particles
 {
@@ -11,7 +10,7 @@ namespace InfernumMode.Particles
     {
         public Color LightColor => Color * 0.45f;
 
-        public Vector2[] TrailPositions = new Vector2[16];
+        public Vector2[] TrailPositions = new Vector2[10];
 
         public override bool UseAdditiveBlend => true;
         public override bool UseCustomDraw => true;
@@ -40,7 +39,7 @@ namespace InfernumMode.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = GeneralParticleHandler.GetTexture(Type);
             Vector2 scale = Vector2.One * Scale * 11f / texture.Size() * 0.5f;
             Vector2 origin = texture.Size() * 0.5f;
 

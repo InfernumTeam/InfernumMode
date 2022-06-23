@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
@@ -26,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Fire Beam");
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+
         }
 
         public override void SetDefaults()
@@ -44,8 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            if (CalamityGlobalNPC.holyBoss == -1 || 
-                !Main.npc[CalamityGlobalNPC.holyBoss].active || 
+            if (CalamityGlobalNPC.holyBoss == -1 ||
+                !Main.npc[CalamityGlobalNPC.holyBoss].active ||
                 Main.npc[CalamityGlobalNPC.holyBoss].ai[0] != (int)ProvidenceBehaviorOverride.ProvidenceAttackType.CrystalBladesWithLaser)
             {
                 Projectile.Kill();

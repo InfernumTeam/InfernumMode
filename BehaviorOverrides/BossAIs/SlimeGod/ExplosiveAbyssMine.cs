@@ -2,15 +2,15 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
     public class ExplosiveAbyssMine : ModProjectile
     {
-        public override string Texture => "CalamityMod/Projectiles/Boss/AbyssBallVolley";
+        public override string Texture => "CalamityMod/Projectiles/Boss/UnstableEbonianGlob";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Abyss Mine");
 
@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (Projectile.ai[1] == 0f)
             {
                 Projectile.ai[1] = 1f;
-                SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 33);
+                SoundEngine.PlaySound(SoundID.Item33, Projectile.Center);
             }
 
             if (Main.rand.NextBool(4))
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 14);
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
             CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 50);
 
             for (int i = 0; i < 30; i++)

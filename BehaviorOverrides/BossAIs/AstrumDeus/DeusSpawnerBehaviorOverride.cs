@@ -1,14 +1,14 @@
-﻿using CalamityMod.NPCs.AstrumDeus;
+using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -32,18 +32,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Summon deus from the sky after enough time has passed.
             if (timer == 235f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSpawn"), projectile.Center);
+                SoundEngine.PlaySound(AstrumDeusHead.SpawnSound, projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int deus = NPC.NewNPC(new InfernumSource(), (int)projectile.Center.X, (int)projectile.Center.Y - 3300, ModContent.NPCType<AstrumDeusHeadSpectral>());
+                    int deus = NPC.NewNPC(projectile.GetSource_FromAI(), (int)projectile.Center.X, (int)projectile.Center.Y - 3300, ModContent.NPCType<AstrumDeusHead>());
                     CalamityMod.CalamityUtils.BossAwakenMessage(deus);
                 }
             }
 
-            if (NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && timer < 240f)
+            if (NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && timer < 240f)
                 timer = 240f;
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && timer >= 240f)
+            if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && timer >= 240f)
                 projectile.Kill();
             projectile.timeLeft = 5;
 

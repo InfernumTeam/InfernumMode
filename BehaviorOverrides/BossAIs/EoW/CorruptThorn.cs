@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -122,14 +122,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawVine(scale, aimDirection, tipTexture, ref tipBottom);
+            DrawVine(Main.spriteBatch, scale, aimDirection, tipTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawVine(Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
+        public void DrawVine(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
         {
             Texture2D thornBodyPiece = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EoW/CorruptThornPiece").Value;
 
@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool? CanDamage() => Time >= 70f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

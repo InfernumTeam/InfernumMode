@@ -1,14 +1,14 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.BoC.BoCBehaviorOverride;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     break;
                 case BoCAttackState.DashingIllusions:
                 case BoCAttackState.BloodDashSwoop:
-                case BoCAttackState.IllusionSpinCharge:
+                case BoCAttackState.SpinPull:
                     destination = owner.Center + destinationOffsetDirection * 16f;
                     idealAlpha = 255;
                     break;

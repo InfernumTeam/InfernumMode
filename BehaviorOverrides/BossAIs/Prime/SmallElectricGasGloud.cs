@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
@@ -19,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.width = Projectile.height = 80;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 500;
             Projectile.scale = 1.5f;
             Projectile.hide = true;
@@ -58,12 +58,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.6f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (!Projectile.Hitbox.Intersects(screenRectangle))
                 return false;
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;

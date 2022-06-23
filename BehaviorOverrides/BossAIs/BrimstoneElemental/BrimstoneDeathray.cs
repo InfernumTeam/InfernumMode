@@ -1,25 +1,28 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.BaseProjectiles;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-	public class BrimstoneDeathray : BaseLaserbeamProjectile
+    public class BrimstoneDeathray : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => 85;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Red;
-        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/BrimstoneRayMid").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/BrimstoneRayEnd").Value;
+        public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/BrimstoneRayMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/BrimstoneRayEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public Vector2 OwnerEyePosition => Main.npc[OwnerIndex].Center + new Vector2(Main.npc[OwnerIndex].spriteDirection * 20f, -70f);
@@ -89,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 return;
 
             if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 300);
+                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 300);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);
         }

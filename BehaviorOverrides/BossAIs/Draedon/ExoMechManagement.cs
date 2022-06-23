@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
@@ -27,13 +27,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalMechIndexIndex = 12;
         public const int FinalPhaseTimerIndex = 16;
         public const int DeathAnimationTimerIndex = 19;
-        public const int DeathAnimationHasStartedIndex = 20;
+        public const int DeathAnimationHasStartedIndex = 22;
 
         public const int Thanatos_AttackDelayIndex = 13;
 
         public const int Ares_ProjectileDamageBoostIndex = 8;
         public const int Ares_LineTelegraphInterpolantIndex = 17;
         public const int Ares_LineTelegraphRotationIndex = 18;
+
+        public const int Athena_EnragedIndex = 8;
 
         public const int Twins_ComplementMechEnrageTimerIndex = 15;
         public const int Twins_SideSwitchDelayIndex = 18;
@@ -152,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return false;
 
                 NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
-                return apollo.ai[3] is > 0f and < Phase2TransitionTime;
+                return apollo.ai[3] > 0f && apollo.ai[3] < Phase2TransitionTime;
             }
         }
 
@@ -272,8 +274,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ElectricGas>(),
                 ModContent.ProjectileType<TeslaSpark>(),
                 ModContent.ProjectileType<AresTeslaOrb>(),
-                ModContent.ProjectileType<ApolloChargeFlameExplosion>(),
-                ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
                 ModContent.ProjectileType<ExofireSpark>(),
                 ModContent.ProjectileType<PlasmaSpark>(),
                 ModContent.ProjectileType<AresRocket>(),
@@ -282,6 +282,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ExolaserBomb>(),
                 ModContent.ProjectileType<RefractionRotor>(),
                 ModContent.ProjectileType<PulseBeamStart>(),
+                ModContent.ProjectileType<ThanatosComboLaser>(),
+                ModContent.ProjectileType<ApolloRocketInfernum>(),
+                ModContent.ProjectileType<LightOverloadRay>(),
                 ModContent.ProjectileType<PulseLaser>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -307,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -324,7 +327,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AthenaNPC>())
             {
                 Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
+                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
                 NPC apollo = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -339,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AresBody>())
             {
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -368,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<ThanatosHead>())
             {
                 Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
+                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
                 NPC apollo = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -384,7 +387,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AthenaNPC>())
             {
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -401,7 +404,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -459,9 +462,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 var attack = (TwinsAttackType)(int)npc.ai[0];
 
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
+                if (attack == TwinsAttackType.LaserRayScarletBursts)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.SpecialAttack_PlasmaCharges)
+                if (attack == TwinsAttackType.PlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)
@@ -491,9 +494,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 var attack = (TwinsAttackType)(int)Main.npc[apollo].ai[0];
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
+                if (attack == TwinsAttackType.LaserRayScarletBursts)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.SpecialAttack_PlasmaCharges)
+                if (attack == TwinsAttackType.PlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)

@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class SCalIntroScreen : BaseIntroScreen
+    public class SCalIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => Color.White;
 
@@ -36,9 +36,9 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SupremeCalamitasSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/SupremeCalamitasSpawn");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

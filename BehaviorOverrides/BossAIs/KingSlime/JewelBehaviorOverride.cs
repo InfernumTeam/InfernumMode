@@ -1,4 +1,4 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

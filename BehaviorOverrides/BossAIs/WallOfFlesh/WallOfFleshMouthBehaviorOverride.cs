@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             int miscEnemyCount = NPC.CountNPCS(NPCID.LeechHead) + NPC.CountNPCS(NPCID.TheHungryII);
             if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && totalAttachedEyes <= 0 && attackTimer % 180f == 179f)
             {
-                int leech = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
+                int leech = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
                 if (Main.npc.IndexInRange(leech))
                     Main.npc[leech].velocity = npc.velocity * 1.25f;
             }
@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             for (int i = 0; i < 5; i++)
             {
-                int hungry = NPC.NewNPC(new InfernumSource(), (int)npc.position.X, (int)npc.Center.Y, NPCID.TheHungry, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                int hungry = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X, (int)npc.Center.Y, NPCID.TheHungry, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 Main.npc[hungry].ai[0] = i * 0.2f - 0.05f;
             }
 
@@ -232,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     continue;
                 }
 
-                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
             }
         }
 
@@ -298,14 +298,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     roarTimer = 660f;
 
+                    // Roar.
                     if (Main.LocalPlayer.Center.Y > (Main.maxTilesY - 300f) * 16f)
-                    {
-                        // Scream.
-                        SoundEngine.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
-
-                        // Roar.
-                        SoundEngine.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
-                    }
+                        SoundEngine.PlaySound(SoundID.NPCDeath10 with { Volume = 1.2f, Pitch = 0.3f }, target.Center);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)

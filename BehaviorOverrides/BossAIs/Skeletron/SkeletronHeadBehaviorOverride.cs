@@ -1,14 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
@@ -103,11 +103,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (phaseChangeCountdown == 35f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, target.Center);
                         npc.velocity = -Vector2.UnitY * 4f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -198,13 +198,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    int hand = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = -1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
                     Main.npc[hand].netUpdate = true;
 
-                    hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    hand = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = 1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (animationTimer == 190f)
             {
                 animationChargeTimer = 70f;
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.GetLerpValue(560f, 1230f, npc.Distance(target.Center), true));
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -348,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             else
             {
                 if (attackTimer % 1050f == 601f)
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                 float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 7.75f;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
@@ -443,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             npc.rotation = npc.velocity.X * 0.05f;
 
             if (attackTimer % 160f == 85f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             if (attackTimer >= 305f)
             {
@@ -463,7 +463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             // Roar and charge after enough time has passed.
             if (attackTimer == 50f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             if (attackTimer >= 50f && attackTimer % 45f == 0f)
             {

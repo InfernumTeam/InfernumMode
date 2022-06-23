@@ -33,12 +33,10 @@ namespace InfernumMode.BossIntroScreens
             }
         }
 
-        public override int AnimationTime => 160;
-
         public override float TextScale => MajorBossTextScale;
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Providence>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

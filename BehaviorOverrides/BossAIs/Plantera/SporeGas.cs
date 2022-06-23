@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -65,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool CanHitPlayer(Player target) => Time is <= 1800f and > 120f;
+        public override bool CanHitPlayer(Player target) => Time <= 1800f && Time > 120f;
 
         public override Color? GetAlpha(Color lightColor)
         {
@@ -81,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override bool PreDraw(ref Color lightColor)
         {
             // Changes the texture of the projectile
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             switch ((int)Projectile.ai[0])
             {
                 case 0:
@@ -101,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Time is <= 1800f and > 120f)
+            if (Time <= 1800f && Time > 120f)
                 target.AddBuff(BuffID.Poisoned, 240);
         }
     }

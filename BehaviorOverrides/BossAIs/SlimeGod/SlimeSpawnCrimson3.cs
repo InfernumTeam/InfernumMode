@@ -122,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.penetrate is > 1 or (-1))
+            if (projectile.penetrate > 1 || projectile.penetrate == -1)
                 damage = (int)(damage * 0.35);
         }
 
@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             return base.CheckDead();
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {

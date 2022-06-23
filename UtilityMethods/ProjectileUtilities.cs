@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 
 namespace InfernumMode
 {
@@ -73,7 +74,7 @@ namespace InfernumMode
             damage = (int)(damage * 0.5);
             if (Main.expertMode)
                 damage = (int)(damage * 0.5);
-            return Projectile.NewProjectile(new InfernumSource(), spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
+            return Projectile.NewProjectile(new EntitySource_WorldEvent(), spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
         }
 
         /// <summary>

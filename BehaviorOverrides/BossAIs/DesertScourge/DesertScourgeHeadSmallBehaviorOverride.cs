@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs.DesertScourge;
+using CalamityMod.NPCs.DesertScourge;
 using InfernumMode.OverridingSystem;
 using Terraria;
 using Terraria.ModLoader;

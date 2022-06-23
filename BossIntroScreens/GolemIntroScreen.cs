@@ -6,7 +6,7 @@ using Terraria.ID;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class GolemIntroScreen : BaseIntroScreen
+    public class GolemIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -32,6 +32,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Golem);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

@@ -1,7 +1,5 @@
 using CalamityMod.NPCs.HiveMind;
-using System;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -38,9 +36,9 @@ namespace InfernumMode.Skies
         {
             UpdatePIndex();
             if (ProvIndex != -1)
+            {
                 UseTargetPosition(Main.npc[ProvIndex].Center);
-            else
-                Filters.Scene["InfernumMode:HiveMind"].Deactivate(Array.Empty<object>());
+            }
             base.Apply();
         }
     }

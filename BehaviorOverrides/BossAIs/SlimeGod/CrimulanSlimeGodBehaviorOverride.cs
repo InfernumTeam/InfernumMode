@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.OverridingSystem;
@@ -6,17 +6,17 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using Terraria.Audio;
+using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
     public class CrimulanSlimeGodBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<SlimeGodRun>();
+        public override int NPCOverrideType => ModContent.NPCType<CrimulanSlimeGod>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                     for (int i = 0; i < totalSlimesToSpawn; i++)
                     {
-                        int slime = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCrimson3>(), npc.whoAmI);
+                        int slime = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCrimson3>(), npc.whoAmI);
                         if (Main.npc.IndexInRange(slime))
                         {
                             Main.npc[slime].velocity = Main.rand.NextVector2CircularEdge(6f, 6f);
@@ -229,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     }
                 }
 
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodPossession"), npc.Center);
+                SoundEngine.PlaySound(new SoundStyle("CalamityMod/Sounds/Custom/SlimeGodPossession"), npc.Center);
                 for (int k = 0; k < 50; k++)
                     Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }
@@ -333,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // If velocity is 0 (indicating something has been hit) create a shockwave and some other things.
                 if (npc.velocity.Y == 0f && attackTimer < 900f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 70, 1.25f, -0.25f);
+                    SoundEngine.PlaySound(SoundID.Item, npc.position);
                     for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                     {
                         for (int i = 0; i < 6; i++)
@@ -352,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                         int projectileCount = 7;
 
                         // Fire more projectiles if alone.
-                        if ((crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<EbonianSlimeGod>())) || (!crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<SlimeGodRun>())))
+                        if ((crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<EbonianSlimeGod>())) || (!crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<CrimulanSlimeGod>())))
                             projectileCount = 13;
 
                         for (int i = 0; i < projectileCount; i++)

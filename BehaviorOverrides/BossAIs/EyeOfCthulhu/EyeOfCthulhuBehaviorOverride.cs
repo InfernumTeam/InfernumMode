@@ -1,13 +1,13 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 {
@@ -221,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 // Normal boss roar.
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
             else if (attackTimer >= hoverTime + chargeTime)
                 SelectNextAttack(npc);
@@ -270,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(120f, 120f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int eye = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
+                        int eye = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
                         Main.npc[eye].target = npc.target;
                         Main.npc[eye].velocity = Main.npc[eye].SafeDirectionTo(target.Center) * servantSpeed;
                     }
@@ -347,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     attackTimer = 0f;
 
                     // High pitched boss roar.
-                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 }
             }
 
@@ -414,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // High pitched boss roar.
-                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 }
                 if (npc.WithinRange(target.Center, 115f))
                     npc.Center -= npc.SafeDirectionTo(target.Center) * 15f;
@@ -520,7 +520,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // High pitched boss roar.
-                    SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 }
             }
 
@@ -553,7 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.netUpdate = true;
 
                     // Normal boss roar.
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 }
             }
 
@@ -592,7 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         npc.netUpdate = true;
 
                         // High pitched boss roar.
-                        SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                     }
                 }
                 else

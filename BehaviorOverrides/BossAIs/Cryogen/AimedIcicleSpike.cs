@@ -2,9 +2,9 @@ using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -62,6 +62,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             return Main.dayTime ? new Color(50, 50, 255, 255 - Projectile.alpha) : new Color(255, 255, 255, Projectile.alpha);
         }
 
-        public override bool? CanDamage() => Time >= 60f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 60f;
     }
 }

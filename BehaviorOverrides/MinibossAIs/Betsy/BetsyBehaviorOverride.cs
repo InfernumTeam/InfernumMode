@@ -1,13 +1,13 @@
-﻿using InfernumMode.OverridingSystem;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 {
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 6f == 5f)
                 {
-                    SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -317,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             // Do the charge.
             if (attackTimer == hoverRedirectTime)
             {
-                SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFlameBreath, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, npc.Center);
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * horizontalFlySpeed;
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ProjectileID.DD2BetsyFlameBreath, 190, 0f, -1, 0f, npc.whoAmI);
@@ -335,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 10f == 9f)
                 {
-                    SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class AnahitaIntroScreen : BaseIntroScreen
+    public class AnahitaIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -22,8 +22,8 @@ namespace InfernumMode.BossIntroScreens
 
         public override string TextToDisplay => "Forgotten Deity\nAnahita";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Siren>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Anahita>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
     }
 }

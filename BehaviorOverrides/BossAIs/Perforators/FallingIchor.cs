@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
     public class FallingIchor : ModProjectile
     {
-        internal const float Gravity = 0.18f;
+        internal const float Gravity = 0.25f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
 
         public override void SetDefaults()
@@ -17,14 +17,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             Projectile.width = Projectile.height = 12;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
             Projectile.timeLeft = 420;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
         {
-            Projectile.velocity.X *= 0.97f;
             Projectile.tileCollide = Projectile.timeLeft < 350;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -39,8 +37,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             blood.noGravity = true;
 
             Projectile.velocity.Y += Gravity;
-            if (Projectile.velocity.Y >= 5f)
-                Projectile.velocity.Y = 5f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;

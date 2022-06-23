@@ -2,12 +2,12 @@ using InfernumMode.Miscellaneous;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, Projectile.Center, 40);
+            SoundEngine.PlaySound(SoundID.Zombie40, Projectile.Center);
             if (Main.netMode != NetmodeID.Server)
             {
                 WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int spawnedNPC = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, (int)Projectile.ai[0]);
+            int spawnedNPC = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, (int)Projectile.ai[0]);
             if (Main.npc.IndexInRange(spawnedNPC))
                 Main.npc[spawnedNPC].velocity = Vector2.UnitY.RotatedByRandom(0.4f) * -12f;
         }

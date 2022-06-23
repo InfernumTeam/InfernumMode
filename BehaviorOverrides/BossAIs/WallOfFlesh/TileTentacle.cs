@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (TentacleDrawer is null)
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
 
-            GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+            GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Images/Misc/Perlin"));
 
             List<Vector2> points = new()
             {
@@ -115,6 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             points.AddRange(ControlPoints);
             points.Add(Projectile.Center);
             TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 
@@ -123,9 +124,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCs.Add(index);
+            drawCacheProjsBehindNPCs.Add(index);
         }
     }
 }

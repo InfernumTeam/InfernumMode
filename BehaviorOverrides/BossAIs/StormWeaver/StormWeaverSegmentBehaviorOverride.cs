@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

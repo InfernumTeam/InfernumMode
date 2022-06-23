@@ -36,9 +36,9 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/YharonRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/YharonRoar");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

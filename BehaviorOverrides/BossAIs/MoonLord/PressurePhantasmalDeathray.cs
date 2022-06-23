@@ -1,8 +1,9 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
@@ -18,9 +19,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override float Lifetime => LifetimeConstant;
         public override Color LaserOverlayColor => new(1f, 1f, 1f, 0f);
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamBegin").Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamMid").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamEnd").Value;
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamBegin", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3200f;
         public override float MaxScale => 1f;
         public override string Texture => "InfernumMode/ExtraTextures/PhantasmalBeamBegin";

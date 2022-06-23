@@ -1,7 +1,5 @@
 using CalamityMod.NPCs.OldDuke;
-using System;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -37,9 +35,9 @@ namespace InfernumMode.Skies
         {
             UpdatePIndex();
             if (OldDukeIndex != -1)
+            {
                 UseTargetPosition(Main.npc[OldDukeIndex].Center);
-            else
-                Filters.Scene["InfernumMode:OldDuke"].Deactivate(Array.Empty<object>());
+            }
             base.Apply();
         }
     }

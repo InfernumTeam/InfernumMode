@@ -27,9 +27,9 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.WallofFlesh);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => new(SoundID.Roar, 0);
+        public override SoundStyle? SoundToPlayWithTextCreation => SoundID.Roar;
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit13;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.NPCHit13;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

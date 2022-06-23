@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Variant is <= 0f or > 4f)
+            if (Variant <= 0f || Variant > 4f)
                 return false;
 
             Texture2D texture = ModContent.Request<Texture2D>($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}").Value;

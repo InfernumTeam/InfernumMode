@@ -13,7 +13,7 @@ namespace InfernumMode.BossIntroScreens
 
         public static bool ScreenIsObstructed
         {
-            get => IntroScreens.Any(s => s.ShouldCoverScreen && s.ShouldBeActive() && s.AnimationCompletion < 1f);
+            get => IntroScreens.Any(s => s.ShouldCoverScreen && s.ShouldBeActive() && s.AnimationCompletion < 1f) && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed;
         }
 
         public static bool ShouldDisplayJokeIntroText

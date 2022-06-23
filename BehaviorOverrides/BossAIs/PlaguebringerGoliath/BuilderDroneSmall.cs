@@ -2,9 +2,9 @@ using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
@@ -113,9 +113,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             GeneralTimer++;
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.position);
 

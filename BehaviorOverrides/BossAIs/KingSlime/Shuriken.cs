@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -40,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D shurikenTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D shurikenTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/ShurikenOutline").Value;
             float pulseOutwardness = MathHelper.Lerp(2f, 3f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.5f) * 0.5f + 0.5f);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);

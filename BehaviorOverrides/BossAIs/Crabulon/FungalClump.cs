@@ -1,9 +1,12 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -38,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void AI()
         {
             // Die if the main boss is not present.
-            if (!Main.npc.IndexInRange((int)NPC.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>()))
+            if (!Main.npc.IndexInRange((int)NPC.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonNPC>()))
             {
                 NPC.active = false;
                 NPC.netUpdate = true;
@@ -51,8 +54,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 hoverSpeed *= 2.15f;
             HomeTowardsTarget(hoverSpeed);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < 0.45f && Time % 90f == 89f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < CrabulonBehaviorOverride.Phase3LifeRatio && Time % 90f == 89f)
+            {
                 ReleaseSpores();
+                NPC.netUpdate = true;
+            }
 
             Time++;
         }
@@ -85,6 +91,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Owner.life += healAmount;
             if (Owner.life > Owner.lifeMax)
                 Owner.life = Owner.lifeMax;
+        }
+
+        // Draw a blue glowmask for Crabulon's fungal clumps.
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/FungalClump_Glowmask").Value;
+            Vector2 drawPosition = NPC.Center - Main.screenPosition;
+            Vector2 origin = NPC.frame.Size() * 0.5f;
+            Color color = NPC.GetAlpha(drawColor);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
+            return false;
         }
 
         public override bool CheckActive() => false;

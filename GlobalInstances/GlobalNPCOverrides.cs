@@ -1,8 +1,9 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
+using CalamityMod.Items.Materials;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
@@ -10,6 +11,10 @@ using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Ravager;
@@ -26,21 +31,18 @@ using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent.ItemDropRules;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using InfernumMode.Systems;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -49,10 +51,11 @@ namespace InfernumMode.GlobalInstances
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
+        public static bool MLSealTeleport = false;
         public const int TotalExtraAISlots = 100;
 
         // I'll be fucking damned if this isn't enough
-        public float[] ExtraAI;
+        public float[] ExtraAI = new float[TotalExtraAISlots];
         public Vector2 angleTarget = default;
         public Rectangle arenaRectangle = default;
         public bool canTelegraph = false;
@@ -67,7 +70,7 @@ namespace InfernumMode.GlobalInstances
         #region Reset Effects
         public override void ResetEffects(NPC npc)
         {
-            static void ResetSavedIndex(ref int type, int type1, int type2 = -1)
+            void ResetSavedIndex(ref int type, int type1, int type2 = -1)
             {
                 if (type >= 0)
                 {
@@ -99,7 +102,7 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == ModContent.NPCType<CalamitasRun3>() && WorldSaveSystem.InfernumMode)
+            if (npc.type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode)
             {
                 bool brotherAlive = false;
                 if (CalamityGlobalNPC.cataclysm != -1)
@@ -123,28 +126,12 @@ namespace InfernumMode.GlobalInstances
         }
         #endregion
 
-        public override GlobalNPC Clone(NPC npc, NPC npcClone)
-        {
-            if (((NPC)npc.Clone()).TryGetGlobalNPC(out GlobalNPCOverrides clone))
-            {
-                clone.ExtraAI = npc.Infernum().ExtraAI;
-                clone.canTelegraph = npc.Infernum().canTelegraph;
-                clone.arenaRectangle = npc.Infernum().arenaRectangle;
-                clone.angleTarget = npc.Infernum().angleTarget;
-                clone.OptionalPrimitiveDrawer = npc.Infernum().OptionalPrimitiveDrawer;
-                return clone;
-            }
-            return new GlobalNPCOverrides();
-        }
-
         public override void SetDefaults(NPC npc)
         {
             angleTarget = default;
-            ExtraAI = new float[TotalExtraAISlots];
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
-            ExtraAI = new float[TotalExtraAISlots];
             OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
@@ -232,7 +219,7 @@ namespace InfernumMode.GlobalInstances
                     if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))
                     {
                         if (!Main.player[Main.myPlayer].dead && Main.player[Main.myPlayer].active && npc.WithinRange(Main.player[Main.myPlayer].Center, 6400f))
-                            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossZen>(), 2);
+                            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossEffects>(), 2);
                     }
 
                     // Decrement each immune timer if it's greater than 0.
@@ -248,10 +235,10 @@ namespace InfernumMode.GlobalInstances
             return base.PreAI(npc);
         }
 
-        public override bool SpecialOnKill(NPC npc)
+        public override bool PreKill(NPC npc)
         {
             if (!InfernumMode.CanUseCustomAIs)
-                return false;
+                return base.PreKill(npc);
 
             if (npc.type == NPCID.EaterofWorldsHead)
             {
@@ -297,31 +284,25 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
-            return false;
-        }
 
-        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
-        {
-            if (npc.type == NPCID.BloodNautilus)
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int athenaID = ModContent.NPCType<AthenaNPC>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                // Remove the vanilla loot rule for the Sanguine Staff, Blood Moon Monolith, and Bloody Tear.
-                int[] dropsToReAdd = new int[]
-                {
-                    ItemID.SanguineStaff,
-                    ItemID.BloodMoonMonolith,
-                    ItemID.BloodMoonStarter
-                };
-                npcLoot.RemoveWhere((rule) =>
-                {
-                    if (rule is DropBasedOnExpertMode expertDrop)
-                        return expertDrop.ruleForNormalMode is CommonDrop thing && dropsToReAdd.Contains(thing.itemId);
-                    return false;
-                });
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                    continue;
+                if (!Main.npc[i].active)
+                    continue;
 
-                // And replace them with a 100% chance.
-                for (int i = 0; i < dropsToReAdd.Length; i++)
-                    npcLoot.Add(dropsToReAdd[i]);
+                totalExoMechs++;
             }
+            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc))
+                return false;
+
+            return base.PreKill(npc);
         }
 
         public override void OnKill(NPC npc)
@@ -335,20 +316,6 @@ namespace InfernumMode.GlobalInstances
                 {
                     int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 95, 0f);
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
-                }
-            }
-
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead").Type)
-            {
-                // Skip the sentinel phase entirely
-                CalamityWorld.DoGSecondStageCountdown = 600;
-
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    var netMessage = InfernumMode.CalamityMod.GetPacket();
-                    netMessage.Write((byte)14);
-                    netMessage.Write(CalamityWorld.DoGSecondStageCountdown);
-                    netMessage.Send();
                 }
             }
         }
@@ -378,30 +345,32 @@ namespace InfernumMode.GlobalInstances
 
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
+
+            // Make DoG enter the second phase once ready.
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && npc.Infernum().ExtraAI[33] == 0f)
+                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
-                npc.Infernum().ExtraAI[10] = 1f;
+                DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
                 return false;
             }
 
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= 1000 && npc.Infernum().ExtraAI[33] == 1f)
+                 life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[32] == 0f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
                     npc.Infernum().ExtraAI[32] = 1f;
                 }
                 return false;
             }
 
             // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
             {
                 Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
                 Main.npc[npc.realLife].netUpdate = true;
@@ -416,6 +385,9 @@ namespace InfernumMode.GlobalInstances
                     npc.checkDead();
                 }
             }
+
+            if (npc.type == ModContent.NPCType<ThanatosHead>())
+                damage = (int)(damage * 1.65f);
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }
@@ -465,7 +437,7 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[20] == 0f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
                     npc.Infernum().ExtraAI[20] = 1f;
                 }
                 npc.active = true;
@@ -529,30 +501,6 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == ModContent.NPCType<RavagerClawLeft>() || npc.type == ModContent.NPCType<RavagerClawRight>())
-            {
-                npc.Infernum().ExtraAI[0] = 1f;
-                npc.netUpdate = true;
-                npc.active = true;
-                npc.dontTakeDamage = true;
-                npc.life = npc.lifeMax;
-
-                // Synchronize the other claw, if it too has been released.
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC checkNPC = Main.npc[i];
-                    bool correctNPC = checkNPC.type == ModContent.NPCType<RavagerClawLeft>() || checkNPC.type == ModContent.NPCType<RavagerClawRight>();
-                    if (!correctNPC || !checkNPC.active || checkNPC.Infernum().ExtraAI[0] != 1f)
-                        continue;
-
-                    checkNPC.ai[0] = 2f;
-                    checkNPC.ai[1] = 0f;
-                    checkNPC.netUpdate = true;
-                }
-
-                return false;
-            }
-
             if (npc.type == NPCID.CultistBoss)
             {
                 CultistBehaviorOverride.ClearAwayEntities();
@@ -576,7 +524,6 @@ namespace InfernumMode.GlobalInstances
 
                 return false;
             }
-
             if (Utilities.IsExoMech(npc))
             {
                 bool hasPerformedDeathAnimation = npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
@@ -665,7 +612,7 @@ namespace InfernumMode.GlobalInstances
             if (!WorldSaveSystem.InfernumMode)
                 return;
 
-            if (npc.type == ModContent.NPCType<CrabulonIdle>())
+            if (npc.type == ModContent.NPCType<Crabulon>())
             {
                 target.AddBuff(BuffID.Poisoned, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
@@ -686,7 +633,7 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))
                 target.AddBuff(ModContent.BuffType<ShadowflameInferno>(), 180);
 
-            if (npc.type is NPCID.PrimeSaw or NPCID.PrimeVice)
+            if (npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice)
             {
                 target.AddBuff(BuffID.BrokenArmor, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);

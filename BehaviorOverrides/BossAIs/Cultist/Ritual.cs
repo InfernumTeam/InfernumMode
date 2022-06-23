@@ -3,9 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -13,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public ref float Time => ref Projectile.ai[0];
         public int MainCultistIndex => (int)Projectile.ai[1];
-        public static Color RitualColor => Color.White;
+        public Color RitualColor => Color.White;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Texture2D outerRingTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D outerRingTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
             Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
             float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
@@ -94,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindNPCs.Add(index);
+            drawCacheProjsBehindNPCs.Add(index);
         }
     }
 }

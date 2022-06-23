@@ -1,5 +1,6 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-	public class DarkEnergyBolt : ModProjectile
+    public class DarkEnergyBolt : ModProjectile
     {
         public PrimitiveTrailCopy TrailDrawer = null;
         public ref float Time => ref Projectile.ai[0];

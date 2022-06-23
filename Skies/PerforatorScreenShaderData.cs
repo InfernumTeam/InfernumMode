@@ -1,5 +1,4 @@
 using CalamityMod.NPCs.Perforator;
-using System;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
@@ -40,7 +39,7 @@ namespace InfernumMode.Skies
             if (HiveIndex != -1)
                 UseTargetPosition(Main.npc[HiveIndex].Center);
             else
-                Filters.Scene["InfernumMode:Perforators"].Deactivate(Array.Empty<object>());
+                Filters.Scene["InfernumMode:Perforators"].Deactivate();
             base.Apply();
         }
     }

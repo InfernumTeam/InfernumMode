@@ -26,9 +26,9 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Plantera);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item17;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item17;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

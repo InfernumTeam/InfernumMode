@@ -1,12 +1,12 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<BeeWave>(), 0, 0f);
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                     GotoNextAttackState(npc);
                 }
 
@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                     attackState = 1f;
                     frameType = (int)QueenBeeFrameType.HorizontalCharge;
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
 
                     npc.netUpdate = true;
                 }
@@ -403,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 }
                 else
                 {
-                    int bee = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
+                    int bee = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
                     Main.npc[bee].velocity = Main.npc[bee].SafeDirectionTo(target.Center, Vector2.UnitY).RotatedByRandom(0.37f) * 4f;
                 }
             }
@@ -432,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 // Roar and make a circle of honey dust as an indicator before release the bees.
                 if (attackTimer == hoverTime + 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                     for (int i = 0; i < 30; i++)
                     {
                         Vector2 honeyDustVelocity = (MathHelper.TwoPi * i / 30f).ToRotationVector2() * 5f;

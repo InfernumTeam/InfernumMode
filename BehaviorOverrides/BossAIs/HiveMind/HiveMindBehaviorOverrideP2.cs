@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
@@ -7,10 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
@@ -85,9 +85,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.UnitY * -12f;
                 npc.netUpdate = true;
             }
-
-            if (below20)
-                target.Infernum().MakeAnxious(45);
 
             if (fadeoutCountdown > 0f)
                 fadeoutCountdown--;
@@ -230,16 +227,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                 HiveMindP2AttackState nextAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[5];
                 bool shouldBecomeInvisible =
-                    nextAttack is HiveMindP2AttackState.NPCSpawnArc or
-                    HiveMindP2AttackState.SpinLunge or
-                    HiveMindP2AttackState.CloudDash or
-                    HiveMindP2AttackState.UndergroundFlameDash or
-                    HiveMindP2AttackState.EaterOfSoulsWall or
-                    HiveMindP2AttackState.CursedRain or
-                    HiveMindP2AttackState.BlobBurst;
+                    nextAttack == HiveMindP2AttackState.NPCSpawnArc ||
+                    nextAttack == HiveMindP2AttackState.SpinLunge ||
+                    nextAttack == HiveMindP2AttackState.CloudDash ||
+                    nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
+                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall ||
+                    nextAttack == HiveMindP2AttackState.CursedRain ||
+                    nextAttack == HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
                 {
-                    if (nextAttack is HiveMindP2AttackState.EaterOfSoulsWall or HiveMindP2AttackState.CursedRain)
+                    if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
                     {
                         npc.Center = target.Center - Vector2.UnitY * 350f;
                         npc.velocity = Vector2.Zero;
@@ -328,13 +325,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     // Spawn things if nothing is in the way of the target.
                     if (Main.netMode != NetmodeID.MultiplayerClient && Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.height))
                     {
-                        if (spawnedEnemyCount is 2 or 4)
+                        if (spawnedEnemyCount == 2 || spawnedEnemyCount == 4)
                         {
                             if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
-                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
+                                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
                         }
                         else if (NPC.CountNPCS(NPCID.EaterofSouls) < 2)
-                            NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
+                            NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
                     }
 
                     // Reset to the slowdown state in preparation for the next attack.
@@ -351,7 +348,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public static void DoBehavior_SpinLunge(NPC npc, Player target, bool enraged, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
-            int clotReleaseRate = 10;
             int spinTime = lifeRatio < 0.2f ? 75 : 90;
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
@@ -373,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
             spinIncrement += (float)Math.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 0.6D);
 
-            // Decide the spin direction if it has yet to be decided.
+            // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)
                 spinDirection = Main.rand.NextBool().ToDirectionInt();
 
@@ -399,7 +395,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % clotReleaseRate == clotReleaseRate - 1f && attackTimer < MaxSlowdownTime)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 10f == 9f && attackTimer < MaxSlowdownTime)
                 {
                     Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 5.4f;
                     int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);
@@ -539,8 +535,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (BossRushEvent.BossRushActive)
                     wallVelocity *= 1.7f;
 
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 75, 1f);
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 75, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
 
                 // Reset to the slowdown state in preparation for the next attack.
                 if (npc.ai[3] > EaterWallSlowdownTime + EaterWallSummoningTime)
@@ -731,14 +727,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             hoverOffsetAngle += MathHelper.ToRadians(5f);
             if ((int)attackTimer == 120f)
             {
-                Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                if (explosionSound != null)
-                {
-                    explosionSound.Volume = 0.2f;
-                    explosionSound.Pitch = -0.4f;
-                }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
+
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
             }
 
             // Release a bunch of blobs.
@@ -762,7 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 }
             }
             else
@@ -780,7 +773,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             if (highPitched)
             {
-                SoundEngine.PlaySound(SoundID.ForceRoar, npc.Center, -1);
+                SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 return;
             }
 
@@ -790,7 +783,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
                 fire.noGravity = true;
             }
-            SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+            SoundEngine.PlaySound(SoundID.Roar, npc.Center);
         }
 
         public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

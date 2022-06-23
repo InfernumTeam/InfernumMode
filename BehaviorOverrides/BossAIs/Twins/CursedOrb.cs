@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * NPC.Opacity;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.9f);
             GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - screenPos + NPC.velocity * 1.6f, 47);
+            FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition + NPC.velocity * 1.6f, 47);
 
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 3f;
-                Vector2 drawPosition = NPC.Center - screenPos + drawOffset;
+                Vector2 drawPosition = NPC.Center - Main.screenPosition + drawOffset;
                 Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
             }
 

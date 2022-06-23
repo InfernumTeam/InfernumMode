@@ -17,8 +17,8 @@ namespace InfernumMode.BossIntroScreens
 
         public override string TextToDisplay => "The Reanimated Carcass\nCrabulon";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Crabulon>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

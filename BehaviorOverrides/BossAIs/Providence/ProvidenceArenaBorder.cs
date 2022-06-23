@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
@@ -15,7 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Border");
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 9999999;
         }
 
         public override void SetDefaults()
@@ -70,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            DrawBlackEffectHook.DrawCacheBeforeBlack.Add(index);
+            DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
         }
 
         public override bool ShouldUpdatePosition() => false;

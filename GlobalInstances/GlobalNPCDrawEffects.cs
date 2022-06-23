@@ -1,13 +1,11 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+using CalamityMod;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
-using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -40,10 +38,8 @@ namespace InfernumMode.GlobalInstances
                 npc.type == ModContent.NPCType<ThanatosTail>())
             {
                 bool dealsNoContactDamage = npc.damage == 0;
-                npc.Infernum().ExtraAI[21] = MathHelper.Clamp(npc.Infernum().ExtraAI[21] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
-                Color color = Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[21]);
-                color = Color.Lerp(color, new Color(255, 0, 0, 64) * npc.Opacity * 0.75f, Utils.GetLerpValue(10f, 75f, npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex], true));
-                return color;
+                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
             }
 
             return base.GetAlpha(npc, drawColor);
@@ -59,13 +55,23 @@ namespace InfernumMode.GlobalInstances
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG)
             {
-                NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
-                if (npc.Opacity < 0.1f || (head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f))
+                if (npc.Opacity <= 0.02f)
+                {
                     index = -1;
+                    return;
+                }
+
+                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+                if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+                    index = inPhase2 ? DevourerofGodsHead.phase2IconIndex : DevourerofGodsHead.phase1IconIndex;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
             }
 
             // Make Anahita completely invisible on the map when sufficiently faded out.
-            if (npc.type == ModContent.NPCType<Siren>() && npc.Opacity < 0.1f)
+            if (npc.type == ModContent.NPCType<Anahita>() && npc.Opacity < 0.1f)
                 index = -1;
 
             // Make Signus completely invisible on the map.
@@ -83,6 +89,17 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<Cryogen>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
         }
+
+        public override void BossHeadRotation(NPC npc, ref float rotation)
+        {
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
+            {
+                if (DoGPhase2HeadBehaviorOverride.InPhase2)
+                    rotation = npc.rotation;
+            }
+        }
+
         #endregion
 
         #region Manual Drawing
@@ -115,18 +132,25 @@ namespace InfernumMode.GlobalInstances
                             float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
                             float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
 
-                            drawPosition.X = i is 0 or 2 ? Main.LocalPlayer.Center.X + horizontalOffset : Main.LocalPlayer.Center.X - horizontalOffset;
-                            drawPosition.Y = i is 0 or 1 ? Main.LocalPlayer.Center.Y + verticalOffset : Main.LocalPlayer.Center.Y - verticalOffset;
+                            if (i is 0 or 2)
+                                drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
+                            else
+                                drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
+
+                            if (i is 0 or 1)
+                                drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
+                            else
+                                drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
                             drawPosition.Y += npc.gfxOffY;
-                            drawPosition -= screenPos;
+                            drawPosition -= Main.screenPosition;
 
                             Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
-                    return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);
+                    return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, Main.spriteBatch, drawColor);
                 }
             }
-            return base.PreDraw(npc, spriteBatch, screenPos, drawColor);
+            return base.PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
         }
         #endregion
 
@@ -144,9 +168,6 @@ namespace InfernumMode.GlobalInstances
                 return false;
 
             if (npc.type == NPCID.EaterofWorldsBody)
-                return false;
-
-            if (npc.type == ModContent.NPCType<PerforatorBodyMedium>() || npc.type == ModContent.NPCType<PerforatorTailMedium>())
                 return false;
 
             return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);

@@ -1,13 +1,13 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             float pressureLaserEndingAngularOffset = 0.14f;
             float chargeVerticalOffset = 330f;
             float boltShootSpeed = 2f;
-            
+
             if (MoonLordCoreBehaviorOverride.InFinalPhase)
             {
                 boltCount += 2;
@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 // Release lasers.
                 if (attackTimer == fireDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Zombie, target.Center, 104);
+                    SoundEngine.PlaySound(SoundID.Zombie104, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = -1; i <= 1; i += 2)
@@ -197,7 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         // Cast charge telegraph lines and prepare the initial charge.
                         if (attackTimer == fireDelay)
                         {
-                            SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                            SoundEngine.PlaySound(SoundID.Zombie100, npc.Center);
                             npc.velocity = new Vector2(Math.Sign(target.Center.X - npc.Center.X), -3.4f).SafeNormalize(Vector2.UnitY) * chargeSpeed;
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -210,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                     chargePositions[i + 1] = chargePositions[i] + currentVelocity * chargeRate;
                                     currentVelocity = Vector2.Reflect(currentVelocity, Vector2.UnitY) * new Vector2(1f, 0.85f);
                                 }
-                                int telegraph = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
+                                int telegraph = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
                                 if (Main.projectile.IndexInRange(telegraph))
                                 {
                                     Main.projectile[telegraph].ModProjectile<TrueEyeChargeTelegraph>().ChargePositions = chargePositions;
@@ -302,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                    SoundEngine.PlaySound(SoundID.Zombie102, npc.Center);
 
                 // Slow down.
                 npc.velocity = (npc.velocity * 0.825f).MoveTowards(Vector2.Zero, 1.5f);
@@ -458,8 +458,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && 
-                    wrappedAttackTimer == repositionTime + (int)(sphereCastTime * 0.6f) && 
+                if (Main.netMode != NetmodeID.MultiplayerClient &&
+                    wrappedAttackTimer == repositionTime + (int)(sphereCastTime * 0.6f) &&
                     groupIndex == groupIndexToAttack)
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordWave>(), 0, 0f);
@@ -472,13 +472,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (groupIndex == groupIndexToAttack)
                 {
-                    var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                    if (explosionSound != null)
-                    {
-                        explosionSound.Volume = MathHelper.Clamp(explosionSound.Volume * 1.9f, 0f, 1f);
-                        explosionSound.Pitch = -0.4f;
-                    }
-
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 1.9f, Pitch = -0.4f }, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
@@ -640,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Scream before charging.
                 if (wrappedAttackTimer == attckDelay + (int)(slowdownTime * 0.5f) && groupIndex != 1f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                    SoundEngine.PlaySound(SoundID.Zombie101, npc.Center);
 
                 pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
                 pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.15f);
@@ -770,8 +764,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Main.spriteBatch.ResetBlendState();
                 }
             }
-            if (core.ai[0] is ((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage) or
-				((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath))
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage ||
+                core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath)
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)

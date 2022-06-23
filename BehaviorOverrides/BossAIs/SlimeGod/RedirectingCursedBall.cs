@@ -1,13 +1,14 @@
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-	public class RedirectingCursedBall : ModProjectile
+    public class RedirectingCursedBall : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Orb");
 
@@ -35,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.Opacity = Utils.GetLerpValue(300f, 290f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * 0.75f;
 
             float homingSpeed = BossRushEvent.BossRushActive ? 21f : 7f;
-            if (Projectile.timeLeft is > 170 and < 235)
+            if (Projectile.timeLeft > 170 && Projectile.timeLeft < 235)
                 Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(target.Center) * homingSpeed, 0.25f);
 
             if (Projectile.timeLeft < 35)

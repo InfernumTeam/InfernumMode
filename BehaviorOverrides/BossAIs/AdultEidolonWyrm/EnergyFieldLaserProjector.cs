@@ -1,12 +1,13 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -15,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public int SpinDirection = 1;
         public float MoveIncrement = 0;
         public Vector2 InitialTargetPosition;
-        public static int LaserAttackTime => 180;
+        public int LaserAttackTime => 180;
         public float CloseInInterpolant => Utils.GetLerpValue(LaserAttackTime - 60f, LaserAttackTime, AttackTimer, true);
         public Player Target => Main.player[NPC.target];
         public ref float AttackTimer => ref NPC.ai[0];
@@ -70,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (AttackTimer == 0f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/MechGaussRifle"), NPC.Center);
+                SoundEngine.PlaySound(Karasawa.FireSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = NPC.SafeDirectionTo(Main.npc[(int)NextProjectorIndex].Center, Vector2.UnitY);
@@ -93,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreKill() => false;
 
         public override bool CheckDead()
         {
@@ -131,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return true;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Main.spriteBatch.EnterShaderRegion();
             Texture2D noiseTexture = TextureAssets.Npc[NPC.type].Value;

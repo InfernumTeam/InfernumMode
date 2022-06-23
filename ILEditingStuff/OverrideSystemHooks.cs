@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles;
 using InfernumMode.GlobalInstances;
@@ -8,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
@@ -47,7 +48,8 @@ namespace InfernumMode.ILEditingStuff
         internal static void NPCSetDefaultsChange(ILContext context)
         {
             ILCursor cursor = new(context);
-            cursor.GotoFinalRet();
+            while (cursor.TryGotoNext(MoveType.Before, c => c.MatchRet())) { }
+
             cursor.Remove();
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -106,7 +108,7 @@ namespace InfernumMode.ILEditingStuff
                     npc.GetGlobalNPC<GlobalNPCDrawEffects>().FindFrame(npc, frameHeight);
                     return;
                 }
-                npc.VanillaFindFrame(frameHeight);
+                npc.VanillaFindFrame(frameHeight, npc.isLikeATownNPC, npc.ModNPC?.AnimationType is > 0 ? npc.ModNPC.AnimationType : npc.type);
                 npc.type = type;
                 npc.ModNPC?.FindFrame(frameHeight);
                 foreach (GlobalNPC g in list.Enumerate(globalNPCs))
@@ -153,7 +155,7 @@ namespace InfernumMode.ILEditingStuff
             {
                 var globalProjectiles = (Instanced<GlobalProjectile>[])typeof(Projectile).GetField("globalProjectiles", Utilities.UniversalBindingFlags).GetValue(projectile);
                 HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
-                
+
                 bool result = true;
                 foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
@@ -200,7 +202,7 @@ namespace InfernumMode.ILEditingStuff
             ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
-            cursor.EmitDelegate(ProjectilePreDrawDelegateFuckYou);
+            cursor.EmitDelegate<PreDrawDelegate>(ProjectilePreDrawDelegateFuckYou);
             cursor.Emit(OpCodes.Ret);
         }
 

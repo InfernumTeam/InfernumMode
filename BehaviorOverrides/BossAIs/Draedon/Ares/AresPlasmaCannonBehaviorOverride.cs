@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using InfernumMode.OverridingSystem;
@@ -6,11 +7,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -57,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 shootTime += 60;
                 totalFlamesPerBurst += 2;
-                flameShootSpeed *= 1.55f;
+                flameShootSpeed *= 1.2f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
@@ -148,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire plasma.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

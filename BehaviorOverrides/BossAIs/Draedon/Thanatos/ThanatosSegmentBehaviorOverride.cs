@@ -1,6 +1,7 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -8,12 +9,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -103,15 +104,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                     // Decide what sound to play.
                     if (willShootProjectile)
-                    {
-                        string soundType = "LaserCannon";
-                        SoundEffectInstance sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, $"Sounds/Item/{soundType}"), target.Center);
-                        if (sound != null)
-                            sound.Volume *= 0.5f;
-                    }
-                    SoundEffectInstance ventSound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ThanatosVent"), npc.Center);
-                    if (ventSound != null)
-                        ventSound.Volume *= 0.1f;
+                        SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound with { Volume = 0.5f }, target.Center);
+                    SoundEngine.PlaySound(ThanatosHead.VentSound with { Volume = 0.33f }, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && willShootProjectile)
                     {
@@ -127,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         }
 
                         if ((int)headAttackType == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
-                            generalShootSpeedFactor *= 0.5f;
+                            generalShootSpeedFactor *= ExoMechManagement.CurrentThanatosPhase != 4f ? 0.36f : 0.5f;
 
                         switch ((int)headAttackType)
                         {
@@ -135,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             case (int)ThanatosHeadAttackType.LaserBarrage:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
-                                float shootSpeed = generalShootSpeedFactor * 10f;
+                                float shootSpeed = generalShootSpeedFactor * 7f;
 
                                 // Predictive laser.
                                 Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
@@ -181,9 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (npc.frameCounter > Main.npcFrameCount[npc.type] - 1f)
                 {
                     npc.frameCounter = Main.npcFrameCount[npc.type] - 1f;
-                    SoundEffectInstance ventSound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ThanatosVent"), npc.Center);
-                    if (ventSound != null)
-                        ventSound.Volume *= 0.25f;
+                    SoundEngine.PlaySound(ThanatosHead.VentSound with { Volume = 0.5f }, npc.Center);
                 }
                 else if (npc.frameCounter < Main.npcFrameCount[npc.type] - 1f)
                     npc.frameCounter += 0.26f;
@@ -267,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Vector2 origin = new(TextureAssets.Npc[npc.type].Value.Width / 2, TextureAssets.Npc[npc.type].Value.Height / Main.npcFrameCount[npc.type] / 2);
+            Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;
 
@@ -305,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Vector2 origin = new(TextureAssets.Npc[npc.type].Value.Width / 2, TextureAssets.Npc[npc.type].Value.Height / Main.npcFrameCount[npc.type] / 2);
+            Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;
 
@@ -343,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Vector2 origin = new(TextureAssets.Npc[npc.type].Value.Width / 2, TextureAssets.Npc[npc.type].Value.Height / Main.npcFrameCount[npc.type] / 2);
+            Vector2 origin = npc.frame.Size() * 0.5f;
 
             Vector2 center = npc.Center - Main.screenPosition;
 

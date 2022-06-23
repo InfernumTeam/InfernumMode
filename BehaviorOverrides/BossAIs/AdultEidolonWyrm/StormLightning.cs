@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-	public class StormLightning : ModProjectile
+    public class StormLightning : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
@@ -31,7 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             DisplayName.SetDefault("Teratesla Lightning Torrent");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
         public override void SetDefaults()

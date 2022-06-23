@@ -1,25 +1,28 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
+using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using BrimmyNPC = CalamityMod.NPCs.BrimstoneElemental.BrimstoneElemental;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-	public class BrimstoneElementalBehaviorOverride : NPCBehaviorOverride
+    public class BrimstoneElementalBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 
@@ -431,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 case 2:
                     if (attackTimer >= burstRate)
                     {
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), npc.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Release waving skulls.
@@ -673,7 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         }
 
                         IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());
-                        if (Main.netMode != NetmodeID.MultiplayerClient && rays.Count() > 0 && Main.rand.NextBool(2))
+                        if (Main.netMode != NetmodeID.MultiplayerClient && rays.Any() && Main.rand.NextBool(2))
                         {
                             Projectile deathray = rays.First();
                             Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
@@ -805,8 +808,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
             {
                 float circleAngle = 0f;
-                Texture2D vineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine").Value;
-                Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose").Value;
+                Texture2D vineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine", AssetRequestMode.ImmediateLoad).Value;
+                Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose", AssetRequestMode.ImmediateLoad).Value;
                 Vector2 vineOrigin = vineTexture.Size() * 0.5f;
                 Vector2 roseOrigin = roseTexture.Size() * 0.5f;
 

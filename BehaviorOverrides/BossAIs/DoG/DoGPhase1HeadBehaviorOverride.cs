@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
@@ -6,20 +6,49 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
     public class DoGPhase1HeadBehaviorOverride : NPCBehaviorOverride
     {
+        public enum Phase2TransitionState
+        {
+            NotEnteringPhase2,
+            NeedsToSummonPortal,
+            EnteringPortal
+        }
+
+        public static Phase2TransitionState CurrentPhase2TransitionState
+        {
+            get
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return Phase2TransitionState.NotEnteringPhase2;
+
+                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
+                return (Phase2TransitionState)npc.Infernum().ExtraAI[Phase2TransitionStateAIIndex];
+            }
+            set
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return;
+
+                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
+                npc.Infernum().ExtraAI[Phase2TransitionStateAIIndex] = (int)value;
+                npc.netUpdate = true;
+            }
+        }
+
         public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -27,13 +56,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public const float Phase2LifeRatio = 0.8f;
 
         public const int PassiveMovementTimeP1 = 420;
+
         public const int AggressiveMovementTimeP1 = 600;
-        public const int PortalProjectileIndexAIIndex = 11;
+
+        public const int Phase2TransitionStateAIIndex = 10;
+
+        public const int Phase2PortalProjectileIndexAIIndex = 11;
+
         public const int BodySegmentFadeTypeAIIndex = 37;
 
         #region AI
         public override bool PreAI(NPC npc)
         {
+            // Disable secondary teleport effects.
             Main.player[npc.target].Calamity().normalityRelocator = false;
             Main.player[npc.target].Calamity().spectralVeil = false;
 
@@ -41,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[6];
             ref float jawRotation = ref npc.Infernum().ExtraAI[7];
             ref float chompTime = ref npc.Infernum().ExtraAI[8];
-            ref float portalIndex = ref npc.Infernum().ExtraAI[PortalProjectileIndexAIIndex];
+            ref float portalIndex = ref npc.Infernum().ExtraAI[Phase2PortalProjectileIndexAIIndex];
             ref float phaseCycleTimer = ref npc.Infernum().ExtraAI[12];
             ref float passiveAttackDelay = ref npc.Infernum().ExtraAI[13];
             ref float uncoilTimer = ref npc.Infernum().ExtraAI[35];
@@ -73,6 +108,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.player[npc.target].HasBuff(ModContent.BuffType<WhisperingDeath>()))
                 Main.player[npc.target].ClearBuff(ModContent.BuffType<WhisperingDeath>());
 
+            // Emit light.
+            Lighting.AddLight((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f), 0.2f, 0.05f, 0.2f);
+
+            if (npc.ai[3] > 0f)
+                npc.realLife = (int)npc.ai[3];
+
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
@@ -83,32 +124,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType);
             }
 
+            // Set music.
+            npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP1") ?? MusicID.LunarBoss;
+
             // Do through the portal once ready to enter the second phase.
-            if (npc.Infernum().ExtraAI[10] > 0f)
+            if (CurrentPhase2TransitionState != Phase2TransitionState.NotEnteringPhase2)
             {
                 HandlePhase2TransitionEffect(npc, ref portalIndex);
                 return false;
             }
 
+            // Reset invulnerability and fade in.
             npc.dontTakeDamage = false;
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
-
-            // Light
-            Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
-
-            // Worm variable
-            if (npc.ai[3] > 0f)
-                npc.realLife = (int)npc.ai[3];
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            // Start above the target.
+            if (npc.Infernum().ExtraAI[22] == 0f)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 2000f;
+                npc.Infernum().ExtraAI[22] = 1f;
+                npc.netUpdate = true;
+            }
+
             // Stay away from the target if the screen is being obstructed by the intro animation.
             if (IntroScreenManager.ScreenIsObstructed)
             {
                 npc.dontTakeDamage = true;
-                npc.Center = target.Center - Vector2.UnitY * 3000f;
+                npc.Center = target.Center - Vector2.UnitY * 2000f;
                 npc.netUpdate = true;
             }
 
@@ -123,10 +169,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
                     {
                         int segment;
-                        if (segmentSpawn is >= 0 and < 80)
-                            segment = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type, npc.whoAmI);
+                        if (segmentSpawn >= 0 && segmentSpawn < 80)
+                            segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type, npc.whoAmI);
                         else
-                            segment = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type, npc.whoAmI);
+                            segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type, npc.whoAmI);
 
                         Main.npc[segment].realLife = npc.whoAmI;
                         Main.npc[segment].ai[2] = npc.whoAmI;
@@ -142,26 +188,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Chomping after attempting to eat the player.
-            bool chomping = !npc.dontTakeDamage && DoChomp(npc, ref chompTime, ref jawRotation);
+            bool chomping = !npc.dontTakeDamage && DoGPhase2HeadBehaviorOverride.DoChomp(npc, ref chompTime, ref jawRotation);
 
-            // Despawn.
-            if (Main.player[npc.target].dead)
-            {
-                npc.velocity.Y -= 0.8f;
-                if (npc.position.Y < Main.topWorld + 16f)
-                    npc.velocity.Y -= 1f;
-
-                if (npc.position.Y < Main.topWorld + 16f)
-                {
-                    for (int a = 0; a < Main.maxNPCs; a++)
-                    {
-                        if (Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead") .Type||
-                            Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody") .Type||
-                            Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type)
-                            Main.npc[a].active = false;
-                    }
-                }
-            }
+            // Despawn if no valid target exists.
+            if (target.dead || !target.active)
+                DoGPhase2HeadBehaviorOverride.Despawn(npc);
 
             // Initially uncoil.
             else if (uncoilTimer < 45f)
@@ -169,9 +200,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 uncoilTimer++;
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 27f, 0.125f);
             }
-            else if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < PassiveMovementTimeP1)
+            else if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < AggressiveMovementTimeP1)
             {
-                DoPassiveFlyMovement(npc, ref jawRotation, ref chompTime);
+                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1)) < 90f;
+                if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) == 1f)
+                    DoGSkyInfernum.CreateLightningBolt(new Color(1f, 0f, 0f, 0.2f), 16, true);
+
+                DoGPhase2HeadBehaviorOverride.DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompTime, ref attackTimer, ref flyAcceleration);
+            }
+            else
+            {
+                if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) == AggressiveMovementTimeP1 + 1f)
+                    DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
+
+                DoGPhase2HeadBehaviorOverride.DoPassiveFlyMovement(npc, ref jawRotation, ref chompTime);
 
                 // Idly release laserbeams.
                 if (phaseCycleTimer % 150f == 0f && passiveAttackDelay >= 300f)
@@ -188,11 +230,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     }
                 }
             }
-            else
-            {
-                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1)) - PassiveMovementTimeP1 < 90f;
-                DoAggressiveFlyMovement(npc, dontChompYet, chomping, ref jawRotation, ref chompTime, ref attackTimer, ref flyAcceleration);
-            }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             return false;
@@ -205,175 +242,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 50f, 0.1f);
             npc.damage = 0;
 
-            if (npc.Infernum().ExtraAI[10] == 1f)
+            // Summon the portal and become fully opaque if the portal hasn't been created yet.
+            if (CurrentPhase2TransitionState == Phase2TransitionState.NeedsToSummonPortal)
             {
+                // Spawn the portal.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
-                    portalIndex = Projectile.NewProjectile(new InfernumSource(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                    Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 2150f;
+                    portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
 
                     Main.projectile[(int)portalIndex].localAI[0] = 1f;
-                    Main.projectile[(int)portalIndex].localAI[1] = 280f;
+                    Main.projectile[(int)portalIndex].localAI[1] = DoGPhase2IntroPortalGate.Phase2AnimationTime;
                 }
 
                 int headType = ModContent.NPCType<DoGHead>();
                 int bodyType = ModContent.NPCType<DevourerofGodsBody>();
                 int tailType = ModContent.NPCType<DevourerofGodsTail>();
-
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && (Main.npc[i].type == headType || Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
                     {
                         Main.npc[i].Opacity = 1f;
+                        Main.npc[i].netUpdate = true;
                     }
                 }
 
                 npc.Opacity = 1f;
-                npc.Infernum().ExtraAI[10] = 2f;
+                CurrentPhase2TransitionState = Phase2TransitionState.EnteringPortal;
             }
 
             // Enter the portal if it's being touched.
             if (Main.projectile[(int)portalIndex].Hitbox.Intersects(npc.Hitbox))
                 npc.alpha = Utils.Clamp(npc.alpha + 140, 0, 255);
 
+            // Vanish if the target died in the middle of the transition.
             if (Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
                 npc.TargetClosest();
                 if (Main.player[npc.target].dead || !Main.player[npc.target].active)
                     npc.active = false;
-            }
-        }
-
-        public static bool DoChomp(NPC npc, ref float chompTime, ref float jawRotation)
-        {
-            bool chomping = chompTime > 0f;
-            float idealChompAngle = MathHelper.ToRadians(-9f);
-            if (chomping)
-            {
-                chompTime--;
-
-                if (jawRotation != idealChompAngle)
-                {
-                    jawRotation = jawRotation.AngleTowards(idealChompAngle, 0.12f);
-
-                    if (Math.Abs(jawRotation - idealChompAngle) < 0.001f)
-                    {
-                        for (int i = 0; i < 26; i++)
-                        {
-                            Dust electricity = Dust.NewDustPerfect(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 52f, 229);
-                            electricity.velocity = ((MathHelper.TwoPi / 26f * i).ToRotationVector2() * new Vector2(7f, 4f)).RotatedBy(npc.rotation) + npc.velocity * 1.5f;
-                            electricity.noGravity = true;
-                            electricity.scale = 1.8f;
-                        }
-                        jawRotation = idealChompAngle;
-                    }
-                }
-            }
-            return chomping;
-        }
-
-        public static void DoPassiveFlyMovement(NPC npc, ref float jawRotation, ref float chompTime)
-        {
-            chompTime = 0f;
-            jawRotation = jawRotation.AngleTowards(0f, 0.08f);
-
-            // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 430f;
-            if (!npc.WithinRange(destination, 150f))
-            {
-                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 27f;
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
-            }
-        }
-
-        public static void DoAggressiveFlyMovement(NPC npc, bool dontChompYet, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
-        {
-            npc.Center = npc.Center.MoveTowards(Main.player[npc.target].Center, 1.8f);
-
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(19f, 14.4f, lifeRatio);
-            float idealMouthOpeningAngle = MathHelper.ToRadians(34f);
-            float flySpeedFactor = 1f + lifeRatio * 0.425f;
-
-            Vector2 destination = Main.player[npc.target].Center;
-
-            float distanceFromDestination = npc.Distance(destination);
-            if (distanceFromDestination > 650f)
-            {
-                destination += (time % 60f / 60f * MathHelper.TwoPi).ToRotationVector2() * 120f;
-                distanceFromDestination = npc.Distance(destination);
-                idealFlyAcceleration *= 2.5f;
-                flySpeedFactor = 1.5f;
-            }
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.GetLerpValue(460f, 600f, distanceFromDestination, true) * 0.41f;
-
-            // Charge if the player is far away.
-            // Don't do this at the start of the fight though. Doing so might lead to an unfair
-            // charge.
-            if (distanceFromDestination > 2700f && time > 120f)
-            {
-                idealFlyAcceleration = MathHelper.Min(6f, flyAcceleration + 1f);
-                idealFlySpeed = 37f;
-            }
-
-            flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
-
-            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
-            if (distanceFromDestination > 100f)
-            {
-                float speed = npc.velocity.Length();
-                if (speed < 17f)
-                    speed += 0.08f;
-
-                if (speed > 24.5f)
-                    speed -= 0.08f;
-
-                if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
-                    speed += 0.24f;
-
-                if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
-                    speed -= 0.1f;
-
-                speed = MathHelper.Clamp(speed, flySpeedFactor * 14f, flySpeedFactor * 32f);
-
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 25f);
-            }
-
-            // Jaw opening when near player.
-            if (!chomping)
-            {
-                if ((npc.Distance(Main.player[npc.target].Center) < 310f && directionToPlayerOrthogonality > 0.67f) ||
-                    (npc.Distance(Main.player[npc.target].Center) < 490f && directionToPlayerOrthogonality > 0.92f))
-                {
-                    jawRotation = jawRotation.AngleTowards(idealMouthOpeningAngle, 0.028f);
-                    if (distanceFromDestination * 0.5f < 56f)
-                    {
-                        if (chompTime == 0f)
-                        {
-                            chompTime = 18f;
-                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
-                        }
-                    }
-                }
-                else
-                {
-                    jawRotation = jawRotation.AngleTowards(0f, 0.07f);
-                }
-            }
-
-            // Lunge if near the player, and prepare to chomp.
-            if (distanceFromDestination * 0.5f < 110f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 1.5f && !dontChompYet)
-            {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.95f;
-                jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
-                if (chompTime == 0f)
-                {
-                    chompTime = 18f;
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
-                }
             }
         }
 
@@ -383,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
-                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, spriteBatch, lightColor);
+                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, Main.spriteBatch, lightColor);
 
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)

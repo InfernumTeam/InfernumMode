@@ -1,17 +1,17 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class DefenderGuardianBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianBoss2>();
+        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianDefender>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float attackTimer = ref npc.Infernum().ExtraAI[0];
 
             // Defend the crystal guardian if it has a lower life ratio than the main boss.
-            int healerIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianBoss3>());
+            int healerIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianHealer>());
             if (Main.npc.IndexInRange(healerIndex) && Main.npc[healerIndex].life / (float)Main.npc[healerIndex].lifeMax < thingToDefendLifeRatio)
                 thingToDefend = Main.npc[healerIndex];
 

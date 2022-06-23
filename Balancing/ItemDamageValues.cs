@@ -1,4 +1,4 @@
-﻿using CalamityMod.Items.Ammo;
+using CalamityMod.Items.Ammo;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;

@@ -1,13 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public class BlobProjectile : ModProjectile
+    public class BlobProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {

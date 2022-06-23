@@ -1,13 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-	public class HomingDoGBurst : ModProjectile
+    public class HomingDoGBurst : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -32,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void AI()
         {
+            // Play a shoot sound.
             if (Projectile.localAI[0] == 0f)
             {
                 Projectile.localAI[0] = 1f;
@@ -42,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.frame = Projectile.frameCounter / 6 % Main.projFrames[Projectile.type];
             Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
 
+            // Home towards the nearest target. The speed of the homing is maintained after direction change calculations are made.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Projectile.velocity = (Projectile.velocity * 69f + Projectile.SafeDirectionTo(target.Center) * 23f) / 70f;
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
@@ -63,6 +66,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 74);
+        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
     }
 }

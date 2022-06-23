@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -44,8 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 float shootSpeed = 2.75f;
                 Vector2 orthogonalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * shootSpeed;
-                Projectile.NewProjectile(new InfernumSource(), Projectile.Center, orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
-                Projectile.NewProjectile(new InfernumSource(), Projectile.Center, -orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, -orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
             }
         }
 
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             float lerpMult = (1f + 0.22f * (float)Math.Cos(Main.GlobalTimeWrappedHourly % 30f * MathHelper.TwoPi * 3f + Projectile.identity % 10f)) * 0.8f;
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
             Color baseColor = new(39, 255, 151, 192);
             baseColor *= Projectile.Opacity * 0.6f;

@@ -1,14 +1,14 @@
-﻿using InfernumMode.OverridingSystem;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
-using CalamityMod.NPCs;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.Audio;
-using CalamityMod;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreAI(NPC npc)
         {
-            int toothBallReleaseRate = 64;
+            int toothBallReleaseRate = 120;
             float toothBallShootSpeed = 9f;
             ref float attackTimer = ref npc.ai[0];
 
@@ -48,8 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Fly towards the target.
-            float xDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
-            float yDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);
+            float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
+            float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);
             Vector2 flyDestination = target.Center;
 
             if (npc.WithinRange(flyDestination, 400f) && npc.velocity.Length() > 6f)
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             else
             {
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.7f;
-                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 15f);
+                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 12.5f);
             }
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 

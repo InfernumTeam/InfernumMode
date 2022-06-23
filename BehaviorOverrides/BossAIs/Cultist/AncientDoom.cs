@@ -1,13 +1,16 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -57,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D doomTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D doomTexture = TextureAssets.Projectile[Projectile.type].Value;
             Rectangle frame = doomTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             for (int i = 0; i < 10; i++)
             {
@@ -88,12 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override void Kill(int timeLeft)
         {
             // Make some strong sounds.
-            var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), Target.Center);
-            if (sound != null)
-                sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
-            sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), Target.Center);
-            if (sound != null)
-                sound.Pitch = -0.21f;
+            SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.61f }, Target.Center);
+            SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = -0.21f }, Target.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

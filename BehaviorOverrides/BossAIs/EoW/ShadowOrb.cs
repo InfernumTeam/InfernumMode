@@ -1,10 +1,8 @@
-using CalamityMod.NPCs.HiveMind;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -35,14 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item8, Projectile.Center);
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            WeightedRandom<int> enemySelector = new(Main.rand);
-            enemySelector.Add(NPCID.EaterofSouls);
-            enemySelector.Add(NPCID.DevourerHead, 0.4);
-            enemySelector.Add(ModContent.NPCType<DarkHeart>(), 0.65);
-            NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, enemySelector.Get(), 1);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -89,6 +89,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool? CanDamage() => Time >= 67f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 67f;
     }
 }

@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
@@ -25,6 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI() => GolemFistLeft.DoFistAI(NPC, false);
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => GolemFistLeft.DrawFist(NPC, screenPos, drawColor, false);
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => GolemFistLeft.DrawFist(NPC, Main.spriteBatch, drawColor, false);
     }
 }

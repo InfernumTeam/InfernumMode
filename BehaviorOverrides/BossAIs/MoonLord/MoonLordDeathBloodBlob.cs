@@ -1,14 +1,15 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-	public class MoonLordDeathBloodBlob : ModProjectile
+    public class MoonLordDeathBloodBlob : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -147,6 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Projectile.velocity.Y = 16f;
             }
         }
+
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
             fallThrough = false;

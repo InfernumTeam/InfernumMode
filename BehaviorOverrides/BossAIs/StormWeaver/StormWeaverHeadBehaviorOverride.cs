@@ -1,12 +1,12 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
@@ -44,10 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.maxClouds;
+                    Main.numCloudsTemp = 160;
                     Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedCurrent = 1.56f;
-                    Main.windSpeedTarget = Main.windSpeedCurrent;
+                    Main.windSpeedTarget = 1.56f;
+                    Main.windSpeedCurrent = Main.windSpeedTarget;
                     Main.maxRaining = 0.9f;
                 }
 

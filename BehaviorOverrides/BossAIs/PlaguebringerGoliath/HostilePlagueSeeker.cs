@@ -41,6 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Time++;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.8f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 0.8f;
     }
 }

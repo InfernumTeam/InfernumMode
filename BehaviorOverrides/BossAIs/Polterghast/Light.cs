@@ -26,12 +26,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI() => Time++;
 
-        public override bool PreDraw(ref Color _)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 origin = new(66f, 86f);
             Vector2 drawPosition = new(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
             Vector2 scale = new(1.4f, 1.6f);
-            Color lightColor = new(205, 10, 205, 0);
+            lightColor = new(205, 10, 205, 0);
             Color coloredLight = new(255, 180, 255, 0);
             float completion = 0f;
             if (Time < 30f)

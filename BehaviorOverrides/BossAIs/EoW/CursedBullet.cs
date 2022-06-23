@@ -1,12 +1,13 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
-	public class CursedBullet : ModProjectile
+    public class CursedBullet : ModProjectile
     {
         public override void SetStaticDefaults()
         {

@@ -1,27 +1,35 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.OldDuke;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
+using InfernumMode.Skies;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace InfernumMode
 {
-	public class PoDPlayer : ModPlayer
+    public class PoDPlayer : ModPlayer
     {
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;
@@ -65,8 +73,6 @@ namespace InfernumMode
             }
             set => twinsSpecialAttackTypeSelector = value;
         }
-
-        public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
 
         #region Nurse Cheese Death
         public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)
@@ -152,7 +158,7 @@ namespace InfernumMode
         #region Screen Shaking
         public override void ModifyScreenPosition()
         {
-            if (ScreenFocusInterpolant > 0f)
+            if (ScreenFocusInterpolant > 0f && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
             {
                 Vector2 idealScreenPosition = ScreenFocusPosition - new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 Main.screenPosition = Vector2.Lerp(Main.screenPosition, idealScreenPosition, ScreenFocusInterpolant);
@@ -163,14 +169,14 @@ namespace InfernumMode
             else
                 return;
 
-            if (CalamityConfig.Instance.DisableScreenShakes)
+            if (!CalamityConfig.Instance.Screenshake)
                 return;
 
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
         }
         #endregion
         #region Saving and Loading
-        public override void SaveData(TagCompound tag)
+        public override void SaveData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
         {
             ThanatosLaserTypeSelector?.Save(tag);
             AresSpecialAttackTypeSelector?.Save(tag);
@@ -185,25 +191,9 @@ namespace InfernumMode
         }
         #endregion Saving and Loading
         #region Misc Effects
-        public void MakeAnxious(int time)
-        {
-            int deleteIndex = Player.MaxBuffs - 1;
-            int[] buffsToSkip = new int[]
-            {
-                BuffID.ChaosState,
-                BuffID.PotionSickness,
-                BuffID.ManaSickness,
-                ModContent.BuffType<ManaBurn>()
-            };
-            while (buffsToSkip.Contains(Player.buffType[deleteIndex]) && deleteIndex > 0)
-                deleteIndex--;
-
-            Player.DelBuff(deleteIndex);
-            Player.AddBuff(ModContent.BuffType<Anxiety>(), time);
-        }
         public override void PostUpdateMiscEffects()
         {
-            if (Player.mount.Active && Player.mount.Type == MountID.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("DesertScourgeHead").Type))
+            if (Player.mount.Active && Player.mount.Type == MountID.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("DesertScourgeHead").Type) && InfernumMode.CanUseCustomAIs)
             {
                 Player.mount.Dismount(Player);
             }
@@ -217,29 +207,6 @@ namespace InfernumMode
             {
                 CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
                 CalamityWorld.malice = false;
-            }
-
-            if (WorldSaveSystem.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active &&
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("Signus") .Type||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverHead").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverBody").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverTail").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedHead").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedBody").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("StormWeaverNakedTail").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("CeaselessVoid").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy2").Type) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.Find<ModNPC>("DarkEnergy3").Type)))
-                    {
-                        Main.npc[i].active = false;
-                    }
-                }
-                CalamityWorld.DoGSecondStageCountdown = 599;
             }
 
             if (ShadowflameInferno)

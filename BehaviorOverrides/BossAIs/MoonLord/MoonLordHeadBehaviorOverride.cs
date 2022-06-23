@@ -1,12 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -203,14 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer < deathrayTelegraphTime)
             {
                 if (wrappedAttackTimer == 25f)
-                {
-                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
-                    if (sound != null)
-                    {
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
-                        sound.Pitch = -0.2f;
-                    }
-                }
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.2f }, target.Center);
 
                 telegraphInterpolant = Utils.GetLerpValue(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
                 angularOffset += CalamityUtils.Convert01To010(telegraphInterpolant) * MathHelper.TwoPi / 300f;
@@ -228,12 +223,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer == deathrayTelegraphTime)
             {
                 // Make some strong sounds.
-                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), target.Center);
-                if (sound != null)
-                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
-                sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
-                if (sound != null)
-                    sound.Pitch = -0.21f;
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.61f }, target.Center);
+                SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = -0.21f }, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

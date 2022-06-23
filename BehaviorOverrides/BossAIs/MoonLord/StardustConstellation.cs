@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Color solarColor = new(255, 140, 0);
             Color starColor = Color.Lerp(stardustColor, solarColor, fadeToOrange);
 
-            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D starTexture = TextureAssets.Projectile[Projectile.type].Value;
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }

@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -10,12 +10,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.AcidBubbleFountain,
+            OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.AcidBubbleFountain,
+            OldDukeAttackState.ToothBallVomit,
         };
 
         public static readonly List<OldDukeAttackState> Phase2AttackPattern = new()
@@ -88,6 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
@@ -105,17 +106,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.AcidBelch,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
         };
 
@@ -131,16 +135,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
@@ -148,10 +155,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.SharkronSpinSummon,
         };
@@ -205,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.maxClouds;
+                    Main.numCloudsTemp = 160;
                     Main.numClouds = Main.numCloudsTemp;
                     Main.windSpeedCurrent = 1.04f;
                     Main.windSpeedTarget = Main.windSpeedCurrent;
@@ -309,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 15f);
+            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, -15f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -360,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
             // Decide frames.
-            if (phaseTransitionTimer is < (PhaseTransitionTime - 48f) and > (PhaseTransitionTime - 65f))
+            if (phaseTransitionTimer < PhaseTransitionTime - 48f && phaseTransitionTimer > PhaseTransitionTime - 65f)
                 frameType = (int)OldDukeFrameType.Roar;
             else
             {
@@ -370,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             // Roar and summon sharks below the boss.
             if (phaseTransitionTimer == PhaseTransitionTime - 60f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
 
             if (phaseTransitionTimer >= PhaseTransitionTime - 60f)
             {
@@ -378,8 +387,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     phaseTransitionSharkSpawnOffset += 135f;
                     Vector2 spawnOffset = new(phaseTransitionSharkSpawnOffset + 50f, 340f);
-                    NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
-                    NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<SulphurousSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<SulphurousSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
                 }
             }
         }
@@ -403,7 +412,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.velocity *= 0.97f;
 
             // Right before and after the spawn animation dust stuff, roar.
-            if (attackTimer is > 52f and < 64f)
+            if (attackTimer > 52f && attackTimer < 64f)
                 frameType = (int)OldDukeFrameType.Roar;
 
             // Otherwise, flap wings.
@@ -425,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     acid.velocity = npc.SafeDirectionTo(dustSpawnPosition) * 3f;
                 }
 
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
             }
 
             if (attackTimer >= 75f)
@@ -437,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
-            bool goingToCharge = upcomingAttack is OldDukeAttackState.Charge or OldDukeAttackState.FastRegularCharge;
+            bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
             if (goingToCharge)
                 waitDelay = 30;
@@ -495,13 +504,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 chargeTime -= 3;
                 chargeSpeed += 5.4f;
             }
-
-            // Make the predictiveness more loose if the target is charing at Old Duke. This is done to make the "tricking" strategy more consistently possible.
-            float playerChargingAtOldDukeFactor = (float)Math.Cos(target.SafeDirectionTo(npc.Center).AngleBetween(target.velocity));
-
-            // Make this effect taper off if the target is moving slowly.
-            playerChargingAtOldDukeFactor *= Utils.GetLerpValue(7f, 10f, target.velocity.Length(), true);
-            aimAheadFactor += Utils.Remap(playerChargingAtOldDukeFactor, 0.61f, 0.9f, 0f, 1.4f);
 
             if (attackTimer >= chargeTime)
             {
@@ -619,7 +621,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
             {
                 if (attackTimer == shootDelay + 1f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                    SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
 
                 frameType = (int)OldDukeFrameType.Roar;
             }
@@ -669,7 +671,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
             {
                 Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);
-                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(8.5f, 11.5f);
+                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10.5f, 13.5f);
                 if (inPhase2)
                     bubbleVelocity *= 1.15f;
                 if (BossRushEvent.BossRushActive)
@@ -703,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.netUpdate = true;
 
                 // Play sounds and spawn Tooth Balls and a Vortex
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
 
                 Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -714,7 +716,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1050f);
-                        int shark = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<OldDukeSharkron>());
+                        int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SulphurousSharkron>());
                         if (Main.npc.IndexInRange(shark))
                         {
                             Main.npc[shark].velocity = Main.rand.NextVector2CircularEdge(8f, 8f);
@@ -762,7 +764,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
             {
                 if (attackTimer == shootDelay + 1f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                    SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
 
                 frameType = (int)OldDukeFrameType.Roar;
             }
@@ -777,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
             {
                 Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 11f;
-                int toothBall = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<OldDukeToothBall>());
+                int toothBall = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<OldDukeToothBall>());
                 if (Main.npc.IndexInRange(toothBall))
                     Main.npc[toothBall].velocity = shootVelocity;
             }
@@ -811,12 +813,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer == 150f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < goreCount; i++)
                     {
-                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(19f, 27f);
+                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(16f, 23f);
                         Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
                     }
                 }
@@ -824,7 +826,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 150f && attackTimer < 180f)
             {
-                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(14f, 19f);
+                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(13f, 18f);
                 Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
             }
 
@@ -857,7 +859,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Teleport.
             if (attackTimer == fadeTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f);
@@ -980,7 +982,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (currentAttack == OldDukeAttackState.AttackSelectionWait)
                 afterimageCount = 7;
 
-            if (currentAttack is OldDukeAttackState.AcidBubbleFountain or OldDukeAttackState.AcidBelch)
+            if (currentAttack == OldDukeAttackState.AcidBubbleFountain || currentAttack == OldDukeAttackState.AcidBelch)
                 afterimageCount = 4;
 
             if (currentAttack == OldDukeAttackState.Charge || inPhase3)

@@ -5,11 +5,10 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class ChargeFlare : ModProjectile
+    public class ChargeFlare : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -78,7 +77,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, 20);
             if (Projectile.owner == Main.myPlayer)
             {
                 int xTileCoords = (int)(Projectile.Center.X / 16f);
@@ -98,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 int spawnLimitY = (int)(Main.player[Projectile.owner].Center.Y / 16f) + 50;
                 if (yTileCoords > spawnLimitY)
                     yTileCoords = spawnLimitY;
-                Projectile infernado = Projectile.NewProjectileDirect(new InfernumSource(), new Vector2(xTileCoords * 16 + 8, yTileCoords * 16 - 24), Vector2.Zero, ModContent.ProjectileType<Infernado>(), 0, 4f, Main.myPlayer, 11f, 25f);
+                Projectile infernado = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), new Vector2(xTileCoords * 16 + 8, yTileCoords * 16 - 24), Vector2.Zero, ModContent.ProjectileType<Infernado>(), 0, 4f, Main.myPlayer, 11f, 25f);
                 infernado.netUpdate = true;
             }
         }

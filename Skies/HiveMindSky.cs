@@ -1,7 +1,6 @@
 using CalamityMod.NPCs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -11,20 +10,18 @@ namespace InfernumMode.Skies
 {
     public class HiveMindSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player)
+        public override bool IsSceneEffectActive(Player player) => true;
+
+        public override void SpecialVisuals(Player player)
         {
             int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
             int hiveMind = NPC.FindFirstNPC(hiveMindID);
             NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
-            return hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-        }
-
-        public override void SpecialVisuals(Player player)
-        {
-            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", IsSceneEffectActive(player));
+            bool enabled = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
+            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", enabled);
         }
     }
-
+    
     public class HiveMindSky : CustomSky
     {
         private bool isActive = false;
@@ -41,9 +38,6 @@ namespace InfernumMode.Skies
             {
                 intensity -= 0.01f;
             }
-
-            if (NPC.FindFirstNPC(ModContent.NPCType<HiveMind>()) == -1)
-                Deactivate(Array.Empty<object>());
         }
 
         private float GetIntensity()
@@ -90,7 +84,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float intensity = this.GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), InfernumMode.HiveMindSkyColor * intensity);
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * intensity);
             }
         }
 

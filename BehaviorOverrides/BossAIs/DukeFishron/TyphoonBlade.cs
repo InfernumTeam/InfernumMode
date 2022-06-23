@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
-	public class TyphoonBlade : ModProjectile
+    public class TyphoonBlade : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
@@ -22,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 270;
             Projectile.penetrate = -1;
             CooldownSlot = 1;
         }
@@ -36,7 +37,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             Projectile.rotation += 0.4f * (Projectile.velocity.X > 0).ToDirectionInt();
             Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Time, true) * Utils.GetLerpValue(0f, 16f, Projectile.timeLeft, true);
 
-            if (Time > 40f)
+            if (Projectile.timeLeft < 90f)
+            {
+                if (Projectile.velocity.Length() < 15f)
+                    Projectile.velocity *= 1.016f;
+            }
+            else if (Time > 40f)
             {
                 float oldSpeed = Projectile.velocity.Length();
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

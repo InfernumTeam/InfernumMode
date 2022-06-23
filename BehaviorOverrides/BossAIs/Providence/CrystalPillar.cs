@@ -1,15 +1,15 @@
 using CalamityMod;
 using InfernumMode.Miscellaneous;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Terraria.Audio;
-using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -28,7 +28,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crystal Spike");
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 9999999;
         }
 
         public override void SetDefaults()
@@ -94,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     Projectile.Bottom = newBottom.ToWorldCoordinates(isHalfTile ? 8 : 0, 8);
                     MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Right - WorldSaveSystem.ProvidenceArena.Left) * 20f;
                 }
-                
+
                 CurrentHeight = StartingHeight;
                 Projectile.netUpdate = true;
             }
@@ -114,7 +113,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SoundEngine.PlaySound(SoundID.Item73, target.Center);
             }
         }
-
 
         public override bool PreDraw(ref Color lightColor)
         {

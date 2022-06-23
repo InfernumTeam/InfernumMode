@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
@@ -19,7 +19,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ThanatosAres_LaserCircle,
             ThanatosAres_ElectricCage,
 
-            TwinsAthena_ThermoplasmaDance
+            TwinsAthena_ThermoplasmaDance,
+            TwinsAthena_ThermoplasmaChargeupBursts
         }
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
@@ -52,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // If the initial mech is not present, stop attack selections.
             NPC initialMech = FindInitialMech();
-            if (initialMech is null || initialMech.Opacity == 0f)
+            if (initialMech is null || initialMech.Opacity == 0f || npc != initialMech)
                 return false;
 
             newAttack = (ExoMechComboAttackType)(int)initialMech.ai[0];
@@ -75,11 +76,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
 
-                do
-                    newAttack = attackSelector.Get();
-                while ((int)newAttack == initialMech.ai[0]);
+                switch ((int)initialMech.ai[0])
+                {
+                    case (int)ExoMechComboAttackType.AresTwins_DualLaserCharges:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.AresTwins_CircleAttack;
+                        break;
+                    case (int)ExoMechComboAttackType.AresTwins_CircleAttack:
+                    default:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.AresTwins_DualLaserCharges;
+                        break;
+                }
 
                 // Inform all mechs of the change.
+                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
                 InformAllMechsOfComboAttackChange((int)newAttack);
                 return true;
             }
@@ -89,15 +98,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
 
                 attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance);
-                newAttack = attackSelector.Get();
+                attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts);
 
-                /*
-                do
-                    newAttack = attackSelector.Get();
-                while ((int)newAttack == initialMech.ai[0]);
-                */
+                switch ((int)initialMech.ai[0])
+                {
+                    case (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts;
+                        break;
+                    case (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts:
+                    default:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance;
+                        break;
+                }
 
                 // Inform all mechs of the change.
+                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
                 InformAllMechsOfComboAttackChange((int)newAttack);
                 return true;
             }
@@ -108,11 +123,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectricCage);
 
-                do
-                    newAttack = attackSelector.Get();
-                while ((int)newAttack == initialMech.ai[0]);
+                switch ((int)initialMech.ai[0])
+                {
+                    case (int)ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.ThanatosAres_ElectricCage;
+                        break;
+                    case (int)ExoMechComboAttackType.ThanatosAres_ElectricCage:
+                    default:
+                        initialMech.ai[0] = (int)ExoMechComboAttackType.ThanatosAres_LaserCircle;
+                        break;
+                }
 
                 // Inform all mechs of the change.
+                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
                 InformAllMechsOfComboAttackChange((int)newAttack);
                 return true;
             }

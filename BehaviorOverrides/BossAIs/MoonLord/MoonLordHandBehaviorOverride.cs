@@ -1,14 +1,14 @@
-﻿using CalamityMod;
+using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -187,15 +187,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer == waveTime + 16f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
             {
                 if (Main.netMode != NetmodeID.Server)
-                {
-                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
-                    if (sound != null)
-                    {
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
-                        sound.Pitch = -0.5f;
-                    }
-                }
-                    
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.5f }, target.Center);
+
                 foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
                 {
                     sphere.ai[0] = -1f;
@@ -320,7 +313,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Create stars.
             if (wrappedAttackTimer >= initialAnimationTime &&
-                wrappedAttackTimer < initialAnimationTime + starCreationTime && 
+                wrappedAttackTimer < initialAnimationTime + starCreationTime &&
                 (wrappedAttackTimer - initialAnimationTime) % starCreationRate == 0f)
             {
                 float patternCompletion = Utils.GetLerpValue(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);

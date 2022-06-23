@@ -110,11 +110,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 80);
+            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
+            Main.spriteBatch.ExitShaderRegion();
 
             return false;
         }
 
-        public override bool? CanDamage() => Time >= 8f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 8f;
     }
 }

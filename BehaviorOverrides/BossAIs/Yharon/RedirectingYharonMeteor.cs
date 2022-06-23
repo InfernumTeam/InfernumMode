@@ -2,14 +2,15 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class RedirectingYharonMeteor : ModProjectile
+    public class RedirectingYharonMeteor : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/Boss/YharonFireball";
 
@@ -87,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 14, 0.5f, 0f);
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
             CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 144);
             for (int d = 0; d < 2; d++)
             {
@@ -108,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if (Projectile.velocity.Y >= -16f)
-                target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 180);
+                target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

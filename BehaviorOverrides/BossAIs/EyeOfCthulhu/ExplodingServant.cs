@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (target != null && !target.dead && target.active)
             {
                 float squareTargetDistance = NPC.DistanceSQ(target.Center);
-                if (squareTargetDistance is > (180f * 180f) and < (1000f * 1000f))
+                if (squareTargetDistance > 180f * 180f && squareTargetDistance < 1000f * 1000f)
                     NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(target.Center), 0.0145f);
             }
 
@@ -95,14 +95,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
             }
-            if (NPC.life <= 0)
+            if (Main.netMode != NetmodeID.Server && NPC.life <= 0)
             {
                 for (int k = 0; k < 7; k++)
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
                 }
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, 6);
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, 7);
+                Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 6);
+                Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 7);
             }
         }
     }

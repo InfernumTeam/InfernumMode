@@ -3,9 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -49,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 return false;
             }
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 7; i++)
@@ -72,9 +73,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool ShouldUpdatePosition() => Projectile.timeLeft < 330;
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindProjectiles.Add(index);
+            drawCacheProjsBehindProjectiles.Add(index);
         }
     }
 }

@@ -1,15 +1,16 @@
-﻿using CalamityMod;
+using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 using CalamityModClass = CalamityMod.CalamityMod;
 
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("XF-09 Ares Pulse Cannon");
             Main.npcFrameCount[NPC.type] = 12;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
@@ -56,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.hide = true;
             Music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }
-        
+
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
@@ -70,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Update the energy drawer.
             EnergyDrawer.Update();
 
-            // Locate Ares' body as an NPC.
+            // Locate Ares' body as an npc.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
@@ -118,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Don't do anything if this arm should be disabled.
             if (currentlyDisabled)
                 AttackTimer = 1f;
-            
+
             // Become more resistant to damage as necessary.
             NPC.takenDamageMultiplier = 1f;
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(NPC))
@@ -184,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire a pulse blast.
             if (AttackTimer >= ChargeDelay && AttackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PulseRifleFire"), NPC.Center);
+                SoundEngine.PlaySound(PulseRifle.FireSound, NPC.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -252,14 +254,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     exoEnergy.noGravity = true;
                 }
 
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresPulseCannon1"), NPC.scale);
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase1", InfernumMode.CalamityMod), NPC.scale);
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase2", InfernumMode.CalamityMod), NPC.scale);
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase3", InfernumMode.CalamityMod), NPC.scale);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("AresPulseCannon1").Type, NPC.scale);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase1").Type, NPC.scale);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase2").Type, NPC.scale);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase3").Type, NPC.scale);
+                }
             }
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (NPC.Infernum().OptionalPrimitiveDrawer is null)
             {
@@ -278,7 +283,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (NPC.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            // Locate Ares' body as an NPC.
+            // Locate Ares' body as an npc.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Rectangle frame = NPC.frame;
@@ -291,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (int i = 1; i < numAfterimages; i += 2)
                 {
-                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
+                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(drawColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
                     Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }
@@ -299,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, NPC, texture, center, frame, origin);
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
-            Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(lightColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow").Value;
 
@@ -307,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (int i = 1; i < numAfterimages; i += 2)
                 {
-                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
+                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(drawColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
                     Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }

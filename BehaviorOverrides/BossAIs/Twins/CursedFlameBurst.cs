@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class CursedFlameBurst : ModProjectile
+    public class CursedFlameBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int Lifetime = 240;

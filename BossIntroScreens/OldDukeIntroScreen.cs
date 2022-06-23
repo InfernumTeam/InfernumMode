@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class OldDukeIntroScreen : BaseIntroScreen
+    public class OldDukeIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -35,6 +35,6 @@ namespace InfernumMode.BossIntroScreens
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<OldDuke>());
 
         // Sounds are played in the Old Duke's AI.
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

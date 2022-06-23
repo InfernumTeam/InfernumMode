@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
@@ -28,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color particle = Color.Lerp(Color.White, Color.Yellow, Projectile.identity % 6f / 6f * 0.6f) * Projectile.Opacity;
             float scaleFactor = MathHelper.Lerp(0.4f, 0.75f, Projectile.identity % 9f / 9f) * 0.11f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -75,10 +76,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     fire.alpha = 200;
                 }
             }
-            if (Main.rand.NextBool(5) && Time >= 15f)
+            if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(5) && Time >= 15f)
             {
-                Vector2 vector = Projectile.Center + flameDirection * FireMaxLength * 0.75f + Main.rand.NextVector2Square(-20f, 20f);
-                Gore smoke = Gore.NewGoreDirect(new InfernumSource(), vector, Vector2.Zero, Main.rand.Next(61, 64), 0.5f);
+                Vector2 smokeSpawnPosition = Projectile.Center + flameDirection * FireMaxLength * 0.75f + Main.rand.NextVector2Square(-20f, 20f);
+                Gore smoke = Gore.NewGoreDirect(Projectile.GetSource_FromAI(), smokeSpawnPosition, Vector2.Zero, Main.rand.Next(61, 64), 0.5f);
                 smoke.velocity *= 0.3f;
                 smoke.velocity += flameDirection * 4f;
             }
@@ -109,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             Vector2 startOfFlame = Projectile.Center - Main.screenPosition;
             float relativeFrameCompletion = Projectile.frameCounter / 40f;
-            Texture2D texture2D5 = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture2D5 = TextureAssets.Projectile[Projectile.type].Value;
             Color flameDrawColor;
             Color startingFlameColor = new(255, 255, 255, 0);
             Color midFlameColor = new(167, 232, 30, 40);

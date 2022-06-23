@@ -1,4 +1,4 @@
-﻿using CalamityMod.CalPlayer;
+using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
 using InfernumMode.OverridingSystem;
@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = (npc.rotation * 4f + npc.velocity.X * 0.04f * 1.25f) / 10f;
 
             // Repel from other swarmers.
-            if (attackState is 0f or 1f)
+            if (attackState == 0f || attackState == 1f)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {

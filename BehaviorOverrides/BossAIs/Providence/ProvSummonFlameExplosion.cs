@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
@@ -38,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             explosionColor = Color.Lerp(explosionColor, Color.White, Projectile.Opacity * 0.2f);
             explosionColor *= Projectile.Opacity * 0.7f;
@@ -56,6 +57,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
+        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.45f;
     }
 }

@@ -1,8 +1,10 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
@@ -23,7 +25,7 @@ namespace InfernumMode
 
         public const int Lifetime = 375;
 
-        public override string Texture => "CalamityMod/Items/SummonItems/ProfanedCoreUnlimited";
+        public override string Texture => "CalamityMod/Items/SummonItems/ProfanedCore";
 
         public override void SetDefaults()
         {
@@ -43,7 +45,7 @@ namespace InfernumMode
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
 
             // Rise upward and create a spiral of fire around the core.
-            if (Time is >= 70f and < 210f)
+            if (Time >= 70f && Time < 210f)
             {
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * 1.75f, 0.025f);
                 for (int i = 0; i < Math.Abs(Projectile.velocity.Y) * 1.6f + 1; i++)
@@ -71,11 +73,11 @@ namespace InfernumMode
 
             // Play a rumble sound.
             if (Time == 75f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/LeviathanSummonBase"), Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, Projectile.Center);
 
             if (Time >= 210f)
             {
-                float jitterFactor = Utils.Remap(Projectile.velocity.Length(), 2f, 0f, 0.4f, 3f);
+                float jitterFactor = MathHelper.Lerp(0.4f, 3f, Utils.GetLerpValue(0f, 2f, Projectile.velocity.Length(), true));
 
                 Projectile.velocity *= 0.96f;
                 Projectile.Center += Main.rand.NextVector2Circular(jitterFactor, jitterFactor);
@@ -101,10 +103,13 @@ namespace InfernumMode
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 16f;
 
             // Make the crystal shatter.
-            SoundEngine.PlaySound(SoundLoader.CustomSoundType, -1, -1, SoundLoader.GetSoundSlot(InfernumMode.CalamityMod, "Sounds/NPCKilled/ProvidenceDeath"));
+            SoundEngine.PlaySound(Providence.DeathSound, Projectile.Center);
 
-            for (int i = 1; i <= 4; i++)
-                Gore.NewGore(new InfernumSource(), Projectile.Center, Main.rand.NextVector2Circular(8f, 8f), Utilities.GetGoreID($"ProfanedCoreGore{i}", InfernumMode.Instance), Projectile.scale);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                for (int i = 1; i <= 4; i++)
+                    Gore.NewGore(Projectile.GetSource_Death(), Projectile.Center, Main.rand.NextVector2Circular(8f, 8f), Mod.Find<ModGore>($"ProfanedCoreGore{i}").Type, Projectile.scale);
+            }
 
             // Emit fire.
             for (int i = 0; i < 32; i++)
@@ -135,9 +140,9 @@ namespace InfernumMode
                     for (int j = WorldSaveSystem.ProvidenceArena.Top; j < WorldSaveSystem.ProvidenceArena.Bottom; j++)
                     {
                         Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
-                        if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]))
+                        if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                         {
-                            if (!validTiles.Contains(tile.type))
+                            if (!validTiles.Contains(tile.TileType))
                                 WorldGen.KillTile(i, j);
                         }
                     }
@@ -151,7 +156,7 @@ namespace InfernumMode
 
             for (int i = 0; i < 8; i++)
             {
-                Color color = Color.Lerp(new(1f, 0.62f, 0f, 0f), Color.White, (float)Math.Pow(Projectile.Opacity, 1.63)) * Projectile.Opacity;
+                Color color = Color.Lerp(new Color(1f, 0.62f, 0f, 0f), Color.White, (float)Math.Pow(Projectile.Opacity, 1.63)) * Projectile.Opacity;
                 Vector2 drawOffset = (Time * MathHelper.TwoPi / 67f + MathHelper.TwoPi * i / 8f).ToRotationVector2() * (1f - Projectile.Opacity) * 75f;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);

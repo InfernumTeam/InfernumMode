@@ -1,6 +1,11 @@
 using CalamityMod.Events;
+using CalamityMod.Items.Tools;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -97,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create the shield.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
             {
-                int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
+                int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
                 Main.projectile[shield].ai[0] = npc.whoAmI;
                 hasCreatedShield = 1f;
             }
@@ -209,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                 if (attackTimer > 210f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[3] == 0f)
                     {
@@ -411,7 +416,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         SoundEngine.PlaySound(SoundID.Item101, target.Center);
                     }
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                 }
 
                 frameType = (int)PrimeFrameType.Spikes;
@@ -450,10 +455,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Play a telegraph sound prior to firing.
             if (attackTimer == 5f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             if (attackTimer == shootDelay - 35f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
             // Release the lasers from eyes.
             if (attackTimer == shootDelay)
@@ -536,7 +541,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create a bunch of scenic lightning and decide the laser direction.
             if (attackTimer == lightningCreationDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 6; i++)
@@ -597,8 +602,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Roar as a telegraph.
                 if (attackTimer == 130f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 }
                 if (attackTimer > 95f)
                     frameType = (int)PrimeFrameType.OpenMouth;
@@ -688,7 +693,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Release a bunch of tesla orb bombs around the target.
             if (attackTimer == slowdownTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), target.Center);
+                SoundEngine.PlaySound(Karasawa.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < bombCount; i++)
@@ -758,7 +763,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     npc.velocity.Y -= 10f;
                     npc.netUpdate = true;
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
                 }
 
                 // Release lasers upward.
@@ -822,7 +827,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D eyeGlowTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/PrimeEyes");
+            Texture2D eyeGlowTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeEyes").Value;
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             for (int i = 9; i >= 0; i -= 2)
@@ -862,7 +867,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[2];
-                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 Player target = Main.player[npc.target];
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
@@ -894,7 +899,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // slope of laser = (p2.y - p0.y) / (p2.x - p0.x) = 0.187266
                 // d = arctan(slope of laser) - arctan(slope of telegraph) = -0.0586534
                 float angularDiscrepancy = -0.0586534f;
-                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);

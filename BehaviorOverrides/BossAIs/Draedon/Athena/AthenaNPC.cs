@@ -11,6 +11,7 @@ using CalamityMod.UI;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.GlobalInstances;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -372,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             // Play the transition sound at the start.
             if (FinalPhaseAnimationTime == 3f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), Target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, Target.Center);
 
             // Clear away all lasers and laser telegraphs.
             if (FinalPhaseAnimationTime == 3f)
@@ -441,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // The player can technically teleport out of the circle, but doing so prevents seeing the boss.
             if (AttackTimer == teleportTime + circleSummonDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThunderStrike"), NPC.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExowlCircleSummonBoom>(), 0, 0f);
@@ -470,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // Determine if Athena should enrage.
             if (AttackTimer >= teleportTime + circleSummonDelay + 60f && !Target.WithinRange(NPC.Center, circleRadius + 50f) && !Enraged)
             {
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), Target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, Target.Center);
                 Enraged = true;
             }
 
@@ -753,7 +754,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 // Determine if Athena should enrage.
                 if (!Target.WithinRange(NPC.Center, 2500f) && !Enraged)
                 {
-                    SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), Target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, Target.Center);
                     Enraged = true;
                 }
 
@@ -1170,9 +1171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (DeathAnimationTimer == implosionRingLifetime)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
-                var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), NPC.Center);
-                if (sound != null)
-                    CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, NPC.Center);
             }
 
             DeathAnimationTimer++;

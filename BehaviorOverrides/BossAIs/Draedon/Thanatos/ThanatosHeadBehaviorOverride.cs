@@ -1,11 +1,16 @@
 using CalamityMod;
+using CalamityMod.Items.Tools;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -340,9 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 int thanatosBodyID = ModContent.NPCType<ThanatosBody2>();
 
                 // Play an explosion sound.
-                var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
-                if (sound != null)
-                    CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
 
                 Color[] explosionColorPalette = (Color[])CalamityUtils.ExoPalette.Clone();
                 for (int j = 0; j < explosionColorPalette.Length; j++)
@@ -380,7 +383,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == 720f - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer > 720f)
                 SelectNextAttack(npc);
@@ -453,7 +456,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Play a telegraph sound.
                 if (npc.WithinRange(hoverDestination, 1400f) && attackTimer > 35f && attackTimer < hoverRedirectTime - 90f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, npc.Center);
                     attackTimer = hoverRedirectTime - 90f;
                     npc.netUpdate = true;
                 }
@@ -473,7 +476,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Play a telegraph sound and release sparks after the charge begins.
             if (attackTimer == hoverRedirectTime + 1f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
+                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && canFireSparks)
                 {
                     for (int i = 0; i < 18; i++)
@@ -490,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (chargeCounter >= chargeCount - 1f && attackTimer == hoverRedirectTime + 1f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer > hoverRedirectTime + chargeTime)
             {
@@ -553,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == 600f - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
@@ -665,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime)
                 SelectNextAttack(npc);
@@ -738,7 +741,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a telegraph sound to alert the player of the impending charge.
             if (attackTimer == slowdownTime + chargePreparationTime / 2)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
 
             // Begin the charge.
             if (attackTimer >= slowdownTime + chargePreparationTime && attackTimer < slowdownTime + chargePreparationTime + redirectTime)
@@ -780,7 +783,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             // Perform the attack again if necessary.
             if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay)
@@ -853,7 +856,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Create light telegraphs.
                 if (attackTimer == initialRedirectTime + 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/CrystylCharge"), npc.Center);
+                    SoundEngine.PlaySound(CrystylCrusher.ChargeSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < totalLightRays; i++)
@@ -879,7 +882,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Create a massive laser.
             if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserFireDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
+                SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -901,7 +904,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
             {
@@ -927,7 +930,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a telegraph before the attack begins as a warning.
             if (attackTimer == 1f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, target.Center);
 
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
@@ -962,7 +965,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == attackTime + cooloffTime - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
 
             if (attackTimer > attackTime + cooloffTime)
                 SelectNextAttack(npc);
@@ -1061,10 +1064,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (flySpeed > 15f)
                     flySpeed -= 0.065f;
 
-                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
+                if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
                     flySpeed += 0.16f;
 
-                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
+                if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
                     flySpeed -= 0.1f;
 
                 flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
@@ -1086,7 +1089,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -1097,8 +1100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
-            bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
-                oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
+            bool wasCharging = oldAttackType is ThanatosHeadAttackType.AggressiveCharge or ThanatosHeadAttackType.MaximumOverdrive;
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
                 npc.ai[0] = (int)newAttack;
@@ -1159,11 +1161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 // Play a vent sound (sus).
                 if (Main.netMode != NetmodeID.Server && npc.frame.Y == frameHeight * (finalFrame - 1))
-                {
-                    SoundEffectInstance sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
-                    if (sound != null)
-                        sound.Volume *= 0.4f;
-                }
+                    SoundEngine.PlaySound(ThanatosHead.VentSound with { Volume = 0.4f }, npc.Center);
 
                 if (npc.frame.Y >= frameHeight * finalFrame)
                     npc.frame.Y = frameHeight * finalFrame;
@@ -1184,7 +1182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosHeadGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosHeadGlow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             npc.ModNPC<ThanatosHead>().SmokeDrawer.DrawSet(npc.Center);
             return false;

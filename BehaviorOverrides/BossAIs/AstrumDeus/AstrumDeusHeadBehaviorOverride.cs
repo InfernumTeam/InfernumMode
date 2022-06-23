@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -650,7 +651,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Play an acoustic indicator prior to firing as a charge.
             if (attackTimer == fireDelay - 120f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Release a plasma beam periodically.
             if (!cannotFireAnymore && attackTimer >= fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) == 0)

@@ -10,6 +10,7 @@ using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -295,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 46.5f));
             if (phaseTransitionAnimationTime == pupilPopoffTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int lensType = ModContent.ProjectileType<BrokenApolloLens>();
@@ -304,16 +305,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         lensType = ModContent.ProjectileType<BrokenArtemisLens>();
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(npc.Center + lensDirection * 70f, lensDirection * 24f, lensType, 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + lensDirection * 70f, lensDirection * 24f, lensType, 0, 0f);
                     npc.netUpdate = true;
                 }
             }
 
             if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), npc.Center);
+                SoundEngine.PlaySound(GatlingLaser.FireSound, npc.Center);
 
             if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
+                SoundEngine.PlaySound(GatlingLaser.FireEndSound, npc.Center);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
@@ -426,9 +427,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 // Create a massive impact explosion and release sparks everywhere.
                 if (npc.type == ModContent.NPCType<Apollo>())
                 {
-                    var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
-                    if (sound != null)
-                        CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
 
                     GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, CalamityUtils.ExoPalette, 3f, 90));
                     for (int i = 0; i < 40; i++)
@@ -474,7 +473,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f && npc.type == ModContent.NPCType<Apollo>())
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
         }
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
@@ -667,10 +666,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
 
-                    var flameSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
-                    if (flameSound != null)
-                        flameSound.Volume = MathHelper.Clamp(flameSound.Volume * 1.5f, 0f, 1f);
-
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), 560, 0f);
@@ -1104,7 +1100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Also determine which direction Artemis will spin in.
                     if (attackTimer == 1f)
                     {
-                        SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, target.Center);
                         hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
                         npc.netUpdate = true;
                     }
@@ -1248,11 +1244,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
-                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), target.Center);
+                            SoundEngine.PlaySound(GatlingLaser.FireSound, target.Center);
 
                         // Play the laser fire loop.
                         if (attackTimer >= 15f && attackTimer % 70f == 20f && attackTimer < shootTime)
-                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
+                            SoundEngine.PlaySound(GatlingLaser.FireLoopSound, target.Center);
 
                         bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime;
                         if (shouldFire)
@@ -1460,7 +1456,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Apollo>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
             int numAfterimages = npc.ModNPC<Apollo>().ChargeComboFlash > 0f ? 0 : 5;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
@@ -1537,7 +1533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 }
             }
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
             if (CalamityConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < numAfterimages; i += 2)

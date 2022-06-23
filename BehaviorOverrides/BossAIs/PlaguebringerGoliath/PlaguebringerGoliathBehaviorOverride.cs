@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -177,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        SoundEngine.PlaySound(PlaguebringerBoss.DashSound, target.Center);
                     }
                 }
                 else
@@ -423,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        SoundEngine.PlaySound(PlaguebringerBoss.DashSound, target.Center);
                     }
                 }
                 else
@@ -515,7 +517,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        SoundEngine.PlaySound(PlaguebringerBoss.DashSound, target.Center);
                     }
                 }
                 else
@@ -667,7 +669,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        SoundEngine.PlaySound(PlaguebringerBoss.DashSound, target.Center);
                     }
                 }
                 else
@@ -730,7 +732,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 }
 
                 if (bombingTimer == bombingDelay)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TankCannon"), target.Center);
+                    SoundEngine.PlaySound(HandheldTank.UseSound, target.Center);
 
                 if (bombingTimer > bombingDelay + 90f)
                 {
@@ -760,7 +762,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueWave>(), 0, 0f);
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
 
             // Do initializations.
@@ -791,7 +793,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        SoundEngine.PlaySound(PlaguebringerBoss.DashSound, target.Center);
                     }
                 }
                 else
@@ -865,7 +867,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (attackTimer == 1f)
             {
                 Utilities.DisplayText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 4; i++)
@@ -965,11 +967,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             bool charging = npc.localAI[0] == (int)PBGFrameType.Charge;
             ref float previousFrameType = ref npc.localAI[1];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowTexture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathGlow");
+            Texture2D glowTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathGlow").Value;
             if (charging)
             {
-                texture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTex");
-                glowTexture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTexGlow");
+                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTex").Value;
+                glowTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTexGlow").Value;
             }
 
             // Reset frames when frame types change.

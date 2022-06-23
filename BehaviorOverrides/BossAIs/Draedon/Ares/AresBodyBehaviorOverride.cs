@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -9,6 +10,7 @@ using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -327,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer == 1f)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, implosionRingScale, implosionRingLifetime));
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), npc.Center);
+                SoundEngine.PlaySound(AresBody.EnragedSound, npc.Center);
             }
 
             // Create particles that fly outward every frame.
@@ -362,9 +364,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer == implosionRingLifetime)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
-                var sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
-                if (sound != null)
-                    CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
             }
 
             deathAnimationTimer++;
@@ -392,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
 
             // Clear away all lasers and laser telegraphs.
             if (phaseTransitionAnimationTime == 3f)
@@ -609,7 +609,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Create laser bursts.
             if (attackTimer == shootDelay + telegraphTime - 1f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
 
                 // Create lightning bolts in the sky.
                 int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
@@ -649,7 +649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
 
                     // Create lightning bolts in the sky.
                     int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
@@ -670,7 +670,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (!npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 135f) && enraged == 0f)
             {
                 if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), target.Center);
+                    SoundEngine.PlaySound(AresBody.EnragedSound, target.Center);
 
                 // Have Draedon comment on the player's attempts to escape.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -852,7 +852,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     }
                     break;
                 case AresBodyFrameType.Laugh:
-                    if (currentFrame <= 35 || currentFrame >= 47)
+                    if (currentFrame is <= 35 or >= 47)
                         currentFrame = 36f;
 
                     if (npc.frameCounter >= 6D)
@@ -869,7 +869,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.frame = new Rectangle(npc.width * (int)(currentFrame / 8), npc.height * (int)(currentFrame % 8), npc.width, npc.height);
         }
 
-        public static MethodInfo DrawArmFunction = typeof(AresBody).GetMethod("DrawArm", BindingFlags.Public | BindingFlags.Instance);
+        internal static MethodInfo DrawArmFunction = typeof(AresBody).GetMethod("DrawArm", BindingFlags.Public | BindingFlags.Instance);
 
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
@@ -987,7 +987,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow").Value;
             if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
                 afterimageBaseColor = Color.White;
 
@@ -999,7 +999,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 float telegraphRotation = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphRotationIndex];
                 float telegraphScaleFactor = telegraphInterpolant * 1.2f;
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;

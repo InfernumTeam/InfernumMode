@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
@@ -762,7 +763,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Play a charge sound as a telegraph prior to firing.
             if (attackTimer == laserShootDelay - 155f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Adjust frames.
             frameType = Math.Abs(walkSpeed) > 0f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
@@ -771,7 +772,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (attackTimer == laserShootDelay - 5f)
             {
                 // Create a laserbeam fire sound effect.
-                SoundEngine.PlaySound(SoundID.Zombie, npc.Center, 104);
+                SoundEngine.PlaySound(SoundID.Zombie104, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

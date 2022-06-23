@@ -1,4 +1,5 @@
 using CalamityMod.NPCs;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -61,11 +62,7 @@ namespace InfernumMode.Skies
             }
 
             if (playSound && !Main.gamePaused)
-            {
-                var lightningSound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThunderStrike"), Main.LocalPlayer.Center);
-                if (lightningSound != null)
-                    lightningSound.Volume *= 0.5f;
-            }
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { Volume = 0.5f }, Main.LocalPlayer.Center);
         }
 
         public override void Update(GameTime gameTime)
@@ -111,8 +108,8 @@ namespace InfernumMode.Skies
                     spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, drawColor, 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
-            Texture2D flashTexture = ModContent.GetTexture("Terraria/Misc/VortexSky/Flash");
-            Texture2D boltTexture = ModContent.GetTexture("Terraria/Misc/VortexSky/Bolt");
+            Texture2D flashTexture = ModContent.Request<Texture2D>("Terraria/Misc/VortexSky/Flash").Value;
+            Texture2D boltTexture = ModContent.Request<Texture2D>("Terraria/Misc/VortexSky/Bolt").Value;
 
             // Draw lightning bolts.
             float spaceFade = Math.Min(1f, (Main.screenPosition.Y - 300f) / 300f);

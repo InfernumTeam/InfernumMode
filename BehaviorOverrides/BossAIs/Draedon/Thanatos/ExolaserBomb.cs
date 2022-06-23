@@ -1,4 +1,6 @@
 using CalamityMod;
+using CalamityMod.Items.Tools;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -57,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 if (Projectile.timeLeft > 110)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/CrystylCharge"), Projectile.Center);
+                    SoundEngine.PlaySound(CrystylCrusher.ChargeSound, Projectile.Center);
                     Projectile.timeLeft = 110;
                 }
 
@@ -78,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
+            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
@@ -103,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 4.75f;
-                Texture2D twinkleTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/LargeStar");
+                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 
@@ -123,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 235, 105, 30f, 2.25f);
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/TeslaCannonFire"), Projectile.Center);
+            SoundEngine.PlaySound(TeslaCannon.FireSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
@@ -132,11 +134,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 34f);
                 Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
             }
-        }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Radius * 0.85f);

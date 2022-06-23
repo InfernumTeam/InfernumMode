@@ -877,6 +877,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 platformSpawnRate += 8;
                 totalCrystalsPerBurst++;
             }
+            
+            if (!Main.dayTime)
+            {
+                crystalBurstShootRate -= 5;
+                totalCrystalsPerBurst += 7;
+            }
 
             if (!Main.dayTime)
             {
@@ -994,7 +1000,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 9.6f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
-
+            
             if (!Main.dayTime)
             {
                 bladeRelaseRate -= 10;
@@ -1256,6 +1262,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             float speedBoost = (1f - lifeRatio) * 7.5f;
             float acceleration = (accelerationBoost + 1.15f) * speedFactor;
             float maxFlySpeed = (speedBoost + 17f) * speedFactor;
+            
+            // Fly faster at night.
+            if (!Main.dayTime)
+            {
+                maxFlySpeed *= 1.35f;
+                acceleration *= 1.35f;
+            }
 
             // Fly faster at night.
             if (!Main.dayTime)

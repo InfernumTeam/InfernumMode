@@ -10,13 +10,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class CondemnationArrowSCal : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-
+        public PrimitiveTrailCopy TrailDrawer = null;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Arrow");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 15;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 15;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
         }
 
         public override void SetDefaults()
@@ -60,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 end = start + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
                 Main.spriteBatch.DrawLineBetter(start, end, Color.Red, telegraphWidth);
             }
-            return true;
+            return true
         }
     }
 }

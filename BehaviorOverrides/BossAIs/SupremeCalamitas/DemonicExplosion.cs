@@ -16,7 +16,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public PrimitiveTrailCopy FireDrawer;
 
         public ref float Time => ref Projectile.ai[0];
+        
         public ref float Radius => ref Projectile.ai[1];
+        
         public override void SetStaticDefaults() => DisplayName.SetDefault("Demonic Explosion");
 
         public override void SetDefaults()
@@ -47,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public Color SunColorFunction(float completionRatio)
         {
-            Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
+            Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan
             return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 

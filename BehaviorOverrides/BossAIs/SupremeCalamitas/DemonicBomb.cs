@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
+using Terraria.Audio
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -19,7 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
-
         }
 
         public override void SetDefaults()
@@ -86,6 +85,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
+        public override bool? CanDamage() => false;
     }
 }

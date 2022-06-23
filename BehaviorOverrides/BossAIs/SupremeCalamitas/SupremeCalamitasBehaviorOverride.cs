@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Dusts;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -73,7 +72,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 if (SCal is null)
                     return 0f;
-
                 return SCal.ModNPC<SCalBoss>().shieldOpacity;
             }
             set
@@ -116,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 if (SCal is null)
                     return;
-
+                    
                 SCal.ModNPC<SCalBoss>().forcefieldScale = value;
             }
         }
@@ -303,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Fire the souls.
                 if ((attackTimer - shootDelay) % shootRate == shootRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath52, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath52, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -445,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
             }
         }
-
+        
         public static void DoBehavior_ExplosiveCharges(NPC npc, Player target, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             int chargeDelay = 50;
@@ -463,7 +461,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 explosionDelay -= 25;
                 chargeSpeed += 3.5f;
             }
-
             // Use the updraft animation.
             frameChangeSpeed = 0.2f;
             frameType = (int)SCalFrameType.UpwardDraft;

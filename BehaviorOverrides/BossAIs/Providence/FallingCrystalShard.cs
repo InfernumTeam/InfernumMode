@@ -56,6 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
+        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
     }
 }

@@ -12,10 +12,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
-using CrimulanSGSmall = CalamityMod.NPCs.SlimeGod.SlimeGodRunSplit;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using EbonianSGSmall = CalamityMod.NPCs.SlimeGod.SlimeGodSplit;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
+using CrimulanSGSmall = CalamityMod.NPCs.SlimeGod.SplitCrimulanSlimeGod;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
+using EbonianSGSmall = CalamityMod.NPCs.SlimeGod.SplitEbonianSlimeGod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -466,8 +466,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // Release abyss balls upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 20f == 19f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.15f;
@@ -537,8 +537,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // Release abyss balls upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.Y > 0f).ToDirectionInt() * 0.15f;

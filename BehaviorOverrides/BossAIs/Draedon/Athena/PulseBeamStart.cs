@@ -15,8 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
     {
         public int OwnerIndex
         {
-            get => (int)projectile.ai[1];
-            set => projectile.ai[1] = value;
+            get => (int)Projectile.ai[1];
+            set => Projectile.ai[1] = value;
         }
 
         public bool OwnerIsValid => Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AthenaNPC>();
@@ -34,43 +34,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override Color LightCastColor => Color.White;
 
         public override Texture2D LaserBeginTexture =>
-            ModContent.GetTexture(Texture);
+            ModContent.Request<Texture2D>(Texture).Value;
 
         public override Texture2D LaserMiddleTexture =>
-            ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle");
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle").Value;
 
         public override Texture2D LaserEndTexture =>
-            ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd");
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd").Value;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pulse Disintegration Beam");
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 5;
 
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 40;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 600;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 40;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 600;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override void AttachToSomething()
@@ -78,8 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (OwnerIsValid)
             {
                 Vector2 fireFrom = Main.npc[OwnerIndex].ModNPC<AthenaNPC>().MainTurretCenter;
-                fireFrom += projectile.velocity.SafeNormalize(Vector2.UnitY) * projectile.scale * 168f;
-                projectile.Center = fireFrom;
+                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * Projectile.scale * 168f;
+                Projectile.Center = fireFrom;
             }
 
             // Die of the owner is invalid in some way.
@@ -87,21 +87,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             else
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    projectile.Kill();
+                    Projectile.Kill();
                 return;
             }
 
             // Die if the owner is not performing Athena' deathray attack.
             if (Main.npc[OwnerIndex].ai[0] != (int)AthenaNPC.AthenaAttackType.AimedPulseLasers)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
         }
 
         public override void UpdateLaserMotion()
         {
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
         public override void PostAI()
@@ -111,10 +111,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             // Spawn dust at the end of the beam.
             int dustType = (int)CalamityDusts.PurpleCosmilite;
-            Vector2 dustCreationPosition = projectile.Center + projectile.velocity * (LaserLength - 14f);
+            Vector2 dustCreationPosition = Projectile.Center + Projectile.velocity * (LaserLength - 14f);
             for (int i = 0; i < 2; i++)
             {
-                float dustDirection = projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2;
+                float dustDirection = Projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2;
                 Vector2 dustVelocity = dustDirection.ToRotationVector2() * Main.rand.NextFloat(2f, 4f);
 
                 Dust redFlame = Dust.NewDustDirect(dustCreationPosition, 0, 0, dustType, dustVelocity.X, dustVelocity.Y, 0, default, 1f);
@@ -124,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             if (Main.rand.NextBool(5))
             {
-                Vector2 dustSpawnOffset = projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * projectile.width * 0.5f;
+                Vector2 dustSpawnOffset = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * Projectile.width * 0.5f;
 
                 Dust redFlame = Dust.NewDustDirect(dustCreationPosition + dustSpawnOffset - Vector2.One * 4f, 8, 8, dustType, 0f, 0f, 100, default, 1.5f);
                 redFlame.velocity *= 0.5f;
@@ -134,44 +134,44 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             }
 
             // Determine frames.
-            projectile.frameCounter++;
-            if (projectile.frameCounter % 5f == 0f)
-                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter % 5f == 0f)
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (!OwnerIsValid)
                 return false;
 
             // This should never happen, but just in case.
-            if (projectile.velocity == Vector2.Zero || projectile.localAI[0] < 2f)
+            if (Projectile.velocity == Vector2.Zero || Projectile.localAI[0] < 2f)
                 return false;
 
             Color beamColor = LaserOverlayColor;
-            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
 
             // Start texture drawing.
             Main.spriteBatch.Draw(LaserBeginTexture,
-                             projectile.Center - Main.screenPosition,
+                             Projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
-                             projectile.rotation,
+                             Projectile.rotation,
                              LaserBeginTexture.Size() / 2f,
-                             projectile.scale,
+                             Projectile.scale,
                              SpriteEffects.None,
                              0);
 
             // Prepare things for body drawing.
             float laserBodyLength = LaserLength + middleFrameArea.Height;
-            Vector2 centerOnLaser = projectile.Center + projectile.velocity * -5f;
+            Vector2 centerOnLaser = Projectile.Center + Projectile.velocity * -5f;
 
             // Body drawing.
             if (laserBodyLength > 0f)
             {
-                float laserOffset = middleFrameArea.Height * projectile.scale;
+                float laserOffset = middleFrameArea.Height * Projectile.scale;
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
@@ -179,14 +179,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
-                                     projectile.rotation,
+                                     Projectile.rotation,
                                      LaserMiddleTexture.Size() * 0.5f,
-                                     projectile.scale,
+                                     Projectile.scale,
                                      SpriteEffects.None,
                                      0);
                     incrementalBodyLength += laserOffset;
-                    centerOnLaser += projectile.velocity * laserOffset;
-                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[projectile.type];
+                    centerOnLaser += Projectile.velocity * laserOffset;
+                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[Projectile.type];
                     if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
                         middleFrameArea.Y = 0;
                 }
@@ -197,19 +197,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                              laserEndCenter,
                              endFrameArea,
                              beamColor,
-                             projectile.rotation,
+                             Projectile.rotation,
                              LaserEndTexture.Size() * 0.5f,
-                             projectile.scale,
+                             Projectile.scale,
                              SpriteEffects.None,
                              0);
             return false;
         }
 
-        public override bool CanHitPlayer(Player target) => OwnerIsValid && projectile.scale >= 0.5f;
+        public override bool CanHitPlayer(Player target) => OwnerIsValid && Projectile.scale >= 0.5f;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

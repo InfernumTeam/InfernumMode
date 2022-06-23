@@ -15,7 +15,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasRun3;
+using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
 using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
-            int brotherCount = NPC.CountNPCS(ModContent.NPCType<CalamitasRun>()) + NPC.CountNPCS(ModContent.NPCType<CalamitasRun2>());
+            int brotherCount = NPC.CountNPCS(ModContent.NPCType<Cataclysm>()) + NPC.CountNPCS(ModContent.NPCType<Catastrophe>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.Infernum().ExtraAI[7];
             ref float transitionState = ref npc.ai[2];
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     attackTimer = 0f;
                     SelectNewAttack(npc);
 
-                    int explosion = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                    int explosion = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                     Main.projectile[explosion].ai[0] = NPCID.Retinazer;
                 }
 
@@ -230,10 +230,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f && transitionState == 1f)
                 {
                     // Summon Catatrophe and Cataclysm.
-                    int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());
+                    int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
                     CalamityUtils.BossAwakenMessage(cataclysm);
 
-                    int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun2>());
+                    int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
                     CalamityUtils.BossAwakenMessage(catastrophe);
                 }
 
@@ -528,7 +528,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create a thunder sound and before the lightning comes down.
             if (attackTimer == attackDelay - 25f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                SoundEngine.PlaySound(new SoundStyle("CalamityMod/Sounds/Custom/LightningStrike"), target.Center);
                 npc.netUpdate = true;
             }
 
@@ -687,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
@@ -924,7 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Vector2 drawPosition = npc.position + origin - Main.screenPosition;
             spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow").Value;
             Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
 
             if (CalamityConfig.Instance.Afterimages)

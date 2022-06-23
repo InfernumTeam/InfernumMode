@@ -5,8 +5,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class BrimstoneElementalIntroScreen : BaseIntroScreen
@@ -24,6 +22,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<BrimstoneElemental>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/BrimflameRecharge");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/BrimflameRecharge");
     }
 }

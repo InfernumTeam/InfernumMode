@@ -5,8 +5,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class LeviathanIntroScreen : BaseIntroScreen
@@ -27,6 +25,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Leviathan>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/LeviathanRoarCharge");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/LeviathanRoarCharge");
     }
 }

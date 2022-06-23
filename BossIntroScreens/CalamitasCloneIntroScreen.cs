@@ -5,8 +5,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class CalamitasCloneIntroScreen : BaseIntroScreen
@@ -21,11 +19,11 @@ namespace InfernumMode.BossIntroScreens
 
         public override float TextScale => MajorBossTextScale;
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CalamitasRun3>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CalamitasClone>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/ProvidenceSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

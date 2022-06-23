@@ -35,6 +35,6 @@ namespace InfernumMode.BossIntroScreens
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<OldDuke>());
 
         // Sounds are played in the Old Duke's AI.
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

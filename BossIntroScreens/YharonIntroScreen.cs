@@ -7,8 +7,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class YharonIntroScreen : BaseIntroScreen
@@ -33,14 +31,14 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Orange.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Yellow.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/YharonRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/YharonRoar");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

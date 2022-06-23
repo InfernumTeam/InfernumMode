@@ -34,6 +34,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<RavagerBody>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

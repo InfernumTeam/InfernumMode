@@ -23,6 +23,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.SkeletronHead);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

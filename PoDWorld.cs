@@ -13,6 +13,7 @@ using Terraria.ModLoader.IO;
 
 using ModInstance = InfernumMode.InfernumMode;
 using Terraria.WorldBuilding;
+using Terraria.IO;
 
 namespace InfernumMode
 {
@@ -40,13 +41,11 @@ namespace InfernumMode
             if (InfernumMode)
                 downed.Add("fuckYouMode");
 
-            TagCompound tag = new();
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
             tag["ProvidenceArenaY"] = ProvidenceArena.Y;
             tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
-            return tag;
         }
         #endregion
 
@@ -58,18 +57,6 @@ namespace InfernumMode
             DraedonAttempts = tag.GetInt("DraedonAttempts");
             DraedonSuccesses = tag.GetInt("DraedonSuccesses");
             ProvidenceArena = new Rectangle(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
-        }
-        #endregion
-
-        #region LoadLegacy
-        public override void LoadLegacy(BinaryReader reader)
-        {
-            int loadVersion = reader.ReadInt32();
-            if (loadVersion == 0)
-            {
-                BitsByte flags = reader.ReadByte();
-                InfernumMode = flags[0];
-            }
         }
         #endregion
 
@@ -119,7 +106,7 @@ namespace InfernumMode
             if (finalIndex != -1)
             {
                 int currentFinalIndex = finalIndex;
-                tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", progress =>
+                tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", (progress, configuration) =>
                 {
                     progress.Message = "Constructing a temple for an ancient goddess";
                     GenerateProfanedShrine(progress);
@@ -127,7 +114,7 @@ namespace InfernumMode
             }
         }
 
-        public static void GenerateUndergroundDesertArea(GenerationProgress progress)
+        public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration configuration)
         {
             Vector2 cutoutAreaCenter = WorldGen.UndergroundDesertLocation.Center.ToVector2();
 
@@ -142,7 +129,7 @@ namespace InfernumMode
             }
         }
 
-        public static void GenerateUndergroundJungleArea(GenerationProgress progress)
+        public static void GenerateUndergroundJungleArea(GenerationProgress progress, GameConfiguration configuration)
         {
             bool success = false;
             while (!success)

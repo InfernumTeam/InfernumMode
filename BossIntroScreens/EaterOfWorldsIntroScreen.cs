@@ -23,6 +23,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.EaterofWorldsHead);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

@@ -7,8 +7,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class SCalIntroScreen : BaseIntroScreen
@@ -33,14 +31,14 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Red.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Orange.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("Terraria/Misc/Perlin");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/SupremeCalamitasSpawn");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

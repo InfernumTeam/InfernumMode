@@ -8,8 +8,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class AstrumAureusIntroScreen : BaseIntroScreen
@@ -28,14 +26,14 @@ namespace InfernumMode.BossIntroScreens
         {
             Color gleamColor = Color.Lerp(new Color(255, 164, 94), new Color(109, 242, 196), (float)Math.Cos(Main.GlobalTimeWrappedHourly * 6f) * 0.5f + 0.5f);
             shader.Parameters["uColor"].SetValue(gleamColor.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/DiagonalGleam");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AstrumAureus>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.Instance.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/ThanatosTransition");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Sounds/Custom/ThanatosTransition");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit4;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

@@ -6,8 +6,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class DestroyerIntroScreen : BaseIntroScreen
@@ -25,14 +23,14 @@ namespace InfernumMode.BossIntroScreens
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(0.02f, 0.54f, 0.91f));
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/DiagonalGleam");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.TheDestroyer);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.Instance.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/ThanatosTransition");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Sounds/Custom/ThanatosTransition");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit4;
+        public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

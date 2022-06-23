@@ -10,7 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CrabulonNPC = CalamityMod.NPCs.Crabulon.CrabulonIdle;
+using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon

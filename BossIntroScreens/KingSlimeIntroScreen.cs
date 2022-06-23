@@ -4,8 +4,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
     public class KingSlimeIntroScreen : BaseIntroScreen
@@ -24,6 +22,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.KingSlime);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SlimeGodPossession");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/SlimeGodPossession");
     }
 }

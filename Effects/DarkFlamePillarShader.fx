@@ -14,6 +14,7 @@ float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
 matrix uWorldViewProjection;
+float4 uShaderSpecificData;
 
 struct VertexShaderInput
 {

@@ -80,6 +80,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Not doing this will result in the arena not being drawn if far from the target.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
+            // Prevent natural despawns.
+            npc.timeLeft = 72000;
+
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];

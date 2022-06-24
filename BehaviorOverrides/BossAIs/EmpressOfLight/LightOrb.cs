@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void AI()
         {
-            int spiralReleaseRate = 25;
+            int spiralReleaseRate = 13;
             if (Owner is null)
             {
                 Projectile.Kill();

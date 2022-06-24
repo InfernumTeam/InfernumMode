@@ -66,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             if (npc.ai[3] == 0f)
             {
                 crownIsAttached = 1f;
+                npc.RemoveWaterSlowness();
                 npc.ai[3] = 1f;
                 npc.netUpdate = true;
             }
@@ -104,6 +105,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             int gelSlamCount = 7;
             float gelShootSpeed = 9.5f;
             ref float slamCounter = ref npc.Infernum().ExtraAI[0];
+            ref float readyToCollideWithTiles = ref npc.Infernum().ExtraAI[1];
+
+            npc.noTileCollide = false;
 
             // Hover into position.
             if (attackTimer < hoverTime)
@@ -112,6 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
+                npc.noTileCollide = true;
                 npc.damage = 0;
 
                 // Stop in place when close to the hover position.
@@ -128,12 +133,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             else if (attackTimer < hoverTime + slamDelay)
             {
                 npc.velocity = -Vector2.UnitY * Utils.GetLerpValue(0f, slamDelay - 6f, attackTimer - hoverTime, true) * 6f;
-                frameType = (int)(int)QueenSlimeFrameType.SlamDownward;
+                frameType = (int)QueenSlimeFrameType.SlamDownward;
             }
 
             // Slam downward.
             else if (attackTimer < hoverTime + slamDelay + slamTime)
             {
+                if (readyToCollideWithTiles == 0f && npc.Bottom.Y > target.Bottom.Y)
+                {
+                    readyToCollideWithTiles = 1f;
+                    npc.netUpdate = true;
+                }
+
+                npc.noTileCollide = readyToCollideWithTiles == 0f;
                 npc.velocity.X *= 0.8f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, 0f, 10f);
                 for (int i = 0; i < 5; i++)
@@ -170,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Sit in place after slamming.
             else
             {
-                while (Collision.SolidCollision(npc.Bottom, 1, 1))
+                while (Collision.SolidCollision(npc.Bottom, 1, 1) && !npc.noTileCollide)
                     npc.position.Y--;
                 npc.position = (npc.position / 16f).Floor() * 16f;
                 if (!OnSolidGround(npc))
@@ -180,6 +192,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (attackTimer >= hoverTime + slamDelay + slamTime + postSlamSitTime)
                 {
+                    npc.noTileCollide = false;
+                    readyToCollideWithTiles = 0f;
+
                     slamCounter++;
                     if (slamCounter >= slamCount)
                         SelectNextAttack(npc);
@@ -281,6 +296,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             ref float hasSummonedCrown = ref npc.Infernum().ExtraAI[0];
             ref float crownShouldReturn = ref npc.Infernum().ExtraAI[1];
             ref float slamCounter = ref npc.Infernum().ExtraAI[2];
+            ref float readyToCollideWithTiles = ref npc.Infernum().ExtraAI[3];
+
+            npc.noTileCollide = false;
 
             // Sit in place if the crown should return.
             crownShouldReturn = (slamCounter >= slamCount).ToInt();
@@ -303,6 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
+                npc.noTileCollide = true;
                 npc.damage = 0;
 
                 // Stop in place when close to the hover position.
@@ -325,6 +344,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Slam downward.
             else if (attackTimer < hoverTime + slamDelay + slamTime)
             {
+                if (readyToCollideWithTiles == 0f && npc.Bottom.Y > target.Bottom.Y)
+                {
+                    readyToCollideWithTiles = 1f;
+                    npc.netUpdate = true;
+                }
+
+                npc.noTileCollide = readyToCollideWithTiles == 0f;
                 npc.velocity.X *= 0.8f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, 0f, 10f);
                 for (int i = 0; i < 3; i++)
@@ -349,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Sit in place after slamming.
             else
             {
-                while (Collision.SolidCollision(npc.Bottom, 1, 1))
+                while (Collision.SolidCollision(npc.Bottom, 1, 1) && !npc.noTileCollide)
                     npc.position.Y--;
                 npc.position = (npc.position / 16f).Floor() * 16f;
                 if (!OnSolidGround(npc))
@@ -359,6 +385,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (attackTimer >= hoverTime + slamDelay + slamTime + postSlamSitTime)
                 {
+                    npc.noTileCollide = false;
+                    readyToCollideWithTiles = 0f;
                     attackTimer = 0f;
                     npc.netUpdate = true;
                 }

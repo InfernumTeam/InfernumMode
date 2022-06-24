@@ -1,7 +1,9 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,6 +12,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 	public class QueenSlimeCrown : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public ref float ChargeGlowTelegraphInterpolant => ref Projectile.localAI[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Queen Slime's Crown");
@@ -38,6 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 return;
             }
 
+            // Reset damage and the charge glow interpolant.
+            ChargeGlowTelegraphInterpolant = 0f;
             if (Projectile.Calamity().defDamage == 0)
                 Projectile.Calamity().defDamage = Projectile.damage;
 
@@ -77,6 +84,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 }
                 return;
             }
+
+            // Glow before charging.
+            ChargeGlowTelegraphInterpolant = Utils.GetLerpValue(100f, 165f, Time, true);
+            ChargeGlowTelegraphInterpolant = Utils.GetLerpValue(0f, 0.4f, ChargeGlowTelegraphInterpolant, true) * Utils.GetLerpValue(1f, 0.8f, ChargeGlowTelegraphInterpolant, true);
 
             // Hover into position near the target.
             if (Time < 150f)
@@ -162,6 +173,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Color backglowColor = new Color(1f, 0.24f, 1f, 0f) * Projectile.Opacity * ChargeGlowTelegraphInterpolant * 0.65f;
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * ChargeGlowTelegraphInterpolant * 10f;
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, backglowColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            }
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }

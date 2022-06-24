@@ -41,17 +41,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         #region Constants and Attack Patterns
 
-        public static bool ShouldBeEnraged => Main.dayTime;
+        public static bool ShouldBeEnraged => Main.dayTime && !BossRushEvent.BossRushActive;
 
         public const int SecondPhaseFadeoutTime = 90;
 
         public const int SecondPhaseFadeBackInTime = 90;
 
-        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase2LifeRatio = 0.8f;
 
-        public const float Phase3LifeRatio = 0.4f;
+        public const float Phase3LifeRatio = 0.45f;
 
-        public const float Phase4LifeRatio = 0.15f;
+        public const float Phase4LifeRatio = 0.2f;
 
         public const float BorderWidth = 6000f;
 
@@ -363,8 +363,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase2(npc))
             {
                 boltReleaseRate--;
-                boltSpeed += 2f;
+                boltSpeed += 4f;
             }
+
+            if (ShouldBeEnraged)
+                boltSpeed += 8f;
 
             if (BossRushEvent.BossRushActive)
                 boltSpeed *= 1.5f;
@@ -451,7 +454,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 if (ShouldBeEnraged)
                 {
-                    boltCount = 21f;
+                    boltCount = 28f;
                     totalHandsToShootFrom = 2f;
                 }
 
@@ -564,7 +567,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             if (ShouldBeEnraged)
+            {
+                if (boltReleaseRate >= 5)
+                    boltReleaseRate -= 4;
                 chargeSpeed += 8f;
+            }
 
             if (BossRushEvent.BossRushActive)
             {
@@ -681,7 +688,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 lanceCreationRate -= 12;
 
             if (ShouldBeEnraged)
-                lanceCreationRate = Utils.Clamp(lanceCreationRate - 8, 28, 150);
+                lanceCreationRate = Utils.Clamp(lanceCreationRate - 12, 24, 150);
 
             // Hover above the target.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 310f;
@@ -754,11 +761,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase3(npc))
             {
                 prismCreationRate -= 5;
-                boltReleaseRate -= 5;
+                boltReleaseRate -= 9;
             }
 
             if (ShouldBeEnraged)
-                boltReleaseRate -= 7;
+                boltReleaseRate -= 13;
 
             // Hover above the target and enter the wisp form.
             if (attackTimer <= wispFormEnterTime)
@@ -845,6 +852,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 totalSwordsThatShouldAttack += 2;
                 lanceReleaseRate -= 35;
                 lanceCount += 3;
+            }
+
+            if (ShouldBeEnraged)
+            {
+                attackTimePerSword -= 24;
+                lanceWallSize += 210f;
             }
 
             if (BossRushEvent.BossRushActive)
@@ -1074,11 +1087,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 360f;
 
             if (ShouldBeEnraged)
-                lanceBurstReleaseRate -= 8;
+                lanceBurstReleaseRate -= 15;
 
             if (BossRushEvent.BossRushActive)
             {
-                lanceBurstReleaseRate -= 8;
+                lanceBurstReleaseRate -= 14;
                 lanceSpawnOffset += 300f;
             }
 

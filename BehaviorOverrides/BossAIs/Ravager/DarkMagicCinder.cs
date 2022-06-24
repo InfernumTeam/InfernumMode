@@ -2,8 +2,11 @@ using CalamityMod;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
@@ -14,6 +17,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             DisplayName.SetDefault("Dark Magic Cinder");
             Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
@@ -42,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.75f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
 
         public override Color? GetAlpha(Color lightColor) => new Color(1f, 0.1f, 1f, 0.4f) * Projectile.Opacity;
 
@@ -57,6 +62,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 dust.velocity = Main.rand.NextVector2Circular(5f, 5f);
                 dust.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Vector2 origin = frame.Size() * 0.5f;
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            }
+            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
+            return false;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 120);

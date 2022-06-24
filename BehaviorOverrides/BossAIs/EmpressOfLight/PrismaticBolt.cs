@@ -139,7 +139,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 float afterimageRot = Projectile.oldRot[i];
                 Vector2 drawPos = Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-                Color afterimageColor = MyColor * ((Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
+                Color baseColor = i <= 1 ? Color.White : MyColor;
+                Color afterimageColor = baseColor * ((Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
                 Main.spriteBatch.Draw(texture, drawPos, null, afterimageColor, afterimageRot, origin, Projectile.scale, 0, 0f);
             }
 

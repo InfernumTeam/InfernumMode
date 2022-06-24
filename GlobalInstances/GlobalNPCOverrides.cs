@@ -400,6 +400,16 @@ namespace InfernumMode.GlobalInstances
             BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
         }
 
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            switch (npc.type)
+            {
+                case NPCID.BloodNautilus:
+                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 85, 105);
+                    break;
+            }
+        }
+
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
             if (!InfernumMode.CanUseCustomAIs)

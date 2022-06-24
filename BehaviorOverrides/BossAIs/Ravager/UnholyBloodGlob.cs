@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
 
-        public override bool CanHitPlayer(Player target) => Projectile.localAI[1] <= 900f && Projectile.localAI[1] > 45f;
+        public override bool CanHitPlayer(Player target) => Projectile.localAI[1] is <= 900f and > 45f;
 
         public override Color? GetAlpha(Color lightColor)
         {

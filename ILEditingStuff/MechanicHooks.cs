@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -7,6 +8,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.UI;
 using CalamityMod.World;
+using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.Systems;
@@ -202,6 +204,25 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => ExoMechSelectionUIDraw -= DrawSelectionUI;
     }
 
+    public class NerfAdrenalineHook : IHookEdit
+    {
+        internal static void NerfAdrenalineRates(ILContext context)
+        {
+            ILCursor c = new(context);
+
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<CalamityPlayer>("adrenaline")))
+                return;
+            if (!c.TryGotoPrev(MoveType.After, i => i.MatchLdloc(out _)))
+                return;
+
+            c.EmitDelegate<Func<float>>(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f);
+            c.Emit(OpCodes.Div);
+        }
+
+        public void Load() => UpdateRippers += NerfAdrenalineRates;
+        public void Unload() => UpdateRippers -= NerfAdrenalineRates;
+    }
+
     public class DrawBlackEffectHook : IHookEdit
     {
         public static List<int> DrawCacheBeforeBlack = new(Main.maxProjectiles);
@@ -303,13 +324,12 @@ namespace InfernumMode.ILEditingStuff
         {
             var c = new ILCursor(instructionContext);
 
-            if (!c.TryGotoNext(i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
                 return;
 
-            c.Index++;
             c.EmitDelegate<Action>(() =>
             {
-                if (NPC.AnyNPCs(NPCID.MoonLordCore) && WorldSaveSystem.InfernumMode)
+                if (NPC.AnyNPCs(NPCID.MoonLordCore) && InfernumMode.CanUseCustomAIs)
                     Main.LocalPlayer.noBuilding = true;
             });
         }
@@ -323,7 +343,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
-            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && WorldSaveSystem.InfernumMode)
+            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && InfernumMode.CanUseCustomAIs)
                 return slainMonsterID == minibossID ? 99999 : 0;
 
             return orig(slainMonsterID);

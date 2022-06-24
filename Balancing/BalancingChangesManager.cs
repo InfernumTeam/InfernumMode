@@ -30,6 +30,8 @@ namespace InfernumMode.Balancing
         internal static List<IBalancingRule[]> UniversalBalancingChanges = null;
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges = null;
 
+        public const float AdrenalineChargeTimeFactor = 1.6f;
+
         internal static void Load()
         {
             int corrosiveSpineCloud1 = ProjectileType<Corrocloud1>();

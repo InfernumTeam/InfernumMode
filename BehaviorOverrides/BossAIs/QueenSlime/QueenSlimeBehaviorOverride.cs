@@ -374,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             float wrappedattackTimer = attackTimer % burstReleaseRate;
 
             // Hover above the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 25f;
             float distanceFromDestination = npc.Distance(hoverDestination);
 

@@ -405,7 +405,7 @@ namespace InfernumMode.GlobalInstances
             switch (npc.type)
             {
                 case NPCID.BloodNautilus:
-                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 85, 105);
+                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
                     break;
             }
         }

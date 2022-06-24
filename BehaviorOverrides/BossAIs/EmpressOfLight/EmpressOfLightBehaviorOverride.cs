@@ -530,6 +530,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int redirectTime = 40;
             int chargeTime = 45;
             int attackTransitionDelay = 8;
+            int boltReleaseRate = 0;
             float chargeSpeed = 56f;
             float hoverSpeed = 25f;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
@@ -539,10 +540,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 redirectTime += 16;
 
             if (InPhase2(npc))
+            {
+                boltReleaseRate = 15;
                 chargeSpeed += 4f;
+            }
 
             if (InPhase3(npc))
+            {
+                boltReleaseRate -= 5;
                 chargeSpeed += 5f;
+            }
 
             if (ShouldBeEnraged)
                 chargeSpeed += 8f;
@@ -573,6 +580,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (attackTimer == redirectTime)
                     npc.velocity *= 0.3f;
             }
+
+            // Charge.
+            // If applicable, release prismatic bolts.
             else if (attackTimer <= redirectTime + chargeTime)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.15f);
@@ -585,6 +595,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     npc.damage *= 2;
 
                 npc.dontTakeDamage = true;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && boltReleaseRate >= 1 && attackTimer % boltReleaseRate == boltReleaseRate - 1f)
+                {
+                    Vector2 boltVelocity = Main.rand.NextVector2Circular(8f, 8f);
+                    int bolt = Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
+                    if (Main.projectile.IndexInRange(bolt))
+                    {
+                        Main.projectile[bolt].ai[0] = npc.target;
+                        Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
+                    }
+                }
             }
             else
                 npc.velocity *= 0.92f;
@@ -638,6 +659,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int lanceCount = 10;
             int lanceCreationRate = 50;
             int lanceBarrageCount = 8;
+            int attackTransitionDelay = 135;
             float lanceSpawnOffset = 1000f;
             float targetCircleOffset = 350f;
             ref float lanceBarrageCounter = ref npc.Infernum().ExtraAI[0];
@@ -658,6 +680,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.SimpleFlyMovement(idealVelocity, 0.75f);
             else
                 npc.velocity *= 0.96f;
+
+            if (lanceBarrageCounter >= lanceBarrageCount)
+            {
+                if (attackTimer >= attackTransitionDelay)
+                    SelectNextAttack(npc);
+                return;
+            }
 
             // Release lance telegraphs at the target. They will fire short afterward.
             if (attackTimer % lanceCreationRate == lanceCreationRate - 1f)
@@ -693,7 +722,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     }
                     lanceBarrageCounter++;
                     if (lanceBarrageCounter >= lanceBarrageCount)
-                        SelectNextAttack(npc);
+                        attackTimer = 0f;
 
                     npc.netUpdate = true;
                 }

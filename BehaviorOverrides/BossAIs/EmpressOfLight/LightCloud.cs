@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 laserVelocity = (MathHelper.TwoPi * i / 4f + TelegraphDirection).ToRotationVector2();
                         int laser = Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<SpinningPrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].ai[0] = aimDirection * 0.025f;
+                            Main.projectile[laser].ai[0] = aimDirection * 0.0167f;
                     }
                 }
             }

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
@@ -57,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             float lightOffset = MathHelper.Lerp(20f, (float)Math.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
             float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, (float)Math.Cos(Time / 23f) * 0.5f + 0.5f);
             CurrentSpread = MathHelper.Lerp(CurrentSpread, MaximumSpread, 0.015f);
+            if (MathHelper.Distance(CurrentSpread, MaximumSpread) < 0.03f)
+                CurrentSpread = MaximumSpread;
+
             Projectile.Opacity = fadeInInterpolant;
             Projectile.Center = StartingPosition + (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread * offsetAngleFactor).ToRotationVector2() * lightOffset;
 

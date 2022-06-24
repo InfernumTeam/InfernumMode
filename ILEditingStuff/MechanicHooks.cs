@@ -1,11 +1,13 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.UI;
 using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -149,6 +151,14 @@ namespace InfernumMode.ILEditingStuff
                         netMessage.Write((byte)CalamityModMessageType.ExoMechSelection);
                         netMessage.Write((int)CalamityWorld.DraedonMechToSummon);
                         netMessage.Send();
+                    }
+
+                    int draedon = NPC.FindFirstNPC(ModContent.NPCType<Draedon>());
+                    if (draedon != -1)
+                    {
+                        Main.npc[draedon].ai[0] = Draedon.ExoMechChooseDelay + 8f;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            DraedonBehaviorOverride.SummonExoMech(Main.player[Main.npc[draedon].target]);
                     }
                 }
                 Main.blockMouse = Main.LocalPlayer.mouseInterface = true;
@@ -330,11 +340,12 @@ namespace InfernumMode.ILEditingStuff
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
+
             try
             {
                 orig(self);
             }
-            catch { }
+            catch (IndexOutOfRangeException) { }
 
             if (useShader)
             {

@@ -24,6 +24,9 @@ namespace InfernumMode.GlobalInstances
         public float[] ExtraAI = new float[100];
         public override void SetDefaults(Projectile projectile)
         {
+            if (projectile.ModProjectile?.Mod.Name == Mod.Name)
+                ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 20000;
+
             for (int i = 0; i < ExtraAI.Length; i++)
             {
                 ExtraAI[i] = 0f;

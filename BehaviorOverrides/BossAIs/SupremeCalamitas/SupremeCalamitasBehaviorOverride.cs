@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -301,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Fire the souls.
                 if ((attackTimer - shootDelay) % shootRate == shootRate - 1f)
                 {
-                    Main.PlaySound(SoundID.NPCDeath52, npc.Center);
+                    SoundEngine.PlaySound(SoundID.NPCDeath52, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

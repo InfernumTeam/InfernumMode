@@ -18,7 +18,7 @@ namespace InfernumMode
         public Player Owner => Main.player[Projectile.owner];
         public ref float Time => ref Projectile.ai[0];
         public const int Lifetime = 150;
-        public override string Texture => "InfernumMode/Death2";
+        public override string Texture => "InfernumMode/DemonicChaliceOfInfernum";
 
         public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 8;
 

@@ -31,7 +31,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             LightOverload,
             ShimmeringDiamondLanceBarrage,
             LaserStorm,
-            InfiniteBrilliance
+            InfiniteBrilliance,
+            VividDustSpell,
         }
 
         public override int NPCOverrideType => NPCID.HallowBoss;
@@ -138,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float wingFrameCounter = ref npc.localAI[0];
             ref float leftArmFrame = ref npc.localAI[1];
             ref float rightArmFrame = ref npc.localAI[1];
-            ref float ScreenShaderStrength = ref npc.localAI[3];
+            ref float screenShaderStrength = ref npc.localAI[3];
 
             npc.damage = 0;
             npc.spriteDirection = 1;
@@ -252,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     DoBehavior_ShimmeringDiamondLanceBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.LaserStorm:
-                    DoBehavior_LaserStorm(npc, target, ref attackTimer, ref rightArmFrame);
+                    DoBehavior_LaserStorm(npc, target, initialXPosition, ref attackTimer, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.InfiniteBrilliance:
                     DoBehavior_InfiniteBrilliance(npc, target, ref attackTimer);
@@ -262,14 +263,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Manage the screen shader.
             if (Main.netMode != NetmodeID.Server)
             {
-                ScreenShaderStrength = 1f;
+                screenShaderStrength = 1f;
                 if (attackType == (int)EmpressOfLightAttackType.EnterSecondPhase)
-                    ScreenShaderStrength = Utils.GetLerpValue(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, attackTimer, true);
+                    screenShaderStrength = Utils.GetLerpValue(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, attackTimer, true);
 
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/noise");
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/Perlin", 2);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseIntensity(ScreenShaderStrength);
+                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseIntensity(screenShaderStrength);
             }
 
             wingFrameCounter++;
@@ -310,8 +311,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Hold hands together for the first part of the animation.
             if (attackTimer < spawnAnimationTime * 0.67f)
             {
-                leftArmFrame = 5f;
-                rightArmFrame = 5f;
+                leftArmFrame = 2f;
+                rightArmFrame = 2f;
             }
 
             // Cast shimmers.
@@ -589,12 +590,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (attackTimer == redirectTime + chargeTime)
                     npc.velocity *= 0.7f;
 
-                // Do damage and become temporarily invulnerable. This is done to prevent dash-cheese.
+                // Do damage.
                 npc.damage = npc.defDamage;
                 if (ShouldBeEnraged)
                     npc.damage *= 2;
-
-                npc.dontTakeDamage = true;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && boltReleaseRate >= 1 && attackTimer % boltReleaseRate == boltReleaseRate - 1f)
                 {
@@ -1214,7 +1213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_LaserStorm(NPC npc, Player target, ref float attackTimer, ref float rightArmFrame)
+        public static void DoBehavior_LaserStorm(NPC npc, Player target, float horizontalArenaCenter, ref float attackTimer, ref float rightArmFrame)
         {
             int shootDelay = 35;
 
@@ -1223,9 +1222,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.velocity *= 0.95f;
 
             // Teleport above the target and descend.
+            // To prevent scenarios where the player cannot circle around the light cloud, the teleport has a safeguard that prevents teleports
+            // at the edges of the arena.
             if (attackTimer == 1f)
             {
                 npc.Center = target.Center - Vector2.UnitY * 420f;
+                npc.position.X = MathHelper.Clamp(npc.position.X, horizontalArenaCenter - BorderWidth + 660f, horizontalArenaCenter + BorderWidth - 660f);
                 if (npc.position.Y < 2000f)
                     npc.position.Y = 2000f;
 
@@ -1438,7 +1440,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Color startingBorderColor = Color.HotPink;
             Color endingBorderColor = Main.hslToRgb(Main.GlobalTimeWrappedHourly % 1f, 1f, 0.5f);
             if (ShouldBeEnraged)
-                endingBorderColor = Main.OurFavoriteColor;
+                endingBorderColor = GetDaytimeColor(Main.GlobalTimeWrappedHourly * 0.84f);
 
             spriteBatch.SetBlendState(BlendState.Additive);
             if (leftBorderOpacity > 0f)
@@ -1689,7 +1691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 tentacleDressColor *= 0.6f;
                 if (ShouldBeEnraged)
                 {
-                    tentacleDressColor = Main.OurFavoriteColor;
+                    tentacleDressColor = GetDaytimeColor(Main.GlobalTimeWrappedHourly * 0.63f);
                     tentacleDressColor.A = 0;
                     tentacleDressColor *= 0.3f;
                 }
@@ -1796,7 +1798,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         Color telegraphColor = Main.hslToRgb(j / (float)boltCount, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant);
                         if (ShouldBeEnraged)
-                            telegraphColor = Main.OurFavoriteColor;
+                            telegraphColor = GetDaytimeColor(j / (float)boltCount);
                         telegraphColor *= 0.6f;
 
                         Vector2 telegraphDirection = (MathHelper.TwoPi * j / boltCount + telegraphRotation).ToRotationVector2();
@@ -1844,7 +1846,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     float hue = (i / 4f + Main.GlobalTimeWrappedHourly * 0.67f) % 1f;
                     Color telegraphColor = Main.hslToRgb(hue, 1f, 0.7f);
                     if (ShouldBeEnraged)
-                        telegraphColor = Main.OurFavoriteColor;
+                        telegraphColor = GetDaytimeColor(hue);
 
                     Vector2 telegraphDirection = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, telegraphSlope);
                     Vector2 start = npc.Center + Vector2.UnitY * 8f;
@@ -1887,6 +1889,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public static bool InPhase3(NPC npc) => npc.ai[2] >= 2f;
 
         public static bool InPhase4(NPC npc) => npc.ai[2] >= 3f;
+
+        public static Color GetDaytimeColor(float colorInterpolant)
+        {
+            Color pink = Color.HotPink;
+            Color cyan = Color.Cyan;
+            return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));
+        }
         #endregion
     }
 }

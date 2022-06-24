@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 0.95f, 0.54f);
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = Main.OurFavoriteColor * 1.35f;
+                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f);
 
                 color.A /= 8;
                 return color;
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     return false;
 
                 int attackCycle = (int)(Timer / AttackTimePerSword);
-                float cycleCompletion = ((attackCycle + SwordIndex) / (float)SwordCount) % 1f;
+                float cycleCompletion = (attackCycle + SwordIndex) / SwordCount % 1f;
                 float swordRatio = 1f / TotalSwordsThatShouldAttack;
                 return cycleCompletion % swordRatio < 0.01f;
             }
@@ -147,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
 
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.1f);
-            Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.06f);
+            Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.03f);
         }
 
         public void AttackTarget()

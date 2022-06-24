@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 1f, 0.56f) * Projectile.Opacity * 1.3f;
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = Main.OurFavoriteColor * 1.35f;
+                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f) * Projectile.Opacity;
 
                 color.A /= 10;
                 return color;

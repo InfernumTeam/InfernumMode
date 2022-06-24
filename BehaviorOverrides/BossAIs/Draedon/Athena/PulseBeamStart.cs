@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
@@ -34,13 +35,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override Color LightCastColor => Color.White;
 
         public override Texture2D LaserBeginTexture =>
-            ModContent.Request<Texture2D>(Texture).Value;
+            ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
 
         public override Texture2D LaserMiddleTexture =>
-            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle").Value;
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamMiddle", AssetRequestMode.ImmediateLoad).Value;
 
         public override Texture2D LaserEndTexture =>
-            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd").Value;
+            ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/PulseBeamEnd", AssetRequestMode.ImmediateLoad).Value;
 
         public override void SetStaticDefaults()
         {

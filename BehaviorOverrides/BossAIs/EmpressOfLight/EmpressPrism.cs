@@ -87,10 +87,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float fadeOffset = MathHelper.Lerp(45f, 6f, fadeInInterpolant);
             for (int i = 0; i < 8; i++)
             {
-                Color color = Main.hslToRgb((i / 8f + Main.GlobalTimeWrappedHourly * 0.5f) % 1f, 1f, 0.5f) * (float)Math.Sqrt(fadeInInterpolant);
+                float hue = (i / 8f + Main.GlobalTimeWrappedHourly * 0.5f) % 1f;
+                Color color = Main.hslToRgb(hue, 1f, 0.5f);
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = Main.OurFavoriteColor;
-                color *= Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
+                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hue);
+                color *= Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * (float)Math.Sqrt(fadeInInterpolant);
                 color.A = 0;
 
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTimeWrappedHourly * 1.5f).ToRotationVector2() * fadeOffset;

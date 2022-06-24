@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Color color = Main.hslToRgb(hues[i] % 1f, 1f, 0.5f);
 
                 if (Main.dayTime)
-                    color = Main.OurFavoriteColor;
+                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hues[i]);
 
                 color *= fadeOpacity * dissipateOpacity;
                 color.A /= 8;

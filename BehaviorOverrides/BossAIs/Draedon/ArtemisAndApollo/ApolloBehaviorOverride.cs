@@ -792,7 +792,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int plasmaShootRate = 38;
             int laserShootCount = 4;
             int sparkShootCount = 3;
-            float sparkShootSpeed = 14f;
+            float sparkShootSpeed = 8f;
             float plasmaShootSpeed = 9f;
             float minHorizontalOffset = 420f;
             float maxHorizontalOffset = 750f;

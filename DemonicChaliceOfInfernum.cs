@@ -10,11 +10,12 @@ using Terraria.ModLoader;
 
 namespace InfernumMode
 {
-    public class Death2 : ModItem
+    [LegacyName("Death2")]
+    public class DemonicChaliceOfInfernum : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Infernal Chalice");
+            DisplayName.SetDefault("Demonic Chalice of Infernum");
             Tooltip.SetDefault("Makes bosses absurd unless Boss Rush is active\n" +
                                "Revengeance Mode must be active to use this item\n" +
                                "Malice Mode is disabled while this is active\n" +
@@ -28,8 +29,8 @@ namespace InfernumMode
             Item.rare = ItemRarityID.Red;
             Item.width = 50;
             Item.height = 96;
-            Item.useAnimation = 45;
-            Item.useTime = 45;
+            Item.useAnimation = 46;
+            Item.useTime = 46;
             Item.channel = true;
             Item.noUseGraphic = true;
             Item.shoot = ModContent.ProjectileType<InfernalChaliceHoldout>();

@@ -66,12 +66,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
             float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
             float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;
+
+            Color spikeColor = new(1f, 1f, 0f, 0f);
             if (frameHeight > 0f)
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
                 Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
-                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
-                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, spikeColor, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, spikeColor, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;

@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Don't attack if the Ravager isn't ready to do so yet.
             npc.dontTakeDamage = false;
-            npc.damage = npc.defDamage;
+            npc.damage = 0;
             if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
             {
                 npc.damage = 0;

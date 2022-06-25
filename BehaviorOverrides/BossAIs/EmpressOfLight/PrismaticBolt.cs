@@ -70,12 +70,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Vector2 idealVelocity = Projectile.velocity;
                 if (Projectile.hostile && Main.player.IndexInRange(targetIndex))
                 {
-                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 28f;
+                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 34f;
                     if (Projectile.localAI[0] > 0f)
                         idealVelocity *= Projectile.localAI[0];
                 }
 
-                float amount = MathHelper.Lerp(0.05f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
+                float amount = MathHelper.Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
                 Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, amount);
             }
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true);

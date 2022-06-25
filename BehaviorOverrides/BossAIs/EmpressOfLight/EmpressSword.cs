@@ -166,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Aim at the target in anticipation of a lunge.
             if (wrappedAttackTimer < lungeDelay)
             {
-                float idealRotation = Projectile.AngleTo(Target.Center + Target.velocity * 20f);
+                float idealRotation = Projectile.AngleTo(Target.Center + Target.velocity * 27f);
                 Projectile.velocity = Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, 30f);
                 Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.15f).AngleTowards(idealRotation, 0.15f);
 

@@ -674,7 +674,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 CreateGroundImpactEffects(npc);
                 hasDoneGroundHitEffects = 1f;
                 attackTimer = 0f;
+                npc.velocity.X = 0f;
                 npc.netUpdate = true;
+
+                // Create flame pillar telegraphs.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = -15; i <= 15; i++)
+                    {
+                        Vector2 telegraphSpawnPosition = npc.Bottom + Vector2.UnitX * horizontalStepPerPillar * i;
+                        telegraphSpawnPosition.X += 42f;
+                        int telegraph = Utilities.NewProjectileBetter(telegraphSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillarTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[0] = Math.Abs(i) * fireReleaseRate + groundShootDelay;
+                    }
+                }
             }
 
             // Create flame projectiles and spikes once on the ground.

@@ -4,7 +4,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

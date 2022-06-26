@@ -1,7 +1,6 @@
 using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

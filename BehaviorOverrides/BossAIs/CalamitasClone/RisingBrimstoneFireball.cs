@@ -1,9 +1,7 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

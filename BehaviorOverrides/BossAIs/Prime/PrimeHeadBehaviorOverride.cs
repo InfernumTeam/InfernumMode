@@ -1,6 +1,5 @@
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;

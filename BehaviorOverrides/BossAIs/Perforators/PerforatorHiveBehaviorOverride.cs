@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Particles;

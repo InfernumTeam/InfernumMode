@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.OverridingSystem;

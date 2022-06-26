@@ -1,28 +1,13 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.CalPlayer;
-using CalamityMod.Events;
-using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.OldDuke;
-using CalamityMod.NPCs.Perforator;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
-using InfernumMode.Skies;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -127,12 +112,6 @@ namespace InfernumMode
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
         #endregion
-        #region Kill
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            ExoMechManagement.RecordAttackDeath(Player);
-        }
-        #endregion Kill
         #region Life Regen
         public override void UpdateLifeRegen()
         {

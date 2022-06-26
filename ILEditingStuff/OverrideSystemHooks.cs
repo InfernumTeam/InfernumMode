@@ -7,8 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;

@@ -14,7 +14,6 @@ using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
@@ -108,32 +107,6 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<RavagerLegLeft>(), Do(new PierceResistBalancingRule(0.4f))),
                 new NPCBalancingChange(NPCType<RavagerLegRight>(), Do(new PierceResistBalancingRule(0.4f))),
                 new NPCBalancingChange(NPCType<RavagerHead>(), Do(new PierceResistBalancingRule(0.4f))),
-
-                // Cultist.
-                new NPCBalancingChange(NPCID.CultistDragonBody1, Do(new PierceResistBalancingRule(0.1f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody2, Do(new PierceResistBalancingRule(0.1f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody3, Do(new PierceResistBalancingRule(0.1f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody4, Do(new PierceResistBalancingRule(0.1f))),
-
-                // The Devourer of Gods.
-                new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),
-
-                // Exo Mechs.
-                new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresLaserCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresPlasmaFlamethrower>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresTeslaCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresGaussNuke>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
-                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
-                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),
-                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),
-                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<DragonRageFireball>()))),
-                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<DragonRageFireball>()))),
-
-                // Supreme Calamitas.
-                new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
             };
         }
 

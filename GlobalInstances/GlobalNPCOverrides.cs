@@ -17,16 +17,10 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.UI;
-using CalamityMod.World;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
-using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
-using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.Buffs;
@@ -93,7 +87,6 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
-            ResetSavedIndex(ref Athena, ModContent.NPCType<AthenaNPC>());
         }
         #endregion Reset Effects
 
@@ -285,23 +278,6 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
 
-            int apolloID = ModContent.NPCType<Apollo>();
-            int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int athenaID = ModContent.NPCType<AthenaNPC>();
-            int aresID = ModContent.NPCType<AresBody>();
-            int totalExoMechs = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
-                    continue;
-                if (!Main.npc[i].active)
-                    continue;
-
-                totalExoMechs++;
-            }
-            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc))
-                return false;
-
             return base.PreKill(npc);
         }
 
@@ -328,68 +304,6 @@ namespace InfernumMode.GlobalInstances
                 return npc.alpha == 0;
             }
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
-        }
-
-        public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
-
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("Yharon").Type)
-            {
-                if (npc.life - (int)Math.Ceiling(damage) <= 0)
-                {
-                    npc.NPCLoot();
-                }
-            }
-
-            double realDamage = crit ? damage * 2 : damage;
-            int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
-
-            // Make DoG enter the second phase once ready.
-            if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
-            {
-                damage = 0;
-                npc.dontTakeDamage = true;
-                DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
-                return false;
-            }
-
-            if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
-            {
-                damage = 0;
-                npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[32] == 0f)
-                {
-                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                    npc.Infernum().ExtraAI[32] = 1f;
-                }
-                return false;
-            }
-
-            // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
-            {
-                Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
-                Main.npc[npc.realLife].netUpdate = true;
-            }
-
-            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
-            {
-                if (npc.life - realDamage <= 1000)
-                {
-                    npc.life = 0;
-                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
-                    npc.checkDead();
-                }
-            }
-
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
-                damage = (int)(damage * 1.65f);
-
-            return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -440,48 +354,6 @@ namespace InfernumMode.GlobalInstances
                 npc.netUpdate = true;
                 return false;
             }
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
-            {
-                npc.life = 1;
-                npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[20] == 0f)
-                {
-                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                    npc.Infernum().ExtraAI[20] = 1f;
-                }
-                npc.active = true;
-                npc.netUpdate = true;
-                return false;
-            }
-
-            if (npc.type == ModContent.NPCType<PolterghastNPC>())
-            {
-                if (npc.Infernum().ExtraAI[6] > 0f)
-                    return true;
-
-                npc.Infernum().ExtraAI[6] = 1f;
-                npc.life = 1;
-                npc.netUpdate = true;
-                npc.dontTakeDamage = true;
-
-                return false;
-            }
-
-            if (npc.type == ModContent.NPCType<Bumblefuck2>())
-            {
-                if (npc.ai[0] != 3f && npc.ai[3] > 0f)
-                {
-                    npc.life = npc.lifeMax;
-                    npc.dontTakeDamage = true;
-                    npc.ai[0] = 3f;
-                    npc.ai[1] = 0f;
-                    npc.ai[2] = 0f;
-                    npc.netUpdate = true;
-                }
-                return false;
-            }
-
             if (npc.type is NPCID.Spazmatism or NPCID.Retinazer)
             {
                 bool otherTwinHasCreatedShield = false;
@@ -510,91 +382,6 @@ namespace InfernumMode.GlobalInstances
                     return false;
                 }
             }
-
-            if (npc.type == NPCID.CultistBoss)
-            {
-                CultistBehaviorOverride.ClearAwayEntities();
-                npc.Infernum().ExtraAI[6] = 1f;
-                npc.netUpdate = true;
-                npc.active = true;
-                npc.dontTakeDamage = true;
-                npc.life = 1;
-
-                SoundEngine.PlaySound(SoundID.NPCDeath59, npc.Center);
-
-                return false;
-            }
-
-            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
-            {
-                npc.netUpdate = true;
-                npc.active = true;
-                npc.dontTakeDamage = true;
-                npc.life = 1;
-
-                return false;
-            }
-            if (Utilities.IsExoMech(npc))
-            {
-                bool hasPerformedDeathAnimation = npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
-                if (npc.realLife >= 0)
-                    hasPerformedDeathAnimation = Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
-
-                // Execute battle event triggers if the exo mech in question has finished its death animation.
-                if (hasPerformedDeathAnimation)
-                {
-                    bool finalMechKilled = ExoMechManagement.FindFinalMech() == npc;
-                    if (npc.realLife >= 0)
-                        finalMechKilled = ExoMechManagement.FindFinalMech() == Main.npc[npc.realLife];
-                    if (finalMechKilled)
-                        ExoMechManagement.MakeDraedonSayThings(4);
-                    else if (ExoMechManagement.TotalMechs - 1 == 1)
-                        ExoMechManagement.MakeDraedonSayThings(5);
-                }
-
-                // Otherwise, trigger the exo mech's death animation.
-                // Once it ends this code will be called again.
-                else
-                {
-                    npc.life = npc.lifeMax;
-                    npc.dontTakeDamage = true;
-                    npc.active = true;
-                    if (npc.realLife >= 0)
-                    {
-                        Main.npc[npc.realLife].life = Main.npc[npc.realLife].lifeMax;
-                        Main.npc[npc.realLife].dontTakeDamage = true;
-                        Main.npc[npc.realLife].active = true;
-                        Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = 1f;
-                        Main.npc[npc.realLife].netUpdate = true;
-                        Main.npc[npc.realLife].UpdateNPC(npc.realLife);
-                    }
-                    else
-                    {
-                        npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = 1f;
-
-                        // If Apollo is the one being checked, ensure that Artemis stays alive.
-                        if (npc.type == ModContent.NPCType<Apollo>())
-                        {
-                            int artemisID = ModContent.NPCType<Artemis>();
-                            for (int i = 0; i < Main.maxNPCs; i++)
-                            {
-                                if (Main.npc[i].type == artemisID && Main.npc[i].realLife == npc.whoAmI)
-                                {
-                                    Main.npc[i].life = npc.life;
-                                    Main.npc[i].active = true;
-                                }
-                            }
-                        }
-                        npc.UpdateNPC(npc.whoAmI);
-                    }
-
-                    npc.netUpdate = true;
-                    ExoMechManagement.ClearAwayTransitionProjectiles();
-
-                    return false;
-                }
-            }
-
             return base.CheckDead(npc);
         }
 
@@ -608,10 +395,6 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.SkeletronHand)
                 return false;
             if (npc.type == ModContent.NPCType<GreatSandShark>())
-                return false;
-            if (npc.type == NPCID.AncientCultistSquidhead)
-                return false;
-            if (npc.type == NPCID.MoonLordFreeEye)
                 return false;
 
             return base.CheckActive(npc);

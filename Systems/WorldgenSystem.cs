@@ -57,12 +57,11 @@ namespace InfernumMode.Systems
                 if (WorldGen.dungeonX < Main.maxTilesX / 2)
                     x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.6), (int)(Main.maxTilesX * 0.85));
                 else
-                    x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.15), (int)(Main.maxTilesX * 0.4));
+                    x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.15), (int)(Main.maxTilesX * 0.5));
 
                 int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 840);
 
-                if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.JungleGrass &&
-                    Main.tile[x, y].TileType != TileID.LihzahrdBrick && Main.tile[x, y].WallType != WallID.LihzahrdBrick)
+                if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.JungleGrass && Main.tile[x, y].WallType != WallID.LihzahrdBrick)
                 {
                     success = true;
                     for (int i = 0; i < 4; i++)

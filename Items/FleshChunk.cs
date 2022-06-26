@@ -11,7 +11,8 @@ namespace InfernumMode.Items
         {
             DisplayName.SetDefault("Flesh Chunk");
             Tooltip.SetDefault("Summons the Wall of Flesh\n" +
-                "Can only be used in the underworld");
+                "Can only be used in the underworld\n" +
+                "Not consumable");
         }
 
         public override void SetDefaults()

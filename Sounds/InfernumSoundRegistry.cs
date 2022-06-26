@@ -24,7 +24,7 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");
 
-        public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom//PlagueSounds/PBGNukeWarning");
+        public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
         public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/PolterghastDeath");
 

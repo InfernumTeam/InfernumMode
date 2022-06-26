@@ -50,6 +50,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             npc.dontTakeDamage = npc.Calamity().newAI[1] < 700f;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
 
+            // Fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
+
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {

@@ -91,6 +91,9 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCID.WallofFleshEye, Do(new PierceResistBalancingRule(0.785f), new ProjectileResistBalancingRule(0.625f, ProjectileType<TrackingDiskLaser>()))),
                 new NPCBalancingChange(NPCID.WallofFleshEye, Do(new PierceResistBalancingRule(0.785f), new ProjectileResistBalancingRule(0.625f, ProjectileType<TrackingDiskLaser>()))),
 
+                // Queen Slime.
+                new NPCBalancingChange(NPCID.QueenSlimeBoss, Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<SeasSearingSpout>()))),
+
                 // Aquatic Scourge.
                 new NPCBalancingChange(NPCType<AquaticScourgeBody>(), Do(new PierceResistBalancingRule(0.45f))),
                 new NPCBalancingChange(NPCType<AquaticScourgeBodyAlt>(), Do(new PierceResistBalancingRule(0.45f))),

@@ -63,6 +63,7 @@ namespace InfernumMode.Balancing
             [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 246800 : 3232,
             [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 1068000 : 10476,
             [NPCID.DD2OgreT2] = 15100,
+            [NPCID.QueenSlimeBoss] = 25940,
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(29950),
             [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : CalculateMechHP(29950),
             [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 289515 : CalculateMechHP(44444),

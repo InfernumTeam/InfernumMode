@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
+            Projectile.width = Projectile.height = 28;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
@@ -29,8 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(360f, 354f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
-            if (Projectile.velocity.Length() < 36f)
-                Projectile.velocity *= 1.042f;
+            if (Projectile.velocity.Length() < 30f)
+                Projectile.velocity *= 1.038f;
         }
 
 		public override bool PreDraw(ref Color lightColor)

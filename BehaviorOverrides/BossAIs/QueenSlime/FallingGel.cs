@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
+            Projectile.width = Projectile.height = 28;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;

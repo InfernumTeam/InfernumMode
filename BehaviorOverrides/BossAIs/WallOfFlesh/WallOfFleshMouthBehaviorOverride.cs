@@ -84,6 +84,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 initialized01Flag = 1f;
             }
 
+            // Despawn.
+            if (target.dead)
+            {
+                npc.localAI[1] += 1f / 18f;
+                if (npc.localAI[1] >= 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCDeath10, npc.position);
+                    npc.life = 0;
+                    npc.active = false;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        NetMessage.SendData(MessageID.DamageNPC, -1, -1, null, npc.whoAmI, -1f);
+
+                    return false;
+                }
+            }
+            else
+                npc.localAI[1] = MathHelper.Clamp(npc.localAI[1] - 1f / 30f, 0f, 1f);
+
             SetEyePositions(npc);
             PerformMouthMotion(npc, lifeRatio);
             AngerEffects(npc, target);
@@ -241,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float angerStrength = ref npc.ai[0];
             ref float timeSpentRunning = ref npc.ai[1];
             ref float enrageAttackCountdown = ref npc.ai[2];
-            ref float roarTimer = ref npc.localAI[1];
+            ref float roarTimer = ref npc.localAI[2];
 
             float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.GetLerpValue(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
 

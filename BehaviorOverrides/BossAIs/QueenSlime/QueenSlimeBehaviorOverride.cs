@@ -15,7 +15,7 @@ using CalamityMod.NPCs.SlimeGod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
-	public class QueenSlimeBehaviorOverride : NPCBehaviorOverride
+    public class QueenSlimeBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.QueenSlimeBoss;
 
@@ -24,11 +24,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         #region Fields, Properties, and Enumerations
         public enum QueenSlimeAttackType
         {
-            RepeatedSlams,
+            CrystalSlams,
             CrystalShatter,
             CrownDashes,
             CrystalShardBursts,
-            CrownLasers
+            CrownLasers,
+            RepeatedSlams,
         }
 
         public enum QueenSlimeFrameType
@@ -71,11 +72,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 npc.netUpdate = true;
             }
 
+            // Despawn if the target is dead.
+            if (target.dead || !target.active)
+            {
+                npc.active = false;
+                return false;
+            }
+
             npc.damage = npc.defDamage;
             switch ((QueenSlimeAttackType)attackType)
             {
                 case QueenSlimeAttackType.RepeatedSlams:
-                    DoBehavior_RepeatedSlams(npc, target, ref attackTimer, ref frameType);
+                    DoBehavior_RepeatedSlams(npc, target, false, ref attackTimer, ref frameType);
                     break;
                 case QueenSlimeAttackType.CrystalShatter:
                     DoBehavior_CrystalShatter(npc, target, ref attackTimer, ref frameType);
@@ -89,13 +97,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 case QueenSlimeAttackType.CrownLasers:
                     DoBehavior_CrownLasers(npc, target, ref attackTimer, ref frameType, ref crownIsAttached);
                     break;
+                case QueenSlimeAttackType.CrystalSlams:
+                    DoBehavior_RepeatedSlams(npc, target, true, ref attackTimer, ref frameType);
+                    break;
             }
             slamTelegraphInterpolant = 0f;
             attackTimer++;
             return false;
         }
 
-        public static void DoBehavior_RepeatedSlams(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_RepeatedSlams(NPC npc, Player target, bool useCrystals, ref float attackTimer, ref float frameType)
         {
             int slamCount = 5;
             int hoverTime = 150;
@@ -112,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Hover into position.
             if (attackTimer < hoverTime)
             {
-                float hoverSpeed = MathHelper.Lerp(12f, 48f, Utils.GetLerpValue(0f, 18f, attackTimer, true));
+                float hoverSpeed = MathHelper.Lerp(9f, 26f, Utils.GetLerpValue(0f, 18f, attackTimer, true));
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
@@ -155,17 +166,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     // Slam into the ground once it's reached and create hit effects.
                     if (OnSolidGround(npc) && npc.Bottom.Y >= target.Top.Y)
                     {
-                        // Create a shockwave and bursts of gel that accelerate.
                         SoundEngine.PlaySound(SlimeGodCore.ExitSound, npc.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+
+                        // Create a shockwave and bursts of gel that accelerate.
+                        if (!useCrystals)
                         {
-                            Utilities.NewProjectileBetter(npc.Bottom, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
-                            for (int j = 0; j < gelSlamCount; j++)
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.91f, 0.91f, j / (float)(gelSlamCount - 1f));
-                                Vector2 gelSpawnPosition = npc.Center;
-                                Vector2 gelShootVelocity = (target.Center - gelSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed;
-                                Utilities.NewProjectileBetter(gelSpawnPosition, gelShootVelocity, ModContent.ProjectileType<AcceleratingGel>(), 125, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
+                                for (int j = 0; j < gelSlamCount; j++)
+                                {
+                                    float offsetAngle = MathHelper.Lerp(-0.91f, 0.91f, j / (float)(gelSlamCount - 1f));
+                                    Vector2 gelSpawnPosition = npc.Center;
+                                    Vector2 gelShootVelocity = (target.Center - gelSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed;
+                                    Utilities.NewProjectileBetter(gelSpawnPosition, gelShootVelocity, ModContent.ProjectileType<AcceleratingGel>(), 125, 0f);
+                                }
+                            }
+                        }
+
+                        // Create a circle of crystals.
+                        else
+                        {
+                            int crystalCount = InPhase2(npc) ? 40 : 27;
+                            for (int j = 0; j < crystalCount; j++)
+                            {
+                                float offsetAngle = MathHelper.TwoPi * j / crystalCount;
+                                Vector2 crystalSpawnPosition = npc.Center + Vector2.UnitY * 20f;
+                                Vector2 crystalShootVelocity = (target.Center - crystalSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed * 2.4f;
+                                int spike = Utilities.NewProjectileBetter(crystalSpawnPosition, crystalShootVelocity, ProjectileID.QueenSlimeMinionBlueSpike, 130, 0f);
+                                if (Main.projectile.IndexInRange(spike))
+                                    Main.projectile[spike].ai[1] = -2f;
                             }
                         }
 
@@ -288,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_CrownDashes(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float crownIsAttached)
         {
-            int slamCount = 7;
+            int slamCount = 5;
             int hoverTime = 150;
             int slamDelay = 25;
             int slamTime = 180;
@@ -317,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Hover into position.
             if (attackTimer < hoverTime)
             {
-                float hoverSpeed = MathHelper.Lerp(10f, 48f, Utils.GetLerpValue(0f, 18f, attackTimer, true));
+                float hoverSpeed = MathHelper.Lerp(8f, 26f, Utils.GetLerpValue(0f, 18f, attackTimer, true));
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
@@ -397,12 +427,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             int burstReleaseRate = 75;
             int burstCount = 8;
-            int shardCount = 15;
+            int shardCount = 11;
             float shardSpread = 0.92f;
             float wrappedattackTimer = attackTimer % burstReleaseRate;
 
             // Hover above the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 25f;
             float distanceFromDestination = npc.Distance(hoverDestination);
 
@@ -412,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 idealVelocity *= 0.65f;
             if (distanceFromDestination < 40f)
                 idealVelocity = npc.velocity;
-            npc.SimpleFlyMovement(idealVelocity, 0.5f);
+            npc.SimpleFlyMovement(idealVelocity, 0.65f);
 
             // Release a spread of shards at the target.
             // The spread intentionally has an opening.
@@ -425,11 +455,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     float openAreaAngle = Main.rand.NextFloatDirection() * shardSpread * 0.6f;
                     for (int i = 0; i < shardCount; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-shardSpread, shardSpread, i / (float)(shardCount - 1f)) + Main.rand.NextFloatDirection() * 0.02f;
+                        float shootOffsetAngle = MathHelper.Lerp(-shardSpread, shardSpread, i / (float)(shardCount - 1f)) + Main.rand.NextFloatDirection() * 0.01f;
                         if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.16f)
                             continue;
 
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(2f, 3f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(2.6f, 3f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AcceleratingGel>(), 130, 0f);
                     }
                 }
@@ -478,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Release bursts of gel that fall downward.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % gelReleaseRate == gelReleaseRate - 1f && attackTimer < gelReleaseRate * gelReleaseCount)
             {
-                for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.3f, 2.8f))
+                for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.9f, 3.2f))
                 {
                     Vector2 gelVelocity = new(i, Main.rand.NextFloat(-12f, -10f));
                     Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
@@ -491,7 +521,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             if (attackTimer >= gelReleaseRate * (gelReleaseCount - 1f) - 36f)
                 crownShouldReturn = 1f;
 
-            if (attackTimer >= gelReleaseRate * (gelReleaseCount + 2f))
+            if (attackTimer >= gelReleaseRate * (gelReleaseCount + 3.6f))
             {
                 npc.rotation = 0f;
                 SelectNextAttack(npc);
@@ -502,20 +532,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             switch ((QueenSlimeAttackType)npc.ai[0])
             {
-                case QueenSlimeAttackType.RepeatedSlams:
+                case QueenSlimeAttackType.CrystalSlams:
                     npc.ai[0] = (int)QueenSlimeAttackType.CrownDashes;
                     break;
                 case QueenSlimeAttackType.CrownDashes:
                     npc.ai[0] = (int)QueenSlimeAttackType.CrystalShatter;
                     break;
                 case QueenSlimeAttackType.CrystalShatter:
-                    npc.ai[0] = InPhase2(npc) ? (int)QueenSlimeAttackType.CrystalShardBursts : (int)QueenSlimeAttackType.RepeatedSlams;
+                    npc.ai[0] = InPhase2(npc) ? (int)QueenSlimeAttackType.CrystalShardBursts : (int)QueenSlimeAttackType.CrystalSlams;
                     break;
                 case QueenSlimeAttackType.CrystalShardBursts:
                     npc.ai[0] = (int)QueenSlimeAttackType.CrownLasers;
                     break;
                 case QueenSlimeAttackType.CrownLasers:
                     npc.ai[0] = (int)QueenSlimeAttackType.RepeatedSlams;
+                    break;
+                case QueenSlimeAttackType.RepeatedSlams:
+                    npc.ai[0] = (int)QueenSlimeAttackType.CrystalSlams;
                     break;
             }
 
@@ -811,7 +844,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         #region Misc Utilities
 
-        public static bool InPhase2(NPC npc) => npc.life < npc.lifeMax * 0.5f;
+        public static bool InPhase2(NPC npc) => npc.life < npc.lifeMax * 0.625f;
 
         public static bool OnSolidGround(NPC npc)
         {

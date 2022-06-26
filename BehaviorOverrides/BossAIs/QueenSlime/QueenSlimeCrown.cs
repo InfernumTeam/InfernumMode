@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 float chargeSpeedInterpolant = Utils.GetLerpValue(165f, 172f, Time, true);
                 float chargeSpeed = MathHelper.Lerp(8f, 28f, chargeSpeedInterpolant);
                 if (QueenSlimeBehaviorOverride.InPhase2(queenSlime))
-                    chargeSpeed *= 1.15f;
+                    chargeSpeed *= 1.3f;
 
                 if (chargeSpeedInterpolant < 1f)
                     Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -148,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 return;
             }
 
-            Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * Time / 180f).ToRotationVector2() * 550f;
+            Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * Time / 180f).ToRotationVector2() * 680f;
             if (Time % 90f > 75f)
                 Projectile.velocity *= 0.925f;
             else

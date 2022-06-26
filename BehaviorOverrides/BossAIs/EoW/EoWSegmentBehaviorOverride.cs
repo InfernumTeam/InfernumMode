@@ -40,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             npc.damage = npc.defDamage + 8;
             npc.dontTakeDamage = head.dontTakeDamage;
             npc.defense = 7;
+            npc.Opacity = head.Opacity;
             aheadSegment.ai[0] = npc.whoAmI;
 
             if (head.damage == 0)

@@ -104,12 +104,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
-            Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
-
-            if (!Projectile.Hitbox.Intersects(screenRectangle))
-                return false;
-
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

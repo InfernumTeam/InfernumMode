@@ -264,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     DoBehavior_LaserStorm(npc, target, initialXPosition, ref attackTimer, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.InfiniteBrilliance:
-                    DoBehavior_InfiniteBrilliance(npc, target, ref attackTimer);
+                    DoBehavior_InfiniteBrilliance(npc, target, initialXPosition, ref attackTimer);
                     break;
                 case EmpressOfLightAttackType.ContinuousLanceBarrages:
                     DoBehavior_ContinuousLanceBarrages(npc, target, ref attackTimer);
@@ -1251,7 +1251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer == 1f)
             {
                 npc.Center = target.Center - Vector2.UnitY * 420f;
-                npc.position.X = MathHelper.Clamp(npc.position.X, horizontalArenaCenter - BorderWidth + 660f, horizontalArenaCenter + BorderWidth - 660f);
+                npc.position.X = MathHelper.Clamp(npc.position.X, horizontalArenaCenter - BorderWidth * 0.5f + 600f, horizontalArenaCenter + BorderWidth * 0.5f - 600f);
                 if (npc.position.Y < 2000f)
                     npc.position.Y = 2000f;
 
@@ -1285,7 +1285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_InfiniteBrilliance(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_InfiniteBrilliance(NPC npc, Player target, float horizontalArenaCenter, ref float attackTimer)
         {
             int telegraphTime = 175;
             int laserbeamCount = 30;
@@ -1294,9 +1294,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float maxTelegraphTilt = 0.253f;
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[1];
+            ref float lanceShootTimer = ref npc.Infernum().ExtraAI[2];
 
             if (ShouldBeEnraged)
                 lanceReleaseRate -= 12;
+
+            // Make the lances appear more infrequently if the player is near the borders.
+            float distanceToLeftBorder = MathHelper.Distance(target.Center.X, horizontalArenaCenter - BorderWidth * 0.5f);
+            float distanceToRightBorder = MathHelper.Distance(target.Center.X, horizontalArenaCenter + BorderWidth * 0.5f);
+            float distanceToClosestBorderInterpolant = 1f - MathHelper.Min(distanceToLeftBorder, distanceToRightBorder) / BorderWidth * 2f;
+            if (distanceToClosestBorderInterpolant > 0f)
+                lanceReleaseRate = (int)(lanceReleaseRate + Utils.Remap(distanceToClosestBorderInterpolant, 0.6f, 0.9f, 0f, 24f));
 
             // Reset the telegraph interpolant.
             telegraphInterpolant = 0f;
@@ -1346,12 +1354,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer >= telegraphTime)
             {
                 // Release bursts of lances.
-                if (attackTimer % lanceReleaseRate == lanceReleaseRate - 1f)
+                lanceShootTimer++;
+                if (lanceShootTimer >= lanceReleaseRate)
                 {
                     SoundEngine.PlaySound(SoundID.Item162, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        lanceShootTimer = 0f;
+                        npc.netUpdate = true;
+
                         float hueOffset = Main.rand.NextFloat();
                         for (int i = 0; i < lanceCount; i++)
                         {
@@ -1475,8 +1487,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float initialXPosition = npc.Infernum().ExtraAI[6];
             float left = initialXPosition - BorderWidth * 0.5f;
             float right = initialXPosition + BorderWidth * 0.5f;
-            float leftBorderOpacity = Utils.GetLerpValue(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
-            float rightBorderOpacity = Utils.GetLerpValue(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
+            float leftBorderOpacity = Utils.GetLerpValue(left + 1000f, left + 360f, Main.LocalPlayer.Center.X, true);
+            float rightBorderOpacity = Utils.GetLerpValue(right - 1000f, right - 360f, Main.LocalPlayer.Center.X, true);
             Color startingBorderColor = Color.HotPink;
             Color endingBorderColor = Main.hslToRgb(Main.GlobalTimeWrappedHourly % 1f, 1f, 0.5f);
             if (ShouldBeEnraged)

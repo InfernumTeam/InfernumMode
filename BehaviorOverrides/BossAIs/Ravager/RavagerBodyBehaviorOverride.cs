@@ -4,7 +4,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.Particles;
-using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
@@ -17,6 +16,7 @@ using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
@@ -36,7 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
-            public bool ShouldBeBuffed => DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive;
+            public bool ShouldBeBuffed =>
+                DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && OverridingListManager.Registered<ProvidenceNPC>();
 
             public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
             {

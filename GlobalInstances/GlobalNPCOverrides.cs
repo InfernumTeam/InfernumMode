@@ -5,6 +5,7 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.Items.Materials;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
@@ -17,10 +18,9 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
-using CalamityMod.World;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
@@ -102,7 +102,7 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode)
+            if (npc.type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode && OverridingListManager.Registered(npc.type))
             {
                 bool brotherAlive = false;
                 if (CalamityGlobalNPC.cataclysm != -1)
@@ -203,7 +203,7 @@ namespace InfernumMode.GlobalInstances
                     ModContent.NPCType<PerforatorBodySmall>(),
                     ModContent.NPCType<PerforatorTailSmall>()
                 };
-                if (perforatorIDs.Contains(npc.type))
+                if (perforatorIDs.Contains(npc.type) && OverridingListManager.Registered<PerforatorHive>())
                 {
                     for (int k = 0; k < npc.buffImmune.Length; k++)
                         npc.buffImmune[k] = true;
@@ -240,7 +240,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.PreKill(npc);
 
-            if (npc.type == NPCID.EaterofWorldsHead)
+            if (npc.type == NPCID.EaterofWorldsHead && OverridingListManager.Registered(npc.type))
             {
                 if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
                 {
@@ -273,7 +273,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             // Clear lightning.
-            if (npc.type == NPCID.BrainofCthulhu)
+            if (npc.type == NPCID.BrainofCthulhu && OverridingListManager.Registered(npc.type))
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -282,7 +282,7 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == ModContent.NPCType<OldDukeNPC>())
+            if (npc.type == ModContent.NPCType<OldDukeNPC>() && OverridingListManager.Registered(npc.type))
                 CalamityMod.CalamityMod.StopRain();
 
             int apolloID = ModContent.NPCType<Apollo>();
@@ -299,7 +299,7 @@ namespace InfernumMode.GlobalInstances
 
                 totalExoMechs++;
             }
-            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc))
+            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
                 return false;
 
             return base.PreKill(npc);
@@ -310,7 +310,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            if (npc.type == NPCID.WallofFlesh)
+            if (npc.type == NPCID.WallofFlesh && OverridingListManager.Registered(npc.type))
             {
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
                 {
@@ -322,7 +322,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())
             {
                 cooldownSlot = 0;
                 return npc.alpha == 0;
@@ -335,48 +335,49 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
 
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("Yharon").Type)
+            if (npc.type == ModContent.NPCType<Yharon>() && OverridingListManager.Registered(npc.type))
             {
                 if (npc.life - (int)Math.Ceiling(damage) <= 0)
-                {
                     npc.NPCLoot();
-                }
             }
 
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
 
             // Make DoG enter the second phase once ready.
-            if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
+            if (OverridingListManager.Registered<DevourerofGodsHead>())
             {
-                damage = 0;
-                npc.dontTakeDamage = true;
-                DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
-                return false;
-            }
-
-            if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
-            {
-                damage = 0;
-                npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[32] == 0f)
+                if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
+                     life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
                 {
-                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                    npc.Infernum().ExtraAI[32] = 1f;
+                    damage = 0;
+                    npc.dontTakeDamage = true;
+                    DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
+                    return false;
                 }
-                return false;
+
+                if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
+                     life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
+                {
+                    damage = 0;
+                    npc.dontTakeDamage = true;
+                    if (npc.Infernum().ExtraAI[32] == 0f)
+                    {
+                        SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
+                        npc.Infernum().ExtraAI[32] = 1f;
+                    }
+                    return false;
+                }
             }
 
             // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
+            if (npc.type == ModContent.NPCType<AdultEidolonWyrmTail>() && OverridingListManager.Registered<AdultEidolonWyrmHead>())
             {
                 Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
                 Main.npc[npc.realLife].netUpdate = true;
             }
 
-            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
+            if ((npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead) && OverridingListManager.Registered(NPCID.MoonLordCore))
             {
                 if (npc.life - realDamage <= 1000)
                 {
@@ -386,7 +387,7 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
+            if (npc.type == ModContent.NPCType<ThanatosHead>() && OverridingListManager.Registered(npc.type))
                 damage = (int)(damage * 1.65f);
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
@@ -405,17 +406,9 @@ namespace InfernumMode.GlobalInstances
             switch (npc.type)
             {
                 case NPCID.BloodNautilus:
-                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
+                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && OverridingListManager.Registered(NPCID.BloodNautilus), ModContent.ItemType<BloodOrb>(), 1, 85, 105);
                     break;
             }
-        }
-
-        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
-
-            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
         }
 
         public override bool CheckDead(NPC npc)
@@ -423,7 +416,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
 
-            if (npc.type == NPCID.WallofFleshEye)
+            if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -441,7 +434,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsHead>() && OverridingListManager.Registered(npc.type))
             {
                 npc.life = 1;
                 npc.dontTakeDamage = true;
@@ -455,7 +448,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == ModContent.NPCType<PolterghastNPC>())
+            if (npc.type == ModContent.NPCType<PolterghastNPC>() && OverridingListManager.Registered(npc.type))
             {
                 if (npc.Infernum().ExtraAI[6] > 0f)
                     return true;
@@ -468,7 +461,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == ModContent.NPCType<Bumblefuck2>())
+            if (npc.type == ModContent.NPCType<Bumblefuck2>() && OverridingListManager.Registered<Bumblefuck>())
             {
                 if (npc.ai[0] != 3f && npc.ai[3] > 0f)
                 {
@@ -482,7 +475,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type is NPCID.Spazmatism or NPCID.Retinazer)
+            if ((npc.type is NPCID.Spazmatism or NPCID.Retinazer) && OverridingListManager.Registered(NPCID.Spazmatism))
             {
                 bool otherTwinHasCreatedShield = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -511,7 +504,7 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.CultistBoss)
+            if (npc.type == NPCID.CultistBoss && OverridingListManager.Registered(npc.type))
             {
                 CultistBehaviorOverride.ClearAwayEntities();
                 npc.Infernum().ExtraAI[6] = 1f;
@@ -525,7 +518,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
+            if (npc.type == ModContent.NPCType<SupremeCalamitas>() && OverridingListManager.Registered(npc.type))
             {
                 npc.netUpdate = true;
                 npc.active = true;
@@ -534,7 +527,7 @@ namespace InfernumMode.GlobalInstances
 
                 return false;
             }
-            if (Utilities.IsExoMech(npc))
+            if (Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
             {
                 bool hasPerformedDeathAnimation = npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
                 if (npc.realLife >= 0)
@@ -603,15 +596,15 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckActive(npc);
 
-            if (npc.type == NPCID.KingSlime)
+            if (npc.type == NPCID.KingSlime && OverridingListManager.Registered(npc.type))
                 return false;
-            if (npc.type == NPCID.SkeletronHand)
+            if (npc.type == NPCID.SkeletronHand && OverridingListManager.Registered(NPCID.SkeletronHead))
                 return false;
-            if (npc.type == ModContent.NPCType<GreatSandShark>())
+            if (npc.type == ModContent.NPCType<GreatSandShark>() && OverridingListManager.Registered(npc.type))
                 return false;
-            if (npc.type == NPCID.AncientCultistSquidhead)
+            if (npc.type == NPCID.AncientCultistSquidhead && OverridingListManager.Registered(NPCID.CultistBoss))
                 return false;
-            if (npc.type == NPCID.MoonLordFreeEye)
+            if (npc.type == NPCID.MoonLordFreeEye && OverridingListManager.Registered(NPCID.MoonLordCore))
                 return false;
 
             return base.CheckActive(npc);
@@ -622,35 +615,35 @@ namespace InfernumMode.GlobalInstances
             if (!WorldSaveSystem.InfernumMode)
                 return;
 
-            if (npc.type == ModContent.NPCType<Crabulon>())
+            if (npc.type == ModContent.NPCType<Crabulon>() && OverridingListManager.Registered(npc.type))
             {
                 target.AddBuff(BuffID.Poisoned, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
             }
 
-            if (npc.type == NPCID.QueenBee)
+            if (npc.type == NPCID.QueenBee && OverridingListManager.Registered(npc.type))
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
 
-            if (npc.type == ModContent.NPCType<SlimeGodCore>())
+            if (npc.type == ModContent.NPCType<SlimeGodCore>() && OverridingListManager.Registered(npc.type))
             {
                 target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
                 target.AddBuff(ModContent.BuffType<Shadowflame>(), 90);
                 target.AddBuff(BuffID.Slimed, 240);
                 target.AddBuff(BuffID.Slow, 240);
             }
-            if (npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism))
+            if (npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism) && OverridingListManager.Registered(npc.type))
                 target.AddBuff(ModContent.BuffType<RedSurge>(), 180);
-            if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))
+            if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer) && OverridingListManager.Registered(npc.type))
                 target.AddBuff(ModContent.BuffType<ShadowflameInferno>(), 180);
 
-            if (npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice)
+            if ((npc.type is NPCID.PrimeSaw or NPCID.PrimeVice) && OverridingListManager.Registered(NPCID.SkeletronPrime))
             {
                 target.AddBuff(BuffID.BrokenArmor, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
                 target.AddBuff(BuffID.Bleeding, 300);
             }
 
-            if (npc.type == NPCID.SkeletronPrime)
+            if (npc.type == NPCID.SkeletronPrime && OverridingListManager.Registered(npc.type))
                 target.AddBuff(BuffID.Bleeding, 420);
         }
 

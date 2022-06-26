@@ -1,7 +1,6 @@
 using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Events;

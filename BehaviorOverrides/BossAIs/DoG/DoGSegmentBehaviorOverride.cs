@@ -1,13 +1,10 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 using static InfernumMode.BehaviorOverrides.BossAIs.DoG.DoGPhase2HeadBehaviorOverride;

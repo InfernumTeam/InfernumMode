@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Items.Potions;
-using CalamityMod.Items.TreasureBags;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;

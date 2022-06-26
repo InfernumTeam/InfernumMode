@@ -1,5 +1,4 @@
 using CalamityMod.Events;
-using CalamityMod.NPCs.Crabulon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

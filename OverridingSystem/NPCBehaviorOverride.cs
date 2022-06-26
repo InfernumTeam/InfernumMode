@@ -17,24 +17,14 @@ namespace InfernumMode.OverridingSystem
             {
                 string methodName = string.Empty;
 
-                switch (context)
+                methodName = context switch
                 {
-                    case NPCOverrideContext.NPCAI:
-                        methodName = "PreAI";
-                        break;
-                    case NPCOverrideContext.NPCSetDefaults:
-                        methodName = "SetDefaults";
-                        break;
-                    case NPCOverrideContext.NPCPreDraw:
-                        methodName = "PreDraw";
-                        break;
-                    case NPCOverrideContext.NPCFindFrame:
-                        methodName = "FindFrame";
-                        break;
-                    default:
-                        throw new ArgumentException("The given override context is invalid.");
-                }
-
+                    NPCOverrideContext.NPCAI => "PreAI",
+                    NPCOverrideContext.NPCSetDefaults => "SetDefaults",
+                    NPCOverrideContext.NPCPreDraw => "PreDraw",
+                    NPCOverrideContext.NPCFindFrame => "FindFrame",
+                    _ => throw new ArgumentException("The given override context is invalid."),
+                };
                 MethodInfo method = type.GetMethod(methodName, Utilities.UniversalBindingFlags);
                 List<Type> paramTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToList();
                 paramTypes.Add(method.ReturnType);

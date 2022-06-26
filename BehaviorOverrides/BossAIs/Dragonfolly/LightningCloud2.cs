@@ -1,6 +1,5 @@
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

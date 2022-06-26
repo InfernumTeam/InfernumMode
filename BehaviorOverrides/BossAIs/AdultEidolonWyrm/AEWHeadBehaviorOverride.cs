@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;

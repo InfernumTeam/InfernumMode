@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
-using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -15,8 +14,9 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
 using Terraria.WorldBuilding;
+using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
+using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public const bool ReadyToUseBuffedAI = false;
+        public static bool ReadyToUseBuffedAI => OverridingListManager.Registered<ProvidenceNPC>();
 
         #region Enumerations
         public enum CloneAttackType

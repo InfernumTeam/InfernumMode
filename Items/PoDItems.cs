@@ -4,7 +4,6 @@ using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;

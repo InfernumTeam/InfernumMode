@@ -4,7 +4,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -19,6 +18,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using BrimmyNPC = CalamityMod.NPCs.BrimstoneElemental.BrimstoneElemental;
+using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public const float BaseDR = 0.12f;
         public const float InvincibleDR = 0.99999f;
         public const float RoseCircleRadius = 1279f;
-        public const bool ReadyToUseBuffedAI = false;
+        public static bool ReadyToUseBuffedAI => OverridingListManager.Registered<ProvidenceNPC>();
 
         #region Enumerations
         public enum BrimmyAttackType

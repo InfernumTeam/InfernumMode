@@ -9,7 +9,6 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {

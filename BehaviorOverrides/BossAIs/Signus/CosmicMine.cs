@@ -4,7 +4,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

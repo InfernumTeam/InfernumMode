@@ -3,7 +3,6 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;

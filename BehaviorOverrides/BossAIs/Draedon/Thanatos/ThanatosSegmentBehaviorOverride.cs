@@ -4,7 +4,6 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;

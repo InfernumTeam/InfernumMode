@@ -1,6 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon

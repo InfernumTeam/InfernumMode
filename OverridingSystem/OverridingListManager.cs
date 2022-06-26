@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.OverridingSystem
 {
@@ -22,6 +23,10 @@ namespace InfernumMode.OverridingSystem
 
         public delegate bool NPCPreAIDelegate(NPC npc);
         public delegate bool NPCPreDrawDelegate(NPC npc, SpriteBatch spriteBatch, Color lightColor);
+
+        public static bool Registered(int npcID) => InfernumNPCPreAIOverrideList.ContainsKey(npcID);
+
+        public static bool Registered<T>() where T : ModNPC => Registered(ModContent.NPCType<T>());
 
         internal static void Load()
         {

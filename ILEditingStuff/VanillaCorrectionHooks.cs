@@ -114,11 +114,15 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Player>>(player =>
             {
+                int scourgeID = ModContent.NPCType<DesertScourgeHead>();
+                if (NPC.AnyNPCs(scourgeID))
+                    return;
+
                 SoundEngine.PlaySound(SoundID.Roar, player.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
+                    NPC.SpawnOnPlayer(player.whoAmI, scourgeID);
                 else
-                    NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
+                    NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, scourgeID);
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);

@@ -188,12 +188,10 @@ namespace InfernumMode
             if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
 
-            // Ensure that Malice Mode is never active while Infernum is active.
-            if (WorldSaveSystem.InfernumMode && CalamityWorld.malice)
-            {
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
-                CalamityWorld.malice = false;
-            }
+            // I said FUCK OFF.
+            bool stupidDifficultyIsActive = CalamityWorld.malice || Main.masterMode || Main.getGoodWorld;
+            if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive)
+                WorldSaveSystem.InfernumMode = false;
 
             if (ShadowflameInferno)
             {

@@ -19,7 +19,7 @@ namespace InfernumMode
             Tooltip.SetDefault("Makes bosses absurd unless Boss Rush is active\n" +
                                "Revengeance Mode must be active to use this item\n" +
                                "Malice Mode is disabled while this is active\n" +
-                               "This item cannot be used in Master Mode or For The Worthy seed worlds" +
+                               "This item cannot be used in Master Mode or For The Worthy seed worlds\n" +
                                "Infernum");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 8));
         }
@@ -50,7 +50,7 @@ namespace InfernumMode
             return true;
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip3" && x.Mod == "Terraria").OverrideColor = Color.DarkRed;
+        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip4" && x.Mod == "Terraria").OverrideColor = Color.DarkRed;
 
         public override void AddRecipes()
         {

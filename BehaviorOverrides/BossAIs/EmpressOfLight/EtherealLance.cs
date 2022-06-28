@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-	public class EtherealLance : ModProjectile
+    public class EtherealLance : ModProjectile
     {
         public Color MyColor
         {

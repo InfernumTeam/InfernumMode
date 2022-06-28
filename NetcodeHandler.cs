@@ -1,14 +1,17 @@
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode
 {
     public enum InfernumPacketType : short
     {
-        SendExtraNPCData
+        SendExtraNPCData,
+        SyncInfernumActive
     }
 
     public class InfernumNPCSyncInformation
@@ -44,6 +47,36 @@ namespace InfernumMode
     public static class NetcodeHandler
     {
         public static List<InfernumNPCSyncInformation> PendingSyncs = new();
+
+        public static void SyncInfernumActivity(int sender)
+        {
+            // Don't bother sending packets in singleplayer.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            BitsByte containmentFlagWrapper = new();
+            containmentFlagWrapper[0] = WorldSaveSystem.InfernumMode;
+
+            packet.Write((byte)InfernumPacketType.SyncInfernumActive);
+            packet.Write(sender);
+            packet.Write(containmentFlagWrapper);
+            packet.Send(-1, sender);
+        }
+
+        public static void RecieveInfernumActivitySync(BinaryReader reader)
+        {
+            int sender = reader.ReadInt32();
+            BitsByte flag = reader.ReadByte();
+            WorldSaveSystem.InfernumMode = flag[0];
+
+            // Send the packet again to the other clients if this packet was received on the server.
+            // Since ModPackets go solely to the server when sent by a client this is necesssary
+            // to ensure that all clients are informed of what happened.
+            if (Main.netMode == NetmodeID.Server)
+                SyncInfernumActivity(sender);
+        }
+
         public static void ReceivePacket(Mod mod, BinaryReader reader, int whoAmI)
         {
             InfernumPacketType packetType = (InfernumPacketType)reader.ReadInt16();
@@ -74,7 +107,16 @@ namespace InfernumMode
 
                     if (!syncInformation.TryToApplyToNPC())
                         PendingSyncs.Add(syncInformation);
+                    break;
 
+                case InfernumPacketType.SyncInfernumActive:
+                    // Send the packet again to the other clients if this packet was received on the server.
+                    // Since ModPackets go solely to the server when sent by a client this is necesssary
+                    // to ensure that all clients are informed of what happened.
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+
+                    }
                     break;
             }
         }

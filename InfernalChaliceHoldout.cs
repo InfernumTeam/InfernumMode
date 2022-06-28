@@ -55,18 +55,26 @@ namespace InfernumMode
             Projectile.frame = (int)Time / 6 % Main.projFrames[Projectile.type];
         }
 
+        public override void Kill(int timeLeft)
+        {
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                return;
+
+            bool infernumWasAlreadyActive = WorldSaveSystem.InfernumMode;
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
+
+            if (Main.myPlayer == Projectile.owner)
+            {
+                WorldSaveSystem.InfernumMode = !infernumWasAlreadyActive;
+                NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
+            }
+        }
+
         public void ToggleModeAndCreateVisuals()
         {
             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch, Main.LocalPlayer.Center);
             SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, Main.LocalPlayer.Center);
-
-            bool infernumWasAlreadyActive = WorldSaveSystem.InfernumMode;
-            if (Main.netMode != NetmodeID.MultiplayerClient && !CalamityPlayer.areThereAnyDamnBosses)
-            {
-                Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
-                WorldSaveSystem.InfernumMode = !infernumWasAlreadyActive;
-                CalamityNetcode.SyncWorld();
-            }
 
             if (Main.netMode != NetmodeID.Server)
             {

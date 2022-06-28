@@ -356,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int boltReleaseDelay = 90;
             int boltReleaseTime = 74;
             int boltReleaseRate = 2;
-            int attackSwitchDelay = 300;
+            int attackSwitchDelay = 190;
             float boltSpeed = 10.5f;
             Vector2 handOffset = new(-55f, -30f);
 
@@ -1072,7 +1072,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Eventually make the light orb fade away.
             fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
 
-            if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 180f)
+            if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 120f)
                 SelectNextAttack(npc);
         }
 

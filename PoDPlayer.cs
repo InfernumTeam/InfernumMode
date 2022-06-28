@@ -191,7 +191,11 @@ namespace InfernumMode
             // I said FUCK OFF.
             bool stupidDifficultyIsActive = CalamityWorld.malice || Main.masterMode || Main.getGoodWorld;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
                 WorldSaveSystem.InfernumMode = false;
+            }
 
             if (ShadowflameInferno)
             {

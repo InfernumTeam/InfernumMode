@@ -50,8 +50,7 @@ namespace InfernumMode.Systems
 
         public static void GenerateUndergroundJungleArea(GenerationProgress progress, GameConfiguration configuration)
         {
-            bool success = false;
-            while (!success)
+            for (int j = 0; j < 5000; j++)
             {
                 int x;
                 if (WorldGen.dungeonX < Main.maxTilesX / 2)
@@ -63,7 +62,6 @@ namespace InfernumMode.Systems
 
                 if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.JungleGrass && Main.tile[x, y].WallType != WallID.LihzahrdBrick)
                 {
-                    success = true;
                     for (int i = 0; i < 4; i++)
                     {
                         x += WorldGen.genRand.Next(-15, 15);
@@ -74,6 +72,7 @@ namespace InfernumMode.Systems
                             new Actions.PlaceWall(WallID.MudUnsafe)
                             ));
                     }
+                    break;
                 }
             }
         }

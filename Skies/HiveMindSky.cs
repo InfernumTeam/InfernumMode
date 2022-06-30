@@ -10,15 +10,18 @@ namespace InfernumMode.Skies
 {
     public class HiveMindSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => true;
-
-        public override void SpecialVisuals(Player player)
+        public override bool IsSceneEffectActive(Player player)
         {
             int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
             int hiveMind = NPC.FindFirstNPC(hiveMindID);
             NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
             bool enabled = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", enabled);
+            return enabled;
+        }
+
+        public override void SpecialVisuals(Player player, bool isActive)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", isActive);
         }
     }
     

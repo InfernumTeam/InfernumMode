@@ -22,8 +22,11 @@ namespace InfernumMode.MusicOverrides
 
         public override bool IsSceneEffectActive(Player player) => MoonLord != null;
 
-        public override void SpecialVisuals(Player player)
+        public override void SpecialVisuals(Player player, bool isActive)
         {
+            if (!isActive)
+                return;
+
             Main.musicFade[Main.curMusic] = 1f;
         }
 

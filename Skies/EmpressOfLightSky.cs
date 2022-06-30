@@ -11,15 +11,18 @@ namespace InfernumMode.Skies
 {
 	public class EmpressOfLightSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => true;
-
-        public override void SpecialVisuals(Player player)
+        public override bool IsSceneEffectActive(Player player)
         {
             int empressID = NPCID.HallowBoss;
             int empress = NPC.FindFirstNPC(empressID);
             NPC empressNPC = empress >= 0 ? Main.npc[empress] : null;
             bool enabled = empressNPC != null && EmpressOfLightBehaviorOverride.InPhase2(empressNPC);
-            player.ManageSpecialBiomeVisuals("InfernumMode:EmpressOfLight", enabled);
+            return enabled;
+        }
+
+        public override void SpecialVisuals(Player player, bool isActive)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:EmpressOfLight", isActive);
         }
     }
 

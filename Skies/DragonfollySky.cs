@@ -10,13 +10,16 @@ namespace InfernumMode.Skies
 {
     public class DragonfollySkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => true;
-
-        public override void SpecialVisuals(Player player)
+        public override bool IsSceneEffectActive(Player player)
         {
             int bumblefuckID = ModContent.NPCType<Bumblefuck>();
             bool enabled = NPC.AnyNPCs(bumblefuckID) && (Main.npc[NPC.FindFirstNPC(bumblefuckID)].Infernum().ExtraAI[8] > 0f);
-            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", enabled);
+            return enabled;
+        }
+
+        public override void SpecialVisuals(Player player, bool isActive)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", isActive);
         }
     }
 

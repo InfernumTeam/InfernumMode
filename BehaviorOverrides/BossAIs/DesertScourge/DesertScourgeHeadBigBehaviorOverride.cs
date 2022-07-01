@@ -138,7 +138,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
                         int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
                         if (Main.projectile.IndexInRange(sand))
+                        {
+                            Main.projectile[sand].MaxUpdates = 1;
                             Main.projectile[sand].tileCollide = false;
+                        }
                     }
                 }
             }
@@ -221,11 +224,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(13f, 20.5f);
                         int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                         if (Main.projectile.IndexInRange(sand))
+                        {
+                            Main.projectile[sand].MaxUpdates = 1;
                             Main.projectile[sand].tileCollide = false;
+                        }
 
                         sand = Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                         if (Main.projectile.IndexInRange(sand))
+                        {
+                            Main.projectile[sand].MaxUpdates = 1;
                             Main.projectile[sand].tileCollide = false;
+                        }
                     }
 
                     if (attackTimer > 360f || MathHelper.Distance(target.Center.X, npc.Center.X) > 1950f)
@@ -355,7 +364,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                             Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
                             int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                             if (Main.projectile.IndexInRange(sand))
+                            {
+                                Main.projectile[sand].MaxUpdates = 1;
                                 Main.projectile[sand].tileCollide = false;
+                            }
                         }
 
                         // Create the tornadoes.

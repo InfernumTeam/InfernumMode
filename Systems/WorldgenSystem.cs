@@ -18,11 +18,11 @@ namespace InfernumMode.Systems
             int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
             if (floatingIslandIndex != -1)
                 tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateUndergroundDesertArea));
-            int jungleTreesIndex = tasks.FindIndex(g => g.Name == "Jungle Trees");
-            if (jungleTreesIndex != -1)
+            int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
+            if (finalCleanupIndex != -1)
                 tasks.Insert(floatingIslandIndex, new PassLegacy("Jungle Digout Area", GenerateUndergroundJungleArea));
             int finalIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
-            if (finalIndex != -1    )
+            if (finalIndex != -1)
             {
                 int currentFinalIndex = finalIndex;
                 tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", (progress, config) =>
@@ -52,13 +52,8 @@ namespace InfernumMode.Systems
         {
             for (int j = 0; j < 5000; j++)
             {
-                int x;
-                if (WorldGen.dungeonX < Main.maxTilesX / 2)
-                    x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.6), (int)(Main.maxTilesX * 0.85));
-                else
-                    x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.15), (int)(Main.maxTilesX * 0.5));
-
-                int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 840);
+                int x = WorldGen.genRand.Next(Main.maxTilesX / 10, Main.maxTilesX * 9 / 10);
+                int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 740);
 
                 if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.JungleGrass && Main.tile[x, y].WallType != WallID.LihzahrdBrick)
                 {
@@ -68,6 +63,7 @@ namespace InfernumMode.Systems
                         y += WorldGen.genRand.Next(-15, 15);
                         WorldUtils.Gen(new Point(x, y), new Shapes.Circle(70), Actions.Chain(
                             new Modifiers.Blotches(12),
+                            new Modifiers.SkipTiles(TileID.LihzahrdBrick),
                             new Actions.ClearTile(),
                             new Actions.PlaceWall(WallID.MudUnsafe)
                             ));

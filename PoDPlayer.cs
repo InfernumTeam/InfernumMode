@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using InfernumMode.Systems;
@@ -113,12 +112,6 @@ namespace InfernumMode
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
         #endregion
-        #region Kill
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            ExoMechManagement.RecordAttackDeath(Player);
-        }
-        #endregion Kill
         #region Life Regen
         public override void UpdateLifeRegen()
         {

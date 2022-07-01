@@ -3,7 +3,6 @@ using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
-using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,8 +30,6 @@ namespace InfernumMode.GlobalInstances
             {
                 ExtraAI[i] = 0f;
             }
-            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
-                projectile.timeLeft = ProvidenceBehaviorOverride.AuraTime;
         }
 
         // TODO -- This is terrible. Refactor it at some point.
@@ -106,9 +103,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
-            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>() ||
-                n.type == ModContent.NPCType<ProvArenaPlatform>()).
-                OrderBy(n => projectile.Distance(n.Center)).ToArray();
+            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center)).ToArray();
             NPC[] attachedPlatforms = platforms.Where(p =>
             {
                 Rectangle platformHitbox = p.Hitbox;

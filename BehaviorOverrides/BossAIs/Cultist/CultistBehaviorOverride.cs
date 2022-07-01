@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             AncientDoom
         }
 
-        public const float BorderWidth = 5472f;
+        public const float BorderWidth = 3472f;
         public const float Phase2LifeRatio = 0.65f;
         public const float Phase3LifeRatio = 0.25f;
         public const float TransitionAnimationTime = 90f;
@@ -97,8 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 return false;
             }
 
-            float left = initialXPosition - 2700f;
-            float right = initialXPosition + 2700f;
+            float left = initialXPosition - BorderWidth / 2f + 30f;
+            float right = initialXPosition + BorderWidth / 2f - 30f;
 
             // Restrict the player's position.
             target.Center = Vector2.Clamp(target.Center, new Vector2(left + target.width * 0.5f, -100f), new Vector2(right - target.width * 0.5f, Main.maxTilesY * 16f + 100f));
@@ -442,8 +442,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoAttack_FireballBarrage(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
-            int fireballShootRate = phase2 ? 9 : 7;
-            int fireballCount = phase2 ? 38 : 32;
+            int fireballShootRate = phase2 ? 11 : 7;
+            int fireballCount = phase2 ? 30 : 32;
             int attackLength = 105 + fireballShootRate * fireballCount;
             if (phase2)
                 attackLength += 390;
@@ -480,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         if (aimRotation == 0f)
                             aimRotation = (target.Center - fireballSpawnPosition + target.velocity * 30f).ToRotation();
                         else
-                            aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
+                            aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.18f);
 
                         Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
                         fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);

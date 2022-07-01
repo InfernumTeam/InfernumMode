@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreAI(NPC npc)
         {
-            int swerveTime = 60;
+            int swerveTime = 42;
             bool phase2Variant = npc.ai[0] == 1f;
             Player target = Main.player[npc.target];
             ref float attackTimer = ref npc.ai[1];

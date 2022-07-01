@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.penetrate = -1;
         }
 
-        public static int GetWaitTime(bool phase2) => phase2 ? 150 : 200;
+        public static int GetWaitTime(bool phase2) => phase2 ? 175 : 215;
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
 

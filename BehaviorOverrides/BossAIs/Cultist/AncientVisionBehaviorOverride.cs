@@ -3,6 +3,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
@@ -16,97 +17,85 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         #region AI
         public override bool PreAI(NPC npc)
         {
-            int direction = (npc.ai[0] == 0f).ToDirectionInt();
-            ref float attackTimer = ref npc.ai[1];
-            ref float attackState = ref npc.ai[2];
-
-            npc.noGravity = true;
+            npc.TargetClosest(false);
+            int idealDirection = (npc.velocity.X > 0).ToDirectionInt();
+            npc.spriteDirection = idealDirection;
             npc.noTileCollide = true;
-
-            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
-            {
-                npc.TargetClosest();
-                updateAllOtherVisions();
-
-                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
-                {
-                    if (npc.timeLeft > 45)
-                        npc.timeLeft = 45;
-                    else
-                        npc.Opacity = Utils.GetLerpValue(4f, 45f, npc.timeLeft, true);
-                }
-                return false;
-            }
-
-            npc.Opacity = 1f;
-
-            void updateAllOtherVisions()
-            {
-                // Only one NPC can perform this operation, to prevent overlap.
-                if (direction != 1)
-                    return;
-
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].type != npc.type || !Main.npc[i].active || i == npc.whoAmI)
-                        continue;
-
-                    Main.npc[i].target = npc.target;
-                    Main.npc[i].ai[1] = npc.ai[1];
-                    Main.npc[i].ai[2] = npc.ai[2];
-                    Main.npc[i].netUpdate = true;
-                }
-            }
 
             Player target = Main.player[npc.target];
 
+            ref float direction = ref npc.ai[0];
+            ref float attackState = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[2];
+
             switch ((int)attackState)
             {
+                // Rise upward.
                 case 0:
-                    Vector2 destination = target.Center + new Vector2(direction * 320f, -215f);
-                    npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
-                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
-                    npc.spriteDirection = -1;
+                    Vector2 flyDestination = target.Center + new Vector2(direction * 400f, -240f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 12f;
+                    npc.velocity = (npc.velocity * 29f + idealVelocity) / 29f;
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
 
-                    npc.velocity = (npc.velocity * 4f + npc.SafeDirectionTo(destination) * 15f) / 5f;
-                    if (npc.WithinRange(destination, 50f))
+                    // Decide rotation.
+                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi;
+
+                    if (npc.WithinRange(flyDestination, 40f) || attackTimer > 150f)
                     {
                         attackState = 1f;
-                        attackTimer = 0f;
-                        updateAllOtherVisions();
+                        npc.velocity *= 0.65f;
                         npc.netUpdate = true;
                     }
                     break;
+
+                // Slow down and look at the target.
                 case 1:
-                    if (attackState == 20f)
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 17f;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.velocity *= 0.96f;
+                    npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.25f);
+                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi, 0.2f);
 
-                    if (attackTimer < 20f)
+                    // Charge once sufficiently slowed down.
+                    float chargeSpeed = 23f;
+                    if (npc.velocity.Length() < 1.25f)
                     {
-                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -7f, 0.08f);
-                        npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
-                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
-                    }
-                    else if (attackState < 125f)
-                    {
-                        if (!npc.WithinRange(target.Center, 160f))
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.035f);
-                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (BossRushEvent.BossRushActive ? 26f : 18.5f);
-
-                        npc.rotation = npc.velocity.ToRotation();
-                        npc.spriteDirection = (Math.Cos(npc.rotation) > 0f).ToDirectionInt();
-                    }
-
-                    if (attackTimer >= 125f)
-                    {
-                        npc.velocity *= 0.95f;
-                        if (attackTimer >= 185f)
+                        SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                        for (int i = 0; i < 36; i++)
                         {
-                            attackState = 0f;
-                            attackTimer = 0f;
-                            updateAllOtherVisions();
-                            npc.netUpdate = true;
+                            Dust magic = Dust.NewDustPerfect(npc.Center, 267);
+                            magic.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 6f;
+                            magic.scale = 1.1f;
+                            magic.color = Color.Yellow;
+                            magic.noGravity = true;
                         }
+
+                        attackState = 2f;
+                        attackTimer = 0f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Charge and swoop.
+                case 2:
+                    float angularTurnSpeed = MathHelper.Pi / 300f;
+                    idealVelocity = npc.SafeDirectionTo(target.Center);
+                    Vector2 leftVelocity = npc.velocity.RotatedBy(-angularTurnSpeed);
+                    Vector2 rightVelocity = npc.velocity.RotatedBy(angularTurnSpeed);
+                    if (leftVelocity.AngleBetween(idealVelocity) < rightVelocity.AngleBetween(idealVelocity))
+                        npc.velocity = leftVelocity;
+                    else
+                        npc.velocity = rightVelocity;
+
+                    // Decide rotation.
+                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi;
+
+                    if (attackTimer > 50f)
+                    {
+                        attackState = 0f;
+                        attackTimer = 0f;
+                        npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 8f, 0.14f);
+                        npc.netUpdate = true;
                     }
                     break;
             }

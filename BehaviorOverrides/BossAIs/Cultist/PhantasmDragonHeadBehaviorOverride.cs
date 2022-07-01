@@ -53,13 +53,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer % 300f > 210f)
             {
                 // If close to the target, speed up. Otherwise attempt to rotate towards them.
-                if (!npc.WithinRange(target.Center, 250f))
+                if (!npc.WithinRange(target.Center, 280f))
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 20f : 14f, 0.04f);
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 26f : 19f, 0.04f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0415f, true) * newSpeed;
                 }
                 else if (npc.velocity.Length() < 24f)
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 41f : 24f, 0.06f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 41f : 29f, 0.06f);
 
                 openMouthFlag = 1f;
 

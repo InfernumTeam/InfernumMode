@@ -17,6 +17,9 @@ dotnet_diagnostic.IDE0083.severity=warning
 dotnet_diagnostic.IDE0074.severity=warning
 dotnet_diagnostic.IDE0078.severity=warning
 
+# IDE0011: Add braces
+dotnet_diagnostic.IDE0011.severity = none
+
 [*.{cs,vb}]
 end_of_line=lf
 dotnet_style_prefer_auto_properties=true:warning

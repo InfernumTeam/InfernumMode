@@ -3,6 +3,7 @@ using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BossIntroScreens;
+using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
@@ -58,6 +59,17 @@ namespace InfernumMode
 
             Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
+
+            Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Dragonfolly"] = new DragonfollySky();
+
+            Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
+
+            Filters.Scene["InfernumMode:OldDuke"] = new Filter(new OldDukeScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Lime, Color.Black, 0.9f)).UseOpacity(0.6f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
+
+            SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
@@ -147,6 +159,9 @@ namespace InfernumMode
                 OverrideMusicBox(ItemID.MusicBoxBoss3, MusicLoader.GetMusicSlot(this, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, MusicLoader.GetMusicSlot(this, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
+
+            if (BossRushApplies)
+                BossRushChanges.Load();
 
             if (Main.netMode != NetmodeID.Server)
                 GeneralParticleHandler.LoadModParticleInstances(this);

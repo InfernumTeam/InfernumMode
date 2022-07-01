@@ -5,6 +5,8 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,11 +22,53 @@ namespace InfernumMode.GlobalInstances
     {
         public override bool InstancePerEntity => true;
 
+        #region Get Alpha
+        public override Color? GetAlpha(NPC npc, Color drawColor)
+        {
+            // Give a dark tint to the moon lord.
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
+            {
+                if (InfernumMode.CanUseCustomAIs)
+                    return MoonLordCoreBehaviorOverride.OverallTint;
+            }
+
+            if (npc.type == ModContent.NPCType<ThanatosHead>() ||
+                npc.type == ModContent.NPCType<ThanatosBody1>() ||
+                npc.type == ModContent.NPCType<ThanatosBody2>() ||
+                npc.type == ModContent.NPCType<ThanatosTail>())
+            {
+                bool dealsNoContactDamage = npc.damage == 0;
+                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
+            }
+
+            return base.GetAlpha(npc, drawColor);
+        }
+        #endregion
+
         #region Map Icon Manipulation
         public override void BossHeadSlot(NPC npc, ref int index)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
+
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
+            {
+                if (npc.Opacity <= 0.02f)
+                {
+                    index = -1;
+                    return;
+                }
+
+                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+                if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+                    index = inPhase2 ? DevourerofGodsHead.phase2IconIndex : DevourerofGodsHead.phase1IconIndex;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
+            }
 
             // Make Anahita completely invisible on the map when sufficiently faded out.
             if (npc.type == ModContent.NPCType<Anahita>() && npc.Opacity < 0.1f)
@@ -44,6 +88,16 @@ namespace InfernumMode.GlobalInstances
             // Have Cryogen use a custom map icon.
             if (npc.type == ModContent.NPCType<Cryogen>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
+        }
+
+        public override void BossHeadRotation(NPC npc, ref float rotation)
+        {
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
+            {
+                if (DoGPhase2HeadBehaviorOverride.InPhase2)
+                    rotation = npc.rotation;
+            }
         }
 
         #endregion

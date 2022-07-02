@@ -23,6 +23,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -482,10 +483,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 7f) * 8f;
                             Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
-                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), StrongerNormalShotDamage, 0f);
 
                             shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 7f) * 8f;
-                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), StrongerNormalShotDamage, 0f);
                         }
                     }
                     SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
@@ -622,7 +623,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), 1050, 0f);
+                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f);
                         if (Main.projectile.IndexInRange(deathray))
                         {
                             Main.projectile[deathray].ai[1] = npc.whoAmI;
@@ -639,7 +640,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
                 Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 650f) * new Vector2(1f, 0.6f);
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), 550, 0f);
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), StrongerNormalShotDamage, 0f);
             }
 
             // Make the laser spin.
@@ -754,8 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
                 return !activeArms.Contains(npc.type);
 
-            bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] > 1f &&
-                aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] < ExoMechManagement.FinalPhaseTransitionTime;
+            bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] is > 1f and < ExoMechManagement.FinalPhaseTransitionTime;
             if (aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||

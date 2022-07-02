@@ -190,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int blastDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
+                    int blastDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                     Vector2 blastShootVelocity = aimDirection * blastShootSpeed;
                     Vector2 blastSpawnPosition = endOfCannon + blastShootVelocity * 8.4f;
                     Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), blastDamage, 0f);

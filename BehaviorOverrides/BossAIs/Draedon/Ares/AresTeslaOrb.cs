@@ -199,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 4; i++)
             {
                 Vector2 sparkVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 5.6f;
-                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
             }
         }
 

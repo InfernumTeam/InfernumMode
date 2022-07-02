@@ -190,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                             {
                                 float offsetAngle = MathHelper.Lerp(-crystalSpread, crystalSpread, i / (float)(crystalsPerBurst - 1f));
                                 Vector2 crystalShootVelocity = NPC.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * crystalShootSpeed;
-                                Utilities.NewProjectileBetter(NPC.Center + crystalShootVelocity * 4f, crystalShootVelocity, ModContent.ProjectileType<PhotonRipperCrystal>(), 550, 0f);
+                                Utilities.NewProjectileBetter(NPC.Center + crystalShootVelocity * 4f, crystalShootVelocity, ModContent.ProjectileType<PhotonRipperCrystal>(), DraedonBehaviorOverride.StrongerNormalShotDamage, 0f);
                             }
                         }
 

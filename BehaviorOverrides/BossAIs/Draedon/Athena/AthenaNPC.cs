@@ -23,6 +23,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -492,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 lightningShootVelocity = TelegraphRotation.ToRotationVector2() * 8.4f;
-                    int lightning = Utilities.NewProjectileBetter(MainTurretCenter - lightningShootVelocity * 12f, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 530, 0f);
+                    int lightning = Utilities.NewProjectileBetter(MainTurretCenter - lightningShootVelocity * 12f, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), StrongerNormalShotDamage, 0f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Main.projectile[lightning].ai[0] = TelegraphRotation;
@@ -734,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 for (int i = 0; i < laserbeamCount; i++)
                 {
                     Vector2 laserbeamDirection = (pulseLaserDirection + MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
-                    int laserbeam = Utilities.NewProjectileBetter(NPC.Center, laserbeamDirection, ModContent.ProjectileType<PulseBeamStart>(), 950, 0f);
+                    int laserbeam = Utilities.NewProjectileBetter(NPC.Center, laserbeamDirection, ModContent.ProjectileType<PulseBeamStart>(), PowerfulShotDamage, 0f);
                     if (Main.projectile.IndexInRange(laserbeam))
                         Main.projectile[laserbeam].ai[1] = NPC.whoAmI;
                 }
@@ -775,7 +776,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                             shootSpeed += (Target.Distance(NPC.Center) - 960f) * 0.01f;
 
                         Vector2 projectileDestination = Target.Center + Target.velocity * predictionFactor;
-                        int laser = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer);
+                        int laser = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(projectileDestination) * shootSpeed, type, NormalShotDamage, 0f, Main.myPlayer);
                         if (Main.projectile.IndexInRange(laser))
                         {
                             Main.projectile[laser].owner = NPC.target;
@@ -869,7 +870,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center) * 8f;
-                    Utilities.NewProjectileBetter(NPC.Center, shootVelocity, ModContent.ProjectileType<AresTeslaOrb>(), 500, 0f);
+                    Utilities.NewProjectileBetter(NPC.Center, shootVelocity, ModContent.ProjectileType<AresTeslaOrb>(), StrongerNormalShotDamage, 0f);
                 }
 
                 NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
@@ -976,7 +977,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                             for (int i = 0; i < sparkCount; i++)
                             {
                                 Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
-                                Utilities.NewProjectileBetter(NPC.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 530, 0f);
+                                Utilities.NewProjectileBetter(NPC.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<TeslaSpark>(), NormalShotDamage, 0f);
                             }
                             if (ExoMechManagement.CurrentAthenaPhase >= 5)
                             {
@@ -1085,7 +1086,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 rocketShootVelocity = (Target.Center - MainTurretCenter).SafeNormalize(-Vector2.UnitY) * rocketShootSpeed;
-                        Utilities.NewProjectileBetter(MainTurretCenter, rocketShootVelocity, ModContent.ProjectileType<AthenaRocket>(), 500, 0f);
+                        Utilities.NewProjectileBetter(MainTurretCenter, rocketShootVelocity, ModContent.ProjectileType<AthenaRocket>(), StrongerNormalShotDamage, 0f);
                     }
                 }
 

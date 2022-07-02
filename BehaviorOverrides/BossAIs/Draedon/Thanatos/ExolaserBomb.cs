@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 18f);
-                    Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
                 }
             }
             else
@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             for (int i = 0; i < 120; i++)
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 34f);
-                Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
             }
         }
 

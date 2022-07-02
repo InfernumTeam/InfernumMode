@@ -29,6 +29,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public const int PostBattleMusicLength = 5120;
 
+        public const int NormalShotDamage = 455;
+
+        public const int StrongerNormalShotDamage = 475;
+
+        public const int PowerfulShotDamage = 775;
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI variable.

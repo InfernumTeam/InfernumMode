@@ -11,13 +11,14 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using Terraria.WorldBuilding;
 using InfernumMode.Sounds;
 using CalamityMod.Sounds;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -187,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < totalLasers; i++)
                         {
                             Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), 1050, 0f);
+                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f);
                             if (Main.projectile.IndexInRange(deathray))
                             {
                                 Main.projectile[deathray].ai[1] = npc.whoAmI;
@@ -320,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         SoundEngine.PlaySound(shootSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, 500, 0f);
+                        int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f);
                         if (Main.projectile.IndexInRange(laser) && armShootType == ModContent.ProjectileType<CannonLaser>())
                         {
                             Main.projectile[laser].ai[1] = npc.whoAmI;
@@ -381,14 +382,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         {
                             Vector2 boltShootVelocity = (MathHelper.TwoPi * i / aresCircularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 13f;
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
+                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), NormalShotDamage, 0f);
                         }
 
                         for (int i = 0; i < aresShotBoltCount; i++)
                         {
                             Vector2 boltShootVelocity = telegraphRotation.ToRotationVector2() * 31f + Main.rand.NextVector2Circular(5f, 5f);
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 21f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
+                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), NormalShotDamage, 0f);
                         }
                     }
                 }

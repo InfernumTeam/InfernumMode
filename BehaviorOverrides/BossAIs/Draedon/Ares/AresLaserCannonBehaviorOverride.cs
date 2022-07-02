@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 530;
+                    int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                     for (int i = 0; i < laserCount; i++)
                     {
                         Vector2 laserShootVelocity = aimDirection * laserShootSpeed;

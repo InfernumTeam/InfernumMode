@@ -13,10 +13,11 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using ArtemisLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -295,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                         int type = ModContent.ProjectileType<ApolloRocketInfernum>();
                                         Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 12.5f;
                                         Vector2 rocketSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 70f;
-                                        int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, 500, 0f, Main.myPlayer, 0f, target.Center.Y);
+                                        int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, NormalShotDamage, 0f, Main.myPlayer, 0f, target.Center.Y);
                                         if (Main.projectile.IndexInRange(rocket))
                                             Main.projectile[rocket].tileCollide = false;
                                     }
@@ -433,10 +434,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         laserDirection = Main.rand.NextBool().ToDirectionInt();
 
                         int type = ModContent.ProjectileType<AresSpinningRedDeathray>();
-                        int beam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, type, 960, 0f);
+                        int beam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, type, PowerfulShotDamage, 0f);
                         if (Main.projectile.IndexInRange(beam))
                             Main.projectile[beam].ai[1] = npc.whoAmI;
-                        beam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, type, 960, 0f);
+                        beam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, type, PowerfulShotDamage, 0f);
                         if (Main.projectile.IndexInRange(beam))
                             Main.projectile[beam].ai[1] = npc.whoAmI;
                         npc.netUpdate = true;
@@ -544,7 +545,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 plasmaShootVelocity = aimDirection * normalShotShootSpeed;
-                                int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 500, 0f);
+                                int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
                                 if (Main.projectile.IndexInRange(plasma))
                                     Main.projectile[plasma].ai[0] = Main.rand.NextBool().ToDirectionInt();
                             }
@@ -556,7 +557,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 laserShootVelocity = aimDirection * normalShotShootSpeed;
-                                int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), 500, 0f);
+                                int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), NormalShotDamage, 0f);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].ModProjectile<ArtemisLaserInfernum>().InitialDestination = aimDestination;

@@ -157,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     for (int i = 0; i < fireballCount; i++)
                     {
-                        int flameDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
+                        int flameDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                         Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
                         int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
                         if (ExoMechManagement.CurrentAresPhase >= 2)

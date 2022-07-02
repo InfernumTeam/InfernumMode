@@ -170,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int teslaOrbDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
+                    int teslaOrbDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                     int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f);
                     if (Main.projectile.IndexInRange(electricOrb))
                         Main.projectile[electricOrb].ai[0] = orbCounter;
@@ -188,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     // Release sparks once Ares is in the second phase.
                     if (ExoMechManagement.CurrentAresPhase >= 2)
                     {
-                        int teslaSparkDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
+                        int teslaSparkDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                         float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                         for (int i = 0; i < 7; i++)
                         {
@@ -200,7 +200,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     // As well as a of electric clouds in the third phase.
                     if (ExoMechManagement.CurrentAresPhase >= 3)
                     {
-                        int teslaGasDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 530;
+                        int teslaGasDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                         for (int i = 0; i < 85; i++)
                         {
                             Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;

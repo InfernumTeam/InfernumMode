@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 3; i++)
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2CircularEdge(10f, 10f);
-                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<ExoburstSpark>(), 550, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<ExoburstSpark>(), DraedonBehaviorOverride.StrongerNormalShotDamage, 0f);
             }
         }
 

@@ -21,6 +21,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -481,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     for (int i = 0; i < 18; i++)
                     {
                         Vector2 sparkVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 24f;
-                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<LaserSpark>(), 500, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<LaserSpark>(), NormalShotDamage, 0f);
                     }
                 }
             }
@@ -636,7 +637,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer == initialRedirectTime + 1f)
             {
                 Vector2 bombSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
-                int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExolaserBomb>(), 1000, 0f);
+                int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExolaserBomb>(), PowerfulShotDamage, 0f);
                 if (Main.projectile.IndexInRange(bomb))
                     Main.projectile[bomb].ModProjectile<ExolaserBomb>().GrowTime = (int)spinTime;
             }
@@ -887,7 +888,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<OverloadBoom>(), 0, 0f);
 
-                    int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), 1200, 0f);
+                    int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), PowerfulShotDamage, 0f);
                     if (Main.projectile.IndexInRange(light))
                         Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.53f;
                 }
@@ -898,7 +899,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
                 Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 650f) * new Vector2(1f, 0.6f);
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), 550, 0f);
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), StrongerNormalShotDamage, 0f);
             }
 
             // Play a sound prior to switching attacks.
@@ -949,7 +950,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     float shootSpeed = 19f;
                     Vector2 projectileDestination = target.Center;
                     Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1500f, 1500f);
-                    int laser = Utilities.NewProjectileBetter(spawnPosition, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 600, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                    int laser = Utilities.NewProjectileBetter(spawnPosition, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, StrongerNormalShotDamage, 0f, Main.myPlayer, 0f, npc.whoAmI);
                     if (Main.projectile.IndexInRange(laser))
                     {
                         Main.projectile[laser].owner = npc.target;

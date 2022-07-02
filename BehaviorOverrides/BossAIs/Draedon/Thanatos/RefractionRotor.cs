@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Vector2 aimedDirection = (Projectile.SafeDirectionTo(Target.Center) + aimedOffset).SafeNormalize(Vector2.UnitY);
                     laserDirection = Vector2.Lerp(laserDirection, aimedDirection, PointAtTargetInterpolant);
                     Vector2 laserVelocity = laserDirection * laserShootSpeed;
-                    int spark = Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
+                    int spark = Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
                     if (Main.projectile.IndexInRange(spark))
                         Main.projectile[spark].MaxUpdates = 3;
                 }

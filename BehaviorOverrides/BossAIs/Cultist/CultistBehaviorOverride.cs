@@ -524,7 +524,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 float adjustedTime = attackTimer - (105 + fireballShootRate * fireballCount);
                 frameType = (int)CultistFrameState.RaiseArmsUp;
-                if (adjustedTime > 80f && adjustedTime < 140f)
+                if (adjustedTime is > 80f and < 140f)
                     frameType = (int)CultistFrameState.Laugh;
 
                 if (adjustedTime == 10f && !npc.WithinRange(target.Center, 720f))
@@ -583,11 +583,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int summonLightningTime = phase2 ? 48 : 60;
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
+            int nebulaLightningShootTime = 280;
+            Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
             if (phase2)
-                attackLength += 280;
+                attackLength += nebulaLightningShootTime;
 
-            // Play a chant sount prior to releasing red lightning.
-            if (phase2 && attackTimer == attackLength - 275f)
+            // Play a chant sound and create pink dust prior to releasing red lightning.
+            if (phase2 && attackTimer >= attackLength - nebulaLightningShootTime - 35f && attackTimer < attackLength - nebulaLightningShootTime + 5f)
+            {
+                // Release hand electric dust.
+                for (int j = 0; j < 2; j++)
+                {
+                    Dust electricity = Dust.NewDustPerfect(lightningSpawnPosition, 264);
+                    electricity.velocity = Vector2.UnitX.RotatedByRandom(0.2f) * npc.spriteDirection * 2.6f;
+                    electricity.scale = Main.rand.NextFloat(1.3f, 1.425f);
+                    electricity.fadeIn = 0.9f;
+                    electricity.color = Color.Red;
+                    electricity.noLight = true;
+                    electricity.noGravity = true;
+                }
+            }
+
+            if (phase2 && attackTimer == attackLength - nebulaLightningShootTime + 5f)
                 SoundEngine.PlaySound(SoundID.Zombie91, npc.Center);
 
             // Hover and fly above the player.
@@ -643,7 +660,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create a burst of sparks and summon orbs.
-                if (adjustedTime == 30f || adjustedTime == 36f)
+                if (adjustedTime is 30f or 36f)
                 {
                     npc.velocity = Vector2.Zero;
                     for (int i = 0; i < 2; i++)
@@ -698,23 +715,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
             }
 
-            // Release a torrent of red lightning in phase 2.
+            // Release a torrent of nebula lightning in phase 2.
             else if (phase2)
             {
-                npc.velocity *= 0.95f;
-                Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
+                // Hold hands out.
+                frameType = (int)CultistFrameState.HoldArmsOut;
 
-                // Release hand electric dust.
-                for (int j = 0; j < 2; j++)
-                {
-                    Dust electricity = Dust.NewDustPerfect(lightningSpawnPosition, 264);
-                    electricity.velocity = Vector2.UnitX.RotatedByRandom(0.2f) * npc.spriteDirection * 2.6f;
-                    electricity.scale = Main.rand.NextFloat(1.3f, 1.425f);
-                    electricity.fadeIn = 0.9f;
-                    electricity.color = Color.Red;
-                    electricity.noLight = true;
-                    electricity.noGravity = true;
-                }
+                npc.velocity *= 0.95f;
 
                 if (attackTimer % 4f == 3f)
                 {
@@ -1051,7 +1058,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
             }
 
-            if (attackTimer == 50f || attackTimer == 210f || attackTimer == 330f)
+            if (attackTimer is 50f or 195f or 310f)
             {
                 Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
@@ -1073,7 +1080,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
             }
 
-            if (attackTimer >= 510f)
+            if (attackTimer >= 480f)
                 SelectNextAttack(npc);
         }
 
@@ -1081,7 +1088,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             float attackPower = Utils.GetLerpValue(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
 
-            int burstCount = 3;
+            int burstCount = 2;
             int burstShootRate = (int)MathHelper.Lerp(270f, 215f, attackPower);
             ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
             ref float cycleIndex = ref npc.Infernum().ExtraAI[1];

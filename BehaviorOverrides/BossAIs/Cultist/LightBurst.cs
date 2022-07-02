@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 1.6f, SpriteEffects.None, 0f);
 
-                float explosionTelegraphFade = Utils.GetLerpValue(0f, 20f, ExplosionTelegraphFade, true) * 0.16f;
+                float explosionTelegraphFade = Utils.GetLerpValue(0f, 20f, ExplosionTelegraphFade, true) * 0.3f;
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor * explosionTelegraphFade, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 5f, SpriteEffects.None, 0f);
                 return false;
             }

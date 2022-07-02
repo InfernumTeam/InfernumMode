@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.hostile = true;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = 135;
             Projectile.Opacity = 0f;
             Projectile.extraUpdates = 1;
             Projectile.penetrate = -1;
@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // The amount of these will create a somewhat geometric pattern.
             if (Time is > 60f and < 170f)
             {
-                float lineWidth = Utils.GetLerpValue(60f, 90f, Time, true) * Utils.GetLerpValue(170f, 140f, Time, true) * 2.5f + 0.2f;
+                float lineWidth = Utils.GetLerpValue(45f, 75f, Time, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * 2.5f + 0.2f;
 
                 if (lineWidth > 1f)
                     lineWidth += (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;

@@ -101,6 +101,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.04f, true) * newSpeed;
             }
+
+            npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.45f);
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             return false;
         }

@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             npc.defense = npc.defDefense;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
-
+            
             switch ((DesertScourgeAttackType)(int)attackType)
             {
                 case DesertScourgeAttackType.SandSpit:

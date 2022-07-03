@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Purple, Color.DarkBlue, (float)Math.Pow(completionRatio, 2D));
-            color = Color.Lerp(color, Color.DarkRed, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.3f);
+            color = Color.Lerp(color, Color.Black, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.4f);
             return color * Projectile.Opacity;
         }
 

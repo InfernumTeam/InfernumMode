@@ -9,6 +9,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
     public class OgreStompBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.DD2OgreSmash;
+
         public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
 
         public override bool PreAI(Projectile projectile)

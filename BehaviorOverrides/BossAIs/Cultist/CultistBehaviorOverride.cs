@@ -471,9 +471,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Shoot fireballs.
             else if (canShootFireballs)
             {
-                // Fire a barrage of fireballs from the hands in Phase 1.
+                // Fire a barrage of fireballs from the hands and create some from the sky in Phase 1.
                 if (!phase2)
                 {
+                    int skyFireballShootRate = fireballShootRate * 2;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
                     {
                         Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
@@ -482,13 +483,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         else
                             aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.18f);
 
-                        Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
+                        float shootSpeed = Main.rand.NextFloat(12f, 14f) + npc.Distance(target.Center) * 0.011f;
+                        Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * shootSpeed;
                         fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
                         Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 195, 0f);
                     }
+                    
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % skyFireballShootRate == skyFireballShootRate - 1f)
+                    {
+                        Vector2 fireballSpawnPosition = target.Center - new Vector2(Main.rand.NextFloatDirection() * 600f, -850f - target.velocity.Y * 20f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 195, 0f);
+                    }
+
                     frameType = (int)CultistFrameState.HoldArmsOut;
                 }
 
@@ -579,8 +588,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public static void DoAttack_LightningHover(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
             int lightningBurstCount = phase2 ? 2 : 3;
-            int hoverTime = phase2 ? 70 : 90;
-            int summonLightningTime = phase2 ? 48 : 60;
+            int hoverTime = phase2 ? 54 : 65;
+            int summonLightningTime = phase2 ? 40 : 50;
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
             int nebulaLightningShootTime = 280;
@@ -692,7 +701,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                                     if (phase2)
                                         predictivenessOffset *= 0.9f;
 
-                                    Vector2 lightningVelocity = (target.Center - orbSummonPosition + predictivenessOffset).SafeNormalize(Vector2.UnitY) * 7.6f;
+                                    Vector2 lightningVelocity = (target.Center - orbSummonPosition + predictivenessOffset).SafeNormalize(Vector2.UnitY) * 8.5f;
                                     lightningVelocity = lightningVelocity.RotatedBy(MathHelper.TwoPi * k / lightningCircleCount);
                                     if (!phase2)
                                         lightningVelocity *= 1.15f;

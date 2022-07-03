@@ -45,6 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     if (npc.timeLeft > 180)
                         npc.timeLeft = 180;
                     npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * (npc.velocity.Length() + 1.5f), 0.06f);
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     return false;
                 }
             }
@@ -55,11 +56,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // If close to the target, speed up. Otherwise attempt to rotate towards them.
                 if (!npc.WithinRange(target.Center, 280f))
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 26f : 19f, 0.04f);
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 33f : 23.75f, 0.05f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0415f, true) * newSpeed;
                 }
                 else if (npc.velocity.Length() < 24f)
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 41f : 29f, 0.06f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 43f : 33f, 0.06f);
 
                 openMouthFlag = 1f;
 
@@ -97,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 if (angleBetweenDirectionAndTarget < MathHelper.Pi / 3f && angleBetweenDirectionAndTarget > MathHelper.Pi * 0.75f)
                     newSpeed -= 0.0725f;
 
-                newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.7f : 1f);
+                newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.8f : 1.32f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.04f, true) * newSpeed;
             }

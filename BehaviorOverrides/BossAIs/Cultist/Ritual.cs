@@ -13,8 +13,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     public class Ritual : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+        
         public int MainCultistIndex => (int)Projectile.ai[1];
-        public Color RitualColor => Color.White;
+
+        public static Color RitualColor => Color.White;
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
@@ -28,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.penetrate = -1;
         }
 
-        public static int GetWaitTime(bool phase2) => phase2 ? 175 : 215;
+        public static int GetWaitTime(bool phase2) => phase2 ? 210 : 240;
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
 

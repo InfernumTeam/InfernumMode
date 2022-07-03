@@ -30,6 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void AI()
         {
+            if (Utilities.AnyProjectiles(ModContent.ProjectileType<IceMass>()))
+                Projectile.timeLeft -= 4;
+
             Projectile.Opacity = Utils.GetLerpValue(0f, 15f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Time++;

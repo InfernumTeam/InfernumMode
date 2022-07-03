@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.ILEditing;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -11,12 +12,15 @@ using CalamityMod.World;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
+using InfernumMode.BehaviorOverrides.BossAIs.Golem;
+using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
@@ -220,6 +224,154 @@ namespace InfernumMode.ILEditingStuff
 
         public void Load() => UpdateRippers += NerfAdrenalineRates;
         public void Unload() => UpdateRippers -= NerfAdrenalineRates;
+    }
+
+    public class MakeHooksInteractWithPlatforms : IHookEdit
+    {
+        internal static NPC[] GetPlatforms(Projectile projectile)
+        {
+            return Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>() ||
+                n.type == ModContent.NPCType<ProvArenaPlatform>()).
+                OrderBy(n => projectile.Distance(n.Center)).ToArray();
+        }
+
+        internal static bool PlatformRequirement(Projectile projectile)
+        {
+            Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
+            NPC[] attachedPlatforms = GetPlatforms(projectile).Where(p =>
+            {
+                Rectangle platformHitbox = p.Hitbox;
+                return Utils.CenteredRectangle(adjustedCenter, Vector2.One * 32f).Intersects(platformHitbox);
+            }).ToArray();
+            return attachedPlatforms.Length >= 1;
+        }
+
+        internal static void HandleAttachment(Projectile projectile)
+        {
+            if (PlatformRequirement(projectile) && projectile.ai[0] != 2f)
+                projectile.Center = Vector2.Lerp(projectile.Center, GetPlatforms(projectile)[0].Center, 0.3f);
+        }
+
+        internal static void AdjustHitPlatformCoords(Projectile projectile, ref int x, ref int y)
+        {
+            if (PlatformRequirement(projectile))
+            {
+                var platform = GetPlatforms(projectile)[0];
+                Vector2 hitPoint = new(projectile.Center.X, platform.Center.Y);
+                x = (int)(hitPoint.X / 16f);
+                y = (int)(hitPoint.Y / 16f);
+            }
+        }
+
+        public delegate void PlatformCoordsDelegate(Projectile projectile, ref int x, ref int y);
+
+        internal static void AdjustPlatformCollisionChecks(ILContext context)
+        {
+            ILCursor c = new(context);
+
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<WorldGen>("GetTileVisualHitbox")))
+                return;
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<Projectile>("damage")))
+                return;
+
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitDelegate<Action<Projectile>>(HandleAttachment);
+
+            // Go to the last instance of AI_007_GrapplingHooks_CanTileBeLatchedOnTo.
+            while (c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Projectile>("AI_007_GrapplingHooks_CanTileBeLatchedOnTo"))) { }
+
+            // Move to the instance of local loading that determines if the hook should return and AND it ensure that the platform requirement is met.
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchLdloc(out _)))
+                return;
+
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitDelegate<Func<Projectile, bool>>(p => !PlatformRequirement(p));
+            c.Emit(OpCodes.And);
+
+            // Make the hook and player move with the platform if attached.
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitDelegate<Action<Projectile>>(projectile =>
+            {
+                if (PlatformRequirement(projectile))
+                {
+                    Player owner = Main.player[projectile.owner];
+                    var platform = GetPlatforms(projectile)[0];
+                    Vector2 offset = platform.velocity * 0.5f;
+
+                    if (Collision.CanHit(owner.position, owner.width, owner.height, owner.position + offset * 1.5f, owner.width, owner.height))
+                    {
+                        owner.position += offset;
+                        projectile.position += offset;
+                    }
+                }
+            });
+
+            // Go back and get the label inside the "Has a tile been hit? Collide with it." logic that will be jumped to from outside based on the moving platforms.
+            // Also get the local indices for the hit tile's X/Y coordinates. They will be overrided by the result of the platform collision as necessary.
+            c.Goto(0);
+            for (int i = 0; i < 2; i++)
+            {
+                if (!c.TryGotoNext(MoveType.After, i => i.MatchLdfld<Player>("grapCount")))
+                    return;
+            }
+
+            // Get the label to jump to.
+            if (!c.TryGotoPrev(MoveType.After, i => i.MatchInitobj<Tile>()))
+                return;
+
+            if (!c.TryGotoPrev(MoveType.Before, i => i.MatchLdsflda<Main>("tile")))
+                return;
+
+            // Delete the stupid fucking tile null check since it fucks up the search process and does literally nothing now.
+            int start = c.Index;
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Tilemap>("set_Item")))
+                return;
+            int end = c.Index;
+            c.Goto(start);
+            c.RemoveRange(end - start);
+
+            int placeToPutPlatformCoordAdjustments = c.Index;
+
+            // Find the local coordinates based on a Main.tile[x, y] check right above.
+            int xLocalIndex = 0;
+            int yLocalIndex = 0;
+            if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdloc(out xLocalIndex)))
+                return;
+            if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdloc(out yLocalIndex)))
+                return;
+
+            int afterLocalIndicesIndex = c.Index;
+            if (!c.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Player>("IsBlacklistedForGrappling")))
+                return;
+            if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdsfld<Main>("player")))
+                return;
+            var tileHitLogic = c.DefineLabel();
+            c.MarkLabel(tileHitLogic);
+            c.Emit(OpCodes.Ldarg_0);
+            c.Emit(OpCodes.Ldloca, xLocalIndex);
+            c.Emit(OpCodes.Ldloca, yLocalIndex);
+            c.EmitDelegate<PlatformCoordsDelegate>(AdjustHitPlatformCoords);
+
+            // Finally, leave the conditional hell and hook to a default(Vector2) outside of the loop to create the jump/XY change.
+            c.Index = afterLocalIndicesIndex;
+            if (!c.TryGotoPrev(MoveType.After, i => i.MatchInitobj<Vector2>()))
+                return;
+            if (!c.TryGotoPrev(MoveType.Before, i => i.MatchLdloca(out _)))
+                return;
+
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitDelegate<Func<Projectile, bool>>(PlatformRequirement);
+            c.Emit(OpCodes.Brtrue, tileHitLogic);
+
+            c.Index = placeToPutPlatformCoordAdjustments;
+            c.Emit(OpCodes.Ldarg_0);
+            c.Emit(OpCodes.Ldloca, xLocalIndex);
+            c.Emit(OpCodes.Ldloca, yLocalIndex);
+            c.EmitDelegate<PlatformCoordsDelegate>(AdjustHitPlatformCoords);
+        }
+
+        public void Load() => IL.Terraria.Projectile.AI_007_GrapplingHooks += AdjustPlatformCollisionChecks;
+        public void Unload() => IL.Terraria.Projectile.AI_007_GrapplingHooks -= AdjustPlatformCollisionChecks;
     }
 
     public class DrawBlackEffectHook : IHookEdit

@@ -333,7 +333,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // If velocity is 0 (indicating something has been hit) create a shockwave and some other things.
                 if (npc.velocity.Y == 0f && attackTimer < 900f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item, npc.position);
                     for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                     {
                         for (int i = 0; i < 6; i++)

@@ -1,112 +1,95 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.Leviathan;
-using CalamityMod.Projectiles.Boss;
-using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
-using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
-using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-    // TODO - Refactor this AI.
     public class LeviathanBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public enum LeviathanAttackType
         {
-            LazilyHover,
-            BubbleBelch,
-            CallForHelp,
-            MeteorVomiting,
-            Charge
+            // Alone attacks.
+            VomitBlasts,
+            HorizontalCharges,
+            MeteorBelch,
+            
+            // Alone and enraged attacks.
+            AberrationCharges
         }
 
+        public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
 
-        internal static readonly LeviathanAttackType[] Phase1AttackPattern = new LeviathanAttackType[]
-        {
-            LeviathanAttackType.LazilyHover,
-            LeviathanAttackType.BubbleBelch,
-            LeviathanAttackType.Charge,
-            LeviathanAttackType.LazilyHover,
-            LeviathanAttackType.MeteorVomiting,
-        };
-
-        internal static readonly LeviathanAttackType[] Phase2AttackPattern = new LeviathanAttackType[]
-        {
-            LeviathanAttackType.LazilyHover,
-            LeviathanAttackType.Charge,
-            LeviathanAttackType.BubbleBelch,
-            LeviathanAttackType.BubbleBelch,
-            LeviathanAttackType.LazilyHover,
-            LeviathanAttackType.Charge,
-            LeviathanAttackType.MeteorVomiting,
-        };
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
-            // Select a new target if an old one was lost.
+            // Stay within the world you stupid fucking fish I swear to god.
+            npc.position.X = MathHelper.Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
+
+            // Select a target and reset damage and invulnerability.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
-
+            npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.damage = npc.defDamage;
-
-            CalamityGlobalNPC.leviathan = npc.whoAmI;
+            npc.dontTakeDamage = false;
 
             // Send natural despawns into the sun.
             npc.timeLeft = 3600;
 
-            Vector2 mouthPosition = npc.Center + new Vector2(300f * npc.spriteDirection, -45f);
-
-            if (!target.active || target.dead || !npc.WithinRange(target.Center, 5600f))
+            // Despawn.
+            if (target.dead || !target.active)
             {
-                npc.TargetClosest(false);
-                target = Main.player[npc.target];
-                if (!target.active || target.dead || !npc.WithinRange(target.Center, 5600f))
+                npc.TargetClosest();
+                if (target.dead || !target.active)
                 {
-                    for (int x = 0; x < Main.maxNPCs; x++)
-                    {
-                        if (Main.npc[x].type == ModContent.NPCType<Anahita>())
-                        {
-                            Main.npc[x].active = false;
-                            Main.npc[x].netUpdate = true;
-                        }
-                    }
                     npc.active = false;
-                    npc.netUpdate = true;
                     return false;
                 }
             }
 
-            ref float attackTimer = ref npc.ai[2];
-            ref float spawnAnimationTime = ref npc.Infernum().ExtraAI[6];
+            // Set the whoAmI variable.
+            CalamityGlobalNPC.leviathan = npc.whoAmI;
+
+            // Inherit attributes from the leader.
+            ComboAttackManager.InheritAttributesFromLeader(npc);
+
+            ref float attackTimer = ref npc.ai[1];
+            ref float frameState = ref npc.localAI[0];
+            ref float spawnAnimationTime = ref npc.ai[2];
 
             // Adjust Calamity's version of the spawn animation timer, for sky darkening purposes.
             npc.Calamity().newAI[3] = spawnAnimationTime;
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool anahitaFightingToo = lifeRatio < AnahitaBehaviorOverride.AnahitaReturnLifeRatio;
-            bool sirenAlive = Main.npc.IndexInRange(CalamityGlobalNPC.siren) && Main.npc[CalamityGlobalNPC.siren].active;
-            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
+            // Reset things.
+            frameState = 0f;
+            npc.damage = npc.defDamage;
+            npc.dontTakeDamage = false;
 
-            npc.dontTakeDamage = outOfOcean;
-            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
+            // Don't take damage if the target leaves the ocean.
+            bool outOfOcean = target.position.X > AnahitaBehaviorOverride.OceanDistanceLeniancy && 
+                target.position.X < (Main.maxTilesX * 16 - AnahitaBehaviorOverride.OceanDistanceLeniancy) && !BossRushEvent.BossRushActive;
+            if (outOfOcean)
+            {
+                npc.dontTakeDamage = true;
+                npc.Calamity().CurrentlyEnraged = true;
+            }
 
-            if (spawnAnimationTime < 180f)
+            bool enraged = ComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
+            Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 380f, -45f);
+
+            // Do spawn animation stuff.
+            if (spawnAnimationTime <= 180f)
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
@@ -120,251 +103,283 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 return false;
             }
 
-            // Play idle sounds.
-            var soundChoiceRage = SoundID.Zombie92;
-            var soundChoice = Utils.SelectRandom(Main.rand, new SoundStyle[]
+            switch ((int)npc.ai[0])
             {
-                SoundID.Zombie38,
-                SoundID.Zombie39,
-                SoundID.Zombie40
-            });
-
-            if (Main.rand.NextBool(600))
-                SoundEngine.PlaySound(sirenAlive ? soundChoice : soundChoiceRage, npc.Center);
-
-            void goToNextAIState()
-            {
-                npc.ai[3]++;
-
-                LeviathanAttackType[] patternToUse = (anahitaFightingToo || outOfOcean) ? Phase2AttackPattern : Phase1AttackPattern;
-                LeviathanAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
-
-                // Going to the next AI state.
-                npc.ai[1] = (int)nextAttackType;
-
-                // Resetting the attack timer.
-                npc.ai[2] = 0f;
-
-                // And the misc ai slots.
-                for (int i = 0; i < 5; i++)
-                {
-                    npc.Infernum().ExtraAI[i] = 0f;
-                }
-
-                // Select a new target.
-                npc.TargetClosest();
-            }
-
-            if (outOfOcean && (LeviathanAttackType)(int)npc.ai[1] != LeviathanAttackType.Charge)
-            {
-                goToNextAIState();
-                return false;
-            }
-
-            bool usingBelchFrames = npc.frame.X > 0 && npc.frame.Y <= 0;
-
-            switch ((LeviathanAttackType)(int)npc.ai[1])
-            {
-                case LeviathanAttackType.LazilyHover:
-                    npc.spriteDirection = npc.direction;
-
-                    Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 900f;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 8f, 0.16f);
-
-                    if (attackTimer >= (sirenAlive ? 100f : 50f))
-                        goToNextAIState();
+                case (int)LeviathanAttackType.VomitBlasts:
+                    npc.damage = 0;
+                    DoBehavior_VomitBlasts(npc, target, enraged, mouthPosition, ref attackTimer);
                     break;
-                case LeviathanAttackType.BubbleBelch:
-                    npc.spriteDirection = npc.direction;
-
-                    int shootDelay = sirenAlive ? 60 : 20;
-
-                    destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 960f;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 10f, 0.2f);
-
-                    if (attackTimer >= shootDelay && attackTimer <= shootDelay + 35f && usingBelchFrames)
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            for (int i = 0; i < 20; i++)
-                            {
-                                Vector2 bubbleVelocity = Vector2.UnitX.RotatedByRandom(0.3f) * npc.spriteDirection * Main.rand.NextFloat(7f, 11f);
-                                if (!sirenAlive || !anahitaFightingToo)
-                                    bubbleVelocity *= 1.33f;
-                                if (BossRushEvent.BossRushActive)
-                                    bubbleVelocity *= 1.6f;
-
-                                int bubble = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
-                                if (Main.npc.IndexInRange(bubble))
-                                {
-                                    Main.npc[bubble].velocity = bubbleVelocity;
-                                    if (Main.npc[bubble].type == ModContent.NPCType<RedirectingBubble>())
-                                        Main.npc[bubble].target = npc.target;
-                                }
-                            }
-                        }
-
-                        SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
-                        attackTimer = shootDelay + 35f;
-                    }
-
-                    if (attackTimer >= shootDelay + 35f && attackTimer <= shootDelay + 55f)
-                        npc.frameCounter--;
-
-                    if (attackTimer >= 130f)
-                        goToNextAIState();
+                case (int)LeviathanAttackType.HorizontalCharges:
+                    DoBehavior_HorizontalCharges(npc, target, enraged, ref attackTimer);
                     break;
-                case LeviathanAttackType.CallForHelp:
-                    int countedMinions = NPC.CountNPCS(ModContent.NPCType<AquaticAberration>()) * 2;
-                    int hoverTime = sirenAlive ? 60 : 30;
-                    int slowdownTime = sirenAlive ? 40 : 20;
-                    if (!anahitaFightingToo)
-                    {
-                        hoverTime -= 8;
-                        slowdownTime -= 8;
-                    }
-
-                    if (attackTimer < hoverTime)
-                    {
-                        if (countedMinions >= 6)
-                            goToNextAIState();
-
-                        destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 950f;
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 11f, 0.15f);
-                    }
-                    else if (attackTimer < hoverTime + slowdownTime)
-                        npc.velocity *= 0.97f;
-                    else if (attackTimer >= hoverTime + slowdownTime && attackTimer <= hoverTime + slowdownTime + 35f && usingBelchFrames)
-                    {
-                        npc.velocity = Vector2.Zero;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            List<Vector2> decidedSpawnPositions = new();
-                            for (int i = 0; i < 2; i++)
-                            {
-                                bool shouldSpawnImmediately = true;
-                                Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(300f, 300f);
-                                for (int tries = 0; tries < 300; tries++)
-                                {
-                                    float xOffset = Main.rand.NextFloat(450f, 950f) * Main.rand.NextBool(2).ToDirectionInt();
-
-                                    WorldUtils.Find(new Vector2(npc.Center.X + xOffset, npc.Center.Y - 1000f).ToTileCoordinates(), Searches.Chain(new Searches.Down(250), new CustomTileConditions.IsWater()), out Point waterTop);
-                                    if (Math.Abs(waterTop.X) > 1000000)
-                                        continue;
-                                    if (decidedSpawnPositions.Any(decided => Math.Abs(waterTop.X - decided.X) < 400f / 16f))
-                                        continue;
-
-                                    decidedSpawnPositions.Add(waterTop.ToVector2());
-                                    spawnPosition = waterTop.ToWorldCoordinates() + Vector2.UnitY * 16f;
-                                    shouldSpawnImmediately = false;
-                                    break;
-                                }
-
-                                int typeToSummon = ModContent.NPCType<AquaticAberration>();
-                                int spawner = Projectile.NewProjectile(npc.GetSource_FromAI(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<LeviathanMinionSpawner>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(spawner))
-                                {
-                                    Main.projectile[spawner].ai[0] = typeToSummon;
-                                    if (shouldSpawnImmediately)
-                                        Main.projectile[spawner].timeLeft = 1;
-                                }
-                            }
-                        }
-
-                        SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
-                        attackTimer = hoverTime + slowdownTime + 35f;
-                    }
-
-                    if (attackTimer >= hoverTime + slowdownTime + 70f)
-                        goToNextAIState();
+                case (int)LeviathanAttackType.MeteorBelch:
+                    npc.damage = 0;
+                    DoBehavior_MeteorBelch(npc, target, enraged, mouthPosition, ref attackTimer);
                     break;
-                case LeviathanAttackType.MeteorVomiting:
-                    npc.spriteDirection = npc.direction;
-
-                    destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * (anahitaFightingToo ? 1360f : 1110f);
-                    float hoverSpeed = BossRushEvent.BossRushActive ? 29f : 19f;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 60f);
-
-                    int vomitCount = 9;
-                    int vomitTime = anahitaFightingToo ? 74 : 78;
-                    if (BossRushEvent.BossRushActive)
-                        vomitTime = 64;
-                    if (!sirenAlive)
-                        vomitTime = 62;
-
-                    if (attackTimer % vomitTime == 38f)
-                    {
-                        npc.frameCounter += 2;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 2f)) * 10f;
-                                if (!sirenAlive)
-                                    shootVelocity *= Main.rand.NextFloat(1.3f, 1.5f);
-                                if (BossRushEvent.BossRushActive)
-                                    shootVelocity *= 2f;
-
-                                shootVelocity = shootVelocity.RotatedByRandom(0.21f);
-                                int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 175, 0f);
-                                if (Main.projectile.IndexInRange(meteor))
-                                    Main.projectile[meteor].timeLeft += 180;
-                            }
-                        }
-
-                        SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
-                    }
-
-                    if (attackTimer % vomitTime >= 50f && attackTimer % vomitTime <= 75f)
-                        npc.frameCounter--;
-
-                    if (attackTimer >= vomitTime * vomitCount)
-                        goToNextAIState();
-                    break;
-                case LeviathanAttackType.Charge:
-                    slowdownTime = 25;
-                    int redirectTime = sirenAlive ? 60 : 45;
-                    int chargeTime = sirenAlive ? 41 : 28;
-                    ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
-                    if (outOfOcean)
-                    {
-                        redirectTime = 50;
-                        chargeTime = 24;
-                        if (hoverOffsetAngle == 0f)
-                            hoverOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    }
-
-                    if (attackTimer < redirectTime)
-                    {
-                        destination = target.Center - Vector2.UnitX.RotatedBy(hoverOffsetAngle) * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * (outOfOcean ? 23f : 12f), (outOfOcean || !sirenAlive) ? 0.55f : 0.25f);
-                        npc.spriteDirection = npc.direction;
-                    }
-
-                    // Initiate the charge.
-                    if (attackTimer == redirectTime)
-                    {
-                        float chargeSpeed = sirenAlive ? 28f : 39f;
-                        if (BossRushEvent.BossRushActive)
-                            chargeSpeed *= 1.3f;
-                        if (outOfOcean)
-                            chargeSpeed = 50f;
-                        npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
-                        if (outOfOcean)
-                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                        SoundEngine.PlaySound(LeviathanNPC.RoarChargeSound, target.Center);
-                    }
-
-                    // Slow down after charging.
-                    if (attackTimer >= redirectTime + chargeTime)
-                        npc.velocity *= 0.95f;
-
-                    if (attackTimer >= redirectTime + chargeTime + slowdownTime)
-                        goToNextAIState();
+                case (int)LeviathanAttackType.AberrationCharges:
+                    DoBehavior_AberrationCharges(npc, target, ref attackTimer);
                     break;
             }
+            ComboAttackManager.DoComboAttacks(npc, target, ref attackTimer);
 
             attackTimer++;
+            return false;
+        }
+
+        public static void DoBehavior_VomitBlasts(NPC npc, Player target, bool enraged, Vector2 mouthPosition, ref float attackTimer)
+        {
+            int shootDelay = 75;
+            int shootRate = 32;
+            int shootTime = 325;
+            int attackTransitionDelay = 60;
+            int vomitShootCount = 5;
+            float vomitShootSpeed = 14.75f;
+            if (enraged)
+            {
+                shootRate -= 5;
+                vomitShootSpeed += 2.7f;
+            }
+
+            // Determine direction.
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            // Roar before firing.
+            if (attackTimer == shootDelay / 2)
+                SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
+
+            // Hover to the side of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1200f;
+            float hoverSpeed = BossRushEvent.BossRushActive ? 29f : 19f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 60f);
+
+            // Shoot bursts of vomit at the target.
+            bool canShoot = attackTimer >= shootDelay && attackTimer <= shootDelay + shootTime;
+            if (canShoot && attackTimer % shootRate == shootRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item45, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < vomitShootCount; i++)
+                    {
+                        float offsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / (float)(vomitShootCount - 1f));
+                        Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * vomitShootSpeed;
+                        Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), 175, 0f);
+                    }
+                }
+            }
+
+            // Handle frame stuff.
+            npc.localAI[0] = canShoot.ToInt();
+            if (canShoot)
+                npc.frameCounter -= 0.5;
+
+            if (attackTimer >= shootDelay + shootTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_HorizontalCharges(NPC npc, Player target, bool enraged, ref float attackTimer)
+        {
+            int slowdownTime = 25;
+            int redirectTime = 35;
+            int chargeTime = 30;
+            int chargeCount = 2;
+            float chargeSpeed = 39f;
+            if (enraged)
+            {
+                chargeSpeed += 3.2f;
+                chargeTime -= 5;
+                chargeCount++;
+            }
+
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (attackTimer < redirectTime)
+            {
+                npc.damage = 0;
+
+                Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 14f, 0.27f);
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
+                npc.spriteDirection = npc.direction;
+
+                // Roar before charging.
+                if (attackTimer == redirectTime / 2 && chargeCounter == 0f)
+                    SoundEngine.PlaySound(LeviathanNPC.RoarChargeSound, npc.Center);
+            }
+
+            // Initiate the charge.
+            if (attackTimer == redirectTime)
+            {
+                if (BossRushEvent.BossRushActive)
+                    chargeSpeed *= 1.3f;
+                npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
+            }
+
+            // Slow down after charging.
+            if (attackTimer >= redirectTime + chargeTime)
+                npc.velocity *= 0.95f;
+
+            if (attackTimer >= redirectTime + chargeTime + slowdownTime)
+            {
+                attackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_MeteorBelch(NPC npc, Player target, bool enraged, Vector2 mouthPosition, ref float attackTimer)
+        {
+            int shootDelay = 75;
+            int shootRate = 60;
+            int shootTime = 185;
+            int attackTransitionDelay = 60;
+            float meteorShootSpeed = 16f;
+            if (enraged)
+            {
+                shootRate -= 12;
+                meteorShootSpeed += 3f;
+            }
+
+            // Determine direction.
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            // Roar before firing.
+            if (attackTimer == shootDelay / 2)
+                SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
+
+            // Hover to the side of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1110f;
+            float hoverSpeed = BossRushEvent.BossRushActive ? 29f : 19f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 60f);
+
+            // Shoot bursts of vomit at the target.
+            bool canShoot = attackTimer >= shootDelay && attackTimer <= shootDelay + shootTime;
+            if (canShoot && attackTimer % shootRate == shootRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item45, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * meteorShootSpeed;
+                    Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanMeteor>(), 200, 0f);
+                }
+            }
+
+            // Handle frame stuff.
+            npc.localAI[0] = canShoot.ToInt();
+            if (canShoot)
+                npc.frameCounter -= 0.5;
+
+            if (attackTimer >= shootDelay + shootTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_AberrationCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int shootDelay = 75;
+            int aberrationSpawnRate = 16;
+            int aberrationSpawnCount = 6;
+            ref float verticalSpawnOffset = ref npc.Infernum().ExtraAI[0];
+
+            // Determine direction.
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            // Roar before firing.
+            if (attackTimer == shootDelay / 2)
+                SoundEngine.PlaySound(LeviathanNPC.RoarMeteorSound, npc.Center);
+
+            // Hover to the side of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1110f;
+            float hoverSpeed = BossRushEvent.BossRushActive ? 29f : 19f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 60f);
+
+            // Shoot bursts of vomit at the target.
+            bool canShoot = attackTimer >= shootDelay && attackTimer <= shootDelay + aberrationSpawnRate * aberrationSpawnCount;
+            if (canShoot && attackTimer % aberrationSpawnRate == aberrationSpawnRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath19, npc.position);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    verticalSpawnOffset += 60f;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 aberrationSpawnPosition = target.Center + new Vector2((i == 0f).ToDirectionInt() * 1050f, verticalSpawnOffset - 900f);
+                        Vector2 aberrationVelocity = (target.Center - aberrationSpawnPosition).SafeNormalize(Vector2.UnitY) * 13.5f;
+                        Utilities.NewProjectileBetter(aberrationSpawnPosition, aberrationVelocity, ModContent.ProjectileType<AquaticAberrationProj>(), 200, 0f);
+                    }
+                }
+            }
+
+            // Handle frame stuff.
+            npc.localAI[0] = canShoot.ToInt();
+            if (canShoot)
+                npc.frameCounter -= 0.5;
+
+            if (attackTimer >= shootDelay + aberrationSpawnRate * aberrationSpawnCount + 90f)
+                SelectNextAttack(npc);
+        }
+
+        public static void SelectNextAttack(NPC npc)
+        {
+            npc.ai[3]++;
+
+            bool enraged = ComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
+            LeviathanAttackType[] patternToUse = new LeviathanAttackType[]
+            {
+                LeviathanAttackType.VomitBlasts,
+                LeviathanAttackType.HorizontalCharges,
+                LeviathanAttackType.MeteorBelch,
+                LeviathanAttackType.HorizontalCharges,
+                enraged ? LeviathanAttackType.AberrationCharges : LeviathanAttackType.MeteorBelch,
+            };
+            LeviathanAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
+
+            // Go to the next AI state.
+            npc.ai[0] = (int)nextAttackType;
+            ComboAttackManager.SelectNextAttackSpecific(npc);
+
+            // Reset the attack timer.
+            npc.ai[1] = 0f;
+
+            // Reset the misc ai slots.
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+        }
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            int timeBetweenFrames = 6;
+            npc.frameCounter++;
+            if (npc.frameCounter >= timeBetweenFrames * 6)
+                npc.frameCounter = 0;
+
+            int frame = (int)(npc.frameCounter / timeBetweenFrames);
+            npc.frame.Width = 1011;
+            npc.frame.Height = 486;
+            npc.frame.X = frame / 3 * npc.frame.Width;
+            npc.frame.Y = frame % 3 * npc.frame.Height;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            float horizontalAfterimageInterpolant = npc.localAI[1];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            switch ((int)npc.localAI[0])
+            {
+                case 0:
+                    texture = TextureAssets.Npc[npc.type].Value;
+                    break;
+                case 1:
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Leviathan/LeviathanAttack").Value;
+                    break;
+            }
+
+            Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
+            Color baseColor = npc.GetAlpha(lightColor) * (1f - horizontalAfterimageInterpolant);
+            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, baseColor, npc.rotation, origin, npc.scale, direction, 0f);
             return false;
         }
     }

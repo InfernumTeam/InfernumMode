@@ -339,6 +339,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             return false;
         }
 
+        public void DoShatterEffect(Vector2 positionOffset)
+        {
+            var branches = GenerateBranches();
+            foreach (var branch in branches.Keys)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Vector2 end = branch.EndOfCurve + positionOffset;
+                    Vector2 start = end - branch.Direction.ToRotationVector2() * branch.CurveLength;
+                    Vector2 crystalShardSpawnPosition = Vector2.Lerp(end, start, Main.rand.NextFloat());
+                    Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
+
+                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 68, shardVelocity);
+                    shard.noGravity = Main.rand.NextBool();
+                    shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
+                    shard.velocity.Y -= 5f;
+                }
+            }
+        }
+
         public Branch GenerateBranchCurve(Vector2 start, Vector2 end, float startWidth, float endWidth, Branch previousBranch = null)
         {
             float distanceBetweenPoints = Vector2.Distance(start, end);

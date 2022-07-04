@@ -42,6 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Drawer?.IsCollidingWith(Projectile.Center, targetHitbox) ?? false;
 
+        public override void Kill(int timeLeft) => Drawer?.DoShatterEffect(Projectile.Center);
+
         public override bool PreDraw(ref Color lightColor)
         {
             Drawer ??= new()

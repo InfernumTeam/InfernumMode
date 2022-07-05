@@ -211,9 +211,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         public static void DoBehavior_CreateWaterIllusions(NPC npc, Player target, bool enraged, ref float attackTimer, ref float horizontalAfterimageInterpolant)
         {
             int fadeOutTime = 40;
-            int shootRate = 35;
+            int shootRate = 33;
             int shootTime = AnahitaWaterIllusion.Lifetime;
-            int illusionCount = 5;
+            int illusionCount = 6;
             float waterBoltShootSpeed = 14.25f;
             if (enraged)
             {
@@ -313,7 +313,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         public static void DoBehavior_PlaySinusoidalSong(NPC npc, Player target, bool enraged, Vector2 headPosition, ref float attackTimer)
         {
             int shootDelay = 72;
-            int shootTime = 420;
+            int shootTime = 330;
             int shootRate = 9;
             float bobAmplitude = 325f;
             float bobPeriod = 30f;
@@ -357,15 +357,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int teleportChargeTime = 60;
             int teleportCount = 5;
             int mistReleaseRate = 10;
-            float mistMaxSpeed = 5f;
+            float mistMaxSpeed = 7.75f;
             float horizontalTeleportOffset = 240f;
-            float verticalTeleportOffset = 400f;
+            float verticalTeleportOffset = 540f;
             if (enraged)
             {
                 teleportCount--;
                 teleportChargeTime -= 12;
                 mistReleaseRate -= 3;
-                mistMaxSpeed += 2.3f;
+                mistMaxSpeed += 2.4f;
             }
 
             Vector2 initialTeleportOffset = target.Center - Vector2.UnitY * 350f;
@@ -475,7 +475,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             // Check to see if water or tiles have been hit. If they have, go to the next attack state and create a bunch of water spears.
-            bool createSpears = Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) || Collision.WetCollision(npc.TopLeft, npc.width, npc.height) || attackTimer >= hoverTime + 200f;
+            bool edgeOfWorld = npc.Center.X < 540f || npc.Center.Y >= Main.maxTilesX * 16f - 540f;
+            bool createSpears = Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) || Collision.WetCollision(npc.TopLeft, npc.width, npc.height) || attackTimer >= hoverTime + 180f || edgeOfWorld;
             if (attackTimer > hoverTime && createSpears)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)

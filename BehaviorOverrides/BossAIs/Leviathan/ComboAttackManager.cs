@@ -116,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int chargeTime = 64;
             int slowdownTime = 30;
             int chargeCount = 3;
-            float chargeSpeed = 37f;
+            float chargeSpeed = 35f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Have the Leviathan hover a bit above the side of the target and have Anahita move towards riding on her back.
@@ -227,7 +227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     SoundEngine.PlaySound(SoundID.Item60, headPosition);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 shootVelocity = (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * 10.5f;
+                        Vector2 shootVelocity = (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * 13.5f;
                         Utilities.NewProjectileBetter(headPosition, shootVelocity, ModContent.ProjectileType<FrostMist>(), 175, 0f);
                     }
                 }
@@ -283,7 +283,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 // Initiate the charge.
                 if (wrappedAttackTimer == redirectTime)
                 {
-                    float chargeSpeed = 35f;
+                    float chargeSpeed = 32.5f;
                     if (BossRushEvent.BossRushActive)
                         chargeSpeed *= 1.3f;
                     npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;

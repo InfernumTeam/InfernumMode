@@ -32,7 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public override void AI()
         {
             // Fade out if Deerclops is gone.
-            if (!NPC.AnyNPCs(NPCID.Deerclops))
+            int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
+            if (deerclopsIndex < 0)
             {
                 Projectile.Opacity = Projectile.timeLeft / 30f;
                 return;
@@ -43,8 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.017f, 0f, 1f);
 
             // Move towards the target.
-            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.Center = Projectile.Center.MoveTowards(target.Center, 1.1f);
+            Projectile.Center = Projectile.Center.MoveTowards(Main.npc[deerclopsIndex].Center, 1.1f);
 
             Time++;
         }
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
             for (int i = 0; i < HandCount; i++)
             {
-                float rotation = MathHelper.TwoPi * i / HandCount + Time / 31f;
+                float rotation = MathHelper.TwoPi * i / HandCount + Time / 31f + MathHelper.Pi;
                 Vector2 ringOffset = (MathHelper.TwoPi * i / HandCount + Time / 31f).ToRotationVector2() * RingRadius;
                 Color backglowColor = Color.Violet * Projectile.Opacity * 0.5f;
                 for (int j = 0; j < 4; j++)

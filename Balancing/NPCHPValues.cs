@@ -78,7 +78,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<Catastrophe>()] = BossRushEvent.BossRushActive ? 176085 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
             [ModContent.NPCType<SoulSeeker>()] = BossRushEvent.BossRushActive ? 24000 : 2100,
             [NPCID.Plantera] = BossRushEvent.BossRushActive ? 575576 : 110500,
-            [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 116096,
+            [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 102097,
             [ModContent.NPCType<AquaticAberration>()] = BossRushEvent.BossRushActive ? -1 : 900,
             [ModContent.NPCType<Anahita>()] = BossRushEvent.BossRushActive ? 450000 : 71000,
             [ModContent.NPCType<AureusSpawn>()] = 25000,

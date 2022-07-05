@@ -179,11 +179,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public static void DoBehavior_HorizontalCharges(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
-            int slowdownTime = 25;
+            int slowdownTime = 32;
             int redirectTime = 35;
             int chargeTime = 30;
             int chargeCount = 2;
-            float chargeSpeed = 39f;
+            float chargeSpeed = 35.5f;
             if (enraged)
             {
                 chargeSpeed += 3.2f;
@@ -203,7 +203,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 npc.spriteDirection = npc.direction;
 
                 // Roar before charging.
-                if (attackTimer == redirectTime / 2 && chargeCounter == 0f)
+                if (attackTimer == 1f && chargeCounter == 0f)
                     SoundEngine.PlaySound(LeviathanNPC.RoarChargeSound, npc.Center);
             }
 

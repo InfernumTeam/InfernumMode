@@ -279,7 +279,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             float adjustedAttackTimer = attackTimer - fadeOutTime;
             if (adjustedAttackTimer >= 90f && adjustedAttackTimer % shootRate == shootRate - 1f && !npc.WithinRange(target.Center, 250f))
             {
-                SoundEngine.PlaySound(SoundID.Item158 with { Pitch = 0.4f }, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     return;
 

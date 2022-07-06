@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -53,9 +55,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public override bool PreDraw(ref Color lightColor)
         {
+            int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
+
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D blackCircle = TextureAssets.MagicPixel.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = tex.Size() * 0.5f;
+
+            // Draw the circle.
+            Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
+            Main.spriteBatch.EnterShaderRegion();
+
+            float radius = RingRadius * MathHelper.Lerp(2.5f, 1f, Projectile.Opacity);
+            if (deerclopsIndex >= 0)
+                radius *= (1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[7]);
+            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
+            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uCircleRadius"].SetValue(radius * 1.414f);
+            GameShaders.Misc["Infernum:CircleCutout"].Apply();
+            Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
+            Main.spriteBatch.ExitShaderRegion();
 
             for (int i = 0; i < HandCount; i++)
             {
@@ -70,6 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 }
                 Main.spriteBatch.Draw(tex, drawPosition + ringOffset, null, Projectile.GetAlpha(Color.White), rotation, origin, Projectile.scale, 0, 0f);
             }
+
             return false;
         }
 

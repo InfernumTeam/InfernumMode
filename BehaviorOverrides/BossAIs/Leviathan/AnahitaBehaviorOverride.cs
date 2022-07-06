@@ -170,8 +170,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     moveDirection = -1f;
                 npc.velocity.X = moveDirection * 6f;
                 npc.spriteDirection = (int)-moveDirection;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
             }
+            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, 6f, 16f);
 
             float idealRotation = npc.velocity.ToRotation();
             if (npc.spriteDirection == 1)
@@ -214,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int shootRate = 33;
             int shootTime = AnahitaWaterIllusion.Lifetime;
             int illusionCount = 6;
-            float waterBoltShootSpeed = 14.25f;
+            float waterBoltShootSpeed = 15.6f;
             if (enraged)
             {
                 shootRate -= 6;

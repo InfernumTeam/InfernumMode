@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             Player target = Main.player[npc.target];
             npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.damage = npc.defDamage;
+            npc.defense = 12;
             npc.dontTakeDamage = false;
 
             // Send natural despawns into the sun.
@@ -132,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int shootRate = 32;
             int shootTime = 325;
             int attackTransitionDelay = 60;
-            int vomitShootCount = 5;
+            int vomitShootCount = 7;
             float vomitShootSpeed = 14.75f;
             if (enraged)
             {
@@ -161,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 {
                     for (int i = 0; i < vomitShootCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / (float)(vomitShootCount - 1f));
+                        float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, i / (float)(vomitShootCount - 1f));
                         Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * vomitShootSpeed;
                         Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), 175, 0f);
                     }

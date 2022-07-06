@@ -8,6 +8,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
+        public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Sounds/Custom/DeerclopsRubbleAttackDistorted");
+
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Sounds/Custom/DoGLaugh");
 
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Sounds/Custom/ExoMechFinalPhaseChargeup");

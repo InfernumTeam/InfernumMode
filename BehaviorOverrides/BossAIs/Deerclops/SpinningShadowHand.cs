@@ -12,6 +12,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
     {
         public ref float Time => ref Projectile.ai[0];
 
+        public ref float SpinTime => ref Projectile.ai[1];
+
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.InsanityShadowHostile}";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Hand");
@@ -32,22 +34,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             if (!NPC.AnyNPCs(NPCID.Deerclops))
                 Projectile.Kill();
 
+            if (SpinTime == 0f)
+                SpinTime = 24f;
+
             // Fade in.
             Projectile.Opacity = Utils.GetLerpValue(0f, 16f, Time, true);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Time <= 24f)
+            if (Time <= SpinTime)
             {
                 // Slow down and spin in place.
-                float rotationOffset = MathHelper.TwoPi * Time / 24f;
+                float rotationOffset = MathHelper.TwoPi * ((Time / SpinTime + Projectile.identity / 8f) % 1f);
+                rotationOffset = MathHelper.Lerp(rotationOffset, MathHelper.TwoPi, Utils.GetLerpValue(SpinTime - 16f, SpinTime, Time, true));
                 Projectile.rotation = Projectile.AngleTo(target.Center) + rotationOffset;
-                Projectile.velocity *= 0.97f;
+                Projectile.velocity *= 0.98f;
 
                 // Charge at the target.
-                if (Time == 24f)
+                if (Time == SpinTime)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
                     Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * 6.4f;
+                    Projectile.rotation = Projectile.velocity.ToRotation();
                     Projectile.netUpdate = true;
                 }
             }

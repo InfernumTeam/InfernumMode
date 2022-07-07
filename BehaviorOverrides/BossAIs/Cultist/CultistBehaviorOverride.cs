@@ -602,8 +602,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int nebulaLightningShootTime = (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount;
             Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
             if (phase2)
-                attackLength += (nebulaTelegraphTime + nebulaShootTime) * nebulaLightningCycleCount - 12;
+                attackLength += (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount - 2;
             ref float nebulaLightningDirection = ref npc.Infernum().ExtraAI[0];
+            ref float telegraphSummonCounter = ref npc.Infernum().ExtraAI[1];
 
             // Play a chant sound and create pink dust prior to releasing red lightning.
             if (phase2 && attackTimer >= attackLength - nebulaLightningShootTime - 35f && attackTimer < attackLength - nebulaLightningShootTime + 5f)
@@ -747,7 +748,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 if (wrappedAttackTimer < nebulaTelegraphTime)
                 {
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    if (wrappedAttackTimer == 1f)
+                    if (wrappedAttackTimer == 1f && telegraphSummonCounter < nebulaLightningCycleCount)
                     {
                         // Play a firing sound.
                         SoundEngine.PlaySound(SoundID.Item72, target.Center);
@@ -755,12 +756,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             nebulaLightningDirection = npc.AngleTo(target.Center);
+                            telegraphSummonCounter++;
                             for (int i = 0; i < lightningCount; i++)
                             {
                                 Vector2 telegraphDirection = (MathHelper.TwoPi * i / lightningCount + nebulaLightningDirection).ToRotationVector2();
                                 int line = Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f);
                                 if (Main.projectile.IndexInRange(line))
+                                {
                                     Main.projectile[line].ai[1] = nebulaTelegraphTime - 1f;
+                                    Main.projectile[line].localAI[0] = MathHelper.Lerp(1f, 0.35f, i / (float)(lightningCount - 1f));
+                                }
                             }
                             npc.netUpdate = true;
                         }
@@ -801,7 +806,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int shootDelay = 20;
             int lightBurstCount = phase2 ? 24 : 14;
             int lightBurstShootRate = phase2 ? 2 : 3;
-            int sideLightSummonRate = phase2 ? 27 : 35;
+            int sideLightSummonRate = phase2 ? 18 : 25;
             int lightBurstAttackDelay = phase2 ? 185 : 225;
             int attackLength = shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
             if (phase2)

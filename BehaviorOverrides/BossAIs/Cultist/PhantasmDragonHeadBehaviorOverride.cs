@@ -50,6 +50,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
             }
 
+            // Disappear if the tail is missing.
+            if (!NPC.AnyNPCs(NPCID.CultistDragonTail))
+                npc.active = false;
+
             Player target = Main.player[npc.target];
             if (attackTimer % 300f > 210f)
             {

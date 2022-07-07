@@ -38,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 2f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
+            Projectile.Opacity *= Projectile.localAI[0];
             if (Time >= Lifetime)
                 Projectile.Kill();
 
@@ -46,12 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphWidth = MathHelper.Lerp(0.8f, 5f, Projectile.Opacity);
+            float telegraphWidth = MathHelper.Lerp(0.8f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Vector2 start = Projectile.Center;
             Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 4200f;
-            Main.spriteBatch.DrawLineBetter(start, end, Color.MediumPurple, telegraphWidth);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.MediumPurple * Projectile.Opacity, telegraphWidth);
             return false;
         }
 

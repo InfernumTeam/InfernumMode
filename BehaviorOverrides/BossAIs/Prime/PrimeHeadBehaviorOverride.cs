@@ -93,6 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Continuously reset defense and damage.
             npc.defense = npc.defDefense;
             npc.damage = npc.defDamage + 24;
+            npc.timeLeft = 3600;
 
             // Don't allow damage to happen if any arms remain or the shield is still up.
             List<Projectile> shields = Utilities.AllProjectilesByID(ModContent.ProjectileType<PrimeShield>()).ToList();

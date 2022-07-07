@@ -55,11 +55,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.3f, 1f);
                 float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
-                Vector2 flyDestination = target.Center + Vector2.UnitY * 550f;
+                Vector2 flyDestination = target.Center + Vector2.UnitY * 375f;
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.8f;
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 20f);
 
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 500f)
+                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 400f)
                 {
                     npc.velocity.X *= 0.9f;
                     npc.position.X += npc.SafeDirectionTo(target.Center).X * 12f;
@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Rise upward.
-            if (wrappedAttackTimer >= 180f && wrappedAttackTimer < 255f)
+            if (wrappedAttackTimer >= 180f && wrappedAttackTimer < 225f)
             {
                 npc.velocity.X *= 0.96f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -14.5f, 15f);
@@ -101,9 +101,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Fall.
-            if (wrappedAttackTimer >= 255f)
+            if (wrappedAttackTimer >= 225f)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.16f, -14.5f, 10f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.16f, -8.5f, 10f);
             }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;

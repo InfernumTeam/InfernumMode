@@ -18,9 +18,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int swerveTime = 30;
             bool phase2Variant = npc.ai[0] == 1f;
 
+            npc.dontTakeDamage = true;
+
             Player target = Main.player[npc.target];
             ref float attackTimer = ref npc.ai[1];
-            float adjustedAttackTimer = attackTimer + (npc.whoAmI * 3 % 10);
+
+            float adjustedAttackTimer = attackTimer + (npc.whoAmI * 3 % 20);
+
+            if (npc.ai[0] == 2f)
+            {
+                if (npc.velocity.Length() < 28f)
+                    npc.velocity *= 1.01f;
+                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                return false;
+            }
 
             if (adjustedAttackTimer <= swerveTime)
             {
@@ -61,7 +72,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             attackTimer++;
 
             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
-            npc.dontTakeDamage = true;
             return false;
         }
     }

@@ -18,8 +18,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = TrailPointCount;
         }
 
-        public override int Lifetime => 105;
+        public override int Lifetime => 85;
+
         public override int TrailPointCount => 40;
+
+        public override float LightningTurnRandomnessFactor => 0.6f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

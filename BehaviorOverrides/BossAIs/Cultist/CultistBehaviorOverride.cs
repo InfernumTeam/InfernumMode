@@ -484,7 +484,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.18f);
 
                         float shootSpeed = Main.rand.NextFloat(12f, 14f) + npc.Distance(target.Center) * 0.011f;
-                        shootSpeed *= Utils.GetLerpValue(105f, 182f, attackTimer, true);
+                        shootSpeed *= Utils.Remap(attackTimer, 105f, 182f, 0.35f, 1f);
 
                         Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * shootSpeed;
                         fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
@@ -594,10 +594,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int summonLightningTime = phase2 ? 40 : 50;
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
-            int nebulaLightningShootTime = 280;
+
+            int nebulaTelegraphTime = 75;
+            int nebulaShootTime = 54;
+            int lightningCount = 18;
+            int nebulaLightningCycleCount = 2;
+            int nebulaLightningShootTime = (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount;
             Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
             if (phase2)
-                attackLength += nebulaLightningShootTime;
+                attackLength += (nebulaTelegraphTime + nebulaShootTime) * nebulaLightningCycleCount - 12;
+            ref float nebulaLightningDirection = ref npc.Infernum().ExtraAI[0];
 
             // Play a chant sound and create pink dust prior to releasing red lightning.
             if (phase2 && attackTimer >= attackLength - nebulaLightningShootTime - 35f && attackTimer < attackLength - nebulaLightningShootTime + 5f)
@@ -619,7 +625,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 SoundEngine.PlaySound(SoundID.Zombie91, npc.Center);
 
             // Hover and fly above the player.
-            if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
+            if (attackTimer % (hoverTime + summonLightningTime) < hoverTime && attackTimer < lightningBurstTime + 20)
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 375f;
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
@@ -634,7 +640,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 frameType = (int)CultistFrameState.Hover;
             }
-            else if (attackTimer < lightningBurstTime)
+             
+            if (attackTimer < lightningBurstTime)
             {
                 npc.velocity *= 0.94f;
 
@@ -726,7 +733,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
             }
 
-            // Release a torrent of nebula lightning in phase 2.
+            // Release a torrent of telegraphed nebula lightning in phase 2.
             else if (phase2)
             {
                 // Hold hands out.
@@ -734,12 +741,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 npc.velocity *= 0.95f;
 
-                if (attackTimer % 4f == 3f)
+                float wrappedAttackTimer = (attackTimer - lightningBurstTime - 10f) % (nebulaTelegraphTime + nebulaShootTime);
+
+                // Create telegraph lines.
+                if (wrappedAttackTimer < nebulaTelegraphTime)
                 {
-                    lightningSpawnPosition += Main.rand.NextVector2Circular(18f, 18f);
-                    Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 1.35f;
-                    lightningVelocity += Main.rand.NextVector2Circular(0.125f, 0.125f);
-                    lightningVelocity *= 0.85f;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    if (wrappedAttackTimer == 1f)
+                    {
+                        // Play a firing sound.
+                        SoundEngine.PlaySound(SoundID.Item72, target.Center);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            nebulaLightningDirection = npc.AngleTo(target.Center);
+                            for (int i = 0; i < lightningCount; i++)
+                            {
+                                Vector2 telegraphDirection = (MathHelper.TwoPi * i / lightningCount + nebulaLightningDirection).ToRotationVector2();
+                                int line = Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(line))
+                                    Main.projectile[line].ai[1] = nebulaTelegraphTime - 1f;
+                            }
+                            npc.netUpdate = true;
+                        }
+                    }
+                }
+
+                // Release the nebula lightning.
+                else if (wrappedAttackTimer % 3f == 0f && wrappedAttackTimer < nebulaTelegraphTime + nebulaShootTime)
+                {
+                    float shootInterpolant = Utils.GetLerpValue(nebulaTelegraphTime, nebulaTelegraphTime + nebulaShootTime, wrappedAttackTimer, true);
+                    Vector2 lightningVelocity = (MathHelper.TwoPi * shootInterpolant + nebulaLightningDirection).ToRotationVector2() * 1.87f;
+                    lightningSpawnPosition -= lightningVelocity * 40f;
 
                     npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
                     SoundEngine.PlaySound(SoundID.Item72, target.Center);
@@ -757,7 +790,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= attackLength)
+            {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<FireballLineTelegraph>(), ModContent.ProjectileType<PinkLightning>());
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoAttack_ConjureLightBlasts(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
@@ -765,6 +801,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int shootDelay = 20;
             int lightBurstCount = phase2 ? 24 : 14;
             int lightBurstShootRate = phase2 ? 2 : 3;
+            int sideLightSummonRate = phase2 ? 27 : 35;
             int lightBurstAttackDelay = phase2 ? 185 : 225;
             int attackLength = shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
             if (phase2)
@@ -849,44 +886,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     lightMagic.noGravity = true;
                 }
 
-                if (attackTimer > shootDelay && attackTimer % lightBurstShootRate == lightBurstShootRate - 1f)
+                if (attackTimer > shootDelay)
                 {
-                    // Release a burst of light from the hand.
-                    for (int i = 0; i < 16; i++)
+                    if (attackTimer % lightBurstShootRate == lightBurstShootRate - 1f)
                     {
-                        Dust lightMagic = Dust.NewDustPerfect(handPosition, 264);
-                        lightMagic.scale = 0.85f;
-                        lightMagic.fadeIn = 0.35f;
-                        lightMagic.velocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 2.7f;
-                        lightMagic.velocity.Y -= 1.8f;
-                        lightMagic.color = Color.LightBlue;
-                        lightMagic.noLight = true;
-                        lightMagic.noGravity = true;
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        npc.TargetClosest();
-
-                        Vector2 shootVelocity = Vector2.UnitX.RotatedByRandom(0.51f) * npc.spriteDirection * 10f;
-                        if (phase2)
-                            shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / lightBurstCount) * 12f;
-                        if (BossRushEvent.BossRushActive)
-                            shootVelocity *= 1.7f;
-
-                        Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
-                        int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
-                        if (Main.npc.IndexInRange(ancientLight))
+                        // Release a burst of light from the hand.
+                        for (int i = 0; i < 16; i++)
                         {
-                            Main.npc[ancientLight].velocity = shootVelocity;
-                            Main.npc[ancientLight].target = npc.target;
+                            Dust lightMagic = Dust.NewDustPerfect(handPosition, 264);
+                            lightMagic.scale = 0.85f;
+                            lightMagic.fadeIn = 0.35f;
+                            lightMagic.velocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 2.7f;
+                            lightMagic.velocity.Y -= 1.8f;
+                            lightMagic.color = Color.LightBlue;
+                            lightMagic.noLight = true;
+                            lightMagic.noGravity = true;
                         }
 
-                        shotCounter++;
-                        npc.netUpdate = true;
+                        // Create the light patterns.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            npc.TargetClosest();
+
+                            Vector2 shootVelocity = Vector2.UnitX.RotatedByRandom(0.51f) * npc.spriteDirection * 10f;
+                            if (phase2)
+                                shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / lightBurstCount) * 12f;
+                            if (BossRushEvent.BossRushActive)
+                                shootVelocity *= 1.7f;
+
+                            Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
+                            int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
+                            if (Main.npc.IndexInRange(ancientLight))
+                            {
+                                Main.npc[ancientLight].velocity = shootVelocity;
+                                Main.npc[ancientLight].target = npc.target;
+                            }
+
+                            shotCounter++;
+                            npc.netUpdate = true;
+                        }
                     }
                 }
                 frameType = (int)CultistFrameState.HoldArmsOut;
+            }
+
+            if (attackTimer > shootDelay)
+            {
+                // Create light behind the player that follows them, to make the attack more interesting.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sideLightSummonRate == sideLightSummonRate - 1f)
+                {
+                    Point lightSpawnPosition = (target.Center - target.velocity.RotatedByRandom(0.5f).SafeNormalize(Main.rand.NextVector2Unit()) * 850f).ToPoint();
+                    int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, 2f);
+                    if (Main.npc.IndexInRange(ancientLight))
+                    {
+                        Main.npc[ancientLight].velocity = (target.Center - lightSpawnPosition.ToVector2()).SafeNormalize(Vector2.UnitY) * 13f;
+                        Main.npc[ancientLight].target = npc.target;
+                    }
+                }
             }
 
             if (attackTimer >= attackLength)

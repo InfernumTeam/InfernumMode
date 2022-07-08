@@ -197,10 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 if (finalPhaseAnimationTime == 1f)
-                {
-                    foreach (Projectile flamethrower in Utilities.AllProjectilesByID(ModContent.ProjectileType<ApolloFlamethrower>()))
-                        flamethrower.Kill();
-                }
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ArtemisSpinLaser>());
 
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
@@ -259,6 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             else
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ArtemisSpinLaser>());
                 DoBehavior_DeathAnimation(npc, target, ref frame, ref npc.ModNPC<Apollo>().ChargeComboFlash, ref deathAnimationTimer);
                 deathAnimationTimer++;
             }
@@ -543,7 +541,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Fire a plasma burst/laser shot and select a new offset.
             if (attackTimer >= shootRate)
             {
-                if (npc.WithinRange(hoverDestination, 200f) && !dontFireYet)
+                if (npc.WithinRange(hoverDestination, target.velocity.Length() + 200f) && !dontFireYet)
                 {
                     ulong seed = (ulong)angleOffsetSeed;
                     for (int i = 0; i < shotsPerBurst; i++)
@@ -793,7 +791,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int plasmaShootRate = 38;
             int laserShootCount = 4;
             int sparkShootCount = 3;
-            float sparkShootSpeed = 8f;
+            float sparkShootSpeed = 5.6f;
             float plasmaShootSpeed = 9f;
             float minHorizontalOffset = 420f;
             float maxHorizontalOffset = 750f;

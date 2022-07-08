@@ -704,7 +704,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.ai[0] = (int)AresBodyAttackType.IdleHover;
                 if (oldAttackType == AresBodyAttackType.IdleHover)
                 {
-                    if (Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3)
+                    if ((Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3) && ExoMechManagement.CurrentAresPhase <= 5)
                         npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
                     else if (ExoMechManagement.CurrentAresPhase >= 3)
                     {

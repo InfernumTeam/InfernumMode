@@ -73,6 +73,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
 
+            if (!ExoMechIsPresent)
+            {
+                npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
+                if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
+                {
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
+                    InfernumMode.DraedonThemeTimer = 0f;
+                }
+                else
+                {
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Draedon");
+                    InfernumMode.DraedonThemeTimer = 1f;
+                }
+            }
+
             // Stay within the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
 
@@ -176,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (Main.netMode != NetmodeID.Server)
                 {
                     SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.55f }, playerToFollow.Center);
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechIntroSound with { Volume = 1.5f }, playerToFollow.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechIntroSound with { Volume = 1.5f });
                 }
             }
 
@@ -266,20 +281,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 HandleDefeatStuff(npc, playerToFollow, ref npc.ModNPC<DraedonNPC>().DefeatTimer);
                 npc.ModNPC<DraedonNPC>().DefeatTimer++;
-            }
-
-            if (!ExoMechIsPresent)
-            {
-                if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
-                {
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
-                    InfernumMode.DraedonThemeTimer = 0f;
-                }
-                else
-                {
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Draedon");
-                    InfernumMode.DraedonThemeTimer = 1f;
-                }
             }
 
             talkTimer++;

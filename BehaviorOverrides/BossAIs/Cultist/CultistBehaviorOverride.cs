@@ -595,8 +595,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
 
-            int nebulaTelegraphTime = 75;
-            int nebulaShootTime = 54;
+            int nebulaTelegraphTime = 50;
+            int nebulaShootTime = 50;
             int lightningCount = 18;
             int nebulaLightningCycleCount = 2;
             int nebulaLightningShootTime = (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount;

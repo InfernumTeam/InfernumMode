@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = TrailPointCount;
         }
 
-        public override int Lifetime => 85;
+        public override int Lifetime => 72;
 
         public override int TrailPointCount => 40;
 

@@ -10,6 +10,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
     {
         public ref float Time => ref Projectile.ai[0];
 
+        public bool Shadow => Projectile.localAI[1] == 1f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ice Spike");
@@ -46,16 +48,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 Projectile.frame = Main.rand.Next(maxValue);
                 for (int i = 0; i < 5; i++)
                 {
-                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
-                    bloodDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
-                    bloodDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
+                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
+                    iceDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
+                    iceDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
                 }
                 for (int j = 0; j < 5; j++)
                 {
-                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
-                    bloodDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
-                    bloodDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
-                    bloodDust.fadeIn = 1f;
+                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
+                    iceDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
+                    iceDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
+                    iceDust.fadeIn = 1f;
                 }
             }
             if (Time < fadeInTime)
@@ -80,8 +82,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            if (Shadow)
+                tex = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Deerclops/ShadowIcicleSpike").Value;
+
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = tex.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            
+            if (Shadow)
+            {
+                float pulseFade = (Main.GlobalTimeWrappedHourly + Projectile.identity * 5.0579362f) * 0.57f % 1f;
+                Color pulseColor = Color.DarkViolet;
+                pulseColor.A = 0;
+                pulseColor *= (1f - pulseFade) * Projectile.Opacity;
+
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * pulseFade * 10f;
+                    Main.spriteBatch.Draw(tex, drawPosition + drawOffset, frame, pulseColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0f);
+                }
+            }
+
             Main.spriteBatch.Draw(tex, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0f);
             return false;
         }

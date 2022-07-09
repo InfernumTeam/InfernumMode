@@ -275,7 +275,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             continue;
 
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(16f, 20f);
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), laserDamage, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), laserDamage, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].MaxUpdates = 1;
                     }
 
                     laserShootCounter = 0f;
@@ -627,7 +629,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     for (int i = 0; i < 25; i++)
                     {
                         Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 25f).ToRotationVector2() * Main.rand.NextFloat(0.8f, 1f) * laserSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].MaxUpdates = 1;
                     }
 
                     npc.netUpdate = true;
@@ -674,7 +678,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             frameType = (int)AureusFrameType.Idle;
 
             int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
-            int meteorShootRate = lifeRatio < Phase3LifeRatio ? 90 : 125;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -803,7 +806,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     for (int i = 0; i < 16; i++)
                     {
                         Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 16f).ToRotationVector2() * 8f;
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].MaxUpdates = 1;
                     }
 
                     npc.netUpdate = true;
@@ -822,7 +827,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     {
                         float laserRotation = MathHelper.Pi * laserLifetimeCompletion * OrangeLaserbeam.FullCircleRotationFactor;
                         Vector2 laserShootVelocity = Vector2.UnitY.RotatedByRandom(laserRotation) * Main.rand.NextFloat(9f, 18f);
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 180, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 180, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].MaxUpdates = 1;
                     }
                 }
             }

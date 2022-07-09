@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public override void AI()
         {
             int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
-            if (deerclopsIndex < 0)
+            if (deerclopsIndex < 0 || Main.npc[deerclopsIndex].ai[0] != (int)DeerclopsBehaviorOverride.DeerclopsAttackState.DyingBeaconOfLight)
             {
                 NPC.active = false;
                 return;

@@ -70,6 +70,7 @@ namespace InfernumMode
             SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
 
             SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
+            SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
@@ -85,6 +86,9 @@ namespace InfernumMode
             if (Main.netMode != NetmodeID.Server)
             {
                 CryogenBehaviorOverride.SetupCustomBossIcon();
+
+                Ref<Effect> madnessShader = new(Assets.Request<Effect>("Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
+                Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
 
                 Ref<Effect> aewPsychicEnergyShader = new(Assets.Request<Effect>("Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");

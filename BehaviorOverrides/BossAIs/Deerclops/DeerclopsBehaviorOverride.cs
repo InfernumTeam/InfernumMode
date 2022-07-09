@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
@@ -12,6 +13,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.CameraModifiers;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             BidirectionalIcicleSlam,
             UpwardDebrisLaunch,
 
-            TransitionToSecondPhase,
+            TransitionToNextPhase,
             FeastclopsEyeLaserbeam,
             AimedAheadShadowHands,
 
@@ -47,6 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public const float Phase2LifeRatio = 0.66667f;
 
+        public const float Phase3LifeRatio = 0.25f;
+
         public override int NPCOverrideType => NPCID.Deerclops;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
@@ -60,7 +64,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             ref float attackTimer = ref npc.ai[1];
             ref float frameType = ref npc.localAI[0];
             ref float shadowFormInterpolant = ref npc.localAI[2];
-            ref float inPhase2Flag = ref npc.Infernum().ExtraAI[6];
+            ref float shadowFormP3Interpolant = ref npc.Infernum().ExtraAI[8];
+            ref float currentPhase = ref npc.Infernum().ExtraAI[6];
             ref float radiusDecreaseInterpolant = ref npc.Infernum().ExtraAI[7];
 
             // Reset things.
@@ -68,21 +73,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.Opacity = 1f;
             npc.noGravity = false;
             npc.noTileCollide = false;
+            npc.chaseable = true;
+            npc.Calamity().DR = 0.15f;
 
             // Transition to the second phase.
-            if (inPhase2Flag == 0f && npc.life < npc.lifeMax * Phase2LifeRatio)
+            if ((currentPhase == 0f && npc.life < npc.lifeMax * Phase2LifeRatio) ||
+                (currentPhase == 1f && npc.life < npc.lifeMax * Phase3LifeRatio))
             {
                 // Reset the attack cycle.
                 npc.ai[2] = 0f;
 
-                npc.ai[0] = (int)DeerclopsAttackState.TransitionToSecondPhase;
+                npc.ai[0] = (int)DeerclopsAttackState.TransitionToNextPhase;
                 attackTimer = 0f;
-                inPhase2Flag = 1f;
+                currentPhase++;
                 npc.netUpdate = true;
             }
 
             // Create shadow form dust.
-            bool inPhase2 = inPhase2Flag == 1f;
+            bool inPhase2 = currentPhase >= 1f;
+            bool inPhase3 = currentPhase == 2f;
+            if (npc.life > npc.lifeMax * Phase3LifeRatio)
+                shadowFormP3Interpolant = 0f;
+
             float dustInterpolant = Utils.Remap(shadowFormInterpolant, 0f, 0.8333f, 0f, 1f);
             if (dustInterpolant > 0f)
             {
@@ -100,25 +112,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                     DoBehavior_DecideArena(npc, target, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.WalkToTarget:
-                    DoBehavior_WalkToTarget(npc, target, ref attackTimer, ref frameType);
+                    DoBehavior_WalkToTarget(npc, target, inPhase3, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.TallIcicles:
-                    DoBehavior_CreateIcicles(npc, target, false, ref attackTimer, ref frameType);
+                    DoBehavior_CreateIcicles(npc, target, false, inPhase2, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.WideIcicles:
-                    DoBehavior_CreateIcicles(npc, target, true, ref attackTimer, ref frameType);
+                    DoBehavior_CreateIcicles(npc, target, true, inPhase2, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.BidirectionalIcicleSlam:
                     DoBehavior_BidirectionalIcicleSlam(npc, target, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.UpwardDebrisLaunch:
-                    DoBehavior_UpwardDebrisLaunch(npc, target, inPhase2, ref attackTimer, ref frameType);
+                    DoBehavior_UpwardDebrisLaunch(npc, target, inPhase3, ref attackTimer, ref frameType);
                     break;
-                case DeerclopsAttackState.TransitionToSecondPhase:
-                    DoBehavior_TransitionToSecondPhase(npc, target, ref attackTimer, ref frameType, ref shadowFormInterpolant);
+                case DeerclopsAttackState.TransitionToNextPhase:
+                    if (inPhase2)
+                        DoBehavior_TransitionToNextPhase(npc, target, ref attackTimer, ref frameType, ref shadowFormInterpolant);
+                    else
+                        DoBehavior_TransitionToNextPhase(npc, target, ref attackTimer, ref frameType, ref shadowFormP3Interpolant);
                     break;
                 case DeerclopsAttackState.FeastclopsEyeLaserbeam:
-                    DoBehavior_FeastclopsEyeLaserbeam(npc, target, ref attackTimer, ref frameType);
+                    DoBehavior_FeastclopsEyeLaserbeam(npc, target, inPhase3, ref attackTimer, ref frameType);
                     break;
                 case DeerclopsAttackState.AimedAheadShadowHands:
                     DoBehavior_AimedAheadShadowHands(npc, target, ref attackTimer, ref frameType);
@@ -199,11 +214,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.4f, -8f, 16f);
         }
 
-        public static void DoBehavior_WalkToTarget(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_WalkToTarget(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
             int maxWalkTime = 210;
             float walkSpeed = MathHelper.Lerp(4.56f, 7f, 1f - npc.life / (float)npc.lifeMax);
             bool haltMovement = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
+            if (inPhase3)
+            {
+                maxWalkTime -= 60;
+                walkSpeed += 2f;
+            }
 
             // Slow down and make the attack go by quicker if really close to the target.
             if (haltMovement)
@@ -220,10 +240,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             DoDefaultWalk(npc, target, walkSpeed, haltMovement);
         }
 
-        public static void DoBehavior_CreateIcicles(NPC npc, Player target, bool wideIcicles, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_CreateIcicles(NPC npc, Player target, bool wideIcicles, bool inPhase2, ref float attackTimer, ref float frameType)
         {
             int spikeShootRate = 2;
             int spikeShootTime = 64;
+            int handCreationRate = 0;
             float offsetPerSpike = 35f;
             float minSpikeScale = 0.5f;
             float maxSpikeScale = 1.84f;
@@ -232,6 +253,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 offsetPerSpike = 56f;
                 minSpikeScale = 0.5f;
                 maxSpikeScale = minSpikeScale + 0.01f;
+            }
+
+            if (inPhase2)
+            {
+                offsetPerSpike *= 0.6f;
+                spikeShootTime += 8;
+                handCreationRate = 24;
             }
 
             int spikeCount = spikeShootTime / spikeShootRate;
@@ -278,7 +306,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             {
                 float horizontalOffset = spikeIndex * offsetPerSpike;
                 float scale = Utils.Remap(attackTimer / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
-                TryMakingSpike(target, ref point, 90, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                TryMakingSpike(target, ref point, 90, inPhase2, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+            }
+
+            // Summon shadow hands.
+            if (Main.netMode != NetmodeID.MultiplayerClient && handCreationRate > 0 && attackTimer % handCreationRate == handCreationRate - 1f)
+            {
+                float handDirection = Main.rand.NextBool().ToDirectionInt();
+                Vector2 handSpawnPosition = target.Center + Vector2.UnitY * handDirection * 640f;
+                Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 90, 0f);
             }
 
             if (attackTimer >= spikeShootTime + 30f)
@@ -346,8 +382,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 {
                     float horizontalOffset = spikeIndex * offsetPerSpike;
                     float scale = Utils.Remap(attackTimer / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
-                    TryMakingSpike(target, ref point, 90, -npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
-                    TryMakingSpike(target, ref point, 90, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                    TryMakingSpike(target, ref point, 90, false, -npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                    TryMakingSpike(target, ref point, 90, false, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
                 }
 
                 if (attackTimer >= spikeShootTime + 30f)
@@ -355,13 +391,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
         }
 
-        public static void DoBehavior_UpwardDebrisLaunch(NPC npc, Player target, bool inPhase2, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_UpwardDebrisLaunch(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
             int debrisCount = 18;
             int shadowHandCount = 0;
             int attackTransitionDelay = 175;
             float debrisShootSpeed = 13.75f;
-            if (inPhase2)
+            if (inPhase3)
             {
                 debrisCount = 0;
                 shadowHandCount = 7;
@@ -407,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
 
             // Create debris.
-            // Shadow hands are launched upwards instead in the second phase.
+            // Shadow hands are launched upwards instead in the third phase.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 2f)
             {
                 // Handle debris creation.
@@ -440,7 +476,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_TransitionToSecondPhase(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float shadowFormInterpolant)
+        public static void DoBehavior_TransitionToNextPhase(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float shadowFormInterpolant)
         {
             int fadeToShadowTime = 36;
             int roarTime = 56;
@@ -456,23 +492,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
             // Roar and create an arena of shadow hands.
             frameType = (int)DeerclopsFrameType.FrontFacingRoar;
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == fadeToShadowTime + roarTime - 27f)
+            
+            if (npc.life > npc.lifeMax * Phase3LifeRatio)
             {
-                ShatterIcicleArena(target);
-                Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<ShadowHandArena>(), 100, 0f);
-                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, Vector2.Zero, ModContent.ProjectileType<DeerclopsP2Wave>(), 0, 0f);
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == fadeToShadowTime + roarTime - 27f)
+                {
+                    ShatterIcicleArena(target);
+                    Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<ShadowHandArena>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, Vector2.Zero, ModContent.ProjectileType<DeerclopsP2Wave>(), 0, 0f);
+                }
             }
 
             if (attackTimer >= fadeToShadowTime + roarTime)
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_FeastclopsEyeLaserbeam(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_FeastclopsEyeLaserbeam(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
             int eyeChargeTelegraphTime = 48;
             float laserOffsetAngle = npc.spriteDirection * -0.32f;
             Vector2 initialDirection = Vector2.UnitY.RotatedBy(laserOffsetAngle);
-            float laserSweepSpeed = (MathHelper.PiOver2 * 1.24f - Math.Abs(laserOffsetAngle)) * -npc.spriteDirection / DeerclopsEyeLaserbeam.LaserLifetime;
+            float maxLaserAngle = MathHelper.PiOver2 * 1.24f;
+            if (inPhase3)
+                maxLaserAngle *= 1.3f;
+
+            float laserSweepSpeed = (maxLaserAngle - Math.Abs(laserOffsetAngle)) * -npc.spriteDirection / DeerclopsEyeLaserbeam.LaserLifetime;
 
             // Slow down horizontally.
             npc.velocity *= 0.95f;
@@ -556,6 +600,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int darknessFadeTime = 125;
             int handSummonRate = 155;
             int maxHandCount = 6;
+            int attackTime = 660;
             float maxNaturalRadiusDecreaseInterpolant = 0.25f;
             float maxRadiusDecreaseInterpolant = 0.8f;
             ref float smoothDistance = ref npc.Infernum().ExtraAI[0];
@@ -569,6 +614,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 radiusDecreaseInterpolant = MathHelper.SmoothStep(0f, maxNaturalRadiusDecreaseInterpolant, attackTimer / darknessFadeTime);
                 return;
             }
+
+            npc.chaseable = false;
+            npc.Calamity().DR = 0.6f;
 
             // Make the radius decrease as more hands congregate near the eye.
             // To make the attack better than a simple DPS check the hands will target nearby players if close to deerclops.
@@ -591,9 +639,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)handSummonPosition.X, (int)handSummonPosition.Y, handID, npc.whoAmI);
             }
+
+            if (attackTimer >= attackTime)
+                SelectNextAttack(npc);
         }
 
-        public static void TryMakingSpike(Player target, ref Point sourceTileCoords, int damage, int dir, int spikeCount, int spikeIndex, float horizontalOffset, float scale)
+        public static void TryMakingSpike(Player target, ref Point sourceTileCoords, int damage, bool shadow, int dir, int spikeCount, int spikeIndex, float horizontalOffset, float scale)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -608,7 +659,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Vector2 velocity = -Vector2.UnitY.RotatedBy(spikeIndex / (float)spikeCount * dir * MathHelper.Pi * 0.175f);
             int spike = Utilities.NewProjectileBetter(position, velocity, spikeID, damage, 0f, Main.myPlayer, 0f);
             if (Main.projectile.IndexInRange(spike))
+            {
                 Main.projectile[spike].ai[1] = scale;
+                Main.projectile[spike].localAI[1] = shadow.ToInt();
+            }
         }
 
         public static int TryMakingSpike_FindBestY(Player target, ref Point sourceTileCoords, int x)
@@ -667,16 +721,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             {
                 DeerclopsAttackState.FeastclopsEyeLaserbeam,
                 DeerclopsAttackState.AimedAheadShadowHands,
+                DeerclopsAttackState.WideIcicles,
+                DeerclopsAttackState.WalkToTarget,
+                DeerclopsAttackState.WalkToTarget,
+                DeerclopsAttackState.WideIcicles,
+            };
+            DeerclopsAttackState[] phase3Pattern = new DeerclopsAttackState[]
+            {
+                DeerclopsAttackState.DyingBeaconOfLight,
+                DeerclopsAttackState.FeastclopsEyeLaserbeam,
+                DeerclopsAttackState.AimedAheadShadowHands,
+                DeerclopsAttackState.WideIcicles,
+                DeerclopsAttackState.WalkToTarget,
                 DeerclopsAttackState.DyingBeaconOfLight,
                 DeerclopsAttackState.WalkToTarget,
                 DeerclopsAttackState.BidirectionalIcicleSlam,
                 DeerclopsAttackState.UpwardDebrisLaunch,
                 DeerclopsAttackState.WalkToTarget,
-                DeerclopsAttackState.DyingBeaconOfLight,
+                DeerclopsAttackState.WideIcicles,
             };
             var patternToUse = phase1Pattern;
             if (npc.life < npc.lifeMax * Phase2LifeRatio)
                 patternToUse = phase2Pattern;
+            if (npc.life < npc.lifeMax * Phase3LifeRatio)
+                patternToUse = phase3Pattern;
 
             npc.ai[0] = (int)patternToUse[(int)npc.ai[2] % patternToUse.Length];
             npc.localAI[0] = 0f;
@@ -783,12 +851,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 origin.X = frame.Width - 106;
 
             Color shadowColor = Color.White;
+            int maxTrailCount = 12;
             float opacityAffectedFadeToShadow = 0f;
             float forcedFadeToShadow = 0f;
             int shadowBackglowCount = 0;
             float offsetInterpolant = 0f;
             float shadowOffset = 0f;
             float shadowFormInterpolant = npc.localAI[2];
+            float strongerShadowsInterpolant = npc.Infernum().ExtraAI[8];
+            int trailCount = (int)(strongerShadowsInterpolant * maxTrailCount);
             Color baseColor = lightColor;
             if (shadowFormInterpolant > 0f)
             {
@@ -808,9 +879,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
             Color opacityAffectedColor = npc.GetAlpha(baseColor);
             if (shadowFormInterpolant > 0f)
-                opacityAffectedColor = Color.Lerp(opacityAffectedColor, new Color(50, 0, 160) * npc.Opacity, Utils.Remap(shadowFormInterpolant, 0f, 0.5555f, 0f, 1f));
+            {
+                Color result = new Color(50, 0, 160) * npc.Opacity;
+                result.A = (byte)((1f - strongerShadowsInterpolant) * 75 + 180);
+                opacityAffectedColor = Color.Lerp(opacityAffectedColor, result, Utils.Remap(shadowFormInterpolant, 0f, 0.5555f, 0f, 1f));
+            }
 
+            // Redefine trails.
+            NPCID.Sets.TrailCacheLength[npc.type] = maxTrailCount;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
+
+            if (trailCount > 1)
+            {
+                for (int i = 1; i < trailCount; i++)
+                {
+                    float shadowFade = 1f - i / (float)(trailCount - 1f);
+                    Vector2 drawPosition = npc.oldPos[i] + new Vector2(npc.width * 0.5f, npc.height) - Main.screenPosition;
+                    Color fadeColor = opacityAffectedColor * shadowFade;
+                    fadeColor.A = (byte)((1f - strongerShadowsInterpolant) * 255);
+                    Main.spriteBatch.Draw(tex, drawPosition, frame, fadeColor, npc.rotation, origin, npc.scale, direction, 0f);
+                }
+            }
             Main.spriteBatch.Draw(tex, baseDrawPosition, frame, opacityAffectedColor, npc.rotation, origin, npc.scale, direction, 0f);
+
             if (shadowFormInterpolant > 0f)
             {
                 Texture2D eyeTexture = TextureAssets.Extra[245].Value;

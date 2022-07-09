@@ -1,3 +1,4 @@
+using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -15,6 +16,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public const int HandCount = 24;
 
         public const float RingRadius = 700f;
+
+        public float Radius
+        {
+            get
+            {
+                int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
+                float radius = RingRadius * MathHelper.Lerp(2.5f, 1f, Projectile.Opacity);
+                if (deerclopsIndex >= 0)
+                    radius *= 1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[7];
+                return radius;
+            }
+        }
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.InsanityShadowHostile}";
 
@@ -48,6 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             // Move towards the target.
             Projectile.Center = Projectile.Center.MoveTowards(Main.npc[deerclopsIndex].Center, 1.1f);
 
+            // Give the player the madness effect if they leave the circle.
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            if (!target.WithinRange(Projectile.Center, Radius + 12f))
+                target.AddBuff(ModContent.BuffType<Madness>(), 8);
+
             Time++;
         }
 
@@ -55,8 +73,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public override bool PreDraw(ref Color lightColor)
         {
-            int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
-
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D blackCircle = TextureAssets.MagicPixel.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -66,11 +82,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
             Main.spriteBatch.EnterShaderRegion();
 
-            float radius = RingRadius * MathHelper.Lerp(2.5f, 1f, Projectile.Opacity);
-            if (deerclopsIndex >= 0)
-                radius *= (1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[7]);
             GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
-            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uCircleRadius"].SetValue(radius * 1.414f);
+            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uCircleRadius"].SetValue(Radius * 1.414f);
             GameShaders.Misc["Infernum:CircleCutout"].Apply();
             Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
             Main.spriteBatch.ExitShaderRegion();

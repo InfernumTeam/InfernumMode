@@ -17,11 +17,15 @@ namespace InfernumMode
 {
     public class PoDPlayer : ModPlayer
     {
+        public int MadnessTime;
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;
         public bool DarkFlames = false;
+        public bool Madness = false;
         public float CurrentScreenShakePower;
         public float MusicMuffleFactor;
+
+        public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
@@ -77,6 +81,7 @@ namespace InfernumMode
             RedElectrified = false;
             ShadowflameInferno = false;
             DarkFlames = false;
+            Madness = false;
             ScreenFocusInterpolant = 0f;
             MusicMuffleFactor = 0f;
         }
@@ -87,6 +92,8 @@ namespace InfernumMode
             RedElectrified = false;
             ShadowflameInferno = false;
             DarkFlames = false;
+            Madness = false;
+            MadnessTime = 0;
 
             if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
@@ -109,6 +116,8 @@ namespace InfernumMode
                     damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} could not withstand the red lightning.");
                 if (DarkFlames)
                     damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} was incinerated by ungodly fire.");
+                if (Madness)
+                    damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} went mad.");
             }
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
@@ -139,6 +148,9 @@ namespace InfernumMode
                 causeLifeRegenLoss(30);
                 Player.statDefense -= 8;
             }
+            if (Madness)
+                causeLifeRegenLoss(20);
+            MadnessTime = Utils.Clamp(MadnessTime + (Madness ? 1 : -8), 0, 660);
         }
         #endregion
         #region Screen Shaking

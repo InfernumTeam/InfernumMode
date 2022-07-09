@@ -73,6 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.Opacity = 1f;
             npc.noGravity = false;
             npc.noTileCollide = false;
+            npc.dontTakeDamage = false;
             npc.chaseable = true;
             npc.Calamity().DR = 0.15f;
 
@@ -87,6 +88,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 attackTimer = 0f;
                 currentPhase++;
                 npc.netUpdate = true;
+            }
+
+            // Disappear if the player is really far away or dead.
+            if (!npc.WithinRange(target.Center, 5600f) || target.dead)
+            {
+                npc.TargetClosest();
+                target = Main.player[npc.target];
+                if (!npc.WithinRange(target.Center, 5600f) || target.dead)
+                {
+                    npc.active = false;
+                    return false;
+                }
             }
 
             // Create shadow form dust.
@@ -104,6 +117,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                     dustCount -= 1f;
                     Dust.NewDustDirect(npc.position, npc.width, npc.height, 109, 0f, -3f, 0, default, 1.4f).noGravity = true;
                 }
+            }
+
+            // Become invincible in phase 1 if the player leaves the spike area.
+            if (!inPhase2)
+            {
+                float arenaCenterX = npc.Infernum().ExtraAI[9];
+                if (target.Center.X < arenaCenterX - Phase1ArenaWidth * 0.5f - 36f)
+                    npc.dontTakeDamage = true;
+                if (target.Center.X > arenaCenterX + Phase1ArenaWidth * 0.5f + 36f)
+                    npc.dontTakeDamage = true;
             }
 
             switch ((DeerclopsAttackState)npc.ai[0])
@@ -165,7 +188,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             frameType = (int)DeerclopsFrameType.FrontFacingRoar;
 
             if (attackTimer == 38f)
+            {
+                npc.Infernum().ExtraAI[9] = target.Center.X;
+                npc.netUpdate = true;
                 CreateIcicles(target);
+            }
 
             if (attackTimer >= 54f)
                 SelectNextAttack(npc);

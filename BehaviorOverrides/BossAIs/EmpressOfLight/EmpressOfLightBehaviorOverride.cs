@@ -752,7 +752,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int spinTime = 210;
             int prismCreationRate = 15;
             int laserReleaseDelay = 30;
-            int boltReleaseRate = 35;
+            int boltReleaseRate = 43;
             int attackTransitionDelay = 360;
             float spinSpeed = 30f;
             float spinOffset = 540f;
@@ -805,9 +805,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Vector2 handOffset = new(55f, -30f);
                     Vector2 handPosition = npc.Center + handOffset;
-                    int bolt = Utilities.NewProjectileBetter(handPosition, -Vector2.UnitY.RotatedByRandom(0.6f) * 16f, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
+                    int bolt = Utilities.NewProjectileBetter(handPosition, Vector2.UnitY.RotatedByRandom(0.6f) * 10f, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
+                    {
                         Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
+                        Main.projectile[bolt].localAI[0] = 0.75f;
+                    }
                 }
             }
 

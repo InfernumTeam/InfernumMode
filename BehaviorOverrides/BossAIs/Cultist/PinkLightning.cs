@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             for (int i = 0; i < checkPoints.Count - 1; i++)
             {
                 float _ = 0f;
-                float width = PrimitiveWidthFunction(i / (float)checkPoints.Count);
+                float width = PrimitiveWidthFunction(i / (float)checkPoints.Count) * 2f;
                 if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), checkPoints[i], checkPoints[i + 1], width * 0.8f, ref _))
                     return true;
             }

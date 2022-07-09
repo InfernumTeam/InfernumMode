@@ -506,6 +506,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // In Phase 2 however, conjure fireballs that appear from the sides of the target.
                 else
                 {
+                    // Hover above the target.
+                    Vector2 destination = target.Center - Vector2.UnitY * 385f;
+                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(11f, npc.Distance(destination) * 0.05f);
+
+                    if (!npc.WithinRange(destination, 185f))
+                        npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.165f);
+                    else
+                        npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), 0.045f);
+
+                    if (MathHelper.Distance(destination.X, npc.Center.X) > 24f)
+                        npc.spriteDirection = Math.Sign(destination.X - npc.Center.X);
+
                     // Also make cinders appear around the target to actually give a sense that things are warming up.
                     for (int i = 0; i < 4; i++)
                     {
@@ -742,7 +754,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 npc.velocity *= 0.95f;
 
-                float wrappedAttackTimer = (attackTimer - lightningBurstTime - 10f) % (nebulaTelegraphTime + nebulaShootTime);
+                float wrappedAttackTimer = (attackTimer - lightningBurstTime - 3f) % (nebulaTelegraphTime + nebulaShootTime);
 
                 // Create telegraph lines.
                 if (wrappedAttackTimer < nebulaTelegraphTime)
@@ -773,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Release the nebula lightning.
-                else if (wrappedAttackTimer % 3f == 0f && wrappedAttackTimer < nebulaTelegraphTime + nebulaShootTime)
+                else if (wrappedAttackTimer % 3f == 2f && wrappedAttackTimer < nebulaTelegraphTime + nebulaShootTime)
                 {
                     float shootInterpolant = Utils.GetLerpValue(nebulaTelegraphTime, nebulaTelegraphTime + nebulaShootTime, wrappedAttackTimer, true);
                     Vector2 lightningVelocity = (MathHelper.TwoPi * shootInterpolant + nebulaLightningDirection).ToRotationVector2() * 1.87f;
@@ -853,6 +865,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     light.noGravity = true;
                 }
                 frameType = (int)CultistFrameState.RaiseArmsUp;
+                npc.velocity *= 0.9f;
 
                 // Create a flash of light at the cultist's position and release a bunch of light.
                 if (adjustedTime == 75f && Main.netMode != NetmodeID.MultiplayerClient)
@@ -948,6 +961,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         Main.npc[ancientLight].target = npc.target;
                     }
                 }
+
+                // Float around while waiting to fire.
+                if (waitingBeforeFiring)
+                {
+                    Vector2 destination = target.Center - Vector2.UnitY * 370f;
+                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
+
+                    if (!npc.WithinRange(destination, 185f))
+                        npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
+                    else
+                        npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), 0.045f);
+
+                    if (MathHelper.Distance(destination.X, npc.Center.X) > 24f)
+                        npc.spriteDirection = Math.Sign(destination.X - npc.Center.X);
+                }
             }
 
             if (attackTimer >= attackLength)
@@ -974,7 +1002,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 foreach (int cultist in cultists)
-                    CreateTeleportTelegraph(Main.projectile[(int)npc.Infernum().ExtraAI[1]].Center, Main.npc[cultist].Center, 45, false);
+                {
+                    Vector2 start = Main.npc[cultist].Center + Main.npc[cultist].SafeDirectionTo(Main.projectile[(int)npc.Infernum().ExtraAI[1]].Center) * 20f;
+                    CreateTeleportTelegraph(Main.projectile[(int)npc.Infernum().ExtraAI[1]].Center, start, 45, false);
+                }
             }
 
             // Play a chant sound before fading out.
@@ -1399,6 +1430,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailCacheLength[npc.type] = 8;
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             // Draw borders.
@@ -1454,6 +1487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 GameShaders.Misc["Infernum:CultistDeath"].Apply();
             }
 
+            bool inPhase2 = npc.ai[2] == 2f;
             bool performingRitual = npc.ai[0] == (int)CultistAIState.Ritual && npc.ai[1] >= 30f && !npc.dontTakeDamage;
             Texture2D baseTexture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
@@ -1463,7 +1497,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frame = baseTexture.Frame(1, 3, 0, (int)(npc.frameCounter / 14f % 1f * 3f));
             }
 
+            // Create cool afterimages in phase 2.
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (inPhase2)
+            {
+                for (int i = 1; i < npc.oldPos.Length; i++)
+                {
+                    Vector2 drawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.4f) - Main.screenPosition;
+                    float completionRatio = i / (float)(npc.oldPos.Length - 1f);
+                    float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 16f) % 1f;
+                    Color solarColor = new(255, 93, 30);
+                    Color nebulaColor = new(232, 76, 183);
+                    Color vortexColor = new(6, 229, 156);
+                    Color stardustColor = new(0, 170, 221);
+                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor) * npc.Opacity;
+                    illusionColor *= Utils.GetLerpValue(0.9f, 0.5f, completionRatio);
+                    illusionColor.A = (byte)Utils.Remap(completionRatio, 0f, 0.54f, 255f, 0f);
+                    Main.spriteBatch.Draw(baseTexture, drawPosition, frame, illusionColor, npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
+                }
+            }
             Main.spriteBatch.Draw(baseTexture, npc.Center - Main.screenPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             if (deathTimer > 120f)

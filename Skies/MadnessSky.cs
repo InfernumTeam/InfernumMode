@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
@@ -25,7 +26,7 @@ namespace InfernumMode.Skies
 
         public override void Reset() { }
 
-        public override bool IsActive() => !Main.gameMenu && Main.LocalPlayer.Infernum().Madness;
+        public override bool IsActive() => !Main.gameMenu && NPC.AnyNPCs(NPCID.Deerclops);
 
         public override void Activate(Vector2 position, params object[] args) { }
 

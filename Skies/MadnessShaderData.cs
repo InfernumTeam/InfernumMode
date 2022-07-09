@@ -12,8 +12,9 @@ namespace InfernumMode.Skies
 
         public override void Apply()
         {
+            float interpolant = Main.LocalPlayer.Infernum().MadnessInterpolant;
             UseTargetPosition(Main.LocalPlayer.Center);
-            base.UseOpacity(Main.LocalPlayer.Infernum().MadnessInterpolant);
+            base.UseIntensity(interpolant);
             base.Apply();
         }
     }

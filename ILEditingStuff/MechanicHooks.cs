@@ -24,6 +24,7 @@ using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -452,6 +453,18 @@ namespace InfernumMode.ILEditingStuff
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
                 DrawCacheAdditiveLighting.Clear();
+
+                // Draw the madness effect.
+                if (InfernumMode.CanUseCustomAIs && NPC.AnyNPCs(NPCID.Deerclops))
+                {
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+                    Filters.Scene["InfernumMode:Madness"].GetShader().UseSecondaryColor(Color.DarkViolet with { A = 20 });
+                    Filters.Scene["InfernumMode:Madness"].Apply();
+                    Main.spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/Misc/noise").Value, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), Color.White);
+                    Main.spriteBatch.ExitShaderRegion();
+                }
             });
         }
 

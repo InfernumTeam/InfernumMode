@@ -21,10 +21,20 @@ float4 uSourceRect;
 float2 uZoom;
 float4 uShaderSpecificData;
 
+float Random(float2 coords)
+{
+    return tex2D(uImage0, coords);
+}
 float4 PixelShaderFunction(float4 sampleColor : TEXCOORD, float2 coords : TEXCOORD0) : COLOR0
 {
-    float4 color = tex2D(uImage0, coords);
-    return 1;
+    float r = Random(coords + float2(0.158, uTime * 0.01)) * 0.05;
+    float n1 = Random(coords * 1613 + float2(uTime * 0.07, uTime * -0.04) - r);
+    float n2 = Random(coords * 1759 + float2(uTime * 0.061, -uTime * 0.0464) + r);
+    float x1 = sin(coords.y * 15924.185 + uTime * 5.1);
+    float x2 = sin(coords.x * 7197.294 + uTime * -2.7182 * coords.y);
+    float interpolant = (x1 + x2) * 0.25 + 0.5;
+    float fadeToMaxColor = saturate(interpolant * 0.6 + uIntensity * 0.75);
+    return float4(lerp(uColor, uSecondaryColor, fadeToMaxColor), 1) * lerp(n1, n2, interpolant) * uIntensity * 0.24;
 }
 technique Technique1
 {

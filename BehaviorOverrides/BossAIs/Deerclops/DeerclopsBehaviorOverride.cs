@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public const float Phase2LifeRatio = 0.66667f;
 
-        public const float Phase3LifeRatio = 0.25f;
+        public const float Phase3LifeRatio = 0.3f;
 
         public override int NPCOverrideType => NPCID.Deerclops;
 
@@ -333,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             {
                 float horizontalOffset = spikeIndex * offsetPerSpike;
                 float scale = Utils.Remap(attackTimer / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
-                TryMakingSpike(target, ref point, 90, inPhase2, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                TryMakingSpike(target, ref point, 105, inPhase2, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
             }
 
             // Summon shadow hands.
@@ -341,7 +341,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             {
                 float handDirection = Main.rand.NextBool().ToDirectionInt();
                 Vector2 handSpawnPosition = target.Center + Vector2.UnitY * handDirection * 640f;
-                Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 90, 0f);
+                Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 105, 0f);
             }
 
             if (attackTimer >= spikeShootTime + 30f)
@@ -409,8 +409,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 {
                     float horizontalOffset = spikeIndex * offsetPerSpike;
                     float scale = Utils.Remap(attackTimer / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
-                    TryMakingSpike(target, ref point, 90, false, -npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
-                    TryMakingSpike(target, ref point, 90, false, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                    TryMakingSpike(target, ref point, 105, false, -npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
+                    TryMakingSpike(target, ref point, 105, false, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
                 }
 
                 if (attackTimer >= spikeShootTime + 30f)
@@ -477,13 +477,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 for (int i = 0; i < debrisCount; i++)
                 {
                     Vector2 shootDestination = target.Center + Vector2.UnitX * (MathHelper.Lerp(-450f, 450f, i / (float)(debrisCount - 1f)) + Main.rand.NextFloat(10f));
-                    Vector2 shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed, out _).RotatedByRandom(0.19f);
-                    int debris = Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 90, 0f);
+                    Vector2 shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed, out _).RotatedByRandom(0.08f);
+                    int debris = Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 105, 0f);
                     if (Main.projectile.IndexInRange(debris))
                         Main.projectile[debris].ai[1] = Main.rand.Next(6, 12);
 
-                    shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed * 1.45f, out _).RotatedByRandom(0.13f);
-                    debris = Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 90, 0f);
+                    shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed * 1.45f, out _).RotatedByRandom(0.06f);
+                    debris = Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 105, 0f);
                     if (Main.projectile.IndexInRange(debris))
                         Main.projectile[debris].ai[1] = Main.rand.Next(6, 12);
                 }
@@ -493,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 {
                     float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / (float)(shadowHandCount - 1f));
                     Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(12.5f, 16f);
-                    int hand = Utilities.NewProjectileBetter(npc.Center - shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 90, 0f);
+                    int hand = Utilities.NewProjectileBetter(npc.Center - shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 105, 0f);
                     if (Main.projectile.IndexInRange(hand))
                         Main.projectile[hand].ai[1] = 47f;
                 }
@@ -539,7 +539,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int eyeChargeTelegraphTime = 48;
             float laserOffsetAngle = npc.spriteDirection * -0.32f;
             Vector2 initialDirection = Vector2.UnitY.RotatedBy(laserOffsetAngle);
-            float maxLaserAngle = MathHelper.PiOver2 * 1.24f;
+            float maxLaserAngle = MathHelper.PiOver2 * 1.34f;
             if (inPhase3)
                 maxLaserAngle *= 1.3f;
 
@@ -589,7 +589,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int handSummonRate = 75;
             int handSummonCycleCount = 2;
             int totalHandsToSummon = 5;
-            float handSpawnOffset = 500f;
+            float handSpawnOffset = 450f;
             bool haltMovement = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
 
             // Use walking frames.
@@ -609,10 +609,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
                     for (int i = 0; i < totalHandsToSummon; i++)
                     {
-                        float spawnOffsetAngle = MathHelper.Lerp(-1.06f, 1.06f, i / (float)(totalHandsToSummon - 1f));
+                        float spawnOffsetAngle = MathHelper.Lerp(-1.26f, 1.26f, i / (float)(totalHandsToSummon - 1f));
                         Vector2 handSpawnPosition = target.Center + handSpawnOffsetDirection.RotatedBy(spawnOffsetAngle) * handSpawnOffset;
                         Vector2 handSpawnVelocity = (target.Center - handSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * -Main.rand.NextFloat(7f, 10f);
-                        Utilities.NewProjectileBetter(handSpawnPosition, handSpawnVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 90, 0f);
+                        Utilities.NewProjectileBetter(handSpawnPosition, handSpawnVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 105, 0f);
                     }
                 }
             }
@@ -625,7 +625,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public static void DoBehavior_DyingBeaconOfLight(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float radiusDecreaseInterpolant)
         {
             int darknessFadeTime = 125;
-            int handSummonRate = 155;
+            int handSummonRate = 120;
             int maxHandCount = 6;
             int attackTime = 660;
             float maxNaturalRadiusDecreaseInterpolant = 0.25f;

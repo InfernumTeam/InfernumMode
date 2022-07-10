@@ -1,9 +1,7 @@
 using CalamityMod;
-using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             NPC.npcSlots = 0f;
             NPC.width = NPC.height = 40;
             NPC.defense = 0;
-            NPC.lifeMax = 120;
+            NPC.lifeMax = 196;
             NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -47,6 +45,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
             if (deerclopsIndex < 0 || Main.npc[deerclopsIndex].ai[0] != (int)DeerclopsBehaviorOverride.DeerclopsAttackState.DyingBeaconOfLight)
             {
+                if (deerclopsIndex >= 0 && Main.npc[deerclopsIndex].ai[0] != (int)DeerclopsBehaviorOverride.DeerclopsAttackState.DyingBeaconOfLight && NPC.Opacity > 0f)
+                {
+                    NPC.Opacity -= 0.1f;
+                    NPC.velocity = Vector2.Zero;
+                    return;
+                }
+
                 NPC.active = false;
                 return;
             }

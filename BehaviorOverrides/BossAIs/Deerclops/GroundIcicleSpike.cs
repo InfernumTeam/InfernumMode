@@ -110,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         {
             float _ = 0f;
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * Projectile.scale * 30f;
-            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * MathHelper.Max(67f, Projectile.scale * 120f);
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * MathHelper.Max(65f, Projectile.scale * 110f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.scale * 35f, ref _);
         }
 

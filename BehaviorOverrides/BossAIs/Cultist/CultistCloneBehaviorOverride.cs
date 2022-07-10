@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            CultistBehaviorOverride.ExtraDrawcode(npc, spriteBatch);
+            CultistBehaviorOverride.ExtraDrawcode(npc);
             return true;
         }
 

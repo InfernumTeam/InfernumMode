@@ -149,7 +149,7 @@ namespace InfernumMode
                 Player.statDefense -= 8;
             }
             if (Madness)
-                causeLifeRegenLoss(20);
+                causeLifeRegenLoss(50);
             MadnessTime = Utils.Clamp(MadnessTime + (Madness ? 1 : -8), 0, 660);
         }
         #endregion

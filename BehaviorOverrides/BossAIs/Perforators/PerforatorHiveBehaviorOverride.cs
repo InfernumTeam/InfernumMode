@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Particles;
@@ -58,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float backgroundStrength = ref npc.localAI[1];
 
             // Reset certain things.
-            npc.dontTakeDamage = false;
+            npc.Calamity().DR = 0.2f;
             backafterimageGlowInterpolant = MathHelper.Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -675,8 +676,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float chargeTimer = ref npc.Infernum().ExtraAI[0];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
-            // Disable contact damage.
-            npc.dontTakeDamage = true;
+            // Disable significant contact damage.
+            npc.Calamity().DR = 0.999999f;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)

@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public const int HandCount = 24;
 
-        public const float RingRadius = 700f;
+        public const float RingRadius = 600f;
 
         public float Radius
         {

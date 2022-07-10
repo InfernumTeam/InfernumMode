@@ -49,6 +49,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public const float Phase3LifeRatio = 0.25f;
         public const float TransitionAnimationTime = 90f;
 
+        public static readonly Color[] PillarsPallete = new Color[]
+        {
+            // Solar.
+            new(255, 93, 30),
+
+            // Nebula.
+            new(232, 76, 183),
+
+            // Vortex.
+            new(0, 170, 221),
+
+            // Stardust.
+            new(0, 170, 221)
+        };
+
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -444,11 +459,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             int fireballShootRate = phase2 ? 11 : 7;
             int fireballCount = phase2 ? 30 : 32;
-            int attackLength = 105 + fireballShootRate * fireballCount;
+            int hoverTime = 105;
+            int laserTelegraphCreationDelay = 90;
+            int attackLength = hoverTime + fireballShootRate * fireballCount;
             if (phase2)
                 attackLength += 390;
 
-            bool canShootFireballs = attackTimer >= 105f && attackTimer < 105f + fireballShootRate * fireballCount;
+            bool canShootFireballs = attackTimer >= hoverTime && attackTimer < hoverTime + fireballShootRate * fireballCount;
 
             ref float aimRotation = ref npc.Infernum().ExtraAI[0];
 
@@ -462,7 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.netUpdate = true;
             }
 
-            if (attackTimer < 105f)
+            if (attackTimer < hoverTime)
             {
                 frameType = (int)CultistFrameState.Hover;
                 npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
@@ -484,7 +501,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.18f);
 
                         float shootSpeed = Main.rand.NextFloat(12f, 14f) + npc.Distance(target.Center) * 0.011f;
-                        shootSpeed *= Utils.Remap(attackTimer, 105f, 182f, 0.35f, 1f);
+                        shootSpeed *= Utils.Remap(attackTimer, hoverTime, hoverTime + 75f, 0.35f, 1f);
 
                         Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * shootSpeed;
                         fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
@@ -543,11 +560,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Shoot a powerful fire beam in phase 2.
-            else if (phase2 && attackTimer >= 105 + fireballShootRate * fireballCount)
+            else if (phase2 && attackTimer >= hoverTime + fireballShootRate * fireballCount)
             {
-                float adjustedTime = attackTimer - (105 + fireballShootRate * fireballCount);
+                float adjustedTime = attackTimer - (hoverTime + fireballShootRate * fireballCount);
                 frameType = (int)CultistFrameState.RaiseArmsUp;
-                if (adjustedTime is > 80f and < 140f)
+
+                // Laugh before the laserbeam is created.
+                if (adjustedTime > (laserTelegraphCreationDelay - 10f) && adjustedTime < laserTelegraphCreationDelay + 50f)
                     frameType = (int)CultistFrameState.Laugh;
 
                 if (adjustedTime == 10f && !npc.WithinRange(target.Center, 720f))
@@ -562,7 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Vector2 beamShootPosition = npc.Top - Vector2.UnitY * 4f;
 
                 // Create charge-up dust.
-                if (adjustedTime < 80f)
+                if (adjustedTime < laserTelegraphCreationDelay - 10f)
                 {
                     Vector2 dustSpawnPosition = beamShootPosition + Main.rand.NextVector2CircularEdge(56f, 56f);
                     Dust fire = Dust.NewDustPerfect(dustSpawnPosition, 222);
@@ -573,7 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Make burst dust and make a chanting sound.
-                if (adjustedTime == 90f)
+                if (adjustedTime == laserTelegraphCreationDelay)
                 {
                     npc.TargetClosest();
                     npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
@@ -816,6 +835,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public static void DoAttack_ConjureLightBlasts(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
             int shootDelay = 20;
+            int lightCreationDelay = 75;
             int lightBurstCount = phase2 ? 24 : 14;
             int lightBurstShootRate = phase2 ? 2 : 3;
             int sideLightSummonRate = phase2 ? 18 : 25;
@@ -836,7 +856,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Teleport above the player.
             if (attackTimer == 15f)
             {
-                Vector2 teleportPosition = target.Center - Vector2.UnitY * 270f;
+                Vector2 teleportPosition = target.Center - Vector2.UnitY * 375f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -854,7 +874,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 float adjustedTime = attackTimer - (shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay);
 
                 // Absorb a bunch of magic.
-                if (adjustedTime < 75f)
+                if (adjustedTime < lightCreationDelay)
                 {
                     Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(85f, 85f);
                     Dust light = Dust.NewDustPerfect(dustSpawnPosition, 264);
@@ -868,7 +888,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.velocity *= 0.9f;
 
                 // Create a flash of light at the cultist's position and release a bunch of light.
-                if (adjustedTime == 75f && Main.netMode != NetmodeID.MultiplayerClient)
+                if (adjustedTime == lightCreationDelay && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center - Vector2.UnitY * 300f;
                     npc.netUpdate = true;
@@ -876,7 +896,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     CreateTeleportTelegraph(npc.Center, npc.Center, 0);
                 }
 
-                if (adjustedTime > 80f && adjustedTime < 180f && adjustedTime % 5f == 4f)
+                if (adjustedTime > lightCreationDelay + 5f && adjustedTime < lightCreationDelay + 105f && adjustedTime % 5f == 4f)
                 {
                     Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
                     lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
@@ -1376,7 +1396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             npc.frameCounter++;
         }
 
-        public static void ExtraDrawcode(NPC npc, SpriteBatch spriteBatch)
+        public static void ExtraDrawcode(NPC npc)
         {
             float frameState = npc.ai[2];
             float transitionTimer = npc.ai[3];
@@ -1388,11 +1408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 for (int i = 0; i < 8; i++)
                 {
                     float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 8f) % 1f;
-                    Color solarColor = new(255, 93, 30);
-                    Color nebulaColor = new(232, 76, 183);
-                    Color vortexColor = new(6, 229, 156);
-                    Color stardustColor = new(0, 170, 221);
-                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor);
+                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, PillarsPallete);
                     float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) *
                         Utils.GetLerpValue(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
                     illusionColor.A = (byte)MathHelper.Lerp(125f, 0f, 1f - illusionOpacity);
@@ -1479,7 +1495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             float deathTimer = npc.Infernum().ExtraAI[7];
             if (!dying)
-                ExtraDrawcode(npc, spriteBatch);
+                ExtraDrawcode(npc);
             else if (deathTimer > 120f)
             {
                 Main.spriteBatch.EnterShaderRegion();
@@ -1507,11 +1523,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Vector2 drawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.4f) - Main.screenPosition;
                     float completionRatio = i / (float)(npc.oldPos.Length - 1f);
                     float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 16f) % 1f;
-                    Color solarColor = new(255, 93, 30);
-                    Color nebulaColor = new(232, 76, 183);
-                    Color vortexColor = new(6, 229, 156);
-                    Color stardustColor = new(0, 170, 221);
-                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor) * npc.Opacity;
+                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, PillarsPallete) * npc.Opacity;
                     illusionColor *= Utils.GetLerpValue(0.9f, 0.5f, completionRatio);
                     illusionColor.A = (byte)Utils.Remap(completionRatio, 0f, 0.54f, 255f, 0f);
                     Main.spriteBatch.Draw(baseTexture, drawPosition, frame, illusionColor, npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);

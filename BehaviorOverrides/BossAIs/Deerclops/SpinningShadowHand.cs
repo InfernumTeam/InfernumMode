@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 Projectile.Kill();
 
             if (SpinTime == 0f)
-                SpinTime = 24f;
+                SpinTime = 20f;
 
             // Fade in.
             Projectile.Opacity = Utils.GetLerpValue(0f, 16f, Time, true);
@@ -53,13 +53,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 if (Time == SpinTime)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
-                    Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * 6.4f;
+                    Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * 8f;
                     Projectile.rotation = Projectile.velocity.ToRotation();
                     Projectile.netUpdate = true;
                 }
             }
-            else if (Projectile.velocity.Length() < 13.75f)
-                Projectile.velocity *= 1.015f;
+            else if (Projectile.velocity.Length() < 15.5f)
+                Projectile.velocity *= 1.0175f;
 
             Time++;
         }

@@ -601,9 +601,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoAttack_LightningHover(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
-            int lightningBurstCount = phase2 ? 2 : 3;
-            int hoverTime = phase2 ? 54 : 65;
-            int summonLightningTime = phase2 ? 40 : 50;
+            int lightningBurstCount = phase2 ? 3 : 4;
+            int hoverTime = phase2 ? 28 : 35;
+            int summonLightningTime = phase2 ? 27 : 36;
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
 
@@ -691,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create a burst of sparks and summon orbs.
-                if (adjustedTime is 30f or 36f)
+                if (adjustedTime is 18f or 25f)
                 {
                     npc.velocity = Vector2.Zero;
                     for (int i = 0; i < 2; i++)
@@ -701,7 +701,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             Vector2 orbSummonPosition = npc.Center - Vector2.UnitY * 450f;
                             orbSummonPosition.X -= (i == 0).ToDirectionInt() * (350f + j * 100f);
 
-                            if (adjustedTime == 30f)
+                            if (adjustedTime == 18f)
                             {
                                 // Release a line of electricity towards the orb.
                                 for (int k = 0; k < 200; k++)
@@ -1081,6 +1081,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     NPC cultist = Main.npc[cultists[i]];
                     cultist.Center = ritualCenter + (MathHelper.TwoPi * i / cultists.Count).ToRotationVector2() * 180f;
                     cultist.spriteDirection = (cultist.Center.X < ritualCenter.X).ToDirectionInt();
+                    cultist.velocity = Vector2.Zero;
                     cultist.netUpdate = true;
                 }
                 createRitualZap(cultists);
@@ -1191,8 +1192,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             float attackPower = Utils.GetLerpValue(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
 
-            int burstCount = 2;
-            int burstShootRate = (int)MathHelper.Lerp(270f, 215f, attackPower);
+            int burstCount = 3;
+            int burstShootRate = (int)MathHelper.Lerp(195f, 140f, attackPower);
             ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
             ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
 

@@ -35,6 +35,8 @@ namespace InfernumMode.Items
             recipe.Register();
         }
 
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.HallowBoss);
+
         public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)

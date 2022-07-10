@@ -12,9 +12,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     public class DoomBeam : ModProjectile
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public const float LaserLength = 4000f;
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Death Beam");
 
         public override void SetDefaults()
@@ -24,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 125;
+            Projectile.timeLeft = 105;
             Projectile.alpha = 255;
             Projectile.Calamity().canBreakPlayerDefense = true;
             CooldownSlot = 1;
@@ -37,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / 125f) * 3f;
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / 105f) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 

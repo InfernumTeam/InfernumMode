@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.hostile = true;
-            Projectile.timeLeft = 90;
+            Projectile.timeLeft = 60;
             Projectile.Opacity = 0f;
             Projectile.penetrate = -1;
         }
@@ -47,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Projectile.netUpdate = true;
             }
 
-            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(4f, 35f, Projectile.timeLeft, true);
-            Projectile.scale = Utils.GetLerpValue(0f, 15f, Time, true) * Utils.GetLerpValue(4f, 35f, Projectile.timeLeft, true) * 1.35f;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true) * Utils.GetLerpValue(4f, 15f, Projectile.timeLeft, true);
+            Projectile.scale = Projectile.Opacity * 1.35f;
             Projectile.frameCounter++;
             if (Projectile.frameCounter % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
@@ -72,14 +72,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Main.spriteBatch.ResetBlendState();
 
             // Make line telegraphs.
-            if (Projectile.timeLeft < 40f)
+            if (Projectile.timeLeft < 36f)
             {
                 for (int i = 0; i < 9; i++)
                 {
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                     if (Projectile.localAI[1] == 1f)
                         beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true)) * 2f);
+                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 36f, Projectile.timeLeft, true)) * 2f);
                 }
             }
 

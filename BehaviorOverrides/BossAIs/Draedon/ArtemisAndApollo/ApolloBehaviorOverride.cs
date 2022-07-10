@@ -499,6 +499,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 shootSpread *= 0.64f;
                 predictivenessFactor *= 1.33f;
             }
+            if (!target.Calamity().HasCustomDash)
+                predictivenessFactor *= 1.4f;
 
             if (calmTheFuckDown)
                 shootRate += 25;

@@ -41,7 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ConjureLightBlasts,
             Ritual,
             IceStorm,
-            AncientDoom
+            AncientDoom,
+            DesperationAttack
         }
 
         public const float BorderWidth = 3472f;
@@ -96,13 +97,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             bool shouldBeInPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             bool inPhase2 = phaseState == 2f;
-            bool dying = npc.Infernum().ExtraAI[6] == 1f;
+            bool dying = npc.Infernum().ExtraAI[6] == 2f;
 
             if (initialXPosition == 0f)
             {
                 initialXPosition = npc.Center.X;
                 npc.netUpdate = true;
             }
+
+            // Use the desperation attack after "dying".
+            if (npc.Infernum().ExtraAI[6] == 1f)
+                attackState = CultistAIState.DesperationAttack;
 
             if (dying)
             {
@@ -173,6 +178,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     break;
                 case CultistAIState.AncientDoom:
                     DoAttack_AncientDoom(npc, target, ref frameType, ref attackTimer);
+                    break;
+                case CultistAIState.DesperationAttack:
+                    DoAttack_DesperationAttack(npc, target, ref frameType, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -856,7 +864,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Teleport above the player.
             if (attackTimer == 15f)
             {
-                Vector2 teleportPosition = target.Center - Vector2.UnitY * 375f;
+                Vector2 teleportPosition = target.Center - Vector2.UnitY * 470f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1258,6 +1266,157 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 SelectNextAttack(npc);
         }
 
+        public static void DoAttack_DesperationAttack(NPC npc, Player target, ref float frameType, ref float attackTimer)
+        {
+            int attackDelay = 75;
+
+            int chargeTime = 50;
+            int slowdownTime = 10;
+            int totalCharges = 5;
+            int chargePhaseTime = attackDelay + (chargeTime + slowdownTime) * totalCharges;
+            int chargeBoltCreationRate = 6;
+            float chargeSpeed = 31f;
+
+            int spinTime = 360;
+            int spinBoltCreationRate = 40;
+            int spinPhaseTime = chargePhaseTime + spinTime;
+            float spinSpeed = 30f;
+            float spinOffset = 560f;
+
+            int spreadCountBeforeTeleport = 10;
+            int spreadTeleportCount = 2;
+            int spreadShootRate = 30;
+            int spreadPhaseTime = spinPhaseTime + (spreadShootRate * spreadCountBeforeTeleport) * spreadTeleportCount;
+            int boltsInSpread = 7;
+            float spreadShootSpeed = 11f;
+
+            // Disable damage, allowing the player to focus solely on dodging.
+            npc.dontTakeDamage = true;
+
+            if (attackTimer == 1f || !npc.WithinRange(target.Center, 1950f))
+            {
+                Vector2 teleportPosition = target.Center - Vector2.UnitY * 380f;
+                CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
+                npc.Center = teleportPosition;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+            }
+
+            // Laugh and rise upward before attacking.
+            if (attackTimer < attackDelay)
+            {
+                if (attackTimer == 24f)
+                    SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
+                frameType = (int)(attackTimer >= 24f ? (int)CultistFrameState.Laugh : (int)CultistFrameState.Hover);
+
+                float riseSpeed = Utils.GetLerpValue(0f, 40f, attackTimer, true) * Utils.GetLerpValue(attackDelay - 6f, attackDelay - 27f, attackTimer, true) * 4f;
+                npc.velocity = -Vector2.UnitY * riseSpeed;
+                npc.localAI[2] = Utils.GetLerpValue(16f, attackDelay - 15f, attackTimer, true);
+                return;
+            }
+
+            // Perform multiple fast charges at the target and release bolts perpendicular to the current direction.
+            if (attackTimer <= chargePhaseTime)
+            {
+                int chargeTimer = (int)(attackTimer - attackDelay) % (chargeTime + slowdownTime);
+
+                // Charge at the target.
+                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                if (chargeTimer <= 6f)
+                {
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.2f);
+                    npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
+                }
+                if (chargeTimer == 6f)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    npc.velocity = chargeVelocity;
+                    npc.netUpdate = true;
+                }
+
+                // Do contact damage when charging.
+                if (npc.velocity.Length() > chargeSpeed * 0.8f)
+                {
+                    npc.damage = 184;
+
+                    // Release perpendicular bolts.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % chargeBoltCreationRate == chargeBoltCreationRate - 1f)
+                    {
+                        Vector2 left = npc.velocity.RotatedBy(-MathHelper.PiOver2) * 0.3f;
+                        Vector2 right = npc.velocity.RotatedBy(MathHelper.PiOver2) * 0.3f;
+                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
+                    }
+                }
+
+                // Slow down after charging.
+                if (chargeTimer >= chargeTime)
+                {
+                    npc.velocity *= 0.85f;
+                    npc.damage = 0;
+                }
+
+                return;
+            }
+
+            // Spin around the target and release redirecting large dark bolts.
+            if (attackTimer <= spinPhaseTime)
+            {
+                // Do the spin.
+                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(MathHelper.TwoPi / spinTime * 3f * attackTimer) * spinOffset;
+                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, spinSpeed);
+                
+                // Release bolts.
+                if (attackTimer % spinBoltCreationRate == spinBoltCreationRate - 1f && attackTimer < spinPhaseTime - 60f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 190, 0f);
+                }
+
+                npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
+                return;
+            }
+
+            // Release an even spread of bolts while hovering near the target.
+            if (attackTimer <= spreadPhaseTime)
+            {
+                Vector2 hoverDestination = target.Center + Vector2.UnitY * (target.Center.Y < npc.Center.Y).ToDirectionInt() * 550f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f).MoveTowards(hoverDestination, 8f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 0.75f);
+
+                if (npc.WithinRange(hoverDestination, 200f) && attackTimer % spreadShootRate == spreadShootRate - 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < boltsInSpread; i++)
+                        {
+                            float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, i / (float)(boltsInSpread - 1f));
+                            Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * spreadShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
+                        }
+                    }
+                }
+
+                // Teleport.
+                if (attackTimer == spreadPhaseTime - spreadShootRate * spreadCountBeforeTeleport)
+                {
+                    Vector2 teleportPosition = target.Center + Vector2.UnitY * (target.Center.Y > npc.Center.Y).ToDirectionInt() * 550f; ;
+                    CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
+                    npc.Center = teleportPosition;
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
+                return;
+            }
+
+            // Do the death animation after the above attacks.
+            attackTimer = 0f;
+            npc.Infernum().ExtraAI[6] = 2f;
+            npc.netUpdate = true;
+        }
+
         public static void CreateTeleportTelegraph(Vector2 start, Vector2 end, int dustCount, bool canCreateDust = true, int extraUpdates = 0)
         {
             if (canCreateDust)
@@ -1430,14 +1589,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 glowOpacity = Utils.GetLerpValue(TransitionAnimationTime, TransitionAnimationTime + 15f, transitionTimer, true);
 
             // Create an afterimage glow in phase 2.
+            float finalPhaseEffectsInterpolant = npc.localAI[2];
             for (int i = 0; i < 8; i++)
             {
-                Color glowColor = Color.Cyan * glowOpacity * 0.45f;
+                Color glowColor = Color.Lerp(Color.Cyan, Color.DarkViolet, finalPhaseEffectsInterpolant) * glowOpacity * 0.45f;
                 glowColor.A = 0;
 
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
-                drawOffset *= MathHelper.Lerp(4f, 5f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.4f) * 0.5f + 0.5f);
+                drawOffset *= MathHelper.Lerp(4f, 5f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.4f) * 0.5f + 0.5f) * MathHelper.Lerp(1f, 1.7f, finalPhaseEffectsInterpolant);
                 drawPosition += drawOffset;
                 SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 

@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             ref float attackTimer = ref npc.ai[1];
 
             // Circle around the player slowly, releasing bolts when at the cardinal directions.
-            int cinderShootRate = 180;
+            int cinderShootRate = 270;
             Vector2 hoverOffset = (MathHelper.TwoPi * (attackTimer / cinderShootRate) / 4f).ToRotationVector2() * 360f;
             Vector2 hoverDestination = target.Center + hoverOffset;
 

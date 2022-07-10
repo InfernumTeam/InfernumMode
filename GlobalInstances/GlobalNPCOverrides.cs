@@ -508,12 +508,11 @@ namespace InfernumMode.GlobalInstances
             {
                 CultistBehaviorOverride.ClearAwayEntities();
                 npc.Infernum().ExtraAI[6] = 1f;
-                npc.netUpdate = true;
                 npc.active = true;
                 npc.dontTakeDamage = true;
                 npc.life = 1;
-
-                SoundEngine.PlaySound(SoundID.NPCDeath59, npc.Center);
+                npc.ai[1] = 0f;
+                npc.netUpdate = true;
 
                 return false;
             }

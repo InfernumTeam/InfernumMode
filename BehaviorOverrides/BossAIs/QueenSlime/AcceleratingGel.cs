@@ -29,8 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(360f, 354f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
-            if (Projectile.velocity.Length() < 30f)
-                Projectile.velocity *= 1.038f;
+            if (Projectile.velocity.Length() < 21f)
+                Projectile.velocity *= 1.03f;
         }
 
 		public override bool PreDraw(ref Color lightColor)

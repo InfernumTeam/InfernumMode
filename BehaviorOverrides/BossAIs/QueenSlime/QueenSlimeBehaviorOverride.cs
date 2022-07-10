@@ -452,11 +452,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float openAreaAngle = Main.rand.NextFloatDirection() * shardSpread * 0.6f;
+                    float openAreaAngle = Main.rand.NextFloatDirection() * shardSpread * 0.5f;
                     for (int i = 0; i < shardCount; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-shardSpread, shardSpread, i / (float)(shardCount - 1f)) + Main.rand.NextFloatDirection() * 0.01f;
-                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.16f)
+                        float shootOffsetAngle = MathHelper.Lerp(-shardSpread, shardSpread, i / (float)(shardCount - 1f)) + Main.rand.NextFloatDirection() * 0.005f;
+                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.23f)
                             continue;
 
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(2.6f, 3f);

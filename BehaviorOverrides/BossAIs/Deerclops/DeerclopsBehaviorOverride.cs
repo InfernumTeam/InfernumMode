@@ -659,7 +659,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.Opacity = MathHelper.Lerp(1f, 0.36f, fadeInterpolant);
 
             bool summonInterval = attackTimer % handSummonRate == handSummonRate - 1f || attackTimer == darknessFadeTime + 1f;
-            if (NPC.CountNPCS(handID) < maxHandCount && summonInterval)
+            if (NPC.CountNPCS(handID) < maxHandCount && summonInterval && attackTimer < attackTime)
             {
                 Vector2 handSummonPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(335f, 400f);
                 SoundEngine.PlaySound(SoundID.DD2_EtherianPortalSpawnEnemy, handSummonPosition);
@@ -667,7 +667,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)handSummonPosition.X, (int)handSummonPosition.Y, handID, npc.whoAmI);
             }
 
-            if (attackTimer >= attackTime)
+            if (attackTimer >= attackTime && !NPC.AnyNPCs(handID))
                 SelectNextAttack(npc);
         }
 

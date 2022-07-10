@@ -89,7 +89,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 136031,
             [NPCID.DukeFishron] = BossRushEvent.BossRushActive ? -1 : 100250,
             [ModContent.NPCType<RavagerHead>()] = BossRushEvent.BossRushActive ? -1 : 18000,
-            [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 107000,
+            [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 104000,
             [NPCID.AncientCultistSquidhead] = BossRushEvent.BossRushActive ? -1 : 9020,
             [NPCID.CultistDragonHead] = BossRushEvent.BossRushActive ? -1 : 36500,
             [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 50000,

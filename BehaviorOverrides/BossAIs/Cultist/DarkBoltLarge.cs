@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 int targetIndex = (int)Projectile.ai[0];
                 Vector2 idealVelocity = Projectile.velocity;
                 if (Projectile.hostile && Main.player.IndexInRange(targetIndex))
-                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 31f;
+                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 34.5f;
 
                 float amount = MathHelper.Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
                 Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, amount);

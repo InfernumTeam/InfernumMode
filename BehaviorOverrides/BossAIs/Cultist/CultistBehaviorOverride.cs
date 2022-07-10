@@ -864,7 +864,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Teleport above the player.
             if (attackTimer == 15f)
             {
-                Vector2 teleportPosition = target.Center - Vector2.UnitY * 470f;
+                Vector2 teleportPosition = target.Center - Vector2.UnitY * 600f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1278,7 +1278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float chargeSpeed = 31f;
 
             int spinTime = 360;
-            int spinBoltCreationRate = 40;
+            int spinBoltCreationRate = 38;
             int spinPhaseTime = chargePhaseTime + spinTime;
             float spinSpeed = 30f;
             float spinOffset = 560f;
@@ -1287,14 +1287,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int spreadTeleportCount = 2;
             int spreadShootRate = 30;
             int spreadPhaseTime = spinPhaseTime + (spreadShootRate * spreadCountBeforeTeleport) * spreadTeleportCount;
-            int boltsInSpread = 7;
-            float spreadShootSpeed = 11f;
+            float spreadShootSpeed = 16.4f;
 
             // Disable damage, allowing the player to focus solely on dodging.
             npc.dontTakeDamage = true;
 
             if (attackTimer == 1f || !npc.WithinRange(target.Center, 1950f))
             {
+                if (attackTimer == 1f)
+                    ClearAwayEntities();
+
                 Vector2 teleportPosition = target.Center - Vector2.UnitY * 380f;
                 CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
                 npc.Center = teleportPosition;
@@ -1307,7 +1309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 if (attackTimer == 24f)
                     SoundEngine.PlaySound(SoundID.Zombie105, npc.Center);
-                frameType = (int)(attackTimer >= 24f ? (int)CultistFrameState.Laugh : (int)CultistFrameState.Hover);
+                frameType = attackTimer >= 24f ? (int)CultistFrameState.Laugh : (int)CultistFrameState.Hover;
 
                 float riseSpeed = Utils.GetLerpValue(0f, 40f, attackTimer, true) * Utils.GetLerpValue(attackDelay - 6f, attackDelay - 27f, attackTimer, true) * 4f;
                 npc.velocity = -Vector2.UnitY * riseSpeed;
@@ -1378,10 +1380,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 return;
             }
 
+            // Delete large bolts.
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkBoltLarge>());
+
             // Release an even spread of bolts while hovering near the target.
             if (attackTimer <= spreadPhaseTime)
             {
-                Vector2 hoverDestination = target.Center + Vector2.UnitY * (target.Center.Y < npc.Center.Y).ToDirectionInt() * 550f;
+                frameType = (int)CultistFrameState.Hover;
+                npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
+
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 550f;
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f).MoveTowards(hoverDestination, 8f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 0.75f);
 
@@ -1390,9 +1398,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        int boltsInSpread = Main.rand.Next(7, 12);
                         for (int i = 0; i < boltsInSpread; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, i / (float)(boltsInSpread - 1f));
+                            float offsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / (float)(boltsInSpread - 1f));
                             Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * spreadShootSpeed;
                             Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
                         }
@@ -1402,7 +1411,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Teleport.
                 if (attackTimer == spreadPhaseTime - spreadShootRate * spreadCountBeforeTeleport)
                 {
-                    Vector2 teleportPosition = target.Center + Vector2.UnitY * (target.Center.Y > npc.Center.Y).ToDirectionInt() * 550f; ;
+                    Vector2 teleportPosition = target.Center + Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * 550f;
                     CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
                     npc.Center = teleportPosition;
                     npc.velocity = Vector2.Zero;
@@ -1612,7 +1621,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             // Draw borders.
-            bool dying = npc.Infernum().ExtraAI[6] == 1f;
+            bool dying = npc.Infernum().ExtraAI[6] == 2f;
             Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/Border").Value;
             float initialXPosition = npc.Infernum().ExtraAI[8];
             float left = initialXPosition - BorderWidth * 0.5f;

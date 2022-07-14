@@ -104,6 +104,14 @@ namespace InfernumMode.GlobalInstances
 
                 return false;
             }
+
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
+                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, Main.spriteBatch, lightColor);
+            }
+            return base.PreAI(projectile);
+
             return base.PreDraw(projectile, ref lightColor);
         }
 

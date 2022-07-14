@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalBoltEyeBursts,
             PhantasmalFlareBursts,
             PhantasmalDeathrays,
+            PhantasmalSpin,
             PhantasmalRush,
             PhantasmalDance,
             PhantasmalBarrage,
@@ -228,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Clear projectiles, go to the desperation attack, and do some visual effects when ready to enter the final phase.
             if (npc.Infernum().ExtraAI[8] == 0f && InFinalPhase)
             {
-                var roarSound = SoundEngine.PlaySound(SoundID.Zombie92 with { Volume = 0.2f, Pitch = -0.48f }, npc.Center);
+                SoundEngine.PlaySound(SoundID.Zombie92 with { Volume = 0.9f, Pitch = -0.48f }, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordWave>(), 0, 0f);
 
@@ -250,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
+                    bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
                     if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                     {
                         n.netSpam = npc.netSpam;
@@ -381,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             DoBehavior_IdleHover(npc, target, ref attackTimer);
 
-            int vortexSummonRate = 20;
+            int vortexSummonRate = 27;
             int nebulaSummonCount = 3;
             int nebulaSummonRate = 240;
             if (InFinalPhase)
@@ -408,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             float edgeInterpolant = Vector2.Distance(playerCenter, new Vector2(xInterpolant, yInterpolant)) * 1.414f;
 
                             // Bias noise towards 0 if close to the center.
-                            noise = MathHelper.Lerp(noise, 0f, Utils.GetLerpValue(0.33f, 0.2f, edgeInterpolant, true));
+                            noise = MathHelper.Lerp(noise, 0f, Utils.GetLerpValue(0.4f, 0.27f, edgeInterpolant, true));
 
                             // Create nebulae.
                             Vector2 nebulaSpawnPosition = new(x, y);
@@ -471,7 +472,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
                 MoonLordAttackState.PhantasmalSphereHandWaves,
-                MoonLordAttackState.PhantasmalFlareBursts,
+                eyeCount == 1 ? MoonLordAttackState.PhantasmalSpin : MoonLordAttackState.PhantasmalFlareBursts,
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,
             };
             if (CurrentActiveArms <= 0 && npc.ai[0] != (int)MoonLordAttackState.SpawnEffects)
@@ -531,7 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC n = Main.npc[i];
-                bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
+                bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
                 if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                 {
                     for (int j = 0; j < 5; j++)

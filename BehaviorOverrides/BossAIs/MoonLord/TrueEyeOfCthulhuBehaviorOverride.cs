@@ -54,6 +54,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     npc.StrikeNPCNoInteraction(9999, 0f, 0);
                     npc.checkDead();
                     break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSpin:
+                    DoBehavior_PhantasmalSpin(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                    break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalRush:
                     DoBehavior_PhantasmalRush(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
@@ -102,6 +105,76 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
         }
 
+        public static void DoBehavior_PhantasmalSpin(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        {
+            int fireDelay = 135;
+            int shootTime = 450;
+            int attackTransitionDelay = 90;
+            int boltSpreadCount = 3;
+            int asteroidReleaseRate = 37;
+            Vector2 hoverDestination = core.Infernum().arenaRectangle.Center.ToVector2();
+
+            // Look at the target.
+            pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
+
+            // Hover into position.
+            if (attackTimer < fireDelay)
+            {
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.2f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.4f, 0.15f);
+
+                npc.rotation = npc.rotation.AngleLerp(MathHelper.Pi, 0.08f);
+                npc.spriteDirection = 1;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero.MoveTowards(hoverDestination - npc.Center, 45f), 0.6f);
+            }
+            else if (attackTimer < fireDelay + shootTime)
+            {
+                if (attackTimer == fireDelay)
+                {
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+
+                    SoundEngine.PlaySound(SoundID.Zombie100, target.Center);
+                }
+
+                // Release the barrage of eyes.
+                if (attackTimer % 5f== 4f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item12, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float eyeAngularVelocity = MathHelper.ToRadians(0.2f);
+                        float temporalOffsetAngle = MathHelper.TwoPi * (attackTimer - fireDelay) / 225f;
+                        Vector2 eyeSpawnPosition = npc.Center + Vector2.UnitY * 10f;
+                        for (int i = 0; i < boltSpreadCount; i++)
+                        {
+                            Vector2 eyeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / boltSpreadCount + temporalOffsetAngle) * 8f;
+                            int eye = Utilities.NewProjectileBetter(eyeSpawnPosition, eyeVelocity, ModContent.ProjectileType<NonHomingPhantasmalEye>(), 215, 0f);
+                            if (Main.projectile.IndexInRange(eye))
+                                Main.projectile[eye].ai[1] = eyeAngularVelocity;
+                        }
+                    }
+                }
+
+                if (attackTimer % asteroidReleaseRate == asteroidReleaseRate - 1f)
+                {
+                    Vector2 asteroidSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
+                    Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                    int asteroid = Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f);
+                    if (Main.projectile.IndexInRange(asteroid))
+                        Main.projectile[asteroid].ai[0] = core.whoAmI;
+                }
+            }
+
+            // Terminate the attack early if the target leaves the arena, as this attack is arena-focused.
+            if (MoonLordCoreBehaviorOverride.IsEnraged || attackTimer >= fireDelay + shootTime + attackTransitionDelay)
+            {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<NonHomingPhantasmalEye>(), ModContent.ProjectileType<LunarAsteroid>());
+                core.Infernum().ExtraAI[5] = 1f;
+            }
+        }
+
         public static void DoBehavior_PhantasmalRush(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int fireDelay = 120;
@@ -117,6 +190,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 boltCount += 2;
                 chargeVerticalOffset += 15f;
+            }
+
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                boltCount = 13;
+                boltShootSpeed = 10f;
             }
 
             int chargeCount = laserLifetime / chargeRate;
@@ -261,6 +340,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 orbReleaseRate--;
                 spinOffset -= 20f;
                 chargeSpeed += 3f;
+            }
+            
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                chargeTelegraphTime = 30;
+                spinOffset = 325f;
+                chargeSpeed = 50f;
             }
 
             int chargeCounter = (int)(attackTimer / (spinTime + chargeTelegraphTime + chargeTime));

@@ -61,7 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Release asteroids that fly into the black hole.
-            if (Timer >= 135f && Timer % 12f == 11f)
+            int asteroidReleaseRate = MoonLordCoreBehaviorOverride.IsEnraged ? 6 : 12;
+            if (Timer >= 135f && Timer % asteroidReleaseRate == asteroidReleaseRate - 1f)
             {
                 Vector2 asteroidSpawnPosition = Target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
                 Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 11f;

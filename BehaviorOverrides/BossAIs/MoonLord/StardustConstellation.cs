@@ -25,11 +25,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.hide = true;
-            Projectile.timeLeft = 90000;
+            Projectile.timeLeft = 900;
         }
 
         public override void AI()
         {
+            if (!NPC.AnyNPCs(NPCID.MoonLordCore))
+                Projectile.active = false;
+
             if (Projectile.timeLeft < 60)
                 Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 0.002f, 0.1f);
 

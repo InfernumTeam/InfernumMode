@@ -266,6 +266,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 totalStarsToCreate += 3;
             }
 
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                starCreationRate = 2;
+                explosionTime -= 50;
+            }
+
             int starCreationTime = totalStarsToCreate * starCreationRate;
             float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
             float wrappedAttackTimer = (attackTimer + (handSide == 0f ? 0f : 36f)) % (initialAnimationTime + starCreationTime + explosionTime);

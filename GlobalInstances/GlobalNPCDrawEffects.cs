@@ -26,7 +26,7 @@ namespace InfernumMode.GlobalInstances
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
             // Give a dark tint to the moon lord.
-            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordCore)
             {
                 if (InfernumMode.CanUseCustomAIs)
                     return MoonLordCoreBehaviorOverride.OverallTint;

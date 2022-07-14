@@ -13,6 +13,23 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class DoGSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player) => DoGSkyInfernum.CanSkyBeActive;
+
+        // FUCK YOU FUCK YOU
+        public override SceneEffectPriority Priority => (SceneEffectPriority)10000;
+
+        public override float GetWeight(Player player) => 0.9f;
+
+        public override void SpecialVisuals(Player player, bool isActive)
+        {
+            if (isActive)
+                SkyManager.Instance.Deactivate("CalamityMod:DevourerofGodsHead");
+            player.ManageSpecialBiomeVisuals("InfernumMode:DoG", isActive);
+        }
+    }
+
     public class DoGSkyInfernum : CustomSky
     {
         public class Lightning

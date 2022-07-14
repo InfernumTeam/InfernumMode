@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.tileCollide = false;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 45;
+            Projectile.timeLeft = 64;
             Projectile.MaxUpdates = 3;
         }
 

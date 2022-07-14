@@ -585,7 +585,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * flySpeed;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
-                if (npc.velocity.Y > -1f)
+                if (npc.velocity.Y > -1f && MathHelper.Distance(destination.X, npc.Center.X) < 1050f)
                     npc.velocity.Y -= 1.75f;
             }
         }
@@ -710,7 +710,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float offsetPerLaser = 80f;
             float laserWallSpeed = 16f;
-            if (attackTimer % 75f == 74f)
+            if (attackTimer % 90f == 89f)
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
 

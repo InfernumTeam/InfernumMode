@@ -4,6 +4,7 @@ using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -44,6 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilOutwardness = ref npc.localAI[1];
             ref float pupilScale = ref npc.localAI[2];
             ref float eyeAnimationFrameCounter = ref npc.localAI[3];
+            ref float leechCreationCounter = ref npc.Infernum().ExtraAI[5];
+            ref float mouthFrame = ref npc.Infernum().ExtraAI[6];
 
             int idealFrame = 0;
 
@@ -78,6 +81,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 idealFrame = 0;
                 npc.life = 1;
                 npc.dontTakeDamage = true;
+            }
+
+            // Idly create the leech from the mouth.
+            if (!Utilities.AnyProjectiles(ProjectileID.MoonLeech))
+            {
+                leechCreationCounter++;
+                mouthFrame = (int)Math.Round(Utils.GetLerpValue(270f, 290f, leechCreationCounter, true) * 2f);
+            }
+            else
+                mouthFrame = 2f;
+
+            if (leechCreationCounter >= 300f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitY * 216f;
+                    Vector2 leechVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 7f;
+                    int leech = Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f);
+                    if (Main.projectile.IndexInRange(leech))
+                    {
+                        Main.projectile[leech].ai[0] = npc.whoAmI + 1;
+                        Main.projectile[leech].ai[1] = npc.target;
+                    }
+                }
+                leechCreationCounter = 0f;
+                npc.netUpdate = true;
             }
 
             // Handle frames.
@@ -263,15 +292,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/Head").Value;
-            Texture2D headGlowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask").Value;
             Vector2 headOrigin = new(191f, 130f);
             Texture2D eyeScleraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadSclera").Value;
             Texture2D pupilTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadPupil").Value;
             Vector2 mouthOrigin = new(19f, 34f);
             Texture2D mouthTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/Mouth").Value;
             Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
-            Rectangle mouthFrame = mouthTexture.Frame(1, 1, 0, 0);
-            mouthFrame.Height /= 3;
+            Rectangle mouthFrame = mouthTexture.Frame(1, 3, 0, (int)npc.Infernum().ExtraAI[6]);
             Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadEye").Value;
             Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
             Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
@@ -294,14 +321,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
             else
             {
-                Main.spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.6f, npc.rotation, mouthOrigin, 1f, 0, 0f);
+                Main.spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.7f, npc.rotation, mouthOrigin, 1f, 0, 0f);
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
                 Main.spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity, npc.rotation, pupilTexture.Size() * 0.5f, npc.localAI[2], SpriteEffects.None, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
             Main.spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
-            //Main.spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);
             Main.spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);
             Main.spriteBatch.Draw(mouthTexture, (npc.Center - Main.screenPosition + mouthOffset).Floor(), mouthFrame, color, npc.rotation, mouthFrame.Size() / 2f, 1f, 0, 0f);
 

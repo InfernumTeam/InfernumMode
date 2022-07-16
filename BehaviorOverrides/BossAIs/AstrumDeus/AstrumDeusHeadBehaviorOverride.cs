@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
@@ -28,7 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             InfectedStarWeave,
             ConstellationWeave,
             VortexLemniscate,
-            PlasmaAndCrystals
+            PlasmaAndCrystals,
+            AstralSolarSystem
         }
 
         public const float Phase2LifeThreshold = 0.6f;
@@ -56,28 +58,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 DoBehavior_Despawn(npc);
                 return false;
             }
+
+            Player target = Main.player[npc.target];
+
             // Create a beacon if none exists.
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             if (beacons.Count == 0)
             {
-                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
+                Projectile.NewProjectile(npc.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
                 beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             }
-
-            Player target = Main.player[npc.target];
 
             // Allow Calamity's code to drop loot as usual.
             npc.Calamity().newAI[0] = 3f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float beaconAngerFactor = Utils.GetLerpValue(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
+            float beaconAngerFactor = Utils.GetLerpValue(4800f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
             bool phase2 = lifeRatio < Phase2LifeThreshold;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
             ref float releasingParticlesFlag = ref npc.localAI[1];
 
-            // Save the beacon anger factor in a variable.
+            // Save the beacon anger factor in a variable for use by the sky code.
             npc.Infernum().ExtraAI[6] = beaconAngerFactor;
             npc.Calamity().CurrentlyEnraged = beaconAngerFactor > 0.7f;
 
@@ -85,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
                 CreateSegments(npc, 65, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
-                attackType = (int)DeusAttackType.PlasmaAndCrystals;
+                attackType = (int)DeusAttackType.AstralSolarSystem;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
             }
@@ -113,6 +116,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     break;
                 case DeusAttackType.PlasmaAndCrystals:
                     DoBehavior_PlasmaAndCrystals(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    break;
+                case DeusAttackType.AstralSolarSystem:
+                    DoBehavior_AstralSolarSystem(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -537,7 +543,167 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public static void DoBehavior_PlasmaAndCrystals(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
         {
+            int shootTime = 420;
+            int attackTransitionDelay = 105;
+            int plasmaShootRate = (int)MathHelper.Lerp(54f, 28f, beaconAngerFactor);
+            int crystalShootRate = 32;
+            bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
+            float flySpeed = 16.5f;
+            float flyTurnSpeed = 0.035f;
+            float plasmaShootSpeed = 12.5f;
+            ref float plasmaShootTimer = ref npc.Infernum().ExtraAI[0];
 
+            if (phase2)
+            {
+                plasmaShootRate -= 10;
+                crystalShootRate -= 7;
+                flySpeed *= 1.25f;
+                flyTurnSpeed *= 1.3f;
+                shootTime -= 32;
+            }
+
+            // Fly near the target and snap at them if sufficiently close.
+            float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+            if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
+                npc.velocity *= 1.016f;
+            else
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyTurnSpeed, true) * nextFlySpeed;
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Periodically release astral plasma fireballs if not close enough to snap at the target.
+            if (!closeEnoughToSnap && attackTimer < shootTime)
+            {
+                plasmaShootTimer++;
+                if (plasmaShootTimer >= plasmaShootRate)
+                {
+                    SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 plasmaShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * plasmaShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + plasmaShootVelocity * 3f, plasmaShootVelocity, ModContent.ProjectileType<AstralPlasmaFireball>(), 200, 0f);
+
+                        plasmaShootTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            // Release crystals off of body segments.
+            if (attackTimer < shootTime)
+            {
+                int bodyID = ModContent.NPCType<AstrumDeusBody>();
+                List<NPC> crystalShootCandidates = Main.npc.Take(Main.maxNPCs).Where(n =>
+                {
+                    return n.active && n.type == bodyID && !n.WithinRange(target.Center, 375f) && n.WithinRange(target.Center, 960f);
+                }).ToList();
+                if (attackTimer % crystalShootRate == crystalShootRate - 1f && crystalShootCandidates.Count >= 1)
+                {
+                    NPC bodyToShootFrom = Main.rand.Next(crystalShootCandidates);
+                    SoundEngine.PlaySound(SoundID.Item27, bodyToShootFrom.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 shootPosition = bodyToShootFrom.Center;
+                        Vector2 shootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                        Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<AstralCrystal>(), 200, 0f);
+                    }
+                }
+            }
+
+            if (attackTimer >= shootTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_AstralSolarSystem(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        {
+            int planetCount = 7;
+            int flyTime = 270;
+            int attackTransitionDelay = 210;
+            int plasmaShootRate = (int)MathHelper.Lerp(50f, 28f, beaconAngerFactor);
+            bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
+            float plasmaShootSpeed = 12f;
+            float flySpeed = 17.25f;
+            float flyTurnSpeed = 0.035f;
+
+            if (phase2)
+            {
+                planetCount += 3;
+                plasmaShootRate -= 7;
+            }
+
+            int deusSpawnID = ModContent.NPCType<DeusSpawn>();
+            ref float plasmaShootTimer = ref npc.Infernum().ExtraAI[0];
+
+            // Determine rotation.
+            // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
+            // a real difference.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Periodically release astral plasma fireballs if not close enough to snap at the target.
+            if (!closeEnoughToSnap && attackTimer < flyTime)
+            {
+                plasmaShootTimer++;
+                if (plasmaShootTimer >= plasmaShootRate)
+                {
+                    SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 plasmaShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * plasmaShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + plasmaShootVelocity * 3f, plasmaShootVelocity, ModContent.ProjectileType<AstralPlasmaFireball>(), 200, 0f);
+
+                        plasmaShootTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            // Create the Deus spawns as a solar system on the first frame.
+            if (attackTimer == 2f)
+            {
+                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < planetCount; i++)
+                    {
+                        // In degrees.
+                        float orbitalAngularVelocity = Main.rand.NextFloatDirection() * 4f;
+                        float offsetRadius = MathHelper.Lerp(105f, 360f, i / (float)(planetCount - 1f));
+
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, deusSpawnID, npc.whoAmI, MathHelper.TwoPi * i / planetCount, offsetRadius, orbitalAngularVelocity);
+                    }
+                }
+            }
+
+            if (attackTimer < flyTime)
+            {
+                // Fly near the target and snap at them if sufficiently close.
+                float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+                if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
+                    npc.velocity *= 1.016f;
+                else
+                    npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyTurnSpeed, true) * nextFlySpeed;
+                return;
+            }
+
+            // Make all deus spawns fly towards the target after a sufficient quantity of time has passed.
+            if (attackTimer == flyTime + 1f)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (!Main.npc[i].active || Main.npc[i].type != deusSpawnID)
+                        continue;
+
+                    Main.npc[i].ai[3] = 1f;
+                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * 9f;
+                    Main.npc[i].netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= flyTime + attackTransitionDelay)
+                SelectNextAttack(npc);
         }
 
         #endregion Custom Behaviors
@@ -554,14 +720,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             DeusAttackType newAttackState;
 
             WeightedRandom<DeusAttackType> attackSelector = new();
-            attackSelector.Add(DeusAttackType.WarpCharge);
-            attackSelector.Add(DeusAttackType.AstralMeteorShower);
-            attackSelector.Add(DeusAttackType.RubbleFromBelow);
+            //attackSelector.Add(DeusAttackType.WarpCharge);
+            //attackSelector.Add(DeusAttackType.AstralMeteorShower);
+            //attackSelector.Add(DeusAttackType.RubbleFromBelow);
             attackSelector.Add(DeusAttackType.VortexLemniscate);
+            attackSelector.Add(DeusAttackType.PlasmaAndCrystals);
+            attackSelector.Add(DeusAttackType.AstralSolarSystem);
 
             do
                 newAttackState = attackSelector.Get();
             while (newAttackState == oldAttackState || newAttackState == secondLastAttackState);
+            newAttackState = DeusAttackType.AstralSolarSystem;
 
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;

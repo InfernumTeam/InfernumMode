@@ -62,9 +62,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Release plasma bolts.
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] != -1f)
             {
-                int totalProjectiles = 9;
+                int totalProjectiles = 6;
                 int type = ModContent.ProjectileType<AstralPlasmaSpark>();
-                Vector2 spinningPoint = Main.rand.NextVector2Circular(0.5f, 0.5f);
+                Vector2 spinningPoint = Main.rand.NextVector2Circular(8f, 8f);
                 for (int i = 0; i < totalProjectiles; i++)
                 {
                     Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);

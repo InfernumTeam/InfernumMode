@@ -4,6 +4,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
@@ -26,11 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             WarpCharge,
             AstralMeteorShower,
             RubbleFromBelow,
-            InfectedStarWeave,
             ConstellationWeave,
             VortexLemniscate,
             PlasmaAndCrystals,
-            AstralSolarSystem
+            AstralSolarSystem,
+            InfectedStarWeave,
         }
 
         public const float Phase2LifeThreshold = 0.6f;
@@ -88,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
                 CreateSegments(npc, 65, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
-                attackType = (int)DeusAttackType.AstralSolarSystem;
+                attackType = (int)DeusAttackType.InfectedStarWeave;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
             }
@@ -119,6 +120,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     break;
                 case DeusAttackType.AstralSolarSystem:
                     DoBehavior_AstralSolarSystem(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    break;
+                case DeusAttackType.InfectedStarWeave:
+                    DoBehavior_InfectedStarWeave(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -706,6 +710,110 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_InfectedStarWeave(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        {
+            int repositionTimeBuffer = 10;
+            int starGrowTime = 165;
+            int laserShootRate = (int)MathHelper.Lerp(12f, 4f, beaconAngerFactor);
+            int attackTransitionDelay = 165;
+
+            if (phase2)
+            {
+                starGrowTime -= 40;
+                attackTransitionDelay -= 30;
+            }
+
+            ref float starSpawnCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float starSpawnCenterY = ref npc.Infernum().ExtraAI[1];
+            ref float hasCharged = ref npc.Infernum().ExtraAI[2];
+
+            // Decide the position to spawn the star at on the first frame.
+            if (attackTimer == 1f)
+            {
+                Vector2 starSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1150f, 1150f);
+                starSpawnCenterX = starSpawnPosition.X;
+                starSpawnCenterY = starSpawnPosition.Y;
+                npc.netUpdate = true;
+            }
+
+            // Ensure the star position stays within the world.
+            if (starSpawnCenterY < 700f)
+                starSpawnCenterY = 700f;
+
+            // Circle around the star spawn center.
+            if (attackTimer < repositionTimeBuffer + starGrowTime)
+            {
+                // Disable contact damage.
+                npc.damage = 0;
+
+                Vector2 spinDestination = new Vector2(starSpawnCenterX, starSpawnCenterY) + (MathHelper.TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
+                Vector2 oldCenter = npc.Center;
+                npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                if (npc.velocity == Vector2.Zero)
+                    npc.rotation = (spinDestination - oldCenter).ToRotation() + MathHelper.PiOver2;
+
+                // Don't let the attack proceed until in position for the spin.
+                if ((int)attackTimer == repositionTimeBuffer && !npc.WithinRange(spinDestination, 200f))
+                    attackTimer = repositionTimeBuffer - 1f;
+            }
+            else if (npc.velocity == Vector2.Zero || npc.velocity.Length() < 0.1f)
+                npc.velocity = npc.SafeDirectionTo(target.Center);
+
+            // Create the star once ready.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == repositionTimeBuffer + 1f)
+            {
+                int star = Utilities.NewProjectileBetter(new(starSpawnCenterX, starSpawnCenterY), Vector2.Zero, ModContent.ProjectileType<MassiveInfectedStar>(), 300, 0f);
+                if (Main.projectile.IndexInRange(star))
+                    Main.projectile[star].ModProjectile<MassiveInfectedStar>().GrowTime = starGrowTime;
+            }
+
+            // Send energy bolts towards the star.
+            int bodyID = ModContent.NPCType<AstrumDeusBody>();
+            List<NPC> bodySegments = Main.npc.Take(Main.maxNPCs).Where(n =>
+            {
+                return n.active && n.type == bodyID;
+            }).ToList();
+            if (attackTimer > repositionTimeBuffer && attackTimer < repositionTimeBuffer + starGrowTime && attackTimer % 7f == 6f)
+            {
+                Vector2 startCenter = new(starSpawnCenterX, starSpawnCenterY);
+                SoundEngine.PlaySound(SoundID.Item28, startCenter);
+                Dust.QuickDustLine(Main.rand.Next(bodySegments).Center, startCenter, 100f, Main.rand.NextBool() ? Color.Orange : Color.Cyan);
+            }
+
+            // Charge and hurl the star at the player after it has grown to its full size.
+            if (attackTimer >= repositionTimeBuffer + starGrowTime && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.55f && hasCharged == 0f)
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 25f;
+                foreach (Projectile star in Utilities.AllProjectilesByID(ModContent.ProjectileType<MassiveInfectedStar>()))
+                {
+                    star.velocity = star.SafeDirectionTo(target.Center) * 21.5f;
+                    star.netUpdate = true;
+                }
+                hasCharged = 1f;
+            }
+
+            // Fire lasers at the target from the body segments after the star has been hurled.
+            if (attackTimer > repositionTimeBuffer + starGrowTime && attackTimer % laserShootRate == laserShootRate - 1f)
+            {
+                NPC bodyToShoot = Main.rand.Next(bodySegments);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, bodyToShoot.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 laserShootVelocity = bodyToShoot.SafeDirectionTo(target.Center) * 16f;
+                    Utilities.NewProjectileBetter(bodyToShoot.Center, laserShootVelocity, ModContent.ProjectileType<AstralShot2>(), 200, 0f);
+                }
+            }
+
+            // Determine rotation.
+            if (npc.velocity != Vector2.Zero)
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer >= repositionTimeBuffer + starGrowTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
         #endregion Custom Behaviors
 
         #region Misc AI Operations
@@ -730,7 +838,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             do
                 newAttackState = attackSelector.Get();
             while (newAttackState == oldAttackState || newAttackState == secondLastAttackState);
-            newAttackState = DeusAttackType.AstralSolarSystem;
+            newAttackState = DeusAttackType.InfectedStarWeave;
 
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;

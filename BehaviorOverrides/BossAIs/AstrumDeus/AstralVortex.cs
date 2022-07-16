@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Vortex");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Consumed Vortex");
 
         public override void SetDefaults()
         {
@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.penetrate = -1;
             Projectile.timeLeft = 1080;
             Projectile.scale = 1f;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

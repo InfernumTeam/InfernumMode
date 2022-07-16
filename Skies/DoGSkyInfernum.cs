@@ -15,7 +15,7 @@ namespace InfernumMode.Skies
 {
     public class DoGSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => DoGSkyInfernum.CanSkyBeActive;
+        public override bool IsSceneEffectActive(Player player) => false;
 
         // FUCK YOU FUCK YOU
         public override SceneEffectPriority Priority => (SceneEffectPriority)10000;

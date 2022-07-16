@@ -35,7 +35,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             MeteorSlam,
             AstralLaserBursts,
             CreateAureusSpawnRing,
-            CelestialRain,
             AstralDrillLaser,
             Recharge
         }
@@ -137,9 +136,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     break;
                 case AureusAttackType.CreateAureusSpawnRing:
                     DoAttack_CreateAureusSpawnRing(npc, lifeRatio, ref attackTimer, ref frameType);
-                    break;
-                case AureusAttackType.CelestialRain:
-                    DoAttack_CelestialRain(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.AstralDrillLaser:
                     DoAttack_AstralDrillLaser(npc, target, lifeRatio, ref attackTimer, ref frameType);
@@ -906,28 +902,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             AureusAttackType newAttackState;
             WeightedRandom<AureusAttackType> attackSelector = new(Main.rand);
             attackSelector.Add(AureusAttackType.WalkAndShootLasers);
-            if (oldAttackState != AureusAttackType.CelestialRain)
-            {
-                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
-                attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 0.7);
-            }
+            attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
+            attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 0.7);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)
                 attackSelector.Add(AureusAttackType.AstralLaserBursts);
 
             if (lifeRatio < Phase2LifeRatio)
-            {
                 attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
-                if (oldAttackState != AureusAttackType.LeapAtTarget && oldAttackState != AureusAttackType.MeteorSlam)
-                    attackSelector.Add(AureusAttackType.CelestialRain);
-            }
 
             if (lifeRatio < Phase3LifeRatio && !NPC.AnyNPCs(ModContent.NPCType<AureusSpawn>()))
                 attackSelector.Add(AureusAttackType.AstralDrillLaser, 2D);
 
+            int tries = 0;
             do
+            {
+                tries++;
                 newAttackState = attackSelector.Get();
+                if (tries >= 500)
+                    break;
+            }
             while (newAttackState == oldAttackState || (int)newAttackState == (int)npc.Infernum().ExtraAI[7]);
 
             // Always use a consistent attack after the spawn activation.

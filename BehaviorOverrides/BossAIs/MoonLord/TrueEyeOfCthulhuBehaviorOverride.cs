@@ -110,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int fireDelay = 135;
             int shootTime = 450;
             int attackTransitionDelay = 90;
-            int boltSpreadCount = 3;
+            int boltSpreadCount = 4;
             int asteroidReleaseRate = 37;
             Vector2 hoverDestination = core.Infernum().arenaRectangle.Center.ToVector2();
 
@@ -331,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int chargeTime = 36;
             int chargeCount = 4;
             int orbReleaseRate = 5;
-            float spinOffset = 400f;
+            float spinOffset = 500f;
             float chargeSpeed = 37f;
             float chargePredictiveness = 20f;
 
@@ -345,7 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (MoonLordCoreBehaviorOverride.IsEnraged)
             {
                 chargeTelegraphTime = 30;
-                spinOffset = 325f;
+                spinOffset = 375f;
                 chargeSpeed = 50f;
             }
 
@@ -384,7 +384,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Define the telegraph direction.
                 if (telegraphCompletion < 0.9f)
-                    telegraphDirection = npc.AngleTo(target.Center + target.velocity * chargePredictiveness);
+                    telegraphDirection = telegraphDirection.AngleLerp(npc.AngleTo(target.Center + target.velocity * chargePredictiveness), 0.15f);
 
                 // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)

@@ -1,12 +1,13 @@
 using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
-using CalamityMod.Items.Tools;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -21,18 +22,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public enum DeusAttackType
         {
-            AstralBombs,
-            StellarCrash,
-            CelestialLights,
             WarpCharge,
-            StarWeave,
-            InfectedPlasmaVomit,
-            ConstellationSpawn,
-            FusionBurst
+            AstralMeteorShower,
+            RubbleFromBelow,
+            InfectedStarWeave,
+            ConstellationWeave,
+            VortexLemniscate,
+            PlasmaAndCrystals
         }
 
-        public const float Phase2LifeThreshold = 0.55f;
-        public const float Phase3LifeThreshold = 0.2f;
+        public const float Phase2LifeThreshold = 0.6f;
+        public const float Phase3LifeThreshold = 0.25f;
 
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.TargetClosestIfTargetIsInvalid();
 
             // Reset damage. Do none by default if somewhat transparent.
+            npc.defDamage = 180;
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
             // If none was found or it was too far away, despawn.
@@ -55,9 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 DoBehavior_Despawn(npc);
                 return false;
             }
-
-            // Set the whoAmI index.
-
             // Create a beacon if none exists.
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             if (beacons.Count == 0)
@@ -73,6 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float beaconAngerFactor = Utils.GetLerpValue(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
+            bool phase2 = lifeRatio < Phase2LifeThreshold;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
@@ -85,8 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Create segments and initialize on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
-                CreateSegments(npc, 54, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
-                attackType = (int)DeusAttackType.AstralBombs;
+                CreateSegments(npc, 65, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
+                attackType = (int)DeusAttackType.PlasmaAndCrystals;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
             }
@@ -100,29 +99,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             switch ((DeusAttackType)(int)attackType)
             {
-                case DeusAttackType.AstralBombs:
-                    DoBehavior_AstralBombs(npc, target, beaconAngerFactor, lifeRatio, attackTimer);
-                    break;
-                case DeusAttackType.StellarCrash:
-                    DoBehavior_StellarCrash(npc, target, beaconAngerFactor, lifeRatio, ref attackTimer);
-                    break;
-                case DeusAttackType.CelestialLights:
-                    DoBehavior_CelestialLights(npc, target, beaconAngerFactor, lifeRatio, attackTimer);
-                    break;
                 case DeusAttackType.WarpCharge:
-                    DoBehavior_WarpCharge(npc, target, beaconAngerFactor, lifeRatio, attackTimer, ref releasingParticlesFlag);
+                    DoBehavior_WarpCharge(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
-                case DeusAttackType.StarWeave:
-                    DoBehavior_StarWeave(npc, target, beaconAngerFactor, ref attackTimer);
+                case DeusAttackType.AstralMeteorShower:
+                    DoBehavior_AstralMeteorShower(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
-                case DeusAttackType.InfectedPlasmaVomit:
-                    DoBehavior_InfectedPlasmaVomit(npc, target, beaconAngerFactor, ref attackTimer);
+                case DeusAttackType.RubbleFromBelow:
+                    DoBehavior_RubbleFromBelow(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
-                case DeusAttackType.ConstellationSpawn:
-                    DoBehavior_ConstellationSpawn(npc, target, beaconAngerFactor, ref attackTimer);
+                case DeusAttackType.VortexLemniscate:
+                    DoBehavior_VortexLemniscate(npc, target, phase2, ref attackTimer);
                     break;
-                case DeusAttackType.FusionBurst:
-                    DoBehavior_FusionBurst(npc, target, beaconAngerFactor, ref attackTimer);
+                case DeusAttackType.PlasmaAndCrystals:
+                    DoBehavior_PlasmaAndCrystals(npc, target, phase2, beaconAngerFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -134,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public static void DoBehavior_Despawn(NPC npc)
         {
             // Ascend into the sky and disappear.
-            npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 26f, 0.08f);
+            npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 30f, 0.08f);
             npc.velocity.X *= 0.975f;
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -149,204 +139,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
-        public static void DoBehavior_AstralBombs(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer)
+        public static void DoBehavior_WarpCharge(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
         {
-            int shootRate = (int)MathHelper.Lerp(9f, 5f, 1f - lifeRatio);
-            int totalBombsToShoot = lifeRatio < Phase2LifeThreshold ? 38 : 45;
-            float flySpeed = MathHelper.Lerp(12f, 16f, 1f - lifeRatio) + beaconAngerFactor * 10f;
-            float flyAcceleration = MathHelper.Lerp(0.028f, 0.034f, 1f - lifeRatio) + beaconAngerFactor * 0.036f;
-            if (BossRushEvent.BossRushActive)
-            {
-                flySpeed *= 2f;
-                flyAcceleration *= 1.7f;
-                totalBombsToShoot -= 14;
-            }
-
-            int shootTime = shootRate * totalBombsToShoot;
-            int attackSwitchDelay = lifeRatio < Phase2LifeThreshold ? 45 : 105;
-
-            // Initialize movement if it is too low.
-            if (npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
-                npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * 5.25f;
-
-            // Drift towards the player. Contact damage is possible, but should be of little threat.
-            if (!npc.WithinRange(target.Center, 625f))
-            {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.075f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), flyAcceleration, true) * newSpeed;
-            }
-
-            // Release astral bomb mines from the sky.
-            // They become faster/closer at specific life thresholds.
-            if (attackTimer % shootRate == 0 && attackTimer < shootTime)
-            {
-                SoundEngine.PlaySound(SoundID.Item11, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float bombShootOffset = lifeRatio < Phase2LifeThreshold ? 850f : 1050f;
-                    Vector2 bombShootPosition = target.Center - Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * bombShootOffset;
-                    Vector2 bombShootVelocity = (target.Center - bombShootPosition).SafeNormalize(Vector2.UnitY) * 27f;
-                    if (lifeRatio < Phase2LifeThreshold)
-                        bombShootVelocity *= 1.4f;
-
-                    Utilities.NewProjectileBetter(bombShootPosition, bombShootVelocity, ModContent.ProjectileType<DeusMine2>(), 155, 0f);
-                }
-            }
-
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-            if (attackTimer > shootTime + attackSwitchDelay)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_StellarCrash(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, ref float attackTimer)
-        {
-            int totalCrashes = lifeRatio < Phase2LifeThreshold ? 2 : 3;
-            int crashRiseTime = lifeRatio < Phase2LifeThreshold ? 315 : 375;
-            int crashChargeTime = lifeRatio < Phase2LifeThreshold ? 100 : 95;
-            float crashSpeed = MathHelper.Lerp(41f, 56f, 1f - lifeRatio) + beaconAngerFactor * 20f;
-            if (BossRushEvent.BossRushActive)
-            {
-                crashChargeTime -= 8;
-                crashSpeed *= 1.4f;
-            }
-
-            float wrappedTime = attackTimer % (crashRiseTime + crashChargeTime);
-
-            // Rise upward and release redirecting astral bombs.
-            if (wrappedTime < crashRiseTime)
-            {
-                Vector2 riseDestination = target.Center + new Vector2(70f, MathHelper.Lerp(-1250f, -965f, 1f - lifeRatio));
-                if (!npc.WithinRange(riseDestination, 95f))
-                {
-                    npc.Center = npc.Center.MoveTowards(riseDestination, 12f);
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(riseDestination), 0.035f);
-                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(riseDestination) * (33.5f + beaconAngerFactor * 13f), 0.6f);
-                }
-                else
-                    attackTimer += crashRiseTime - wrappedTime;
-
-                if (npc.WithinRange(target.Center, 285f))
-                    npc.velocity = npc.velocity.RotatedBy(MathHelper.Pi * 0.025f) * 0.95f;
-            }
-
-            // Attempt to crash into the target from above after releasing flames as a dive-bomb.
-            else
-            {
-                if (wrappedTime - crashRiseTime < 16)
-                {
-                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center + target.velocity * 20f) * crashSpeed, crashSpeed * 0.11f);
-                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 0f)
-                    {
-                        Vector2 shootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(-Vector2.UnitY), npc.SafeDirectionTo(target.Center), 0.95f) * Main.rand.NextFloat(12f, 14f);
-                        shootVelocity = shootVelocity.RotatedByRandom(0.34f);
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<LargeAstralComet>(), 155, 0f);
-                    }
-                }
-
-                if (wrappedTime == crashRiseTime + 8f)
-                    SoundEngine.PlaySound(AstrumDeusHead.SplitSound, target.Center);
-            }
-
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-            if (attackTimer > totalCrashes * (crashRiseTime + crashChargeTime) + 40)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_CelestialLights(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer)
-        {
-            float flySpeed = MathHelper.Lerp(12.5f, 17f, 1f - lifeRatio);
-            float flyAcceleration = MathHelper.Lerp(0.03f, 0.038f, 1f - lifeRatio);
-            if (BossRushEvent.BossRushActive)
-            {
-                flySpeed *= 2f;
-                flyAcceleration *= 1.75f;
-            }
-
-            int shootRate = lifeRatio < Phase2LifeThreshold ? 2 : 4;
-            shootRate = (int)MathHelper.Lerp(shootRate, 1f, beaconAngerFactor);
-
-            ref float starCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Initialize movement if it is too low.
-            if (npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
-                npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * 5.25f;
-
-            // Drift towards the player. Contact damage is possible, but should be of little threat.
-            if (!npc.WithinRange(target.Center, 865f))
-            {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.08f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), flyAcceleration, true) * newSpeed;
-            }
-
-            if (attackTimer > 60f && attackTimer % shootRate == shootRate - 1f && starCounter < 30f)
-            {
-                int bodyType = ModContent.NPCType<AstrumDeusBody>();
-                int shootIndex = (int)(starCounter * 2f);
-                Vector2 starSpawnPosition = Vector2.Zero;
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].ai[2] != shootIndex || Main.npc[i].type != bodyType || !Main.npc[i].active)
-                        continue;
-
-                    starSpawnPosition = Main.npc[i].Center;
-                    break;
-                }
-
-                SoundEngine.PlaySound(SoundID.Item9, starSpawnPosition);
-                if (Main.netMode != NetmodeID.MultiplayerClient && starSpawnPosition != Vector2.Zero)
-                {
-                    Vector2 starVelocity = -Vector2.UnitY.RotatedByRandom(0.37f) * Main.rand.NextFloat(5f, 6f);
-                    starVelocity *= MathHelper.Lerp(1f, 1.8f, beaconAngerFactor);
-                    int star = Utilities.NewProjectileBetter(starSpawnPosition, starVelocity, ModContent.ProjectileType<AstralStar>(), 160, 0f);
-                    if (Main.projectile.IndexInRange(star))
-                        Main.projectile[star].ai[1] = beaconAngerFactor;
-                }
-
-                starCounter++;
-            }
-
-            if (attackTimer >= 60f + shootRate * 30f + 380f)
-                SelectNextAttack(npc);
-
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-        }
-
-        public static void DoBehavior_WarpCharge(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer, ref float releasingParticlesFlag)
-        {
-            int fadeInTime = lifeRatio < Phase2LifeThreshold ? 42 : 60;
-            int chargeTime = lifeRatio < Phase2LifeThreshold ? 38 : 45;
-            int fadeOutTime = fadeInTime / 2 + 10;
-            int chargeCount = lifeRatio < Phase2LifeThreshold ? 3 : 4;
+            int driftTime = 32;
+            int fadeInTime = 40;
+            int chargeTime = 36;
+            int chargeCount = 3;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             float teleportOutwardness = MathHelper.Lerp(1420f, 1095f, 1f - lifeRatio) - beaconAngerFactor * 240f;
-            float chargeSpeed = MathHelper.Lerp(33.5f, 45f, 1f - lifeRatio) + beaconAngerFactor * 15f;
+            float chargeSpeed = MathHelper.Lerp(34.5f, 45f, 1f - lifeRatio) + beaconAngerFactor * 15f;
+
+            if (phase2)
+            {
+                fadeInTime -= 18;
+                chargeTime -= 7;
+            }
+
             if (BossRushEvent.BossRushActive)
             {
                 chargeTime -= 4;
                 chargeSpeed *= 1.425f;
             }
 
+            int fadeOutTime = fadeInTime / 2 + 10;
             float wrappedTimer = attackTimer % (fadeInTime + chargeTime + fadeOutTime);
 
             if (wrappedTimer < fadeInTime)
             {
                 // Drift towards the player. Contact damage is possible, but should be of little threat.
-                if (!npc.WithinRange(target.Center, 375f) && wrappedTimer < 45f)
+                if (!npc.WithinRange(target.Center, 375f) && wrappedTimer < driftTime)
                 {
                     float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 16f, 0.085f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.032f, true) * newSpeed;
                 }
-                else if (wrappedTimer >= 45f)
+                else if (wrappedTimer >= driftTime)
                 {
                     float maxSpeed = BossRushEvent.BossRushActive ? 33f : 26f;
                     if (npc.velocity.Length() < maxSpeed)
-                        npc.velocity *= 1.015f;
+                        npc.velocity *= 1.0167f;
                 }
-
+                
+                // Rapidly fade out and do the teleport.
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.13f, 0f, 1f);
                 if (wrappedTimer == fadeInTime - 1f)
                 {
@@ -356,28 +189,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness;
-                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
 
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < 7; i++)
                         {
-                            Vector2 fireVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 7f;
+                            float shootOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / 6f);
+                            Vector2 fireVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 9f;
                             if (BossRushEvent.BossRushActive)
                                 fireVelocity *= 2.3f;
 
-                            Utilities.NewProjectileBetter(npc.Center, fireVelocity, ModContent.ProjectileType<AstralFlame2>(), 155, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, fireVelocity, ModContent.ProjectileType<AstralFlame2>(), 200, 0f);
                         }
 
                         BringAllSegmentsToNPCPosition(npc);
                     }
                 }
             }
+
+            // Fade back in after the charge.
             else if (wrappedTimer < fadeInTime + chargeTime)
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
+
             else if (wrappedTimer < fadeInTime + chargeTime + fadeOutTime)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.06f, 0f, 1f);
 
+                // Attempt to rotate towards the target after the teleport if not super close to them.
                 if (!npc.WithinRange(target.Center, 200f))
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f);
 
@@ -394,10 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     }
                 }
             }
-
-            // Release particles when disappearing.
-            releasingParticlesFlag = (npc.Opacity < 0.5f && npc.Opacity > 0f).ToInt();
-
+            
             if (attackTimer >= chargeCount * (fadeInTime + chargeTime + fadeOutTime) + 3)
                 SelectNextAttack(npc);
 
@@ -405,295 +240,306 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoBehavior_StarWeave(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_AstralMeteorShower(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
         {
-            // Apply the extreme gravity debuff.
-            if (Main.netMode != NetmodeID.Server)
-                target.AddBuff(ModContent.BuffType<DoGExtremeGravity>(), 25);
+            int upwardRiseTime = 135;
+            int meteorShootDelay = 45;
+            int meteorReleaseRate = 10;
+            int meteorShootTime = 270;
+            int attackTransitionDelay = 90;
+            float maxUpwardRiseSpeed = 29f;
+            float upwardRiseAcceleration = 0.56f;
+            float downwardSlamGravity = 0.35f;
+            float downwardSlamSpeed = 13.5f;
+            float meteorSpeed = 13f;
+            ref float meteorRainAngle = ref npc.Infernum().ExtraAI[0];
 
-            float spinSpeed = 34f;
-            ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
-
-            // Check if any segments are too close to the target.
-            bool tooClose = npc.WithinRange(target.Center, 650f);
-            int bodyType = ModContent.NPCType<AstrumDeusBody>();
-            if (!tooClose)
+            if (phase2)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].type != bodyType || !Main.npc[i].active || !Main.npc[i].WithinRange(target.Center, 300f))
-                        continue;
-
-                    tooClose = true;
-                    break;
-                }
+                meteorReleaseRate -= 2;
+                maxUpwardRiseSpeed += 4f;
+                upwardRiseAcceleration *= 1.4f;
+                downwardSlamGravity *= 1.4f;
+                downwardSlamSpeed *= 1.1f;
             }
 
-            // Move away from the target if it's too far away if the star has not been created yet.
-            // This delays the star creation.
-            if (attackTimer < 60f && tooClose)
-            {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -30f, 3f);
-                attackTimer = 30f;
-            }
+            // Apply distance-enrage buffs.
+            meteorReleaseRate = Utils.Clamp((int)(meteorReleaseRate - beaconAngerFactor * 5f), 3, 20);
+            meteorSpeed = MathHelper.Lerp(meteorSpeed, 21.5f, beaconAngerFactor);
 
-            // Move near the target if it's too far away if the star has not been created yet.
-            // This delays the star creation.
-            if (attackTimer < 60f && !npc.WithinRange(target.Center, 1550f))
-            {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 23f, 1.5f);
-                attackTimer = 30f;
-            }
+            // Initialize the meteor rain angle.
+            if (meteorRainAngle == 0f)
+                meteorRainAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 12f;
 
-            // Otherwise approach the ideal spin speed.
-            else if (npc.velocity.Length() < spinSpeed && attackTimer < 90f)
-                npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), spinSpeed, 0.075f);
-
-            // Spin if the boss is allowed to do so.
-            if (cantKeepSpinningFlag == 0f)
-                npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi / 125f);
-
-            // Summon a small star near the center point at which the boss is currently spinning.
-            // The star will grow based on energy generated by body segments.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 60f)
-            {
-                Vector2 starSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * 135f / MathHelper.TwoPi;
-                int star = Utilities.NewProjectileBetter(starSpawnPosition, Vector2.Zero, ModContent.ProjectileType<GiantAstralStar>(), 250, 0f);
-                if (Main.projectile.IndexInRange(star))
-                    Main.projectile[star].localAI[0] = beaconAngerFactor;
-            }
-
-            List<Projectile> stars = Utilities.AllProjectilesByID(ModContent.ProjectileType<GiantAstralStar>()).ToList();
-
-            // Keep the attack timer in stasis while the star is being formed.
-            // This also allows the spin to begin.
-            if (attackTimer > 60f && stars.Count > 0 && stars.First().scale < 7f)
-            {
-                cantKeepSpinningFlag = 0f;
-                attackTimer = 60f;
-            }
-
-            // If an opening is found to hit the target and the star is fully charged, fly towards the target and send the star towards them too.
-            bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.18f;
-            if (aimedTowardsPlayer && stars.Count > 0 && stars.First().velocity == Vector2.Zero && attackTimer > 90f)
-            {
-                stars.First().velocity = stars.First().SafeDirectionTo(target.Center) * MathHelper.Lerp(4f, 8f, beaconAngerFactor);
-                if (BossRushEvent.BossRushActive)
-                    stars.First().velocity *= 2.5f;
-
-                stars.First().netUpdate = true;
-
-                cantKeepSpinningFlag = 1f;
-                npc.velocity = npc.SafeDirectionTo(target.Center) * MathHelper.Lerp(24f, 38f, beaconAngerFactor);
-                if (BossRushEvent.BossRushActive)
-                    npc.velocity *= 1.4f;
-
-                npc.netUpdate = true;
-            }
-
-            // Adjust rotation.
+            // Determine rotation.
+            // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
+            // a real difference.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (attackTimer > 90f && !npc.WithinRange(target.Center, 270f))
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * (15f + beaconAngerFactor * 5f), 0.7f);
+            // Rise into the sky in anticipation of the downward charge and meteor shower.
+            if (attackTimer < upwardRiseTime)
+            {
+                // Ensure that the horizontal speed does not exceed a low threshold, to prevent Deus from flying too far away from the original position.
+                // A nudge towards the horizontal position of the target is constantly applied to mitigate this as well.
+                if (Math.Abs(npc.velocity.X) > 4f)
+                    npc.velocity.X *= 0.97f;
+                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 540f)
+                    npc.position.X += npc.SafeDirectionTo(target.Center).X * 11f;
 
-            if (attackTimer > 270f)
+                // Perform vertical movement.
+                if (npc.velocity.Y > -maxUpwardRiseSpeed)
+                    npc.velocity.Y -= upwardRiseAcceleration;
+
+                // Only allow transitioning to happen once sufficiently far above the player, as a fail-safe.
+                if (attackTimer >= upwardRiseTime - 5f && npc.Center.Y > target.Center.Y + 800f)
+                    attackTimer = upwardRiseTime - 5f;
+                return;
+            }
+
+            // Play a powerful thunder sound before the meteor show begins, as a telegraph.
+            if (attackTimer == upwardRiseTime + 1f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
+
+            // Slam downward, and attempt to aim horizontally in such a way that Deus loosely tries to hit the target.
+            // While this isn't necessarily supposed to be the primary source of damage, it's best to be closer to the target than not,
+            // to allow for consistent damage from the player.
+            if (npc.velocity.Y < 0f)
+            {
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 19f, 0.1f);
+                npc.velocity *= 0.965f;
+            }
+            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + downwardSlamGravity, -maxUpwardRiseSpeed, downwardSlamSpeed);
+
+            // Create meteors.
+            bool withinShootInterval = attackTimer >= upwardRiseTime + meteorShootDelay && attackTimer < upwardRiseTime + meteorShootDelay + meteorShootTime;
+            if (Main.netMode != NetmodeID.MultiplayerClient && withinShootInterval && attackTimer % meteorReleaseRate == meteorReleaseRate - 1f)
+            {
+                Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
+                Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorRainAngle);
+                Vector2 shootVelocity = shootDirection * meteorSpeed;
+
+                int cometType = ModContent.ProjectileType<AstralBlueComet>();
+                Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, 200, 0f);
+            }
+
+            if (attackTimer >= upwardRiseTime + meteorShootDelay + meteorShootTime + attackTransitionDelay)
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_InfectedPlasmaVomit(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_RubbleFromBelow(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
         {
-            int shootRate = (int)MathHelper.Lerp(32f, 12f, beaconAngerFactor);
-            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+            int minDescendTime = 90;
+            int minRiseTime = 75;
+            int rubbleCount = 15;
+            int attackTransitionDelay = 75;
+            float rubbleFlySpeedFactor = MathHelper.Lerp(1f, 1.5f, beaconAngerFactor);
+            float descendGravity = MathHelper.Lerp(0.6f, 1.36f, beaconAngerFactor);
 
-            // Drift towards the player.
-            if (!npc.WithinRange(target.Center, 530f))
+            // This is fast, but not too fast, to prevent potential cheap hits if Deus happens to fall on top of the player.
+            float maxDescendSpeed = 26f;
+            float riseAcceleration = MathHelper.Lerp(0.84f, 1.56f, beaconAngerFactor);
+            float maxRiseSpeed = 34.5f;
+            bool movingBackDownAgain = attackTimer >= minDescendTime + minRiseTime + 8f;
+
+            if (phase2)
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 31f : 17f, 0.085f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.036f, true) * newSpeed;
+                rubbleCount += 5;
+                rubbleFlySpeedFactor += 0.36f;
             }
 
-            // Release bursts of plasma.
-            if (shootTimer >= shootRate)
-            {
-                SoundEngine.PlaySound(SoundID.Item74, npc.Center);
+            // Determine rotation.
+            // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
+            // a real difference.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
+            // Descend downward and make any remaining horizontal movement fizzle out.
+            if (attackTimer < minDescendTime || movingBackDownAgain)
+            {
+                bool isntFarEnoughDown = npc.Center.Y < target.Center.Y + 700f && !movingBackDownAgain;
+
+                // Let the descent persist if not sufficiently far down below the target yet.
+                if (isntFarEnoughDown && attackTimer >= minDescendTime - 5f)
+                    attackTimer = minDescendTime - 5f;
+                
+                if (attackTimer >= minDescendTime + minRiseTime + attackTransitionDelay)
+                    SelectNextAttack(npc);
+
+                npc.velocity.X *= 0.985f;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + descendGravity, -16f, maxDescendSpeed);
+                return;
+            }
+
+            // Rise back up into the air.
+            if (attackTimer < minDescendTime + minRiseTime)
+            {
+                bool isntFarEnoughUp = npc.Center.Y > target.Center.Y - 840f;
+
+                // Rapidly degrade any old downward movement.
+                if (npc.velocity.Y > 0f)
+                    npc.velocity.Y *= 0.925f;
+
+                // Try to stay horizontally near the target.
+                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 150f)
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 20f, 0.05f);
+
+                // Let the rise persist if not sufficiently far down below the target yet.
+                if (isntFarEnoughUp && attackTimer >= minDescendTime + minRiseTime - 5f)
+                    attackTimer = minDescendTime + minRiseTime - 5f;
+
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - riseAcceleration, -maxRiseSpeed, maxDescendSpeed);
+            }
+
+            // Release rubble upward in a mostly even spread at the apex of the rise.
+            if (attackTimer == minDescendTime + minRiseTime + 5f)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < rubbleCount; i++)
                     {
-                        Vector2 plasmaVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.56f) * Main.rand.NextFloat(14f, 18f);
-                        if (BossRushEvent.BossRushActive)
-                            plasmaVelocity *= 1.8f;
-
-                        Utilities.NewProjectileBetter(npc.Center + plasmaVelocity * 2f, plasmaVelocity, ModContent.ProjectileType<InfectiousPlasma>(), 160, 0f);
+                        for (float j = 0.2f; j <= 1f; j += 0.2f)
+                        {
+                            float shootOffsetAngle = MathHelper.Lerp(-1.24f, 1.24f, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.032f;
+                            Vector2 rubbleVelocity = Vector2.Lerp(-Vector2.UnitY, (npc.rotation + MathHelper.PiOver2).ToRotationVector2(), 0.32f);
+                            rubbleVelocity = rubbleVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(17.5f, 25f) * rubbleFlySpeedFactor * j;
+                            Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 2f, rubbleVelocity, ModContent.ProjectileType<AstralRubble>(), 200, 0f);
+                        }
                     }
-                    shootTimer = 0f;
+                }
+            }
+        }
+
+        public static void DoBehavior_VortexLemniscate(NPC npc, Player target, bool phase2, ref float attackTimer)
+        {
+            int flameSpawnRate = 50;
+            int vortexCreationDelay = 60;
+            int chargeAtPlayerDelay = AstralVortex.ScaleFadeinTime + 30;
+
+            if (phase2)
+                flameSpawnRate -= 14;
+
+            ref float lemniscateCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float lemniscateCenterY = ref npc.Infernum().ExtraAI[1];
+            ref float hasCharged = ref npc.Infernum().ExtraAI[2];
+
+            // The parametic form of a lemniscate of bernoulli is as follows:
+            // x = r * cos(t) / (1 + sin^2(t))
+            // y = r * sin(t) * cos(t) / (1 + sin^2(t))
+            // Given that these provide positions, we can determine the velocity path that Deus must follow to move in this pattern
+            // via taking derivatives of both components.
+
+            // Quotient rule:
+            // (g(x) / h(x))' = (g'(x) * h(x) - g(x) * h'(x)) / h(x)^2
+
+            // Shorthands:
+            // g(t) = cos(t) --- cos(t) * sin(t)
+            // g'(t) = -sin(t) --- cos(2t)
+            // h(t) = 1 + sin^2(t)
+            // h'(t) = sin(2t)
+
+            // Calculations for dx/dt:
+            // (g'(t) * h(t) - g(t) * h'(t)) / h(t)^2 = 
+            // r * ((-sin(t) * (1 + sin^2(t)) - cos(t) * sin(2t)) / (1 + sin^2(t))^2 =
+            // r * (-sin(t) - sin^3(t) - cos(t) * sin(2t)) / (1 + 2sin^2(t) + sin^4(t))
+
+            // Calculations for dy/dt:
+            // (g'(t) * h(t) - g(t) * h'(t)) / h(t)^2 = 
+            // r * ((cos(2t) * (1 + sin^2(t)) - sin(t) * cos(t) * sin(2t)) / (1 + sin^2(t))^2 =
+            // r * (cos^2(t) - 2sin^4(t) - sin(t) * cos(t) * sin(2t)) / (1 + 2sin^2(t) + sin^4(t))
+            float flySpeed = 54f;
+            if (hasCharged == 0f)
+            {
+                float t = MathHelper.TwoPi * attackTimer / 150f;
+                float sinT = (float)Math.Sin(t);
+                float sin2T = (float)Math.Sin(2D * t);
+                float cosT = (float)Math.Cos(t);
+                float denominator = (float)(1f + 2D * Math.Pow(Math.Sin(t), 2D) + Math.Pow(sinT, 4D));
+
+                float speedX = flySpeed * (float)(-sinT - Math.Pow(sinT, 3D) - cosT * sin2T) / denominator;
+                float speedY = flySpeed * (float)(Math.Pow(cosT, 2D) - 2D * Math.Pow(sinT, 4D) - sinT * cosT * sin2T) / denominator;
+                npc.velocity = new(speedX, speedY);
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Initialize the center of the lemniscate.
+            if (lemniscateCenterX == 0f || lemniscateCenterY == 0f)
+            {
+                lemniscateCenterX = npc.Center.X - flySpeed * 24f;
+                lemniscateCenterY = npc.Center.Y;
+                npc.netUpdate = true;
+            }
+
+            // Create the vortices at the foci positions once ready.
+            if (attackTimer == vortexCreationDelay)
+            {
+                Vector2 lemniscateCenter = new(lemniscateCenterX, lemniscateCenterY);
+                Vector2[] lemniscateFoci = new[]
+                {
+                    lemniscateCenter - Vector2.UnitX * flySpeed * 11.5f,
+                    lemniscateCenter + Vector2.UnitX * flySpeed * 11.5f
+                };
+
+                bool cyan = true;
+                List<int> vortices = new();
+                foreach (Vector2 focus in lemniscateFoci)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int vortex = Utilities.NewProjectileBetter(focus, Vector2.Zero, ModContent.ProjectileType<AstralVortex>(), 300, 0f);
+                        if (Main.projectile.IndexInRange(vortex))
+                        {
+                            Main.projectile[vortex].localAI[0] = cyan.ToInt();
+                            vortices.Add(vortex);
+                            cyan = false;
+                        }
+                    }
+
+                    for (int i = 0; i < vortices.Count; i++)
+                        Main.projectile[vortices[i]].ai[1] = vortices[(i + 1) % vortices.Count];
+                }
+            }
+
+            // Charge at the player and hurl both vortices at them if they're closely within Deus' line of sight.
+            bool targetInLineOfSight = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.71f;
+            if (attackTimer >= vortexCreationDelay + chargeAtPlayerDelay && targetInLineOfSight)
+            {
+                if (hasCharged == 0f)
+                {
+                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
+                    foreach (Projectile vortex in Utilities.AllProjectilesByID(ModContent.ProjectileType<AstralVortex>()))
+                    {
+                        vortex.velocity = vortex.SafeDirectionTo(target.Center) * 11f;
+                        vortex.ModProjectile<AstralVortex>().FlameSpawnRate = flameSpawnRate;
+                        vortex.netUpdate = true;
+                    }
+
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
+                    hasCharged = 1f;
                     npc.netUpdate = true;
                 }
             }
 
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            // Try to spin around the target after charging.
+            if (hasCharged == 1f)
+            {
+                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1450f;
 
-            if (attackTimer >= 270f)
-                SelectNextAttack(npc);
-
-            shootTimer++;
+                npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                if (!Utilities.AnyProjectiles(ModContent.ProjectileType<AstralVortex>()) && !Utilities.AnyProjectiles(ModContent.ProjectileType<AstralFlame2>()))
+                    SelectNextAttack(npc);
+            }
         }
 
-        public static void DoBehavior_ConstellationSpawn(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_PlasmaAndCrystals(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
         {
-            int totalStarsToCreate = 16;
-            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
-            ref float shootTimer = ref npc.Infernum().ExtraAI[1];
 
-            if (attackTimer >= 120f)
-                shootTimer++;
-            if (attackTimer > 120f && shootCounter < totalStarsToCreate)
-                attackTimer = 120f;
-
-            // Drift towards the player.
-            if (!npc.WithinRange(target.Center, 680f))
-            {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 15f, 0.085f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f, true) * newSpeed;
-            }
-
-            if (shootTimer > Main.rand.Next(10, 18) - beaconAngerFactor * 6f && shootCounter < totalStarsToCreate)
-            {
-                SoundEngine.PlaySound(SoundID.Item8, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * Main.rand.NextFloat(20f, 96f);
-                    int star = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<ConstellationStar>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
-                        Main.projectile[star].ai[0] = shootCounter;
-
-                    shootCounter++;
-                }
-                shootTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            if (attackTimer == 175f)
-            {
-                SoundEngine.PlaySound(SoundID.Item72, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int starType = ModContent.ProjectileType<ConstellationStar>();
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (Main.projectile[i].type != starType || !Main.projectile[i].active)
-                            continue;
-
-                        Main.projectile[i].timeLeft = Main.rand.Next(70, 140);
-                        Main.projectile[i].netUpdate = true;
-                    }
-                }
-            }
-
-            if (attackTimer > 320f)
-                SelectNextAttack(npc);
-
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoBehavior_FusionBurst(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
-        {
-            int fireDelay = 270;
-            int totalBursts = 3;
-            bool cannotFireAnymore = attackTimer >= fireDelay + (AstralPlasmaBeam.Lifetime + 40f) * totalBursts;
-            bool doneCharging = attackTimer > fireDelay - 75f;
-            bool rayHasBeenReleased = attackTimer > fireDelay;
-            float idealGeneralMoveSpeed = doneCharging ? 6f : 15f;
-            float idealGeneralMoveAcceleration = doneCharging ? 0.013f : 0.03f;
-            ref float burstShootTimer = ref npc.Infernum().ExtraAI[0];
-
-            // Drift towards the player.
-            float rotateThreshold = MathHelper.Pi * 0.76f;
-            if (rayHasBeenReleased && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) > AstralPlasmaBeam.Lifetime)
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.2f, 0.027f, true) * idealGeneralMoveSpeed;
-
-            if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < rotateThreshold)
-            {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), idealGeneralMoveSpeed, 0.085f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.025f, idealGeneralMoveAcceleration, true) * newSpeed;
-            }
-
-            // Get close to the target if they're far off prior to firing so that the player can know what the boss is doing.
-            // This delays the firing.
-            if (!npc.WithinRange(target.Center, 1000f) && attackTimer > fireDelay - 150f && attackTimer < fireDelay - 60f)
-            {
-                npc.Center = npc.Center.MoveTowards(target.Center, 56f);
-                npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
-                attackTimer = fireDelay - 80f;
-            }
-
-            // Create plasma particles near the mouth to indicate that something is happening.
-            if (attackTimer < fireDelay)
-            {
-                int particleCount = (int)MathHelper.SmoothStep(2f, 6f, Utils.GetLerpValue(15f, fireDelay - 45f, attackTimer, true));
-                Vector2 mouthPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 30f;
-                for (int i = 0; i < particleCount; i++)
-                {
-                    Vector2 drawOffset = Main.rand.NextVector2CircularEdge(24f, 24f) * Main.rand.NextFloat(0.8f, 1.2f) + npc.velocity;
-                    Dust plasma = Dust.NewDustPerfect(mouthPosition + drawOffset, 267);
-                    plasma.color = Color.Lerp(Main.rand.NextBool() ? Color.Cyan : Color.OrangeRed, Color.White, Main.rand.NextFloat(0.5f, 0.8f));
-                    plasma.scale = Main.rand.NextFloat(1.1f, 1.4f);
-                    plasma.velocity = (mouthPosition + npc.velocity - plasma.position) * 0.08f + npc.velocity * 2f;
-                    plasma.noGravity = true;
-                }
-            }
-
-            // Cause the screen to shake prior to firing in anticipatiom.
-            target.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(fireDelay - 105f, fireDelay - 15f, attackTimer, true) * Utils.GetLerpValue(fireDelay + 12f, fireDelay, attackTimer, true) * 4f;
-
-            // Play an acoustic indicator prior to firing as a charge.
-            if (attackTimer == fireDelay - 120f)
-                SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
-
-            // Release a plasma beam periodically.
-            if (!cannotFireAnymore && attackTimer >= fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) == 0)
-            {
-                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int plasmaBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<AstralPlasmaBeam>(), 270, 0f);
-                    if (Main.projectile.IndexInRange(plasmaBeam))
-                        Main.projectile[plasmaBeam].ai[1] = npc.whoAmI;
-                }
-            }
-
-            // Periodically release bursts of astral rays outward from the mouth while rays are firing.
-            float shootSpeed = MathHelper.Lerp(15f, 27f, beaconAngerFactor);
-            int laserCount = (int)MathHelper.Lerp(12f, 20f, beaconAngerFactor);
-            int laserBurstShootRate = (int)MathHelper.Lerp(50f, 24f, beaconAngerFactor);
-            if (!cannotFireAnymore && rayHasBeenReleased)
-                burstShootTimer++;
-
-            if (burstShootTimer >= laserBurstShootRate)
-            {
-                SoundEngine.PlaySound(SoundID.Item12, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < laserCount; i++)
-                    {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<AstralShot2>(), 160, 0f);
-                    }
-                    burstShootTimer = 0f;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-            if (attackTimer >= fireDelay + (AstralPlasmaBeam.Lifetime + 40f) * totalBursts + 125f)
-                SelectNextAttack(npc);
-        }
         #endregion Custom Behaviors
 
         #region Misc AI Operations
@@ -706,19 +552,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             DeusAttackType oldAttackState = (DeusAttackType)(int)npc.ai[0];
             DeusAttackType secondLastAttackState = (DeusAttackType)(int)npc.ai[3];
             DeusAttackType newAttackState;
+
             WeightedRandom<DeusAttackType> attackSelector = new();
-            attackSelector.Add(DeusAttackType.AstralBombs, lifeRatio < Phase2LifeThreshold ? 0.5f : 0.8f);
-            attackSelector.Add(DeusAttackType.StellarCrash, lifeRatio < Phase2LifeThreshold ? 0.7f : 1f);
-            attackSelector.Add(DeusAttackType.CelestialLights, lifeRatio < Phase2LifeThreshold ? 0.8f : 1.15f);
-            attackSelector.Add(DeusAttackType.WarpCharge, lifeRatio < Phase2LifeThreshold ? 0.8f : 1f);
-            if (lifeRatio < Phase2LifeThreshold)
-            {
-                attackSelector.Add(DeusAttackType.StarWeave, 1.225f);
-                attackSelector.Add(DeusAttackType.InfectedPlasmaVomit, 1.1f);
-                attackSelector.Add(DeusAttackType.ConstellationSpawn, 1.15f);
-            }
-            if (lifeRatio < Phase3LifeThreshold)
-                attackSelector.Add(DeusAttackType.FusionBurst, 4.1f);
+            attackSelector.Add(DeusAttackType.WarpCharge);
+            attackSelector.Add(DeusAttackType.AstralMeteorShower);
+            attackSelector.Add(DeusAttackType.RubbleFromBelow);
+            attackSelector.Add(DeusAttackType.VortexLemniscate);
 
             do
                 newAttackState = attackSelector.Get();

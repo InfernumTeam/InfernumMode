@@ -1,5 +1,6 @@
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -123,6 +124,20 @@ namespace InfernumMode.ILEditingStuff
                     NPC.SpawnOnPlayer(player.whoAmI, scourgeID);
                 else
                     NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, scourgeID);
+
+                // Summon nuisances if not in Infernum mode.
+                if (CalamityWorld.revenge && !InfernumMode.CanUseCustomAIs)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+                    else
+                        NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+                    else
+                        NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+                }
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);

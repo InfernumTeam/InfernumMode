@@ -1,12 +1,8 @@
 using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -36,9 +32,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
-            npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
+            npc.damage = npc.alpha > 40 || headSegment.damage <= 0 ? 0 : npc.defDamage;
 
-            npc.Calamity().DR = 0.55f;
+            npc.Calamity().DR = 0.325f;
             npc.Calamity().newAI[1] = 600f;
 
             Player target = Main.player[npc.target];
@@ -47,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Perform segment positioning and rotation.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.12f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
@@ -56,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode != NetmodeID.MultiplayerClient && headSegment.localAI[1] == 1f && Main.rand.NextFloat() < npc.Opacity)
                 Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<AstralSparkle>(), 0, 0f);
 
+            /*
             List<Projectile> stars = Utilities.AllProjectilesByID(ModContent.ProjectileType<GiantAstralStar>()).ToList();
 
             bool growingStar = stars.Count > 0 && stars.First().scale < 7f;
@@ -81,6 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     }
                 }
             }
+            */
 
             return false;
         }

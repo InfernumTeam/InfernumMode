@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.ILEditing;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -25,7 +24,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;

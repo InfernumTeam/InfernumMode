@@ -49,13 +49,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Emit light.
             Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 0.1f);
 
-            // Emit astral flame dusts.
+            // Emit astral flame dust.
             Projectile.ai[0]++;
             if (Projectile.ai[0] > 15f)
             {
                 Dust astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 100, default, 0.8f);
                 astralFire.noGravity = true;
-                astralFire.velocity *= 0f;
+                astralFire.velocity = Vector2.Zero;
             }
         }
 

@@ -1,7 +1,5 @@
-﻿using InfernumMode;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Skies

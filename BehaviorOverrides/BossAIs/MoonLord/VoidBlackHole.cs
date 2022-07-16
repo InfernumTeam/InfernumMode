@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.width = Projectile.height = 160;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 900000;
             Projectile.scale = 1f;

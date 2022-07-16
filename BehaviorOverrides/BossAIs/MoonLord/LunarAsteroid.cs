@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 34;
+            Projectile.width = Projectile.height = 28;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;

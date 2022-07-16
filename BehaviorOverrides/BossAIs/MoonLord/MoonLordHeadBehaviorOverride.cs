@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             NPC core = Main.npc[(int)npc.ai[3]];
 
             // Hacky workaround to problems with popping.
+            // The system regarding ML's death is held together with duct tape, broken promises, and three daily prayers. Do not question it, for your own safety.
             if (npc.life < 1000)
                 npc.life = 1000;
 
@@ -56,6 +57,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
+                // Have the head use the exposed eye frames, not take damage, and rotate in such a way that it looks like the neck was fucking snapped when dying.
+                // Simple stuff.
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.DeathEffects:
                     idealFrame = 3;
                     npc.dontTakeDamage = true;

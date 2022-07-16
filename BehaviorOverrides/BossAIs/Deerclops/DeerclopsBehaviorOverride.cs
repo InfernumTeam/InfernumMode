@@ -1,19 +1,16 @@
 using CalamityMod;
-using CalamityMod.Events;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SteelSeries.GameSense;
 using System;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.CameraModifiers;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 

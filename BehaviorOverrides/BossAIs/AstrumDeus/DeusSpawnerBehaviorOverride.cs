@@ -19,6 +19,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool PreAI(Projectile projectile)
         {
+            ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 999999;
+
             ref float timer = ref projectile.ai[0];
 
             // Rise into the sky a bit after oscillating. After even more time has passed, slow down.

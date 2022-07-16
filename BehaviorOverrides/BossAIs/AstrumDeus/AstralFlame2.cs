@@ -26,9 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.alpha = 100;
-            Projectile.penetrate = 1;
-            Projectile.timeLeft = 485;
+            Projectile.Opacity = 0f;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 360;
         }
 
         public override void AI()
@@ -49,10 +49,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Time is > 85f and < 145f)
-                Projectile.velocity = (Projectile.velocity * 41f + Projectile.SafeDirectionTo(closestPlayer.Center) * 15f) / 42f;
+                Projectile.velocity = (Projectile.velocity * 41f + Projectile.SafeDirectionTo(closestPlayer.Center) * 13f) / 42f;
 
             if (Time > 150f && Projectile.velocity.Length() < 20f)
                 Projectile.velocity *= 1.01f;
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             Time++;
         }

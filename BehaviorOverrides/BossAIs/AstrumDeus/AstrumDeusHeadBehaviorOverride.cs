@@ -117,7 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     ModContent.ProjectileType<AstralPlasmaFireball>(), 
                     ModContent.ProjectileType<AstralPlasmaSpark>(),
                     ModContent.ProjectileType<AstralFlame2>(),
-                    ModContent.ProjectileType<AstralCrystal>());
+                    ModContent.ProjectileType<AstralCrystal>(),
+                    ModContent.ProjectileType<AstralVortex>());
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].type == deusSpawnID)
@@ -209,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int chargeCount = 3;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float teleportOutwardness = MathHelper.Lerp(1420f, 1095f, 1f - lifeRatio) - beaconAngerFactor * 240f;
-            float chargeSpeed = MathHelper.Lerp(34.5f, 45f, 1f - lifeRatio) + beaconAngerFactor * 15f;
+            float chargeSpeed = MathHelper.Lerp(34.5f, 42f, 1f - lifeRatio) + beaconAngerFactor * 15f;
 
             if (phase2)
             {
@@ -310,14 +311,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             int upwardRiseTime = 135;
             int meteorShootDelay = 45;
-            int meteorReleaseRate = 10;
+            int meteorReleaseRate = 8;
             int meteorShootTime = 270;
             int attackTransitionDelay = 90;
             float maxUpwardRiseSpeed = 29f;
             float upwardRiseAcceleration = 0.56f;
             float downwardSlamGravity = 0.35f;
             float downwardSlamSpeed = 13.5f;
-            float meteorSpeed = 13f;
+            float meteorSpeed = 16f;
             ref float meteorRainAngle = ref npc.Infernum().ExtraAI[0];
 
             if (phase2)
@@ -329,11 +330,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 downwardSlamSpeed *= 1.1f;
             }
             if (phase3)
-                meteorReleaseRate -= 2;
+                meteorReleaseRate--;
 
             // Apply distance-enrage buffs.
             meteorReleaseRate = Utils.Clamp((int)(meteorReleaseRate - beaconAngerFactor * 5f), 3, 20);
-            meteorSpeed = MathHelper.Lerp(meteorSpeed, 21.5f, beaconAngerFactor);
+            meteorSpeed = MathHelper.Lerp(meteorSpeed, 24.5f, beaconAngerFactor);
 
             // Initialize the meteor rain angle.
             if (meteorRainAngle == 0f)

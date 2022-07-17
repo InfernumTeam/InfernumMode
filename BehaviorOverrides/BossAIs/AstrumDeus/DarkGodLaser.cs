@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void UpdateLaserMotion()
         {
-            float spinSpeed = Utils.GetLerpValue(0f, 60f, Time, true) * 0.02f;
+            float spinSpeed = Utils.GetLerpValue(0f, 60f, Time, true) * 0.016f;
             Projectile.velocity = Projectile.velocity.RotatedBy(spinSpeed);
         }
 

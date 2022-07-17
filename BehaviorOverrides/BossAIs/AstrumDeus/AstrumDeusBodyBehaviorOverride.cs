@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.alpha > 40 || headSegment.damage <= 0 ? 0 : npc.defDamage;
 
-            npc.Calamity().DR = 0.325f;
+            npc.Calamity().DR = 0.425f;
             npc.Calamity().newAI[1] = 600f;
 
             // Perform segment positioning and rotation.

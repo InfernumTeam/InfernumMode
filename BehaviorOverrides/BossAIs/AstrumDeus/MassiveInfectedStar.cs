@@ -142,6 +142,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Radius * 0.85f);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Radius * 0.8f);
     }
 }

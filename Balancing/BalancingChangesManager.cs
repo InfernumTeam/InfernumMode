@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
@@ -114,6 +115,11 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCID.CultistDragonBody2, Do(new PierceResistBalancingRule(0.1f))),
                 new NPCBalancingChange(NPCID.CultistDragonBody3, Do(new PierceResistBalancingRule(0.1f))),
                 new NPCBalancingChange(NPCID.CultistDragonBody4, Do(new PierceResistBalancingRule(0.1f))),
+
+                // Astrum Deus.
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new PierceResistBalancingRule(0.5f))),
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<MalachiteProj>(), ProjectileType<MalachiteBolt>()))),
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.1f, ProjectileType<TenebreusTidesWaterProjectile>(), ProjectileType<TenebreusTidesWaterSpear>()))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),

@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.alpha > 40 || headSegment.damage <= 0 ? 0 : npc.defDamage;
 
-            npc.Calamity().DR = 0.425f;
+            npc.Calamity().DR = 0.35f;
             npc.Calamity().newAI[1] = 600f;
 
             // Perform segment positioning and rotation.
@@ -43,7 +43,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.12f);
             if (headSegment.Infernum().ExtraAI[7] == 1f)
+            {
                 npc.HitSound = SoundID.NPCHit1;
+                npc.Calamity().DR = 0.45f;
+            }
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;

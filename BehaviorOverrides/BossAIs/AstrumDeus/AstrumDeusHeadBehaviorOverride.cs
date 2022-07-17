@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             float upwardRiseAcceleration = 0.56f;
             float downwardSlamGravity = 0.35f;
             float downwardSlamSpeed = 13.5f;
-            float meteorSpeed = 16f;
+            float meteorSpeed = 14f;
             ref float meteorRainAngle = ref npc.Infernum().ExtraAI[0];
 
             if (phase2)
@@ -383,7 +383,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             bool withinShootInterval = attackTimer >= upwardRiseTime + meteorShootDelay && attackTimer < upwardRiseTime + meteorShootDelay + meteorShootTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && withinShootInterval && attackTimer % meteorReleaseRate == meteorReleaseRate - 1f)
             {
-                Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
+                float horizontalOffset = Main.rand.NextFloat(-1050, 1050f);
+                if (Math.Abs(target.Center.X) < 1f)
+                    horizontalOffset *= 0.1f;
+
+                Vector2 cometSpawnPosition = target.Center + new Vector2(horizontalOffset, -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorRainAngle);
                 Vector2 shootVelocity = shootDirection * meteorSpeed;
 
@@ -912,11 +916,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     if (tries >= 500)
                         break;
                     
-                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(1000f, 1000f);
+                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(1100f, 1100f);
                     blackHoleCenterX = blackHoleCenter.X;
                     blackHoleCenterY = blackHoleCenter.Y;
                 }
-                while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 400f, 800, 800));
+
+                // Avoid placing the black hole near tiles. The laser spin needs to be able to be dodged by letting the target
+                // spin in tandem with the lasers. If they're blocked by tiles then they could recieve an unfair hit or two.
+                while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 600f, 1200, 1200));
 
                 for (int i = 0; i < starsInConstellation; i++)
                 {

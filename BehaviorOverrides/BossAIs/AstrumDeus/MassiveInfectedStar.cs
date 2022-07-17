@@ -42,9 +42,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             Radius = Projectile.scale * 100f;
 
+            // Disappear if Deus is not present.
             if (!NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()))
                 Projectile.active = false;
 
+            // Fade out once ready.
             if (Projectile.timeLeft < 60f)
             {
                 Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);

@@ -6,9 +6,11 @@ using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +29,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             WarpCharge,
             AstralMeteorShower,
             RubbleFromBelow,
-            ConstellationWeave,
             VortexLemniscate,
             PlasmaAndCrystals,
             AstralSolarSystem,
             InfectedStarWeave,
+            DarkGodsOutburst,
+            AstralGlobRush,
+            ConstellationExplosions
         }
 
         public const float Phase2LifeThreshold = 0.6f;
@@ -75,11 +79,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float beaconAngerFactor = Utils.GetLerpValue(4800f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
-            bool phase2 = lifeRatio < Phase2LifeThreshold;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
             ref float releasingParticlesFlag = ref npc.localAI[1];
+            ref float inFinalPhase = ref npc.Infernum().ExtraAI[7];
+
+            bool phase2 = lifeRatio < Phase2LifeThreshold;
+            bool phase3 = inFinalPhase == 1f;
 
             // Save the beacon anger factor in a variable for use by the sky code.
             npc.Infernum().ExtraAI[6] = beaconAngerFactor;
@@ -89,14 +96,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
                 CreateSegments(npc, 65, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
-                attackType = (int)DeusAttackType.InfectedStarWeave;
+                attackType = (int)DeusAttackType.AstralMeteorShower;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
             }
 
+            // Prevent natural despawns.
+            npc.timeLeft = 3600;
+
+            bool enteringLastPhase = lifeRatio < Phase3LifeThreshold && inFinalPhase == 0f;
+
             // Clamp position into the world.
             npc.position.X = MathHelper.Clamp(npc.position.X, 700f, Main.maxTilesX * 16f - 700f);
-            npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
+
+            // Have Deus fly high into the sky and shed its shell before flying back down in the final phase.
+            if (enteringLastPhase)
+            {
+                int deusSpawnID = ModContent.NPCType<DeusSpawn>();
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AstralConstellation>(), 
+                    ModContent.ProjectileType<AstralPlasmaFireball>(), 
+                    ModContent.ProjectileType<AstralPlasmaSpark>(),
+                    ModContent.ProjectileType<AstralFlame2>(),
+                    ModContent.ProjectileType<AstralCrystal>());
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == deusSpawnID)
+                        Main.npc[i].active = false;
+                }
+
+                attackTimer = 0f;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -30f, 13.5f);
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                if (npc.Center.Y < -3500f || !npc.WithinRange(target.Center, 6000f))
+                {
+                    SelectNextAttack(npc);
+                    attackType = (int)DeusAttackType.WarpCharge;
+                    inFinalPhase = 1f;
+                    npc.HitSound = SoundID.NPCHit1;
+                    npc.velocity.Y = 4.5f;
+                    npc.netUpdate = true;
+                }
+                return false;
+            }
+            else
+                npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
 
             // Quickly fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 16, 0, 255);
@@ -104,25 +147,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             switch ((DeusAttackType)(int)attackType)
             {
                 case DeusAttackType.WarpCharge:
-                    DoBehavior_WarpCharge(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_WarpCharge(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
                     break;
                 case DeusAttackType.AstralMeteorShower:
-                    DoBehavior_AstralMeteorShower(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_AstralMeteorShower(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
                     break;
                 case DeusAttackType.RubbleFromBelow:
-                    DoBehavior_RubbleFromBelow(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_RubbleFromBelow(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
                     break;
                 case DeusAttackType.VortexLemniscate:
-                    DoBehavior_VortexLemniscate(npc, target, phase2, ref attackTimer);
+                    DoBehavior_VortexLemniscate(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case DeusAttackType.PlasmaAndCrystals:
-                    DoBehavior_PlasmaAndCrystals(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_PlasmaAndCrystals(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
                     break;
                 case DeusAttackType.AstralSolarSystem:
-                    DoBehavior_AstralSolarSystem(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_AstralSolarSystem(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
                     break;
                 case DeusAttackType.InfectedStarWeave:
-                    DoBehavior_InfectedStarWeave(npc, target, phase2, beaconAngerFactor, ref attackTimer);
+                    DoBehavior_InfectedStarWeave(npc, target, phase2, phase3, beaconAngerFactor, ref attackTimer);
+                    break;
+                case DeusAttackType.DarkGodsOutburst:
+                    DoBehavior_DarkGodsOutburst(npc, target, ref attackTimer);
+                    break;
+                case DeusAttackType.AstralGlobRush:
+                    DoBehavior_AstralGlobRush(npc, target, ref attackTimer);
+                    break;
+                case DeusAttackType.ConstellationExplosions:
+                    DoBehavior_ConstellationExplosions(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -149,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
-        public static void DoBehavior_WarpCharge(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_WarpCharge(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int driftTime = 32;
             int fadeInTime = 40;
@@ -161,17 +213,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             if (phase2)
             {
-                fadeInTime -= 18;
-                chargeTime -= 7;
+                fadeInTime -= 14;
+                chargeTime -= 4;
             }
-
+            if (phase3)
+            {
+                fadeInTime -= 14;
+                chargeTime -= 4;
+            }
             if (BossRushEvent.BossRushActive)
             {
                 chargeTime -= 4;
                 chargeSpeed *= 1.425f;
             }
 
-            int fadeOutTime = fadeInTime / 2 + 10;
+            int fadeOutTime = fadeInTime / 2 + 8;
             float wrappedTimer = attackTimer % (fadeInTime + chargeTime + fadeOutTime);
 
             if (wrappedTimer < fadeInTime)
@@ -250,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoBehavior_AstralMeteorShower(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_AstralMeteorShower(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int upwardRiseTime = 135;
             int meteorShootDelay = 45;
@@ -272,6 +328,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 downwardSlamGravity *= 1.4f;
                 downwardSlamSpeed *= 1.1f;
             }
+            if (phase3)
+                meteorReleaseRate -= 2;
 
             // Apply distance-enrage buffs.
             meteorReleaseRate = Utils.Clamp((int)(meteorReleaseRate - beaconAngerFactor * 5f), 3, 20);
@@ -336,7 +394,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_RubbleFromBelow(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_RubbleFromBelow(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int minDescendTime = 90;
             int minRiseTime = 75;
@@ -355,6 +413,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 rubbleCount += 5;
                 rubbleFlySpeedFactor += 0.36f;
+            }
+            if (phase3)
+            {
+                rubbleCount += 9;
+                rubbleFlySpeedFactor += 0.25f;
             }
 
             // Determine rotation.
@@ -419,14 +482,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
-        public static void DoBehavior_VortexLemniscate(NPC npc, Player target, bool phase2, ref float attackTimer)
+        public static void DoBehavior_VortexLemniscate(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int flameSpawnRate = 50;
             int vortexCreationDelay = 60;
             int chargeAtPlayerDelay = AstralVortex.ScaleFadeinTime + 30;
 
             if (phase2)
-                flameSpawnRate -= 14;
+                flameSpawnRate -= 12;
+            if (phase3)
+                flameSpawnRate -= 15;
 
             ref float lemniscateCenterX = ref npc.Infernum().ExtraAI[0];
             ref float lemniscateCenterY = ref npc.Infernum().ExtraAI[1];
@@ -545,7 +610,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
-        public static void DoBehavior_PlasmaAndCrystals(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_PlasmaAndCrystals(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int shootTime = 420;
             int attackTransitionDelay = 105;
@@ -564,6 +629,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 flySpeed *= 1.25f;
                 flyTurnSpeed *= 1.3f;
                 shootTime -= 32;
+            }
+            if (phase3)
+            {
+                plasmaShootRate -= 10;
+                crystalShootRate -= 6;
+                flySpeed *= 1.25f;
             }
 
             // Fly near the target and snap at them if sufficiently close.
@@ -619,7 +690,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_AstralSolarSystem(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_AstralSolarSystem(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int planetCount = 7;
             int flyTime = 270;
@@ -634,6 +705,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 planetCount += 3;
                 plasmaShootRate -= 7;
+            }
+            if (phase3)
+            {
+                planetCount += 2;
+                plasmaShootRate -= 9;
             }
 
             int deusSpawnID = ModContent.NPCType<DeusSpawn>();
@@ -710,7 +786,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_InfectedStarWeave(NPC npc, Player target, bool phase2, float beaconAngerFactor, ref float attackTimer)
+        public static void DoBehavior_InfectedStarWeave(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
         {
             int repositionTimeBuffer = 10;
             int starGrowTime = 165;
@@ -720,6 +796,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (phase2)
             {
                 starGrowTime -= 40;
+                attackTransitionDelay -= 27;
+            }
+            if (phase3)
+            {
+                starGrowTime -= 50;
                 attackTransitionDelay -= 30;
             }
 
@@ -814,6 +895,200 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_DarkGodsOutburst(NPC npc, Player target, ref float attackTimer)
+        {
+            int starsInConstellation = 40;
+            ref float blackHoleCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float blackHoleCenterY = ref npc.Infernum().ExtraAI[1];
+
+            // Decide the position to spawn the black hole and create the dark star constellation at on the first frame.
+            if (attackTimer == 1f)
+            {
+                int tries = 0;
+                do
+                {
+                    tries++;
+                    if (tries >= 500)
+                        break;
+                    
+                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(1000f, 1000f);
+                    blackHoleCenterX = blackHoleCenter.X;
+                    blackHoleCenterY = blackHoleCenter.Y;
+                }
+                while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 400f, 800, 800));
+
+                for (int i = 0; i < starsInConstellation; i++)
+                {
+                    float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
+                    Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
+                    int star = Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                    {
+                        Main.projectile[star].ai[0] = i;
+                        Main.projectile[star].ai[1] = (i + 1) % starsInConstellation;
+                        Main.projectile[star].ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
+                        Main.projectile[star].ModProjectile<DarkStar>().AnchorPoint = new(blackHoleCenterX, blackHoleCenterY);
+                    }
+                }
+                Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
+
+                npc.netUpdate = true;
+            }
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Circle around the black hole spawn center.
+            Vector2 spinDestination = new Vector2(blackHoleCenterX, blackHoleCenterY) + (MathHelper.TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
+            Vector2 oldCenter = npc.Center;
+            npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
+            npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+            npc.rotation = (spinDestination - oldCenter).ToRotation() + MathHelper.PiOver2;
+
+            if (!Utilities.AnyProjectiles(ModContent.ProjectileType<AstralBlackHole>()) && attackTimer >= 2f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_AstralGlobRush(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeTime = 420;
+            int blobShootThreshold = 24;
+            int chargeBlobCount = 14;
+            bool closeEnoughToSnap = npc.WithinRange(target.Center, 250f);
+            float flySpeed = 24.5f;
+            float flyTurnSpeed = 0.05f;
+            ref float blobShootTimer = ref npc.Infernum().ExtraAI[0];
+            
+            // Fly near the target and snap at them if sufficiently close.
+            float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+            if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
+                npc.velocity *= 1.016f;
+            else
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyTurnSpeed, true) * nextFlySpeed;
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Shoot infection globs.
+            if (npc.WithinRange(target.Center, 420f))
+                blobShootTimer++;
+            if (blobShootTimer >= blobShootThreshold && closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.5f)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+
+                Vector2 shootDirection = npc.SafeDirectionTo(target.Center);
+                bool lineOfSightIsClear = Collision.CanHit(npc.Center, 1, 1, npc.Center + shootDirection * 120f, 1, 1);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && lineOfSightIsClear)
+                {
+                    for (int i = 0; i < chargeBlobCount; i++)
+                    {
+                        Vector2 blobVelocity = (shootDirection * 24f + Main.rand.NextVector2Circular(4f, 4f));
+                        int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<InfectionGlob>(), 200, 0f);
+                        if (Main.projectile.IndexInRange(blob))
+                            Main.projectile[blob].ai[1] = target.Center.Y;
+                    }
+                    blobShootTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= chargeTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_ConstellationExplosions(NPC npc, Player target, ref float attackTimer)
+        {
+            int initialAnimationTime = 54;
+            int starCreationRate = 2;
+            int totalStarsToCreate = 15;
+            int explosionTime = 100;
+            int constellationCount = 3;
+            int starCreationTime = totalStarsToCreate * starCreationRate;
+            float plasmaShootSpeed = 13f;
+            float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
+            float wrappedAttackTimer = attackTimer % (initialAnimationTime + starCreationTime + explosionTime);
+            ref float constellationPatternType = ref npc.Infernum().ExtraAI[0];
+            ref float constellationSeed = ref npc.Infernum().ExtraAI[1];
+
+            // Rotate towards the target.
+            if (!npc.WithinRange(target.Center, 250f))
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.032f, true) * 14.5f;
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Determine what constellation pattern this arm will use. Each arm has their own pattern that they create.
+            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == initialAnimationTime - 30f)
+            {
+                constellationSeed = Main.rand.NextFloat();
+                constellationPatternType = Main.rand.Next(3);
+                npc.netUpdate = true;
+            }
+
+            // Create stars.
+            if (wrappedAttackTimer >= initialAnimationTime &&
+                wrappedAttackTimer < initialAnimationTime + starCreationTime &&
+                (wrappedAttackTimer - initialAnimationTime) % starCreationRate == 0f)
+            {
+                float patternCompletion = Utils.GetLerpValue(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);
+                Vector2 currentPoint;
+                switch ((int)constellationPatternType)
+                {
+                    // Diagonal stars from top left to bottom right.
+                    case 0:
+                        Vector2 startingPoint = target.Center + new Vector2(-800f, -600f);
+                        Vector2 endingPoint = target.Center + new Vector2(200f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Diagonal stars from top right to bottom left.
+                    case 1:
+                        startingPoint = target.Center + new Vector2(200f, -600f);
+                        endingPoint = target.Center + new Vector2(-800f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Horizontal sinusoid.
+                    case 2:
+                    default:
+                        float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
+                        float verticalOffset = (float)Math.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
+                        break;
+                }
+
+                SoundEngine.PlaySound(SoundID.Item72, currentPoint);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<AstralConstellation>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                    {
+                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
+                        Main.projectile[star].ai[1] = npc.whoAmI;
+                    }
+                }
+            }
+
+            if (wrappedAttackTimer == initialAnimationTime)
+            {
+                SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 plasmaShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * plasmaShootSpeed;
+                    Utilities.NewProjectileBetter(npc.Center + plasmaShootVelocity * 3f, plasmaShootVelocity, ModContent.ProjectileType<AstralPlasmaFireball>(), 200, 0f);
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Make all constellations spawned by this hand prepare to explode.
+            if (wrappedAttackTimer == initialAnimationTime + starCreationTime)
+            {
+                foreach (Projectile star in Utilities.AllProjectilesByID(ModContent.ProjectileType<AstralConstellation>()).Where(p => p.ai[1] == npc.whoAmI))
+                    star.timeLeft = 50;
+            }
+
+            if (attackTimer >= (initialAnimationTime + starCreationTime + explosionTime) * constellationCount - 1f)
+                SelectNextAttack(npc);
+        }
+
         #endregion Custom Behaviors
 
         #region Misc AI Operations
@@ -828,17 +1103,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             DeusAttackType newAttackState;
 
             WeightedRandom<DeusAttackType> attackSelector = new();
-            //attackSelector.Add(DeusAttackType.WarpCharge);
-            //attackSelector.Add(DeusAttackType.AstralMeteorShower);
-            //attackSelector.Add(DeusAttackType.RubbleFromBelow);
-            attackSelector.Add(DeusAttackType.VortexLemniscate);
-            attackSelector.Add(DeusAttackType.PlasmaAndCrystals);
-            attackSelector.Add(DeusAttackType.AstralSolarSystem);
+            if (lifeRatio < Phase2LifeThreshold)
+            {
+                attackSelector.Add(DeusAttackType.ConstellationExplosions, 2);
+                attackSelector.Add(DeusAttackType.VortexLemniscate, 2);
+                attackSelector.Add(DeusAttackType.AstralSolarSystem, 2);
+            }
+            if (lifeRatio < Phase3LifeThreshold)
+            {
+                attackSelector.Add(DeusAttackType.DarkGodsOutburst, 7.5);
+                attackSelector.Add(DeusAttackType.AstralGlobRush, 5);
+            }
+            else
+            {
+                attackSelector.Add(DeusAttackType.WarpCharge);
+                attackSelector.Add(DeusAttackType.PlasmaAndCrystals);
+                attackSelector.Add(DeusAttackType.AstralMeteorShower);
+                attackSelector.Add(DeusAttackType.RubbleFromBelow);
+                attackSelector.Add(DeusAttackType.InfectedStarWeave);
+            }
 
             do
                 newAttackState = attackSelector.Get();
             while (newAttackState == oldAttackState || newAttackState == secondLastAttackState);
-            newAttackState = DeusAttackType.InfectedStarWeave;
 
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
@@ -890,5 +1177,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
 
         #endregion Misc AI Operations
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumDeus/AstrumDeusHead").Value;
+            if (npc.Infernum().ExtraAI[7] == 1f)
+            {
+                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AstrumDeus/AstrumDeusHeadExposed").Value;
+                lightColor = Color.White;
+            }
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            lightColor = Color.Lerp(lightColor, Color.White, 0.6f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0f);
+            return false;
+        }
+        #endregion Drawing
     }
 }

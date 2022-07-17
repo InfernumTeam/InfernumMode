@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            for (int i = 0; i < Projectile.oldPos.Length - 7; i++)
+            for (int i = 0; i < Projectile.oldPos.Length - 13; i++)
             {
                 int x = (int)Projectile.oldPos[i].X;
                 int y = (int)Projectile.oldPos[i].Y;

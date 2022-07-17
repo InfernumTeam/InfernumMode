@@ -24,7 +24,7 @@ namespace InfernumMode.Skies
 
     public class DeusSky : CustomSky
     {
-        private struct AstralStar
+        public struct AstralStar
         {
             public bool Blue;
 
@@ -40,18 +40,13 @@ namespace InfernumMode.Skies
         }
 
         private bool isActive = false;
-        private float intensity = 0f;
-        private float nebulaIntensity = 0f;
+        private float intensity = 1f;
+        private float nebulaIntensity = 1f;
         private int nebulaTimer = 0;
         private AstralStar[] Stars;
 
         public override void Update(GameTime gameTime)
         {
-            if (isActive && intensity < 1f && !Main.dayTime)
-                intensity += 0.01f;
-            else if (!isActive && intensity > 0f)
-                intensity -= 0.01f;
-
             int deus = NPC.FindFirstNPC(ModContent.NPCType<AstrumDeusHead>());
             if (isActive && nebulaIntensity < 1f && !Main.dayTime && deus != -1 && Main.npc[deus].life < Main.npc[deus].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
                 nebulaIntensity += 0.01f;

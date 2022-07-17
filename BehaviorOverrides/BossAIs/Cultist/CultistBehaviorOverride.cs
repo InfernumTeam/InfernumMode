@@ -41,7 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ConjureLightBlasts,
             Ritual,
             IceStorm,
-            AncientDoom,
             DesperationAttack
         }
 
@@ -175,9 +174,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     break;
                 case CultistAIState.IceStorm:
                     DoAttack_IceStorm(npc, target, ref frameType, ref attackTimer);
-                    break;
-                case CultistAIState.AncientDoom:
-                    DoAttack_AncientDoom(npc, target, ref frameType, ref attackTimer);
                     break;
                 case CultistAIState.DesperationAttack:
                     DoAttack_DesperationAttack(npc, target, ref frameType, ref attackTimer);
@@ -1215,57 +1211,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer >= 480f)
                 SelectNextAttack(npc);
         }
-
-        public static void DoAttack_AncientDoom(NPC npc, Player target, ref float frameType, ref float attackTimer)
-        {
-            float attackPower = Utils.GetLerpValue(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
-
-            int burstCount = 3;
-            int burstShootRate = (int)MathHelper.Lerp(195f, 140f, attackPower);
-            ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
-            ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
-
-            if (attackTimer < 30f)
-                npc.Opacity = Utils.GetLerpValue(25f, 0f, attackTimer, true);
-            else
-                npc.Opacity = 1f;
-
-            // Teleport and raise arms.
-            if (attackTimer == 30f)
-            {
-                Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
-                CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    npc.Center = teleportPosition;
-                    npc.netUpdate = true;
-                }
-
-                burstShootCounter = 145f;
-                frameType = (int)CultistFrameState.RaiseArmsUp;
-                npc.netUpdate = true;
-            }
-
-            // Summon ancient doom NPCs and release a circle of projectiles to weave through.
-            burstShootCounter++;
-            if (burstShootCounter >= burstShootRate)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int doom = Utilities.NewProjectileBetter(npc.Top - Vector2.UnitY * 26f, Vector2.Zero, ModContent.ProjectileType<AncientDoom>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(doom))
-                        Main.projectile[doom].localAI[1] = cycleIndex++ % 2;
-                }
-
-                burstShootCounter = 0f;
-                npc.netUpdate = true;
-            }
-
-            if (attackTimer >= burstShootRate * (burstCount + 0.95f))
-                SelectNextAttack(npc);
-        }
-
         public static void DoAttack_DesperationAttack(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
             int attackDelay = 75;
@@ -1283,11 +1228,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float spinSpeed = 30f;
             float spinOffset = 560f;
 
-            int spreadCountBeforeTeleport = 10;
-            int spreadTeleportCount = 2;
-            int spreadShootRate = 30;
-            int spreadPhaseTime = spinPhaseTime + (spreadShootRate * spreadCountBeforeTeleport) * spreadTeleportCount;
-            float spreadShootSpeed = 16.4f;
+            int burstTeleportTime = 30;
+            int burstCount = 5;
+            int burstShootRate = 110;
+            int spreadPhaseTime = spinPhaseTime + burstShootRate * burstCount + burstTeleportTime;
+            ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
+            ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
 
             // Disable damage, allowing the player to focus solely on dodging.
             npc.dontTakeDamage = true;
@@ -1386,37 +1332,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Release an even spread of bolts while hovering near the target.
             if (attackTimer <= spreadPhaseTime)
             {
-                frameType = (int)CultistFrameState.Hover;
-                npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
+                float doomTimer = attackTimer - spinTime;
 
-                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 550f;
-                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f).MoveTowards(hoverDestination, 8f);
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 0.75f);
-
-                if (npc.WithinRange(hoverDestination, 200f) && attackTimer % spreadShootRate == spreadShootRate - 1f)
+                // Teleport and raise arms.
+                if (doomTimer == burstTeleportTime)
                 {
-                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                    Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
+                    CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int boltsInSpread = Main.rand.Next(7, 12);
-                        for (int i = 0; i < boltsInSpread; i++)
-                        {
-                            float offsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / (float)(boltsInSpread - 1f));
-                            Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * spreadShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
-                        }
+                        npc.Center = teleportPosition;
+                        npc.netUpdate = true;
                     }
-                }
 
-                // Teleport.
-                if (attackTimer == spreadPhaseTime - spreadShootRate * spreadCountBeforeTeleport)
-                {
-                    Vector2 teleportPosition = target.Center + Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * 550f;
-                    CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
-                    npc.Center = teleportPosition;
-                    npc.velocity = Vector2.Zero;
+                    burstShootCounter = 145f;
+                    frameType = (int)CultistFrameState.RaiseArmsUp;
                     npc.netUpdate = true;
                 }
+
+                // Summon ancient doom NPCs and release a circle of projectiles to weave through.
+                burstShootCounter++;
+                if (burstShootCounter >= burstShootRate)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int doom = Utilities.NewProjectileBetter(npc.Top - Vector2.UnitY * 26f, Vector2.Zero, ModContent.ProjectileType<AncientDoom>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(doom))
+                            Main.projectile[doom].localAI[1] = cycleIndex++ % 2;
+                    }
+
+                    burstShootCounter = 0f;
+                    npc.netUpdate = true;
+                }
+
                 return;
             }
 
@@ -1507,9 +1456,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     newAttackState = phase2 ? CultistAIState.IceStorm : CultistAIState.FireballBarrage;
                     break;
                 case CultistAIState.IceStorm:
-                    newAttackState = phase3 ? CultistAIState.AncientDoom : CultistAIState.FireballBarrage;
-                    break;
-                case CultistAIState.AncientDoom:
                     newAttackState = CultistAIState.FireballBarrage;
                     break;
             }

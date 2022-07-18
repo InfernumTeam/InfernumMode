@@ -5,9 +5,9 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
+namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-    public class TrueEyeChargeTelegraph : ModProjectile
+    public class LightningSuperchargeTelegraph : ModProjectile
     {
         public Vector2[] ChargePositions = new Vector2[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -15,6 +15,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
 
         public PrimitiveTrail TelegraphDrawer = null;
+
+        public const int Lifetime = 60;
+
         public const float TelegraphFadeTime = 15f;
 
         public override void SetStaticDefaults()
@@ -30,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.tileCollide = false;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = PressurePhantasmalDeathray.LifetimeConstant;
+            Projectile.timeLeft = Lifetime;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -64,8 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Determine opacity.
-            int lifetime = PressurePhantasmalDeathray.LifetimeConstant;
-            Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * Utils.GetLerpValue(lifetime, lifetime - 6f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, Lifetime - 6f, Projectile.timeLeft, true);
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -80,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             opacity *= MathHelper.Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
             if (completionRatio > 0.95f)
                 opacity = 0.0000001f;
-            return Color.Cyan * opacity;
+            return Color.Red * opacity;
         }
 
         public float TelegraphPrimitiveWidth(float completionRatio)
@@ -94,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 TelegraphDrawer = new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
 
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.41f);
+            GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.36f);
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
             {

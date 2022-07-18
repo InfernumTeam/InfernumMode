@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
 
         public const float Phase2LifeThreshold = 0.6f;
-        public const float Phase3LifeThreshold = 0.25f;
+        public const float Phase3LifeThreshold = 0.33333f;
 
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 

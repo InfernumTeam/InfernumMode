@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.AstrumDeus;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -138,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             for (int i = 0; i < 45; i++)
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 14f);
-                Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), 200, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<AstralShot2>(), 200, 0f);
             }
         }
 

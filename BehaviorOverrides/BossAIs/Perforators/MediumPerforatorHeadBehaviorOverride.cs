@@ -47,6 +47,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
+            // Reset shit.
+            npc.Calamity().DR = 0f;
+            npc.dontTakeDamage = false;
+
             // Fly towards the target.
             float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
             float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);

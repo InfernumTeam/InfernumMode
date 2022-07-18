@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -32,7 +33,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             npc.friendly = false;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
+            npc.dontTakeDamage = false;
             npc.dontCountMe = true;
+            npc.Calamity().DR = 0f;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

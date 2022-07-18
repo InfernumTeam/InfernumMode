@@ -41,12 +41,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true);
 
-            if (Projectile.timeLeft == Lifetime - 90f)
+            if (Projectile.timeLeft == Lifetime - 65f)
             {
                 SoundEngine.PlaySound(SoundID.Item109, Projectile.position);
-                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * 28.5f;
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * 30f;
                 if (BossRushEvent.BossRushActive)
-                    Projectile.velocity *= 1.6f;
+                    Projectile.velocity *= 1.54f;
 
                 Projectile.netUpdate = true;
             }

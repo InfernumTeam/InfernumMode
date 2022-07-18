@@ -161,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     DoAttack_CreateNormalLightningAura(npc, target, ref attackTimer, ref frameType, ref flapRate);
                     break;
                 case DragonfollyAttackType.FeatherSpreadRelease:
-                    DoAttack_ReleaseSpreadOfFeathers(npc, target, ref attackTimer, ref frameType, ref flapRate);
+                    DoAttack_FeatherSpreadRelease(npc, target, ref attackTimer, ref frameType, ref flapRate);
                     break;
                 case DragonfollyAttackType.PlasmaBursts:
                     DoAttack_ReleasePlasmaBursts(npc, target, ref attackTimer, ref fadeToRed, ref frameType, ref flapRate);
@@ -445,7 +445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 float flySpeed = BossRushEvent.BossRushActive ? 40f : 32f;
                 float flyInertia = 8f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
-                npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * (chargeType == DragonfollyAttackType.ThunderCharge ? 0.5f : 1f)) / flyInertia;
+                npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * (chargeType == DragonfollyAttackType.ThunderCharge ? 0.67f : 1f)) / flyInertia;
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
                 if (attackTimer >= chargeDelay)
@@ -493,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             // Do the actual charge.
             else if (chargeState == 2f)
             {
-                float horizontalSpeed = MathHelper.Lerp(29f, 34.25f, 1f - npc.life / (float)npc.lifeMax);
+                float horizontalSpeed = MathHelper.Lerp(31f, 43.5f, 1f - npc.life / (float)npc.lifeMax);
 
                 // Fly faster than usual after a fakeout.
                 if (hasDoneFakeoutFlag == 1f && chargeType == DragonfollyAttackType.FakeoutCharge)
@@ -521,7 +521,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
-                int cloudSpawnRate = (int)MathHelper.Lerp(12f, 6f, 1f - npc.life / (float)npc.lifeMax);
+                int cloudSpawnRate = (int)MathHelper.Lerp(10f, 4f, 1f - npc.life / (float)npc.lifeMax);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
                     Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
 
@@ -688,9 +688,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_ReleaseSpreadOfFeathers(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
+        public static void DoAttack_FeatherSpreadRelease(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
-            int totalWaves = (int)MathHelper.Lerp(1f, 3.5f, 1f - npc.life / (float)npc.lifeMax);
+            int totalWaves = (int)MathHelper.Lerp(2f, 4.5f, 1f - npc.life / (float)npc.lifeMax);
             int flyTime = 40;
             int waveDelay = 24;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -806,8 +806,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public static void DoAttack_ElectricOverload(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
-            int cloudReleaseRate = 12;
-            int sparkReleaseRate = 27;
+            int cloudReleaseRate = 10;
+            int sparkReleaseRate = 20;
             float horizontalOffset = 750f;
             ref float chargeState = ref npc.Infernum().ExtraAI[0];
             ref float accumulatedSpeed = ref npc.Infernum().ExtraAI[1];
@@ -903,7 +903,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.velocity *= 0.99f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudReleaseRate == cloudReleaseRate - 1f)
                 {
-                    Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 900f) * Main.rand.NextBool(2).ToDirectionInt();
+                    Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 500f) * Main.rand.NextBool().ToDirectionInt();
                     int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
                     if (Main.projectile.IndexInRange(cloud))
                     {
@@ -944,7 +944,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = npc.rotation.AngleTowards(0f, 0.125f);
             npc.noTileCollide = true;
 
-            int featherReleaseRate = phase3 ? 5 : 8;
+            int featherReleaseRate = phase3 ? 4 : 7;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
 
             // Fly near the target.
@@ -953,11 +953,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 frameType = (int)DragonfollyFrameDrawingType.FlapWings;
                 flapRate = 5f;
 
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 200f, -Vector2.UnitY) * 21f, 0.15f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 200f, -Vector2.UnitY) * 29f, 0.45f);
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
                 // If somewhat close to the target or enough time has passed, transition to the feather creating state.
-                if (npc.WithinRange(target.Center, 540f) || attackTimer >= 210f)
+                if (npc.WithinRange(target.Center, 420f) || attackTimer >= 360f)
                 {
                     attackState = 1f;
                     attackTimer = 0f;
@@ -1000,9 +1000,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             int chargeDelay = 20;
             int lightningSpawnerReleaseRate = 13;
-            int featherReleaseRate = 4;
+            int featherReleaseRate = 3;
             int chargeTime = 48;
-            float chargeSpeed = 37.5f;
+            float chargeSpeed = 39.5f;
             float horizontalOffset = 600f;
             Vector2 hoverDestination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
             ref float attackState = ref npc.Infernum().ExtraAI[0];

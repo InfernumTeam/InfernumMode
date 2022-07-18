@@ -1,3 +1,4 @@
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -88,7 +89,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 return;
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(target.Center) * 13.5f, ModContent.ProjectileType<RedSpark>(), 240, 0f);
+            Vector2 lightningVelocity = Projectile.SafeDirectionTo(target.Center) * 1.45f;
+            int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 250, 0f);
+            if (Main.projectile.IndexInRange(lightning))
+            {
+                Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
+                Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+            }
         }
     }
 }

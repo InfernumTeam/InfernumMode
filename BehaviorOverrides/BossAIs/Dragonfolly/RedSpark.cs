@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.frameCounter++;
             if (Projectile.frameCounter % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
-            if (Projectile.velocity.Length() < 25f)
+            if (Projectile.velocity.Length() < 27f)
                 Projectile.velocity *= 1.016f;
 
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, TextureAssets.Projectile[Projectile.type].Value, false);
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, TextureAssets.Projectile[Projectile.type].Value, false);
             return false;
         }
         

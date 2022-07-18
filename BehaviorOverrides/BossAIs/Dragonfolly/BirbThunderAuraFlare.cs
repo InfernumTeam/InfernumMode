@@ -88,33 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             if (Projectile.owner != Main.myPlayer)
                 return;
 
-            int type = ModContent.ProjectileType<BirbAura>();
-            if (CalamityUtils.CountProjectiles(type) >= 2)
-            {
-                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
-                return;
-            }
-            float x = Utils.Clamp((int)(Projectile.Center.Y / 16f), 10, Main.maxTilesX - 110) * 16;
-            float y = Utils.Clamp((int)(Projectile.Center.X / 16f), 10, Main.maxTilesX - 110) * 16 + 900;
-            Vector2 laserVelocity;
-
-            x += 1000f;
-            if ((int)(x / 16f) > Main.maxTilesX - 10)
-                x = (Main.maxTilesX - 10) * 16f;
-            laserVelocity = new Vector2(x, 160f) - new Vector2(x, y);
-            laserVelocity.Normalize();
-            int auraLaser = Utilities.NewProjectileBetter(x, y, 0f, laserVelocity.Y, type, 495, 0f, Main.myPlayer, x, y);
-            Main.projectile[auraLaser].timeLeft = 600;
-            Main.projectile[auraLaser].netUpdate = true;
-
-            x -= 2000f;
-            if ((int)(x / 16f) < 10)
-                x = 160f;
-            laserVelocity = new Vector2(x, 160f) - new Vector2(x, y);
-            laserVelocity.Normalize();
-            auraLaser = Utilities.NewProjectileBetter(x, y, 0f, laserVelocity.Y, type, 495, 0f, Main.myPlayer, x, y);
-            Main.projectile[auraLaser].timeLeft = 600;
-            Main.projectile[auraLaser].netUpdate = true;
+            Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
         }
     }
 }

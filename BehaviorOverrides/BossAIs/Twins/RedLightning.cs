@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
 
-            LightningDrawer.Draw(Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), Projectile.Size * 0.5f - Main.screenPosition, 70);
+            LightningDrawer.Draw(Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), Projectile.Size * 0.5f - Main.screenPosition, 36);
             return false;
         }
         #endregion

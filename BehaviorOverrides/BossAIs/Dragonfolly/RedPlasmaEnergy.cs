@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.Bumblebirb;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         }
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Plasma Orb");
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.TrailCacheLength[NPC.type] = 7;
@@ -30,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 22;
-            NPC.damage = 185;
+            NPC.damage = 164;
             NPC.lifeMax = 900;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -81,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     {
                         NPC.velocity = NPC.SafeDirectionTo(Target.Center);
                         NPC.velocity.X *= 0.4f;
-                        NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 8f;
+                        NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 9f;
                         HasReachedDestination = true;
                         NPC.netUpdate = true;
                     }
@@ -106,12 +108,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            drawColor = Color.Red * NPC.Opacity * 0.4f;
+            drawColor = Color.Red * NPC.Opacity * 0.8f;
             drawColor.A = 0;
             Texture2D energyTexture = TextureAssets.Npc[NPC.type].Value;
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 12; i++)
             {
-                Vector2 drawPosition = NPC.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.1f).ToRotationVector2() * 4f - Main.screenPosition;
+                Vector2 drawPosition = NPC.Center + (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4.1f).ToRotationVector2() * 4f - Main.screenPosition;
                 Main.spriteBatch.Draw(energyTexture, drawPosition, null, drawColor, NPC.rotation, energyTexture.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0f);
             }
             return false;

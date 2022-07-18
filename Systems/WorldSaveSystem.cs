@@ -7,6 +7,12 @@ namespace InfernumMode.Systems
 {
     public class WorldSaveSystem : ModSystem
     {
+        public static bool HasGeneratedProfanedShrine
+        {
+            get;
+            set;
+        } = false;
+
         public static bool InfernumMode
         {
             get;
@@ -24,6 +30,9 @@ namespace InfernumMode.Systems
             var downed = new List<string>();
             if (InfernumMode)
                 downed.Add("InfernumModeActive");
+            if (HasGeneratedProfanedShrine)
+                downed.Add("HasGeneratedProfanedShrine");
+
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
             tag["ProvidenceArenaY"] = ProvidenceArena.Y;
@@ -35,6 +44,7 @@ namespace InfernumMode.Systems
         {
             var downed = tag.GetList<string>("downed");
             InfernumMode = downed.Contains("InfernumModeActive");
+            HasGeneratedProfanedShrine = downed.Contains("HasGeneratedProfanedShrine");
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
         }
     }

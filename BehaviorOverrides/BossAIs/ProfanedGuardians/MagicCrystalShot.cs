@@ -44,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.timeLeft = 240;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.hostile = true;
             CooldownSlot = 1;
         }
 
@@ -61,8 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Projectile.timeLeft > 30f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Vector2 idealVelocity = Projectile.SafeDirectionTo(target.Center) * 21f;
-                Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, MathHelper.Lerp(0.07f, 0.15f, Utils.GetLerpValue(140f, 30f, Projectile.timeLeft, true)));
+                Vector2 idealVelocity = Projectile.SafeDirectionTo(target.Center) * 16f;
+                Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, MathHelper.Lerp(0.045f, 0.1f, Utils.GetLerpValue(140f, 30f, Projectile.timeLeft, true)));
             }
 
             if (Projectile.timeLeft < 15)
@@ -97,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            for (int i = 0; i < Projectile.oldPos.Length / 2; i++)
+            for (int i = 0; i < Projectile.oldPos.Length / 3; i++)
             {
                 if (targetHitbox.Intersects(Utils.CenteredRectangle(Projectile.oldPos[i] + Projectile.Size * 0.5f, Projectile.Size)))
                     return true;

@@ -209,6 +209,8 @@ namespace InfernumMode.Systems
                 }
                 frameX += 18;
             }
+
+            WorldSaveSystem.HasGeneratedProfanedShrine = true;
         }
     }
 }

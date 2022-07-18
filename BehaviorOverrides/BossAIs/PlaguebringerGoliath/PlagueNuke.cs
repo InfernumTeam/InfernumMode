@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                     NPC.active = false;
                 }
-                NPC.rotation = NPC.velocity.ToRotation() - MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() + MathHelper.PiOver2;
                 return;
             }
 
@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     NPC.checkDead();
                     NPC.active = false;
                 }
-                NPC.rotation = NPC.velocity.ToRotation() - MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() + MathHelper.PiOver2;
                 return;
             }
             else
@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.5f);
 
                 // Rotate towards the player.
-                float idealRotation = NPC.AngleTo(Target.Center + Target.velocity * 25f) - MathHelper.PiOver2;
+                float idealRotation = NPC.AngleTo(Target.Center + Target.velocity * 25f) + MathHelper.PiOver2;
                 NPC.rotation = NPC.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.025f);
             }
 

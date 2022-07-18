@@ -116,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             }
             else
             {
-                if (attackState > 1f && !npc.WithinRange(target.Center, 3600f))
+                if (attackState > 1f && attackState < 3f && !npc.WithinRange(target.Center, 3600f))
                     attackState = 1f;
             }
 
@@ -305,6 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.active = false;
                     npc.netUpdate = true;
                 }
+                
                 // Release lightning clouds when charging if in phase 3.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > fadeTime + chargeDelay && attackTimer % 7f == 6f && inPhase3)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VolatileLightning>(), 0, 0f);

@@ -18,6 +18,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
@@ -35,6 +36,7 @@ using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
+using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -317,6 +319,13 @@ namespace InfernumMode.GlobalInstances
                     int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 95, 0f);
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
+            }
+
+            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>() && !WorldSaveSystem.HasGeneratedProfanedShrine)
+            {
+                Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                WorldSaveSystem.HasGeneratedProfanedShrine = true;
+                new Thread(_ => WorldgenSystem.GenerateProfanedShrine(new(), new(new()))).Start();
             }
         }
 

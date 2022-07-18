@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < 0.75f;
-            bool phase3 = lifeRatio < 0.25f;
+            bool phase3 = lifeRatio < 0.3333f;
             Player target = Main.player[npc.target];
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -146,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     DoAttack_Charge(npc, target, (DragonfollyAttackType)(int)attackType, phase2, phase3, ref fadeToRed, ref attackTimer, ref frameType, ref flapRate);
                     break;
                 case DragonfollyAttackType.SummonSwarmers:
-                    DoAttack_SummonSwarmers(npc, target, phase2, ref attackTimer, ref frameType, ref flapRate);
+                    DoAttack_SummonSwarmers(npc, target, phase2, phase3, ref attackTimer, ref frameType, ref flapRate);
                     break;
                 case DragonfollyAttackType.NormalLightningAura:
                     DoAttack_CreateNormalLightningAura(npc, target, ref attackTimer, ref frameType, ref flapRate);
@@ -542,7 +542,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
         }
 
-        internal static void DoAttack_SummonSwarmers(NPC npc, Player target, bool phase2, ref float attackTimer, ref float frameType, ref float flapRate)
+        internal static void DoAttack_SummonSwarmers(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer, ref float frameType, ref float flapRate)
         {
             npc.rotation = npc.rotation.AngleLerp(0f, 0.125f);
             npc.rotation = npc.rotation.AngleTowards(0f, 0.125f);
@@ -605,7 +605,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         if (!target.WithinRange(potentialSpawnPosition, 160f))
                         {
                             int swarmer = NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI);
-                            Main.npc[swarmer].ai[3] = phase2.ToInt();
+                            Main.npc[swarmer].ai[3] = phase2.ToInt() + phase3.ToInt();
                             Main.npc[swarmer].velocity = Vector2.UnitY * -12f;
                         }
                     }
@@ -779,6 +779,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         internal static void DoAttack_LightningSupercharge(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
+            int cloudReleaseRate = 12;
+            int sparkReleaseRate = 27;
             float horizontalOffset = 750f;
             ref float chargeState = ref npc.Infernum().ExtraAI[0];
             ref float accumulatedSpeed = ref npc.Infernum().ExtraAI[1];
@@ -872,7 +874,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             else if (chargeState == 3f)
             {
                 npc.velocity *= 0.99f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudReleaseRate == cloudReleaseRate - 1f)
                 {
                     Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 900f) * Main.rand.NextBool(2).ToDirectionInt();
                     int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
@@ -881,6 +883,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         Main.projectile[cloud].timeLeft = 10 + (110 - (int)attackTimer);
                         Main.projectile[cloud].netUpdate = true;
                     }
+                }
+
+                // Send sparks towards the target periodically.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sparkReleaseRate == sparkReleaseRate - 1f)
+                {
+                    Vector2 spawnOffset = -target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 775f;
+                    Vector2 sparkVelocity = -spawnOffset.SafeNormalize(Vector2.UnitY) * 14f;
+                    Utilities.NewProjectileBetter(target.Center + spawnOffset, sparkVelocity, ModContent.ProjectileType<RedSpark>(), 240, 0f);
                 }
 
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();

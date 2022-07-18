@@ -150,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (TotalRemaininGuardians <= 2)
                         {
                             spearBurstCount += 4;
-                            spearBurstSpread += MathHelper.ToRadians(10f);
+                            spearBurstSpread += MathHelper.ToRadians(15f);
                         }
 
                         for (int i = 0; i < spearBurstCount; i++)
@@ -492,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (horizontalOffset == 0f)
                 horizontalOffset = Math.Sign((npc.Center - target.Center).X);
 
-            Vector2 destination = target.Center + new Vector2(horizontalOffset * 450f, -300f);
+            Vector2 destination = target.Center + new Vector2(horizontalOffset * 620f, -300f);
             Vector2 flyVelocity = (destination - npc.Center).SafeNormalize(Vector2.UnitY) * 17f;
 
             // Hover in place to the top left/right of the target. Firing is handled by the hand's AI.

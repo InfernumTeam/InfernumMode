@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 magicShootVelocity = (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide) * 20f;
+                            Vector2 magicShootVelocity = (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide) * 10f;
                             magicShootVelocity = magicShootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, AttackTime / 90f % 1f));
                             Utilities.NewProjectileBetter(NPC.Center + magicShootVelocity, magicShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
                         }

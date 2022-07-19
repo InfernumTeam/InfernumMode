@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 return;
             }
 
-            if (Time % 300f < 240f)
+            if (Time % 240f < 180f)
             {
                 if (!NPC.WithinRange(Target.Center, 300f))
                     NPC.velocity = (NPC.velocity * 26f + NPC.SafeDirectionTo(Target.Center) * 22f) / 27f;
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             else
             {
                 NPC.damage = HasReachedDestination ? NPC.defDamage : 0;
-                if (Main.netMode != NetmodeID.MultiplayerClient && Time % 300f == 240f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Time % 240f == 180f)
                 {
                     DestinationXOffset = Target.velocity.X * 18f;
                     NPC.netUpdate = true;
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     {
                         NPC.velocity = NPC.SafeDirectionTo(Target.Center);
                         NPC.velocity.X *= 0.4f;
-                        NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 9f;
+                        NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 10f;
                         HasReachedDestination = true;
                         NPC.netUpdate = true;
                     }

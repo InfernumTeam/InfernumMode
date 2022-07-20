@@ -12,6 +12,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
     public class LightningCloud : ModProjectile
     {
+        public float AngularOffset;
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -43,12 +45,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Main.spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
+            Vector2 offsetDirection = Vector2.UnitY.RotatedBy(AngularOffset);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offsetDirection * 4000f, Projectile.Center + offsetDirection * 4000f, Color.Red, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
+            Vector2 offsetDirection = Vector2.UnitY.RotatedBy(AngularOffset);
             SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -56,9 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             for (int i = 0; i < Main.rand.Next(2, 5 + 1); i++)
             {
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
-                spawnPosition.Y -= 2500f;
+                spawnPosition -= offsetDirection * 2500f;
 
-                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 12f, ModContent.ProjectileType<TwinsRedLightning>(), 260, 0f);
+                int lightning = Utilities.NewProjectileBetter(spawnPosition, offsetDirection * 12f, ModContent.ProjectileType<TwinsRedLightning>(), 260, 0f);
                 if (Main.projectile.IndexInRange(lightning))
                 {
                     Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();

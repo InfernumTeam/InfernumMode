@@ -161,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 else if (!npc.WithinRange(target.Center, 400f))
                 {
                     float distanceFromPlayer = npc.Distance(target.Center);
-                    float flySpeed = (duringFollyFight ? 9f : 7f) + distanceFromPlayer / 100f + attackTimer / 15f;
+                    float flySpeed = (duringFollyFight ? 13f : 7f) + distanceFromPlayer / 100f + attackTimer / 15f;
                     float flyInertia = 30f;
                     if (BossRushEvent.BossRushActive)
                         flySpeed += 12f;
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.velocity *= 1.05f;
 
                 attackTimer++;
-                if (attackTimer >= (duringFollyFight ? 90f : 105f))
+                if (attackTimer >= (duringFollyFight ? 70f : 105f))
                 {
                     attackTimer = 0f;
                     attackState = 2f;
@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
                 npc.ai[2] += 0.0166666675f;
                 float flyInertia = 25f;
-                float baseFlySpeed = duringFollyFight ? 12f : 9f;
+                float baseFlySpeed = duringFollyFight ? 18f : 9f;
                 if (BossRushEvent.BossRushActive)
                     baseFlySpeed += 10f;
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * (baseFlySpeed + npc.ai[2] + npc.Distance(target.Center) / 150f);
@@ -221,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // Line up for a charge for a short amount of time.
                 float flyInertia = 8f;
-                Vector2 idealFlyVelocity = npc.SafeDirectionTo(target.Center) * (duringFollyFight ? 20.5f : 14f);
+                Vector2 idealFlyVelocity = npc.SafeDirectionTo(target.Center) * (duringFollyFight ? 24f : 14f);
                 if (BossRushEvent.BossRushActive)
                     idealFlyVelocity *= 1.6f;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + idealFlyVelocity) / flyInertia;

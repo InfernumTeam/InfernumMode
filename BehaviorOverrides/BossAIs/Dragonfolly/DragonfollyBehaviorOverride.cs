@@ -373,12 +373,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         public static void DoAttack_Charge(NPC npc, Player target, DragonfollyAttackType chargeType, bool phase2, bool phase3, ref float fadeToRed, ref float attackTimer, ref float frameType, ref float flapRate)
         {
             npc.noTileCollide = true;
-            var horizontalOffset = chargeType switch
+
+            float horizontalOffset = 550f;
+            switch (chargeType)
             {
-                DragonfollyAttackType.FakeoutCharge => 670f,
-                DragonfollyAttackType.ThunderCharge => 860f,
-                _ => 550f,
-            };
+                case DragonfollyAttackType.FakeoutCharge:
+                    horizontalOffset = 650f;
+                    break;
+                case DragonfollyAttackType.ThunderCharge:
+                    horizontalOffset = 850f;
+                    break;
+            }
 
             // Delete plasma orbs during thunder charges.
             if (chargeType == DragonfollyAttackType.ThunderCharge)
@@ -521,9 +526,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
-                int cloudSpawnRate = (int)MathHelper.Lerp(10f, 4f, 1f - npc.life / (float)npc.lifeMax);
+                int cloudSpawnRate = (int)MathHelper.Lerp(8f, 4f, 1f - npc.life / (float)npc.lifeMax);
+                float cloudOffsetAngle = npc.velocity.X * 0.01f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                {
+                    int cloud = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(cloud))
+                        Main.projectile[cloud].ModProjectile<LightningCloud>().AngularOffset = cloudOffsetAngle;
+                }
 
                 if (hasDoneFakeoutFlag == 0f && chargeType == DragonfollyAttackType.FakeoutCharge)
                 {
@@ -575,7 +585,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = npc.rotation.AngleTowards(0f, 0.125f);
             npc.noTileCollide = true;
 
-            int maxSwarmersAtOnce = phase2 ? 2 : 1;
+            int maxSwarmersAtOnce = phase2 ? 3 : 2;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float originalSwamerCount = ref npc.Infernum().ExtraAI[1];
             if (originalSwamerCount == 0f)
@@ -620,9 +630,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamSoundDelay)
                 {
                     int remainingPossibleSummons = maxSwarmersAtOnce - (int)originalSwamerCount;
-                    int totalSwarmersToSummon = 1;
+                    int totalSwarmersToSummon = 2;
                     if (!phase2 && remainingPossibleSummons >= 2 && Main.rand.NextBool(2))
-                        totalSwarmersToSummon = 2;
+                        totalSwarmersToSummon = 3;
 
                     for (int i = 0; i < totalSwarmersToSummon; i++)
                     {
@@ -690,8 +700,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public static void DoAttack_FeatherSpreadRelease(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
-            int totalWaves = (int)MathHelper.Lerp(2f, 4.5f, 1f - npc.life / (float)npc.lifeMax);
-            int flyTime = 40;
+            int totalWaves = (int)MathHelper.Lerp(3f, 7.5f, 1f - npc.life / (float)npc.lifeMax);
+            int flyTime = 35;
             int waveDelay = 24;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float waveCounter = ref npc.Infernum().ExtraAI[0];

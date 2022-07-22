@@ -12,12 +12,11 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using ArtemisLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
-using ArtemisLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
@@ -55,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (CurrentTwinsPhase >= 2)
                 twinsShootRate -= 8;
-            if (CurrentTwinsPhase != 4 && CurrentTwinsPhase >= 2)
+            if (CurrentTwinsPhase is not 4 and >= 2)
             {
                 twinsShootRate -= 20;
                 chargeTime += 6;
@@ -207,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (CurrentTwinsPhase >= 2)
                 artemisShootRate -= 8;
-            if (CurrentTwinsPhase != 4 && CurrentTwinsPhase >= 2)
+            if (CurrentTwinsPhase is not 4 and >= 2)
             {
                 artemisShootRate -= 15;
                 artemisShootSpeed += 2.5f;

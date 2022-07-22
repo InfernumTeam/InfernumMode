@@ -20,7 +20,7 @@ using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {

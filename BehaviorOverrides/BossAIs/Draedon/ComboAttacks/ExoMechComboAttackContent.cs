@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
@@ -76,16 +76,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
 
-                switch ((int)initialMech.ai[0])
+                initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
-                    case (int)ExoMechComboAttackType.AresTwins_DualLaserCharges:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.AresTwins_CircleAttack;
-                        break;
-                    case (int)ExoMechComboAttackType.AresTwins_CircleAttack:
-                    default:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.AresTwins_DualLaserCharges;
-                        break;
-                }
+                    (int)ExoMechComboAttackType.AresTwins_DualLaserCharges => (int)ExoMechComboAttackType.AresTwins_CircleAttack,
+                    _ => (int)ExoMechComboAttackType.AresTwins_DualLaserCharges,
+                };
 
                 // Inform all mechs of the change.
                 newAttack = (ExoMechComboAttackType)initialMech.ai[0];
@@ -100,16 +95,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance);
                 attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts);
 
-                switch ((int)initialMech.ai[0])
+                initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
-                    case (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts;
-                        break;
-                    case (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts:
-                    default:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance;
-                        break;
-                }
+                    (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance => (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts,
+                    _ => (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance,
+                };
 
                 // Inform all mechs of the change.
                 newAttack = (ExoMechComboAttackType)initialMech.ai[0];
@@ -123,16 +113,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectricCage);
 
-                switch ((int)initialMech.ai[0])
+                initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
-                    case (int)ExoMechComboAttackType.ThanatosAres_LaserCircle:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.ThanatosAres_ElectricCage;
-                        break;
-                    case (int)ExoMechComboAttackType.ThanatosAres_ElectricCage:
-                    default:
-                        initialMech.ai[0] = (int)ExoMechComboAttackType.ThanatosAres_LaserCircle;
-                        break;
-                }
+                    (int)ExoMechComboAttackType.ThanatosAres_LaserCircle => (int)ExoMechComboAttackType.ThanatosAres_ElectricCage,
+                    _ => (int)ExoMechComboAttackType.ThanatosAres_LaserCircle,
+                };
 
                 // Inform all mechs of the change.
                 newAttack = (ExoMechComboAttackType)initialMech.ai[0];

@@ -8,6 +8,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using InfernumMode.Sounds;

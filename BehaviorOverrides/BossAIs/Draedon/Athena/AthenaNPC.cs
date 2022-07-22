@@ -8,6 +8,7 @@ using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using CalamityMod.UI;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.GlobalInstances;
 using InfernumMode.Particles;
 using InfernumMode.Sounds;

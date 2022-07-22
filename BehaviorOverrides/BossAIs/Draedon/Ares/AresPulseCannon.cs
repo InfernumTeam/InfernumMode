@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

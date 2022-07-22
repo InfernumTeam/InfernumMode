@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;

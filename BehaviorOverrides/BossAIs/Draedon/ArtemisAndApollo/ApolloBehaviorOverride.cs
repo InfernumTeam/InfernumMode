@@ -23,6 +23,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {

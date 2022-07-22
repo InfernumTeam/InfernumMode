@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

@@ -19,7 +19,7 @@ using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverr
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
@@ -53,14 +53,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return false;
 
             Player target = Main.player[initialMech.target];
-            switch ((ExoMechComboAttackType)initialMech.ai[0])
+            return (ExoMechComboAttackType)initialMech.ai[0] switch
             {
-                case ExoMechComboAttackType.AresTwins_DualLaserCharges:
-                    return DoBehavior_AresTwins_DualLaserCharges(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
-                case ExoMechComboAttackType.AresTwins_CircleAttack:
-                    return DoBehavior_AresTwins_CircleAttack(npc, target, ref attackTimer, ref frameType);
-            }
-            return false;
+                ExoMechComboAttackType.AresTwins_DualLaserCharges => DoBehavior_AresTwins_DualLaserCharges(npc, target, twinsHoverSide, ref attackTimer, ref frameType),
+                ExoMechComboAttackType.AresTwins_CircleAttack => DoBehavior_AresTwins_CircleAttack(npc, target, ref attackTimer, ref frameType),
+                _ => false,
+            };
         }
 
         public static bool DoBehavior_AresTwins_DualLaserCharges(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)

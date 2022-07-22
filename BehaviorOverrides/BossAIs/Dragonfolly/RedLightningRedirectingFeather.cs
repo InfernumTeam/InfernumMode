@@ -44,36 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Projectile.velocity.Length() < 27f)
+                Projectile.velocity *= 1.02f;
 
-            if (Time < RedirectDelay - AimTime)
-            {
-                if (Projectile.velocity.Length() > 0.04f)
-                    Projectile.velocity *= 0.945f;
-                Projectile.rotation = Projectile.velocity.ToRotation();
-            }
-            else if (Time < RedirectDelay)
-            {
-                Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), 0.15f);
-                Projectile.rotation = Projectile.rotation.AngleTowards(Projectile.AngleTo(Target.Center), 0.15f);
-            }
-            else if (Time == RedirectDelay)
-            {
-                Projectile.velocity = Projectile.rotation.ToRotationVector2() * (BossRushEvent.BossRushActive ? 25f : 34f);
-                SoundEngine.PlaySound(SoundID.Item109, Projectile.Center);
-                for (int i = 0; i < 16; i++)
-                {
-                    Vector2 spawnOffset = Vector2.UnitX * Projectile.width * -0.5f;
-                    spawnOffset -= Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f + Projectile.rotation) * new Vector2(8f, 16f);
-                    Dust redLightning = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 160, default, 1f);
-                    redLightning.position = Projectile.Center + spawnOffset;
-                    redLightning.color = Color.Red;
-                    redLightning.velocity = spawnOffset.SafeNormalize(Vector2.UnitY) * new Vector2(1f, 2f);
-                    redLightning.scale = 1.1f;
-                    redLightning.fadeIn = 1.6f;
-                    redLightning.noGravity = true;
-                }
-                Projectile.netUpdate = true;
-            }
             Time++;
         }
 

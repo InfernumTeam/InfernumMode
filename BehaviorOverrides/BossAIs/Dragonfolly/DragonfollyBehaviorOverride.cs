@@ -707,7 +707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             int totalWaves = (int)MathHelper.Lerp(3f, 7.5f, 1f - npc.life / (float)npc.lifeMax);
             int flyTime = 35;
-            int waveDelay = 24;
+            int waveDelay = 32;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float waveCounter = ref npc.Infernum().ExtraAI[0];
             ref float screamTimer = ref npc.localAI[3];
@@ -1046,6 +1046,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 // Prepare for the charge if sufficiently close to the hover destination or if enough natural time has elapsed.
                 if ((attackTimer >= 45f && npc.WithinRange(hoverDestination, 200f)) || attackTimer >= 270f)
                 {
+                    chargeDirection = npc.AngleTo(target.Center);
                     attackState = 1f;
                     attackTimer = 0f;
                     npc.netUpdate = true;

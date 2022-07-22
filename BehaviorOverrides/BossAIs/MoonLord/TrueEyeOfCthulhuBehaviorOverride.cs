@@ -39,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilRotation = ref npc.localAI[0];
             ref float pupilOutwardness = ref npc.localAI[1];
             ref float pupilScale = ref npc.localAI[2];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[5];
 
             // Define an initial group index.
             if (groupIndex == 0f)
@@ -46,6 +47,55 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 groupIndex = NPC.CountNPCS(npc.type);
                 npc.netUpdate = true;
             }
+
+            // Kill the player if they leave the arena.
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                int enrageBoltCount = 7;
+                float enrageBoltSpread = 0.71f;
+                float enrageBoltShootSpeed = 12f;
+                
+                // Get really, really, really angry if the target leaves the arena.
+                pupilRotation = npc.AngleTo(target.Center);
+                if (enrageTimer < 60f)
+                {
+                    pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.1f);
+
+                    // Have the pupil dilate to a really large size in shock.
+                    pupilScale = MathHelper.Lerp(0.4f, 1.1f, enrageTimer / 60f);
+                }
+                else if (Main.netMode != NetmodeID.MultiplayerClient && enrageTimer % 8f == 7f)
+                {
+                    Vector2 boltSpawnPosition = npc.Center + CalculatePupilOffset(npc);
+                    for (int i = 0; i < enrageBoltCount; i++)
+                    {
+                        Vector2 boltShootVelocity = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * enrageBoltShootSpeed;
+                        boltShootVelocity = boltShootVelocity.RotatedBy(MathHelper.Lerp(-enrageBoltSpread, enrageBoltSpread, i / (float)(enrageBoltCount - 1f)));
+                        Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 360, 0f);
+                    }
+                }
+
+                int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
+                Vector2 hoverOffset = -Vector2.UnitY * 415f;
+
+                if (eyeCount > 1)
+                {
+                    float hoverOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, (groupIndex - 1f) / (float)(eyeCount - 1f));
+                    hoverOffset = hoverOffset.RotatedBy(hoverOffsetAngle);
+                }
+
+                npc.rotation = npc.velocity.X * 0.03f;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                npc.Center = npc.Center.MoveTowards(target.Center + hoverOffset, 2f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
+
+                enrageTimer++;
+                return false;
+            }
+            enrageTimer = 0f;
 
             switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
@@ -65,9 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage:
                     DoBehavior_PhantasmalBarrage(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
-                    break;
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.UnstableNebulae:
-                    DoBehavior_UnstableNebulae(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath:
                     DoBehavior_PhantasmalWrath(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
@@ -613,60 +660,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
                     sphere.Kill();
             }
-        }
-
-        public static void DoBehavior_UnstableNebulae(NPC npc, Player target, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
-        {
-            int enrageBoltCount = 7;
-            float enrageBoltSpread = 0.71f;
-            float enrageBoltShootSpeed = 12f;
-            ref float enrageTimer = ref npc.Infernum().ExtraAI[0];
-
-            if (!MoonLordCoreBehaviorOverride.IsEnraged)
-            {
-                DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
-                enrageTimer = 0f;
-                return;
-            }
-
-            // Get really, really, really angry if the target leaves the arena.
-            pupilRotation = npc.AngleTo(target.Center);
-            if (enrageTimer < 60f)
-            {
-                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.1f);
-
-                // Have the pupil dilate to a really large size in shock.
-                pupilScale = MathHelper.Lerp(0.4f, 1.1f, enrageTimer / 60f);
-            }
-            else if (Main.netMode != NetmodeID.MultiplayerClient && enrageTimer % 15f == 14f)
-            {
-                Vector2 boltSpawnPosition = npc.Center + CalculatePupilOffset(npc);
-                for (int i = 0; i < enrageBoltCount; i++)
-                {
-                    Vector2 boltShootVelocity = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * enrageBoltShootSpeed;
-                    boltShootVelocity = boltShootVelocity.RotatedBy(MathHelper.Lerp(-enrageBoltSpread, enrageBoltSpread, i / (float)(enrageBoltCount - 1f)));
-                    Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 215, 0f);
-                }
-            }
-
-            int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
-            Vector2 hoverOffset = -Vector2.UnitY * 415f;
-
-            if (eyeCount > 1)
-            {
-                float hoverOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, (groupIndex - 1f) / (float)(eyeCount - 1f));
-                hoverOffset = hoverOffset.RotatedBy(hoverOffsetAngle);
-            }
-
-            npc.rotation = npc.velocity.X * 0.03f;
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
-
-            npc.Center = npc.Center.MoveTowards(target.Center + hoverOffset, 2f);
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
-
-            enrageTimer++;
         }
 
         public static void DoBehavior_PhantasmalWrath(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)

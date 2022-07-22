@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
             // If none was found or it was too far away, despawn.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || Main.dayTime || !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 7800f))
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || Main.dayTime || !Main.player[npc.target].active)
             {
                 DoBehavior_Despawn(npc);
                 return false;
@@ -502,6 +502,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             ref float lemniscateCenterY = ref npc.Infernum().ExtraAI[1];
             ref float hasCharged = ref npc.Infernum().ExtraAI[2];
 
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Approach the target before performing the attack.
+            if (!npc.WithinRange(target.Center, 650f) && attackTimer < vortexCreationDelay)
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
+                attackTimer = vortexCreationDelay - 1f;
+                return;
+            }
+
             // The parametic form of a lemniscate of bernoulli is as follows:
             // x = r * cos(t) / (1 + sin^2(t))
             // y = r * sin(t) * cos(t) / (1 + sin^2(t))
@@ -542,14 +553,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-            // Disable contact damage.
-            npc.damage = 0;
-
             // Initialize the center of the lemniscate.
             if (lemniscateCenterX == 0f || lemniscateCenterY == 0f)
             {
-                lemniscateCenterX = npc.Center.X - flySpeed * 24f;
-                lemniscateCenterY = npc.Center.Y;
+                lemniscateCenterX = npc.Center.X + flySpeed * 12f;
+                lemniscateCenterY = npc.Center.Y + 420f;
                 npc.netUpdate = true;
             }
 
@@ -916,7 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     if (tries >= 500)
                         break;
                     
-                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(1100f, 1100f);
+                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
                     blackHoleCenterX = blackHoleCenter.X;
                     blackHoleCenterY = blackHoleCenter.Y;
                 }

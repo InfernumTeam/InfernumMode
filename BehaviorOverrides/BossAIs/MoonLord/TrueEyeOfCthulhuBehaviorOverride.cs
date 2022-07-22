@@ -117,6 +117,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Look at the target.
             pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
 
+            if (groupIndex >= 2f)
+            {
+                DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                return;
+            }
+
             // Hover into position.
             if (attackTimer < fireDelay)
             {

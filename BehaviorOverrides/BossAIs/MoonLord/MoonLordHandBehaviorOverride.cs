@@ -64,6 +64,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
                 default:
                     DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
+                    if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSpin)
+                    {
+                        idealFrame = 0;
+                        npc.dontTakeDamage = false;
+                    }
                     break;
             }
 

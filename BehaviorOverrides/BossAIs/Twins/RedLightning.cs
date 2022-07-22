@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Projectile.tileCollide = false;
             Projectile.extraUpdates = 20;
             Projectile.timeLeft = 60 * Projectile.extraUpdates;
+            Projectile.Calamity().canBreakPlayerDefense = true;
 
             // Readjust the velocity magnitude the moment this projectile is created
             // to make velocity setting outside the scope of this projectile less irritating
@@ -141,7 +143,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
 
-            LightningDrawer.Draw(Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), Projectile.Size * 0.5f - Main.screenPosition, 36);
+            LightningDrawer.Draw(Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), Projectile.Size * 0.5f - Main.screenPosition, 32);
             return false;
         }
         #endregion

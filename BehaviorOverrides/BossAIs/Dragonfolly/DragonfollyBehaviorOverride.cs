@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-        #region Enumerations
+        #region Attacks and Frame Enumeration
         public enum DragonfollyAttackType
         {
             SpawnEffects,
@@ -46,6 +46,73 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             FlapWings,
             Screm
         }
+
+        public static DragonfollyAttackType[] Phase1AttackCycle => new DragonfollyAttackType[]
+        {
+            DragonfollyAttackType.FeatherSpreadRelease,
+            DragonfollyAttackType.OrdinaryCharge,
+
+            DragonfollyAttackType.SummonSwarmers,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.NormalLightningAura,
+            DragonfollyAttackType.OrdinaryCharge,
+
+            DragonfollyAttackType.FeatherSpreadRelease,
+            DragonfollyAttackType.ThunderCharge,
+        };
+
+        public static DragonfollyAttackType[] Phase2AttackCycle => new DragonfollyAttackType[]
+        {
+            DragonfollyAttackType.PlasmaBursts,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.SummonSwarmers,
+            DragonfollyAttackType.OrdinaryCharge,
+
+            DragonfollyAttackType.FakeoutCharge,
+            DragonfollyAttackType.ThunderCharge,
+
+            DragonfollyAttackType.ExplodingEnergyOrbs,
+            DragonfollyAttackType.ThunderCharge,
+
+            DragonfollyAttackType.NormalLightningAura,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.FeatherSpreadRelease,
+            DragonfollyAttackType.ThunderCharge,
+
+            DragonfollyAttackType.RuffleFeathers,
+            DragonfollyAttackType.OrdinaryCharge,
+        };
+
+        public static DragonfollyAttackType[] Phase3AttackCycle => new DragonfollyAttackType[]
+        {
+            DragonfollyAttackType.PlasmaBursts,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.LightningSupercharge,
+            DragonfollyAttackType.OrdinaryCharge,
+
+            DragonfollyAttackType.PlasmaBursts,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.RuffleFeathers,
+            DragonfollyAttackType.ThunderCharge,
+
+            DragonfollyAttackType.ExplodingEnergyOrbs,
+            DragonfollyAttackType.OrdinaryCharge,
+
+            DragonfollyAttackType.ElectricOverload,
+            DragonfollyAttackType.FakeoutCharge,
+
+            DragonfollyAttackType.FeatherSpreadRelease,
+            DragonfollyAttackType.ThunderCharge,
+
+            DragonfollyAttackType.RuffleFeathers,
+            DragonfollyAttackType.OrdinaryCharge,
+        };
+
         #endregion
 
         #region AI
@@ -85,6 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 phaseTransitionCountdown = TransitionTime;
                 phase2TransitionCountdown = 600f;
                 previousPhase = 1f;
+                npc.ai[3] = 0f;
 
                 // Piss off any remaining swarmers.
                 int swarmerType = ModContent.NPCType<Bumblefuck2>();
@@ -107,6 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 chargeCounter = 0f;
                 phaseTransitionCountdown = TransitionTime;
                 previousPhase = 2f;
+                npc.ai[3] = 0f;
 
                 // Piss off any remaining swarmers.
                 int swarmerType = ModContent.NPCType<Bumblefuck2>();
@@ -219,85 +288,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         public static void SelectNextAttack(NPC npc)
         {
             npc.alpha = 0;
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            ref float lastChargeType = ref npc.ai[3];
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[7];
-            DragonfollyAttackType currentAttackState = (DragonfollyAttackType)(int)npc.ai[0];
-            DragonfollyAttackType newAttackState = DragonfollyAttackType.OrdinaryCharge;
-            switch (currentAttackState)
-            {
-                case DragonfollyAttackType.SpawnEffects:
-                    newAttackState = DragonfollyAttackType.OrdinaryCharge;
-                    break;
-                case DragonfollyAttackType.OrdinaryCharge:
-                case DragonfollyAttackType.FakeoutCharge:
-                case DragonfollyAttackType.ThunderCharge:
-                case DragonfollyAttackType.LightningSupercharge:
-                    newAttackState = Main.rand.NextBool(2) ? DragonfollyAttackType.NormalLightningAura : DragonfollyAttackType.SummonSwarmers;
-                    if (Main.rand.NextBool() && lifeRatio < Phase2LifeRatio)
-                        newAttackState = DragonfollyAttackType.RuffleFeathers;
-                    break;
-                case DragonfollyAttackType.SummonSwarmers:
-                    newAttackState = Main.rand.NextBool(2) ? DragonfollyAttackType.FeatherSpreadRelease : DragonfollyAttackType.NormalLightningAura;
-                    break;
-                case DragonfollyAttackType.NormalLightningAura:
-                    newAttackState = Main.rand.NextBool(2) ? DragonfollyAttackType.OrdinaryCharge : DragonfollyAttackType.SummonSwarmers;
-                    if (lifeRatio < Phase2LifeRatio)
-                        newAttackState = Main.rand.NextBool() ? DragonfollyAttackType.ExplodingEnergyOrbs : DragonfollyAttackType.PlasmaBursts;
-                    break;
-                case DragonfollyAttackType.FeatherSpreadRelease:
-                    newAttackState = DragonfollyAttackType.NormalLightningAura;
-                    break;
-                case DragonfollyAttackType.PlasmaBursts:
-                    newAttackState = DragonfollyAttackType.OrdinaryCharge;
-                    break;
-                case DragonfollyAttackType.ElectricOverload:
-                    newAttackState = DragonfollyAttackType.FeatherSpreadRelease;
-                    break;
-                case DragonfollyAttackType.RuffleFeathers:
-                    newAttackState = DragonfollyAttackType.ThunderCharge;
-                    break;
-            }
 
-            if (lifeRatio < Phase3LifeRatio && Main.rand.NextBool(2))
-                newAttackState = DragonfollyAttackType.OrdinaryCharge;
-
-            if (newAttackState == DragonfollyAttackType.OrdinaryCharge)
-            {
-                Dictionary<DragonfollyAttackType, float> chargeTypes = new()
-                {
-                    [DragonfollyAttackType.OrdinaryCharge] = 1f,
-                    [DragonfollyAttackType.FakeoutCharge] = 1f,
-                    [DragonfollyAttackType.ThunderCharge] = 1f
-                };
-                if (lifeRatio < Phase3LifeRatio)
-                    chargeTypes.Add(DragonfollyAttackType.LightningSupercharge, 2.3f);
-
-                int chargeOverrideRate = (int)Math.Round(MathHelper.Lerp(6, 3, Utils.GetLerpValue(Phase3LifeRatio, 0.1f, lifeRatio)));
-                chargeCounter++;
-                if (npc.life < npc.lifeMax * Phase3LifeRatio && chargeCounter > chargeOverrideRate)
-                {
-                    newAttackState = DragonfollyAttackType.ElectricOverload;
-                    chargeCounter = 0f;
-                }
-                else
-                {
-                    // Initialize the charge attack selector RNG.
-                    WeightedRandom<DragonfollyAttackType> attackSelector = new(Main.rand);
-                    foreach (var key in chargeTypes.Keys)
-                        attackSelector.Add(key, chargeTypes[key]);
-
-                    do
-                        newAttackState = attackSelector.Get();
-                    while (newAttackState == (DragonfollyAttackType)(int)lastChargeType);
-                }
-
-                lastChargeType = (int)newAttackState;
-            }
+            int attackCycleIndex = (int)npc.ai[3];
+            DragonfollyAttackType newAttackState = Phase1AttackCycle[attackCycleIndex % Phase1AttackCycle.Length];
+            if (npc.life < npc.lifeMax * Phase2LifeRatio)
+                newAttackState = Phase2AttackCycle[attackCycleIndex % Phase2AttackCycle.Length];
+            if (npc.life < npc.lifeMax * Phase3LifeRatio)
+                newAttackState = Phase3AttackCycle[attackCycleIndex % Phase3AttackCycle.Length];
 
             npc.TargetClosest();
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
+            npc.ai[3]++;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.noTileCollide = true;
@@ -636,7 +638,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     int remainingPossibleSummons = maxSwarmersAtOnce - (int)originalSwamerCount;
                     int totalSwarmersToSummon = 2;
-                    if (!phase2 && remainingPossibleSummons >= 2 && Main.rand.NextBool(2))
+                    if (phase2 && remainingPossibleSummons >= 2 && Main.rand.NextBool(2))
                         totalSwarmersToSummon = 3;
 
                     for (int i = 0; i < totalSwarmersToSummon; i++)
@@ -740,7 +742,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     attackTimer++;
             }
 
-            if (attackTimer == flyTime + waveDelay)
+            if (attackTimer == flyTime + waveDelay && !npc.WithinRange(target.Center, 250f))
             {
                 // Release a burst of feathers into the air.
                 if (Main.netMode != NetmodeID.MultiplayerClient)

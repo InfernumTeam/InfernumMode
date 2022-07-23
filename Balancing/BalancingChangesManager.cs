@@ -118,9 +118,11 @@ namespace InfernumMode.Balancing
 
                 // Astrum Deus.
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new PierceResistBalancingRule(0.35f))),
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.65f, ProjectileID.SolarWhipSword, ProjectileID.SolarWhipSwordExplosion))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ClassResistBalancingRule(0.6f, ClassType.Summon))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<MalachiteProj>(), ProjectileType<MalachiteBolt>()))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<MountedScannerLaser>()))),
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.325f, ProjectileType<FallenPaladinsHammerProj>()))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.01f, ProjectileType<TenebreusTidesWaterProjectile>(), ProjectileType<TenebreusTidesWaterSpear>()))),
 
                 // The Devourer of Gods.

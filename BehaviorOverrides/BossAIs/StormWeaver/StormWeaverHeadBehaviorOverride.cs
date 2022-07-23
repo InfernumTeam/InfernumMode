@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -19,6 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             SparkBurst,
             LightningCharge,
             StaticChargeup,
+            IceStorm,
             StormWeave,
         }
         #endregion
@@ -73,8 +75,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 case StormWeaverAttackType.StaticChargeup:
                     DoAttack_StaticChargeup(npc, target, ref attackTimer, ref fadeToBlue);
                     break;
+                case StormWeaverAttackType.IceStorm:
+                    DoAttack_IceStorm(npc, target, ref attackTimer);
+                    break;
                 case StormWeaverAttackType.StormWeave:
-                    DoAttack_StormWeave(npc, target, ref attackTimer, ref fadeToBlue);
+                    DoAttack_StormWeave(npc, target, ref attackTimer);
                     break;
             }
 
@@ -83,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Determine rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-            // Determine blue fade.
+            // Determine the blue fade.
             npc.Calamity().newAI[0] = MathHelper.Lerp(280f, 400f, MathHelper.Clamp(fadeToBlue, 0f, 1f));
 
             attackTimer++;
@@ -341,7 +346,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_StormWeave(NPC npc, Player target, ref float attackTimer, ref float fadeToBlue)
+        public static void DoAttack_IceStorm(NPC npc, Player target, ref float attackTimer)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            int shootCount = 3;
+            int shotSpacing = (int)MathHelper.Lerp(175f, 145f, 1f - lifeRatio);
+            int delayBeforeFiring = 60;
+            int shootRate = delayBeforeFiring + 54;
+
+            // Lazily move towards the target.
+            if (!npc.WithinRange(target.Center, 200f))
+            {
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.036f, true) * idealVelocity.Length();
+            }
+
+            if (attackTimer % shootRate == 1f)
+            {
+                // Play a sound on the player getting frost waves rained on them, as a telegraph.
+                SoundEngine.PlaySound(SoundID.Item120, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = Main.rand.NextFloatDirection() * MathHelper.PiOver4;
+                    for (int dx = -1750; dx < 1750; dx += shotSpacing)
+                    {
+                        Vector2 spawnOffset = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * 1600f + shootOffsetAngle.ToRotationVector2() * dx;
+                        Vector2 maxShootVelocity = Vector2.UnitY.RotatedBy(shootOffsetAngle) * 9f;
+                        int telegraph = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[1] = maxShootVelocity.Length();
+                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.1f, ProjectileID.FrostWave, 0, 0f);
+                        if (Main.projectile.IndexInRange(wave))
+                        {
+                            Main.projectile[wave].ai[0] = -delayBeforeFiring;
+                            Main.projectile[wave].ai[1] = maxShootVelocity.Length();
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer >= shootRate * shootCount)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_StormWeave(NPC npc, Player target, ref float attackTimer)
         {
             int hoverRedirectTime = 240;
             int chargeTime = 150;
@@ -404,6 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             newStatePicker.Add((int)StormWeaverAttackType.NormalMove, 1.5);
             newStatePicker.Add((int)StormWeaverAttackType.LightningCharge);
             newStatePicker.Add((int)StormWeaverAttackType.StaticChargeup);
+            newStatePicker.Add((int)StormWeaverAttackType.IceStorm);
 
             if (lifeRatio < 0.4f)
                 newStatePicker.Add((int)StormWeaverAttackType.StormWeave, 5D);

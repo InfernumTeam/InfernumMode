@@ -125,7 +125,7 @@ namespace InfernumMode.BossRush
                     int thePefectOne = NPC.NewNPC(new EntitySource_WorldEvent(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[thePefectOne].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(thePefectOne);
-                }, specialSpawnCountdown: 300, permittedNPCs: new int[] { ModContent.NPCType<CrabShroom>(), ModContent.NPCType<FungalClump>() }),
+                }, specialSpawnCountdown: 300, permittedNPCs: new int[] { ModContent.NPCType<CrabShroom>() }),
 
                 new Boss(NPCID.Plantera, permittedNPCs: new int[] { NPCID.PlanterasTentacle, NPCID.PlanterasHook, NPCID.Spore }),
 

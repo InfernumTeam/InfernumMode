@@ -62,26 +62,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
 
             Player target = Main.player[npc.target];
-
-            float lifeRatio = npc.life / (float)npc.lifeMax;
+            
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[1];
-            ref float hasSummonedClumpFlag = ref npc.ai[3];
             ref float jumpCount = ref npc.Infernum().ExtraAI[6];
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < Phase2LifeRatio)
-            {
-                Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
-                hasSummonedClumpFlag = 1f;
-            }
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 1f && lifeRatio < Phase3LifeRatio)
-            {
-                Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
-                hasSummonedClumpFlag = 2f;
-            }
 
             bool enraged = !target.ZoneGlowshroom && npc.Top.Y / 16 < Main.worldSurface && !BossRushEvent.BossRushActive;
             npc.Calamity().CurrentlyEnraged = enraged;

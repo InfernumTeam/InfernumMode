@@ -1433,7 +1433,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             npc.alpha = 0;
             npc.TargetClosest();
             bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
-            bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             CultistAIState oldAttackState = (CultistAIState)(int)npc.ai[0];
             CultistAIState newAttackState = CultistAIState.FireballBarrage;
 

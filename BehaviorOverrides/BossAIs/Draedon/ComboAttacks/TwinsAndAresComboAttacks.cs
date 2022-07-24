@@ -86,8 +86,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (EnrageTimer > 0f)
             {
                 apolloChargeSpeed += 9f;
-                artemisLaserReleaseRate /= 2;
-                artemisLaserBurstCount += 6;
+                artemisLaserReleaseRate /= 3;
+                artemisLaserBurstCount += 7;
                 maxLaserTurnSpeed *= 1.5f;
             }
 
@@ -488,7 +488,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (EnrageTimer > 0f)
             {
                 normalShotShootSpeed += 6f;
-                totalNormalShotCount += 3;
+                totalNormalShotCount += 10;
             }
 
             int normalShotShootRate = normalTwinsAttackTime / totalNormalShotCount;

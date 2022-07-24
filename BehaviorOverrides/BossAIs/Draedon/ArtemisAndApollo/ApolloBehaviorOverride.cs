@@ -500,6 +500,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 shootSpread *= 0.64f;
                 predictivenessFactor *= 1.33f;
             }
+            if (ExoMechComboAttackContent.EnrageTimer > 0f)
+                shootRate -= 15;
+
             if (!target.Calamity().HasCustomDash)
                 predictivenessFactor *= 1.4f;
 
@@ -628,6 +631,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
                 artemisLaserReleaseRate -= 4;
+
+            if (ExoMechComboAttackContent.EnrageTimer > 0f)
+                artemisLaserReleaseRate = 6;
 
             // Apollo performs multiple flamethrower dashes in succession.
             if (npc.type == ModContent.NPCType<Apollo>())
@@ -821,6 +827,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 plasmaShootSpeed += 2f;
                 hoverOffsetY -= 16f;
             }
+            if (ExoMechComboAttackContent.EnrageTimer > 0f)
+            {
+                sparkShootCount = 11;
+                plasmaShootSpeed = 15f;
+                plasmaShootRate = 16;
+            }
 
             int shootCycleLength = telegraphTime + ArtemisBurstLaserbeam.LaserLifetime;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -962,6 +974,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
                 totalCharges--;
+            if (ExoMechComboAttackContent.EnrageTimer > 0f)
+            {
+                chargeSpeed += 27f;
+                chargeTime -= 13;
+                sparkCount += 15;
+            }
 
             ref float attackDelay = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -1239,7 +1257,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (ExoMechManagement.CurrentTwinsPhase >= 5)
                             laserShootRate -= 2;
                         if (ExoMechManagement.CurrentTwinsPhase >= 6)
-                            laserShootRate -= 2;
+                            laserShootRate -= 4;
+                        if (ExoMechComboAttackContent.EnrageTimer > 0f)
+                            laserShootRate = 5;
 
                         // Do movement.
                         ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 25f, 84f);
@@ -1285,6 +1305,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             plasmaShootRate += 16;
                         if (ExoMechManagement.CurrentTwinsPhase >= 5)
                             plasmaShootRate -= 8;
+                        if (ExoMechComboAttackContent.EnrageTimer > 0f)
+                            plasmaShootRate = 16;
 
                         // Do movement.
                         ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 25f, 84f);

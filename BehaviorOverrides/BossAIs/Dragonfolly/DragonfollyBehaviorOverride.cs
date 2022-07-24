@@ -52,13 +52,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             DragonfollyAttackType.FeatherSpreadRelease,
             DragonfollyAttackType.OrdinaryCharge,
 
-            DragonfollyAttackType.SummonSwarmers,
+            DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.FakeoutCharge,
 
-            DragonfollyAttackType.NormalLightningAura,
+            DragonfollyAttackType.FeatherSpreadRelease,
             DragonfollyAttackType.OrdinaryCharge,
 
-            DragonfollyAttackType.FeatherSpreadRelease,
+            DragonfollyAttackType.NormalLightningAura,
             DragonfollyAttackType.ThunderCharge,
         };
 
@@ -67,11 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.FakeoutCharge,
 
-            DragonfollyAttackType.SummonSwarmers,
+            DragonfollyAttackType.FeatherSpreadRelease,
             DragonfollyAttackType.OrdinaryCharge,
-
-            DragonfollyAttackType.FakeoutCharge,
-            DragonfollyAttackType.ThunderCharge,
 
             DragonfollyAttackType.ExplodingEnergyOrbs,
             DragonfollyAttackType.ThunderCharge,
@@ -224,9 +221,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 case DragonfollyAttackType.ThunderCharge:
                     DoAttack_Charge(npc, target, (DragonfollyAttackType)(int)attackType, phase2, phase3, ref fadeToRed, ref attackTimer, ref frameType, ref flapRate);
                     break;
+
+                // Currently unused to attack overlap problems.
                 case DragonfollyAttackType.SummonSwarmers:
                     DoAttack_SummonSwarmers(npc, target, phase2, phase3, ref attackTimer, ref frameType, ref flapRate);
                     break;
+
                 case DragonfollyAttackType.NormalLightningAura:
                     DoAttack_CreateNormalLightningAura(npc, target, ref attackTimer, ref frameType, ref flapRate);
                     break;
@@ -387,7 +387,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     horizontalOffset = 650f;
                     break;
                 case DragonfollyAttackType.ThunderCharge:
-                    horizontalOffset = 850f;
+                    horizontalOffset = 1050f;
                     break;
             }
 
@@ -742,7 +742,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     attackTimer++;
             }
 
-            if (attackTimer == flyTime + waveDelay && !npc.WithinRange(target.Center, 250f))
+            if (attackTimer == flyTime + waveDelay)
             {
                 // Release a burst of feathers into the air.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -982,11 +982,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
             }
 
-            // Scream and create a bunch of feathers.
+            // Create a bunch of feathers.
             else if (attackState == 1f)
             {
-                frameType = (int)DragonfollyFrameDrawingType.Screm;
-
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.04f);
                 if (npc.velocity.Length() < 0.8f)
                     npc.velocity = Vector2.Zero;
@@ -1002,11 +1000,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     }
                 }
 
-                if (attackTimer > ScreamTime + 8f)
-                {
-                    frameType = (int)DragonfollyFrameDrawingType.FlapWings;
-                    flapRate = 5f;
-                }
+                frameType = (int)DragonfollyFrameDrawingType.FlapWings;
+                flapRate = 3f;
 
                 if (attackTimer >= ScreamTime + 25f)
                     SelectNextAttack(npc);

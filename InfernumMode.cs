@@ -152,6 +152,12 @@ namespace InfernumMode
                 Ref<Effect> artemisLaserShader = new(Assets.Request<Effect>("Effects/ArtemisLaserShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:ArtemisLaser"] = new MiscShaderData(artemisLaserShader, "TrailPass");
 
+                Ref<Effect> realityTearShader = new(Assets.Request<Effect>("Effects/RealityTearShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:RealityTear"] = new MiscShaderData(realityTearShader, "TrailPass");
+
+                realityTearShader = new(Assets.Request<Effect>("Effects/RealityTear2Shader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:RealityTear2"] = new MiscShaderData(realityTearShader, "TrailPass");
+
                 Ref<Effect> hologramShader = new(Assets.Request<Effect>("Effects/HologramShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 

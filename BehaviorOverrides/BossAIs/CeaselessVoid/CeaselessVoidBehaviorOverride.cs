@@ -1,13 +1,18 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
-using CalamityMod.Sounds;
+using CalamityMod.NPCs.CeaselessVoid;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -19,18 +24,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         public override int NPCOverrideType => ModContent.NPCType<CeaselessVoidBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults;
-
-        public const int BulletHellTime = 900;
-
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
+        
         #region Enumerations
         public enum CeaselessVoidAttackType
         {
-            ReleaseRealityTearPortals,
-            DarkMagicCharge,
-            DarkEnergyBolts,
-            RealityCracks,
-            DarkEnergyBursts,
+            DarkEnergySwirl,
+            HorizontalRealityRendCharge,
+            ConvergingEnergyBarrages,
+            SlowEnergySpirals,
+            BlackHoleSuck
         }
         #endregion
 
@@ -65,6 +68,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public const float Phase2LifeRatio = 0.65f;
 
+        public const float Phase3LifeRatio = 0.3f;
+
+        public const float DarkEnergyOffsetRadius = 1120f;
+
         public override bool PreAI(NPC npc)
         {
             // Reset DR.
@@ -74,6 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            // Set the global whoAmI variable.
             CalamityGlobalNPC.voidBoss = npc.whoAmI;
 
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
@@ -91,67 +99,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.timeLeft = 3600;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
-            ref float bulletHellTimer = ref npc.ai[2];
-            ref float phase = ref npc.ai[3];
+            ref float currentPhase = ref npc.ai[2];
+
+            // Do phase transitions.
+            if (currentPhase == 0f && phase2)
+            {
+                currentPhase = 1f;
+                SelectNewAttack(npc);
+                attackType = (int)CeaselessVoidAttackType.DarkEnergySwirl;
+            }
+            if (currentPhase == 1f && phase3)
+            {
+                currentPhase = 2f;
+                SelectNewAttack(npc);
+                attackType = (int)CeaselessVoidAttackType.BlackHoleSuck;
+            }
+
+            // This debuff is not fun.
+            if (target.HasBuff(BuffID.VortexDebuff))
+                target.ClearBuff(BuffID.VortexDebuff);
 
             // Reset things.
             npc.damage = 0;
             npc.dontTakeDamage = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
-
-            // Do bullet hells.
-            if (bulletHellTimer > 0f && bulletHellTimer < BulletHellTime)
-            {
-                DoBehavior_DarkEnergyBulletHell(npc, target, lifeRatio, ref bulletHellTimer);
-
-                // Reset individual attack timers.
-                attackTimer = 0f;
-
-                // And use the tear portals attack.
-                attackType = (int)CeaselessVoidAttackType.ReleaseRealityTearPortals;
-
-                bulletHellTimer++;
-                return false;
-            }
-
-            // Handle bullet hell triggers.
-            if (phase == 0f && lifeRatio < 0.75f)
-            {
-                phase = 1f;
-                bulletHellTimer = 1f;
-                npc.netUpdate = true;
-            }
-            if (phase == 1f && lifeRatio < 0.4f)
-            {
-                phase = 2f;
-                bulletHellTimer = 1f;
-                npc.netUpdate = true;
-            }
-            if (phase == 2f && lifeRatio < 0.1f)
-            {
-                phase = 3f;
-                bulletHellTimer = 1f;
-                npc.netUpdate = true;
-            }
-
+            
             switch ((CeaselessVoidAttackType)(int)attackType)
             {
-                case CeaselessVoidAttackType.ReleaseRealityTearPortals:
-                    DoBehavior_ReleaseTearPortals(npc, target, lifeRatio, (int)phase, ref attackTimer);
+                case CeaselessVoidAttackType.DarkEnergySwirl:
+                    DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.DarkMagicCharge:
-                    DoBehavior_DarkMagicCharge(npc, target, lifeRatio, (int)phase, ref attackTimer);
+                case CeaselessVoidAttackType.HorizontalRealityRendCharge:
+                    DoBehavior_HorizontalRealityRendCharge(npc, phase2, phase3, target, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.DarkEnergyBolts:
-                    DoBehavior_DarkEnergyBolts(npc, target, (int)phase, ref attackTimer);
+                case CeaselessVoidAttackType.ConvergingEnergyBarrages:
+                    DoBehavior_ConvergingEnergyBarrages(npc, phase2, phase3, target, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.RealityCracks:
-                    DoBehavior_RealityCracks(npc, target, (int)phase, ref attackTimer);
+                case CeaselessVoidAttackType.SlowEnergySpirals:
+                    DoBehavior_SlowEnergySpirals(npc, phase2, phase3, target, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.DarkEnergyBursts:
-                    DoBehavior_DarkEnergyBursts(npc, target, (int)phase, ref attackTimer);
+                case CeaselessVoidAttackType.BlackHoleSuck:
+                    DoBehavior_BlackHoleSuck(npc, target, ref attackTimer);
                     break;
             }
 
@@ -159,305 +151,370 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
 
-        public static void DoBehavior_ReleaseTearPortals(NPC npc, Player target, float lifeRatio, int phase, ref float attackTimer)
+        public static void DoBehavior_DarkEnergySwirl(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
         {
-            int riftCreationRate = 32 - phase * 4;
-            float hoverSpeed = 21f;
+            int totalRings = 4;
+            int energyCountPerRing = 7;
+            int hoverRedirectDelay = 300;
+            int darkEnergyID = ModContent.NPCType<DarkEnergy>();
 
-            if (lifeRatio < Phase2LifeRatio)
-                hoverSpeed += 4.5f;
-
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
-
-            // Fly to the side of the target.
-            if (!npc.WithinRange(hoverDestination, 150f) || npc.WithinRange(target.Center, 200f))
+            if (phase2)
+                energyCountPerRing += 2;
+            if (phase3)
             {
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
-                npc.SimpleFlyMovement(idealVelocity, hoverSpeed / 22f);
+                energyCountPerRing++;
+                totalRings++;
             }
 
-            // Create rifts around the void.
-            if (attackTimer % riftCreationRate == riftCreationRate - 1f && attackTimer < 300f)
-            {
-                SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+            ref float hasCreatedDarkEnergy = ref npc.Infernum().ExtraAI[0];
+            ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+            // Initialize by creating the dark energy ring.
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedDarkEnergy == 0f)
+            {
+                for (int i = 0; i < totalRings; i++)
                 {
-                    Vector2 portalSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.6f;
-                    Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EnergyPortalBeam>(), 0, 0f);
+                    float spinMovementSpeed = MathHelper.Lerp(1f, 2.3f, i / (float)(totalRings - 1f));
+                    for (int j = 0; j < energyCountPerRing; j++)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * j / energyCountPerRing;
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, darkEnergyID, npc.whoAmI, offsetAngle, spinMovementSpeed);
+                    }
+                }
+                hasCreatedDarkEnergy = 1f;
+            }
+
+            // Redirect to a different offset after a sufficient amount of time has passed.
+            if (attackTimer >= hoverRedirectDelay)
+            {
+                hoverOffsetAngle += MathHelper.PiOver4;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
+
+            // Fly towards the hover destination.
+            float flySpeedInterpolant = Utils.GetLerpValue(-24f, 105f, attackTimer, true);
+            Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 250f;
+            npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeedInterpolant * 12f);
+
+            // Calculate the life ratio of all dark energy combined.
+            // If it is sufficiently low then all remaining dark energy fades away and CV goes to the next attack.
+            int darkEnergyTotalLife = 0;
+            int darkEnergyTotalMaxLife = 0;
+            List<NPC> darkEnergies = new();
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == darkEnergyID)
+                {
+                    darkEnergyTotalLife += Main.npc[i].life;
+                    darkEnergyTotalMaxLife = Main.npc[i].lifeMax;
+                    darkEnergies.Add(Main.npc[i]);
                 }
             }
+            darkEnergyTotalMaxLife *= totalRings * energyCountPerRing;
 
-            if (attackTimer > 375f)
+            float darkEnergyLifeRatio = darkEnergyTotalLife / (float)darkEnergyTotalMaxLife;
+            if (darkEnergyTotalMaxLife <= 0)
+                darkEnergyLifeRatio = 0f;
+
+            if (darkEnergyLifeRatio <= 0.3f)
+            {
+                foreach (NPC darkEnergy in darkEnergies)
+                {
+                    if (darkEnergy.Infernum().ExtraAI[1] == 0f)
+                    {
+                        darkEnergy.Infernum().ExtraAI[1] = 1f;
+                        darkEnergy.netUpdate = true;
+                    }
+                }
+                
                 SelectNewAttack(npc);
+            }
         }
 
-        public static void DoBehavior_DarkMagicCharge(NPC npc, Player target, float lifeRatio, int phase, ref float attackTimer)
+        public static void DoBehavior_HorizontalRealityRendCharge(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
         {
-            int chargeTime = 35;
-            int chargeCount = phase >= 2 ? 2 : 3;
-            float chargeSpeed = MathHelper.Lerp(23f, 29f, 1f - lifeRatio);
+            int chargeTime = 42;
+            int repositionTime = 210;
+            int chargeCount = 3;
+            float hoverOffset = 640f;
+            float chargeDistance = hoverOffset + 975f;
+            if (phase2)
+            {
+                chargeTime -= 6;
+                repositionTime -= 20;
+            }
+            if (phase3)
+            {
+                chargeTime -= 8;
+                chargeCount++;
+            }
 
-            ref float attackState = ref npc.Infernum().ExtraAI[0];
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+            float chargeSpeed = chargeDistance / chargeTime;
+            ref float tearProjectileIndex = ref npc.Infernum().ExtraAI[0];
+            ref float attackState = ref npc.Infernum().ExtraAI[1];
+            ref float chargeDirection = ref npc.Infernum().ExtraAI[2];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[3];
 
             switch ((int)attackState)
             {
-                // Hover into position for the charge.
+                // Get into position for the horizontal charge.
                 case 0:
-                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -300f);
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 0.4f);
-                    npc.Center = npc.Center.MoveTowards(hoverDestination, 7.5f);
+                    Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverOffset;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(hoverDestination, 50f))
+                    // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
+                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 30f)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
-
-                        for (int i = 0; i < 4; i++)
-                        {
-                            Vector2 portalSpawnPosition = npc.Center + (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 135f;
-                            Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EnergyPortalBeam>(), 0, 0f);
-                        }
-
                         attackTimer = 0f;
                         attackState = 1f;
+                        chargeDirection = Math.Sign(target.Center.X - npc.Center.X);
+                        npc.velocity.Y *= 0.372f;
+                        npc.netUpdate = true;
+
+                        // Create the reality tear.
+                        SoundEngine.PlaySound(YanmeisKnife.HitSound, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            tearProjectileIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RealityTear>(), 0, 0f);
                     }
                     break;
 
                 // Do the charge.
                 case 1:
                     npc.damage = npc.defDamage;
-                    if (attackTimer > chargeTime)
-                        npc.velocity *= 0.93f;
-                    if (attackTimer > chargeTime + 25f)
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.1f);
+                    if (attackTimer >= chargeTime)
                     {
-                        attackTimer = 0f;
                         attackState = 0f;
-
-                        if (chargeCounter < chargeCount)
-                            chargeCounter++;
-                        else
-                            SelectNewAttack(npc);
+                        attackTimer = 0f;
+                        tearProjectileIndex = -1f;
+                        chargeCounter++;
                         npc.netUpdate = true;
+
+                        if (chargeCounter >= chargeCount)
+                            SelectNewAttack(npc);
                     }
                     break;
             }
         }
 
-        public static void DoBehavior_DarkEnergyBolts(NPC npc, Player target, int phase, ref float attackTimer)
+        public static void DoBehavior_ConvergingEnergyBarrages(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
         {
-            int burstCount = phase >= 2 ? 2 : 3;
-            int projectilesPerBurst = phase >= 2 ? 11 : 8;
-
-            ref float attackState = ref npc.Infernum().ExtraAI[0];
-            ref float burstCounter = ref npc.Infernum().ExtraAI[1];
-
-            switch ((int)attackState)
+            int hoverTime = 20;
+            int barrageBurstCount = 4;
+            int barrageTelegraphTime = 20;
+            int barrageShootRate = 32;
+            int barrageCount = 13;
+            int attackTransitionDelay = 40;
+            float maxShootOffsetAngle = 1.26f;
+            float initialBarrageSpeed = 10.5f;
+            if (phase2)
+                initialBarrageSpeed += 1.8f;
+            if (phase3)
             {
-                // Hover into position.
-                case 0:
-                    Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 0.8f);
-                    npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(hoverDestination, 50f))
-                    {
-                        attackTimer = 0f;
-                        attackState = 1f;
-                    }
-                    break;
-
-                // Do the burst.
-                case 1:
-                    npc.velocity *= 0.92f;
-                    if (attackTimer == 60f)
-                    {
-                        SoundEngine.PlaySound(SoundID.Item43, npc.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            for (int i = 0; i < projectilesPerBurst; i++)
-                            {
-                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / projectilesPerBurst) * 26f;
-                                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkEnergyBolt>(), 260, 0f);
-                            }
-                        }
-                    }
-
-                    if (attackTimer > 105f)
-                    {
-                        attackTimer = 0f;
-                        attackState = 0f;
-
-                        if (burstCounter < burstCount)
-                            burstCounter++;
-                        else
-                            SelectNewAttack(npc);
-                        npc.netUpdate = true;
-                    }
-                    break;
+                initialBarrageSpeed += 2f;
+                barrageShootRate -= 4;
+                barrageTelegraphTime -= 4;
             }
-        }
 
-        public static void DoBehavior_RealityCracks(NPC npc, Player target, int phase, ref float attackTimer)
-        {
-            int crackCount = 12 + phase * 8;
+            ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[0];
+            ref float playerShootDirection = ref npc.Infernum().ExtraAI[1];
+            ref float barrageBurstCounter = ref npc.Infernum().ExtraAI[2];
+            if (barrageBurstCounter == 0f)
+                hoverTime += 120;
 
-            // Hover into position.
-            float moveSpeedFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(240f, 180f, attackTimer, true);
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * moveSpeedFactor * 25f, moveSpeedFactor * 0.8f);
-            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, moveSpeedFactor);
-            npc.Center = npc.Center.MoveTowards(hoverDestination, moveSpeedFactor * 10f);
-
-            // Create cracks and release a spread of dark energy.
-            if (attackTimer == 150f)
+            // Hover before firing.
+            if (attackTimer < hoverTime)
             {
-                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
-                for (int i = 0; i < crackCount; i++)
+                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 540f;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 1.9f);
+                if (npc.WithinRange(hoverDestination, 100f))
+                    npc.velocity *= 0.85f;
+            }
+            else
+                npc.velocity *= 0.9f;
+
+            // Prepare dust line telegraphs.
+            if (attackTimer == hoverTime + barrageShootRate - barrageTelegraphTime)
+            {
+                SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+
+                playerShootDirection = npc.AngleTo(target.Center);
+                for (int i = 0; i < barrageCount; i++)
                 {
-                    Vector2 crackSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 990f);
-                    Utilities.NewProjectileBetter(crackSpawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityCrack>(), 0, 0f);
+                    float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
+
+                    for (int frames = 8; frames < 75; frames += 4)
+                    {
+                        Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
+                        Dust magic = Dust.NewDustPerfect(linePosition, 267, -Vector2.UnitY);
+                        magic.fadeIn = 0.4f;
+                        magic.scale = 1.1f;
+                        magic.color = Color.Lerp(Color.Cyan, Color.Fuchsia, frames / 75f);
+                        magic.noGravity = true;
+                    }
                 }
+                npc.netUpdate = true;
+            }
 
-                for (int i = 0; i < 20; i++)
+            // Shoot.
+            if (attackTimer == hoverTime + barrageShootRate)
+            {
+                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                for (int i = 0; i < barrageCount; i++)
                 {
-                    Vector2 burstVelocity = (MathHelper.TwoPi * i / 20f).ToRotationVector2() * 5f;
-                    Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
+                    float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
+                    Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
+                    int barrage = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f);
+                    if (Main.projectile.IndexInRange(barrage))
+                        Main.projectile[barrage].ai[1] = playerShootDirection;
                 }
             }
 
-            if (attackTimer > 380f)
-                SelectNewAttack(npc);
-        }
-
-        public static void DoBehavior_DarkEnergyBursts(NPC npc, Player target, int phase, ref float attackTimer)
-        {
-            int burstCount = phase >= 3 ? 7 : 8;
-            int projectilesPerBurst = 12;
-            int burstShootRate = phase >= 3 ? 35 : 44;
-            float burstSpeed = phase >= 3 ? 11f : 9f;
-
-            ref float burstCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Hover into position.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
-            hoverDestination.Y += (float)Math.Cos(attackTimer / 20f) * 50f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 0.8f);
-            npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
-
-            // Shoot bursts after a short delay.
-            if (attackTimer > 90f && attackTimer % burstShootRate == burstShootRate - 1f)
+            if (attackTimer >= hoverTime + barrageShootRate + attackTransitionDelay)
             {
-                if (burstCounter >= burstCount)
-                {
+                attackTimer = 0f;
+                hoverOffsetAngle += MathHelper.TwoPi / barrageBurstCount;
+                barrageBurstCounter++;
+                if (barrageBurstCounter >= barrageBurstCount)
                     SelectNewAttack(npc);
+
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_SlowEnergySpirals(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
+        {
+            int shootDelay = 96;
+            int burstShootRate = 36;
+            int laserBurstCount = 12;
+            if (phase2)
+                burstShootRate -= 6;
+            if (phase3)
+                laserBurstCount += 4;
+
+            ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
+
+            // Redirect quickly towards the target if necessary.
+            if (moveTowardsTarget == 1f)
+            {
+                attackTimer--;
+                if (npc.WithinRange(target.Center, 360f))
+                {
+                    npc.velocity *= 0.8f;
+                    npc.damage = 0;
+                    if (npc.velocity.Length() < 1f)
+                    {
+                        npc.velocity = Vector2.Zero;
+                        moveTowardsTarget = 0f;
+                        npc.netUpdate = true;
+                    }
                     return;
                 }
 
-                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < projectilesPerBurst; i++)
-                    {
-                        float offsetAngle = Main.rand.NextFloat(-0.99f, 0.99f);
-                        Vector2 burstVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle);
-                        burstVelocity *= Main.rand.NextFloat(0.6f, 1f) * burstSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + burstVelocity * 3f, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
-                    }
-                    burstCounter++;
-                    npc.netUpdate = true;
-                }
+                CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 200f - npc.Center, 40f, 0.75f, true);
+                return;
             }
-        }
 
-        public static void DoBehavior_DarkEnergyBulletHell(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            int burstFireRate = (int)MathHelper.Lerp(32f, 16f, 1f - lifeRatio);
-            int circleFireRate = (int)MathHelper.Lerp(72f, 50f, 1f - lifeRatio);
-            int energyPerBurst = (int)MathHelper.Lerp(9f, 14f, 1f - lifeRatio);
-            int energyPerCircle = (int)MathHelper.Lerp(15f, 22f, 1f - lifeRatio);
-            float burstBaseSpeed = MathHelper.Lerp(6f, 10.5f, 1f - lifeRatio);
-
-            if (BossRushEvent.BossRushActive)
-                burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;
+            // Make Ceaseless Void move quickly towards the target if they go too far away.
+            if (!npc.WithinRange(target.Center, 800f))
+            {
+                moveTowardsTarget = 1f;
+                npc.netUpdate = true;
+                return;
+            }
 
             // Slow down.
-            npc.velocity *= 0.965f;
+            npc.velocity *= 0.9f;
 
-            // Don't take damage.
+            // Release lasers.
+            if (attackTimer % burstShootRate == burstShootRate - 1f && attackTimer >= shootDelay && attackTimer < 400f)
+            {
+                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                for (int i = 0; i < laserBurstCount; i++)
+                {
+                    for (int j = -1; j <= 1; j += 2)
+                    {
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * 7.5f;
+                        Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].localAI[1] = j * 0.5f;
+                    }
+                }
+            }
+
+            if (attackTimer >= 480f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_BlackHoleSuck(NPC npc, Player target, ref float attackTimer)
+        {
+            ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
+            ref float hasCreatedBlackHole = ref npc.Infernum().ExtraAI[1];
+
+            // Create the black hole on the first frame.
+            if (hasCreatedBlackHole == 0f)
+            {
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), 360, 0f);
+                hasCreatedBlackHole = 1f;
+            }
+
+            // Disable damage.
             npc.dontTakeDamage = true;
 
-            // Make a pulse sound before firing.
-            if (attackTimer == 45f)
-                SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
+            // Redirect quickly towards the target if necessary.
+            if (moveTowardsTarget == 1f)
+            {
+                if (npc.WithinRange(target.Center, 360f))
+                {
+                    npc.velocity *= 0.8f;
+                    npc.damage = 0;
+                    if (npc.velocity.Length() < 1f)
+                    {
+                        npc.velocity = Vector2.Zero;
+                        moveTowardsTarget = 0f;
+                        npc.netUpdate = true;
+                    }
+                    return;
+                }
 
-            // Don't fire near the start/end of the attack.
-            if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
+                CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 200f - npc.Center, 40f, 0.75f, true);
                 return;
-
-            // Create bursts.
-            if (attackTimer % burstFireRate == burstFireRate - 1f)
-            {
-                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float burstAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < energyPerBurst; i++)
-                    {
-                        float burstInterpolant = i / (float)(energyPerBurst - 1f);
-                        float burstAngle = burstAngleOffset + burstInterpolant * (i + i * i) / 2f + 32f * i;
-                        Vector2 burstVelocity = burstAngle.ToRotationVector2() * burstBaseSpeed * Main.rand.NextFloat(0.7f, 1f);
-                        Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
-                    }
-                }
-
-                for (int i = 0; i < 60; i++)
-                {
-                    Dust magic = Dust.NewDustPerfect(npc.Center, 264);
-                    magic.color = Color.Lerp(Color.Purple, Color.Pink, Main.rand.NextFloat());
-                    magic.scale *= 1.45f;
-                    magic.velocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat(-0.5f, 0.5f)) / 60f).ToRotationVector2() * Main.rand.NextFloat(30f, 50f);
-                    magic.velocity += Main.rand.NextVector2Circular(3f, 3f);
-                    magic.noLight = true;
-                    magic.noGravity = true;
-                }
             }
 
-            // Create circles of energy.
-            if (attackTimer % circleFireRate == circleFireRate - 1f)
+            // Make Ceaseless Void move quickly towards the target if they go too far away.
+            if (!npc.WithinRange(target.Center, 1200f))
             {
-                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < energyPerCircle; i++)
-                    {
-                        Vector2 burstVelocity = (MathHelper.TwoPi * i / energyPerCircle).ToRotationVector2() * burstBaseSpeed * 1.1f;
-                        Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
-                    }
-                }
+                moveTowardsTarget = 1f;
+                npc.netUpdate = true;
+                return;
             }
+
+            // Slow down.
+            npc.velocity *= 0.9f;
+
+            if (attackTimer >= 600f)
+                SelectNewAttack(npc);
         }
 
         public static void SelectNewAttack(NPC npc)
         {
             // Select a new target.
             npc.TargetClosest();
-
-            int phase = (int)npc.ai[3];
+            
             List<CeaselessVoidAttackType> possibleAttacks = new()
             {
-                CeaselessVoidAttackType.ReleaseRealityTearPortals,
-                CeaselessVoidAttackType.DarkMagicCharge,
-                CeaselessVoidAttackType.DarkEnergyBolts
+                CeaselessVoidAttackType.HorizontalRealityRendCharge,
+                CeaselessVoidAttackType.ConvergingEnergyBarrages,
+                CeaselessVoidAttackType.SlowEnergySpirals
             };
-
-            if (phase >= 1)
-                possibleAttacks.Add(CeaselessVoidAttackType.RealityCracks);
-            if (phase >= 2)
-                possibleAttacks.Add(CeaselessVoidAttackType.DarkEnergyBursts);
-
-            if (possibleAttacks.Count > 1)
+            
+            if (possibleAttacks.Count >= 2)
                 possibleAttacks.Remove((CeaselessVoidAttackType)(int)npc.ai[0]);
 
             for (int i = 0; i < 5; i++)
@@ -468,5 +525,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.netUpdate = true;
         }
         #endregion AI
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/CeaselessVoid/CeaselessVoidGlow").Value;
+            Texture2D voidTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidVoidStuff").Value;
+            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+
+            Main.spriteBatch.EnterShaderRegion();
+
+            DrawData drawData = new(voidTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
+            GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
+            drawData.Draw(Main.spriteBatch);
+            Main.spriteBatch.ExitShaderRegion();
+            return false;
+        }
+        #endregion Drawing
     }
 }

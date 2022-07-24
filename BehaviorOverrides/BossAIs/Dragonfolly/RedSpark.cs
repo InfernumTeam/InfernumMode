@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             if (Projectile.velocity.Length() < 27f)
                 Projectile.velocity *= 1.016f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }

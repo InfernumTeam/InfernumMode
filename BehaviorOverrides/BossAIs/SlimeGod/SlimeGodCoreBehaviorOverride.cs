@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -396,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 80f == 79f)
             {
                 Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 10.5f;
-                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
+                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<UnstableEbonianGlob>(), 100, 0f);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 520f)
@@ -463,10 +464,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 2f)
             {
                 // Release abyss balls upward.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 20f == 19f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 15f == 14f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<UnstableEbonianGlob>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<UnstableCrimulanGlob>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.15f;
@@ -534,10 +535,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 2f)
             {
                 // Release abyss balls upward.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<UnstableEbonianGlob>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<UnstableCrimulanGlob>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.Y > 0f).ToDirectionInt() * 0.15f;

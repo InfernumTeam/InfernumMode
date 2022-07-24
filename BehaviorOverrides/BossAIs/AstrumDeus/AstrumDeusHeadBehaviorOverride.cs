@@ -118,7 +118,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     ModContent.ProjectileType<AstralPlasmaSpark>(),
                     ModContent.ProjectileType<AstralFlame2>(),
                     ModContent.ProjectileType<AstralCrystal>(),
-                    ModContent.ProjectileType<AstralVortex>());
+                    ModContent.ProjectileType<AstralVortex>(),
+                    ModContent.ProjectileType<MassiveInfectedStar>());
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].type == deusSpawnID)

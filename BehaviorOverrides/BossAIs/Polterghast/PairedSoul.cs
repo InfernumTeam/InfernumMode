@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             if (Projectile.timeLeft < 3)
             {
+                Projectile.damage = 0;
                 Projectile.velocity = (Projectile.velocity * 11f + Projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 45f) / 12f;
                 if (Projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {

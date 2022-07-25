@@ -66,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 Projectile.Center = Vector2.Lerp(Projectile.Center, polterghast.Center, 0.06f);
                 Projectile.velocity = (Projectile.velocity * 11f + Projectile.SafeDirectionTo(polterghast.Center) * 36f) / 12f;
+                Projectile.damage = 0;
                 if (Projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {
                     polterghast.ai[2]--;

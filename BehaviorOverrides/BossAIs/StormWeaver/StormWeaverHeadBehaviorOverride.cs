@@ -376,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                         int telegraph = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f);
                         if (Main.projectile.IndexInRange(telegraph))
                             Main.projectile[telegraph].ai[1] = maxShootVelocity.Length();
-                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.1f, ProjectileID.FrostWave, 0, 0f);
+                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.1f, ProjectileID.FrostWave, 260, 0f);
                         if (Main.projectile.IndexInRange(wave))
                         {
                             Main.projectile[wave].ai[0] = -delayBeforeFiring;

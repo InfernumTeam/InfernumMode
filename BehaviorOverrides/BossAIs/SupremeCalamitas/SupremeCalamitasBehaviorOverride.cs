@@ -49,12 +49,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Count
         }
 
-        private static readonly FieldInfo shieldOpacityField = typeof(SCalBoss).GetField("shieldOpacity", BindingFlags.NonPublic | BindingFlags.Instance);
-
-        private static readonly FieldInfo shieldRotationField = typeof(SCalBoss).GetField("shieldRotation", BindingFlags.NonPublic | BindingFlags.Instance);
-
-        private static readonly FieldInfo forcefieldScaleField = typeof(SCalBoss).GetField("forcefieldScale", BindingFlags.NonPublic | BindingFlags.Instance);
-
         public static NPC SCal
         {
             get
@@ -118,6 +112,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SCal.ModNPC<SCalBoss>().forcefieldScale = value;
             }
         }
+
+        public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
+        {
+            SCalAttackType.HorizontalDarkSoulRelease,
+            SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.ExplosiveCharges,
+            SCalAttackType.LostSoulBarrage,
+            SCalAttackType.SummonSuicideBomberDemons,
+            SCalAttackType.HorizontalDarkSoulRelease,
+            SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.ExplosiveCharges,
+            SCalAttackType.LostSoulBarrage,
+            SCalAttackType.SummonSuicideBomberDemons,
+        };
 
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
@@ -190,6 +198,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.ModNPC<SCalBoss>().initialRitualPosition = npc.Center + Vector2.UnitY * 24f;
                 attackDelay = 270f;
                 npc.localAI[0] = 2f;
+                ShieldOpacity = 0f;
                 npc.netUpdate = true;
             }
 
@@ -308,6 +317,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         int shootCounter = (int)((attackTimer - shootDelay) / shootRate);
                         float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, shootCounter % 3f / 2f) + Main.rand.NextFloatDirection() * 0.25f;
                         Vector2 soulVelocity = (Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt()).RotatedBy(offsetAngle) * soulShootSpeed;
+                        soulVelocity.Y += target.velocity.Y;
+
                         Utilities.NewProjectileBetter(handPosition, soulVelocity, ModContent.ProjectileType<RedirectingDarkSoul>(), 500, 0f);
                     }
                 }
@@ -461,6 +472,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 explosionDelay -= 25;
                 chargeSpeed += 3.5f;
             }
+            
             // Use the updraft animation.
             frameChangeSpeed = 0.2f;
             frameType = (int)SCalFrameType.UpwardDraft;
@@ -865,7 +877,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.5f);
 
             if (attackTimer >= castTime + SuicideBomberDemonHostile.AttackDuration + 90f)
+            {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<SuicideBomberDemonHostile>());
                 SelectNewAttack(npc);
+            }
         }
 
         public static void DoBehavior_BrimstoneJewelBeam(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
@@ -1093,13 +1108,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Reset the berserk phase.
-            if (npc.ai[0] != (int)SCalAttackType.CondemnationFanBurst)
-            {
-                npc.ai[0] = (int)SCalAttackType.CondemnationFanBurst;
-                npc.ai[3] = 0f;
-            }
-            else
-                npc.ai[0] = (int)SCalAttackType.BrimstoneJewelBeam;
+            npc.ai[3] = 0f;
+            npc.ai[0] = (int)Phase1AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase1AttackCycle.Length];
+            npc.Infernum().ExtraAI[5]++;
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;

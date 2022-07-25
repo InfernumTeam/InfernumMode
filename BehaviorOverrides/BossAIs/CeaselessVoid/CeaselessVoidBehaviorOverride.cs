@@ -103,6 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
+            bool enraged = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float currentPhase = ref npc.ai[2];
@@ -127,8 +128,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Reset things.
             npc.damage = 0;
-            npc.dontTakeDamage = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
+            npc.dontTakeDamage = enraged;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
+            if (enraged)
+            {
+                phase2 = true;
+                phase3 = true;
+            }
             
             switch ((CeaselessVoidAttackType)(int)attackType)
             {
@@ -136,13 +142,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.HorizontalRealityRendCharge:
-                    DoBehavior_HorizontalRealityRendCharge(npc, phase2, phase3, target, ref attackTimer);
+                    DoBehavior_HorizontalRealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.ConvergingEnergyBarrages:
-                    DoBehavior_ConvergingEnergyBarrages(npc, phase2, phase3, target, ref attackTimer);
+                    DoBehavior_ConvergingEnergyBarrages(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.SlowEnergySpirals:
-                    DoBehavior_SlowEnergySpirals(npc, phase2, phase3, target, ref attackTimer);
+                    DoBehavior_SlowEnergySpirals(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.DarkEnergyBulletHell:
                     DoBehavior_DarkEnergyBulletHell(npc, target, ref attackTimer);
@@ -255,7 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
         }
 
-        public static void DoBehavior_HorizontalRealityRendCharge(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
+        public static void DoBehavior_HorizontalRealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int chargeTime = 42;
             int repositionTime = 210;
@@ -276,6 +282,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 scaleFactorDelta += 0.8f;
                 chargeDistance += 900f;
             }
+            if (enraged)
+                scaleFactorDelta = 1.45f;
 
             float chargeSpeed = chargeDistance / chargeTime;
             ref float tearProjectileIndex = ref npc.Infernum().ExtraAI[0];
@@ -329,7 +337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
         }
 
-        public static void DoBehavior_ConvergingEnergyBarrages(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
+        public static void DoBehavior_ConvergingEnergyBarrages(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int hoverTime = 20;
             int barrageBurstCount = 4;
@@ -348,6 +356,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 barrageTelegraphTime -= 9;
                 attackTransitionDelay -= 14;
             }
+            if (enraged)
+                initialBarrageSpeed += 7.5f;
 
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float playerShootDirection = ref npc.Infernum().ExtraAI[1];
@@ -415,17 +425,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
         }
 
-        public static void DoBehavior_SlowEnergySpirals(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
+        public static void DoBehavior_SlowEnergySpirals(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int shootDelay = 96;
             int burstShootRate = 36;
             int laserBurstCount = 12;
+            float burstShootSpeed = 7.5f;
             if (phase2)
                 burstShootRate -= 6;
             if (phase3)
             {
                 burstShootRate -= 5;
                 laserBurstCount += 4;
+            }
+            if (enraged)
+            {
+                burstShootRate -= 8;
+                laserBurstCount += 3;
+                burstShootSpeed += 7.5f;
             }
 
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
@@ -470,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int j = -1; j <= 1; j += 2)
                     {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * 7.5f;
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
                         Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
                         int laser = Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
                         if (Main.projectile.IndexInRange(laser))
@@ -494,8 +511,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (BossRushEvent.BossRushActive)
                 burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;
 
-            // Slow down.
+            // Slow down and use more DR.
             npc.velocity *= 0.965f;
+            npc.Calamity().DR = 0.7f;
 
             // Make a pulse sound before firing.
             if (attackTimer == 45f)

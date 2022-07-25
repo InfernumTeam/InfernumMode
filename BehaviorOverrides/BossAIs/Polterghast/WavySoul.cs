@@ -40,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
             if (Projectile.timeLeft < 9)
             {
+                Projectile.damage = 0;
                 Projectile.velocity = (Projectile.velocity * 11f + Projectile.SafeDirectionTo(polterghast.Center) * 39f) / 12f;
                 if (Projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {

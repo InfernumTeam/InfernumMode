@@ -1,10 +1,16 @@
+using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCataclysm>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -105,6 +111,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SCalBrotherAttackType.ProjectileShooting:
                     DoBehavior_ProjectileShooting(npc, target, isCataclysm, ref attackSpecificTimer, ref currentFrame, ref firingFromRight, ref attackTimer);
                     break;
+                case SCalBrotherAttackType.Hyperdashes:
+                    DoBehavior_Hyperdashes(npc, target, isCataclysm, ref attackSpecificTimer, ref currentFrame, ref firingFromRight, ref attackTimer);
+                    break;
             }
         }
 
@@ -113,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float distanceFromDestination = npc.Distance(hoverDestination);
             Vector2 closeMoveVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceFromDestination, 24f);
             npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.0125f, Utils.GetLerpValue(360f, 1080f, distanceFromDestination, true));
-            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
+            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.02f, -0.125f, 0.125f);
         }
 
         public static void DoBehavior_AttackDelay(NPC npc, Player target, bool isCataclysm, ref float currentFrame, ref float attackTimer)
@@ -229,7 +238,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     DoFastHoverMovement(npc, hoverDestination);
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
                 }
             }
             else
@@ -240,7 +248,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     DoFastHoverMovement(npc, hoverDestination);
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
                 }
 
                 // Rapidly approach a 0 rotation.
@@ -273,6 +280,75 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
+        public static void DoBehavior_Hyperdashes(NPC npc, Player target, bool isCataclysm, ref float attackSpecificTimer, ref float currentFrame, ref float firingFromRight, ref float attackTimer)
+        {
+            int chargeTelegraphTime = 48;
+            int chargeTime = 50;
+            int chargeCount = 3;
+            int soulCount = 11;
+            float chargeSpeed = 55f;
+            float wrappedAttackTimer = attackTimer % (chargeTelegraphTime + chargeTime);
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * isCataclysm.ToDirectionInt() * 600f;
+
+            // Teleport to the side of the target.
+            if (wrappedAttackTimer == 1f)
+            {
+                npc.Center = hoverDestination;
+                npc.velocity = Vector2.Zero;
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(explosion))
+                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 400f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Charge incredibly quickly and release a circle of lost souls.
+            if (wrappedAttackTimer == chargeTime)
+            {
+                // Define the direction and charge.
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.velocity = Vector2.UnitX * npc.spriteDirection * chargeSpeed;
+                npc.netUpdate = true;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < soulCount; i++)
+                    {
+                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 10f;
+                        Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<LostSoulProj>(), 550, 0f);
+                    }
+                }
+
+                SoundEngine.PlaySound(!isCataclysm ? YanmeisKnife.HitSound : ScorchedEarth.ShootSound, npc.Center);
+            }
+
+            // Define the red-glow interpolant.
+            npc.localAI[2] = Utils.GetLerpValue(0f, chargeTelegraphTime - 8f, wrappedAttackTimer, true) * Utils.GetLerpValue(-16f, -1f, wrappedAttackTimer - chargeTelegraphTime - chargeTime, true);
+
+            // Hover to the side of the target before charging.
+            if (wrappedAttackTimer < chargeTelegraphTime)
+            {
+                // Define the direction and animation type.
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                currentFrame = (int)SCalBrotherAnimationType.HoverInPlace;
+
+                if (wrappedAttackTimer < chargeTelegraphTime - 8f)
+                    DoFastHoverMovement(npc, hoverDestination);
+                else
+                    npc.velocity *= 0.8f;
+            }
+            else
+                currentFrame = (int)SCalBrotherAnimationType.AttackAnimation;
+
+            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.01f, -0.15f, 0.15f);
+
+            if (attackTimer >= (chargeTelegraphTime + chargeTime) * chargeCount + 1f)
+                SelectNextAttack(npc);
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             // Catastrophe does not have control over when attack switches happen.
@@ -280,8 +356,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (isCatastrophe)
                 return;
 
-            // The 6 instead of 5 is intentional in the loop below. It's intended to clear the attack specific timer.
-            npc.ai[0] = (int)SCalBrotherAttackType.ProjectileShooting;
+            // The 6 instead of 5 is intentional in the loop below. The fifth index is reserved for the attack specific timer, which should be cleared alongside everything else.
+            npc.ai[0] = (int)npc.ai[0] switch
+            {
+                (int)SCalBrotherAttackType.SinusoidalBobbing => (int)SCalBrotherAttackType.Hyperdashes,
+                (int)SCalBrotherAttackType.Hyperdashes => (int)SCalBrotherAttackType.ProjectileShooting,
+                _ => (int)SCalBrotherAttackType.SinusoidalBobbing,
+            };
             npc.ai[1] = 0f;
             for (int i = 0; i < 6; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -321,6 +402,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.frame.X = xFrame * npc.frame.Width;
             npc.frame.Y = yFrame * npc.frame.Height;
         }
+
+        public static bool DrawBrother(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            int afterimageCount = 4;
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
+                    Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            Vector2 mainDrawPosition = npc.Center - Main.screenPosition;
+
+            // Draw backglow afterimages.
+            if (npc.localAI[2] > 0f)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
+                    Color backglowColor = Color.Red * npc.Opacity * npc.localAI[2];
+                    backglowColor.A = 0;
+                    spriteBatch.Draw(texture, mainDrawPosition + drawOffset, npc.frame, backglowColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+            spriteBatch.Draw(texture, mainDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCataclysmGlow").Value;
+            if (npc.type == ModContent.NPCType<SupremeCatastrophe>())
+                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCatastropheGlow").Value;
+
+            Color baseGlowmaskColor = npc.IsABestiaryIconDummy ? Color.White : Color.Lerp(Color.White, Color.Red, 0.5f);
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i++)
+                {
+                    Color afterimageColor = Color.Lerp(baseGlowmaskColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f);
+                    Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            spriteBatch.Draw(texture, mainDrawPosition, npc.frame, baseGlowmaskColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawBrother(npc, spriteBatch, lightColor);
         #endregion Frames and Drawcode
     }
 }

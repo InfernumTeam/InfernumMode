@@ -34,6 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             HorizontalRealityRendCharge,
             ConvergingEnergyBarrages,
             SlowEnergySpirals,
+            DarkEnergyBulletHell,
             BlackHoleSuck
         }
         #endregion
@@ -111,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 currentPhase = 1f;
                 SelectNewAttack(npc);
-                attackType = (int)CeaselessVoidAttackType.DarkEnergySwirl;
+                attackType = (int)CeaselessVoidAttackType.DarkEnergyBulletHell;
             }
             if (currentPhase == 1f && phase3)
             {
@@ -142,6 +143,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     break;
                 case CeaselessVoidAttackType.SlowEnergySpirals:
                     DoBehavior_SlowEnergySpirals(npc, phase2, phase3, target, ref attackTimer);
+                    break;
+                case CeaselessVoidAttackType.DarkEnergyBulletHell:
+                    DoBehavior_DarkEnergyBulletHell(npc, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.BlackHoleSuck:
                     DoBehavior_BlackHoleSuck(npc, target, ref attackTimer);
@@ -258,15 +262,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int chargeCount = 3;
             float hoverOffset = 640f;
             float chargeDistance = hoverOffset + 975f;
+            float scaleFactorDelta = 0f;
             if (phase2)
             {
                 chargeTime -= 6;
                 repositionTime -= 20;
+                scaleFactorDelta += 0.2f;
             }
             if (phase3)
             {
                 chargeTime -= 8;
                 chargeCount++;
+                scaleFactorDelta += 0.8f;
+                chargeDistance += 900f;
             }
 
             float chargeSpeed = chargeDistance / chargeTime;
@@ -294,14 +302,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         // Create the reality tear.
                         SoundEngine.PlaySound(YanmeisKnife.HitSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
                             tearProjectileIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RealityTear>(), 0, 0f);
+                            if (Main.projectile.IndexInRange((int)tearProjectileIndex))
+                                Main.projectile[(int)tearProjectileIndex].localAI[0] = scaleFactorDelta;
+                        }
                     }
                     break;
 
                 // Do the charge.
                 case 1:
                     npc.damage = npc.defDamage;
-                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.1f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.125f);
                     if (attackTimer >= chargeTime)
                     {
                         attackState = 0f;
@@ -331,9 +343,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 initialBarrageSpeed += 1.8f;
             if (phase3)
             {
-                initialBarrageSpeed += 2f;
-                barrageShootRate -= 4;
-                barrageTelegraphTime -= 4;
+                initialBarrageSpeed += 3f;
+                barrageShootRate -= 9;
+                barrageTelegraphTime -= 9;
+                attackTransitionDelay -= 14;
             }
 
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[0];
@@ -368,7 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
                         Dust magic = Dust.NewDustPerfect(linePosition, 267, -Vector2.UnitY);
                         magic.fadeIn = 0.4f;
-                        magic.scale = 1.1f;
+                        magic.scale = 1.6f;
                         magic.color = Color.Lerp(Color.Cyan, Color.Fuchsia, frames / 75f);
                         magic.noGravity = true;
                     }
@@ -410,7 +423,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (phase2)
                 burstShootRate -= 6;
             if (phase3)
+            {
+                burstShootRate -= 5;
                 laserBurstCount += 4;
+            }
 
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
 
@@ -465,6 +481,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             if (attackTimer >= 480f)
                 SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_DarkEnergyBulletHell(NPC npc, Player target, ref float attackTimer)
+        {
+            int burstFireRate = 21;
+            int circleFireRate = 54;
+            int energyPerBurst = 12;
+            int energyPerCircle = 20;
+            int shootTime = 780;
+            float burstBaseSpeed = 8.4f;
+            if (BossRushEvent.BossRushActive)
+                burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;
+
+            // Slow down.
+            npc.velocity *= 0.965f;
+
+            // Make a pulse sound before firing.
+            if (attackTimer == 45f)
+                SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
+
+            if (attackTimer >= shootTime)
+                SelectNewAttack(npc);
+
+            // Don't fire near the start/end of the attack.
+            if (attackTimer < 90f || attackTimer > shootTime - 90f)
+                return;
+
+            // Create bursts.
+            if (attackTimer % burstFireRate == burstFireRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float burstAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < energyPerBurst; i++)
+                    {
+                        float burstInterpolant = i / (float)(energyPerBurst - 1f);
+                        float burstAngle = burstAngleOffset + burstInterpolant * (i + i * i) / 2f + 32f * i;
+                        Vector2 burstVelocity = burstAngle.ToRotationVector2() * burstBaseSpeed * Main.rand.NextFloat(0.7f, 1f);
+                        Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergyBulletHellProj>(), 260, 0f);
+                    }
+                }
+            }
+
+            // Create circles of energy.
+            if (attackTimer % circleFireRate == circleFireRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < energyPerCircle; i++)
+                    {
+                        Vector2 burstVelocity = (MathHelper.TwoPi * i / energyPerCircle).ToRotationVector2() * burstBaseSpeed * 1.1f;
+                        Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergyBulletHellProj>(), 260, 0f);
+                    }
+                }
+            }
         }
 
         public static void DoBehavior_BlackHoleSuck(NPC npc, Player target, ref float attackTimer)

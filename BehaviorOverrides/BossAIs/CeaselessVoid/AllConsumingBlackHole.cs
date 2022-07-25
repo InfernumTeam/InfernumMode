@@ -1,11 +1,15 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -48,6 +52,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             NPC ceaselessVoid = Main.npc[CalamityGlobalNPC.voidBoss];
             Projectile.Center = ceaselessVoid.Center;
             Projectile.Size = Vector2.One * Radius;
+
+            // Create a slice effect on the first frame.
+            if (Timer == 2f)
+            {
+                SoundEngine.PlaySound(YanmeisKnife.HitSound with { Volume = 1.7f }, Target.Center);
+                SoundEngine.PlaySound(TeslaCannon.FireSound with { Volume = 1.7f }, Target.Center);
+
+                Target.Calamity().GeneralScreenShakePower = 20f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float leftOffsetAngle = MathHelper.PiOver2 - MathHelper.Pi * 0.3f;
+                    float rightOffsetAngle = MathHelper.PiOver2 + MathHelper.Pi * 0.3f;
+                    int slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
+                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - leftOffsetAngle.ToRotationVector2() * 1100f;
+                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + leftOffsetAngle.ToRotationVector2() * 1100f;
+
+                    slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
+                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - rightOffsetAngle.ToRotationVector2() * 1100f;
+                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + rightOffsetAngle.ToRotationVector2() * 1100f;
+
+                    slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
+                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - Vector2.UnitY * 1400f;
+                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + Vector2.UnitY * 1400f;
+                }
+            }
 
             // Fade in.
             float disappearInterpolant = Utils.GetLerpValue(0f, 24f, Projectile.timeLeft / Projectile.MaxUpdates, true);
@@ -185,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            overPlayers.Add(index);
+            behindProjectiles.Add(index);
         }
         #endregion
     }

@@ -9,6 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class CelestialBarrage : ModProjectile
     {
+        public float Power => Projectile.ai[1];
+
         public ref float Time => ref Projectile.ai[0];
 
         public override void SetStaticDefaults()
@@ -33,11 +35,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Home in on the target before accelerating.
             if (Time <= 45f)
             {
+                float homeSpeed = Power * 5f + 14f;
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * 14f) / 20f;
+                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 20f;
             }
             else if (Projectile.velocity.Length() < 24f)
-                Projectile.velocity *= 1.02f;
+                Projectile.velocity *= Power * 0.02f + 1.02f;
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;

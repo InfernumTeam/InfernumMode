@@ -562,38 +562,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         #region Drawing and Frames
 
-        public static void DrawWings(SpriteBatch spriteBatch, NPC npc, Color color)
-        {
-            Texture2D wingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/QueenSlime/QueenSlimeWings").Value;
-            Rectangle wingFrame = wingTexture.Frame(1, 4, 0, (int)npc.localAI[3] / 6);
-
-            for (int i = 0; i < 2; i++)
-            {
-                float horizontalDirection = 1f;
-                float horizontalOffset = 0f;
-                SpriteEffects direction = SpriteEffects.None;
-                if (i == 1)
-                {
-                    horizontalDirection = 0f;
-                    horizontalOffset = 2f;
-                    direction = SpriteEffects.FlipHorizontally;
-                }
-
-                Vector2 origin = npc.frame.Size() * new Vector2(horizontalDirection, 0.5f);
-                Vector2 wingDrawPosition = npc.Center + Vector2.UnitX * horizontalOffset;
-                if (npc.rotation != 0f)
-                    wingDrawPosition = wingDrawPosition.RotatedBy(npc.rotation, npc.Bottom);
-
-                wingDrawPosition.Y -= 32f;
-                wingDrawPosition -= Main.screenPosition;
-                float rotationOffset = MathHelper.Clamp(npc.velocity.Y, -6f, 6f) * -0.1f;
-                if (i == 0)
-                    rotationOffset *= -1f;
-
-                spriteBatch.Draw(wingTexture, wingDrawPosition, wingFrame, color, npc.rotation + rotationOffset, origin, 0.8f, direction, 0f);
-            }
-        }
-
         public static Vector2 CrownPosition(NPC npc)
         {
             Vector2 crownPosition = new(npc.Center.X, npc.Top.Y - 12f);
@@ -657,7 +625,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             Vector2 origin = frameThing.Size() * new Vector2(0.5f, 1f);
             Color color = Color.Lerp(Color.White, drawColor, 0.5f);
             if (InPhase2(npc))
-                DrawWings(spriteBatch, npc, color);
+                Main.instance.DrawNPCDirect_QueenSlimeWings(npc, Main.spriteBatch, Main.screenPosition, npc.Center, drawColor);
 
             Texture2D crystalTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/QueenSlime/QueenSlimeCrystal").Value;
             Rectangle crystalFrame = crystalTexture.Frame();

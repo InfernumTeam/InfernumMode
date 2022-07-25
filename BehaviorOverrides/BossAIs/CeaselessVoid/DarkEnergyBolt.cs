@@ -3,28 +3,33 @@ using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class DungeonDebris : ModProjectile
+    public class DarkEnergyBolt : ModProjectile
     {
+        internal PrimitiveTrailCopy TrailDrawer;
+        
         public ref float Time => ref Projectile.ai[1];
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Flying Debris");
+            DisplayName.SetDefault("Dark Energy Bolt");
             Main.projFrames[Type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 30;
+            Projectile.width = Projectile.height = 22;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
@@ -35,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void AI()
         {
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 16;
             // Die if the owner is not present or is dead.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.voidBoss))
             {
@@ -60,10 +66,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             Time++;
         }
+        
+        internal float WidthFunction(float completionRatio)
+        {
+            float arrowheadCutoff = 0.33f;
+            float width = Projectile.width;
+            if (completionRatio <= arrowheadCutoff)
+                width = MathHelper.Lerp(0.02f, width, Utils.GetLerpValue(0f, arrowheadCutoff, completionRatio, true));
+            return width * Projectile.scale + 1f;
+        }
+
+        internal Color ColorFunction(float completionRatio)
+        {
+            Color shaderColor1 = Color.Lerp(Color.Black, Color.Purple, 0.35f);
+            Color shaderColor2 = Color.Lerp(Color.Black, Color.Cyan, 0.7f);
+
+            float endFadeRatio = 0.9f;
+
+            float endFadeTerm = Utils.GetLerpValue(0f, endFadeRatio * 0.5f, completionRatio, true) * 3.2f;
+            float sinusoidalTime = completionRatio * 2.7f - Main.GlobalTimeWrappedHourly * 2.3f + endFadeTerm;
+            float startingInterpolant = (float)Math.Cos(sinusoidalTime) * 0.5f + 0.5f;
+
+            float colorLerpFactor = 0.6f;
+            Color startingColor = Color.Lerp(shaderColor1, shaderColor2, startingInterpolant * colorLerpFactor) * Projectile.Opacity;
+            return Color.Lerp(startingColor, Color.Transparent, MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, endFadeRatio, completionRatio, true)));
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, Color.Fuchsia, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            if (TrailDrawer is null)
+                TrailDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+
+            GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
+            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 39);
             return false;
         }
 

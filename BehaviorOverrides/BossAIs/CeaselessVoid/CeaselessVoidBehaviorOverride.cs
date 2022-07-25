@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -156,6 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int totalRings = 4;
             int energyCountPerRing = 7;
             int hoverRedirectDelay = 300;
+            int portalFireRate = 96;
             int darkEnergyID = ModContent.NPCType<DarkEnergy>();
 
             if (phase2)
@@ -195,9 +197,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Disable damage.
             npc.dontTakeDamage = true;
 
+            // Shoot lasers if moving slowly.
+            if (attackTimer % portalFireRate == portalFireRate - 1f && npc.velocity.Length() < 8f)
+            {
+                SoundEngine.PlaySound(SoundID.Item33, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 9f;
+                        Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 270, 0f);
+                    }
+                }
+            }
+
             // Fly towards the hover destination.
             float flySpeedInterpolant = Utils.GetLerpValue(-24f, 105f, attackTimer, true);
-            Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 250f;
+            Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 450f;
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeedInterpolant * 12f);
 
             // Calculate the life ratio of all dark energy combined.
@@ -347,7 +363,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
 
-                    for (int frames = 8; frames < 75; frames += 4)
+                    for (int frames = 8; frames < 75; frames += 2)
                     {
                         Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
                         Dust magic = Dust.NewDustPerfect(linePosition, 267, -Vector2.UnitY);
@@ -401,12 +417,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Redirect quickly towards the target if necessary.
             if (moveTowardsTarget == 1f)
             {
-                attackTimer--;
                 if (npc.WithinRange(target.Center, 360f))
                 {
                     npc.velocity *= 0.8f;
                     npc.damage = 0;
-                    if (npc.velocity.Length() < 1f)
+                    if (npc.velocity.Length() < 2.4f)
                     {
                         npc.velocity = Vector2.Zero;
                         moveTowardsTarget = 0f;
@@ -416,7 +431,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 }
 
                 CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 200f - npc.Center, 40f, 0.75f, true);
-                return;
             }
 
             // Make Ceaseless Void move quickly towards the target if they go too far away.
@@ -424,11 +438,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 moveTowardsTarget = 1f;
                 npc.netUpdate = true;
-                return;
             }
-
-            // Slow down.
-            npc.velocity *= 0.9f;
+            else
+            {
+                // Slow down.
+                npc.velocity *= 0.9f;
+            }
 
             // Release lasers.
             if (attackTimer % burstShootRate == burstShootRate - 1f && attackTimer >= shootDelay && attackTimer < 400f)
@@ -454,13 +469,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_BlackHoleSuck(NPC npc, Player target, ref float attackTimer)
         {
+            int blackHoleDamage = 750;
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
             ref float hasCreatedBlackHole = ref npc.Infernum().ExtraAI[1];
 
             // Create the black hole on the first frame.
             if (hasCreatedBlackHole == 0f)
             {
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), 360, 0f);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), blackHoleDamage, 0f);
                 hasCreatedBlackHole = 1f;
             }
 

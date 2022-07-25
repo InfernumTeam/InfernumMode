@@ -26,7 +26,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 c2 = tex2D(uImage1, framedCoords + float2(uTime * -0.019, sin(uTime * -0.09 + 0.754) * 0.6));
     float4 result = pow(c1 + c2, 2.6);
     float luminence = (result.r + result.g + result.b) / 3;
-    result.rb += luminence * 0.4;
+    result.b += luminence * 0.8;
     
     return result * color.a * sampleColor.a;
 }

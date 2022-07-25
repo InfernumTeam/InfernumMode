@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Timer++;
 
             // Suck the player in.
-            float suckPower = MathHelper.Lerp(0.3f, 0.5f, Timer / 360f);
+            float suckPower = MathHelper.Lerp(0.3f, 0.525f, Timer / 540f);
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 float distance = Main.player[i].Distance(Projectile.Center);
@@ -82,13 +82,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Release things that fly into the black hole.
-            int energyReleaseRate = 4;
-            if (Timer >= 135f && Timer % energyReleaseRate == energyReleaseRate - 1f)
+            int energyReleaseRate = 3;
+            if (Timer >= 135f && Timer % energyReleaseRate == energyReleaseRate - 1f && Projectile.scale >= 1f)
             {
-                Vector2 asteroidSpawnPosition = Target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
+                Vector2 asteroidSpawnOffset = -Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(0.84f) * 700f;
+                Vector2 asteroidSpawnPosition = Target.Center + asteroidSpawnOffset;
                 Vector2 asteroidShootVelocity = (ceaselessVoid.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
-                Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<DungeonDebris>(), 275, 0f);
+                Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<DarkEnergyBolt>(), 275, 0f);
             }
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DarkEnergyBolt>());
         }
 
         #region Drawing
@@ -139,6 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
             GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
             GameShaders.Misc["Infernum:RealityTear"].Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);

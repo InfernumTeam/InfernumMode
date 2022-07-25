@@ -46,12 +46,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.9f;
 
-        public override Color? GetAlpha(Color lightColor) => new Color(255, 150, 255, 108) * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 108, 50, 0) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
+
+            for (int i = 0; i < 5; i++)
+                Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
             return false;
         }
     }

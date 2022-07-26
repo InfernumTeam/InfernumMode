@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public enum CeaselessVoidAttackType
         {
             DarkEnergySwirl,
-            HorizontalRealityRendCharge,
+            RealityRendCharge,
             ConvergingEnergyBarrages,
             SlowEnergySpirals,
             DarkEnergyBulletHell,
@@ -88,8 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 18f, 0.08f);
-                if (!npc.WithinRange(target.Center, 1450f))
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 38f, 0.08f);
+                if (!npc.WithinRange(target.Center, 1450f) || target.dead)
                 {
                     npc.life = 0;
                     npc.active = false;
@@ -141,8 +141,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 case CeaselessVoidAttackType.DarkEnergySwirl:
                     DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.HorizontalRealityRendCharge:
-                    DoBehavior_HorizontalRealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);
+                case CeaselessVoidAttackType.RealityRendCharge:
+                    DoBehavior_RealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
                 case CeaselessVoidAttackType.ConvergingEnergyBarrages:
                     DoBehavior_ConvergingEnergyBarrages(npc, phase2, phase3, enraged, target, ref attackTimer);
@@ -167,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int totalRings = 4;
             int energyCountPerRing = 7;
             int hoverRedirectDelay = 300;
-            int portalFireRate = 96;
+            int portalFireRate = 105;
             int darkEnergyID = ModContent.NPCType<DarkEnergy>();
 
             if (phase2)
@@ -179,27 +179,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             ref float hasCreatedDarkEnergy = ref npc.Infernum().ExtraAI[0];
-            ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
             // Initialize by creating the dark energy ring.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedDarkEnergy == 0f)
             {
                 for (int i = 0; i < totalRings; i++)
                 {
-                    float spinMovementSpeed = MathHelper.Lerp(1f, 2.3f, i / (float)(totalRings - 1f));
+                    float spinMovementSpeed = MathHelper.Lerp(1.45f, 3f, i / (float)(totalRings - 1f));
                     for (int j = 0; j < energyCountPerRing; j++)
                     {
+                        float offsetRadius = MathHelper.Lerp(0f, 150f, CalamityUtils.Convert01To010(j / (float)(energyCountPerRing - 1f)));
                         float offsetAngle = MathHelper.TwoPi * j / energyCountPerRing;
-                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, darkEnergyID, npc.whoAmI, offsetAngle, spinMovementSpeed);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, darkEnergyID, npc.whoAmI, offsetAngle, spinMovementSpeed, offsetRadius);
                     }
                 }
+                npc.Center = target.Center - Vector2.UnitY * 300f;
                 hasCreatedDarkEnergy = 1f;
+                npc.netUpdate = true;
             }
 
             // Redirect to a different offset after a sufficient amount of time has passed.
             if (attackTimer >= hoverRedirectDelay)
             {
-                hoverOffsetAngle += MathHelper.PiOver4;
                 attackTimer = 0f;
                 npc.netUpdate = true;
             }
@@ -215,17 +216,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 9f;
-                        Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 270, 0f);
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 9.6f;
+                        int fuckYou = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(fuckYou))
+                            Main.projectile[fuckYou].ai[0] = 270 / 4;
                     }
                 }
             }
-
-            // Fly towards the hover destination.
-            float flySpeedInterpolant = Utils.GetLerpValue(-24f, 105f, attackTimer, true);
-            Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 450f;
-            npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeedInterpolant * 12f);
-
+            
             // Calculate the life ratio of all dark energy combined.
             // If it is sufficiently low then all remaining dark energy fades away and CV goes to the next attack.
             int darkEnergyTotalLife = 0;
@@ -261,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
         }
 
-        public static void DoBehavior_HorizontalRealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
+        public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int chargeTime = 42;
             int repositionTime = 210;
@@ -290,12 +288,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             ref float attackState = ref npc.Infernum().ExtraAI[1];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[2];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[3];
+            ref float verticalHoverOffset = ref npc.Infernum().ExtraAI[4];
 
             switch ((int)attackState)
             {
                 // Get into position for the horizontal charge.
                 case 0:
+                    if (attackTimer == 1f)
+                        verticalHoverOffset = Main.rand.NextFloat(-hoverOffset * 0.7f, 0f);
+
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverOffset;
+                    hoverDestination.Y += verticalHoverOffset;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
                     // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
@@ -303,8 +306,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     {
                         attackTimer = 0f;
                         attackState = 1f;
-                        chargeDirection = Math.Sign(target.Center.X - npc.Center.X);
-                        npc.velocity.Y *= 0.372f;
+                        chargeDirection = npc.AngleTo(target.Center);
+                        npc.velocity *= 0.372f;
                         npc.netUpdate = true;
 
                         // Create the reality tear.
@@ -321,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Do the charge.
                 case 1:
                     npc.damage = npc.defDamage;
-                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.125f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection.ToRotationVector2() * chargeSpeed, 0.125f);
                     if (attackTimer >= chargeTime)
                     {
                         attackState = 0f;
@@ -341,12 +344,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             int hoverTime = 20;
             int barrageBurstCount = 4;
-            int barrageTelegraphTime = 20;
-            int barrageShootRate = 32;
+            int barrageTelegraphTime = 18;
+            int barrageShootRate = 28;
             int barrageCount = 13;
             int attackTransitionDelay = 40;
-            float maxShootOffsetAngle = 1.26f;
-            float initialBarrageSpeed = 10.5f;
+            float maxShootOffsetAngle = 1.49f;
+            float initialBarrageSpeed = 11f;
             if (phase2)
                 initialBarrageSpeed += 1.8f;
             if (phase3)
@@ -363,13 +366,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             ref float playerShootDirection = ref npc.Infernum().ExtraAI[1];
             ref float barrageBurstCounter = ref npc.Infernum().ExtraAI[2];
             if (barrageBurstCounter == 0f)
-                hoverTime += 120;
+                hoverTime += 64;
 
             // Hover before firing.
             if (attackTimer < hoverTime)
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 540f;
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 1.9f);
+                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 640f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.025f);
+
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 25f;
+                npc.SimpleFlyMovement(idealVelocity, 1.9f);
                 if (npc.WithinRange(hoverDestination, 100f))
                     npc.velocity *= 0.85f;
             }
@@ -396,6 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         magic.noGravity = true;
                     }
                 }
+                npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
             }
 
@@ -416,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer >= hoverTime + barrageShootRate + attackTransitionDelay)
             {
                 attackTimer = 0f;
-                hoverOffsetAngle += MathHelper.TwoPi / barrageBurstCount;
+                hoverOffsetAngle += MathHelper.TwoPi / barrageBurstCount + Main.rand.NextFloatDirection() * 0.36f;
                 barrageBurstCounter++;
                 if (barrageBurstCounter >= barrageBurstCount)
                     SelectNewAttack(npc);
@@ -428,14 +435,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public static void DoBehavior_SlowEnergySpirals(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int shootDelay = 96;
-            int burstShootRate = 36;
+            int burstShootRate = 32;
             int laserBurstCount = 12;
-            float burstShootSpeed = 7.5f;
+            float burstShootSpeed = 11.5f;
             if (phase2)
-                burstShootRate -= 6;
+                burstShootRate -= 4;
             if (phase3)
             {
-                burstShootRate -= 5;
+                burstShootRate -= 4;
                 laserBurstCount += 4;
             }
             if (enraged)
@@ -502,8 +509,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_DarkEnergyBulletHell(NPC npc, Player target, ref float attackTimer)
         {
-            int burstFireRate = 21;
-            int circleFireRate = 54;
+            int burstFireRate = 17;
+            int circleFireRate = 42;
             int energyPerBurst = 12;
             int energyPerCircle = 20;
             int shootTime = 780;
@@ -595,7 +602,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Make Ceaseless Void move quickly towards the target if they go too far away.
-            if (!npc.WithinRange(target.Center, 1200f))
+            if (!npc.WithinRange(target.Center, 1280f))
             {
                 moveTowardsTarget = 1f;
                 npc.netUpdate = true;
@@ -616,7 +623,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             
             List<CeaselessVoidAttackType> possibleAttacks = new()
             {
-                CeaselessVoidAttackType.HorizontalRealityRendCharge,
+                CeaselessVoidAttackType.RealityRendCharge,
                 CeaselessVoidAttackType.ConvergingEnergyBarrages,
                 CeaselessVoidAttackType.SlowEnergySpirals
             };

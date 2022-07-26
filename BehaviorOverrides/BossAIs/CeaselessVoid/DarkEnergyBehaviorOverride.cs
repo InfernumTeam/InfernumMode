@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Disable damage universally for a short period of time to both give the target time to react and to prevent all energy being killed at once.
             npc.dontTakeDamage = false;
             npc.damage = npc.defDamage;
-            if (shouldFadeAway || timer < 180f)
+            if (shouldFadeAway || timer < 180f || !Main.player[Player.FindClosest(ceaselessVoid.Center, 1, 1)].WithinRange(ceaselessVoid.Center, CeaselessVoidBehaviorOverride.DarkEnergyOffsetRadius + 200f))
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;

@@ -81,6 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float passiveAttackDelay = ref npc.Infernum().ExtraAI[13];
             ref float uncoilTimer = ref npc.Infernum().ExtraAI[35];
             ref float segmentFadeType = ref npc.Infernum().ExtraAI[BodySegmentFadeTypeAIIndex];
+            ref float getInTheFuckingPortalTimer = ref npc.Infernum().ExtraAI[40];
 
             // Increment timers.
             attackTimer++;
@@ -131,6 +132,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (CurrentPhase2TransitionState != Phase2TransitionState.NotEnteringPhase2)
             {
                 HandlePhase2TransitionEffect(npc, ref portalIndex);
+                getInTheFuckingPortalTimer++;
+                if (getInTheFuckingPortalTimer >= 540f)
+                {
+                    DoGPhase2HeadBehaviorOverride.InPhase2 = true;
+                    Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[10] = 0f;
+                    Main.npc[CalamityGlobalNPC.DoGHead].netUpdate = true;
+                }
+
                 return false;
             }
 

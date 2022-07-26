@@ -35,12 +35,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Home in on the target before accelerating.
             if (Time <= 45f)
             {
-                float homeSpeed = Power * 5f + 14f;
+                float homeSpeed = Power * 6f + 19.6f;
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 20f;
+                Projectile.velocity = (Projectile.velocity * 14f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 15f;
             }
             else if (Projectile.velocity.Length() < 24f)
-                Projectile.velocity *= Power * 0.02f + 1.02f;
+                Projectile.velocity *= Power * 0.025f + 1.02f;
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;

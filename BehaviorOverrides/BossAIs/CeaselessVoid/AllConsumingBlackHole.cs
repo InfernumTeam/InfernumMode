@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Timer++;
 
             // Suck the player in.
-            float suckPower = MathHelper.Lerp(0.3f, 0.525f, Timer / 540f);
+            float suckPower = MathHelper.Lerp(0.4f, 0.7f, Timer / 540f);
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 float distance = Main.player[i].Distance(Projectile.Center);
@@ -114,9 +114,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int energyReleaseRate = 3;
             if (Timer >= 135f && Timer % energyReleaseRate == energyReleaseRate - 1f && Projectile.scale >= 1f)
             {
-                Vector2 asteroidSpawnOffset = -Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(0.84f) * 700f;
+                Vector2 asteroidSpawnOffset = -Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(1.03f) * 700f;
                 Vector2 asteroidSpawnPosition = Target.Center + asteroidSpawnOffset;
-                Vector2 asteroidShootVelocity = (ceaselessVoid.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
+                Vector2 asteroidShootVelocity = (ceaselessVoid.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 14f;
                 Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<DarkEnergyBolt>(), 275, 0f);
             }
         }

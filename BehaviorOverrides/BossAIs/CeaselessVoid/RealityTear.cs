@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Create barrages of otherwordly magic from the tear.
-            else if (Main.netMode != NetmodeID.MultiplayerClient && TrailCache.Count >= 2 && Time % 10f == 9f)
+            else if (Main.netMode != NetmodeID.MultiplayerClient && TrailCache.Count >= 2 && Time % 8f == 7f)
             {
                 int barragePointIndex = Main.rand.Next(TrailCache.Count - 1);
                 Vector2 barrageVelocity = Main.rand.NextVector2CircularEdge(8f, 8f);
@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 if (Main.projectile.IndexInRange(barrage))
                     Main.projectile[barrage].ai[1] = ScaleFactorDelta;
             }
-
+            
             // Fade in.
             float disappearInterpolant = Utils.GetLerpValue(0f, 24f, Projectile.timeLeft / Projectile.MaxUpdates, true);
             float scaleGrowInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 64f, Time, true), 1.72);

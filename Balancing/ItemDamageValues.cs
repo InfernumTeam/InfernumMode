@@ -22,6 +22,7 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<HeavenfallenStardisk>()] = 87,
             [ModContent.ItemType<Atlantis>()] = 55,
             [ModContent.ItemType<ResurrectionButterfly>()] = 44,
+            [ModContent.ItemType<Lazhar>()] = 42,
             [ModContent.ItemType<PridefulHuntersPlanarRipper>()] = 48,
             [ModContent.ItemType<FinalDawn>()] = 855,
         };

@@ -12,27 +12,27 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-    public class EerieLimb : ModNPC
+    public class PolterghastLeg : ModNPC
     {
         public Vector2 IdealPosition;
         public LimbCollection Limbs;
         public PrimitiveTrailCopy LimbDrawer = null;
-        public NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
         public Player Target => Main.player[NPC.target];
         public int Direction => (NPC.ai[0] >= 2f).ToDirectionInt();
         public ref float IdealPositionTimer => ref NPC.ai[1];
-        public PolterghastBehaviorOverride.PolterghastAttackType CurrentAttack => (PolterghastBehaviorOverride.PolterghastAttackType)(int)Polterghast.ai[0];
-        public float AttackTimer => Polterghast.ai[1];
-        public bool Enraged => Polterghast.ai[3] == 1f;
+        public static PolterghastBehaviorOverride.PolterghastAttackType CurrentAttack => (PolterghastBehaviorOverride.PolterghastAttackType)(int)Polterghast.ai[0];
+        public static float AttackTimer => Polterghast.ai[1];
+        public static bool Enraged => Polterghast.ai[3] == 1f;
+        public static NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Limb");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Ghostly Leg");
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 900;
-            NPC.damage = 225;
+            NPC.damage = 245;
             NPC.lifeMax = 5000;
             NPC.dontTakeDamage = true;
             NPC.knockBackResist = 0f;
@@ -186,10 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Have the legs turn red to signal that they do damage.
             if (AttackTimer >= 90f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion)
                 redFade += Utils.GetLerpValue(90f, 130f, AttackTimer, true) * Utils.GetLerpValue(310f, 290f, AttackTimer, true) * 0.32f;
-
-            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale && NPC.ai[0] % 2f == 1f)
-                redFade += Utils.GetLerpValue(45f, 100f, AttackTimer % 150f, true) * 0.32f;
-
+            
             Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade);
             if (!actsAsBorder)
                 baseColor *= Utils.GetLerpValue(54f, 45f, Polterghast.ai[2], true);
@@ -202,8 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 return false;
 
             bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
-            bool impaling = AttackTimer % 150f > 105f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale;
-            if (actsAsBorder || impaling)
+            if (actsAsBorder)
             {
                 float _ = 0f;
                 float lineWidth = PrimitiveWidthFunction(0f);

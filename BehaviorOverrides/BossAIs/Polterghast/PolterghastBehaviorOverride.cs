@@ -36,8 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             IdleMove,
             ReleaseBurstsOfSouls,
-            Impale,
-            RockCharge,
+            ArcingSouls,
+            VortexCharge,
             SpiritPetal,
             EtherealRoar,
             BeastialExplosion,
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 for (int i = 0; i < 4; i++)
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PolterghastLeg>(), 0, i);
                 npc.localAI[3] = 1f;
             }
 
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int cloneType = NPC.CountNPCS(ModContent.NPCType<PolterPhantom>());
-                    int legType = ModContent.NPCType<EerieLimb>();
+                    int legType = ModContent.NPCType<PolterghastLeg>();
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         if ((Main.npc[i].type == cloneType || Main.npc[i].type == legType) && Main.npc[i].active)
@@ -227,13 +227,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 case PolterghastAttackType.ReleaseBurstsOfSouls:
                     DoAttack_ReleaseBurstsOfSouls(npc, target, ref attackTimer, ref totalReleasedSouls, enraged);
                     break;
-                case PolterghastAttackType.Impale:
-                    DoAttack_Impale(npc, target, ref attackTimer);
+                case PolterghastAttackType.ArcingSouls:
+                    DoAttack_ArcingSouls(npc, target, ref attackTimer);
                     break;
                 case PolterghastAttackType.SpiritPetal:
                     DoAttack_SpiritPetal(npc, target, ref attackTimer, ref totalReleasedSouls, enraged);
                     break;
-                case PolterghastAttackType.RockCharge:
+                case PolterghastAttackType.VortexCharge:
                     DoAttack_DoRockCharge(npc, target, ref attackTimer, enraged);
                     break;
                 case PolterghastAttackType.EtherealRoar:
@@ -277,12 +277,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     newAttackState = PolterghastAttackType.ReleaseBurstsOfSouls;
                     break;
                 case PolterghastAttackType.ReleaseBurstsOfSouls:
-                    newAttackState = PolterghastAttackType.Impale;
+                    newAttackState = PolterghastAttackType.ArcingSouls;
                     break;
-                case PolterghastAttackType.Impale:
-                    newAttackState = PolterghastAttackType.RockCharge;
+                case PolterghastAttackType.ArcingSouls:
+                    newAttackState = PolterghastAttackType.VortexCharge;
                     break;
-                case PolterghastAttackType.RockCharge:
+                case PolterghastAttackType.VortexCharge:
                     newAttackState = phase2 ? PolterghastAttackType.SpiritPetal : PolterghastAttackType.IdleMove;
                     break;
                 case PolterghastAttackType.SpiritPetal:
@@ -395,35 +395,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_Impale(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_ArcingSouls(NPC npc, Player target, ref float attackTimer)
         {
-            SelectNextAttack(npc);
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            int shootDelay = 35;
+            int shootRate = 42;
+            int shootTime = 240;
+            int attackTransitionDelay = 60;
+            int soulCount = (int)MathHelper.Lerp(8f, 15f, 1f - lifeRatio);
+            float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
 
-            int impaleCount = 3;
-            float impaleTime = 150f;
+            // Slow down and look at the target at the beginning.
+            if (attackTimer < shootDelay)
+                npc.velocity *= 0.95f;
 
-            if (attackTimer >= impaleTime * impaleCount + 15f)
-                SelectNextAttack(npc);
-
-            // Hover to the top left/right of the target before attacking.
-            if (attackTimer % impaleTime < 45f)
+            // Otherwise crawl into a corner and shoot things.
+            else
             {
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                Vector2 destination = target.Center - Vector2.UnitY * 175f;
+                destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
+                npc.velocity = (npc.velocity * 9f + npc.SafeDirectionTo(destination) * 20f) / 10f;
 
-                Vector2 destination = target.Center - Vector2.UnitY * 250f;
-                destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 170f;
-                npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * 21.5f) / 11f;
-                return;
+                if (attackTimer % shootRate == shootRate - 1f && attackTimer < shootTime + attackTransitionDelay)
+                {
+                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int direction = -1; direction <= 1; direction += 2)
+                        {
+                            for (int i = 0; i < soulCount / 2; i++)
+                            {
+                                float shootOffsetAngle = MathHelper.Lerp(0.46f, 1.19f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float soulAngularVelocity = -shootOffsetAngle * 0.03f;
+                                Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
+                                int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);
+                                if (Main.projectile.IndexInRange(soul))
+                                    Main.projectile[soul].ai[0] = soulAngularVelocity;
+                            }
+                        }
+                    }
+                }
             }
 
-            // Slow down.
-            npc.velocity *= 0.95f;
-            if (attackTimer % impaleTime < 50f)
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            // Look at the target.
+            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-            // Roar right before impaling.
-            if (attackTimer % impaleTime == 90f)
-                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.425f, Volume = 1.5f }, target.Center);
+            if (attackTimer >= shootDelay + shootTime + attackTransitionDelay)
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_SpiritPetal(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls, bool enraged)
@@ -456,8 +474,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 Vector2 baseSpawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 44f;
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 leftVelocity = (MathHelper.TwoPi * i / 3f - offsetAngle).ToRotationVector2() * 22.5f;
-                    Vector2 rightVelocity = (MathHelper.TwoPi * i / 3f + offsetAngle).ToRotationVector2() * 22.5f;
+                    Vector2 leftVelocity = (MathHelper.TwoPi * i / 3f - offsetAngle).ToRotationVector2() * 20.5f;
+                    Vector2 rightVelocity = (MathHelper.TwoPi * i / 3f + offsetAngle).ToRotationVector2() * 20.5f;
 
                     int soul = Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
                     if (Main.projectile.IndexInRange(soul))
@@ -502,13 +520,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public static void DoAttack_DoRockCharge(NPC npc, Player target, ref float attackTimer, bool enraged)
         {
+            int aimTime = 80;
+            int slowdownTime = 20;
+            int chargeTime = 55;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float chargeSpeed = MathHelper.Lerp(24.5f, 31f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(28.5f, 36f, 1f - lifeRatio);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.45f;
 
             // Aim.
-            if (attackTimer < 80f)
+            if (attackTimer < aimTime)
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -518,14 +539,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Slow down.
-            if (attackTimer > 80f && attackTimer < 105f)
+            if (attackTimer > aimTime && attackTimer < aimTime + slowdownTime)
             {
                 npc.velocity *= 0.94f;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
             }
 
             // Charge.
-            if (attackTimer == 105f)
+            if (attackTimer == aimTime + slowdownTime)
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -538,29 +559,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // And release accelerating stones.
-            if (attackTimer >= 105f && attackTimer < 160f)
+            if (attackTimer >= aimTime + slowdownTime && attackTimer < aimTime + slowdownTime + chargeTime)
             {
-                npc.velocity *= 1.005f;
+                npc.velocity *= 1.004f;
 
                 // Release a burst of rocks.
-                int shootRate = enraged ? 5 : 7;
+                int shootRate = enraged ? 3 : 5;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
-                    Vector2 rockVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 280, 0f);
+                    Vector2 rockVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
+                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
                     rockVelocity *= -1f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 280, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
                 }
             }
 
             // Slow down.
-            if (attackTimer >= 160f)
+            if (attackTimer >= aimTime + slowdownTime + chargeTime)
             {
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.275f);
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.0425f) * 0.96f;
             }
 
-            if (attackTimer >= 205f)
+            if (attackTimer >= aimTime + slowdownTime + chargeTime + slowdownTime * 2)
                 SelectNextAttack(npc);
         }
 
@@ -613,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                     for (int i = 0; i <= 10; i++)
                     {
-                        Vector2 soulVelocity = npc.SafeDirectionTo(target.Center) * 15f;
+                        Vector2 soulVelocity = npc.SafeDirectionTo(target.Center) * 12.5f;
                         soulVelocity = soulVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, (i + 0.5f) / 10f));
                         soulVelocity *= MathHelper.Lerp(1f, 1.4f, (float)Math.Sin(MathHelper.Pi * i / 10f));
                         Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<WavySoul>(), 290, 0f);
@@ -717,16 +738,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public static void DoAttack_CloneSplit(NPC npc, Player target, ref float attackTimer, bool enraged)
         {
-            int totalCharges = 3;
-            float chargeSpeed = enraged || BossRushEvent.BossRushActive ? 28f : 23f;
-            int cloneType = ModContent.NPCType<PolterPhantom>();
-            float adjustedTimer = attackTimer % 180f;
+            int totalCharges = 4;
+            int cloneCount = 5;
+            int splitDelay = 15;
+            int hoverTime = 15;
+            int chargeTime = 48;
+            int postChargeDelay = 20;
+            int attackCycleLength = splitDelay + hoverTime + chargeTime + postChargeDelay;
+            float chargeSpeed = enraged || BossRushEvent.BossRushActive ? 30f : 25f;
+            float adjustedTimer = attackTimer % attackCycleLength;
 
+            int cloneID = ModContent.NPCType<PolterPhantom>();
             IEnumerable<int> polterghasts = Main.npc.Take(Main.maxNPCs).
-                Where(n => (n.type == npc.type || n.type == cloneType) && n.active).
+                Where(n => (n.type == npc.type || n.type == cloneID) && n.active).
                 Select(n => n.whoAmI);
 
-            if (adjustedTimer < 40f && !npc.WithinRange(target.Center, 300f))
+            if (adjustedTimer < splitDelay + hoverTime && !npc.WithinRange(target.Center, 300f))
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 240f;
@@ -734,14 +761,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(destination) * 18f) / 16f;
             }
 
-            if (adjustedTimer == 20f)
+            if (adjustedTimer == splitDelay)
             {
                 // Summon three new clones.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < cloneCount; i++)
                     {
-                        int clone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
+                        int clone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneID);
 
                         // An NPC must update once for it to recieve a whoAmI variable.
                         // Without this, the below IEnumerable collection would not incorporate this NPC.
@@ -751,14 +778,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 }
 
                 polterghasts = Main.npc.Take(Main.maxNPCs).
-                    Where(n => n.type == cloneType && n.active).
+                    Where(n => n.type == cloneID && n.active).
                     Select(n => n.whoAmI);
 
                 // Teleport around the player.
                 Vector2 originalPosition = npc.Center;
                 for (int i = 0; i < polterghasts.Count(); i++)
                 {
-                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / polterghasts.Count()) * 260f;
+                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / polterghasts.Count()) * 450f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -771,30 +798,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
             }
 
-            if (adjustedTimer > 50f && adjustedTimer < 105f)
+            if (adjustedTimer > splitDelay + hoverTime && adjustedTimer < splitDelay + hoverTime + chargeTime)
             {
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                npc.velocity *= 1.01f;
+                npc.velocity *= 1.0145f;
             }
             else
             {
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.325f);
-
-                if (attackTimer > 50f)
+                if (adjustedTimer > splitDelay + hoverTime)
                     npc.velocity *= 0.97f;
             }
 
             // Charge.
-            if (Main.netMode != NetmodeID.MultiplayerClient && adjustedTimer == 50f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && adjustedTimer == splitDelay + hoverTime)
             {
                 for (int i = 0; i < polterghasts.Count(); i++)
                 {
-                    Main.npc[polterghasts.ElementAt(i)].velocity = Main.npc[polterghasts.ElementAt(i)].SafeDirectionTo(target.Center + target.velocity * 10f) * chargeSpeed;
+                    Main.npc[polterghasts.ElementAt(i)].velocity = Main.npc[polterghasts.ElementAt(i)].SafeDirectionTo(target.Center) * chargeSpeed;
                     Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
                 }
             }
 
-            if (attackTimer >= totalCharges * 180f)
+            if (attackTimer >= totalCharges * attackCycleLength)
                 SelectNextAttack(npc);
         }
 

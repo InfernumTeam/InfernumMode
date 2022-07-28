@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 NPC firstSlime = FirstSlimeToSummonIndex >= 0 ? Main.npc[FirstSlimeToSummonIndex] : null;
                 NPC secondSlime = SecondSlimeToSummonIndex >= 0 ? Main.npc[SecondSlimeToSummonIndex] : null;
 
-                bool eitherSlimeIsAlive = (firstSlime != null).ToInt() + (secondSlime != null).ToInt() <= 1;
+                bool eitherSlimeIsAlive = firstSlime != null || secondSlime != null;
                 if (eitherSlimeIsAlive)
                 {
                     NPC remainingSlime = firstSlime is null ? secondSlime : firstSlime;

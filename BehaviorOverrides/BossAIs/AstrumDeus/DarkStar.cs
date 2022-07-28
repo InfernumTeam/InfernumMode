@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public ref float Time => ref Projectile.localAI[1];
 
-        public const int PointsInStar = 5;
+        public const int PointsInStar = 6;
         public const float RadiusOfConstellation = 575f;
 
         public const int Lifetime = 960;

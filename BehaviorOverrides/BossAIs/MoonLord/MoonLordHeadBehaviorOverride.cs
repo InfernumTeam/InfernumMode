@@ -326,9 +326,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 Main.spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.7f, npc.rotation, mouthOrigin, 1f, 0, 0f);
 
-                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                //Main.spriteBatch.SetBlendState(BlendState.Additive);
                 Main.spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity, npc.rotation, pupilTexture.Size() * 0.5f, npc.localAI[2], SpriteEffects.None, 0f);
-                Main.spriteBatch.ResetBlendState();
+                //Main.spriteBatch.ResetBlendState();
             }
             Main.spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
             Main.spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);

@@ -399,11 +399,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int shootDelay = 35;
-            int shootRate = 42;
+            int shootRate = 60;
             int shootTime = 240;
             int attackTransitionDelay = 60;
             int soulCount = (int)MathHelper.Lerp(8f, 15f, 1f - lifeRatio);
             float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
+
+            if (lifeRatio < Phase2LifeRatio)
+                shootRate = 50;
+            if (lifeRatio < Phase3LifeRatio)
+                shootRate = 38;
 
             // Slow down and look at the target at the beginning.
             if (attackTimer < shootDelay)

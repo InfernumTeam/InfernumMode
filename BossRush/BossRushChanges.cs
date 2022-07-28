@@ -213,7 +213,7 @@ namespace InfernumMode.BossRush
                     NPCID.CultistDragonTail, NPCID.AncientCultistSquidhead, NPCID.AncientLight, NPCID.AncientDoom }),
 
                 new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: new int[] { ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianSlimeGod>(), ModContent.NPCType<CrimulanSlimeGod>(), ModContent.NPCType<SplitCrimulanSlimeGod>(),
-                    ModContent.NPCType<SplitEbonianSlimeGod>(), ModContent.NPCType<BehaviorOverrides.BossAIs.SlimeGod.SlimeSpawnCorrupt2>(), ModContent.NPCType<SlimeSpawnCrimson3>() }),
+                    ModContent.NPCType<SplitEbonianSlimeGod>() }),
 
                 new Boss(ModContent.NPCType<Providence>(), TimeChangeContext.Day, type =>
                 {

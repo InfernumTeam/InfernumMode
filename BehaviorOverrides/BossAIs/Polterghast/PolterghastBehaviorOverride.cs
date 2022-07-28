@@ -791,8 +791,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     {
                         Main.npc[polterghasts.ElementAt(i)].Center = newPosition;
                         Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
-
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
                 }
                 SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);

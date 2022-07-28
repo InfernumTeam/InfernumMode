@@ -521,7 +521,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         {
                             float offsetAngle = MathHelper.Lerp(-1.13f, 1.13f, i / (float)(kunaiCount - 1f));
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 35f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
                         }
                     }
                 }

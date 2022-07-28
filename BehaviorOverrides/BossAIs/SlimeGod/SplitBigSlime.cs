@@ -1,5 +1,4 @@
 using CalamityMod.Events;
-using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -8,19 +7,22 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-    public class SlimeSpawnCorrupt2 : ModNPC
+    public class SplitBigSlime : ModNPC
     {
+        public int OwnerIndex => (int)NPC.ai[1];
+
         public ref float RedirectCountdown => ref NPC.ai[0];
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Corrupt Slime Spawn");
+            DisplayName.SetDefault("Unstable Slime Spawn");
             Main.npcFrameCount[NPC.type] = 4;
         }
 
         public override void SetDefaults()
         {
             NPC.aiStyle = AIType = -1;
-            NPC.damage = 67;
+            NPC.damage = 70;
             NPC.width = 40;
             NPC.height = 30;
             NPC.defense = 11;
@@ -43,35 +45,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void AI()
         {
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+            if (!Main.npc.IndexInRange(OwnerIndex))
             {
                 NPC.active = false;
                 return;
             }
 
-            NPC slimeGod = Main.npc[CalamityGlobalNPC.slimeGodPurple];
-            float time = slimeGod.ai[1];
-
-            if (time > 500f)
+            NPC slimeGod = Main.npc[OwnerIndex];
+            if (slimeGod.Infernum().ExtraAI[1] == 2f)
                 NPC.active = false;
 
-            if (!NPC.WithinRange(slimeGod.Center, Main.rand.NextFloat(380f, 520f)) || time > 420f)
+            if (!NPC.WithinRange(slimeGod.Center, Main.rand.NextFloat(380f, 520f)) || slimeGod.Infernum().ExtraAI[1] == 1f)
                 RedirectCountdown = 60f;
 
             if (RedirectCountdown > 0f && !NPC.WithinRange(slimeGod.Center, 50f))
             {
-                float flySpeed = BossRushEvent.BossRushActive ? 38f : 20.75f;
-                Vector2 destinationOffset = (MathHelper.TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 12f;
+                float flySpeed = BossRushEvent.BossRushActive ? 38f : 18.25f;
+                flySpeed = MathHelper.Max(flySpeed, slimeGod.velocity.Length() * 1.2f);
+
+                Vector2 destinationOffset = (MathHelper.TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 32f;
                 NPC.velocity = (NPC.velocity * 34f + NPC.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 35f;
+                if (!NPC.WithinRange(slimeGod.Center, 175f))
+                    NPC.Center = Vector2.Lerp(NPC.Center, slimeGod.Center, 0.05f);
+
                 RedirectCountdown--;
             }
 
             NPC.rotation = MathHelper.Clamp(NPC.velocity.X * 0.05f, -0.2f, 0.2f);
+            NPC.spriteDirection = (NPC.velocity.X < 0f).ToDirectionInt();
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.penetrate > 1 || projectile.penetrate == -1)
+            if (projectile.penetrate is > 1 or (-1))
                 damage = (int)(damage * 0.1);
         }
 
@@ -89,13 +95,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override bool CheckDead()
         {
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+            if (!Main.npc.IndexInRange(OwnerIndex))
                 return base.CheckDead();
 
-            Main.npc[CalamityGlobalNPC.slimeGodPurple].life -= NPC.lifeMax;
-            Main.npc[CalamityGlobalNPC.slimeGodPurple].HitEffect(0, NPC.lifeMax);
-            if (Main.npc[CalamityGlobalNPC.slimeGodPurple].life <= 0)
-                Main.npc[CalamityGlobalNPC.slimeGodPurple].NPCLoot();
+            Main.npc[OwnerIndex].life -= NPC.lifeMax;
+            Main.npc[OwnerIndex].HitEffect(0, NPC.lifeMax);
+            if (Main.npc[OwnerIndex].life <= 0)
+                Main.npc[OwnerIndex].NPCLoot();
 
             return base.CheckDead();
         }

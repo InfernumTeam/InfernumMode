@@ -924,7 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
                     if (Main.projectile.IndexInRange(cloud))
                     {
-                        Main.projectile[cloud].timeLeft = 10 + (110 - (int)attackTimer);
+                        Main.projectile[cloud].timeLeft = 10 + (170 - (int)attackTimer);
                         Main.projectile[cloud].netUpdate = true;
                     }
                 }
@@ -947,7 +947,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(target.Center) * flySpeed) / flyInertia;
                 }
 
-                if (attackTimer >= 120f)
+                if (attackTimer >= 180f)
                 {
                     SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                     SelectNextAttack(npc);

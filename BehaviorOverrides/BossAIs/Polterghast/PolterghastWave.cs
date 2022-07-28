@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             if (Projectile.localAI[0] == 0f)
             {
-                MaxRadius = Main.rand.NextFloat(2000f, 2200f);
+                MaxRadius = Main.rand.NextFloat(1600f, 1725f);
                 Projectile.localAI[0] = 1f;
             }
 

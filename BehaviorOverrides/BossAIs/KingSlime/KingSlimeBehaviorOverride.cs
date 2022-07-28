@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     npc.dontTakeDamage = true;
                     npc.damage = 0;
 
-                    // Release slime dust to accompany the teleport
+                    // Release slime dust to accompany the teleport.
                     for (int i = 0; i < 30; i++)
                     {
                         Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);

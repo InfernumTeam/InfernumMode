@@ -276,7 +276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Attempt to move towards the target if far away from them.
             if (!npc.WithinRange(target.Center, attackStartDistanceThreshold) && attackTimer < initialAttackWaitDelay)
             {
-                float idealMoventSpeed = (npc.Distance(target.Center) - attackStartDistanceThreshold) / 70f + 15f;
+                float idealMoventSpeed = (npc.Distance(target.Center) - attackStartDistanceThreshold) / 45f + 24f;
                 npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(target.Center) * idealMoventSpeed) / 40f;
 
                 attackTimer = 0f;

@@ -35,7 +35,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             ref float hitCount = ref npc.ai[0];
             bool hardmode = Main.hardMode;
 
-
             if (hitCount < HitsRequiredToAnger)
             {
                 if (npc.justHit)
@@ -84,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     if (attackTimer > 180)
                         hidingInShell = 1f;
 
-                    if (attackTimer == 0 || attackTimer == 180)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer == 0 || attackTimer == 180))
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
                         for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
@@ -97,8 +96,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                                 if (Main.projectile.IndexInRange(proj))
                                     Main.projectile[proj].ai[0] = 1f;
                             }
-
                         }
+                        npc.netUpdate = true;
                     }
 
                     attackTimer++;
@@ -110,22 +109,27 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     if (attackTimer == 0f)
                     {
                         SoundEngine.PlaySound(SoundID.Item67, npc.position);
-                        for (float offset = -750f; offset < 750f; offset += 150f)
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 spawnPosition = target.Center + new Vector2(offset, -750f);
-                            Vector2 pearlShootVelocity = Vector2.UnitY * 8f;
-                            Utilities.NewProjectileBetter(spawnPosition, pearlShootVelocity, ModContent.ProjectileType<PearlRain>(), npc.damage, 0f, Main.myPlayer, 0f, 0f);
-                        }
-                        for (float offset = -675f; offset < 825f; offset += 150f)
-                        {
-                            Vector2 spawnPosition = target.Center + new Vector2(offset, 750f);
-                            Vector2 pearlShootVelocity = Vector2.UnitY * -8f;
-                            Utilities.NewProjectileBetter(spawnPosition, pearlShootVelocity, ModContent.ProjectileType<PearlRain>(), npc.damage, 0f, Main.myPlayer, 0f, 0f);
+                            for (float offset = -750f; offset < 750f; offset += 150f)
+                            {
+                                Vector2 spawnPosition = target.Center + new Vector2(offset, -750f);
+                                Vector2 pearlShootVelocity = Vector2.UnitY * 8f;
+                                Utilities.NewProjectileBetter(spawnPosition, pearlShootVelocity, ModContent.ProjectileType<PearlRain>(), npc.damage, 0f, Main.myPlayer, 0f, 0f);
+                            }
+                            for (float offset = -675f; offset < 825f; offset += 150f)
+                            {
+                                Vector2 spawnPosition = target.Center + new Vector2(offset, 750f);
+                                Vector2 pearlShootVelocity = Vector2.UnitY * -8f;
+                                Utilities.NewProjectileBetter(spawnPosition, pearlShootVelocity, ModContent.ProjectileType<PearlRain>(), npc.damage, 0f, Main.myPlayer, 0f, 0f);
+                            }
+                            npc.netUpdate = true;
                         }
                     }
                     if (hardmode)
                     {
-                        if (attackTimer == 90f)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 90f)
                         {
                             for (float offset = -750f; offset < 750f; offset += 200f)
                             {
@@ -139,6 +143,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                                 Vector2 pearlShootVelocity = Vector2.UnitX * -8f;
                                 Utilities.NewProjectileBetter(spawnPosition, pearlShootVelocity, ModContent.ProjectileType<PearlRain>(), npc.damage, 0f, Main.myPlayer, 0f, 0f);
                             }
+                            npc.netUpdate = true;
                         }
                     }
                     if (attackTimer >= 180)
@@ -153,7 +158,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     ref float slamCount = ref npc.Infernum().ExtraAI[4];
                     npc.damage = hardmode ? 200 : 125;
                     if (attackTimer == 1f)
+                    {
                         attackSubstate = 1f;
+                        npc.netUpdate = true;
+                    }
 
                     if (attackSubstate == 1f)
                     {
@@ -169,6 +177,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                             npc.position.Y = target.position.Y - 400f;
 
                             attackSubstate = 2f;
+                            npc.netUpdate = true;
                         }
                     }
                     else if (attackSubstate == 2f)
@@ -182,6 +191,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                         {
                             npc.alpha = 0;
                             attackSubstate = 3f;
+                            npc.netUpdate = true;
                         }
                     }
                     else if (attackSubstate == 3f)
@@ -202,6 +212,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                                 }
                                 else
                                     attackSubstate = 4f;
+                                npc.netUpdate = true;
                             }
                             else
                                 npc.velocity.Y += 1f;
@@ -258,6 +269,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     npc.Infernum().ExtraAI[2] = 0f;
                     break;
             }
+            npc.netUpdate = true;
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

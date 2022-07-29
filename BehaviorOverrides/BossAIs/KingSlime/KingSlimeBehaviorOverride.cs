@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
-            ref float hasSummonedJewelFlag = ref npc.localAI[1];
+            ref float jewelSummonTimer = ref npc.localAI[1];
             ref float teleportDirection = ref npc.Infernum().ExtraAI[5];
 
             bool shouldNotChangeScale = false;
@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 hasSummonedNinjaFlag = 1f;
             }
 
-            if (npc.life < npc.lifeMax * Phase2LifeRatio && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
+            if (npc.life < npc.lifeMax * Phase2LifeRatio && jewelSummonTimer == 0f && npc.scale >= 0.8f)
             {
                 Vector2 jewelSpawnPosition = target.Center - Vector2.UnitY * 350f;
                 SoundEngine.PlaySound(SoundID.Item67, target.Center);
@@ -126,7 +126,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
-                hasSummonedJewelFlag = 1f;
+                jewelSummonTimer = 1f;
+            }
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<KingSlimeJewel>()) && jewelSummonTimer >= 1f)
+            {
+                jewelSummonTimer++;
+                if (jewelSummonTimer >= 720f)
+                {
+                    jewelSummonTimer = 0f;
+                    npc.netUpdate = true;
+                }
             }
 
             // Enforce slightly stronger gravity.

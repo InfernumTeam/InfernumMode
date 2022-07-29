@@ -12,6 +12,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.ProfanedGuardians;
@@ -41,6 +42,7 @@ namespace InfernumMode.Balancing
     {
         public static Dictionary<int, int> HPValues => new()
         {
+            [ModContent.NPCType<KingSlimeJewel>()] = BossRushEvent.BossRushActive ? -1 : 2500,
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
             [ModContent.NPCType<GiantClam>()] = Main.hardMode ? 16200 : 4100,
             [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 420000 : 4200,

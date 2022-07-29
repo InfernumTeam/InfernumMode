@@ -513,7 +513,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 return;
             }
 
-            // The parametic form of a lemniscate of bernoulli is as follows:
+            // The parametric form of a lemniscate of bernoulli is as follows:
             // x = r * cos(t) / (1 + sin^2(t))
             // y = r * sin(t) * cos(t) / (1 + sin^2(t))
             // Given that these provide positions, we can determine the velocity path that Deus must follow to move in this pattern

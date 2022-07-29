@@ -1231,6 +1231,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void FindFrame(int frameHeight)
         {
+            if (Turrets?[0] is null)
+                InitializeTurrets();
+
             NPC.frameCounter++;
             for (int i = 0; i < Turrets.Length; i++)
             {
@@ -1374,7 +1377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/AthenaNPC_Glowmask").Value;
             Vector2 drawPosition = npc.Center - screenPos;
             Vector2 origin = npc.frame.Size() * 0.5f;
-            Color glowmaskColor = Main.npc[GlobalNPCOverrides.Athena].ModNPC<AthenaNPC>().Enraged ? Color.MediumVioletRed : Color.White;
+            Color glowmaskColor = GlobalNPCOverrides.Athena >= 0 && Main.npc[GlobalNPCOverrides.Athena].ModNPC<AthenaNPC>().Enraged ? Color.MediumVioletRed : Color.White;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, origin, npc.scale, 0, 0f);
             Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
         }

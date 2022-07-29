@@ -345,14 +345,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
                 // Draw the glowmask and regular texture.
                 // This is influenced by the crystal glow at the end.
-                Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
+                float crystalGlow = 0f;
+                if (!NPC.IsABestiaryIconDummy)
+                    crystalGlow = MinionRedCrystalGlow;
+
+                Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), crystalGlow);
                 Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
 
                 for (int i = 0; i < 2; i++)
                     Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? glowmaskColor), NPC.rotation, origin, NPC.scale, 0, 0f);
-                if (MinionRedCrystalGlow > 0f)
+                if (crystalGlow > 0f)
                 {
-                    float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
+                    float backimageOpacity = MathHelper.Lerp(0f, 0.1f, crystalGlow);
                     Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, NPC.rotation, origin, NPC.scale, 0, 0f);
                 }
             }

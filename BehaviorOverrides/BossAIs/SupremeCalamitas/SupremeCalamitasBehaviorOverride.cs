@@ -36,7 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SummonSuicideBomberDemons,
             BrimstoneJewelBeam,
             DarkMagicBombWalls,
-            SummonBrothers
+            SummonBrothers,
+            SummonSepulcher
         }
 
         public enum SCalFrameType
@@ -118,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
         {
             // TEST ATTACK. REMOVE LATER.
-            SCalAttackType.SummonBrothers,
+            SCalAttackType.SummonSepulcher,
 
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.CondemnationFanBurst,
@@ -268,6 +269,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.SummonBrothers:
                     DoBehavior_SummonBrothers(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                    break;
+                case SCalAttackType.SummonSepulcher:
+                    DoBehavior_SummonSepulcher(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
             }
 
@@ -1154,6 +1158,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             if (attackTimer >= screenShakeTime + SupremeCalamitasBrotherPortal.Lifetime && !NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()))
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_SummonSepulcher(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
+        {
+            int screenShakeTime = 135;
+
+            // Laugh on the first frame.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(SCalBoss.SpawnSound, target.Center);
+
+            // Slow down and look at the target.
+            npc.velocity *= 0.95f;
+            if (npc.velocity.Length() < 8f)
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Use the magic circle animation, as a charge-up effect.
+            frameChangeSpeed = 0.2f;
+            frameType = (int)SCalFrameType.MagicCircle;
+
+            // Shake the screen.
+            float screenShakeDistanceFade = Utils.GetLerpValue(npc.Distance(target.Center), 2600f, 1375f, true);
+            float screenShakeFactor = Utils.Remap(attackTimer, 25f, screenShakeTime, 2f, 12.5f) * screenShakeDistanceFade;
+            if (attackTimer >= screenShakeTime)
+                screenShakeFactor = 0f;
+
+            target.Calamity().GeneralScreenShakePower = screenShakeFactor;
+
+            if (attackTimer == screenShakeTime - 60f)
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 2f }, npc.Center);
+
+            // Summon Sepulcher.
+            if (attackTimer == screenShakeTime - 10f)
+            {
+                SoundEngine.PlaySound(SCalBoss.SepulcherSummonSound, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1000, ModContent.NPCType<SepulcherHead>(), npc.whoAmI + 1);
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= screenShakeTime + SupremeCalamitasBrotherPortal.Lifetime && !NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 SelectNewAttack(npc);
         }
 

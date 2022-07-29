@@ -422,16 +422,6 @@ namespace InfernumMode.GlobalInstances
             BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
         }
 
-        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
-        {
-            switch (npc.type)
-            {
-                case NPCID.BloodNautilus:
-                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && OverridingListManager.Registered(NPCID.BloodNautilus), ModContent.ItemType<BloodOrb>(), 1, 85, 105);
-                    break;
-            }
-        }
-
         public override bool CheckDead(NPC npc)
         {
             if (!InfernumMode.CanUseCustomAIs)

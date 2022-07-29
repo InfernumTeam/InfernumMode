@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.timeLeft = 84;
             Projectile.MaxUpdates = 2;
             Projectile.scale = 1f;
+            Projectile.hide = true;
             Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
@@ -50,6 +51,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
             return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
+        }
+
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCs.Add(index);
         }
 
         public override bool PreDraw(ref Color lightColor)

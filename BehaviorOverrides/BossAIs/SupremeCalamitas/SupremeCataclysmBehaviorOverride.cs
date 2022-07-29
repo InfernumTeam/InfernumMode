@@ -100,6 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Player target = Main.player[npc.target];
 
             // Perform attacks.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
             switch ((SCalBrotherAttackType)attackState)
             {
                 case SCalBrotherAttackType.AttackDelay:
@@ -127,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_AttackDelay(NPC npc, Player target, bool isCataclysm, ref float currentFrame, ref float attackTimer)
         {
-            int transitionDelay = 150;
+            int transitionDelay = 75;
 
             // Reset rotation to zero.
             npc.rotation = 0f;
@@ -138,8 +139,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Hover to the side of the target.
             float acceleration = 0.925f;
-            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center + Vector2.UnitX * isCataclysm.ToDirectionInt() * -720f) * 30f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center + Vector2.UnitX * isCataclysm.ToDirectionInt() * -720f) * npc.Opacity * 30f;
             npc.SimpleFlyMovement(idealVelocity, acceleration);
+
+            // Fade in.
+            npc.Opacity = Utils.GetLerpValue(0f, 24f, attackTimer, true);
 
             if (attackTimer >= transitionDelay)
                 SelectNextAttack(npc);
@@ -148,9 +152,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SinusoidalBobbing(NPC npc, Player target, bool isCataclysm, ref float attackSpecificTimer, ref float currentFrame, ref float firingFromRight, ref float attackTimer)
         {
             int shootTime = 420;
+            int soulShootRate = 45;
+            int soulCount = 9;
             int projectileFireThreshold = isCataclysm ? 60 : 45;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float shootIncrement = MathHelper.Lerp(1.85f, 3f, 1f - lifeRatio);
+            float shootIncrement = MathHelper.Lerp(1.85f, 3.1f, 1f - lifeRatio);
+            if (lifeRatio < 0.5f)
+                soulShootRate -= 5;
+            if (lifeRatio < 0.25f)
+                soulShootRate -= 9;
 
             // Define the direction and animation type.
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -173,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 74f;
                 if (!isCataclysm)
                 {
-                    type = ModContent.ProjectileType<SupremeCatastropheSlash>();
+                    type = ModContent.ProjectileType<CatastropheSlash>();
                     projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 125f;
                 }
 
@@ -186,6 +196,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 firingFromRight = firingFromRight == 0f ? 1f : 0f;
             }
 
+            if (attackTimer % soulShootRate == soulShootRate - 1f)
+            {
+                SoundEngine.PlaySound(SCalNPC.BrimstoneShotSound, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < soulCount; i++)
+                    {
+                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 10f;
+                        Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<LostSoulProj>(), 550, 0f);
+                    }
+                }
+            }
+
             if (attackTimer >= shootTime)
                 SelectNextAttack(npc);
         }
@@ -196,9 +220,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int attackShiftDelay = 0;
             int hoverTime = 60;
             int shootTime = 240;
-            int fireBurstCount = 4;
+            int fireBurstCount = 2;
             int projectileFireThreshold = isCataclysm ? 60 : 45;
             float fireShootSpeed = 17.5f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            if (lifeRatio < 0.5f)
+                projectileFireThreshold -= 9;
+            if (lifeRatio < 0.25f)
+                projectileFireThreshold -= 9;
 
             int attackCycleTime = hoverTime + shootTime;
             int attackTime = (hoverTime + shootTime) * fireBurstCount;
@@ -266,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Vector2 projectileSpawnPosition = npc.Center + shootVelocity * 5.4f;
                         if (!isCataclysm)
                         {
-                            projectileType = ModContent.ProjectileType<SupremeCatastropheSlash>();
+                            projectileType = ModContent.ProjectileType<CatastropheSlash>();
                             projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 125f;
                             shootVelocity = Vector2.UnitX * npc.spriteDirection * 17.5f;
                             firingFromRight = firingFromRight == 0f ? 1f : 0f;
@@ -287,6 +316,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int chargeCount = 3;
             int soulCount = 11;
             float chargeSpeed = 55f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            if (lifeRatio < 0.5f)
+                chargeTelegraphTime -= 10;
+            if (lifeRatio < 0.25f)
+            {
+                chargeSpeed += 6f;
+                chargeTime -= 10;
+            }
+
             float wrappedAttackTimer = attackTimer % (chargeTelegraphTime + chargeTime);
             Vector2 hoverDestination = target.Center + Vector2.UnitX * isCataclysm.ToDirectionInt() * 600f;
 
@@ -295,12 +333,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 npc.Center = hoverDestination;
                 npc.velocity = Vector2.Zero;
+                npc.Opacity = 0f;
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 400f;
+                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
                     npc.netUpdate = true;
                 }
             }
@@ -352,14 +391,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void SelectNextAttack(NPC npc)
         {
             // Catastrophe does not have control over when attack switches happen.
-            bool isCatastrophe = npc.type == ModContent.NPCType<SupremeCataclysm>();
+            bool isCatastrophe = npc.type == ModContent.NPCType<SupremeCatastrophe>();
             if (isCatastrophe)
                 return;
 
             // The 6 instead of 5 is intentional in the loop below. The fifth index is reserved for the attack specific timer, which should be cleared alongside everything else.
             npc.ai[0] = (int)npc.ai[0] switch
             {
-                (int)SCalBrotherAttackType.SinusoidalBobbing => (int)SCalBrotherAttackType.Hyperdashes,
+                (int)SCalBrotherAttackType.SinusoidalBobbing or (int)SCalBrotherAttackType.AttackDelay => (int)SCalBrotherAttackType.Hyperdashes,
                 (int)SCalBrotherAttackType.Hyperdashes => (int)SCalBrotherAttackType.ProjectileShooting,
                 _ => (int)SCalBrotherAttackType.SinusoidalBobbing,
             };

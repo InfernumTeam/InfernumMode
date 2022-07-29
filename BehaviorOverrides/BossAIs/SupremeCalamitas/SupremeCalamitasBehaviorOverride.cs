@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
@@ -35,6 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SummonSuicideBomberDemons,
             BrimstoneJewelBeam,
             DarkMagicBombWalls,
+            SummonBrothers
         }
 
         public enum SCalFrameType
@@ -115,6 +117,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
         {
+            // TEST ATTACK. REMOVE LATER.
+            SCalAttackType.SummonBrothers,
+
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
@@ -260,6 +265,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.DarkMagicBombWalls:
                     DoBehavior_DarkMagicBombWalls(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                    break;
+                case SCalAttackType.SummonBrothers:
+                    DoBehavior_SummonBrothers(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
             }
 
@@ -1096,6 +1104,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             if (attackTimer >= shootDelay + shootTime + endOfAttackShootBlockTime)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_SummonBrothers(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
+        {
+            int screenShakeTime = 135;
+
+            // Laugh on the first frame.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(SCalBoss.SpawnSound, target.Center);
+
+            // Slow down and look at the target.
+            npc.velocity *= 0.95f;
+            if (npc.velocity.Length() < 8f)
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Use the magic circle animation, as a charge-up effect.
+            frameChangeSpeed = 0.2f;
+            frameType = (int)SCalFrameType.MagicCircle;
+
+            // Shake the screen.
+            float screenShakeDistanceFade = Utils.GetLerpValue(npc.Distance(target.Center), 2600f, 1375f, true);
+            float screenShakeFactor = Utils.Remap(attackTimer, 25f, screenShakeTime, 2f, 12.5f) * screenShakeDistanceFade;
+            if (attackTimer >= screenShakeTime)
+                screenShakeFactor = 0f;
+
+            target.Calamity().GeneralScreenShakePower = screenShakeFactor;
+
+            // Create the portals.
+            if (attackTimer == screenShakeTime - 50f)
+            {
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int portal = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(portal))
+                        Main.projectile[portal].ai[0] = ModContent.NPCType<SupremeCataclysm>();
+
+                    portal = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(portal))
+                        Main.projectile[portal].ai[0] = ModContent.NPCType<SupremeCatastrophe>();
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= screenShakeTime + SupremeCalamitasBrotherPortal.Lifetime && !NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()))
                 SelectNewAttack(npc);
         }
 

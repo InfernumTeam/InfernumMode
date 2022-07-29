@@ -22,6 +22,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
+        public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Sounds/Custom/HeavyExplosion");
+
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
 
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");

@@ -2,11 +2,14 @@ using CalamityMod;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -26,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SepulcherHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
 
         public override void SetDefaults(NPC npc)
         {
@@ -35,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.width = 62;
             npc.height = 64;
             npc.defense = 0;
-            npc.lifeMax = 312000;
+            npc.lifeMax = 582000;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
             npc.scale *= 1.2f;
@@ -65,6 +68,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 hasSummonedSegments = 1f;
             }
 
+            if (!NPC.AnyNPCs(ModContent.NPCType<SCalNPC>()))
+            {
+                npc.active = false;
+                return false;
+            }
+
+            npc.localAI[0] = MathHelper.Clamp(npc.localAI[0] - 0.1f, 0f, 1f);
             switch ((SepulcherAttackType)attackState)
             {
                 case SepulcherAttackType.AttackDelay:
@@ -162,9 +172,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Hover into position for the charge.
             if (attackState == 0f)
             {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, -650f);
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -400f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * (attackTimer / 15f + 25f);
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.4f).RotateTowards(idealVelocity.ToRotation(), 0.05f);
+
+                if (attackTimer == 20f)
+                    SoundEngine.PlaySound(SoundID.DD2_SkeletonSummoned with { Volume = 3f }, target.Center);
+
+                npc.localAI[0] = Utils.GetLerpValue(0f, 45f, attackTimer, true);
                 if (attackTimer >= 270 || npc.WithinRange(hoverDestination, 95f))
                 {
                     attackState = 1f;
@@ -179,6 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.15f);
+                npc.localAI[0] = 1f;
                 if (attackTimer >= chargeRedirectTime)
                 {
                     npc.velocity = chargeVelocity;
@@ -202,6 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
+            npc.localAI[0] = Utils.GetLerpValue(chargeTime, chargeTime - 16f, attackTimer, true);
             if (attackTimer >= chargeTime)
             {
                 attackState = 0f;
@@ -323,6 +340,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             npc.netUpdate = true;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                npc.Opacity = 1f;
+
+            SpriteEffects direction = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                direction = SpriteEffects.FlipHorizontally;
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+
+            float backglowInterpolant = npc.localAI[0];
+            if (backglowInterpolant > 0f)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backglowInterpolant * 5f;
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(Color.Red with { A = 0 }) * backglowInterpolant, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                }
+            }
+            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            return false;
         }
     }
 }

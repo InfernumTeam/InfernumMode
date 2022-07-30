@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public const int ChargeupTime = 108;
+        public const int ChargeupTime = 142;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Jewel");
 
@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void AI()
         {
             // Die if SCal is gone.
-            if (CalamityGlobalNPC.SCal == -1)
+            if (CalamityGlobalNPC.SCal == -1 || !Main.npc[CalamityGlobalNPC.SCal].active)
             {
                 Projectile.Kill();
                 return;

@@ -260,14 +260,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int spinTime = 270;
             float sparkShootSpeed = 5.6f;
             int sparkShootRate = 8;
+            int orbShootRate = 75;
             float spinSpeed = 18f;
             if (BossRushEvent.BossRushActive)
             {
                 sparkShootRate = 5;
+                orbShootRate -= 12;
                 sparkShootSpeed *= 1.8f;
             }
 
             float angularSpinVelocity = MathHelper.TwoPi * totalSpins / spinTime;
+            ref float sparkShootCounter = ref npc.Infernum().ExtraAI[0];
 
             // Determine fade to blue.
             fadeToBlue = Utils.GetLerpValue(spinDelay, spinDelay + initialAttackWaitDelay, attackTimer, true) *
@@ -293,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 npc.netUpdate = true;
             }
 
-            // Do the spin, along with associated attacks from it.
+            // Do the spin, and create the sparks from the point at which the weaver is spinning.
             if (attackTimer > spinDelay + initialAttackWaitDelay)
             {
                 npc.velocity = npc.velocity.RotatedBy(angularSpinVelocity);
@@ -305,8 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, spinCenter);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int projectileCount = attackTimer % 24f == 23f ? 9 : 1;
-
+                        int projectileCount = sparkShootCounter % 3f == 2f ? 9 : 1;
                         for (int i = 0; i < projectileCount; i++)
                         {
                             float angularImprecision = Utils.GetLerpValue(720f, 350f, npc.Distance(target.Center), true);
@@ -319,11 +321,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                             Vector2 shootVelocity = (target.Center - spinCenter + predictiveOffset).SafeNormalize(Vector2.UnitY).RotatedBy(angularOffset).RotatedByRandom(angularImprecision * 0.59f) * sparkShootSpeed;
                             Utilities.NewProjectileBetter(spinCenter, shootVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
                         }
+                        sparkShootCounter++;
                     }
                 }
 
-                // As well as some electric orbs that explode.
-                if (attackTimer % 90f == 89f)
+                // Release some electric orbs that explode.
+                if (attackTimer % orbShootRate == orbShootRate - 1f)
                 {
                     Vector2 orbSpawnPosition = spinCenter + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 220f);
                     Vector2 orbShootVelocity = (target.Center - orbSpawnPosition).SafeNormalize(Vector2.UnitY) * 5f;

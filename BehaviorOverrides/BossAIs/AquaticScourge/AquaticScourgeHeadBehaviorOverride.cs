@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         attackTimer++;
                     }
 
-                    DoMovement_GeneralMovement(npc, target, speedFactor);
+                    DoMovement_GeneralMovement(npc, target, speedFactor * 1.25f);
                 }
             }
 

@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.width = npc.height = 20;
 
             npc.defense = 0;
-            npc.lifeMax = 312000;
+            npc.lifeMax = 582000;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
             npc.scale *= 1.2f;

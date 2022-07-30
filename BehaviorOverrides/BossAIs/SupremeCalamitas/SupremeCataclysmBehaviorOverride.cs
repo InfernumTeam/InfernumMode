@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float firingFromRight = ref npc.Infernum().ExtraAI[6];
 
             // Die if the either brother is missing.
-            if (cataclysmIndex == -1 || catastropheIndex == -1)
+            if (cataclysmIndex == -1 || catastropheIndex == -1 || !NPC.AnyNPCs(ModContent.NPCType<SCalNPC>()))
             {
                 npc.life = 0;
                 npc.HitEffect();

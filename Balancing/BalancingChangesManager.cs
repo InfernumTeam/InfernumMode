@@ -21,7 +21,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-
+using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Balancing
@@ -57,7 +57,9 @@ namespace InfernumMode.Balancing
             int inkCloud3 = ProjectileType<InkCloud3>();
 
             float aresPierceResistFactor = 0.925f;
-            float sepulcherPierceResistFactor = 0.525f;
+            float sepulcherPierceResistFactor = 0.375f;
+
+            var sepulcherProjResists1 = new ProjectileResistBalancingRule(0.3f, ProjectileType<DragonRageStaff>(), ProjectileType<DragonRageFireball>(), ProjectileType<MurasamaSlash>());
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {
@@ -142,6 +144,8 @@ namespace InfernumMode.Balancing
                 // Supreme Calamitas.
                 new NPCBalancingChange(NPCType<SepulcherBody>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
                 new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
+                new NPCBalancingChange(NPCType<SepulcherBody>(), Do(sepulcherProjResists1)),
+                new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(sepulcherProjResists1)),
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
             };
         }

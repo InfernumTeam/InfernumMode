@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 15f, Time, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Time, true);
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 

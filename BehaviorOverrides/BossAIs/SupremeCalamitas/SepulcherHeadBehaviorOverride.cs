@@ -46,6 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.noTileCollide = true;
             npc.canGhostHeal = false;
             npc.netAlways = true;
+            npc.DeathSound = SepulcherHead.DeathSound;
         }
 
         public override bool PreAI(NPC npc)

@@ -90,6 +90,9 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.WallofFlesh)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<WallOfFleshRelic>());
 
+            if (npc.type == NPCID.BloodNautilus)
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DreadnautilusRelic>());
+
             if (npc.type == NPCID.QueenSlimeBoss)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<QueenSlimeRelic>());
 

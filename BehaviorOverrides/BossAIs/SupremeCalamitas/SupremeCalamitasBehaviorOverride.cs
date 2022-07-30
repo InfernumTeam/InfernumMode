@@ -139,6 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.LostSoulBarrage,
+            SCalAttackType.HellblastBarrage,
             SCalAttackType.SummonSuicideBomberDemons,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.ExplosiveCharges,
@@ -147,6 +148,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.SummonSuicideBomberDemons,
+        };
+
+
+        public static SCalAttackType[] Phase3AttackCycle => new SCalAttackType[]
+        {
+            SCalAttackType.DarkMagicBombWalls,
+            SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.BecomeBerserk,
+            SCalAttackType.BrimstoneJewelBeam,
+            SCalAttackType.DarkMagicBombWalls,
+            SCalAttackType.ExplosiveCharges,
+            SCalAttackType.BecomeBerserk,
+            SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.BrimstoneJewelBeam,
+            SCalAttackType.ExplosiveCharges
         };
 
         public const float Phase2LifeRatio = 0.7f;
@@ -519,7 +535,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         
         public static void DoBehavior_ExplosiveCharges(NPC npc, Player target, int currentPhase, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
-            int chargeDelay = 50;
+            int chargeDelay = 96;
             int chargeTime = 36;
             int chargeCount = 6;
             int explosionDelay = 120;
@@ -1032,7 +1048,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Adjust the jewel's rotation and create particles.
             if (attackTimer < jewelChargeupTime && jewelRef != null)
             {
-                float angularTurnSpeed = Utilities.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, MathHelper.Pi / 20f, MathHelper.Pi / 355f);
+                float angularTurnSpeed = Utilities.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, MathHelper.Pi / 40f, MathHelper.Pi / 355f);
                 jewelRef.rotation = jewelRef.rotation.AngleTowards(jewelRef.AngleTo(target.Center), angularTurnSpeed);
 
                 float fireParticleScale = Main.rand.NextFloat(1f, 1.25f);
@@ -1085,7 +1101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center) * dartShootSpeed * 0.7f;
+                        Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 35f) * dartShootSpeed * 0.7f;
                         int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
                         if (Main.projectile.IndexInRange(bomb))
                         {
@@ -1367,10 +1383,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType[] attackCycle = Phase1AttackCycle;
             if (currentPhase == 1)
                 attackCycle = Phase2AttackCycle;
+            if (currentPhase == 2)
+                attackCycle = Phase3AttackCycle;
 
-            npc.ai[3] = 0f;
-            npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[5] % attackCycle.Length];
-            npc.Infernum().ExtraAI[5]++;
+            // Delete any old demons.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<SuicideBomberRitual>(), ModContent.ProjectileType<SuicideBomberDemonHostile>());
+
+            // Pick a random attack to become berserk in if the previous attack was a berserk phase starter.
+            if (npc.ai[0] == (int)SCalAttackType.BecomeBerserk)
+            {
+                npc.ai[0] = (int)Utils.SelectRandom(Main.rand,
+                    SCalAttackType.CondemnationFanBurst,
+                    SCalAttackType.ExplosiveCharges,
+                    SCalAttackType.LostSoulBarrage,
+                    SCalAttackType.HellblastBarrage);
+            }
+            else
+            {
+                npc.ai[3] = 0f;
+                npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[5] % attackCycle.Length];
+                npc.Infernum().ExtraAI[5]++;
+            }
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;

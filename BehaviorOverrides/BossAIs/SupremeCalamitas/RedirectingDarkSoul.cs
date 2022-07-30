@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.rotation += MathHelper.Pi;
 
             // Slow down dramatically on the vertical axis and speed upon the horizontal one.
-            Projectile.velocity.X *= 1.02f;
+            Projectile.velocity.X *= 1.03f;
             Projectile.velocity.Y *= 0.96f;
 
             Time++;

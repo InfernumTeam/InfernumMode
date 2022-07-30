@@ -106,6 +106,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(SepulcherBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator SepulcherBody2ModifyProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(SepulcherBodyEnergyBall).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SepulcherBodyEnergyBall).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator SepulcherTailModifyProjectile
         {
             add => HookEndpointManager.Modify(typeof(SepulcherTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);

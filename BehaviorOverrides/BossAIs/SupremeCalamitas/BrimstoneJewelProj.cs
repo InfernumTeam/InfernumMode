@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public const int ChargeupTime = 75;
+        public const int ChargeupTime = 108;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Jewel");
 

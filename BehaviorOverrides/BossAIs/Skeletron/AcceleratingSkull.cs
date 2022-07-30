@@ -9,6 +9,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
     public class AcceleratingSkull : ModProjectile
     {
         public ref float IdealHorizontalOffsetSpeed => ref Projectile.ai[0];
+
+        public ref float Time => ref Projectile.ai[1];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Skull");
@@ -27,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
         }
+
         public override void AI()
         {
             if (Projectile.localAI[0] == 0f)
@@ -37,14 +41,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             // Move to the sides.
             if (IdealHorizontalOffsetSpeed != -9999f)
-            {
-                Projectile.velocity.X = Utils.GetLerpValue(300f, 250f, Projectile.timeLeft, true) *
-                    Utils.GetLerpValue(220f, 250f, Projectile.timeLeft, true) *
-                    IdealHorizontalOffsetSpeed;
-            }
+                Projectile.velocity.X = Utils.GetLerpValue(0f, 50f, Time, true) * Utils.GetLerpValue(50f, 80f, Time, true) * IdealHorizontalOffsetSpeed;
 
             // And accelerate downward.
-            if (Projectile.timeLeft > 270f)
+            if (Time < 30f)
                 Projectile.velocity.Y *= 0.98f;
             else
             {
@@ -68,8 +68,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 magic.noGravity = true;
             }
 
-            if (Projectile.timeLeft > 250f)
+            if (Time >= 50f)
                 Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.3f);
+            Time++;
         }
 
         public override bool PreDraw(ref Color lightColor)

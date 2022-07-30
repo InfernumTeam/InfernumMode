@@ -57,6 +57,7 @@ namespace InfernumMode.Balancing
             int inkCloud3 = ProjectileType<InkCloud3>();
 
             float aresPierceResistFactor = 0.925f;
+            float sepulcherPierceResistFactor = 0.525f;
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {
@@ -139,6 +140,8 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<DragonRageFireball>()))),
 
                 // Supreme Calamitas.
+                new NPCBalancingChange(NPCType<SepulcherBody>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
+                new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
             };
         }

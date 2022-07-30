@@ -119,6 +119,7 @@ namespace InfernumMode.ILEditingStuff
         {
             SepulcherHeadModifyProjectile += EarlyReturn;
             SepulcherBodyModifyProjectile += EarlyReturn;
+            SepulcherBody2ModifyProjectile += EarlyReturn;
             SepulcherTailModifyProjectile += EarlyReturn;
         }
 
@@ -126,6 +127,7 @@ namespace InfernumMode.ILEditingStuff
         {
             SepulcherHeadModifyProjectile -= EarlyReturn;
             SepulcherBodyModifyProjectile -= EarlyReturn;
+            SepulcherBody2ModifyProjectile -= EarlyReturn;
             SepulcherTailModifyProjectile -= EarlyReturn;
         }
     }

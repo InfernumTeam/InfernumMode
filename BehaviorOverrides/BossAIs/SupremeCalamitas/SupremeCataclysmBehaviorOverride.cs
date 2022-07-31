@@ -221,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int hoverTime = 60;
             int shootTime = 240;
             int fireBurstCount = 2;
-            int projectileFireThreshold = isCataclysm ? 60 : 45;
+            int projectileFireThreshold = isCataclysm ? 60 : 64;
             float fireShootSpeed = 17.5f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             if (lifeRatio < 0.5f)

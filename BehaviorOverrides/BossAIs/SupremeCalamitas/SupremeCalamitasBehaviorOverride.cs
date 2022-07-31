@@ -1417,8 +1417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Disable contact damage.
             npc.damage = 0;
-            if (NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()))
-                npc.dontTakeDamage = true;
+            npc.dontTakeDamage = true;
 
             // Use the magic circle animation, as a charge-up effect.
             frameChangeSpeed = 0.2f;
@@ -1457,11 +1456,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SummonSepulcher(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             int screenShakeTime = 135;
-
-            // Laugh on the first frame.
-            if (attackTimer == 1f)
-                SoundEngine.PlaySound(SCalBoss.SpawnSound, target.Center);
-
+            
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
             if (npc.velocity.Length() < 8f)
@@ -1551,6 +1546,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Disable contact damage.
             npc.damage = 0;
             npc.dontTakeDamage = true;
+
+            // Make the shield go away.
+            ShieldOpacity = 0f;
 
             // Emit fire dust.
             for (int i = 0; i < 5; i++)
@@ -1695,8 +1693,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 frameType = (int)SCalFrameType.BlastPunchCast;
 
-                // Slow down.
-                npc.velocity *= 0.9f;
+                // Hover to the side of the target.
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
+                if (!npc.WithinRange(hoverDestination, 150f))
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.5f);
 
                 // Shoot exploding gigablasts from above.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellGigablastShootRate == bulletHellGigablastShootRate - 1f)

@@ -36,7 +36,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/SupremeCalamitasSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
 
         public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 

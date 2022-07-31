@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void AI()
         {
             // Die if SCal is gone.
-            if (CalamityGlobalNPC.SCal == -1)
+            if (CalamityGlobalNPC.SCal == -1 || !Main.npc[CalamityGlobalNPC.SCal].active)
             {
                 Projectile.Kill();
                 return;

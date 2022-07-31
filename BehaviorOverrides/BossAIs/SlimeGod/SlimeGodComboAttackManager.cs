@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Vector2 getHoverDestination(NPC n)
             {
                 float offsetDirection = (n.type == ModContent.NPCType<CrimulanSlimeGod>()).ToDirectionInt() * n.Infernum().ExtraAI[1];
-                Vector2 destination = target.Center + new Vector2(offsetDirection * 450f, -440f);
+                Vector2 destination = target.Center + new Vector2(offsetDirection * 540f, -440f);
                 if (n.WithinRange(target.Center, 360f) && MathHelper.Distance(target.Center.Y, n.Center.Y) < 200f)
                     destination.X -= offsetDirection * 700f;
                 return destination;
@@ -460,7 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                 // Spin around.
                 else if (!npc.WithinRange(flyDestination, 110f))
-                    npc.velocity = (npc.velocity * 19f + npc.SafeDirectionTo(flyDestination) * 19f) / 20f;
+                    npc.velocity = (npc.velocity * 19f + npc.SafeDirectionTo(flyDestination) * 14.5f) / 20f;
             }
             else
             {

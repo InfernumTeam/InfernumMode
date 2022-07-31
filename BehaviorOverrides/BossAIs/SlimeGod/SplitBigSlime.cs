@@ -60,8 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (RedirectCountdown > 0f && !NPC.WithinRange(slimeGod.Center, 50f))
             {
-                float flySpeed = BossRushEvent.BossRushActive ? 38f : 18.25f;
-                flySpeed = MathHelper.Max(flySpeed, slimeGod.velocity.Length() * 1.2f);
+                float flySpeed = BossRushEvent.BossRushActive ? 38f : 17f;
+                flySpeed = MathHelper.Max(flySpeed, slimeGod.velocity.Length() * 1.08f);
 
                 Vector2 destinationOffset = (MathHelper.TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 32f;
                 NPC.velocity = (NPC.velocity * 34f + NPC.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 35f;

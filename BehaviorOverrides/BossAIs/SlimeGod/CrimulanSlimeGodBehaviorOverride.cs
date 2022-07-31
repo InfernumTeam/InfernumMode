@@ -1,6 +1,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using InfernumMode.OverridingSystem;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -80,6 +81,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
             else
                 npc.dontTakeDamage = false;
+
+            while (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 32f, npc.width, 32, true) && !npc.noTileCollide)
+                npc.position.Y -= 4f;
 
             return false;
         }

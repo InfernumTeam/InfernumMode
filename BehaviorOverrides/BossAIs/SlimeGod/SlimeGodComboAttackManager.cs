@@ -160,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             int maxSlamTime = 150;
             int sitTime = 42;
             int globCount = 12;
-            float globSpeed = 8f;
+            float globSpeed = 5.4f;
             ref float hasSlammed = ref npc.Infernum().ExtraAI[0];
             ref float chargeOffsetDirection = ref npc.Infernum().ExtraAI[1];
             ref float slamCounter = ref npc.Infernum().ExtraAI[2];

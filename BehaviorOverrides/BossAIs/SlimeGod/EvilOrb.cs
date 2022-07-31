@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-0.23f, 0.23f, i / 2f);
+                        float shootOffsetAngle = MathHelper.Lerp(-0.28f, 0.28f, i / 2f);
                         Vector2 shootVelocity = (Projectile.Center - npcToOrbit.Center).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * 5f;
                         int bolt = Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<EvilBolt>(), 95, 0f);
                         if (Main.projectile.IndexInRange(bolt))

@@ -530,13 +530,15 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<SupremeCalamitas>() && OverridingListManager.Registered(npc.type))
             {
-                npc.netUpdate = true;
                 npc.active = true;
                 npc.dontTakeDamage = true;
                 npc.life = 1;
+                npc.Infernum().ExtraAI[7] = 1f;
+                npc.netUpdate = true;
 
                 return false;
             }
+
             if (Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
             {
                 bool hasPerformedDeathAnimation = npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;

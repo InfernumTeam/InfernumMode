@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 NPC secondSlime = SecondSlimeToSummonIndex >= 0 ? Main.npc[SecondSlimeToSummonIndex] : null;
 
                 bool eitherSlimeIsAlive = firstSlime != null || secondSlime != null;
-                if (eitherSlimeIsAlive)
+                if (eitherSlimeIsAlive && !(firstSlime != null && secondSlime != null))
                 {
                     NPC remainingSlime = firstSlime is null ? secondSlime : firstSlime;
                     if (remainingSlime.Infernum().ExtraAI[5] == 1f)
@@ -83,7 +83,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             // Pick a new attack if alone, exiting combo attack states.
             if (npc.ai[0] >= 100f && FightState != SlimeGodFightState.BothLargeSlimes)
+            {
+                npc.Opacity = 1f;
+                npc.scale = 1f;
+
+                int splitSlimeID = ModContent.NPCType<SplitBigSlime>();
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == splitSlimeID)
+                        Main.npc[i].active = false;
+                }
+
                 needsToPickNewAttack = true;
+            }
             
             if (needsToPickNewAttack)
                 BigSlimeGodAttacks.SelectNextAttack(npc);

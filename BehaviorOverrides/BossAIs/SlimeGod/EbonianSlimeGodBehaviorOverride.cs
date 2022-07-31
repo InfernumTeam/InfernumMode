@@ -39,6 +39,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             npc.target = Main.npc[CalamityGlobalNPC.slimeGod].target;
             Player target = Main.player[npc.target];
 
+            if (target.dead || !target.active)
+            {
+                npc.active = false;
+                return false;
+            }
+
             // This will affect the other gods as well in terms of behavior.
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];

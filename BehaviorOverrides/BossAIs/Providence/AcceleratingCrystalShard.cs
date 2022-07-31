@@ -40,13 +40,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             float oldScale = Projectile.scale;
             Projectile.scale *= 1.2f;
-            lightColor = Color.Lerp(lightColor, Main.hslToRgb(Projectile.identity / 7f % 1f, 1f, 0.5f), 0.9f);
-            lightColor.A = 128;
+            Color rainbowColor = Main.hslToRgb(Projectile.identity / 7f % 1f, 1f, 0.5f);
+            if (!Main.dayTime)
+                rainbowColor = Color.Lerp(Color.Cyan, Color.Green, Projectile.identity / 7f % 0.6f);
+
+            lightColor = Color.Lerp(lightColor, rainbowColor, 0.9f);
+            lightColor.A = 0;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
             Projectile.scale = oldScale;
 
-            lightColor = Color.Lerp(lightColor, Color.White, 0.5f);
-            lightColor.A = 128;
+            lightColor = Color.Lerp(lightColor, Color.White, 0.2f);
+            lightColor.A = 0;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
 
             return false;

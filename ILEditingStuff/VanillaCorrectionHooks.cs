@@ -86,7 +86,13 @@ namespace InfernumMode.ILEditingStuff
                 fire.noGravity = true;
             }
 
-            orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
+            // I LOVE RANDOM ERRORS IN VANILLA METHODS THAT DISRUPT MY GODDAMN DEBUGGING ENVIRONMENT.
+            // It's so FUN!
+            try
+            {
+                orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
+            }
+            catch (IndexOutOfRangeException) { }
         }
 
         public void Load() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;

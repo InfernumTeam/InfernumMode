@@ -81,6 +81,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
+            if (!Main.dayTime)
+                color = Color.Lerp(Color.Cyan, Color.Lime, (float)Math.Pow(completionRatio, 2D) * 0.5f);
+
             color *= Projectile.Opacity;
             return color;
         }
@@ -105,8 +108,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
+
+            for (int i = 0; i < 2; i++)
+                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
             Main.instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             Main.GlobalTimeWrappedHourly = oldGlobalTime;
             return false;

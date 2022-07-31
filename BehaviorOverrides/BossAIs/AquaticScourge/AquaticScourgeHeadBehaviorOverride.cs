@@ -29,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             BelchParasites,
             BubbleSummon,
             CallForSeekers,
+            ProjectileSpin,
             JustCharges
         }
 
@@ -81,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             // If there still was no valid target, swim away.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                DoAttack_Despawn(npc);
+                DoBehavior_Despawn(npc);
                 return false;
             }
 
@@ -133,22 +134,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         switch ((AquaticScourgeAttackType)(int)attackType)
                         {
                             case AquaticScourgeAttackType.BelchAcid:
-                                DoAttack_BelchAcid(npc, target, attackTimer, enrageFactor);
+                                DoBehavior_BelchAcid(npc, target, attackTimer, enrageFactor);
                                 break;
                             case AquaticScourgeAttackType.SpitTeeth:
-                                DoAttack_SpitTeeth(npc, target, attackTimer, enrageFactor);
+                                DoBehavior_SpitTeeth(npc, target, attackTimer, enrageFactor);
                                 break;
                             case AquaticScourgeAttackType.ReleaseCircleOfSand:
-                                DoAttack_ReleaseCircleOfSand(npc, target, attackTimer, enrageFactor);
+                                DoBehavior_ReleaseCircleOfSand(npc, target, attackTimer, enrageFactor);
                                 break;
                             case AquaticScourgeAttackType.BelchParasites:
-                                DoAttack_BelchParasites(npc, attackTimer, ref speedFactor);
+                                DoBehavior_BelchParasites(npc, attackTimer, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.BubbleSummon:
-                                DoAttack_BubbleSummon(npc, target, attackTimer, enrageFactor, ref speedFactor);
+                                DoBehavior_BubbleSummon(npc, target, attackTimer, enrageFactor, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.CallForSeekers:
-                                DoAttack_CallForSeekers(npc, target, attackTimer, ref speedFactor);
+                                DoBehavior_CallForSeekers(npc, target, attackTimer, ref speedFactor);
+                                break;
+                            case AquaticScourgeAttackType.ProjectileSpin:
+                                DoBehavior_ProjectileSpin(npc, attackTimer, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.JustCharges:
                                 speedFactor = 1.5f;
@@ -171,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         #region Specific Behaviors
 
-        public static void DoAttack_Despawn(NPC npc)
+        public static void DoBehavior_Despawn(NPC npc)
         {
             npc.velocity.X *= 0.985f;
             if (npc.velocity.Y < 24f)
@@ -181,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.timeLeft = 210;
         }
 
-        public static void DoAttack_BelchAcid(NPC npc, Player target, float attackTimer, float enrageFactor)
+        public static void DoBehavior_BelchAcid(NPC npc, Player target, float attackTimer, float enrageFactor)
         {
             int shootRate = 55;
             int shootCount = 4;
@@ -196,13 +200,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     {
                         Vector2 acidVelocity = Vector2.Lerp((npc.rotation - MathHelper.PiOver2).ToRotationVector2(), npc.SafeDirectionTo(target.Center), 0.5f);
                         acidVelocity = acidVelocity.RotatedByRandom(0.35f) * Main.rand.NextFloat(11f, 15f) * (1f + enrageFactor * 0.2f);
-                        Utilities.NewProjectileBetter(npc.Center + acidVelocity * 3f, acidVelocity, ModContent.ProjectileType<OldDukeSummonDrop>(), 110, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + acidVelocity * 3f, acidVelocity, ModContent.ProjectileType<OldDukeSummonDrop>(), 125, 0f);
                     }
 
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(7f, 9f) + enrageFactor * 2f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SulphurousPoisonCloud>(), 115, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SulphurousPoisonCloud>(), 125, 0f);
                     }
                 }
             }
@@ -211,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_SpitTeeth(NPC npc, Player target, float attackTimer, float enrageFactor)
+        public static void DoBehavior_SpitTeeth(NPC npc, Player target, float attackTimer, float enrageFactor)
         {
             int shootRate = 65;
             int shootCount = 4;
@@ -225,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     {
                         Vector2 toothVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.48f, 0.48f, i / 2f)) * 7.2f;
                         toothVelocity *= 1f + (float)Math.Sin(MathHelper.Pi * i / 3f) * 0.2f + enrageFactor * 0.135f;
-                        Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 125, 0f);
                     }
 
                     for (int i = 0; i < 5; i++)
@@ -234,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         do
                             cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
                         while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
                     }
                 }
             }
@@ -243,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_ReleaseCircleOfSand(NPC npc, Player target, float attackTimer, float enrageFactor)
+        public static void DoBehavior_ReleaseCircleOfSand(NPC npc, Player target, float attackTimer, float enrageFactor)
         {
             int shootRate = 45;
             int shootCount = 5;
@@ -256,7 +260,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < 24; i++)
                     {
                         Vector2 sandVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 6f;
-                        Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 110, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 125, 0f);
                     }
 
                     for (int i = 0; i < 5; i++)
@@ -265,7 +269,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         do
                             cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
                         while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
                     }
                 }
             }
@@ -274,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_BelchParasites(NPC npc, float attackTimer, ref float speedFactor)
+        public static void DoBehavior_BelchParasites(NPC npc, float attackTimer, ref float speedFactor)
         {
             speedFactor *= MathHelper.Lerp(1f, 0.25f, Utils.GetLerpValue(10f, 90f, attackTimer, true));
             if (attackTimer == 135f)
@@ -299,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_BubbleSummon(NPC npc, Player target, float attackTimer, float enrageFactor, ref float speedFactor)
+        public static void DoBehavior_BubbleSummon(NPC npc, Player target, float attackTimer, float enrageFactor, ref float speedFactor)
         {
             speedFactor *= MathHelper.Lerp(1f, 0.667f, Utils.GetLerpValue(10f, 70f, attackTimer, true));
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 8f == 7f)
@@ -316,14 +320,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 do
                     spawnPoint = Main.rand.Next(potentialSpawnPoints);
                 while (MathHelper.Distance(spawnPoint.X, target.Center.X) < 180f);
-                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (8.4f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
+                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (8.4f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 125, 0f);
             }
 
             if (attackTimer >= 385f)
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
+        public static void DoBehavior_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
         {
             int summonRate = 90;
             int summonCount = 3;
@@ -362,6 +366,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= summonRate * summonCount)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_ProjectileSpin(NPC npc, float attackTimer, ref float speedFactor)
+        {
+            int redirectTime = 75;
+            int spinTime = 150;
+            int sandToothReleaseRate = 20;
+            int cloudReleaseRate = 48;
+            float spinSpeed = 23f;
+            float spinArc = MathHelper.TwoPi / spinTime;
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            speedFactor = Utils.GetLerpValue(redirectTime, 0f, attackTimer, true);
+            if (attackTimer < redirectTime)
+                return;
+
+            // Spin in place.
+            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * spinSpeed;
+            npc.velocity = npc.velocity.RotatedBy(spinArc);
+
+            // Release sand teeth.
+            if (attackTimer % sandToothReleaseRate == sandToothReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.45f, ModContent.ProjectileType<SlowerSandTooth>(), 125, 0f);
+            }
+
+            // Release sand poison clouds.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudReleaseRate == cloudReleaseRate - 1f)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Vector2 cloudVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 14.5f);
+                    Utilities.NewProjectileBetter(npc.Center, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
+                }
+            }
+
+            if (attackTimer >= redirectTime + spinTime)
                 SelectNextAttack(npc);
         }
 
@@ -419,6 +465,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoMovement_GeneralMovement(NPC npc, Player target, float speedFactor)
         {
+            if (speedFactor == 0f)
+                return;
+
             AquaticScourgeAttackType attackType = (AquaticScourgeAttackType)(int)npc.ai[2];
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
@@ -481,6 +530,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
                 attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
                 attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.5f ? 1.4f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.ProjectileSpin, lifeRatio < 0.5f ? 1.4f : 0f);
                 attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.35f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
 
                 do

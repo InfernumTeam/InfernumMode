@@ -1,5 +1,6 @@
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -60,7 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, Color.Yellow * telegraphInterpolant, telegraphInterpolant * 3f);
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            if (!Main.dayTime)
+                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/HolyCinderNight").Value;
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
             return false;
         }
 

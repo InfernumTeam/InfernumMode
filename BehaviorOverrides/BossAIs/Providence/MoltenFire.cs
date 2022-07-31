@@ -44,6 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
+            if (!Main.dayTime)
+                lightColor = Color.Lerp(Color.White, Color.Cyan, 0.7f) with { A = 0 };
+
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
             return false;
         }

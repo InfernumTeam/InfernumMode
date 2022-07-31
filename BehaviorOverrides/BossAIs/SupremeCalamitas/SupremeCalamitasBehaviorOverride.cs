@@ -782,7 +782,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 projectileVelocity = (npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.1f)).SafeNormalize(Vector2.UnitY) * 25f;
+                    Vector2 projectileVelocity = (npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.1f)).SafeNormalize(Vector2.UnitY) * 16f;
                     Vector2 hellblastSpawnPosition = npc.Center + projectileVelocity * 0.4f;
                     int projectileType = ModContent.ProjectileType<BrimstoneHellblast>();
                     Utilities.NewProjectileBetter(hellblastSpawnPosition, projectileVelocity, projectileType, 500, 0f, Main.myPlayer);
@@ -1202,8 +1202,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Move towards the center of the arena.
             Vector2 arenaCenter = npc.Infernum().arenaRectangle.Center.ToVector2();
-            if (!npc.WithinRange(arenaCenter, 1000f))
-                npc.Center = Vector2.Lerp(npc.Center, arenaCenter, 0.01f).MoveTowards(arenaCenter, 2f);
+            if (!npc.WithinRange(arenaCenter, 400f))
+                npc.Center = Vector2.Lerp(npc.Center, arenaCenter, 0.025f).MoveTowards(arenaCenter, 6f);
 
             // Create the jewel on the first frame.
             if (attackTimer == 1f)

@@ -2,8 +2,11 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,11 +16,8 @@ using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using Terraria.WorldBuilding;
-using InfernumMode.Sounds;
-using CalamityMod.Sounds;
-using InfernumMode.Systems;
+using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -530,6 +530,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
+            // Delete homing fire.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFire2>());
+
             // Release spikes.
             if (attackTimer >= spikeCreationDelay && (attackTimer - spikeCreationDelay) % spikeCreationRate == 0f)
             {
@@ -733,14 +736,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 fireSpawnPosition = npc.Center + leftDirection * Main.rand.NextFloat(1250f);
-                    Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 222);
+                    Dust fire = Dust.NewDustPerfect(fireSpawnPosition, Main.dayTime ? 222 : 221);
                     fire.scale = 1.5f;
                     fire.fadeIn = 0.4f;
                     fire.velocity = leftDirection * Main.rand.NextFloat(8f);
                     fire.noGravity = true;
 
                     fireSpawnPosition = npc.Center + rightDirection * Main.rand.NextFloat(1250f);
-                    fire = Dust.NewDustPerfect(fireSpawnPosition, 222);
+                    fire = Dust.NewDustPerfect(fireSpawnPosition, Main.dayTime ? 222 : 221);
                     fire.scale = 1.5f;
                     fire.fadeIn = 0.4f;
                     fire.velocity = rightDirection * Main.rand.NextFloat(8f);
@@ -1630,7 +1633,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (telegraphOpacity <= 0f)
                     return false;
 
-                Color telegraphColor = Color.Orange * telegraphOpacity;
+                Color telegraphColor = (Main.dayTime ? Color.Yellow : Color.Cyan) * telegraphOpacity;
+                telegraphColor.A = 127;
                 for (int i = 0; i < laserCount; i++)
                 {
                     float telegraphRotation = MathHelper.TwoPi * i / laserCount + telegraphOffsetAngle;

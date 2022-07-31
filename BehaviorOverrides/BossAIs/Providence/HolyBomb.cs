@@ -48,19 +48,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            if (!Main.dayTime)
+                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/HolyBombNight").Value;
+
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, explosionInterpolant, true);
             float pulseInterpolant = Utils.GetLerpValue(0.75f, 0.85f, explosionInterpolant, true);
             float colorPulse = ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 6.3f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant;
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
 
             if (explosionInterpolant > 0f)
             {
                 Texture2D explosionTelegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HollowCircleSoftEdge").Value;
                 Vector2 scale = Vector2.One * ExplosionRadius / explosionTelegraphTexture.Size();
                 Color explosionTelegraphColor = Color.Lerp(Color.Yellow, Color.Red, colorPulse) * circleFadeinInterpolant;
+                if (!Main.dayTime)
+                    explosionTelegraphColor = Color.Lerp(Color.Cyan, Color.Lime, colorPulse * 0.67f) * circleFadeinInterpolant;
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
                 Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);

@@ -124,12 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound with { Volume = 1.6f }, Projectile.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound with { Volume = 3f }, Main.LocalPlayer.Center);
-
-                for (int i = 0; i < 3; i++)
-                {
-                    float pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
-                    SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = pitch, Volume = 0.46f }, Projectile.Center);
-                }
+                SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = 0.8f, Volume = 3f }, Projectile.Center);
             }
         }
     }

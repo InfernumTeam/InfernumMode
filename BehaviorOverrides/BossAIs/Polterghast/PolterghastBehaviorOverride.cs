@@ -430,7 +430,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         {
                             for (int i = 0; i < soulCount / 2; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(0.46f, 1.19f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float shootOffsetAngle = MathHelper.Lerp(0.28f, 1.27f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.03f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);

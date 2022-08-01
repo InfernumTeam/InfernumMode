@@ -30,6 +30,13 @@ namespace InfernumMode
                 npc.TargetClosest();
         }
 
+        // This function returns an available Calamity Music Mod track, or null if the Calamity Music Mod is not available.
+        public static int? GetMusicFromMusicMod(string songFilename)
+        {
+            bool musicAvailable = ModLoader.TryGetMod("CalamityModMusic", out Mod musicMod);
+            return musicAvailable ? MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/" + songFilename) : null;
+        }
+
         public static bool IsExoMech(NPC npc)
         {
             // Thanatos.

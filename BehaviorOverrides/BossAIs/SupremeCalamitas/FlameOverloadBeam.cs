@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Spin.
             float spinInterpolant = Utils.GetLerpValue(16f, 150f, Time, true);
-            float angularVelocity = MathHelper.Lerp(0.006f, 0.0164f, (float)Math.Pow(spinInterpolant, 1.75));
+            float angularVelocity = MathHelper.Lerp(0.006f, 0.0174f, (float)Math.Pow(spinInterpolant, 1.75));
             Projectile.velocity = Projectile.velocity.RotatedBy(angularVelocity);
 
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.

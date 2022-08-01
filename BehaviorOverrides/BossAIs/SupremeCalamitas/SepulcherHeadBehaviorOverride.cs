@@ -74,6 +74,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
+            // Become angry.
+            npc.Calamity().CurrentlyEnraged = SupremeCalamitasBehaviorOverride.Enraged;
+
             npc.localAI[0] = MathHelper.Clamp(npc.localAI[0] - 0.1f, 0f, 1f);
             switch ((SepulcherAttackType)attackState)
             {
@@ -120,6 +123,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int chargeRedirectTime = 12;
             int chargeTime = 54;
             float chargeSpeed = 42f;
+
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+                chargeSpeed = 76f;
+
             float moveSpeed = chargeSpeed * 0.425f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -166,6 +173,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int boneReleaseRate = 3;
             int chargeRedirectTime = 10;
             float chargeSpeed = 39.5f;
+            
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+                chargeSpeed = 78f;
+
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -236,6 +247,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int soulReleaseRate = 8;
             int soulShootTime = 420;
             int attackTransitionDelay = 96;
+
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+                soulReleaseRate = 2;
 
             // Slowly approach the target.
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 14f;

@@ -97,7 +97,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTimer++;
             }
 
+            // Become angry.
+            npc.Calamity().CurrentlyEnraged = SupremeCalamitasBehaviorOverride.Enraged;
+
             Player target = Main.player[npc.target];
+            npc.dontTakeDamage = SupremeCalamitasBehaviorOverride.Enraged;
 
             // Perform attacks.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
@@ -155,12 +159,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int soulShootRate = 45;
             int soulCount = 9;
             int projectileFireThreshold = isCataclysm ? 60 : 45;
+            float regularShotSpeed = 11f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float shootIncrement = MathHelper.Lerp(1.85f, 3.1f, 1f - lifeRatio);
             if (lifeRatio < 0.5f)
                 soulShootRate -= 5;
             if (lifeRatio < 0.25f)
                 soulShootRate -= 9;
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+            {
+                soulShootRate = 12;
+                regularShotSpeed = 24f;
+            }
 
             // Define the direction and animation type.
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -189,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int proj = Utilities.NewProjectileBetter(projectileSpawnPosition, Vector2.UnitX * npc.spriteDirection * 11f, type, 550, 0f);
+                    int proj = Utilities.NewProjectileBetter(projectileSpawnPosition, Vector2.UnitX * npc.spriteDirection * regularShotSpeed, type, 550, 0f);
                     if (Main.projectile.IndexInRange(proj))
                         Main.projectile[proj].ai[1] = firingFromRight;
                 }
@@ -228,6 +238,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 projectileFireThreshold -= 9;
             if (lifeRatio < 0.25f)
                 projectileFireThreshold -= 9;
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+            {
+                projectileFireThreshold = 12;
+                fireShootSpeed = 28.5f;
+            }
 
             int attackCycleTime = hoverTime + shootTime;
             int attackTime = (hoverTime + shootTime) * fireBurstCount;
@@ -323,6 +338,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 chargeSpeed += 6f;
                 chargeTime -= 10;
+            }
+            if (SupremeCalamitasBehaviorOverride.Enraged)
+            {
+                soulCount = 60;
+                chargeSpeed = 100f;
             }
 
             float wrappedAttackTimer = attackTimer % (chargeTelegraphTime + chargeTime);

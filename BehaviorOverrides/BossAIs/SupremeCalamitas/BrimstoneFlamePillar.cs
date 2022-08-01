@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float _ = 0f;
             Vector2 start = Projectile.Bottom - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height * 0.5f;
             Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Width * 0.82f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Width * 0.5f, ref _);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity >= 0.9f;
@@ -121,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 points.Add(Vector2.Lerp(start, end, i / 8f));
 
             if (Time >= 2f)
-                FireDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 166);
+                FireDrawer.Draw(points, Projectile.Size * new Vector2(0f, 0.5f) - Main.screenPosition, 166);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
             return false;
         }

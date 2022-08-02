@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             if (NPC.localAI[0] == 0f)
             {
-                Limbs = new LimbCollection(new ModifiedCyclicCoordinateDescentUpdateRule(0.15f, MathHelper.PiOver2), 160f, 160f, 160f);
+                Limbs = new LimbCollection(new ModifiedCyclicCoordinateDescentUpdateRule(0.15f, MathHelper.PiOver4), 160f, 160f, 160f);
                 DecideNewPositionToStickTo();
                 NPC.localAI[0] = 1f;
             }
@@ -227,6 +227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Limbs is null)
                 return false;
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 if (Limbs.Limbs[i] is null)
@@ -257,6 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     LimbDrawer.Draw(drawPositions, -Main.screenPosition, 38);
                 }
             }
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

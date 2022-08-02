@@ -402,7 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int shootRate = 60;
             int shootTime = 240;
             int attackTransitionDelay = 60;
-            int soulCount = (int)MathHelper.Lerp(8f, 15f, 1f - lifeRatio);
+            int soulCount = (int)MathHelper.Lerp(5f, 10f, 1f - lifeRatio);
             float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
 
             if (lifeRatio < Phase2LifeRatio)
@@ -430,7 +430,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         {
                             for (int i = 0; i < soulCount / 2; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(0.28f, 1.27f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float shootOffsetAngle = MathHelper.Lerp(0.35f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.03f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);

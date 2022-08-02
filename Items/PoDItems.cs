@@ -4,6 +4,7 @@ using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Items;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -89,7 +90,10 @@ namespace InfernumMode
         public override void RightClick(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<StarterBag>())
+            {
+                DropHelper.DropItem(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<BlastedTophat>());
                 DropHelper.DropItemCondition(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<DemonicChaliceOfInfernum>(), Main.expertMode);
+            }
         }
 
         public override void OpenVanillaBag(string context, Player player, int arg)

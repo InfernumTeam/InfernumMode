@@ -9,6 +9,10 @@ namespace InfernumMode.Items.Relics
 {
     public abstract class BaseRelicItem : ModItem
     {
+		public virtual string PersonalMessage => null;
+
+		public virtual Color? PersonalMessageColor => null;
+
 		public abstract string DisplayNameToUse { get; }
 
 		public abstract int TileID { get; }
@@ -23,8 +27,8 @@ namespace InfernumMode.Items.Relics
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
 			TooltipLine obj = tooltips.FirstOrDefault((TooltipLine x) => x.Name == "Tooltip0" && x.Mod == "Terraria");
-			obj.Text = Utilities.InfernalRelicText;
-			obj.OverrideColor = Color.DarkRed;
+			obj.Text = PersonalMessage ?? Utilities.InfernalRelicText;
+			obj.OverrideColor = PersonalMessageColor ?? Color.DarkRed;
 		}
 
 		public override void SetDefaults()

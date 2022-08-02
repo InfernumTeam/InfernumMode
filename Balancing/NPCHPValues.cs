@@ -117,7 +117,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<Apollo>()] = 2400000,
             [ModContent.NPCType<SupremeCataclysm>()] = BossRushEvent.BossRushActive ? -1 : 384000,
             [ModContent.NPCType<SupremeCatastrophe>()] = BossRushEvent.BossRushActive ? -1 : 384000,
-            [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? -1 : 3592000,
+            [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? -1 : 2174750,
         };
 
         public static int CalculateMechHP(int baseHP)

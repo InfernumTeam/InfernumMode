@@ -16,7 +16,6 @@ namespace InfernumMode.BossIntroScreens
 {
     public abstract class BaseIntroScreen
     {
-
         public int AnimationTimer;
 
         public float AnimationCompletion => MathHelper.Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
@@ -35,16 +34,16 @@ namespace InfernumMode.BossIntroScreens
             }
         }
 
-        public static float MinorBossTextScale = 1.1f;
+        public const float MinorBossTextScale = 1.1f;
 
-        public static float MajorBossTextScale = 1.45f;
+        public const float MajorBossTextScale = 1.45f;
 
         // Haha bottom text lmao
-        public static float BottomTextScale = 2.1f;
+        public const float BottomTextScale = 2.1f;
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
+        public static DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
         public Vector2 DrawPosition => BaseDrawPosition;
 

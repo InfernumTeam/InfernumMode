@@ -407,7 +407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             SpriteEffects direction = npc.ai[2] != 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (!isLeftHand)
                 armOrigin.X = armTexture.Width - armOrigin.X;
-
+            
             float armAngularOffset = (float)Math.Acos(MathHelper.Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
             float armRotation = v.ToRotation() + armAngularOffset - MathHelper.PiOver2;
             Main.spriteBatch.Draw(armTexture, handBottom - Main.screenPosition, null, color, armRotation, armOrigin, 1f, direction, 0f);

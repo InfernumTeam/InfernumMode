@@ -303,6 +303,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 npc.dontTakeDamage = true;
                 attackDelay--;
+                if (attackDelay == 42f)
+                    SoundEngine.PlaySound(SCalBoss.SpawnSound, target.Center);
+
                 return false;
             }
 

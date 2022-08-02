@@ -25,6 +25,7 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<Lazhar>()] = 42,
             [ModContent.ItemType<PridefulHuntersPlanarRipper>()] = 48,
             [ModContent.ItemType<FinalDawn>()] = 855,
+            [ModContent.ItemType<DragonsBreath>()] = 132,
         };
     }
 }

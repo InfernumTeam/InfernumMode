@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     int flamePillar = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillar>(), 900, 0f);
                     if (Main.projectile.IndexInRange(flamePillar))
-                        Main.projectile[flamePillar].Bottom = Projectile.Center;
+                        Main.projectile[flamePillar].BottomLeft = Projectile.Center;
                 }
                 Projectile.Kill();
             }

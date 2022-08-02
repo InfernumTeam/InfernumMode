@@ -326,7 +326,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                     npc.velocity.Y += 0.5f;
             }
 
-            if (attackTimer >= 160f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
+            if (attackTimer >= 180f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
             {
                 SelectNextAttack(npc);
                 if (target.Center.Y > npc.Bottom.Y + 80f)
@@ -354,7 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                         new CustomTileConditions.ActiveAndNotActuated(),
                         new CustomTileConditions.NotPlatform()
                     }), out Point newBottom);
-                    Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 70, 0f);
+                    Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 80, 0f);
                 }
 
                 // Release spores into the air.

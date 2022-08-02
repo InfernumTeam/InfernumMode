@@ -114,7 +114,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.knockBackResist = 0f;
                 npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 300f);
+                npc.ai = new float[] { 0f, 0f, 0f, 0f };
                 npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SuspensionStateDrift;
+                npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
                 npc.velocity *= 0.825f;
                 npc.defense = 9999;
                 afterimagePulse += 0.24f;
@@ -227,16 +229,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                 HiveMindP2AttackState nextAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[5];
                 bool shouldBecomeInvisible =
-                    nextAttack == HiveMindP2AttackState.NPCSpawnArc ||
-                    nextAttack == HiveMindP2AttackState.SpinLunge ||
-                    nextAttack == HiveMindP2AttackState.CloudDash ||
-                    nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
-                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall ||
-                    nextAttack == HiveMindP2AttackState.CursedRain ||
-                    nextAttack == HiveMindP2AttackState.BlobBurst;
+                    nextAttack is HiveMindP2AttackState.NPCSpawnArc or
+                    HiveMindP2AttackState.SpinLunge or
+                    HiveMindP2AttackState.CloudDash or
+                    HiveMindP2AttackState.UndergroundFlameDash or
+                    HiveMindP2AttackState.EaterOfSoulsWall or
+                    HiveMindP2AttackState.CursedRain or
+                    HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
                 {
-                    if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
+                    if (nextAttack is HiveMindP2AttackState.EaterOfSoulsWall or HiveMindP2AttackState.CursedRain)
                     {
                         npc.Center = target.Center - Vector2.UnitY * 350f;
                         npc.velocity = Vector2.Zero;

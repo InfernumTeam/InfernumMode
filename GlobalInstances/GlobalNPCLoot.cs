@@ -13,6 +13,7 @@ using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.SunkenSea;
 using InfernumMode.Items.Relics;
@@ -140,6 +141,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<PlaguebringerGoliath>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PlaguebringerGoliathRelic>());
+
+            if (npc.type == ModContent.NPCType<RavagerBody>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<RavagerRelic>());
 
             if (npc.type == NPCID.HallowBoss)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<EmpressOfLightRelic>());

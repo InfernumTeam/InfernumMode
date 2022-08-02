@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Projectiles.Pets;
 using InfernumMode.Buffs;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -29,7 +30,7 @@ namespace InfernumMode.Items
             Item.value = Item.sellPrice(platinum: 1);
             Item.rare = ItemRarityID.Pink;
 
-            Item.shoot = ModContent.ProjectileType<Bear>();
+            Item.shoot = ModContent.ProjectileType<HatGirl>();
             Item.buffType = ModContent.BuffType<HatGirlBuff>();
             Item.UseSound = SoundID.Meowmere;
         }

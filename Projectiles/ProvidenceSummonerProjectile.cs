@@ -17,7 +17,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
-namespace InfernumMode
+namespace InfernumMode.Projectiles
 {
     public class ProvidenceSummonerProjectile : ModProjectile
     {
@@ -45,7 +45,7 @@ namespace InfernumMode
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
 
             // Rise upward and create a spiral of fire around the core.
-            if (Time >= 70f && Time < 210f)
+            if (Time is >= 70f and < 210f)
             {
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * 1.75f, 0.025f);
                 for (int i = 0; i < Math.Abs(Projectile.velocity.Y) * 1.6f + 1; i++)

@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
@@ -14,7 +15,7 @@ namespace InfernumMode
         public const float DefaultTargetRedecideThreshold = 4000f;
         public static void TargetClosestIfTargetIsInvalid(this NPC npc, float distanceThreshold = DefaultTargetRedecideThreshold)
         {
-            bool invalidTargetIndex = npc.target < 0 || npc.target >= 255;
+            bool invalidTargetIndex = npc.target is < 0 or >= 255;
             if (invalidTargetIndex)
             {
                 npc.TargetClosest();
@@ -28,6 +29,20 @@ namespace InfernumMode
 
             if (distanceThreshold >= 0f && !npc.WithinRange(target.Center, distanceThreshold - target.aggro))
                 npc.TargetClosest();
+        }
+
+
+        public static NPC CurrentlyFoughtBoss
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].IsABoss())
+                        return Main.npc[i].realLife >= 0 ? Main.npc[Main.npc[i].realLife] : Main.npc[i];
+                }
+                return null;
+            }
         }
 
         // This function returns an available Calamity Music Mod track, or null if the Calamity Music Mod is not available.

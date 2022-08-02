@@ -25,6 +25,10 @@ namespace InfernumMode
         public float CurrentScreenShakePower;
         public float MusicMuffleFactor;
 
+        public bool HatGirl;
+
+        public bool HatGirlShouldGiveAdvice;
+
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
         public Vector2 ScreenFocusPosition;
@@ -82,6 +86,7 @@ namespace InfernumMode
             ShadowflameInferno = false;
             DarkFlames = false;
             Madness = false;
+            HatGirl = false;
             ScreenFocusInterpolant = 0f;
             MusicMuffleFactor = 0f;
         }

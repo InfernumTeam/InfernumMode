@@ -11,6 +11,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -2140,5 +2141,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Main.spriteBatch.Draw(shieldSkullTexture, drawPosition, null, shieldColor, ShieldRotation, shieldSkullTexture.Size() * 0.5f, 1f, direction, 0f);
         }
         #endregion Frames and Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Try dashing through that centipede when it charges at you!";
+        }
+        #endregion Tips
     }
 }

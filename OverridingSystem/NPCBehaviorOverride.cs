@@ -1,3 +1,4 @@
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,8 +12,11 @@ namespace InfernumMode.OverridingSystem
 {
     public abstract class NPCBehaviorOverride
     {
+        internal static Dictionary<int, NPCBehaviorOverride> BehaviorOverrides = new();
+
         internal static void LoadAll()
         {
+            BehaviorOverrides = new();
             void getMethodBasedOnContext(Type type, NPCBehaviorOverride instance, NPCOverrideContext context)
             {
                 string methodName = string.Empty;
@@ -61,9 +65,14 @@ namespace InfernumMode.OverridingSystem
                     getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCPreDraw);
                 if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCFindFrame))
                     getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCFindFrame);
+                BehaviorOverrides[instance.NPCOverrideType] = instance;
+
+                HatGirlTipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
             }
         }
 
+        public virtual int? NPCIDToDeferToForTips => null;
+        public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
         public abstract int NPCOverrideType { get; }
         public abstract NPCOverrideContext ContentToOverride { get; }
         public virtual void SetDefaults(NPC npc) { }

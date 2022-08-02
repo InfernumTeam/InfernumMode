@@ -6,10 +6,14 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 
+using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class SupremeCatastropheBehaviorOverride : NPCBehaviorOverride
     {
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<SCalNPC>();
+
         public override int NPCOverrideType => ModContent.NPCType<SupremeCatastrophe>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;

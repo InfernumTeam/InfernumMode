@@ -397,6 +397,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, 200, 0f);
             }
 
+            if (withinShootInterval && !npc.WithinRange(target.Center, 600f))
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.04f);
+
             if (attackTimer >= upwardRiseTime + meteorShootDelay + meteorShootTime + attackTransitionDelay)
                 SelectNextAttack(npc);
         }
@@ -511,7 +514,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (!npc.WithinRange(target.Center, 650f) && attackTimer < vortexCreationDelay)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
-                attackTimer = vortexCreationDelay - 1f;
+                attackTimer = vortexCreationDelay - 2f;
                 return;
             }
 
@@ -616,7 +619,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Try to spin around the target after charging.
             if (hasCharged == 1f)
             {
-                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1450f;
+                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 950f;
 
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);

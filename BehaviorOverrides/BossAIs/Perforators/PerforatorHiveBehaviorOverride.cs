@@ -50,6 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Set damage.
             npc.defDamage = 75;
             npc.damage = npc.defDamage;
+            npc.dontTakeDamage = false;
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -91,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 {
                     // Slow down dramatically at first.
                     if (finalPhaseTransitionTimer < 90f)
-                        npc.velocity *= 0.935f;
+                        npc.velocity *= 0.93f;
 
                     // Rise upward and create an explosion sound.
                     if (finalPhaseTransitionTimer == 45f)

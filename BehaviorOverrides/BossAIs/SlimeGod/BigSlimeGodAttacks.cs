@@ -26,9 +26,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
             ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[2];
 
             // Slow down and prepare to jump if on the ground.
-            if (npc.velocity.Y == 0f && Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16, true))
+            if ((npc.velocity.Y == 0f && Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16, true)) || stuckTimer >= 270f)
             {
                 npc.velocity.X *= 0.5f;
                 attackTimer++;
@@ -36,6 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 if (attackTimer >= jumpDelay)
                 {
                     attackTimer = 0f;
+                    stuckTimer = 0f;
                     noTileCollisionCountdown = 10f;
                     jumpCounter++;
 
@@ -89,6 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 noTileCollisionCountdown--;
             }
 
+            stuckTimer++;
             if (jumpCounter >= 6)
                 SelectNextAttack(npc);
         }

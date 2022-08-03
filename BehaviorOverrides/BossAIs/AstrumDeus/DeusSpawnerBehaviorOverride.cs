@@ -58,6 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Draw a beacon into the sky.
             float animationTime = projectile.ai[0];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/Border").Value;
             for (int i = 0; i < 6; i++)
             {
                 float intensity = MathHelper.Clamp(Utils.GetLerpValue(120f, 210f, animationTime, true) - i / 5f, 0f, 1f);
@@ -70,6 +71,44 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 beamColor.A = 0;
                 Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, drawPosition, null, beamColor, 0f, origin, scale, SpriteEffects.None, 0f);
             }
+
+            float left = projectile.Center.X - AstrumDeusHeadBehaviorOverride.EnrageStartDistance;
+            float right = projectile.Center.X + AstrumDeusHeadBehaviorOverride.EnrageStartDistance;
+            float leftBorderOpacity = Utils.GetLerpValue(left + 350f, left, Main.LocalPlayer.Center.X, true) * 0.6f;
+            float rightBorderOpacity = Utils.GetLerpValue(right - 350f, right, Main.LocalPlayer.Center.X, true) * 0.6f;
+
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            if (leftBorderOpacity > 0f)
+            {
+                Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(700f, 755f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                Color borderColor = Color.Lerp(Color.Transparent, Color.Orange, leftBorderOpacity);
+
+                for (int i = 0; i < 150; i++)
+                {
+                    float fade = 1f - Math.Abs(i - 75f) / 75f;
+                    drawPosition = baseDrawPosition + Vector2.UnitY * (i - 75f) / 75f * borderOutwardness;
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Cyan, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+                }
+                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Cyan, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+            }
+
+            if (rightBorderOpacity > 0f)
+            {
+                Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(700f, 755f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                Color borderColor = Color.Lerp(Color.Transparent, Color.Orange, rightBorderOpacity);
+
+                for (int i = 0; i < 150; i++)
+                {
+                    float fade = 1f - Math.Abs(i - 75f) / 75f;
+                    drawPosition = baseDrawPosition + Vector2.UnitY * (i - 75f) / 75f * borderOutwardness;
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Cyan, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+                }
+                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Cyan, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+            }
+
+            Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);
 
             // TODO - Use a cool star texture here, after the beacon is drawn.
             return false;

@@ -40,6 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public const float Phase2LifeThreshold = 0.6f;
         public const float Phase3LifeThreshold = 0.33333f;
 
+        public const float EnrageStartDistance = 4800f;
+
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -77,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.Calamity().newAI[0] = 3f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float beaconAngerFactor = Utils.GetLerpValue(4800f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
+            float beaconAngerFactor = Utils.GetLerpValue(EnrageStartDistance, EnrageStartDistance + 800f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
@@ -209,8 +211,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int chargeTime = 36;
             int chargeCount = 3;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float teleportOutwardness = MathHelper.Lerp(1420f, 1095f, 1f - lifeRatio) - beaconAngerFactor * 240f;
-            float chargeSpeed = MathHelper.Lerp(34.5f, 42f, 1f - lifeRatio) + beaconAngerFactor * 15f;
+            float teleportOutwardness = MathHelper.Lerp(1420f, 1125f, 1f - lifeRatio) - beaconAngerFactor * 240f;
+            float chargeSpeed = MathHelper.Lerp(34f, 42.5f, 1f - lifeRatio) + beaconAngerFactor * 12f;
 
             if (phase2)
             {

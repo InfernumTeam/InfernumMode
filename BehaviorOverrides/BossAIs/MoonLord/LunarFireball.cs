@@ -60,6 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Time++;
         }
 
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+
         public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1);

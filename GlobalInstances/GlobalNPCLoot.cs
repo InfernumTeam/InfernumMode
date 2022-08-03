@@ -70,9 +70,6 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<HiveMind>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<HiveMindRelic>());
 
-            if (npc.type == ModContent.NPCType<Cryogen>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CryogenRelic>());
-
             if (npc.type is NPCID.DD2OgreT2 or NPCID.DD2OgreT3)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OgreRelic>());
 
@@ -103,11 +100,15 @@ namespace InfernumMode.GlobalInstances
             if (npc.type is NPCID.Retinazer or NPCID.Spazmatism)
             {
                 LeadingConditionRule lastTwinStanding = new(DropHelper.If(_ => NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 && InfernumMode.CanUseCustomAIs));
-                lastTwinStanding.Add(ModContent.ItemType<DestroyerRelic>());
+                lastTwinStanding.Add(ModContent.ItemType<TwinsRelic>());
+                npcLoot.Add(lastTwinStanding);
             }
 
             if (npc.type == NPCID.SkeletronPrime)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SkeletronPrimeRelic>());
+
+            if (npc.type == ModContent.NPCType<Cryogen>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CryogenRelic>());
 
             if (npc.type == ModContent.NPCType<AquaticScourgeHead>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<AquaticScourgeRelic>());

@@ -211,7 +211,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int chargeTime = 36;
             int chargeCount = 3;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float teleportOutwardness = MathHelper.Lerp(1420f, 1125f, 1f - lifeRatio) - beaconAngerFactor * 240f;
+            float teleportOutwardness = MathHelper.Lerp(1580f, 1250f, 1f - lifeRatio) - beaconAngerFactor * 240f;
             float chargeSpeed = MathHelper.Lerp(34f, 42.5f, 1f - lifeRatio) + beaconAngerFactor * 12f;
 
             if (phase2)
@@ -221,8 +221,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
             if (phase3)
             {
-                fadeInTime -= 14;
-                chargeTime -= 4;
+                fadeInTime -= 6;
+                chargeTime -= 3;
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -257,9 +257,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     SoundEngine.PlaySound(AstrumDeusHead.SplitSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness;
+                        npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness * 1.35f;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
+                        int telegraph = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[1] = 32f;
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -286,7 +289,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
                 // Attempt to rotate towards the target after the teleport if not super close to them.
                 if (!npc.WithinRange(target.Center, 200f))
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f);
 
                 // Teleport near the player again at the end of the cycle.
                 if (wrappedTimer == fadeInTime + chargeTime + fadeOutTime)
@@ -619,7 +622,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Try to spin around the target after charging.
             if (hasCharged == 1f)
             {
-                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 950f;
+                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1080f;
 
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);

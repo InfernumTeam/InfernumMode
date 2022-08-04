@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             ScytheTeleportThrow,
             ShadowDash,
             FastHorizontalCharge,
-            CosmicFlameChargeBelch,
+            CosmicFlameChargeBombs,
             SummonEntities
         }
         #endregion
@@ -93,8 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     DoAttack_FastHorizontalCharge(npc, target, lifeRatio, ref attackTimer);
                     npc.ai[0] = 0f;
                     break;
-                case SignusAttackType.CosmicFlameChargeBelch:
-                    DoAttack_CosmicFlameChargeBelch(npc, target, lifeRatio, ref attackTimer);
+                case SignusAttackType.CosmicFlameChargeBombs:
+                    DoAttack_CosmicFlameChargeBombs(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case SignusAttackType.SummonEntities:
                     DoAttack_SummonEntities(npc, target, lifeRatio, ref attackTimer);
@@ -194,8 +194,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > chargeTime)
                     {
                         npc.velocity *= 0.85f;
-                        if (npc.velocity.Length() > 50f)
-                            npc.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 50f;
+                        if (npc.velocity.Length() > 40f)
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 40f;
 
                         npc.Opacity = 1f - Utils.GetLerpValue(chargeTime, chargeTime + fadeOutTime, attackTimer, true);
                         npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         attackTimer = 0f;
 
                         if (chargeCounter >= chargeCount)
-                            SelectNewAttack(npc);
+                            SelectNextAttack(npc);
 
                         npc.netUpdate = true;
                     }
@@ -287,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         attackCycleCounter++;
 
                         if (attackCycleCounter >= attackCycleCount)
-                            SelectNewAttack(npc);
+                            SelectNextAttack(npc);
 
                         npc.netUpdate = true;
                     }
@@ -446,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
                     // Transition to the next attack after a small delay.
                     if (attackTimer == telegraphTime + blackTime + finalDelay)
-                        SelectNewAttack(npc);
+                        SelectNextAttack(npc);
                     break;
             }
         }
@@ -544,25 +544,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.01f, -0.45f, 0.45f);
 
             if (attackTimer > totalChargeTime * chargeCount)
-                SelectNewAttack(npc);
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_CosmicFlameChargeBelch(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoAttack_CosmicFlameChargeBombs(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            float chargeSpeed = MathHelper.Lerp(25f, 31f, 1f - lifeRatio);
-            int spinDelay = 35;
-            float spinSpeed = MathHelper.TwoPi / MathHelper.Lerp(100f, 50f, 1f - lifeRatio);
+            int chargeCount = 200;
+            float inertia = 12f;
+            float chargeSpeed = MathHelper.Lerp(15f, 21f, 1f - lifeRatio);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
             switch ((int)attackSubstate)
             {
                 // Rise upwards a bit prior to charging.
                 case 0:
-                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -370f);
+                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 650f, -370f);
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 23f, 0.04f);
-                    npc.ai[0] = 0f;
+                    npc.ai[0] = 3f;
+                    npc.rotation = npc.velocity.X * 0.02f;
 
-                    if (npc.WithinRange(hoverDestination, 25f) || attackTimer > 120f)
+                    if (npc.WithinRange(hoverDestination, 45f) || attackTimer > 180f)
                     {
                         attackTimer = 0f;
                         attackSubstate = 1f;
@@ -571,42 +574,54 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     }
                     break;
 
-                // Do a spin charge and belch cosmic flames from the mouth.
+                // Charge at the player.
                 case 1:
-                    // Start to rotate during the charge after enough time has passed.
-                    if (attackTimer > spinDelay)
-                        npc.velocity = npc.velocity.RotatedBy(spinSpeed);
                     npc.ai[0] = 4f;
                     npc.rotation = npc.velocity.ToRotation();
 
-                    // Stop spinning once Signus is within the target's line of sight and enough time has passed.
-                    bool inLineOfSightOfTarget = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.26f;
-                    if (attackTimer > spinDelay + 100f || (inLineOfSightOfTarget && attackTimer > spinDelay + 50f))
-                    {
-                        attackTimer = 0f;
-                        attackSubstate = 2f;
-                        npc.netUpdate = true;
-                    }
-                    break;
+                    if (Math.Sign(npc.velocity.X) != 0f)
+                        npc.spriteDirection = -Math.Sign(npc.velocity.X);
 
-                // Charge at the target and release fireballs.
-                case 2:
-                    if (attackTimer % 8f == 7f && !npc.WithinRange(target.Center, 300f) && attackTimer < 30f)
+                    if (npc.rotation < -MathHelper.PiOver2)
+                        npc.rotation += MathHelper.Pi;
+                    if (npc.rotation > MathHelper.PiOver2)
+                        npc.rotation -= MathHelper.Pi;
+
+                    npc.spriteDirection = Math.Sign(npc.velocity.X);
+
+                    // Release bombs.
+                    bool canReleaseBomb = attackTimer % 15f == 14f && !npc.WithinRange(target.Center, 200f);
+                    if (canReleaseBomb)
                     {
                         SoundEngine.PlaySound(SoundID.Item73, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                float offsetAngle = MathHelper.Lerp(-0.6f, 0.6f, i / 2f);
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * Main.rand.NextFloat(8f, 12f);
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CosmicFlame>(), 260, 0f);
-                            }
+                            int bomb = Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(bomb))
+                                Main.projectile[bomb].ModProjectile<DarkCosmicBomb>().ExplosionRadius = 700f;
                         }
                     }
 
-                    if (attackTimer > 70f)
-                        SelectNewAttack(npc);
+                    Vector2 idealFlyDirection = (target.Center - npc.Center).SafeNormalize(Vector2.UnitY);
+
+                    if (!npc.WithinRange(target.Center, 250f))
+                    {
+                        npc.velocity = npc.velocity.ClampMagnitude(8f, 42f);
+                        npc.velocity = (npc.velocity * (inertia - 1f) + idealFlyDirection * (npc.velocity.Length() + 0.15f * inertia)) / inertia;
+                    }
+                    else
+                        npc.velocity *= 1.01f;
+
+                    if (attackTimer >= 360f || ((target.Center.Y < npc.Center.Y - 200f) && attackTimer >= 90f))
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 0f;
+                        npc.velocity = npc.velocity.ClampMagnitude(0f, 24f) * 0.4f;
+                        npc.netUpdate = true;
+                        chargeCounter++;
+                        if (chargeCounter >= chargeCount)
+                            SelectNextAttack(npc);
+                    }
                     break;
             }
         }
@@ -642,10 +657,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             }
 
             if (entitySummonCounter > totalEntitiesToSummon)
-                SelectNewAttack(npc);
+                SelectNextAttack(npc);
         }
 
-        public static void SelectNewAttack(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -666,7 +681,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
             if (lifeRatio < Phase2LifeRatio)
             {
-                newStatePicker.Add(SignusAttackType.CosmicFlameChargeBelch, 1.85);
+                newStatePicker.Add(SignusAttackType.CosmicFlameChargeBombs, 1.85);
                 newStatePicker.Add(SignusAttackType.SummonEntities, 1.85);
             }
 
@@ -767,7 +782,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             if (lifeRatio < Phase2LifeRatio)
-                drawInstance(cloneDrawPosition, false, npc.Center.X > target.Center.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+                drawInstance(cloneDrawPosition, false, npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
             return false;
         }
         #endregion

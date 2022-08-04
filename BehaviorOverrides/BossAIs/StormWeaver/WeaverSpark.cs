@@ -24,8 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
-            if (Projectile.velocity.Length() < 29f)
-                Projectile.velocity *= 1.022f;
+            if (Projectile.velocity.Length() < 33f)
+                Projectile.velocity *= 1.026f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 

@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int energyReleaseRate = 3;
             if (Timer >= 135f && Timer % energyReleaseRate == energyReleaseRate - 1f && Projectile.scale >= 1f)
             {
-                Vector2 asteroidSpawnOffset = -Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(1.03f) * 700f;
+                Vector2 asteroidSpawnOffset = Main.rand.NextVector2CircularEdge(480f, 480f);
                 Vector2 asteroidSpawnPosition = Target.Center + asteroidSpawnOffset;
                 Vector2 asteroidShootVelocity = (ceaselessVoid.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 14f;
                 Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<DarkEnergyBolt>(), 275, 0f);

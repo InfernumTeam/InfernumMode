@@ -9,6 +9,7 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
@@ -25,6 +26,7 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
+using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
@@ -536,6 +538,12 @@ namespace InfernumMode.GlobalInstances
                 npc.Infernum().ExtraAI[7] = 1f;
                 npc.netUpdate = true;
 
+                return false;
+            }
+
+            if (npc.type == ModContent.NPCType<CeaselessVoid>() && OverridingListManager.Registered(npc.type))
+            {
+                CeaselessVoidBehaviorOverride.HandleDeathStuff(npc);
                 return false;
             }
 

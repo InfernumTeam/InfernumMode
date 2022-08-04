@@ -4,7 +4,9 @@ using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -119,7 +121,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 currentPhase = 2f;
                 SelectNewAttack(npc);
-                attackType = (int)CeaselessVoidAttackType.BlackHoleSuck;
             }
 
             // This debuff is not fun.
@@ -160,6 +161,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             attackTimer++;
             return false;
+        }
+
+        public static void HandleDeathStuff(NPC npc)
+        {
+            if (npc.Infernum().ExtraAI[6] == 1f)
+                return;
+
+            npc.active = true;
+            npc.dontTakeDamage = true;
+            npc.Infernum().ExtraAI[6] = 1f;
+            npc.life = 1;
+            
+            SelectNewAttack(npc);
+            npc.ai[0] = (int)CeaselessVoidAttackType.BlackHoleSuck;
+
+            npc.netUpdate = true;
         }
 
         public static void DoBehavior_DarkEnergySwirl(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
@@ -276,7 +293,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (phase3)
             {
                 chargeTime -= 8;
-                chargeCount++;
                 scaleFactorDelta += 0.8f;
                 chargeDistance += 900f;
             }
@@ -567,6 +583,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_BlackHoleSuck(NPC npc, Player target, ref float attackTimer)
         {
+            npc.life = 1;
+            npc.dontTakeDamage = true;
+            npc.Calamity().ShouldCloseHPBar = true;
+
             int blackHoleDamage = 750;
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
             ref float hasCreatedBlackHole = ref npc.Infernum().ExtraAI[1];
@@ -612,8 +632,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Slow down.
             npc.velocity *= 0.9f;
 
-            if (attackTimer >= 600f)
-                SelectNewAttack(npc);
+            if (attackTimer >= 560f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.HeavyExplosionSound with { Volume = 1.6f }, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(explosion))
+                        Main.projectile[explosion].ModProjectile<CosmicExplosion>().MaxRadius = 1250f;
+                }
+
+                npc.life = 1;
+                npc.StrikeNPCNoInteraction(9999, 0f, 0, true);
+                npc.HitEffect();
+                npc.NPCLoot();
+            }
         }
 
         public static void SelectNewAttack(NPC npc)

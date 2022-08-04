@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 22;
+            Projectile.width = Projectile.height = 50;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;

@@ -549,7 +549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public static void DoAttack_CosmicFlameChargeBombs(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int chargeCount = 200;
+            int chargeCount = 2;
             float inertia = 12f;
             float chargeSpeed = MathHelper.Lerp(15f, 21f, 1f - lifeRatio);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];

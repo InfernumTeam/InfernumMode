@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         
         public static Vector2 DetermineVelocity(Vector2 old, float idealDirection)
         {
-            return (Vector2.Lerp(old, idealDirection.ToRotationVector2() * old.Length(), 0.0132f) * 1.023f).ClampMagnitude(0f, 30f);
+            return (Vector2.Lerp(old, idealDirection.ToRotationVector2() * old.Length(), 0.0132f) * 1.03f).ClampMagnitude(0f, 30f);
         }
 
         public static Vector2 SimulateMotion(Vector2 startingPosition, Vector2 startingVelocity, float idealDirection, int frames)

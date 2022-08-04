@@ -61,6 +61,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             ref float attackState = ref npc.ai[1];
             ref float attackTimer = ref npc.ai[2];
 
+            // Lol. Lmao.
+            if (target.HasBuff(BuffID.Chilled))
+                target.ClearBuff(BuffID.Chilled);
+            if (target.HasBuff(BuffID.Frozen))
+                target.ClearBuff(BuffID.Frozen);
+
             switch ((StormWeaverAttackType)(int)attackState)
             {
                 case StormWeaverAttackType.NormalMove:
@@ -102,10 +108,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             if (npc.WithinRange(target.Center, 285f))
                 moveSpeed *= 1.015f;
-            else if (npc.velocity.Length() > 19f + attackTimer / 36f)
+            else if (npc.velocity.Length() > 25f + attackTimer / 36f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 15f, 29f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 21f, 32.5f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -123,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             else if (npc.velocity.Length() > 13f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 13f, 25f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 15.4f, 26f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -141,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootSpeed = MathHelper.Lerp(8f, 12.5f, 1f - lifeRatio);
+                    float shootSpeed = MathHelper.Lerp(9.6f, 14.5f, 1f - lifeRatio);
                     if (BossRushEvent.BossRushActive)
                         shootSpeed *= 1.5f;
 
@@ -397,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         {
             int hoverRedirectTime = 240;
             int chargeTime = 150;
-            float cloudCoverArea = 4600f;
+            float cloudCoverArea = 5800f;
             Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -1350f);
             Vector2 hoverDestination = target.Center + hoverOffset;
             if (hoverDestination.Y < 300f)

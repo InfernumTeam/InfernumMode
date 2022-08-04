@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         public enum SlimeGodCoreAttackType
         {
             HoverAndDoNothing,
+            DoAbsolutelyNothing,
             PhaseTransitionAnimation,
             SpinBursts,
             HorizontalCharges,

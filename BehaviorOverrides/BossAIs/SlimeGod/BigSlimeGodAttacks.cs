@@ -1,4 +1,6 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.SlimeGod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -200,73 +202,125 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     SelectNextAttack(npc);
             }
         }
-
-        // A small wink of respect to the Catalyst developers.
-        public static void DoBehavior_EvilFlutter(NPC npc, Player target, ref float attackTimer)
+        
+        public static void DoBehavior_CoreSpinBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int attackDelay = 150;
-            int orbLifetime = 60;
-            int orbCount = 11;
-            int orbBurstCount = 4;
-            ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[0];
-            ref float shootCounter = ref npc.Infernum().ExtraAI[1];
-            if (shootCounter >= 1f)
-                attackDelay /= 4;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            // Disable tile collision and gravity.
-            npc.noTileCollide = true;
-            npc.noGravity = true;
+            float burstSpeed = MathHelper.Lerp(5.8f, 7f, 1f - lifeRatio);
+            float jumpDelay = 10f;
+            float coreChargeSpeed = 24.5f;
 
-            // Initialize the hover offset direction.
-            if (hoverOffsetDirection == 0f)
+            bool touchingGround = Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16, true);
+            ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
+            ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[2];
+            ref float coreChargeCounter = ref npc.Infernum().ExtraAI[3];
+            ref float universalSpinTimer = ref npc.Infernum().ExtraAI[4];
+
+            NPC core = Main.npc[CalamityGlobalNPC.slimeGod];
+
+            // Make the core charge.
+            universalSpinTimer++;
+            core.ai[0] = (int)SlimeGodCoreBehaviorOverride.SlimeGodCoreAttackType.DoAbsolutelyNothing;
+            core.damage = 0;
+            core.rotation += core.velocity.X * 0.02f;
+            if (coreChargeCounter >= 1f)
             {
-                hoverOffsetDirection = Main.rand.NextBool().ToDirectionInt();
-                npc.netUpdate = true;
-            }
-
-            // Hover into position before firing.
-            if (attackTimer < attackDelay)
-            {
-                float flySlowdownFactor = Utils.GetLerpValue(0f, 0.84f, attackDelay / attackDelay, true);
-                float flyInterpolant = MathHelper.Lerp(0.1f, 0.032f, flySlowdownFactor);
-                Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 200f, -500f);
-                Vector2 idealVelocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySlowdownFactor * 18f + 2f);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, flyInterpolant);
+                if (touchingGround)
+                    npc.velocity.X *= 0.5f;
+                core.damage = core.defDamage;
+                coreChargeCounter++;
+                if (coreChargeCounter >= 50f)
+                    core.velocity *= 0.95f;
+                if (coreChargeCounter >= 64f)
+                {
+                    coreChargeCounter = 0f;
+                    npc.netUpdate = true;
+                }
                 return;
             }
 
-            // Slow down after hovering.
-            npc.velocity *= 0.97f;
+            // Make the core spin.
+            Vector2 coreHoverDestination = npc.Center + (MathHelper.TwoPi * universalSpinTimer / 45f).ToRotationVector2() * 300f;
+            core.Center = Vector2.Lerp(core.Center, coreHoverDestination, 0.05f);
+            core.velocity = core.SafeDirectionTo(coreHoverDestination) * 32f;
 
-            // Create the orbs.
-            if (attackTimer - attackDelay == 1f && shootCounter < orbBurstCount)
+            // Slow down and prepare to jump if on the ground.
+            if ((npc.velocity.Y == 0f && touchingGround) || stuckTimer >= 600f)
             {
-                SoundEngine.PlaySound(SoundID.Item74, npc.Bottom);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                npc.velocity.X *= 0.5f;
+                attackTimer++;
+
+                if (attackTimer >= jumpDelay && 
+                    npc.SafeDirectionTo(target.Center).RotatedBy(-MathHelper.PiOver2).AngleBetween(core.Center - npc.Center) < 0.28f &&
+                    !core.WithinRange(npc.Center, 100f) &&
+                    stuckTimer >= 30f)
                 {
-                    float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < orbCount; i++)
+                    attackTimer = 0f;
+                    stuckTimer = 0f;
+                    noTileCollisionCountdown = 10f;
+                    jumpCounter++;
+
+                    npc.velocity.Y -= 6f;
+                    if (target.position.Y + target.height < npc.Center.Y)
+                        npc.velocity.Y -= 1.25f;
+                    if (target.position.Y + target.height < npc.Center.Y - 40f)
+                        npc.velocity.Y -= 1.5f;
+                    if (target.position.Y + target.height < npc.Center.Y - 80f)
+                        npc.velocity.Y -= 1.75f;
+                    if (target.position.Y + target.height < npc.Center.Y - 120f)
+                        npc.velocity.Y -= 2.5f;
+                    if (target.position.Y + target.height < npc.Center.Y - 160f)
+                        npc.velocity.Y -= 3f;
+                    if (target.position.Y + target.height < npc.Center.Y - 200f)
+                        npc.velocity.Y -= 3f;
+                    if (target.position.Y + target.height < npc.Center.Y - 400f)
+                        npc.velocity.Y -= 6.1f;
+                    if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
+                        npc.velocity.Y -= 3.25f;
+                    npc.velocity.Y *= 1.35f;
+
+                    // Release a barrage of globs.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float orbOffsetAngle = offsetAngle + (MathHelper.TwoPi * i / orbCount);
-                        int orb = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EvilOrb>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(orb))
+                        core.velocity = core.SafeDirectionTo(target.Center) * coreChargeSpeed;
+                        int globID = npc.type == ModContent.NPCType<CrimulanSlimeGod>() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
+                        for (int i = 0; i < 7; i++)
                         {
-                            Main.projectile[orb].ai[1] = orbLifetime;
-                            Main.projectile[orb].ModProjectile<EvilOrb>().NPCToOrbit = npc.whoAmI;
-                            Main.projectile[orb].ModProjectile<EvilOrb>().OrbitAngularOffset = orbOffsetAngle;
+                            float shootOffsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 7f);
+                            Vector2 globShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * burstSpeed;
+                            Utilities.NewProjectileBetter(npc.Bottom, globShootVelocity, globID, 90, 0f);
                         }
+                        coreChargeCounter = 1f;
+                        npc.netUpdate = true;
                     }
+
+                    SoundEngine.PlaySound(SoundID.Item167, npc.Bottom);
+                    npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 16f;
+                    npc.netUpdate = true;
                 }
-                shootCounter++;
+            }
+            else
+            {
+                npc.noTileCollide = !Collision.SolidCollision(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
+                npc.noGravity = true;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
+                attackTimer = 0f;
             }
 
-            if (attackTimer >= attackDelay + orbLifetime)
+            if (noTileCollisionCountdown > 0f)
             {
-                attackTimer = 0f;
-                hoverOffsetDirection *= -1f;
-                if (shootCounter >= orbBurstCount)
-                    SelectNextAttack(npc);
-                npc.netUpdate = true;
+                npc.noTileCollide = true;
+                noTileCollisionCountdown--;
+            }
+
+            stuckTimer++;
+            if (jumpCounter >= 5)
+            {
+                core.ai[0] = (int)SlimeGodCoreBehaviorOverride.SlimeGodCoreAttackType.HoverAndDoNothing;
+                core.netUpdate = true;
+                SelectNextAttack(npc);
             }
         }
 
@@ -284,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             newStatePicker.Add(BigSlimeGodAttackType.LongJumps);
             newStatePicker.Add(BigSlimeGodAttackType.GroundedGelSlam);
             if (SlimeGodComboAttackManager.FightState == SlimeGodFightState.AloneSingleLargeSlimeEnraged)
-                newStatePicker.Add(BigSlimeGodAttackType.EvilFlutter);
+                newStatePicker.Add(BigSlimeGodAttackType.CoreSpinBursts);
 
             do
             {

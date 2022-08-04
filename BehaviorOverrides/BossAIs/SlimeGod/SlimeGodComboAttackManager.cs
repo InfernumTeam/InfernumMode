@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
     {
         LongJumps,
         GroundedGelSlam,
-        EvilFlutter
+        CoreSpinBursts
     }
 
     public enum SlimeGodComboAttackType
@@ -124,8 +124,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 case (int)BigSlimeGodAttackType.GroundedGelSlam:
                     BigSlimeGodAttacks.DoBehavior_GroundedGelSlam(npc, target, red, alone, ref attackTimer);
                     break;
-                case (int)BigSlimeGodAttackType.EvilFlutter:
-                    BigSlimeGodAttacks.DoBehavior_EvilFlutter(npc, target, ref attackTimer);
+
+                // This community does not tolerate winks of respect.
+                case (int)BigSlimeGodAttackType.CoreSpinBursts:
+                    BigSlimeGodAttacks.DoBehavior_CoreSpinBursts(npc, target, ref attackTimer);
                     break;
             }
             DoComboAttacks(npc, target, ref attackTimer);

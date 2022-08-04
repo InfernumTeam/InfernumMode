@@ -107,9 +107,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create a telegraph line upward that fades away away the pillar fades in.
             Vector2 start = Projectile.Top;
             Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
-            if (Projectile.Opacity < 1f)
-                Main.spriteBatch.DrawLineBetter(start + Projectile.Size * 0.5f, end + Projectile.Size * 0.5f, Color.Cyan * (1f - Projectile.Opacity), Projectile.Opacity * 6f);
-
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
             GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);

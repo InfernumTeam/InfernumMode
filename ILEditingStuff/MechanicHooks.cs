@@ -229,8 +229,8 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static NPC[] GetPlatforms(Projectile projectile)
         {
-            return Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>() ||
-                n.type == ModContent.NPCType<ProvArenaPlatform>()).
+            return Main.npc.Take(Main.maxNPCs).Where(n => n.active && (n.type == ModContent.NPCType<GolemArenaPlatform>() ||
+                n.type == ModContent.NPCType<ProvArenaPlatform>())).
                 OrderBy(n => projectile.Distance(n.Center)).ToArray();
         }
 

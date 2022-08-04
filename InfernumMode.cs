@@ -170,9 +170,6 @@ namespace InfernumMode
                 Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
                 Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
-
-                OverrideMusicBox(ItemID.MusicBoxBoss3, MusicLoader.GetMusicSlot(this, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
-                OverrideMusicBox(ItemID.MusicBoxLunarBoss, MusicLoader.GetMusicSlot(this, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
 
             if (BossRushApplies)
@@ -182,20 +179,6 @@ namespace InfernumMode
                 GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
-        internal static IDictionary<int, int> SoundLoaderMusicToItem => (Dictionary<int, int>)typeof(MusicLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static IDictionary<int, int> SoundLoaderItemToMusic => (Dictionary<int, int>)typeof(MusicLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static Dictionary<int, Dictionary<int, int>> SoundLoaderTileToMusic => (Dictionary<int, Dictionary<int, int>>)typeof(MusicLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-
-        public static void OverrideMusicBox(int itemType, int musicSlot, int tileType, int tileFrameY)
-        {
-            SoundLoaderMusicToItem[musicSlot] = itemType;
-            SoundLoaderItemToMusic[itemType] = musicSlot;
-            if (!SoundLoaderTileToMusic.ContainsKey(tileType))
-                SoundLoaderTileToMusic[tileType] = new Dictionary<int, int>();
-
-            SoundLoaderTileToMusic[tileType][tileFrameY] = musicSlot;
-        }
-        
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
 
         public override void AddRecipes() => RecipeUpdates.Update();

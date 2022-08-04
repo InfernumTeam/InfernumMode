@@ -4,6 +4,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
@@ -108,6 +109,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
+            // Give the taret infinite flight time.
+            target.wingTime = target.wingTimeMax;
+            target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
 
             // Keep the target within the arena.
             if (target.position.X < arenaArea.Left)
@@ -341,17 +346,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (phase2AnimationTimer > 30f && phase2AnimationTimer < 75f && Main.LocalPlayer.WithinRange(npc.Center, 5000f))
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = 10f;
 
-            // Create some platforms before the spike traps are released.
-            if (Main.netMode != NetmodeID.MultiplayerClient && phase2AnimationTimer == 35f)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 8f);
-                    int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
-                    CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -2.5f);
-                }
-            }
-
             // Make all spike traps release their spears.
             if (phase2AnimationTimer == 75f)
             {
@@ -361,19 +355,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     spear.ModProjectile<GroundCrystalSpike>().SpikesShouldExtendOutward = true;
                     spear.netUpdate = true;
                 }
-            }
-        }
-
-        public static void CreatePlatform(NPC npc, Vector2 spawnPosition, Vector2 velocity)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            int platform = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ProvArenaPlatform>());
-            if (Main.npc.IndexInRange(platform))
-            {
-                Main.npc[platform].velocity = velocity;
-                Main.npc[platform].netUpdate = true;
             }
         }
 
@@ -496,14 +477,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int spikeCreationDelay = 110;
             int spikeCreationRate = 45;
             int spikeCount = 3;
-            int platformSpawnRate = 0;
             float offsetPerSpike = 150f;
 
             if (inPhase2)
             {
                 spikeCreationRate += 24;
                 spikeCount++;
-                platformSpawnRate += 24;
                 offsetPerSpike += 40f;
             }
 
@@ -521,14 +500,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             ref float spikeCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Create platforms as necessary.
-            if (platformSpawnRate >= 1f && attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                float horizontalOffset = (attackTimer / platformSpawnRate * 0.15f) % 1f * arenaArea.Width;
-                Vector2 platformSpawnPosition = new(arenaArea.Left + horizontalOffset - 32f, arenaArea.Bottom + 16f);
-                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
 
             // Delete homing fire.
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFire2>());
@@ -572,7 +543,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int boltCount = 11;
             int bombShootRate = 84;
             int explosionDelay = 120;
-            int platformSpawnRate = 0;
             float boltSpeed = 10f;
             float bombExplosionRadius = 1500f;
 
@@ -581,20 +551,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Make explosions have a slight variance in terms of when they explode, instead of all at once.
                 explosionDelay += Main.rand.Next(90);
                 boltCount += 2;
-                platformSpawnRate += 34;
                 boltSpeed += 3f;
-                bombExplosionRadius += 200f;
+                bombExplosionRadius += 150f;
             }
 
             if (inPhase3)
             {
                 blastShootCount++;
-                platformSpawnRate += 12;
-                bombExplosionRadius += 200f;
+                bombExplosionRadius += 150f;
             }
 
             if (!Main.dayTime)
-                bombExplosionRadius += 250f;
+                bombExplosionRadius += 150f;
 
             ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
             ref float universalAttackTimer = ref npc.Infernum().ExtraAI[2];
@@ -603,15 +571,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.velocity *= 0.96f;
             else
                 DoVanillaFlightMovement(npc, target, false, ref npc.Infernum().ExtraAI[0]);
-
-            // Create platforms as necessary.
-            if (platformSpawnRate >= 1f && attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.725f);
-                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
 
             // Release molten blobs.
             if (attackTimer >= bombShootRate && !npc.WithinRange(target.Center, 200f))
@@ -658,13 +617,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int crystalReleaseRate = 3;
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
-            int platformSpawnRate = 0;
             float maxFanOffsetAngle = 1.09f;
             float crystalSpeed = 9.6f;
 
             if (inPhase2)
             {
-                platformSpawnRate += 24;
                 maxFanOffsetAngle += 0.23f;
                 crystalSpeed += 1.2f;
             }
@@ -673,7 +630,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 crystalReleaseRate--;
                 crystalFanCount--;
-                platformSpawnRate += 6;
             }
 
             if (!Main.dayTime)
@@ -689,19 +645,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             ref float initialDirection = ref npc.Infernum().ExtraAI[1];
             ref float crystalFanCounter = ref npc.Infernum().ExtraAI[2];
 
-            // Create platforms as necessary.
-            if (platformSpawnRate >= 1f && attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
-
             // Make the crystals appear more quickly if using the sinusoidal variant.
             if (useSinusoidalFan)
             {
-                crystalReleaseRate--;
+                crystalReleaseRate = 2;
                 crystalReleaseCount += 8;
             }
 
@@ -863,47 +810,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int shootDelay = 90;
             int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
-            int crystalBurstShootRate = (int)MathHelper.Lerp(29f, 16f, 1f - lifeRatio);
+            int crystalBurstShootRate = (int)MathHelper.Lerp(36f, 24f, 1f - lifeRatio);
             int totalCrystalsPerBurst = 24;
             int transitionDelay = 120;
-            int platformSpawnRate = 0;
 
             if (inPhase2)
             {
-                platformSpawnRate += 32;
                 crystalBurstShootRate += 5;
                 totalCrystalsPerBurst -= 2;
             }
 
             if (inPhase3)
-            {
-                platformSpawnRate += 8;
                 totalCrystalsPerBurst++;
-            }
             
             if (!Main.dayTime)
             {
                 crystalBurstShootRate -= 5;
                 totalCrystalsPerBurst += 7;
             }
-
-            if (!Main.dayTime)
-            {
-                crystalBurstShootRate -= 5;
-                totalCrystalsPerBurst += 7;
-            }
-
+            
             ref float burstTimer = ref npc.Infernum().ExtraAI[2];
             ref float burstCounter = ref npc.Infernum().ExtraAI[3];
-
-            // Create platforms as necessary.
-            if (platformSpawnRate >= 1f && attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(arenaArea.Left + 24f, Main.rand.NextFloat(arenaArea.Top + 64f, arenaArea.Bottom - 32f));
-                platformSpawnPosition.Y = MathHelper.Lerp(platformSpawnPosition.Y, target.Center.Y, 0.4f);
-                CreatePlatform(npc, platformSpawnPosition, Vector2.UnitX * 4f);
-            }
 
             Vector2 destination;
             if (target.gravDir == -1f)
@@ -1068,9 +995,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                             Main.projectile[fireBeam].ai[1] = offsetAngleInterpolant;
                     }
                 }
-
-                // Create a platform below the player.
-                CreatePlatform(npc, target.Bottom + Vector2.UnitY * 50f, Vector2.UnitY * -2f);
             }
 
             if (attackTimer >= laserShootDelay + laserShootTime + 20f)
@@ -1086,18 +1010,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int spearBurstReleaseRate = 50;
             int attackTime = 300;
             int attackTransitionDelay = 120;
-            int platformSpawnRate = 32;
             float spearShootSpeed = 8.4f;
             float crystalShootSpeed = 5f;
-
-            // Create platforms as necessary.
-            if (attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
 
             // Enter the cocoon state.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
@@ -1176,7 +1090,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int blastShootCount = 8;
             int blastShootRate = 40;
-            int platformSpawnRate = 35;
             int boltCount = 9;
             float boltSpeed = 10f;
             float holyBlastSpeed = MathHelper.Lerp(14f, 21f, 1f - lifeRatio);
@@ -1196,15 +1109,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.velocity *= 0.96f;
             else
                 DoVanillaFlightMovement(npc, target, true, ref npc.Infernum().ExtraAI[0]);
-
-            // Create platforms as necessary.
-            if (attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
 
             // Release holy blasts.
             if (attackTimer >= blastShootRate && !npc.WithinRange(target.Center, 400f))

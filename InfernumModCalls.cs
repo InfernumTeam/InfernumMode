@@ -1,5 +1,9 @@
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Systems;
 using System;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode
 {
@@ -20,8 +24,36 @@ namespace InfernumMode
                 case "SetInfernumActive":
                     WorldSaveSystem.InfernumMode = (bool)args[1];
                     break;
+                case "CanPlayMusicForNPC":
+                    int npcID = (int)args[1];
+                    return CanPlayMusicForNPC(npcID);
             }
             return null;
+        }
+
+        public static bool CanPlayMusicForNPC(int npcID)
+        {
+            if (npcID == NPCID.EyeofCthulhu)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.SkeletronHead)
+                return NPC.AnyNPCs(npcID);
+            if (npcID is NPCID.Retinazer or NPCID.Spazmatism or NPCID.SkeletronPrime or NPCID.TheDestroyer)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.HallowBoss)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.DukeFishron)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.CultistBoss)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.MoonLordCore)
+            {
+                int npcIndex = NPC.FindFirstNPC(npcID);
+                if (npcIndex < 0)
+                    return false;
+                return Main.npc[npcIndex].Infernum().ExtraAI[10] >= MoonLordCoreBehaviorOverride.IntroSoundLength;
+            }
+
+            return false;
         }
     }
 }

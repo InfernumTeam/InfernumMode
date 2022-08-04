@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
@@ -42,6 +43,17 @@ namespace InfernumMode
                 }
             }
 
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
+            {
+                foreach (TooltipLine line2 in tooltips)
+                {
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip1")
+                    {
+                        line2.Text = "Summons Providence when used at the alter in the profaned temple at the far right of the underworld";
+                    }
+                }
+            }
+
             if (item.type == ItemID.LihzahrdPowerCell)
             {
                 foreach (TooltipLine line2 in tooltips)
@@ -76,6 +88,10 @@ namespace InfernumMode
                 DoGTeleportDenialText(player, item);
                 return false;
             }
+
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
+                return false;
+
             return base.CanUseItem(item, player);
         }
         public override bool? UseItem(Item item, Player player)/* tModPorter Suggestion: Return null instead of false */

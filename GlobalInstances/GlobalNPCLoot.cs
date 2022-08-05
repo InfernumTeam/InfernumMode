@@ -34,7 +34,7 @@ namespace InfernumMode.GlobalInstances
             switch (npc.type)
             {
                 case NPCID.BloodNautilus:
-                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && OverridingListManager.Registered(NPCID.BloodNautilus), ModContent.ItemType<BloodOrb>(), 1, 85, 105);
+                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
                     break;
             }
 
@@ -64,6 +64,7 @@ namespace InfernumMode.GlobalInstances
             {
                 LeadingConditionRule EoWKill = new(DropHelper.If(info => info.npc.boss && InfernumMode.CanUseCustomAIs));
                 EoWKill.Add(ModContent.ItemType<EaterOfWorldsRelic>());
+                npcLoot.Add(EoWKill);
             }
 
             if (npc.type == ModContent.NPCType<PerforatorHive>())
@@ -131,6 +132,7 @@ namespace InfernumMode.GlobalInstances
             {
                 LeadingConditionRule lastFishStanding = new(DropHelper.If(_ => NPC.CountNPCS(ModContent.NPCType<Anahita>()) + NPC.CountNPCS(ModContent.NPCType<Leviathan>()) <= 1 && InfernumMode.CanUseCustomAIs));
                 lastFishStanding.Add(ModContent.ItemType<LeviathanRelic>());
+                npcLoot.Add(lastFishStanding);
             }
 
             if (npc.type == ModContent.NPCType<AstrumAureus>())

@@ -82,10 +82,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGod = npc.whoAmI;
 
+            if (npc.ai[0] <= 1f)
+            {
+                bool transitionToNextAttack = SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase;
+                if (npc.ai[0] != (int)SlimeGodCoreAttackType.HoverAndDoNothing)
+                    transitionToNextAttack |= attackTimer >= 480f;
+
+                // The 2 check is because it takes a frame for the global NPC indices to be populated, meaning the fight state technically has a delay.
+                if (Main.netMode != NetmodeID.MultiplayerClient && transitionToNextAttack && attackTimer >= 2f)
+                    SelectNextAttack(npc);
+            }
+
             switch ((SlimeGodCoreAttackType)(int)attackState)
             {
                 case SlimeGodCoreAttackType.HoverAndDoNothing:
-                    DoBehavior_HoverAndDoNothing(npc, target, ref attackTimer);
+                    DoBehavior_HoverAndDoNothing(npc, target);
                     break;
                 case SlimeGodCoreAttackType.PhaseTransitionAnimation:
                     DoBehavior_PhaseTransitionAnimation(npc, ref attackTimer, ref backglowInterpolant);
@@ -105,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             return false;
         }
         
-        public static void DoBehavior_HoverAndDoNothing(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_HoverAndDoNothing(NPC npc, Player target)
         {
             // Disable contact damage.
             npc.damage = 0;
@@ -123,11 +134,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     npc.velocity *= 0.97f;
                 npc.rotation += npc.velocity.X * 0.04f;
             }
-
-            // The 2 check is because it takes a frame for the global NPC indices to be populated, meaning the fight state technically has a delay.
-            bool transitionToNextAttack = attackTimer >= 480f || SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase;
-            if (Main.netMode != NetmodeID.MultiplayerClient && transitionToNextAttack && attackTimer >= 2f)
-                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_PhaseTransitionAnimation(NPC npc, ref float attackTimer, ref float backglowInterpolant)

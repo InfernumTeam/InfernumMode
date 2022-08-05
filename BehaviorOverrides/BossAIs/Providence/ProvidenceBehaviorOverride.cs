@@ -481,20 +481,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             if (inPhase2)
             {
-                spikeCreationRate += 24;
+                spikeCreationRate -= 8;
                 spikeCount++;
-                offsetPerSpike += 40f;
             }
 
             if (inPhase3)
             {
-                spikeCreationRate -= 12;
+                spikeCreationRate -= 8;
                 offsetPerSpike -= 15f;
             }
 
             if (!Main.dayTime)
             {
-                spikeCreationRate -= 8;
+                spikeCreationRate -= 7;
                 spikeCount = 3;
                 offsetPerSpike -= 25f;
             }
@@ -936,7 +935,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 bladeRelaseRate -= 10;
                 bladeSpeed += 3f;
             }
-
+            
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];

@@ -36,8 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else if (npc.timeLeft < 600)
                 npc.timeLeft = 600;
 
-            Vector2 vector = player.Center - npc.Center;
-            if (vector.Length() < 40f || npc.ai[3] >= 600f)
+            Vector2 targetOffset = player.Center - npc.Center;
+            if (targetOffset.Length() < 40f || npc.ai[3] >= 250f)
             {
                 npc.dontTakeDamage = false;
                 npc.life = 0;
@@ -48,8 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             npc.ai[3]++;
-            npc.dontTakeDamage = npc.ai[3] > 450f;
-            if (npc.ai[3] >= 300f)
+            npc.dontTakeDamage = npc.ai[3] > 200f;
+            if (npc.ai[3] >= 150f)
             {
                 npc.velocity *= 0.985f;
                 return false;

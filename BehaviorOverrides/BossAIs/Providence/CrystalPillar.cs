@@ -40,7 +40,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 2;
             Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

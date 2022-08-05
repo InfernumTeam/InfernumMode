@@ -20,6 +20,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
@@ -340,6 +341,14 @@ namespace InfernumMode.GlobalInstances
                 Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
                 new Thread(_ => WorldgenSystem.GenerateProfanedShrine(new(), new(new()))).Start();
+            }
+
+            if (npc.type == ModContent.NPCType<Providence>())
+            {
+                if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)
+                    WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = true;
+                WorldSaveSystem.HasBeatedInfernumProvRegularly = true;
+                CalamityNetcode.SyncWorld();
             }
         }
 

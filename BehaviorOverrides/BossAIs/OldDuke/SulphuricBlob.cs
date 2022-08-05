@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 80;
+            Projectile.timeLeft = 56;
             CooldownSlot = 1;
         }
 

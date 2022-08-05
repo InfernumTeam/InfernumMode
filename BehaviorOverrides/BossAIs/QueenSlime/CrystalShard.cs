@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < 36f)
+            if (Projectile.velocity.Length() < 31f)
                 Projectile.velocity *= 1.054f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }

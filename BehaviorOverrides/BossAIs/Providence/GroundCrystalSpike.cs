@@ -6,6 +6,7 @@ using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -43,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            if (CalamityGlobalNPC.holyBoss == -1)
+            if (CalamityGlobalNPC.holyBoss == -1 || !Main.npc[CalamityGlobalNPC.holyBoss].active || Main.npc[CalamityGlobalNPC.holyBoss].type != ModContent.NPCType<ProvidenceBoss>())
             {
                 Projectile.Kill();
                 return;

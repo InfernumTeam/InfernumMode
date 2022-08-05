@@ -5,6 +5,7 @@ using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
+using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
@@ -14,6 +15,7 @@ using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SlimeGod;
@@ -164,6 +166,15 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.MoonLordCore)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<MoonLordRelic>());
+
+            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProfanedGuardiansRelic>());
+
+            if (npc.type == ModContent.NPCType<Bumblefuck>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DragonfollyRelic>());
+
+            if (npc.type == ModContent.NPCType<Providence>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
         }
     }
 }

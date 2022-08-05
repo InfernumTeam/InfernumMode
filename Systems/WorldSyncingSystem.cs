@@ -10,6 +10,8 @@ namespace InfernumMode.Systems
         {
             BitsByte flags = new();
             flags[0] = WorldSaveSystem.InfernumMode;
+            flags[1] = WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay;
+            flags[2] = WorldSaveSystem.HasBeatedInfernumProvRegularly;
             writer.Write(flags);
         }
 
@@ -17,6 +19,8 @@ namespace InfernumMode.Systems
         {
             BitsByte flags = reader.ReadByte();
             WorldSaveSystem.InfernumMode = flags[0];
+            WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = flags[1];
+            WorldSaveSystem.HasBeatedInfernumProvRegularly = flags[2];
         }
     }
 }

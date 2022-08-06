@@ -40,25 +40,25 @@ namespace InfernumMode.Items
             recipe.AddIngredient(ModContent.ItemType<Navystone>(), 3);
             recipe.Register();
 
-            Recipe recipe1 = Recipe.Create(Item.type, 3);
+            Recipe recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Bass, 1);
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
-            recipe1 = Recipe.Create(Item.type, 3);
+            recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.RedSnapper, 1);
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
-            recipe1 = Recipe.Create(Item.type, 3);
+            recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Tuna, 1);
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
-            recipe1 = Recipe.Create(Item.type, 3);
+            recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Trout, 1);
             recipe1.AddTile(TileID.CookingPots);

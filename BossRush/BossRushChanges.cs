@@ -64,11 +64,6 @@ namespace InfernumMode.BossRush
         {
             Bosses = new List<Boss>()
             {
-                new Boss(NPCID.MoonLordCore, spawnContext: type =>
-                {
-                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
-                }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
-
                 new Boss(ModContent.NPCType<DesertScourgeHead>(), spawnContext: type =>
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, ModContent.NPCType<DesertScourgeHead>());
@@ -214,6 +209,11 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: new int[] { ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianSlimeGod>(), ModContent.NPCType<CrimulanSlimeGod>(), ModContent.NPCType<SplitCrimulanSlimeGod>(),
                     ModContent.NPCType<SplitEbonianSlimeGod>() }),
+
+                new Boss(NPCID.MoonLordCore, spawnContext: type =>
+                {
+                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
+                }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
 
                 new Boss(ModContent.NPCType<Providence>(), TimeChangeContext.Day, type =>
                 {

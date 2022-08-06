@@ -69,7 +69,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
                         SelectNextAttack(npc);
                     break;
                 case CorruptionMimicAttackState.CursedFlameWallSlam:
-                    DoBehavior_RapidJumps(npc, target, true, ref attackTimer, ref currentFrame);
+                    if (DoBehavior_RapidJumps(npc, target, true, ref attackTimer, ref currentFrame))
+                        SelectNextAttack(npc);
                     break;
                 case CorruptionMimicAttackState.SpreadOfCursedDarts:
                     DoBehavior_SpreadOfCursedDarts(npc, target, ref attackTimer, ref currentFrame);

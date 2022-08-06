@@ -7,19 +7,31 @@ using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DesertScourge;
+using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.Ravager;
+using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
+using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.Items.Relics;
 using InfernumMode.OverridingSystem;
 using Terraria;
@@ -175,6 +187,41 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Providence>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
+
+            if (npc.type == ModContent.NPCType<CeaselessVoid>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CeaselessVoidRelic>());
+
+            if (npc.type == ModContent.NPCType<StormWeaverHead>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<StormWeaverRelic>());
+
+            if (npc.type == ModContent.NPCType<Signus>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SignusRelic>());
+
+            if (npc.type == ModContent.NPCType<Polterghast>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PolterghastRelic>());
+
+            if (npc.type == ModContent.NPCType<OldDuke>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());
+
+            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DevourerOfGodsRelic>());
+
+            if (npc.type == ModContent.NPCType<Yharon>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
+
+            if (Utilities.IsExoMech(npc))
+            {
+                LeadingConditionRule lastMechStanding = new(DropHelper.If(_ => 
+                    NPC.CountNPCS(ModContent.NPCType<ThanatosHead>()) + 
+                    NPC.CountNPCS(ModContent.NPCType<Apollo>()) +
+                    NPC.CountNPCS(ModContent.NPCType<AresBody>()) +
+                    NPC.CountNPCS(ModContent.NPCType<AthenaNPC>()) <= 1 && InfernumMode.CanUseCustomAIs));
+                lastMechStanding.Add(ModContent.ItemType<DraedonRelic>());
+                npcLoot.Add(lastMechStanding);
+            }
+            
+            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
         }
     }
 }

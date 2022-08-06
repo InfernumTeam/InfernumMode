@@ -1,6 +1,8 @@
 using CalamityMod.Tiles.FurnitureProfaned;
+using CalamityMod.Walls;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Generation;
@@ -131,6 +133,10 @@ namespace InfernumMode.Systems
                     if (y < top - 40)
                         break;
                 }
+
+                // Create pillars.
+                if (x % 20 == 19)
+                    GenerateProfanedShrinePillar(new(x, bottom), top - 10);
             }
 
             // Create the right wall.
@@ -211,6 +217,54 @@ namespace InfernumMode.Systems
             }
 
             WorldSaveSystem.HasGeneratedProfanedShrine = true;
+        }
+
+        public static void GenerateProfanedShrinePillar(Point bottom, int topY)
+        {
+            ushort runicBrickWallID = (ushort)ModContent.WallType<RunicProfanedBrickWall>();
+            ushort profanedSlabWallID = (ushort)ModContent.WallType<ProfanedSlabWall>();
+            ushort profanedRockWallID = (ushort)ModContent.WallType<ProfanedRockWall>();
+
+            int y = bottom.Y;
+
+            while (y > topY)
+            {
+                for (int dx = -2; dx <= 2; dx++)
+                {
+                    for (int dy = 0; dy < 6; dy++)
+                    {
+                        ushort wallID = profanedRockWallID;
+                        if (Math.Abs(dx) >= 2 || dy <= 1 || dy == 4)
+                            wallID = profanedSlabWallID;
+                        if (Math.Abs(dx) <= 1 && dy >= 1 && dy <= 3)
+                            wallID = runicBrickWallID;
+                        if (Math.Abs(dx) == 2 || dy == 5)
+                            wallID = profanedRockWallID;
+
+                        int x = bottom.X + dx;
+                        Main.tile[x, y + dy].WallType = wallID;
+                        if (y + dy == (bottom.Y + topY) / 2 - 1 && dx == 0)
+                        {
+                            Main.tile[x, y + dy].TileType = TileID.Torches;
+                            Main.tile[x, y + dy].Get<TileWallWireStateData>().HasTile = true;
+                        }
+                    }
+                }
+                y -= 6;
+            }
+
+            // Frame everything.
+            for (y = topY; y < bottom.Y; y += 6)
+            {
+                for (int dx = -2; dx <= 2; dx++)
+                {
+                    for (int dy = 0; dy < 6; dy++)
+                    {
+                        int x = bottom.X + dx;
+                        WorldGen.SquareWallFrame(x, y + dy);
+                    }
+                }
+            }
         }
     }
 }

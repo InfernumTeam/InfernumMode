@@ -4,6 +4,8 @@ namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
+        public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/AresLaugh");
+
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/AresTeslaShot");
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");

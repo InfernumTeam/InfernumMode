@@ -18,6 +18,7 @@ using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
+using InfernumMode.Sounds;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -467,6 +468,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 frame = (int)AresBodyFrameType.Normal;
                 if (aresSlowdownPreparationInProgress)
                     frame = (int)AresBodyFrameType.Laugh;
+                if (wrappedAttackTimer == redirectTime - 16f)
+                    DoLaughEffect(npc, target);
             }
 
             return attackTimer >= (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime) * laserBurstCount;

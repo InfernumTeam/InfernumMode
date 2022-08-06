@@ -25,6 +25,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -300,6 +301,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
 
+        public static void DoLaughEffect(NPC npc, Player target)
+        {
+            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f }, target.Center);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<ExowlCircleSummonBoom>(), 0, 0f);
+        }
+
         public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)
         {
 
@@ -393,12 +401,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             frame = (int)AresBodyFrameType.Laugh;
 
             // Play the transition sound at the start.
-            if (phaseTransitionAnimationTime == 3f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
-
-            // Clear away all lasers and laser telegraphs.
-            if (phaseTransitionAnimationTime == 3f)
+            if (phaseTransitionAnimationTime == 15f)
             {
+                npc.Center = target.Center - Vector2.UnitY * 400f;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
+                DoLaughEffect(npc, target);
+
                 // Destroy all lasers and telegraphs.
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -525,6 +535,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Have Ares laugh.
             frameType = (int)AresBodyFrameType.Laugh;
+            if (attackTimer == 1f)
+                DoLaughEffect(npc, target);
 
             if (attackTimer > attackTime)
                 SelectNextAttack(npc);
@@ -589,6 +601,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;
+            if (attackTimer == shootDelay + 1f)
+                DoLaughEffect(npc, target);
 
             // Create telegraph lines that show where the laserbeams will appear.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == shootDelay + 1f)

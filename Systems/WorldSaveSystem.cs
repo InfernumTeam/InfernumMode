@@ -37,6 +37,12 @@ namespace InfernumMode.Systems
             set;
         } = Rectangle.Empty;
 
+        public static bool HasProvidenceDoorShattered
+        {
+            get;
+            set;
+        } = false;
+
         public override void SaveWorldData(TagCompound tag)
         {
             var downed = new List<string>();
@@ -48,6 +54,8 @@ namespace InfernumMode.Systems
                 downed.Add("HasBeatedInfernumProvRegularly");
             if (HasBeatedInfernumNightProvBeforeDay)
                 downed.Add("HasBeatedInfernumNightProvBeforeDay");
+            if (HasProvidenceDoorShattered)
+                downed.Add("HasProvidenceDoorShattered");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -63,6 +71,7 @@ namespace InfernumMode.Systems
             HasGeneratedProfanedShrine = downed.Contains("HasGeneratedProfanedShrine");
             HasBeatedInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly");
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
+            HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
         }
     }

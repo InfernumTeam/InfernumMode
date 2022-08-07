@@ -12,7 +12,8 @@ namespace InfernumMode.GlobalInstances
         {
             int[] invincibleTiles = new int[]
             {
-                ModContent.TileType<ProvidenceSummoner>()
+                ModContent.TileType<ProvidenceSummoner>(),
+                ModContent.TileType<ProvidenceRoomDoorPedestal>(),
             };
 
             Tile checkTile = CalamityUtils.ParanoidTileRetrieval(x, y);

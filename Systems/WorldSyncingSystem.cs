@@ -11,12 +11,17 @@ namespace InfernumMode.Systems
 {
     public class WorldSyncingSystem : ModSystem
     {
-        internal static List<CustomLavaStyle> CustomLavaStyles => (List<CustomLavaStyle>)typeof(CustomLavaManagement).GetField("CustomLavaStyles", Utilities.UniversalBindingFlags).GetValue(null);
+        internal static List<CustomLavaStyle> CustomLavaStyles
+        {
+            get => (List<CustomLavaStyle>)typeof(CustomLavaManagement).GetField("CustomLavaStyles", Utilities.UniversalBindingFlags).GetValue(null);
+            set => typeof(CustomLavaManagement).GetField("CustomLavaStyles", Utilities.UniversalBindingFlags).SetValue(null, value);
+        }
 
         internal static MethodInfo LoadMethod = typeof(CustomLavaStyle).GetMethod("Load", Utilities.UniversalBindingFlags);
 
         public override void Load()
         {
+            CustomLavaStyles ??= new();
             foreach (Type type in typeof(InfernumMode).Assembly.GetTypes())
             {
                 // Ignore abstract types; they cannot have instances.
@@ -35,6 +40,7 @@ namespace InfernumMode.Systems
             flags[0] = WorldSaveSystem.InfernumMode;
             flags[1] = WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay;
             flags[2] = WorldSaveSystem.HasBeatedInfernumProvRegularly;
+            flags[3] = WorldSaveSystem.HasProvidenceDoorShattered;
             writer.Write(flags);
         }
 
@@ -44,6 +50,7 @@ namespace InfernumMode.Systems
             WorldSaveSystem.InfernumMode = flags[0];
             WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = flags[1];
             WorldSaveSystem.HasBeatedInfernumProvRegularly = flags[2];
+            WorldSaveSystem.HasProvidenceDoorShattered = flags[3];
         }
     }
 }

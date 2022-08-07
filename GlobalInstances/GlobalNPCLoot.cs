@@ -45,6 +45,7 @@ namespace InfernumMode.GlobalInstances
     {
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
+            return;
             switch (npc.type)
             {
                 case NPCID.BloodNautilus:

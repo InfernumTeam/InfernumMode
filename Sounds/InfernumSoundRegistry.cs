@@ -38,6 +38,10 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ProvidenceHolyRaySound = new("CalamityMod/Sounds/Custom/ProvidenceHolyRay");
 
+        public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Sounds/Custom/ProvidenceDoorSoundLoop");
+
+        public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Sounds/Custom/ProvidenceDoorShatter");
+
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");

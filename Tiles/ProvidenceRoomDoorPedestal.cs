@@ -1,8 +1,11 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ModLoader;
@@ -47,8 +50,23 @@ namespace InfernumMode.Tiles
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            if (DownedBossSystem.downedGuardians)
+            if (Main.gamePaused)
                 return;
+
+            ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
+
+            // TODO -- THIS IS A TEST BEHAVIOR
+            if (Main.rand.NextBool(900))
+            {
+                shatterTimer = 0;
+                WorldSaveSystem.HasProvidenceDoorShattered = false;
+            }
+
+            if (WorldSaveSystem.HasProvidenceDoorShattered)
+            {
+                Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = 0f;
+                return;
+            }
 
             Vector2 bottom = new Vector2(i, j).ToWorldCoordinates(8f, 0f);
             int verticalOffset = 0;
@@ -61,6 +79,34 @@ namespace InfernumMode.Tiles
                 }
             }
 
+            bool close = Main.LocalPlayer.WithinRange(bottom, 240f);
+            shatterTimer = Utils.Clamp(shatterTimer + close.ToDirectionInt(), 0, 300);
+
+            // Have the door shatter into a bunch of crystals.
+            if (close && DownedBossSystem.downedGuardians && shatterTimer >= 270f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound);
+                for (int k = 0; k < verticalOffset; k += Main.rand.Next(15, 35))
+                {
+                    Vector2 crystalSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(12f, 12f);
+                    Vector2 crystalVelocity = -Vector2.UnitY.RotatedByRandom(1.06f) * Main.rand.NextFloat(4f, 10f);
+                    Gore.NewGore(new EntitySource_WorldEvent(), crystalSpawnPosition, crystalVelocity, Mod.Find<ModGore>($"ProvidenceDoor{Main.rand.Next(1, 3)}").Type, 0.8f);
+                }
+                
+                for (int k = 0; k < verticalOffset; k += Main.rand.Next(8, 16))
+                {
+                    Vector2 crystalShardSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(8f, 8f);
+                    Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
+                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 255, shardVelocity);
+                    shard.noGravity = Main.rand.NextBool();
+                    shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
+                    shard.velocity.Y -= 5f;
+                }
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = 15f;
+                WorldSaveSystem.HasProvidenceDoorShattered = true;
+                CalamityNetcode.SyncWorld();
+            }
+
             int horizontalBuffer = 32;
             Vector2 top = bottom - Vector2.UnitY * verticalOffset;
             Rectangle area = new((int)top.X - Width * 8 + horizontalBuffer / 2, (int)top.Y, Width * 16 - horizontalBuffer, verticalOffset);
@@ -71,6 +117,7 @@ namespace InfernumMode.Tiles
                 Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason($"{Main.LocalPlayer.name} was somehow impaled by a pillar of crystals."), 100, 0);
                 Main.LocalPlayer.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
+            Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = Utils.Remap(Main.LocalPlayer.Distance(bottom), 750f, 180f, 0f, 0.4f);
         }
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
@@ -85,7 +132,7 @@ namespace InfernumMode.Tiles
 
         public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            if (DownedBossSystem.downedGuardians)
+            if (WorldSaveSystem.HasProvidenceDoorShattered)
                 return;
 
             Texture2D door = ModContent.Request<Texture2D>("InfernumMode/Tiles/ProvidenceRoomDoor").Value;

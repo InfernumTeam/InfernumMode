@@ -6,9 +6,12 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
+using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,6 +28,9 @@ namespace InfernumMode
         public bool Madness = false;
         public float CurrentScreenShakePower;
         public float MusicMuffleFactor;
+        public float ShimmerSoundVolumeInterpolant;
+        public SlotId ShimmerSoundID;
+        public int ProvidenceRoomShatterTimer;
 
         public bool HatGirl;
 
@@ -107,6 +113,25 @@ namespace InfernumMode
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }
         #endregion
+        #region Pre Update
+        public override void PreUpdate()
+        {
+            // Handle shimmer sound looping when near the Providence door.
+            if (SoundEngine.TryGetActiveSound(ShimmerSoundID, out var sound))
+            {
+                sound.Sound.Volume = Main.soundVolume * ShimmerSoundVolumeInterpolant;
+                if (WorldSaveSystem.HasProvidenceDoorShattered || ShimmerSoundVolumeInterpolant <= 0f)
+                    sound.Stop();
+                if (ShimmerSoundVolumeInterpolant > 0f)
+                    sound.Resume();
+            }
+            else
+            {
+                if (ShimmerSoundVolumeInterpolant > 0f && !WorldSaveSystem.HasProvidenceDoorShattered)
+                    ShimmerSoundID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.001f });
+            }
+        }
+        #endregion Pre Update
         #region Pre Hurt
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
         {

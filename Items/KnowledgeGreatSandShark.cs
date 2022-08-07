@@ -26,14 +26,5 @@ namespace InfernumMode.Items
         }
 
         public override bool CanUseItem(Player player) => false;
-
-        public override void AddRecipes()
-        {
-            Recipe r = CreateRecipe();
-            r.AddTile(TileID.Bookcases);
-            r.AddIngredient(ModContent.ItemType<GreatSandSharkBanner>());
-            r.AddIngredient(ModContent.ItemType<VictoryShard>(), 10);
-            r.Register();
-        }
     }
 }

@@ -44,7 +44,7 @@ namespace InfernumMode
                 return false;
 
             // Go fuck yourself.
-            if (Main.masterMode || Main.getGoodWorld || CalamityWorld.malice)
+            if (Main.masterMode || Main.getGoodWorld)
                 return false;
 
             return true;

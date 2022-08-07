@@ -103,6 +103,7 @@ namespace InfernumMode
             return base.UseItem(item, player);
         }
 
+        /*
         public override void RightClick(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<StarterBag>())
@@ -111,6 +112,7 @@ namespace InfernumMode
                 DropHelper.DropItemCondition(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<DemonicChaliceOfInfernum>(), Main.expertMode);
             }
         }
+        */
 
         public override void OpenVanillaBag(string context, Player player, int arg)
         {

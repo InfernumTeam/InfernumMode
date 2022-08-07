@@ -25,8 +25,7 @@ namespace InfernumMode.Waters
 
         public override void SelectLightColor(ref Color initialLightColor)
         {
-            initialLightColor = Color.Lerp(Color.Orange, Color.White, 0.7f);
-            initialLightColor.A = 0;
+            initialLightColor = Color.White;
         }
     }
 }

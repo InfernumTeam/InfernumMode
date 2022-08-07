@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.localAI[0]++;
             if (Projectile.localAI[0] % 30f == 29f)
             {
-                int dustType = (Main.dayTime && !CalamityWorld.malice) ? (int)CalamityDusts.ProfanedFire : (int)CalamityDusts.Nightwither;
+                int dustType = Main.dayTime ? (int)CalamityDusts.ProfanedFire : (int)CalamityDusts.Nightwither;
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 spawnOffset = Vector2.UnitX * -Projectile.width / 2f;
@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return (Main.dayTime && !CalamityWorld.malice) ? new Color(250, 150, 0, Projectile.alpha) : new Color(100, 200, 250, Projectile.alpha);
+            return Main.dayTime ? new Color(250, 150, 0, Projectile.alpha) : new Color(100, 200, 250, Projectile.alpha);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            int buffType = (Main.dayTime && !CalamityWorld.malice) ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>();
+            int buffType = Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>();
             target.AddBuff(buffType, 240);
         }
 

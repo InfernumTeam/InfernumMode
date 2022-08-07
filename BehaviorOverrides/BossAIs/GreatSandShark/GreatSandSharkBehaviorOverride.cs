@@ -84,8 +84,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.timeLeft = NPC.activeTime * 30;
-            npc.ModNPC.Banner = npc.type;
-            npc.ModNPC.BannerItem = ModContent.ItemType<GreatSandSharkBanner>();
             npc.Calamity().canBreakPlayerDefense = true;
         }
 

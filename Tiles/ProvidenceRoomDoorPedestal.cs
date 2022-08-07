@@ -56,7 +56,7 @@ namespace InfernumMode.Tiles
             ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
 
             // TODO -- THIS IS A TEST BEHAVIOR
-            if (Main.rand.NextBool(900))
+            if (Main.rand.NextBool(300) && WorldSaveSystem.HasProvidenceDoorShattered)
             {
                 shatterTimer = 0;
                 WorldSaveSystem.HasProvidenceDoorShattered = false;
@@ -79,21 +79,29 @@ namespace InfernumMode.Tiles
                 }
             }
 
-            bool close = Main.LocalPlayer.WithinRange(bottom, 240f);
-            shatterTimer = Utils.Clamp(shatterTimer + close.ToDirectionInt(), 0, 300);
+            bool close = Main.LocalPlayer.WithinRange(bottom, 300f) || shatterTimer >= 2;
+            shatterTimer = Utils.Clamp(shatterTimer + close.ToDirectionInt(), 0, 420);
+
+            if (shatterTimer == 2)
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 2f });
+
+            // Do some screen shake anticipation effects.
+            if (close)
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.Remap(shatterTimer, 240f, 360f, 1f, 16f);
 
             // Have the door shatter into a bunch of crystals.
-            if (close && DownedBossSystem.downedGuardians && shatterTimer >= 270f)
+            if (DownedBossSystem.downedGuardians && shatterTimer >= 360f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound);
-                for (int k = 0; k < verticalOffset; k += Main.rand.Next(15, 35))
+                for (int k = 0; k < verticalOffset; k += Main.rand.Next(6, 12))
                 {
-                    Vector2 crystalSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(12f, 12f);
+                    Vector2 crystalSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(24f, 24f);
                     Vector2 crystalVelocity = -Vector2.UnitY.RotatedByRandom(1.06f) * Main.rand.NextFloat(4f, 10f);
-                    Gore.NewGore(new EntitySource_WorldEvent(), crystalSpawnPosition, crystalVelocity, Mod.Find<ModGore>($"ProvidenceDoor{Main.rand.Next(1, 3)}").Type, 0.8f);
+
+                    if (!Collision.SolidCollision(crystalSpawnPosition, 1, 1))
+                        Gore.NewGore(new EntitySource_WorldEvent(), crystalSpawnPosition, crystalVelocity, Mod.Find<ModGore>($"ProvidenceDoor{Main.rand.Next(1, 3)}").Type, 1.16f);
                 }
                 
-                for (int k = 0; k < verticalOffset; k += Main.rand.Next(8, 16))
+                for (int k = 0; k < verticalOffset; k += Main.rand.Next(4, 9))
                 {
                     Vector2 crystalShardSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(8f, 8f);
                     Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
@@ -102,9 +110,9 @@ namespace InfernumMode.Tiles
                     shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
                     shard.velocity.Y -= 5f;
                 }
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower = 15f;
                 WorldSaveSystem.HasProvidenceDoorShattered = true;
                 CalamityNetcode.SyncWorld();
+                shatterTimer = 0;
             }
 
             int horizontalBuffer = 32;

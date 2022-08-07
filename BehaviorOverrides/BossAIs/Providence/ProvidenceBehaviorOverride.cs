@@ -115,15 +115,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
 
             // Keep the target within the arena.
-            if (target.position.X < arenaArea.Left)
-                target.position.X = arenaArea.Left;
-            if (target.position.X + target.width > arenaArea.Right)
-                target.position.X = arenaArea.Right - target.width;
+            if (!WorldSaveSystem.ProvidenceArena.IsEmpty)
+            {
+                if (target.position.X < arenaArea.Left)
+                    target.position.X = arenaArea.Left;
+                if (target.position.X + target.width > arenaArea.Right)
+                    target.position.X = arenaArea.Right - target.width;
 
-            if (target.position.Y < arenaArea.Top)
-                target.position.Y = arenaArea.Top;
-            if (target.position.Y + target.height > arenaArea.Bottom)
-                target.position.Y = arenaArea.Bottom - target.width;
+                if (target.position.Y < arenaArea.Top)
+                    target.position.Y = arenaArea.Top;
+                if (target.position.Y + target.height > arenaArea.Bottom)
+                    target.position.Y = arenaArea.Bottom - target.width;
+            }
 
             // End rain.
             CalamityMod.CalamityMod.StopRain();

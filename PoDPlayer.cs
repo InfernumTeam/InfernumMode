@@ -6,6 +6,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -113,13 +114,16 @@ namespace InfernumMode
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }
         #endregion
-        #region Pre Update
+        #region Update
         public override void PreUpdate()
         {
             // Handle shimmer sound looping when near the Providence door.
             if (SoundEngine.TryGetActiveSound(ShimmerSoundID, out var sound))
             {
-                sound.Sound.Volume = Main.soundVolume * ShimmerSoundVolumeInterpolant;
+                float idealVolume = Main.soundVolume * ShimmerSoundVolumeInterpolant;
+                if (sound.Sound.Volume != idealVolume)
+                    sound.Sound.Volume = idealVolume;
+
                 if (WorldSaveSystem.HasProvidenceDoorShattered || ShimmerSoundVolumeInterpolant <= 0f)
                     sound.Stop();
                 if (ShimmerSoundVolumeInterpolant > 0f)
@@ -131,7 +135,30 @@ namespace InfernumMode
                     ShimmerSoundID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.001f });
             }
         }
-        #endregion Pre Update
+
+        public override void PostUpdate()
+        {
+            if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
+                return;
+
+            float cinderSpawnInterpolant = CalamityPlayer.areThereAnyDamnBosses ? 0.9f : 0.1f;
+            int cinderSpawnRate = (int)MathHelper.Lerp(10f, 3f, cinderSpawnInterpolant);
+            float cinderFlySpeed = MathHelper.Lerp(6f, 12f, cinderSpawnInterpolant);
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (!Main.rand.NextBool(cinderSpawnRate))
+                    return;
+
+                Vector2 cinderSpawnOffset = new(Main.rand.NextFloatDirection() * 500f, 650f);
+                Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
+                if (Main.rand.NextBool(6))
+                    cinderVelocity.X *= -1f;
+
+                Utilities.NewProjectileBetter(Player.Center + cinderSpawnOffset, cinderVelocity, ModContent.ProjectileType<ProfanedTempleCinder>(), 0, 0f);
+            }
+        }
+        #endregion Update
         #region Pre Hurt
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
         {

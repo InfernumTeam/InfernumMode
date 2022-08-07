@@ -1,0 +1,24 @@
+﻿using InfernumMode.Systems;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace InfernumMode.Biomes
+{
+    public class ProfanedTempleBiome : ModBiome
+    {
+        public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
+
+        public override int Music => MusicID.Hell;
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Profaned Temple");
+        }
+
+        public override bool IsBiomeActive(Player player)
+        {
+            return !player.ZoneDungeon && InfernumBiomeTileCounterSystem.ProfanedTile > 350 && player.ZoneUnderworldHeight;
+        }
+    }
+}

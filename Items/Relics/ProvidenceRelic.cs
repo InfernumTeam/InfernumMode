@@ -16,10 +16,10 @@ namespace InfernumMode.Items.Relics
                 if (WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay)
                 {
                     return "Bruh? What the heck? Are you OK?\n" +
-                        "You were supposed to fight her at night AFTER beating her during the day first";
+                        "You were supposed to fight her at night AFTER beating her during the day first!";
                 }
 
-                return "The first major hurdle following the defeat of the Moon Lord. Your triumph over her was by no means a small feat\n" +
+                return "The first major hurdle following the defeat of the Moon Lord. Your triumph over her was by no means a small feat.\n" +
                     "Perhaps consider fighting her again during the night for a special challenge?";
             }
         }

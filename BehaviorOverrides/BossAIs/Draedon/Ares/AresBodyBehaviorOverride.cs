@@ -799,13 +799,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Opacity <= 0f)
                 return true;
 
-            // Rotate arm usability as follows (This only applies before phase 5):
-            // Pulse Cannon and Laser Cannon,
-            // Laser Cannon and Tesla Cannon,
-            // Tesla Cannon and Plasma Flamethrower
-            // Plasma Flamethrower and Pulse Cannon.
-
-            // If during or after phase 5, rotate arm usability like this instead:
+            // Rotate arm usability is as follows (This only applies before phase 5):
             // Pulse Cannon, Laser Cannon, and Tesla Cannon,
             // Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
             // Tesla Cannon, Plasma Flamethrower, and Pulse Cannon
@@ -813,33 +807,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.type == ModContent.NPCType<PhotonRipperNPC>())
                 return false;
 
-            if (ExoMechManagement.CurrentAresPhase < 5 && false)
+            return ((int)aresBody.Infernum().ExtraAI[5] % 3) switch
             {
-                switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
-                {
-                    case 0:
-                        return npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>();
-                    case 1:
-                        return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
-                    case 2:
-                        return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
-                    case 3:
-                        return npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>();
-                }
-            }
-            else
-            {
-                switch ((int)aresBody.Infernum().ExtraAI[5] % 3)
-                {
-                    case 0:
-                        return npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
-                    case 1:
-                        return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
-                    case 2:
-                        return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>();
-                }
-            }
-            return false;
+                0 => npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>(),
+                1 => npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>(),
+                2 => npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>(),
+                _ => false,
+            };
         }
         #endregion AI
 

@@ -16,8 +16,8 @@ namespace InfernumMode.Tiles
 {
     public class ProvidenceSummoner : ModTile
     {
-        public const int Width = 3;
-        public const int Height = 2;
+        public const int Width = 5;
+        public const int Height = 5;
 
         public override void SetStaticDefaults()
         {
@@ -26,12 +26,12 @@ namespace InfernumMode.Tiles
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
 
-            TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
+            TileObjectData.newTile.CopyFrom(TileObjectData.Style5x4);
             TileObjectData.newTile.Width = Width;
             TileObjectData.newTile.Height = Height;
-            TileObjectData.newTile.Origin = new Point16(1, 1);
+            TileObjectData.newTile.Origin = new Point16(3, 4);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 16 };
             TileObjectData.newTile.DrawYOffset = 8;
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;

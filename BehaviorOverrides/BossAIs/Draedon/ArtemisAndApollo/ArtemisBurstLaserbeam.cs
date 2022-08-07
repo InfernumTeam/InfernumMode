@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public PrimitiveTrail LaserDrawer = null;
 
-        public const int LaserLifetime = 48;
+        public const int LaserLifetime = 25;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => 3600f;
         public override float Lifetime => LaserLifetime;

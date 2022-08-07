@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using InfernumMode.Systems;
@@ -67,6 +68,8 @@ namespace InfernumMode
             }
             set => twinsSpecialAttackTypeSelector = value;
         }
+
+        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>());
 
         #region Nurse Cheese Death
         public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)

@@ -201,7 +201,7 @@ namespace InfernumMode.Systems
             for (int x = centerX; x < centerX + ProvidenceSummoner.Width; x++)
             {
                 frameY = 0;
-                for (int y = bottom - 3; y < bottom + ProvidenceSummoner.Height - 3; y++)
+                for (int y = bottom - 6; y < bottom + ProvidenceSummoner.Height - 6; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
                     Main.tile[x, y].TileType = provSummonerID;

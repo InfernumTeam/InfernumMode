@@ -8,7 +8,8 @@ namespace InfernumMode.Items.Relics
 	{
         public override string DisplayNameToUse => "Infernal Eye of Cthulhu Relic";
 
-        public override string PersonalMessage => "Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to\nThe most important thing is fun";
+        public override string PersonalMessage => "Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to.\n" +
+            "The most important thing is fun.";
 
         public override Color? PersonalMessageColor => Color.LightGray;
 

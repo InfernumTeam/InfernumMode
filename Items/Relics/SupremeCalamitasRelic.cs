@@ -15,8 +15,8 @@ namespace InfernumMode.Items.Relics
             {
                 if (DownedBossSystem.downedExoMechs)
                 {
-                    return "Spectacular work. You have conquered all of the major obstacles\n" +
-                        "Take pride in this accomplishment, for you are considerably stronger than you were when you began";
+                    return "Spectacular work. You have conquered all of the major obstacles.\n" +
+                        "Take pride in this accomplishment, for you are considerably stronger than you were when you began.";
                 }
 
                 return "You have done phenomenally. There is only one challenge left now-\n" +

@@ -33,6 +33,9 @@ namespace InfernumMode.Systems
                     GenerateProfanedShrine(progress, config);
                 }));
             }
+
+            int astralChestIndex = tasks.FindIndex(genpass => genpass.Name.Equals("CalamityDungeonBiomeChests"));
+            tasks.RemoveAt(astralChestIndex);
         }
 
         public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration config)

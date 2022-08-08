@@ -17,11 +17,9 @@ using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
-using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Balancing

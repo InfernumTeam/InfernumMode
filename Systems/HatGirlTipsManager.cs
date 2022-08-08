@@ -40,7 +40,7 @@ namespace InfernumMode.Systems
             // This func evaluates the state of the NPC in question, after it died.
             IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips();
             IEnumerable<string> possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t));
-            if (potentialTips is null || potentialTips.Count() <= 0)
+            if (potentialTips is null || !potentialTips.Any())
                 return string.Empty;
 
             return possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count()));

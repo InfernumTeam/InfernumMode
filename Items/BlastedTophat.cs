@@ -1,5 +1,4 @@
-﻿using CalamityMod.Projectiles.Pets;
-using InfernumMode.Buffs;
+﻿using InfernumMode.Buffs;
 using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;

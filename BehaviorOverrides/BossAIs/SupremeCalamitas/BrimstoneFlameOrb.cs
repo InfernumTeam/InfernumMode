@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Events;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

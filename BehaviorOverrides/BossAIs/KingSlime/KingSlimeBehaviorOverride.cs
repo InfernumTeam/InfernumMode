@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (npc.Opacity > 0.7f)
                 npc.Opacity = 0.7f;
 
-            npc.gfxOffY = (int)(-42 * npc.scale / 3f);
+            npc.gfxOffY = (int)(npc.scale * -14f);
 
             attackTimer++;
             return false;

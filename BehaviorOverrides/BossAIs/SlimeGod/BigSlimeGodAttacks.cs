@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using Microsoft.Xna.Framework;
 using Terraria;

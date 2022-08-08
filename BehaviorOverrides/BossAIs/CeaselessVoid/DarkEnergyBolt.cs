@@ -3,7 +3,6 @@ using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;

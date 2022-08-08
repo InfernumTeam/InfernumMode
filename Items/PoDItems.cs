@@ -1,13 +1,11 @@
-using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.SummonItems;
-using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.Items;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,35 +30,35 @@ namespace InfernumMode
         {
             if (item.type == ItemID.CelestialSigil)
             {
-                foreach (TooltipLine line2 in tooltips)
+                var tooltip0 = tooltips.FirstOrDefault(x => x.Name == "Tooltip0" && x.Mod == "Terraria");
+                if (tooltip0 != null)
                 {
-                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
-                    {
-                        line2.Text = "Summons the Moon Lord immediately\n" +
-                                     "Creates an arena at the player's position\n" +
-                                     "Not consumable.";
-                    }
+                    tooltip0.Text = 
+                        "Summons the Moon Lord immediately\n" +
+                        "Creates an arena at the player's position\n" +
+                        "Not consumable.";
                 }
+            }
+
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedShard>())
+            {
+                var tooltip1 = tooltips.FirstOrDefault(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
+                if (tooltip1 != null)
+                    tooltip1.Text = "Summons the Profaned Guardians when used in the profaned garden at the far right of the underworld";
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
             {
-                foreach (TooltipLine line2 in tooltips)
-                {
-                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip1")
-                    {
-                        line2.Text = "Summons Providence when used at the alter in the profaned temple at the far right of the underworld";
-                    }
-                }
+                var tooltip1 = tooltips.FirstOrDefault(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
+                if (tooltip1 != null)
+                    tooltip1.Text = "Summons Providence when used at the alter in the profaned temple at the far right of the underworld";
             }
 
-            if (item.type == ItemID.LihzahrdPowerCell)
+            if (InfernumMode.CanUseCustomAIs && item.type == ItemID.LihzahrdPowerCell)
             {
-                foreach (TooltipLine line2 in tooltips)
-                {
-                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
-                        line2.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
-                }
+                var tooltip0 = tooltips.FirstOrDefault(x => x.Name == "Tooltip0" && x.Mod == "Terraria");
+                if (tooltip0 != null)
+                    tooltip0.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
             }
         }
 
@@ -89,7 +87,7 @@ namespace InfernumMode
                 return false;
             }
 
-            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
+            if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedShard>() || item.type == ModContent.ItemType<ProfanedCore>()))
                 return false;
 
             return base.CanUseItem(item, player);

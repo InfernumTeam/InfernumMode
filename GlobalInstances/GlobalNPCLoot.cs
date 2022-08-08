@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Items.Accessories.Wings;
 using CalamityMod.Items.Materials;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
@@ -33,7 +32,6 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.Items.Relics;
-using InfernumMode.OverridingSystem;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;

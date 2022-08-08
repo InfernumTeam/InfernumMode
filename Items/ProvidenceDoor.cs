@@ -2,9 +2,9 @@
 using Terraria.ID;
 using InfernumMode.Tiles;
 
-namespace CalamityMod.Items.Placeables
+namespace InfernumMode.Items
 {
-    public class AstralDirt : ModItem
+    public class ProvidenceDoor : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -14,7 +14,7 @@ namespace CalamityMod.Items.Placeables
 
         public override void SetDefaults()
         {
-            Item.createTile = ModContent.TileType<ProvidenceRoomDoorPedestal>();
+            Item.createTile = ModContent.TileType<GuardiansSummoner>();
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTurn = true;
             Item.useAnimation = 15;

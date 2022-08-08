@@ -18,7 +18,6 @@ using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using InfernumMode.Sounds;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {

@@ -1,9 +1,6 @@
 using CalamityMod.Items.LoreItems;
-using CalamityMod.Items.Materials;
-using CalamityMod.Items.Placeables.Banners;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Items
 {

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid

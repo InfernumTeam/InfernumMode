@@ -1,8 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
-using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Projectiles.BaseProjectiles;
-using CalamityMod.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

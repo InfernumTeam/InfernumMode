@@ -36,6 +36,8 @@ namespace InfernumMode
 
         public bool ProfanedTempleAnimationHasPlayed;
 
+        public bool CreateALotOfHolyCinders;
+
         public bool HatGirl;
 
         public bool HatGirlShouldGiveAdvice;
@@ -150,6 +152,12 @@ namespace InfernumMode
             float cinderSpawnInterpolant = CalamityPlayer.areThereAnyDamnBosses ? 0.9f : 0.1f;
             int cinderSpawnRate = (int)MathHelper.Lerp(10f, 3f, cinderSpawnInterpolant);
             float cinderFlySpeed = MathHelper.Lerp(6f, 12f, cinderSpawnInterpolant);
+            if (CreateALotOfHolyCinders)
+            {
+                cinderSpawnRate = 1;
+                cinderFlySpeed = 13.25f;
+                CreateALotOfHolyCinders = false;
+            }
 
             for (int i = 0; i < 4; i++)
             {
@@ -158,7 +166,7 @@ namespace InfernumMode
 
                 Vector2 cinderSpawnOffset = new(Main.rand.NextFloatDirection() * 500f, 650f);
                 Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
-                if (Main.rand.NextBool(6))
+                if (Main.rand.NextBool(CreateALotOfHolyCinders ? 2 : 6))
                     cinderVelocity.X *= -1f;
 
                 Utilities.NewProjectileBetter(Player.Center + cinderSpawnOffset, cinderVelocity, ModContent.ProjectileType<ProfanedTempleCinder>(), 0, 0f);

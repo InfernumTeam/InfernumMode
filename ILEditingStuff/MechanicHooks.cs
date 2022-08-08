@@ -217,6 +217,7 @@ namespace InfernumMode.ILEditingStuff
             if (!c.TryGotoPrev(MoveType.After, i => i.MatchLdloc(out _)))
                 return;
 
+            // This mechanic is ridiculous.
             c.EmitDelegate<Func<float>>(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f);
             c.Emit(OpCodes.Div);
         }

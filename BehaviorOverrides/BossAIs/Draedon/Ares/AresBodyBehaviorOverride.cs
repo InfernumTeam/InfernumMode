@@ -424,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
                 attackTime = 1350;
             if (ExoMechManagement.CurrentAresPhase >= 6)
-                attackTime = 540;
+                attackTime = 900;
 
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
@@ -719,16 +719,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.ai[0] = (int)AresBodyAttackType.IdleHover;
                 if (oldAttackType == AresBodyAttackType.IdleHover)
                 {
-                    if ((Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3) && ExoMechManagement.CurrentAresPhase <= 5)
+                    if ((Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 2) && ExoMechManagement.CurrentAresPhase <= 5)
                         npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
-                    else if (ExoMechManagement.CurrentAresPhase >= 3)
+                    else if (ExoMechManagement.CurrentAresPhase >= 2)
                     {
                         npc.ai[0] = (int)(Main.rand.NextBool() ? AresBodyAttackType.DirectionChangingSpinBursts : AresBodyAttackType.LaserSpinBursts);
 
                         float photonRipperChance = ExoMechManagement.CurrentAresPhase >= 5 ? 0.7f : 0.45f;
+                        if (ExoMechManagement.CurrentAresPhase <= 3)
+                            photonRipperChance = 0f;
 
                         // Always choose the photon ripper slash attack if past the fifth phase and there aren't any photon rippers yet.
-                        if (ExoMechManagement.CurrentAresPhase >= 5f && !NPC.AnyNPCs(ModContent.NPCType<PhotonRipperNPC>()))
+                        if (ExoMechManagement.CurrentAresPhase >= 5 && !NPC.AnyNPCs(ModContent.NPCType<PhotonRipperNPC>()))
                             photonRipperChance = 1f;
 
                         if (Main.rand.NextFloat() < photonRipperChance)

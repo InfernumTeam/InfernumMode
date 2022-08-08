@@ -61,6 +61,8 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual bool ShouldCoverScreen => false;
 
+        public virtual bool CaresAboutBossEffectCondition => true;
+
         public virtual Effect ShaderToApplyToLetters => null;
 
         public virtual SoundStyle? SoundToPlayWithLetterAddition { get; } = null;
@@ -73,6 +75,8 @@ namespace InfernumMode.BossIntroScreens
 
         public abstract SoundStyle? SoundToPlayWithTextCreation { get; }
 
+        public virtual void DoCompletionEffects() { }
+
         public virtual void PrepareShader(Effect shader) { }
 
         public virtual float LetterDisplayCompletionRatio(int animationTimer) => 1f;
@@ -80,8 +84,14 @@ namespace InfernumMode.BossIntroScreens
         public virtual void Draw(SpriteBatch sb)
         {
             bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossEffects>());
-            if (!CalamityConfig.Instance.BossZen)
+            if (!CalamityConfig.Instance.BossZen || !CaresAboutBossEffectCondition)
                 notInvolvedWithBoss = false;
+
+            if (AnimationTimer >= AnimationTime - 1f)
+            {
+                CachedText = string.Empty;
+                DoCompletionEffects();
+            }
 
             if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss)
             {

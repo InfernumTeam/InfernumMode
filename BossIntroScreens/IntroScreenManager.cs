@@ -48,10 +48,15 @@ namespace InfernumMode.BossIntroScreens
             UpdateScreens();
             foreach (BaseIntroScreen introScreen in IntroScreens)
             {
-                if (introScreen.ShouldBeActive() && introScreen.AnimationTimer < introScreen.AnimationTime && !BossRushEvent.BossRushActive)
+                if (introScreen.ShouldBeActive() && !BossRushEvent.BossRushActive)
                 {
-                    introScreen.Draw(Main.spriteBatch);
-                    break;
+                    if (introScreen.AnimationTimer < introScreen.AnimationTime)
+                    {
+                        introScreen.Draw(Main.spriteBatch);
+                        break;
+                    }
+                    else if (!introScreen.CaresAboutBossEffectCondition)
+                        introScreen.AnimationTimer = 0;
                 }
             }
         }

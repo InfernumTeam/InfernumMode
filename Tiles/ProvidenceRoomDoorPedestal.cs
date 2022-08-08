@@ -54,14 +54,7 @@ namespace InfernumMode.Tiles
                 return;
 
             ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
-
-            // TODO -- THIS IS A TEST BEHAVIOR
-            if (Main.rand.NextBool(300) && WorldSaveSystem.HasProvidenceDoorShattered)
-            {
-                shatterTimer = 0;
-                WorldSaveSystem.HasProvidenceDoorShattered = false;
-            }
-
+            
             if (WorldSaveSystem.HasProvidenceDoorShattered)
             {
                 Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = 0f;

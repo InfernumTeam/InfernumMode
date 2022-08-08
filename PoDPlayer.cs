@@ -31,7 +31,10 @@ namespace InfernumMode
         public float MusicMuffleFactor;
         public float ShimmerSoundVolumeInterpolant;
         public SlotId ShimmerSoundID;
+
         public int ProvidenceRoomShatterTimer;
+
+        public bool ProfanedTempleAnimationHasPlayed;
 
         public bool HatGirl;
 
@@ -117,6 +120,9 @@ namespace InfernumMode
         #region Update
         public override void PreUpdate()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             // Handle shimmer sound looping when near the Providence door.
             if (SoundEngine.TryGetActiveSound(ShimmerSoundID, out var sound))
             {
@@ -239,6 +245,7 @@ namespace InfernumMode
             ThanatosLaserTypeSelector?.Save(tag);
             AresSpecialAttackTypeSelector?.Save(tag);
             TwinsSpecialAttackTypeSelector?.Save(tag);
+            tag["ProfanedTempleAnimationHasPlayed"] = ProfanedTempleAnimationHasPlayed;
         }
 
         public override void LoadData(TagCompound tag)
@@ -246,6 +253,7 @@ namespace InfernumMode
             ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
             AresSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "AresSpecialAttack");
             TwinsSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "TwinsSpecialAttack");
+            ProfanedTempleAnimationHasPlayed = tag.GetBool("ProfanedTempleAnimationHasPlayed");
         }
         #endregion Saving and Loading
         #region Misc Effects

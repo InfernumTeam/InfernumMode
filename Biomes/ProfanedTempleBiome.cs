@@ -1,15 +1,14 @@
 ﻿using InfernumMode.Systems;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Biomes
 {
     public class ProfanedTempleBiome : ModBiome
     {
-        public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
+        public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 
-        public override int Music => MusicID.Hell;
+        public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/ProfanedTemple");
 
         public override void SetStaticDefaults()
         {

@@ -352,6 +352,15 @@ namespace InfernumMode.GlobalInstances
             }
         }
 
+        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
+        {
+            if (player.Infernum().ZoneProfaned)
+            {
+                spawnRate *= 40000;
+                maxSpawns = 0;
+            }
+        }
+
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

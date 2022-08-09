@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            Projectile.tileCollide = Time > 30f;
+            Projectile.tileCollide = Time > 120f;
             Time++;
         }
 

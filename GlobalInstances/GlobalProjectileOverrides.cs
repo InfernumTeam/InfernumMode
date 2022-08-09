@@ -40,6 +40,14 @@ namespace InfernumMode.GlobalInstances
                 if (OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                     return (bool)OverridingListManager.InfernumProjectilePreAIOverrideList[projectile.type].DynamicInvoke(projectile);
             }
+
+            // No tombs.
+            // h.
+            bool isTomb = projectile.type is ProjectileID.Tombstone or ProjectileID.Gravestone or ProjectileID.RichGravestone1 or ProjectileID.RichGravestone2 or 
+                ProjectileID.RichGravestone3 or ProjectileID.RichGravestone4 or ProjectileID.RichGravestone4 or ProjectileID.Headstone;
+            if (isTomb)
+                projectile.active = false;
+
             return base.PreAI(projectile);
         }
 

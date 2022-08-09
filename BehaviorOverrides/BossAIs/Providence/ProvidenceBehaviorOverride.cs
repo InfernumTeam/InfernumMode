@@ -153,6 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (lifeRatio < 0.04f)
             {
                 npc.Opacity = 1f;
+                npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
                 if (deathEffectTimer == 1f && !Main.dedServ)
                     SoundEngine.PlaySound(SoundID.DD2_DefeatScene with { Volume = 1.65f }, target.Center);
 
@@ -362,6 +363,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     spear.ModProjectile<GroundCrystalSpike>().SpikesShouldExtendOutward = true;
                     spear.netUpdate = true;
                 }
+                npc.ai[2] = 7f;
+                npc.netUpdate = true;
             }
         }
 
@@ -954,7 +957,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Move towards the center of the arena when not firing the lasers.
             if (attackTimer < laserShootDelay - 30f)
-                npc.Center = npc.Center.MoveTowards(arenaCenter, 7.5f);
+                npc.Center = npc.Center.MoveTowards(target.Center, 7.5f);
 
             // Initialize the laser offset angle on the first frame.
             if (attackTimer == 1f)

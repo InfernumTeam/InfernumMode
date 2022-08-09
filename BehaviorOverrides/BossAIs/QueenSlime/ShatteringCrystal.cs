@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Shatter if colliding with another crystal.
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (i != Projectile.whoAmI && Main.projectile[i].type == Projectile.type && Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox))
+                if (i != Projectile.whoAmI && Main.projectile[i].type == Projectile.type && Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox) && Main.projectile[i].active)
                 {
                     Projectile.Center = Main.projectile[i].Center;
                     Main.projectile[i].Kill();

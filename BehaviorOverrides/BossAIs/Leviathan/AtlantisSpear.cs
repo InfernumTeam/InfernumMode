@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             AIType = ProjectileID.CrystalVileShardHead;
         }
 

@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

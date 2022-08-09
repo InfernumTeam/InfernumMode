@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override void Kill(int timeLeft)
         {
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 60);
+            Projectile.ExpandHitboxBy(60);
             Projectile.alpha = 0;
             Projectile.Damage();
 

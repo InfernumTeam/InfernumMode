@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

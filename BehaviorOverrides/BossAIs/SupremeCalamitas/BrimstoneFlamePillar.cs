@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.MaxUpdates = 2;
             CooldownSlot = 1;
         }

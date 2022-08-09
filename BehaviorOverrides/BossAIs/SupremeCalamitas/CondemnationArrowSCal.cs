@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 80;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

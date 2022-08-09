@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Time == 1f)
             {
                 Projectile.scale = Main.rand.NextFloat(0.4f, 0.9f);
-                CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(72 * Projectile.scale));
+                Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;

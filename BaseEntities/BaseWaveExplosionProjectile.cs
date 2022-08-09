@@ -50,7 +50,7 @@ namespace InfernumMode.BaseEntities
             // Cause the wave to expand outward, along with its hitbox.
             Radius = MathHelper.Lerp(Radius, MaxRadius, RadiusExpandRateInterpolant);
             Projectile.scale = MathHelper.Lerp(MinScale, MaxScale, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
+            Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(ref Color lightColor)
         {

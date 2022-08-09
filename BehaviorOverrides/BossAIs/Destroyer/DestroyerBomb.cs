@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Projectile.tileCollide = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 660;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()
@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         // Explode on death.
         public override void Kill(int timeLeft)
         {
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 84);
+            Projectile.ExpandHitboxBy(84);
             Projectile.damage = 50;
             Projectile.Damage();
 

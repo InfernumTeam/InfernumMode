@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.tileCollide = false;
             Projectile.timeLeft = 9000;
             Projectile.scale = 0.2f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

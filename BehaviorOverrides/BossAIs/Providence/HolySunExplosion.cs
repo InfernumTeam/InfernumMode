@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.timeLeft = 84;
             Projectile.MaxUpdates = 2;
             Projectile.scale = 1f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

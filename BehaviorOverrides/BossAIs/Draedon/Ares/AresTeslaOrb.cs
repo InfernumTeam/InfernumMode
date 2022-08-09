@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.penetrate = -1;
             Projectile.Opacity = 0f;
             Projectile.timeLeft = 125;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

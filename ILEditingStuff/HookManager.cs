@@ -4,6 +4,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Systems;
 using CalamityMod.UI;
@@ -164,6 +165,18 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator PlaceHellLab
+        {
+            add => HookEndpointManager.Modify(typeof(DraedonStructures).GetMethod("PlaceHellLab", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DraedonStructures).GetMethod("PlaceHellLab", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator SpawnProvLootBox
+        {
+            add => HookEndpointManager.Modify(typeof(Providence).GetMethod("SpawnLootBox", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(Providence).GetMethod("SpawnLootBox", Utilities.UniversalBindingFlags), value);
         }
     }
 }

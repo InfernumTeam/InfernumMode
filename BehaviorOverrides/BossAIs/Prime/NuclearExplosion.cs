@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.extraUpdates = 1;
             Projectile.penetrate = -1;
             Projectile.scale = 0.15f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.Opacity = 0f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

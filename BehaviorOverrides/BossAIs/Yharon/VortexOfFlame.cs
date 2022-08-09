@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.ignoreWater = true;
             Projectile.alpha = 255;
             Projectile.timeLeft = Lifetime;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

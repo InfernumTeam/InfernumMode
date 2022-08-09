@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

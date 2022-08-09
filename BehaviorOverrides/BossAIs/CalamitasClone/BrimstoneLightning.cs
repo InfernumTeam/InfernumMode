@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public override float PrimitiveWidthFunction(float completionRatio)
         {
             Projectile.hostile = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
 
             float baseWidth = MathHelper.Lerp(2f, 6f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
             return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio);

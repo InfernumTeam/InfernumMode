@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.penetrate = -1;
             Projectile.timeLeft = 420;
             Projectile.alpha = 225;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

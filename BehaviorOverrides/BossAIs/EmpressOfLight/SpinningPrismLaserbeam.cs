@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.timeLeft = LightCloud.LaserLifetime;
             Projectile.hide = true;
             Projectile.netImportant = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

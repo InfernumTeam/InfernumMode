@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 1600;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

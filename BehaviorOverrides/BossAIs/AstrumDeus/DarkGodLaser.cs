@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = LaserLifetime;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

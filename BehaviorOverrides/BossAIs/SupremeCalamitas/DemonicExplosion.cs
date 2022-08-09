@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.MaxUpdates = 2;
             Projectile.scale = 1f;
             Projectile.hide = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

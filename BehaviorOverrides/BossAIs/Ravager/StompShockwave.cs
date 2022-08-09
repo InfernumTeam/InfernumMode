@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.scale = 0.15f;
             Projectile.extraUpdates = 3;
             Projectile.hide = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

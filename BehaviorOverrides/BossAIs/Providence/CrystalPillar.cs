@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 2;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

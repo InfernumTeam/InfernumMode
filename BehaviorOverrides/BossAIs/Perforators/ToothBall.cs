@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

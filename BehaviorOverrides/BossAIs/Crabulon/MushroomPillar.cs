@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 200;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.timeLeft = 720;
             Projectile.tileCollide = false;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 
@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 144);
+            Projectile.ExpandHitboxBy(144);
             for (int d = 0; d < 2; d++)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 100, default, 1.5f);

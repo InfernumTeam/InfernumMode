@@ -37,6 +37,12 @@ namespace InfernumMode.Systems
             set;
         } = Rectangle.Empty;
 
+        public static int ProvidenceDoorXPosition
+        {
+            get;
+            set;
+        }
+
         public static bool HasProvidenceDoorShattered
         {
             get;
@@ -62,6 +68,7 @@ namespace InfernumMode.Systems
             tag["ProvidenceArenaY"] = ProvidenceArena.Y;
             tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
+            tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -73,6 +80,7 @@ namespace InfernumMode.Systems
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
+            ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
         }
     }
 }

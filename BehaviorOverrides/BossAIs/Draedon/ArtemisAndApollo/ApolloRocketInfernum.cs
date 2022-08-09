@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Projectile.penetrate = -1;
             CooldownSlot = 1;
             Projectile.timeLeft = 600;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

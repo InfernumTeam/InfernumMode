@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

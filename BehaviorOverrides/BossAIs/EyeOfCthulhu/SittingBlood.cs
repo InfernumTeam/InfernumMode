@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (Projectile.timeLeft < 60)
             {
                 Projectile.scale *= 0.992f;
-                CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)Math.Ceiling(24 * Projectile.scale));
+                Projectile.ExpandHitboxBy((int)Math.Ceiling(24 * Projectile.scale));
             }
         }
 

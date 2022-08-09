@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

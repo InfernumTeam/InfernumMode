@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

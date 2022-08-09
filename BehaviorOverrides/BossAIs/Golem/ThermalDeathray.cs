@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Projectile.penetrate = -1;
             Projectile.timeLeft = 9000;
             Projectile.alpha = 255;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

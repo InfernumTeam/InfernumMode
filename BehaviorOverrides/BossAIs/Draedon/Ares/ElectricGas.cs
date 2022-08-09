@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

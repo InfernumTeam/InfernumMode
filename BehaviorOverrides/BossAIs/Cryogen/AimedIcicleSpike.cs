@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

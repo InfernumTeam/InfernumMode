@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             Projectile.penetrate = -1;
             Projectile.timeLeft = 125;
             Projectile.Opacity = 0f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
         
         public override void AI()

@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.timeLeft = 360;
             Projectile.penetrate = -1;
             Projectile.Opacity = 0f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

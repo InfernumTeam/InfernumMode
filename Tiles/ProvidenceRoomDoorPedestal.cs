@@ -53,6 +53,15 @@ namespace InfernumMode.Tiles
             if (Main.gamePaused)
                 return;
 
+            // Calculate the door position in the world if it has yet to be initialized.
+            Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Vector2 bottom = new Vector2(i, j).ToWorldCoordinates(8f, 0f);
+            if (WorldSaveSystem.ProvidenceDoorXPosition == 0 && tile.TileFrameX == 18 && tile.TileFrameY == 0)
+            {
+                WorldSaveSystem.ProvidenceDoorXPosition = (int)bottom.X;
+                CalamityNetcode.SyncWorld();
+            }
+
             ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
             
             if (WorldSaveSystem.HasProvidenceDoorShattered)
@@ -61,7 +70,6 @@ namespace InfernumMode.Tiles
                 return;
             }
 
-            Vector2 bottom = new Vector2(i, j).ToWorldCoordinates(8f, 0f);
             int verticalOffset = 0;
             for (int k = 2; k < 200; k++)
             {

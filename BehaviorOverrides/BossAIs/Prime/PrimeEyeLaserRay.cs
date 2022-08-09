@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = (int)Lifetime;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

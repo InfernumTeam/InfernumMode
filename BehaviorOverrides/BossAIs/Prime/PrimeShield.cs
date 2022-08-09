@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (PrimeHeadBehaviorOverride.AnyArms && Projectile.timeLeft < HealTime)
                 Projectile.timeLeft = HealTime;
 
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
+            Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(ref Color lightColor)
         {

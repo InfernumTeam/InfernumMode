@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

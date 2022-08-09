@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.tileCollide = false;
             Projectile.timeLeft = 90;
             Projectile.Opacity = 0f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

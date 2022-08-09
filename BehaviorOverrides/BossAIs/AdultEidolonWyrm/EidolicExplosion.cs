@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.timeLeft = 150;
             Projectile.extraUpdates = 1;
             Projectile.scale = 0.15f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

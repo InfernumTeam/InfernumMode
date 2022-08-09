@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.penetrate = -1;
             Projectile.alpha = 255;
             Projectile.timeLeft = 9000000;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

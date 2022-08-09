@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

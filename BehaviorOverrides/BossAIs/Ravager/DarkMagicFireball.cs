@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 360;
             Projectile.penetrate = -1;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

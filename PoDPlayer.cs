@@ -45,6 +45,20 @@ namespace InfernumMode
 
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
+        public bool InProfanedArena
+        {
+            get
+            {
+                Rectangle arena = WorldSaveSystem.ProvidenceArena;
+                arena.X *= 16;
+                arena.Y *= 16;
+                arena.Width *= 16;
+                arena.Height *= 16;
+
+                return Player.Hitbox.Intersects(arena);
+            }
+        }
+
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
 
@@ -128,6 +142,13 @@ namespace InfernumMode
             HatGirl = false;
             ScreenFocusInterpolant = 0f;
             MusicMuffleFactor = 0f;
+
+            // Disable block placement and destruction in the profaned arena.
+            if (InProfanedArena)
+            {
+                Player.AddBuff(BuffID.NoBuilding, 10);
+                Player.noBuilding = true;
+            }
         }
         #endregion
         #region Update Dead
@@ -164,12 +185,26 @@ namespace InfernumMode
             else
             {
                 if (ShimmerSoundVolumeInterpolant > 0f && !WorldSaveSystem.HasProvidenceDoorShattered)
-                    ShimmerSoundID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.001f });
+                    ShimmerSoundID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.0001f });
             }
+            ShimmerSoundVolumeInterpolant = MathHelper.Clamp(ShimmerSoundVolumeInterpolant - 0.02f, 0f, 1f);
         }
 
         public override void PostUpdate()
         {
+            // Keep the player out of the providence arena if the door is around.
+            if (WorldSaveSystem.ProvidenceDoorXPosition != 0 && !WorldSaveSystem.HasProvidenceDoorShattered && Player.Bottom.Y >= (Main.maxTilesY - 220f) * 16f)
+            {
+                bool passedDoor = false;
+                float doorX = WorldSaveSystem.ProvidenceDoorXPosition;
+                while (Player.Right.X >= doorX || (passedDoor && Collision.SolidCollision(Player.TopLeft, Player.width, Player.height)))
+                {
+                    Player.velocity.X = 0f;
+                    Player.position.X -= 0.1f;
+                    passedDoor = true;
+                }
+            }
+
             if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
                 return;
 

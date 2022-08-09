@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.timeLeft = 85;
             CooldownSlot = 1;
 
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

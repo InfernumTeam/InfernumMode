@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -69,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 }
             }
 
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
+            Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(ref Color lightColor)
         {

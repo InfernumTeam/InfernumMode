@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             Projectile.penetrate = -1;
             Projectile.timeLeft = 120;
             Projectile.alpha = 255;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 

@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = LungeTime + DashTime;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
         public override void AI()

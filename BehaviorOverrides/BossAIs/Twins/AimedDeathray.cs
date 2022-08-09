@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.alpha = 255;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AttachToSomething()

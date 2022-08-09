@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);
             Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
+            Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(ref Color lightColor)
         {

@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -55,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
 
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 105);
+            Projectile.ExpandHitboxBy(105);
             Projectile.damage = 80;
             Projectile.Damage();
         }

@@ -80,6 +80,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
                     Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
                     MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Bottom - WorldSaveSystem.ProvidenceArena.Top) * 16f;
+
+                    for (int i = 12; i < 50; i++)
+                    {
+                        if (Collision.SolidCollision(Projectile.Center - Vector2.UnitY * i, 1, 1))
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -90,7 +99,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     }), out newBottom);
                     bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X - 1, newBottom.Y).IsHalfBlock;
                     Projectile.Bottom = newBottom.ToWorldCoordinates(isHalfTile ? 8 : 0, 8);
-                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Right - WorldSaveSystem.ProvidenceArena.Left) * 20f;
+                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Right - WorldSaveSystem.ProvidenceArena.Left) * 5f;
+
+                    for (int i = 12; i < 50; i++)
+                    {
+                        if (Collision.SolidCollision(Projectile.Center - Vector2.UnitX * i, 1, 1))
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+                    }
                 }
 
                 CurrentHeight = StartingHeight;
@@ -128,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (direction.Y == 0f)
                     lineOffset.Y += 42f;
 
-                Utils.DrawLine(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f) + lineOffset, Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
+                Utilities.DrawLineBetter(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f) + lineOffset, Color.LightGoldenrodYellow, scale);
             }
 
             Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;

@@ -67,6 +67,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 SpikeReach = 0f;
             }
+
+            for (int i = 12; i < 50; i++)
+            {
+                if (Collision.SolidCollision(Projectile.Center + SpikeDirection.ToRotationVector2() * i, 1, 1))
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -78,19 +87,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + SpikeDirection.ToRotationVector2() * SpikeReach, 4f, ref _);
         }
 
+        public override Color? GetAlpha(Color lightColor)
+        {
+            Color c = Main.dayTime ? Color.Lerp(Color.Orange, Color.Yellow, 0.8f) : Color.Lerp(Color.Cyan, Color.Lime, 0.15f);
+            c = Color.Lerp(c, Color.White, 0.4f);
+
+            c.A = 0;
+            return c * Projectile.Opacity;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            Texture2D spikeChain = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/GroundCrystalSpikePillar").Value;
+
             // Draw the spike.
             Texture2D spikeTipTexture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
-            float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
-            float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;
+            float frameHeight = Vector2.Distance(Projectile.Center + SpikeDirection.ToRotationVector2() * 5f, spikeTip) - Projectile.velocity.Length();
+            float frameTop = spikeChain.Height - frameHeight;
             if (frameHeight > 0f)
             {
                 float spikeRotation = SpikeDirection + MathHelper.PiOver2;
-                Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
-                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
-                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                Rectangle spikeFrame = new(0, (int)frameTop, spikeChain.Width, (int)frameHeight);
+
+                for (int i = 0; i < 2; i++)
+                {
+                    Main.spriteBatch.Draw(spikeChain, spikeTip - Main.screenPosition, spikeFrame, Projectile.GetAlpha(Color.White), spikeRotation, new Vector2(spikeChain.Width / 2f, 0f), 1f, 0, 0f);
+                    Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Projectile.GetAlpha(Color.White), spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                }
             }
             return false;
         }

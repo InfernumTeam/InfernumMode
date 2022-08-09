@@ -319,15 +319,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_EnterPhase2(NPC npc, float phase2AnimationTimer)
         {
             // Slow down.
-            npc.velocity *= 0.95f;
+            npc.velocity *= 0.94f;
 
             // Create spikes throughout the arena at first. This will activate soon afterwards.
             if (phase2AnimationTimer == 1f)
             {
-                for (float i = npc.Infernum().arenaRectangle.Left; i < npc.Infernum().arenaRectangle.Right; i += 16f)
+                float startY = Utilities.GetGroundPositionFrom(Main.player[npc.target].Center).Y - 50f;
+                for (float i = -3650f; i < 3650f; i += 32f)
                 {
-                    Vector2 top = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Top + 6), new Searches.Up(9001)).Floor();
-                    Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Top + 6)).Floor();
+                    Vector2 top = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY), new Searches.Up(9001)).Floor();
+                    Vector2 bottom = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY)).Floor();
 
                     int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 300, 0f);
                     if (Main.projectile.IndexInRange(topSpike))
@@ -336,11 +337,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         Main.projectile[topSpike].netUpdate = true;
                     }
 
-                    int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 300, 0f);
-                    if (Main.projectile.IndexInRange(bottomSpike))
+                    if (!Collision.SolidCollision(bottom - new Vector2(1f, 10f), 20, 2))
                     {
-                        Main.projectile[bottomSpike].ModProjectile<GroundCrystalSpike>().SpikeDirection = -MathHelper.PiOver2;
-                        Main.projectile[bottomSpike].netUpdate = true;
+                        int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 300, 0f);
+                        if (Main.projectile.IndexInRange(bottomSpike))
+                        {
+                            Main.projectile[bottomSpike].ModProjectile<GroundCrystalSpike>().SpikeDirection = -MathHelper.PiOver2;
+                            Main.projectile[bottomSpike].netUpdate = true;
+                        }
                     }
                 }
             }
@@ -515,6 +519,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     float xOffset = Main.rand.NextFloat(-35f, 35f);
                     for (float x = arenaArea.Left; x < arenaArea.Right; x += offsetPerSpike)
                     {
+                        if (MathHelper.Distance(npc.Center.X, x) > 4200f)
+                            continue;
+
                         Vector2 crystalPosition = new(x + xOffset, arenaArea.Center.Y);
                         Utilities.NewProjectileBetter(crystalPosition, Vector2.UnitY * -0.01f, ModContent.ProjectileType<CrystalPillar>(), 225, 0f);
                     }
@@ -526,7 +533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     float yOffset = Main.rand.NextFloat(-35f, 35f);
                     for (float y = arenaArea.Top + 100f; y < arenaArea.Bottom - 80f; y += offsetPerSpike)
                     {
-                        Vector2 crystalPosition = new(arenaArea.Center.X, y + yOffset);
+                        Vector2 crystalPosition = new(npc.Center.X, y + yOffset);
                         Utilities.NewProjectileBetter(crystalPosition, Vector2.UnitX * -0.01f, ModContent.ProjectileType<CrystalPillar>(), 225, 0f);
                     }
                 }

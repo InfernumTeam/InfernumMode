@@ -338,8 +338,8 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
             {
                 Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                WorldgenSystem.GenerateProfanedArena(new(), new(new()));
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
-                new Thread(_ => WorldgenSystem.GenerateProfanedArena(new(), new(new()))).Start();
             }
 
             if (npc.type == ModContent.NPCType<Providence>())

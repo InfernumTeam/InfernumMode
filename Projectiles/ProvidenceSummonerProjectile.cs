@@ -126,27 +126,6 @@ namespace InfernumMode.Projectiles
             {
                 CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 325f, ModContent.NPCType<Providence>());
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<ProvSummonFlameExplosion>(), 0, 0f);
-
-                // Break existing tiles.
-                // This is done to ensure that there are no unexpected tiles that may trivialize the platforming aspect of the fight.
-                int[] validTiles = new int[]
-                {
-                    ModContent.TileType<ProfanedSlab>(),
-                    ModContent.TileType<RunicProfanedBrick>(),
-                    ModContent.TileType<ProvidenceSummoner>(),
-                };
-                for (int i = WorldSaveSystem.ProvidenceArena.Left; i < WorldSaveSystem.ProvidenceArena.Right; i++)
-                {
-                    for (int j = WorldSaveSystem.ProvidenceArena.Top; j < WorldSaveSystem.ProvidenceArena.Bottom; j++)
-                    {
-                        Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
-                        if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
-                        {
-                            if (!validTiles.Contains(tile.TileType))
-                                WorldGen.KillTile(i, j);
-                        }
-                    }
-                }
             }
         }
 

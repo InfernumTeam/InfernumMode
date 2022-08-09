@@ -4,7 +4,7 @@ using InfernumMode.Tiles;
 
 namespace InfernumMode.Items
 {
-    public class ProvidenceDoor : ModItem
+    public class GuardiansAlter : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -14,7 +14,7 @@ namespace InfernumMode.Items
 
         public override void SetDefaults()
         {
-            Item.createTile = ModContent.TileType<ProvidenceRoomDoorPedestal>();
+            Item.createTile = ModContent.TileType<GuardiansSummoner>();
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTurn = true;
             Item.useAnimation = 15;

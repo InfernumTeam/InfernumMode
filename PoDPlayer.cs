@@ -11,6 +11,7 @@ using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -46,6 +47,29 @@ namespace InfernumMode
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
+
+        internal Point? CornerOne = null;
+        internal Point? CornerTwo = null;
+
+        // Property with a getter that dynamically assembles the corners to produce a meaningful Rectangle.
+        internal Rectangle? SelectedProvidenceArena
+        {
+            get
+            {
+                if (!CornerOne.HasValue || !CornerTwo.HasValue)
+                    return null;
+
+                Point c1 = CornerOne.GetValueOrDefault();
+                Point c2 = CornerTwo.GetValueOrDefault();
+
+                // It is possible the player dragged the corners in any direction, so use Abs and Min to find the true upper left corner.
+                int startingX = Math.Min(c1.X, c2.X);
+                int width = Math.Abs(c1.X - c2.X);
+                int startingY = Math.Min(c1.Y, c2.Y);
+                int height = Math.Abs(c1.Y - c2.Y);
+                return new Rectangle(startingX, startingY, width, height);
+            }
+        }
 
         private MLAttackSelector thanatosLaserTypeSelector = null;
         private MLAttackSelector aresSpecialAttackTypeSelector = null;

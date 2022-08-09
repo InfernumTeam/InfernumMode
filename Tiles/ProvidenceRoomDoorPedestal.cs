@@ -74,12 +74,14 @@ namespace InfernumMode.Tiles
 
             bool close = Main.LocalPlayer.WithinRange(bottom, 300f) || shatterTimer >= 2;
             shatterTimer = Utils.Clamp(shatterTimer + close.ToDirectionInt(), 0, 420);
+            if (!DownedBossSystem.downedGuardians)
+                shatterTimer = 0;
 
             if (shatterTimer == 2)
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 2f });
 
             // Do some screen shake anticipation effects.
-            if (close)
+            if (close && DownedBossSystem.downedGuardians)
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.Remap(shatterTimer, 240f, 360f, 1f, 16f);
 
             // Have the door shatter into a bunch of crystals.

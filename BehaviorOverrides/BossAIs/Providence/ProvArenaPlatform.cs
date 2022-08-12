@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             // Die if the platform has left Providence's arena.
-            if (!Main.npc[CalamityGlobalNPC.holyBoss].Infernum().arenaRectangle.Intersects(NPC.Hitbox))
+            if (!Main.npc[CalamityGlobalNPC.holyBoss].Infernum().Arena.Intersects(NPC.Hitbox))
             {
                 NPC.active = false;
                 return;

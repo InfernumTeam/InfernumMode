@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int attackTransitionDelay = 90;
             int boltSpreadCount = 4;
             int asteroidReleaseRate = 37;
-            Vector2 hoverDestination = core.Infernum().arenaRectangle.Center.ToVector2();
+            Vector2 hoverDestination = core.Infernum().Arena.Center.ToVector2();
 
             // Look at the target.
             pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);

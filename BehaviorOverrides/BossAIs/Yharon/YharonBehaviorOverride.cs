@@ -1648,10 +1648,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int width = 9000;
-                    npc.Infernum().arenaRectangle.X = (int)(player.Center.X - width * 0.5f);
-                    npc.Infernum().arenaRectangle.Y = (int)(player.Center.Y - 160000f);
-                    npc.Infernum().arenaRectangle.Width = width;
-                    npc.Infernum().arenaRectangle.Height = 320000;
+                    npc.Infernum().Arena.X = (int)(player.Center.X - width * 0.5f);
+                    npc.Infernum().Arena.Y = (int)(player.Center.Y - 160000f);
+                    npc.Infernum().Arena.Width = width;
+                    npc.Infernum().Arena.Height = 320000;
 
                     Projectile.NewProjectile(npc.GetSource_FromAI(), player.Center.X + width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
                     Projectile.NewProjectile(npc.GetSource_FromAI(), player.Center.X - width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
@@ -1663,7 +1663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Enrage code doesn't run on frame 1 so that Yharon won't be enraged for 1 frame in multiplayer
             else
             {
-                var arena = npc.Infernum().arenaRectangle;
+                var arena = npc.Infernum().Arena;
                 enraged01Flag = (!player.Hitbox.Intersects(arena)).ToInt();
                 if (enraged01Flag == 1f)
                     return true;

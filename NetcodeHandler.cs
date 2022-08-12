@@ -38,7 +38,7 @@ namespace InfernumMode
             for (int i = 0; i < TotalUniqueIndicesUsed; i++)
                 Main.npc[NPCIndex].Infernum().ExtraAI[ExtraAIIndicesUsed[i]] = ExtraAIValues[i];
             if (ArenaRectangle != default)
-                Main.npc[NPCIndex].Infernum().arenaRectangle = ArenaRectangle;
+                Main.npc[NPCIndex].Infernum().Arena = ArenaRectangle;
 
             return true;
         }
@@ -113,10 +113,10 @@ namespace InfernumMode
                     // Send the packet again to the other clients if this packet was received on the server.
                     // Since ModPackets go solely to the server when sent by a client this is necesssary
                     // to ensure that all clients are informed of what happened.
+                    int sender = reader.ReadInt32();
+                    WorldSaveSystem.InfernumMode = ((BitsByte)reader.ReadByte())[0];
                     if (Main.netMode == NetmodeID.Server)
-                    {
-
-                    }
+                        SyncInfernumActivity(sender);
                     break;
             }
         }

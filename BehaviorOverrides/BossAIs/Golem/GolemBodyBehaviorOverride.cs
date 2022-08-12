@@ -193,9 +193,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             else
                 npc.timeLeft = 7200;
 
-            if (npc.Infernum().arenaRectangle != null)
+            if (npc.Infernum().Arena != null)
             {
-                Rectangle arena = npc.Infernum().arenaRectangle;
+                Rectangle arena = npc.Infernum().Arena;
 
                 // 0 is normal. 1 is enraged.
                 EnrageState = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
@@ -282,9 +282,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             if (FightStarted == 0f)
             {
-                if (npc.Bottom.Y > npc.Infernum().arenaRectangle.Bottom)
+                if (npc.Bottom.Y > npc.Infernum().Arena.Bottom)
                 {
-                    npc.Bottom = new Vector2(npc.Center.X, npc.Infernum().arenaRectangle.Bottom);
+                    npc.Bottom = new Vector2(npc.Center.X, npc.Infernum().Arena.Bottom);
                     npc.velocity = Vector2.Zero;
                 }
 
@@ -470,13 +470,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Return to the arena if stuck.
-            Rectangle deflatedArena = npc.Infernum().arenaRectangle;
+            Rectangle deflatedArena = npc.Infernum().Arena;
             deflatedArena.Inflate(-80, -32);
             if (Collision.SolidCollision(npc.Center - Vector2.One * 15f, 30, 30) || !npc.Hitbox.Intersects(deflatedArena))
             {
-                if (!npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
+                if (!npc.Hitbox.Intersects(npc.Infernum().Arena))
                     npc.velocity = Vector2.Zero;
-                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 14f);
+                npc.Center = npc.Center.MoveTowards(npc.Infernum().Arena.Center.ToVector2(), 14f);
             }
 
             if (AttackCooldown <= 0f)
@@ -627,9 +627,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         // Summon crystals on the floor that accelerate upward.
                         float horizontalOffset = Main.rand.NextFloat(120f);
-                        for (float x = npc.Infernum().arenaRectangle.Left + 20f; x < npc.Infernum().arenaRectangle.Right - 20f; x += fireCrystalSpacing)
+                        for (float x = npc.Infernum().Arena.Left + 20f; x < npc.Infernum().Arena.Right - 20f; x += fireCrystalSpacing)
                         {
-                            float y = npc.Infernum().arenaRectangle.Center.Y;
+                            float y = npc.Infernum().Arena.Center.Y;
                             Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x + horizontalOffset, y));
 
                             // Create puffs of fire at the crystal's position.
@@ -649,9 +649,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // As well as on the sides of the arena in the third phase.
                         if (inPhase3)
                         {
-                            for (float y = npc.Infernum().arenaRectangle.Top + 20f; y < npc.Infernum().arenaRectangle.Bottom - 20f; y += fireCrystalSpacing * 2f)
+                            for (float y = npc.Infernum().Arena.Top + 20f; y < npc.Infernum().Arena.Bottom - 20f; y += fireCrystalSpacing * 2f)
                             {
-                                float x = npc.Infernum().arenaRectangle.Center.X;
+                                float x = npc.Infernum().Arena.Center.X;
                                 Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x, y + horizontalOffset), new Searches.Left(9001));
 
                                 // Create puffs of fire at the crystal's position.
@@ -695,7 +695,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the third phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase3)
             {
-                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().Arena.Bottom - 16f);
                 CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
@@ -765,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the second phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().Arena.Bottom - 16f);
                 CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
@@ -800,8 +800,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Create impact effects.
                 if (attackTimer == fistSlamTime - 1f)
                 {
-                    Vector2 leftImpactPoint = new(npc.Infernum().arenaRectangle.Left, leftFist.Center.Y);
-                    Vector2 rightImpactPoint = new(npc.Infernum().arenaRectangle.Right, leftFist.Center.Y);
+                    Vector2 leftImpactPoint = new(npc.Infernum().Arena.Left, leftFist.Center.Y);
+                    Vector2 rightImpactPoint = new(npc.Infernum().Arena.Right, leftFist.Center.Y);
 
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, leftImpactPoint);
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, rightImpactPoint);
@@ -814,10 +814,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Create dust on the walls where spikes will appear.
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 trapSpawnPosition = npc.Infernum().arenaRectangle.TopLeft();
+                    Vector2 trapSpawnPosition = npc.Infernum().Arena.TopLeft();
                     Dust.NewDustDirect(trapSpawnPosition, 8, 600, 6);
 
-                    trapSpawnPosition = npc.Infernum().arenaRectangle.BottomRight();
+                    trapSpawnPosition = npc.Infernum().Arena.BottomRight();
                     Dust.NewDustDirect(trapSpawnPosition - new Vector2(-8f, 600f), 8, 600, 6);
                 }
             }
@@ -830,7 +830,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     for (int i = 0; i < 10; i++)
                     {
                         float[] samples = new float[16];
-                        Vector2 crystalSpawnPosition = npc.Infernum().arenaRectangle.Center.ToVector2();
+                        Vector2 crystalSpawnPosition = npc.Infernum().Arena.Center.ToVector2();
                         Vector2 crystalSpawnOffsetDirection = (MathHelper.TwoPi * i / 10f).ToRotationVector2();
                         Collision.LaserScan(crystalSpawnPosition, crystalSpawnOffsetDirection, 24f, 10000f, samples);
                         crystalSpawnPosition += crystalSpawnOffsetDirection * samples.Average();
@@ -840,13 +840,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % spikeTrapCreationRate == spikeTrapCreationRate - 1f)
                 {
-                    Vector2 trapSpawnPosition = npc.Infernum().arenaRectangle.TopLeft();
+                    Vector2 trapSpawnPosition = npc.Infernum().Arena.TopLeft();
                     Vector2 trapVelocity = Vector2.UnitX * 8f;
                     int spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f);
                     if (Main.projectile.IndexInRange(spike))
                         Main.projectile[spike].ai[1] = 1f;
 
-                    trapSpawnPosition = npc.Infernum().arenaRectangle.BottomRight();
+                    trapSpawnPosition = npc.Infernum().Arena.BottomRight();
                     trapVelocity = Vector2.UnitX * -8f;
                     spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f);
                     if (Main.projectile.IndexInRange(spike))
@@ -869,18 +869,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms in the middle section of the arena.
             if (attackTimer >= fistSlamTime && attackTimer % platformReleaseRate == platformReleaseRate - 1f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new(npc.Infernum().arenaRectangle.Left + 12f, npc.Infernum().arenaRectangle.Center.Y - 40f);
+                Vector2 platformSpawnPosition = new(npc.Infernum().Arena.Left + 12f, npc.Infernum().Arena.Center.Y - 40f);
                 CreatePlatform(npc, platformSpawnPosition, Vector2.UnitX * 3f);
 
-                platformSpawnPosition = new Vector2(npc.Infernum().arenaRectangle.Right - 12f, npc.Infernum().arenaRectangle.Center.Y + 40f);
+                platformSpawnPosition = new Vector2(npc.Infernum().Arena.Right - 12f, npc.Infernum().Arena.Center.Y + 40f);
                 CreatePlatform(npc, platformSpawnPosition, Vector2.UnitX * -3f);
             }
 
             // Do the slam animation.
             leftFist.Center = GetLeftFistAttachmentPosition(npc);
-            leftFist.position.X = MathHelper.Lerp(leftFist.position.X, npc.Infernum().arenaRectangle.Left + 8f, fistSlamInterpolant) - leftFist.width * 0.5f;
+            leftFist.position.X = MathHelper.Lerp(leftFist.position.X, npc.Infernum().Arena.Left + 8f, fistSlamInterpolant) - leftFist.width * 0.5f;
             rightFist.Center = GetRightFistAttachmentPosition(npc);
-            rightFist.position.X = MathHelper.Lerp(rightFist.position.X, npc.Infernum().arenaRectangle.Right - 8f, fistSlamInterpolant) - rightFist.width * 0.5f;
+            rightFist.position.X = MathHelper.Lerp(rightFist.position.X, npc.Infernum().Arena.Right - 8f, fistSlamInterpolant) - rightFist.width * 0.5f;
             leftFist.rotation = 0f;
             rightFist.rotation = 0f;
 
@@ -965,7 +965,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the second phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().Arena.Bottom - 16f);
                 CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
@@ -1025,11 +1025,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
-                CreatePlatform(npc, npc.Infernum().arenaRectangle.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                CreatePlatform(npc, npc.Infernum().Arena.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
-                platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
-                CreatePlatform(npc, npc.Infernum().arenaRectangle.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
+                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
+                CreatePlatform(npc, npc.Infernum().Arena.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
             }
 
             // Cast the laser from the core.
@@ -1138,11 +1138,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 fistEnd = new Vector2(fistSlamDestinationX, fistSlamDestinationY);
             }
 
-            Rectangle deflatedArena = npc.Infernum().arenaRectangle;
+            Rectangle deflatedArena = npc.Infernum().Arena;
             deflatedArena.Inflate(-20, 16);
             while (!Utils.CenteredRectangle(new Vector2(fistSlamDestinationX, fistSlamDestinationY), Vector2.One).Intersects(deflatedArena))
             {
-                Vector2 directionToCenter = (npc.Infernum().arenaRectangle.Center.ToVector2() - new Vector2(fistSlamDestinationX, fistSlamDestinationY)).SafeNormalize(Vector2.UnitY);
+                Vector2 directionToCenter = (npc.Infernum().Arena.Center.ToVector2() - new Vector2(fistSlamDestinationX, fistSlamDestinationY)).SafeNormalize(Vector2.UnitY);
                 fistSlamDestinationX += directionToCenter.X * 4f;
                 fistSlamDestinationY += directionToCenter.Y * 4f;
             }
@@ -1151,11 +1151,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
-                CreatePlatform(npc, npc.Infernum().arenaRectangle.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                CreatePlatform(npc, npc.Infernum().Arena.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
-                platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
-                CreatePlatform(npc, npc.Infernum().arenaRectangle.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
+                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
+                CreatePlatform(npc, npc.Infernum().Arena.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
             }
 
             // Create fire sparks as a telegraph that indicates which fist will charge.
@@ -1263,7 +1263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 30f)
-                    npc.velocity.X = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _).X;
+                    npc.velocity.X = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().Arena.Center.ToVector2(), 0.3f, 21f, out _).X;
 
                 if (attackTimer >= dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 180f)
                 {
@@ -1310,8 +1310,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 2f);
-                        int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                        int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 2f);
+                        int platformY = npc.Infernum().Arena.Bottom - 16;
                         CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
                     }
                 }
@@ -1321,12 +1321,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer >= 25f && attackTimer % laserReleaseRate == laserReleaseRate - 1f)
             {
                 Vector2 laserSpawnOffsetFactors = new(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
-                Vector2 laserSpawnPosition = npc.Infernum().arenaRectangle.Center.ToVector2() + npc.Infernum().arenaRectangle.Size() * laserSpawnOffsetFactors * 0.5f;
+                Vector2 laserSpawnPosition = npc.Infernum().Arena.Center.ToVector2() + npc.Infernum().Arena.Size() * laserSpawnOffsetFactors * 0.5f;
                 SoundEngine.PlaySound(SoundID.Item12, laserSpawnPosition);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 laserShootVelocity = Vector2.UnitX * Math.Sign(npc.Infernum().arenaRectangle.Center.X - laserSpawnPosition.X) * 5f;
+                    Vector2 laserShootVelocity = Vector2.UnitX * Math.Sign(npc.Infernum().Arena.Center.X - laserSpawnPosition.X) * 5f;
                     Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ProjectileID.EyeBeam, 200, 0f);
                 }
             }
@@ -1334,8 +1334,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create new platforms afterwards.
             if (attackTimer % platformReleaseRate == platformReleaseRate - 1f)
             {
-                int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 150f, npc.Infernum().arenaRectangle.Right - 150f, Main.rand.NextFloat());
-                int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 150f, npc.Infernum().Arena.Right - 150f, Main.rand.NextFloat());
+                int platformY = npc.Infernum().Arena.Bottom - 16;
                 CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
             }
 
@@ -1382,11 +1382,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create spikes throughout the arena at first. This will activate soon afterwards.
             if (phase2TransitionTimer == 1f)
             {
-                for (float i = npc.Infernum().arenaRectangle.Left + 16f; i < npc.Infernum().arenaRectangle.Right; i += 16f)
+                for (float i = npc.Infernum().Arena.Left + 16f; i < npc.Infernum().Arena.Right; i += 16f)
                 {
-                    Vector2 top = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y), new Searches.Up(9001)).Floor();
+                    Vector2 top = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().Arena.Center.Y), new Searches.Up(9001)).Floor();
                     top.Y -= 16f;
-                    Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
+                    Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().Arena.Center.Y)).Floor();
 
                     if (Collision.CanHit(top, 1, 1, top + Vector2.UnitY * 100f, 1, 1))
                     {
@@ -1419,8 +1419,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 6f);
-                    int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                    int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 6f);
+                    int platformY = npc.Infernum().Arena.Bottom - 16;
                     CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -2.5f);
                 }
             }
@@ -1646,13 +1646,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             int arenaBottom = altarY + 15;
             Vector2 arenaCenter = new(altarX, arenaBottom - (ArenaHeight / 2) - 5);
             Vector2 arenaArea = new(ArenaWidth, ArenaHeight);
-            npc.Infernum().arenaRectangle = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
-            npc.Center = npc.Infernum().arenaRectangle.Center.ToVector2();
+            npc.Infernum().Arena = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
+            npc.Center = npc.Infernum().Arena.Center.ToVector2();
 
-            int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
-            int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
-            int top = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 - arenaArea.Y * 0.5f);
-            int bottom = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 + arenaArea.Y * 0.5f);
+            int left = (int)(npc.Infernum().Arena.Center().X / 16 - arenaArea.X * 0.5f);
+            int right = (int)(npc.Infernum().Arena.Center().X / 16 + arenaArea.X * 0.5f);
+            int top = (int)(npc.Infernum().Arena.Center().Y / 16 - arenaArea.Y * 0.5f);
+            int bottom = (int)(npc.Infernum().Arena.Center().Y / 16 + arenaArea.Y * 0.5f);
             int arenaTileType = ModContent.TileType<GolemArena>();
             for (int i = left; i <= right; i++)
             {

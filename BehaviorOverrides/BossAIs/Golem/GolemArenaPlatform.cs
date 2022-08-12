@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Die if the platform has left Golem's arena.
-            if (!Main.npc[NPC.golemBoss].Infernum().arenaRectangle.Intersects(NPC.Hitbox))
+            if (!Main.npc[NPC.golemBoss].Infernum().Arena.Intersects(NPC.Hitbox))
             {
                 NPC.active = false;
                 return;

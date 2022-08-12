@@ -31,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 16f, Projectile.timeLeft, true);
             Projectile.rotation += Math.Sign(Projectile.velocity.X) * 0.5f;
+            Projectile.tileCollide = Projectile.timeLeft < 540;
         }
 
         public override void Kill(int timeLeft)

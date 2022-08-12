@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (SCal is null)
                     return false;
 
-                return !Main.player[SCal.target].Hitbox.Intersects(SCal.Infernum().arenaRectangle);
+                return !Main.player[SCal.target].Hitbox.Intersects(SCal.Infernum().Arena);
             }
         }
 
@@ -227,11 +227,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Define the arena.
                 Vector2 arenaArea = new(145f, 145f);
-                npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
-                int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
-                int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
-                int top = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 - arenaArea.Y * 0.5f);
-                int bottom = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 + arenaArea.Y * 0.5f);
+                npc.Infernum().Arena = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
+                int left = (int)(npc.Infernum().Arena.Center().X / 16 - arenaArea.X * 0.5f);
+                int right = (int)(npc.Infernum().Arena.Center().X / 16 + arenaArea.X * 0.5f);
+                int top = (int)(npc.Infernum().Arena.Center().Y / 16 - arenaArea.Y * 0.5f);
+                int bottom = (int)(npc.Infernum().Arena.Center().Y / 16 + arenaArea.Y * 0.5f);
                 int arenaTileType = ModContent.TileType<ArenaTile>();
 
                 for (int i = left; i <= right; i++)
@@ -272,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.damage = 0;
             npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<SoulSeekerSupreme>()) || Enraged;
             npc.Infernum().ExtraAI[8] = 1f;
-            npc.ModNPC<SCalBoss>().safeBox = npc.Infernum().arenaRectangle;
+            npc.ModNPC<SCalBoss>().safeBox = npc.Infernum().Arena;
 
             // Redfine the hitbox size.
             Vector2 hitboxSize = new(ForcefieldScale * 216f / 1.4142f);
@@ -531,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Hover to the side of the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = npc.Infernum().arenaRectangle.Center.ToVector2();
+            Vector2 hoverDestination = npc.Infernum().Arena.Center.ToVector2();
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * 32f, hoverSpeedFactor * 1.2f);
 
             // Create Condemnation on the first frame and decide which direction the fan will go in.
@@ -1012,7 +1012,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float fadeAwayInterpolant = ref npc.Infernum().ExtraAI[1];
 
             // Hover in place at first before slowing down.
-            Vector2 hoverDestination = npc.Infernum().arenaRectangle.Center.ToVector2();
+            Vector2 hoverDestination = npc.Infernum().Arena.Center.ToVector2();
             if (attackTimer < hoverTime && !npc.WithinRange(hoverDestination, 100f))
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 15f, 0.1f);
             else
@@ -1263,7 +1263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameType = (int)SCalFrameType.BlastCast;
 
             // Move towards the center of the arena.
-            Vector2 arenaCenter = npc.Infernum().arenaRectangle.Center.ToVector2();
+            Vector2 arenaCenter = npc.Infernum().Arena.Center.ToVector2();
             if (!npc.WithinRange(arenaCenter, 400f))
                 npc.Center = Vector2.Lerp(npc.Center, arenaCenter, 0.025f).MoveTowards(arenaCenter, 6f);
 
@@ -1420,7 +1420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Hover towards the center of the arena.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = npc.Infernum().arenaRectangle.Center.ToVector2();
+            Vector2 hoverDestination = npc.Infernum().Arena.Center.ToVector2();
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * MathHelper.Min(npc.Distance(hoverDestination), 32f);
             npc.SimpleFlyMovement(idealVelocity, hoverSpeedFactor * 2.25f);
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
@@ -1717,8 +1717,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Create the telegraphs. They will create the pillars once ready to explode.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % flamePillarReleaseRate == flamePillarReleaseRate - 1f)
                     {
-                        flamePillarHorizontalOffset = (flamePillarHorizontalOffset + flamePillarHorizontalStep) % npc.Infernum().arenaRectangle.Width;
-                        Vector2 flamePillarSpawnPosition = npc.Infernum().arenaRectangle.BottomLeft() + new Vector2(flamePillarHorizontalOffset, -10f);
+                        flamePillarHorizontalOffset = (flamePillarHorizontalOffset + flamePillarHorizontalStep) % npc.Infernum().Arena.Width;
+                        Vector2 flamePillarSpawnPosition = npc.Infernum().Arena.BottomLeft() + new Vector2(flamePillarHorizontalOffset, -10f);
                         int telegraph = Utilities.NewProjectileBetter(flamePillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillarTelegraph>(), 0, 0f);
                         if (Main.projectile.IndexInRange(telegraph))
                             Main.projectile[telegraph].ai[0] = 60f;

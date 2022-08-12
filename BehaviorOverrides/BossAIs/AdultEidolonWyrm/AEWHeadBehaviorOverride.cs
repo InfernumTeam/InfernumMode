@@ -740,10 +740,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int width = 9600;
-                    npc.Infernum().arenaRectangle.X = (int)(player.Center.X - width * 0.5f);
-                    npc.Infernum().arenaRectangle.Y = (int)(player.Center.Y - 160000f);
-                    npc.Infernum().arenaRectangle.Width = width;
-                    npc.Infernum().arenaRectangle.Height = 320000;
+                    npc.Infernum().Arena.X = (int)(player.Center.X - width * 0.5f);
+                    npc.Infernum().Arena.Y = (int)(player.Center.Y - 160000f);
+                    npc.Infernum().Arena.Width = width;
+                    npc.Infernum().Arena.Height = 320000;
                     Vector2 spawnPosition = player.Center + new Vector2(width * 0.5f, 100f);
                     Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<TornadoBorder>(), 10000, 0f, Main.myPlayer, 0f, 0f);
                     spawnPosition = player.Center + new Vector2(width * -0.5f, 100f);
@@ -756,7 +756,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Enrage code doesn't run on frame 1 so that Yharon won't be enraged for 1 frame in multiplayer
             else
             {
-                var arena = npc.Infernum().arenaRectangle;
+                var arena = npc.Infernum().Arena;
                 enraged01Flag = (!player.Hitbox.Intersects(arena)).ToInt();
                 if (enraged01Flag == 1f)
                     return true;

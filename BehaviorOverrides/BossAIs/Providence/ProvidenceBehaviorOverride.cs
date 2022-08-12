@@ -100,7 +100,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.height = 450;
             npc.defense = 50;
             npc.dontTakeDamage = false;
-            npc.Infernum().arenaRectangle = arenaArea;
+            npc.Calamity().DR = 0.35f;
+            npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = CocoonDefense;
 
@@ -156,6 +157,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
                 if (deathEffectTimer == 1f && !Main.dedServ)
                     SoundEngine.PlaySound(SoundID.DD2_DefeatScene with { Volume = 1.65f }, target.Center);
+                
+                // Delete all fire blenders.
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());
 
                 deathEffectTimer++;
 
@@ -509,6 +513,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             ref float spikeCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Gain extra DR.
+            npc.Calamity().DR = 0.8f;
 
             // Delete homing fire.
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFire2>());
@@ -954,6 +961,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
 
             npc.velocity *= 0.9f;
+
+            // Gain extra DR.
+            npc.Calamity().DR = 0.8f;
 
             // Move towards the center of the arena when not firing the lasers.
             if (attackTimer < laserShootDelay - 30f)

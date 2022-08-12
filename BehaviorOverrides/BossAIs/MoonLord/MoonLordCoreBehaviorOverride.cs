@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 NPC moonLord = Main.npc[moonLordIndex];
                 Player target = Main.player[moonLord.target];
-                Rectangle arena = moonLord.Infernum().arenaRectangle;
+                Rectangle arena = moonLord.Infernum().Arena;
                 arena.Inflate(-8, -8);
                 return !target.Hitbox.Intersects(arena);
             }
@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 Player closest = Main.player[Player.FindClosest(npc.Center, 1, 1)];
                 Point closestTileCoords = closest.Center.ToTileCoordinates();
-                npc.Infernum().arenaRectangle = new Rectangle((int)closest.position.X - ArenaWidth * 8, (int)closest.position.Y - ArenaHeight * 8 + 20, ArenaWidth * 16, ArenaHeight * 16);
+                npc.Infernum().Arena = new Rectangle((int)closest.position.X - ArenaWidth * 8, (int)closest.position.Y - ArenaHeight * 8 + 20, ArenaWidth * 16, ArenaHeight * 16);
                 for (int i = closestTileCoords.X - ArenaWidth / 2; i <= closestTileCoords.X + ArenaWidth / 2; i++)
                 {
                     for (int j = closestTileCoords.Y - ArenaHeight / 2; j <= closestTileCoords.Y + ArenaHeight / 2; j++)
@@ -396,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int nebulaSeed = Main.rand.Next(1000);
-                    Rectangle arena = npc.Infernum().arenaRectangle;
+                    Rectangle arena = npc.Infernum().Arena;
                     for (float x = arena.Left; x < arena.Right; x += Main.rand.NextFloat(80f, 115f))
                     {
                         for (float y = arena.Top; y < arena.Bottom; y += Main.rand.NextFloat(80f, 115f))

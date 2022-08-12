@@ -18,7 +18,6 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -40,7 +39,6 @@ using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
-using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -57,26 +55,23 @@ namespace InfernumMode.GlobalInstances
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
-        public static bool MLSealTeleport = false;
         public const int TotalExtraAISlots = 100;
 
         // I'll be fucking damned if this isn't enough
         public float[] ExtraAI = new float[TotalExtraAISlots];
-        public Vector2 angleTarget = default;
-        public Rectangle arenaRectangle = default;
-        public bool canTelegraph = false;
+        public Rectangle Arena = default;
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
 
-        public static int Cryogen = -1;
-        public static int AstrumAureus = -1;
-        public static int Athena = -1;
+        internal static int Cryogen = -1;
+        internal static int AstrumAureus = -1;
+        internal static int Athena = -1;
 
         #endregion
 
         #region Reset Effects
         public override void ResetEffects(NPC npc)
         {
-            void ResetSavedIndex(ref int type, int type1, int type2 = -1)
+            static void ResetSavedIndex(ref int type, int type1, int type2 = -1)
             {
                 if (type >= 0)
                 {
@@ -105,36 +100,8 @@ namespace InfernumMode.GlobalInstances
 
         #region Overrides
 
-        #region Get Alpha
-        public override Color? GetAlpha(NPC npc, Color drawColor)
-        {
-            if (npc.type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode && OverridingListManager.Registered(npc.type))
-            {
-                bool brotherAlive = false;
-                if (CalamityGlobalNPC.cataclysm != -1)
-                {
-                    if (Main.npc[CalamityGlobalNPC.cataclysm].active)
-                    {
-                        brotherAlive = true;
-                    }
-                }
-                if (CalamityGlobalNPC.catastrophe != -1)
-                {
-                    if (Main.npc[CalamityGlobalNPC.catastrophe].active)
-                    {
-                        brotherAlive = true;
-                    }
-                }
-                if (WorldSaveSystem.InfernumMode && brotherAlive)
-                    return new Color(100, 0, 0, 127);
-            }
-            return base.GetAlpha(npc, drawColor);
-        }
-        #endregion
-
         public override void SetDefaults(NPC npc)
         {
-            angleTarget = default;
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
@@ -679,7 +646,7 @@ namespace InfernumMode.GlobalInstances
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
                 target.AddBuff(BuffID.Bleeding, 300);
             }
-
+            
             if (npc.type == NPCID.SkeletronPrime && OverridingListManager.Registered(npc.type))
                 target.AddBuff(BuffID.Bleeding, 420);
         }

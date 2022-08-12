@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             NPC golem = Main.npc[NPC.golemBoss];
 
             // Die if the trap leaves the arena.
-            if (!golem.Infernum().arenaRectangle.Intersects(Projectile.Hitbox))
+            if (!golem.Infernum().Arena.Intersects(Projectile.Hitbox))
             {
                 Projectile.Kill();
                 return;

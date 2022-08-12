@@ -20,10 +20,10 @@ namespace InfernumMode.Systems
                 packet.Write(npc.whoAmI);
                 packet.Write(npc.realLife);
                 packet.Write(npc.Infernum().TotalAISlotsInUse);
-                packet.Write(npc.Infernum().arenaRectangle.X);
-                packet.Write(npc.Infernum().arenaRectangle.Y);
-                packet.Write(npc.Infernum().arenaRectangle.Width);
-                packet.Write(npc.Infernum().arenaRectangle.Height);
+                packet.Write(npc.Infernum().Arena.X);
+                packet.Write(npc.Infernum().Arena.Y);
+                packet.Write(npc.Infernum().Arena.Width);
+                packet.Write(npc.Infernum().Arena.Height);
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])

@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 return false;
             }
             NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
-            projectile.tileCollide = projectile.Hitbox.Intersects(core.Infernum().arenaRectangle);
+            projectile.tileCollide = projectile.Hitbox.Intersects(core.Infernum().Arena);
 
             Dust electrivity = Dust.NewDustDirect(projectile.Center, 0, 0, 229, 0f, 0f, 100, default, 1f);
             electrivity.noLight = true;

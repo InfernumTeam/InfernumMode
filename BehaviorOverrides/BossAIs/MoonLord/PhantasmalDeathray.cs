@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             if (Time >= 2f)
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
+                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 26);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
             return false;
         }

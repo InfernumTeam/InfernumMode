@@ -68,6 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 hasSummonedSegments = 1f;
             }
 
+            // Disappear if SCal is not present.
             if (!NPC.AnyNPCs(ModContent.NPCType<SCalNPC>()))
             {
                 npc.active = false;

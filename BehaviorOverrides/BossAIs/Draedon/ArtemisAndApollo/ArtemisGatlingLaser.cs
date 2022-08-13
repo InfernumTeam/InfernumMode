@@ -91,10 +91,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Fade in after telegraphs have faded.
             float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
             if (Projectile.localAI[0] != 0f)
-                positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 40f : 12f;
+                positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 58f : 30f;
             Vector2 overallOffset = (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
             if (Projectile.localAI[0] != 0f)
-                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * Projectile.localAI[0] * 42f;
+                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * Projectile.localAI[0] * 66f;
 
             if (TelegraphDelay > TelegraphTotalTime)
             {

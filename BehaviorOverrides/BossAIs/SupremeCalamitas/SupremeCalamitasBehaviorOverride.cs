@@ -37,6 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             BrimstoneJewelBeam,
             DarkMagicBombWalls,
             FireLaserSpin,
+            SummonShadowDemon,
             SummonBrothers,
             SummonSepulcher,
             PhaseTransition,
@@ -378,6 +379,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.FireLaserSpin:
                     DoBehavior_FireLaserSpin(npc, target, (int)currentPhase, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                    break;
+                case SCalAttackType.SummonShadowDemon:
+                    DoBehavior_SummonShadowDemon(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
                 case SCalAttackType.SummonBrothers:
                     DoBehavior_SummonBrothers(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
@@ -1069,7 +1073,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + BrimstoneFlameOrb.LaserReleaseDelay + orbAttackTime + 120f)
             {
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneFlameOrb>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneFlameOrb>(), ModContent.ProjectileType<InfernumBrimstoneGigablast>());
                 SelectNextAttack(npc);
             }
         }
@@ -1467,6 +1471,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
+        {
+            // Darken the screen.
+        }
+
         public static void DoBehavior_SummonBrothers(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             // Switch from the Grief section of Stained, Brutal Calamity to the Lament section.
@@ -1551,7 +1560,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SCalBoss.SepulcherSummonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1000, ModContent.NPCType<SepulcherHead>(), 1);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1700, ModContent.NPCType<SepulcherHead>(), 1);
                     npc.netUpdate = true;
                 }
             }
@@ -1626,7 +1635,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 SelectNextAttack(npc);
 
-                // TODO -- Summon the Shadow Demon when entering the second phase.
+                // Summon the Shadow Demon when entering the second phase.
+                if (currentPhase == 2)
+                    npc.ai[0] = (int)SCalAttackType.SummonShadowDemon;
 
                 // Summon brothers when entering the third phase.
                 if (currentPhase == 2)
@@ -1777,8 +1788,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellSkullShootRate == bulletHellSkullShootRate - 1f)
                 {
                     float verticalOffset = Main.rand.NextFloatDirection() * 500f;
-                    Vector2 leftSkullSpawnPosition = target.Center + new Vector2(-1000f, verticalOffset);
-                    Vector2 rightSkullSpawnPosition = target.Center + new Vector2(1000f, verticalOffset);
+                    Vector2 leftSkullSpawnPosition = target.Center + new Vector2(-1250f, verticalOffset);
+                    Vector2 rightSkullSpawnPosition = target.Center + new Vector2(1250f, verticalOffset);
                     Utilities.NewProjectileBetter(leftSkullSpawnPosition, Vector2.UnitX * 11f, ModContent.ProjectileType<BrimstoneWave>(), 550, 0f);
                     Utilities.NewProjectileBetter(rightSkullSpawnPosition, Vector2.UnitX * -11f, ModContent.ProjectileType<BrimstoneWave>(), 550, 0f);
                 }
@@ -1805,7 +1816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Utilities.NewProjectileBetter(hellblastSpawnPosition, Vector2.UnitY * bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
                     }
 
-                    // Blasts from left and right
+                    // Blasts from left and right.
                     else if (attackTimer < bulletHellDuration * 2f / 3f)
                     {
                         Vector2 leftSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
@@ -1814,7 +1825,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.UnitX * -bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
                     }
 
-                    // Blasts from above, left, and right
+                    // Blasts from above, left, and right.
                     else
                     {
                         Vector2 topSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);

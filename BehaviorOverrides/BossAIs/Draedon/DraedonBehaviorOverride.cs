@@ -29,11 +29,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public const int PostBattleMusicLength = 5120;
 
+        // Projectile damage values.
         public const int NormalShotDamage = 455;
 
-        public const int StrongerNormalShotDamage = 475;
+        public const int StrongerNormalShotDamage = 480;
 
         public const int PowerfulShotDamage = 775;
+
+        // Contact damage values.
+        public const int AresChargeContactDamage = 650;
+
+        public const int AresPhotonRipperContactDamage = 550;
+
+        public const int TwinsChargeContactDamage = 550;
+
+        public const int AthenaChargeContactDamage = 550;
+
+        public const int ExowlContactDamage = 500;
+
+        public const int ThanatosHeadDamage = 775;
+
+        public const int ThanatosHeadDamageMaximumOverdrive = 900;
 
         public override bool PreAI(NPC npc)
         {
@@ -350,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.Opacity *= 0.67f;
 
             // Stand up in awe after a small amount of time has passed.
-            if (defeatTimer > DelayBeforeDefeatStandup && defeatTimer < TalkDelay * 3f + 50f)
+            if (defeatTimer is > DelayBeforeDefeatStandup and < (TalkDelay * 3f + 50f))
                 npc.ModNPC<DraedonNPC>().ShouldStartStandingUp = true;
 
             if (defeatTimer == DelayBeforeDefeatStandup + 50f)
@@ -400,7 +416,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 frame = 0;
 
             int frameChangeDelay = 7;
-            bool shouldNotSitDown = npc.ModNPC<DraedonNPC>().DefeatTimer > DelayBeforeDefeatStandup && npc.ModNPC<DraedonNPC>().DefeatTimer < TalkDelay * 3f + 10f;
+            bool shouldNotSitDown = npc.ModNPC<DraedonNPC>().DefeatTimer is > DelayBeforeDefeatStandup and < (TalkDelay * 3f + 10f);
 
             npc.frameCounter++;
             if (npc.frameCounter >= frameChangeDelay)

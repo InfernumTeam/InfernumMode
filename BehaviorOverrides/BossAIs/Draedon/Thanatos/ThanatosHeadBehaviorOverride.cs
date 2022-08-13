@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 775;
+            npc.defDamage = ThanatosHeadDamage;
             npc.damage = npc.defDamage;
 
             // Define attack variables.
@@ -920,7 +920,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Dash or die.
-            npc.damage = 900;
+            npc.damage = ThanatosHeadDamageMaximumOverdrive;
 
             int attackTime = 720;
             int cooloffTime = 360;

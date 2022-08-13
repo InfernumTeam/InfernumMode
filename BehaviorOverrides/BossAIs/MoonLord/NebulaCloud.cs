@@ -80,9 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Color nebulaColor = CalamityUtils.MulticolorLerp((float)Math.Pow(Math.Sin(Projectile.identity / 10f) * 0.5f + 0.5f, 2.1), nebulaPalette);
             Color drawColor = Color.Lerp(nebulaColor, Color.White, 0.5f) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 0.9f;
-
-            for (int i = 0; i < 2; i++)
-                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
             return false;
         }
     }

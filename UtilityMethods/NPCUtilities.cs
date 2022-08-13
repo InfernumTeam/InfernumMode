@@ -69,7 +69,8 @@ namespace InfernumMode
                 npc.type == ModContent.NPCType<AresTeslaCannon>() ||
                 npc.type == ModContent.NPCType<AresPlasmaFlamethrower>() ||
                 npc.type == ModContent.NPCType<AresGaussNuke>() ||
-                npc.type == ModContent.NPCType<AresPulseCannon>())
+                npc.type == ModContent.NPCType<AresPulseCannon>() ||
+                npc.type == ModContent.NPCType<PhotonRipperNPC>())
             {
                 return true;
             }

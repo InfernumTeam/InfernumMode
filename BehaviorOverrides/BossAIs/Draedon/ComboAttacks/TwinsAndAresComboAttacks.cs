@@ -52,6 +52,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (initialMech is null)
                 return false;
 
+            // Ensure that the player has a bit of time to compose themselves after killing the third mech.
+            bool secondTwoAtOncePhase = CurrentAresPhase == 3 || CurrentThanatosPhase == 3 || CurrentTwinsPhase == 3 || CurrentAthenaPhase == 3;
+            if (initialMech.Infernum().ExtraAI[23] < 180f && attackTimer >= 3f && secondTwoAtOncePhase)
+            {
+                initialMech.Infernum().ExtraAI[23]++;
+                attackTimer = 3f;
+            }
+
             Player target = Main.player[initialMech.target];
             return (ExoMechComboAttackType)initialMech.ai[0] switch
             {
@@ -358,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     int tries = 0;
                     do
                     {
-                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 900f);
+                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(250f, 540f);
                         tries++;
 
                         if (tries >= 1000)

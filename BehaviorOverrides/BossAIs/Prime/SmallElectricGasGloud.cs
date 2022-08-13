@@ -79,9 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
             Color drawColor = Color.Lerp(Color.Cyan, Color.White, 0.5f) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale;
-
-            for (int i = 0; i < 2; i++)
-                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
 
             return false;
         }

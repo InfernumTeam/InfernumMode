@@ -1,5 +1,6 @@
 using CalamityMod.Events;
 using CalamityMod.Particles;
+using CalamityMod.Particles.Metaballs;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BossIntroScreens;
@@ -174,7 +175,7 @@ namespace InfernumMode
                 BossRushChanges.Load();
 
             if (Main.netMode != NetmodeID.Server)
-                GeneralParticleHandler.LoadModParticleInstances(this);
+                Main.QueueMainThreadAction(() => CalamityMod.Call("LoadParticleInstances", this));
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);

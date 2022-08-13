@@ -46,7 +46,7 @@ namespace InfernumMode
 
     public static class NetcodeHandler
     {
-        public static List<InfernumNPCSyncInformation> PendingSyncs = new();
+        internal static List<InfernumNPCSyncInformation> PendingSyncs = new();
 
         public static void SyncInfernumActivity(int sender)
         {

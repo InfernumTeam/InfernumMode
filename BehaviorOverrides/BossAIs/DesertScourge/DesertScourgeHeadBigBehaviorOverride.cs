@@ -221,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     // Release sand upward.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
-                        Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(13f, 20.5f);
+                        Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(9.25f, 13.5f);
                         int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                         if (Main.projectile.IndexInRange(sand))
                         {

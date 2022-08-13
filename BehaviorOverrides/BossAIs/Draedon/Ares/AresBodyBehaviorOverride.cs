@@ -438,7 +438,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int chargeCount = 7;
             int hoverTime = 35;
             int chargeTime = 35;
-            int contactDamage = 600;
+            int contactDamage = AresChargeContactDamage;
             float hoverSpeed = 65f;
             float chargeSpeed = 38f;
 
@@ -455,7 +455,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 chargeCount++;
                 chargeTime -= 4;
-                contactDamage += 100;
                 chargeSpeed += 4f;
             }
 
@@ -698,12 +697,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (attackTimer >= shootDelay + telegraphTime + spinTime + repositionTime)
             {
-                // Destroy all lasers and telegraphs.
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
-                        Main.projectile[i].Kill();
-                }
+                // Destroy all lasers, telegraphs, and bolts.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AresDeathBeamTelegraph>(), ModContent.ProjectileType<AresSpinningDeathBeam>(),
+                    ModContent.ProjectileType<ExoburstSpark>(), ModContent.ProjectileType<AresBeamExplosion>());
                 SelectNextAttack(npc);
             }
         }

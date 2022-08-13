@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Reset things.
             npc.damage = 0;
-            npc.defDamage = 520;
+            npc.defDamage = TwinsChargeContactDamage;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = (int)Apollo.Phase.ChargeCombo;
 
@@ -481,7 +481,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int totalShots = 11;
             int shootRate = 40;
             int shotsPerBurst = 3;
-            float shootSpread = 0.41f;
+            float shootSpread = 0.57f;
             float predictivenessFactor = 22f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
@@ -553,7 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     for (int i = 0; i < shotsPerBurst; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-shootSpread, shootSpread, i / (float)(shotsPerBurst - 1f));
-                        offsetAngle += MathHelper.Lerp(-0.05f, 0.05f, seed / 1000f % 1f);
+                        offsetAngle += MathHelper.Lerp(-0.03f, 0.03f, seed / 1000f % 1f);
                         Vector2 projectileShootVelocity = aimDirection.RotatedBy(offsetAngle) * projectileShootSpeed;
 
                         // Select the next seed.
@@ -595,7 +595,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 }
 
                 angleOffsetSeed = Main.rand.Next();
-                hoverOffsetX = Main.rand.NextFloat(-50f, 50f);
+                hoverOffsetX = Main.rand.NextFloat(-20f, 20f);
                 attackTimer = 0f;
                 shootCounter++;
                 npc.netUpdate = true;
@@ -787,9 +787,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (attackTimer >= 540f)
             {
-                foreach (Projectile flamethrower in Utilities.AllProjectilesByID(ModContent.ProjectileType<ApolloFlamethrower>()))
-                    flamethrower.Kill();
-
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ApolloFallingPlasmaSpark>());
                 SelectNextAttack(npc);
             }
         }
@@ -856,7 +854,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     if (attackTimer == 1f)
                         hoverOffsetX = Main.rand.NextFloat(minHorizontalOffset, maxHorizontalOffset);
 
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 40f, 1.15f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 28f, 1.15f);
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
                     aimDirection = npc.rotation - MathHelper.PiOver2;
 
@@ -1150,6 +1148,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
+                    // Calculate the charge flash.
+                    npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
+
                     // Fire the laser.
                     if (attackTimer >= shootDelay)
                     {
@@ -1182,6 +1183,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * -spinDirection + hoverOffsetDirection + MathHelper.PiOver2;
                     npc.velocity = spinAngle.ToRotationVector2() * MathHelper.TwoPi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection;
                     npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
+
+                    // Calculate the charge flash.
+                    npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(ArtemisSpinLaser.LaserLifetime - 20f, ArtemisSpinLaser.LaserLifetime - 32f, attackTimer, true);
 
                     if (attackTimer >= ArtemisSpinLaser.LaserLifetime - 16f)
                     {

@@ -147,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             // Use contact damage as necessary.
             if (!IsIllusion)
-                NPC.damage = 500;
+                NPC.damage = DraedonBehaviorOverride.ExowlContactDamage;
             else
                 NPC.dontTakeDamage = true;
 

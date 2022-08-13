@@ -18,10 +18,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public Vector2 InitialDestination;
         public Vector2 Destination;
         public Vector2 Velocity;
-        public const float TelegraphTotalTime = 30f;
-        public const float TelegraphFadeTime = 15f;
+        public const float TelegraphTotalTime = 48f;
+        public const float TelegraphFadeTime = 16f;
         public const float TelegraphWidth = 4200f;
-        public const float LaserVelocity = 10f;
+        public const float LaserVelocity = 15f;
 
         public override void SetStaticDefaults()
         {

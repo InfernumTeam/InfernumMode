@@ -149,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public static void AthenaSetDefaults(NPC npc)
         {
             npc.npcSlots = 5f;
-            npc.damage = 450;
+            npc.damage = AthenaChargeContactDamage;
             npc.width = 230;
             npc.height = 170;
             npc.defense = 100;

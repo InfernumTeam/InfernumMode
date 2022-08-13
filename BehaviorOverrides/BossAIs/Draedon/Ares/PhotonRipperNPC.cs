@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     // Attempt to weakly redirect towards the target after charging.
                     else if (wrappedTimer > chargeCycleTime - chargeDelay)
                     {
-                        NPC.damage = 600;
+                        NPC.damage = DraedonBehaviorOverride.AresPhotonRipperContactDamage;
                         NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(target.Center), 0.026f);
                         NPC.rotation = NPC.velocity.ToRotation() + (NPC.spriteDirection == 1f).ToInt() * MathHelper.Pi;
                     }

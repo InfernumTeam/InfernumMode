@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Rogue;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public const float RedirectSpeed = 11f;
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Bubble");
             Main.npcFrameCount[NPC.type] = 2;
         }

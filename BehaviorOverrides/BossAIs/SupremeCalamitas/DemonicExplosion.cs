@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 16f));
                 }
 
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 24);
+                FireDrawer.Draw(drawPoints, -Main.screenPosition, 14);
             }
             return false;
         }

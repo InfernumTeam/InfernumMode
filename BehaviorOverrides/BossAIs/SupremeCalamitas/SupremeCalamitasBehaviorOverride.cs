@@ -37,11 +37,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             BrimstoneJewelBeam,
             DarkMagicBombWalls,
             FireLaserSpin,
-            SummonShadowDemon,
             SummonBrothers,
             SummonSepulcher,
             PhaseTransition,
-            DesperationPhase
+            DesperationPhase,
+
+            // Shadow demon attacks.
+            SummonShadowDemon = 50,
+            ShadowDemon_ReleaseExplodingShadowBlasts,
         }
 
         public enum SCalFrameType
@@ -130,6 +133,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return !Main.player[SCal.target].Hitbox.Intersects(SCal.Infernum().Arena);
             }
         }
+
+        public static bool ShadowDemonCanAttack => SCal?.ai[0] >= 50f;
 
         public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
         {
@@ -1474,6 +1479,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             // Darken the screen.
+            InfernumMode.BlackFade = Utils.GetLerpValue(0f, 180f, attackTimer, true) * Utils.GetLerpValue(270f, 240f, attackTimer, true);
+
+            // Slow down and look at the target.
+            npc.velocity *= 0.95f;
+            if (npc.velocity.Length() < 8f)
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Disable contact damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Use the magic circle animation, as a charge-up effect.
+            frameChangeSpeed = 0.2f;
+            frameType = (int)SCalFrameType.MagicCircle;
+
+            // Summon the demon.
+            if (attackTimer == 210f)
+            {
+                SoundEngine.PlaySound(BrimstoneMonster.SpawnSound, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1200, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
+            }
+
+            if (attackTimer >= 300f)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_SummonBrothers(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
@@ -1636,7 +1666,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNextAttack(npc);
 
                 // Summon the Shadow Demon when entering the second phase.
-                if (currentPhase == 2)
+                if (currentPhase == 1)
                     npc.ai[0] = (int)SCalAttackType.SummonShadowDemon;
 
                 // Summon brothers when entering the third phase.

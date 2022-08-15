@@ -30,9 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            float movementSpeed = BossRushEvent.BossRushActive ? 18f : 6.5f;
+            float movementSpeed = BossRushEvent.BossRushActive ? 21f : 10f;
             if (!Projectile.WithinRange(closestPlayer.Center, 180) && Projectile.timeLeft > 70)
-                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(closestPlayer.Center) * movementSpeed) / 20f;
+                Projectile.velocity = (Projectile.velocity * 34f + Projectile.SafeDirectionTo(closestPlayer.Center) * movementSpeed) / 35f;
 
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }

@@ -37,14 +37,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             BrimstoneJewelBeam,
             DarkMagicBombWalls,
             FireLaserSpin,
-            SummonBrothers,
             SummonSepulcher,
+            SummonBrothers,
+            SummonSeekers,
             PhaseTransition,
             DesperationPhase,
 
             // Shadow demon attacks.
             SummonShadowDemon = 50,
             ShadowDemon_ReleaseExplodingShadowBlasts,
+            ShadowDemon_ShadowGigablastsAndCharges,
         }
 
         public enum SCalFrameType
@@ -152,17 +154,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static SCalAttackType[] Phase2AttackCycle => new SCalAttackType[]
         {
+            SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HellblastBarrage,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
+            SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.BurningSoulBarrage,
             SCalAttackType.HellblastBarrage,
             SCalAttackType.SummonSuicideBomberDemons,
+            SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.BurningSoulBarrage,
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.BrimstoneJewelBeam,
@@ -172,15 +178,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static SCalAttackType[] Phase3AttackCycle => new SCalAttackType[]
         {
+            SCalAttackType.ShadowDemon_ShadowGigablastsAndCharges,
             SCalAttackType.FireLaserSpin,
             SCalAttackType.DarkMagicBombWalls,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.BecomeBerserk,
             SCalAttackType.BrimstoneJewelBeam,
+            SCalAttackType.ShadowDemon_ShadowGigablastsAndCharges,
             SCalAttackType.DarkMagicBombWalls,
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.BecomeBerserk,
             SCalAttackType.CondemnationFanBurst,
+            SCalAttackType.ShadowDemon_ShadowGigablastsAndCharges,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.FireLaserSpin,
             SCalAttackType.ExplosiveCharges
@@ -278,6 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.damage = 0;
             npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<SoulSeekerSupreme>()) || Enraged;
             npc.Infernum().ExtraAI[8] = 1f;
+            npc.Calamity().DR = 0.4f;
             npc.ModNPC<SCalBoss>().safeBox = npc.Infernum().Arena;
 
             // Redfine the hitbox size.
@@ -388,17 +398,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SCalAttackType.SummonShadowDemon:
                     DoBehavior_SummonShadowDemon(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
+                case SCalAttackType.SummonSepulcher:
+                    DoBehavior_SummonSepulcher(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                    break;
                 case SCalAttackType.SummonBrothers:
                     DoBehavior_SummonBrothers(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
-                case SCalAttackType.SummonSepulcher:
-                    DoBehavior_SummonSepulcher(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                case SCalAttackType.SummonSeekers:
+                    DoBehavior_SummonSeekers(npc, target, handPosition, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
                 case SCalAttackType.PhaseTransition:
                     DoBehavior_PhaseTransition(npc, target, (int)currentPhase, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
                 case SCalAttackType.DesperationPhase:
                     DoBehavior_DesperationPhase(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
+                    break;
+                default:
+                    frameType = (int)SCalFrameType.MagicCircle;
+                    frameChangeSpeed = 0.2f;
+
+                    // Hover to the side of the target.
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
+                    if (!npc.WithinRange(hoverDestination, 150f))
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.5f);
                     break;
             }
 
@@ -1502,7 +1525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1200, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
             }
 
-            if (attackTimer >= 300f)
+            if (attackTimer >= 400f)
                 SelectNextAttack(npc);
         }
 
@@ -1554,6 +1577,82 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (attackTimer >= screenShakeTime + SupremeCalamitasBrotherPortal.Lifetime && !NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()))
                 SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_SummonSeekers(NPC npc, Player target, Vector2 handPosition, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
+        {
+            int chargeupTime = 75;
+            int vigilanceSpinTime = 36;
+            int seekerSummonCount = 24;
+            int seekerSummonRate = 8;
+            int seekerSummonTime = seekerSummonRate * seekerSummonCount;
+            float fanCompletionInterpolant = Utils.GetLerpValue(0f, seekerSummonTime, attackTimer - chargeupTime, true);
+            ref float vigilanceIndex = ref npc.Infernum().ExtraAI[0];
+
+            // Define the projectile as a convenient reference type variable, for easy manipulation of its attributes.
+            Projectile vigilanceRef = Main.projectile[(int)vigilanceIndex];
+            if (vigilanceRef.type != ModContent.ProjectileType<VigilanceProj>())
+                vigilanceRef = null;
+
+            // Use the hands out casting animation.
+            frameChangeSpeed = 0.27f;
+            frameType = (int)SCalFrameType.BlastCast;
+
+            // Reset animation values.
+            ForcefieldScale = 1f;
+            ShieldOpacity = 0f;
+            ShieldRotation = 0f;
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Slow down.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.velocity *= 0.98f;
+
+            // Create vigilance on the first frame and decide which direction the fan will go in.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+            {
+                vigilanceIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VigilanceProj>(), 0, 0f);
+                npc.netUpdate = true;
+            }
+
+            // Spin vigilance around before aiming it upward.
+            float spinRotation = MathHelper.WrapAngle(MathHelper.Pi * attackTimer / vigilanceSpinTime * 10f);
+
+            // Adjust vigilance's rotation.
+            float vigilanceSpinInterpolant = Utils.GetLerpValue(vigilanceSpinTime + 10f, vigilanceSpinTime, attackTimer, true);
+            if (vigilanceRef != null)
+            {
+                vigilanceRef.rotation = (-MathHelper.PiOver2).AngleLerp(spinRotation, vigilanceSpinInterpolant) + MathHelper.TwoPi * fanCompletionInterpolant - MathHelper.PiOver4 + MathHelper.Pi;
+            }
+
+            // Release bursts of energy from Vigilance's tip and summon a seeker.
+            if (vigilanceRef != null && fanCompletionInterpolant > 0f && attackTimer % seekerSummonRate == 0f)
+            {
+                SoundEngine.PlaySound(SoundID.Item73, handPosition);
+                Vector2 seekerSpawnOffset = (MathHelper.TwoPi * fanCompletionInterpolant).ToRotationVector2() * 300f;
+                Vector2 seekerSpawnPosition = npc.Center + seekerSpawnOffset;
+
+                Dust.QuickDustLine(vigilanceRef.ModProjectile<VigilanceProj>().TipPosition, seekerSpawnPosition, 40f, Color.Red);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int seekerIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 0f, -1f);
+                    NPC seeker = Main.npc[seekerIndex];                    
+                    seeker.ai[0] = MathHelper.ToDegrees(seekerSpawnOffset.ToRotation() + MathHelper.Pi);
+                    seeker.ai[3] = seeker.ai[0];
+                    seeker.netUpdate = true;
+                }
+            }
+
+            // Decide when to transition to the next attack.
+            if (fanCompletionInterpolant >= 1f)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<VigilanceProj>());
+                SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_SummonSepulcher(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
@@ -1618,6 +1717,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     ModContent.ProjectileType<CondemnationProj>(),
                     ModContent.ProjectileType<DemonicBomb>(),
                     ModContent.ProjectileType<DemonicTelegraphLine>(),
+                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
                     ModContent.ProjectileType<FlameOverloadBeam>(),
                     ModContent.ProjectileType<HeartSummoningDagger>(),
                     ModContent.ProjectileType<HeresyProjSCal>(),
@@ -1678,16 +1778,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     // Switch from the Lament section of Stained, Brutal Calamity to the Epiphany section.
                     npc.ModNPC.Music = Utilities.GetMusicFromMusicMod("SupremeCalamitas3") ?? MusicID.LunarBoss;
-
-                    int seekerCount = 25;
-                    for (int i = 0; i < seekerCount; i++)
-                    {
-                        int seekerIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 0f, -1f);
-                        NPC seeker = Main.npc[seekerIndex];
-                        seeker.ai[0] = 360f * i / seekerCount;
-                        seeker.ai[3] = 360f * i / seekerCount;
-                        seeker.netUpdate = true;
-                    }
+                    npc.ai[0] = (int)SCalAttackType.SummonSeekers;
                 }
 
                 // Transition to the desperation attack when entering the final phase.

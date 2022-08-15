@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shadow Blast");
-            Main.projFrames[Projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 8;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             Projectile.velocity *= 0.995f;
             Projectile.frameCounter++;
-            Projectile.frame = (int)Math.Ceiling(Projectile.timeLeft / (float)Lifetime * Main.projFrames[Type]);
+            Projectile.frame = (int)Math.Ceiling((1f - Projectile.timeLeft / (float)Lifetime) * Main.projFrames[Type]);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 

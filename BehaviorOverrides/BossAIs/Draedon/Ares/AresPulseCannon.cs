@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(NPC);
             int shootTime = 180;
-            int totalPulseBlastsPerBurst = 3;
+            int totalPulseBlastsPerBurst = 4;
             float blastShootSpeed = 7.5f;
             float aimPredictiveness = 27f;
             ref float shouldPrepareToFire = ref NPC.Infernum().ExtraAI[1];

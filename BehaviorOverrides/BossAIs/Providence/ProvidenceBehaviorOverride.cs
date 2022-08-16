@@ -306,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_CrystalBlades(npc, lifeRatio, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalBladesWithLaser:
-                    DoBehavior_CrystalBladesWithLaser(npc, target, lifeRatio, arenaCenter, ref attackTimer);
+                    DoBehavior_CrystalBladesWithLaser(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case ProvidenceAttackType.FireSpearCrystalCocoon:
                     DoBehavior_FireSpearCrystalCocoon(npc, target, crystalCenter, arenaCenter, ref drawState, ref attackTimer);
@@ -728,6 +728,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                         Vector2 shootVelocity = (initialDirection + offsetAngle).ToRotationVector2() * crystalSpeed;
                         Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<AcceleratingCrystalShard>(), 225, 0f);
+                        int telegraph = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[1] = 30f;
                     }
                 }
 
@@ -942,7 +945,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void DoBehavior_CrystalBladesWithLaser(NPC npc, Player target, float lifeRatio, Vector2 arenaCenter, ref float attackTimer)
+        public static void DoBehavior_CrystalBladesWithLaser(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int laserShootDelay = 180;
             int bladeRelaseRate = 45;

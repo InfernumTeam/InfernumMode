@@ -1,3 +1,4 @@
+using InfernumMode.Miscellaneous;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.WorldBuilding;
@@ -10,7 +11,7 @@ namespace InfernumMode
         {
             if (search is null)
                 search = new Searches.Down(9001);
-            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid()), out Point result))
+            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated()), out Point result))
                 return v;
             return result.ToWorldCoordinates();
         }

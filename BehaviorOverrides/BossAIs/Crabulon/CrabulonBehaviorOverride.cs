@@ -12,6 +12,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 using Terraria.WorldBuilding;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -19,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
     {
         public override int NPCOverrideType => ModContent.NPCType<CrabulonNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
         internal enum CrabulonAttackState
@@ -39,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override bool PreAI(NPC npc)
         {
             // Give a visual offset to the boss.
-            npc.gfxOffY = -16;
+            npc.gfxOffY = 4;
 
             // Emit a deep blue light idly.
             Lighting.AddLight(npc.Center, 0f, 0.3f, 0.7f);
@@ -79,11 +80,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                     break;
                 case CrabulonAttackState.JumpToTarget:
                     DoAttack_JumpToTarget(npc, target, attackTimer, enraged, ref jumpCount);
-                    npc.ai[0] = 3f;
                     break;
                 case CrabulonAttackState.WalkToTarget:
                     DoAttack_WalkToTarget(npc, target, attackTimer, enraged);
-                    npc.ai[0] = 2f;
+                    npc.ai[0] = 1f;
                     break;
                 case CrabulonAttackState.CreateGroundMushrooms:
                     DoAttack_CreateGroundMushrooms(npc, target, ref attackTimer, enraged);
@@ -248,6 +248,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
             else
                 jumpTimer = 0f;
+            npc.ai[0] = hasJumpedFlag == 1f ? 4f : 3f;
+            if (hasHitGroundFlag == 1f)
+                npc.ai[0] = 0f;
         }
 
         internal static void DoAttack_WalkToTarget(NPC npc, Player target, float attackTimer, bool enraged)
@@ -412,5 +415,66 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         #endregion AI Utility Methods
 
         #endregion AI
+
+        #region Frames and Drawcode
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            ref float stomping = ref npc.localAI[0];
+            if (npc.ai[0] > 1f)
+            {
+                if (npc.ai[0] == 2f) // Idle just before jump
+                {
+                    if (stomping == 1f)
+                        stomping = 0f;
+
+                    npc.frameCounter += 0.15;
+                    npc.frameCounter %= Main.npcFrameCount[npc.type];
+                    int frame = (int)npc.frameCounter;
+                    npc.frame.Y = frame * frameHeight;
+                }
+                else if (npc.ai[0] == 3f) // Prepare to jump and then jump
+                {
+                    npc.frameCounter += 1D;
+                    if (npc.frameCounter > 12D)
+                    {
+                        npc.frame.Y += frameHeight;
+                        npc.frameCounter = 0D;
+                    }
+                    if (npc.frame.Y >= frameHeight)
+                        npc.frame.Y = frameHeight;
+                }
+                else // Stomping
+                {
+                    if (stomping == 0f)
+                    {
+                        stomping = 1f;
+                        npc.frameCounter = 0D;
+                    }
+
+                    npc.frameCounter += 1D;
+                    if (npc.frameCounter > 8D)
+                    {
+                        npc.frame.Y += frameHeight;
+                        npc.frameCounter = 0D;
+                    }
+                    if (npc.frame.Y >= frameHeight * 5)
+                        npc.frame.Y = frameHeight * 5;
+                }
+            }
+
+            // Walking.
+            else
+            {
+                if (stomping == 1f)
+                    stomping = 0f;
+
+                npc.frameCounter += 0.15f;
+                npc.frameCounter %= Main.npcFrameCount[npc.type];
+                int frame = (int)npc.frameCounter;
+                npc.frame.Y = frame * frameHeight;
+            }
+        }
+        #endregion Frames
     }
 }

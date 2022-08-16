@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                     // Determine telegraph line characteristics.
                     Vector2 start = Projectile.Center;
-                    Vector2 end = start + telegraphDirection * 1100f;
+                    Vector2 end = start + telegraphDirection * 1450f;
                     float telegraphWidth = pulseInterpolant * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * 8f;
                     float telegraphColorInterpolant = ((float)Math.Sin(Projectile.identity + telegraphDirection.ToRotation()) * 0.5f + 0.5f) * 0.65f;
                     Color telegraphColor = Color.Lerp(Color.Red, Color.Wheat, telegraphColorInterpolant) * pulseInterpolant * 0.6f;

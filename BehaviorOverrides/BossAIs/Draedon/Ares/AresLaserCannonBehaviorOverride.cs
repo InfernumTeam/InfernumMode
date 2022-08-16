@@ -47,9 +47,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 300;
-            int totalLasersPerBurst = 5;
+            int totalLasersPerBurst = 8;
             float aimPredictiveness = 25f;
-            float laserShootSpeed = 7.5f;
+            float laserShootSpeed = 9.6f;
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
             ref float laserCounter = ref npc.ai[2];
@@ -59,30 +59,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
-                totalLasersPerBurst = 12;
+                totalLasersPerBurst += 4;
                 shootTime += 210;
                 laserShootSpeed *= 1.1f;
             }
 
             if (ExoMechManagement.CurrentAresPhase >= 3)
             {
-                laserShootSpeed *= 0.85f;
+                laserShootSpeed *= 0.9f;
 
                 if (laserCount == 3)
                     laserCount += 2;
             }
 
-            // Nerf things while Ares' complement mech is present.
-            if (ExoMechManagement.CurrentAresPhase == 4)
-            {
-                shootTime += 45;
-                laserShootSpeed *= 0.8f;
-            }
-
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
-                shootTime += 120;
-                laserShootSpeed *= 0.8f;
+                totalLasersPerBurst += 2;
+                shootTime += 105;
             }
 
             // Get very pissed off if Ares is enraged.

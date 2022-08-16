@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 150;
             int totalFlamesPerBurst = 2;
-            float flameShootSpeed = 9.33f;
+            float flameShootSpeed = 10.75f;
             float aimPredictiveness = 20f;
 
             // Nerf things while Ares' complement mech is present.

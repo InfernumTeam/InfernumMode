@@ -760,8 +760,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (thanatosIndex >= 0 && aresBody.ai[0] >= 100f && Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)
                 return true;
 
-            // The pulse and laser arm are disabled for 2.5 seconds once they swap.
-            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
+            // The pulse and laser arm are disabled for 1.5 seconds once they swap.
+            if (aresBody.Infernum().ExtraAI[14] < 90f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
                 return true;
 
             // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
@@ -779,8 +779,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return true;
             }
 
-            if (aresBody.ai[0] == (int)AresBodyAttackType.PhotonRipperSlashes && npc.type != ModContent.NPCType<PhotonRipperNPC>())
-                return true;
+            int[] validArmsForPhotonRipperAttack = new int[]
+            {
+                ModContent.NPCType<PhotonRipperNPC>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPulseCannon>(),
+            };
+            if (aresBody.ai[0] == (int)AresBodyAttackType.PhotonRipperSlashes)
+                return !validArmsForPhotonRipperAttack.Contains(npc.type);
 
             if (aresBody.ai[0] != (int)AresBodyAttackType.PhotonRipperSlashes && npc.type == ModContent.NPCType<PhotonRipperNPC>())
                 return true;

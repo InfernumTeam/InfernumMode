@@ -61,8 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 Projectile.velocity *= 0.985f;
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.ai[1] <= 720f;
-
+        public override bool CanHitPlayer(Player target) => Projectile.ai[1] is <= 720f and >= 120f;
 
         public override Color? GetAlpha(Color lightColor)
         {

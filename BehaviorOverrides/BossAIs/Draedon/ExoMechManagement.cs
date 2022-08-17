@@ -9,6 +9,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -28,6 +29,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalPhaseTimerIndex = 16;
         public const int DeathAnimationTimerIndex = 19;
         public const int DeathAnimationHasStartedIndex = 22;
+
+        // Destroyer variant from non-Destroyer variants, regular mech for Destroyer variants.
+        // For example, Thanatos could have Ares, while Apollo could have Thanatos.
+        public const int SecondaryMechNPCTypeIndex = 24;
 
         public const int Thanatos_AttackDelayIndex = 13;
 
@@ -154,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return false;
 
                 NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
-                return apollo.ai[3] > 0f && apollo.ai[3] < Phase2TransitionTime;
+                return apollo.ai[3] is > 0f and < Phase2TransitionTime;
             }
         }
 
@@ -183,26 +188,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
-        public static bool ComplementMechIsPresent(NPC npc)
+        public static int GetComplementMechType(NPC npc)
         {
-            // Ares summons Thanatos.
+            int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
+            if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<AthenaNPC>())
+                return secondaryMechNPCType;
+
             if (npc.type == ModContent.NPCType<AresBody>())
-                return CalamityGlobalNPC.draedonExoMechWorm != -1;
+                return secondaryMechNPCType;
 
-            // Thanatos summons Ares.
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
-                return CalamityGlobalNPC.draedonExoMechPrime != -1;
-
-            // Athena summon the Twins.
-            if (npc.type == ModContent.NPCType<AthenaNPC>())
-                return GlobalNPCOverrides.Athena != -1;
-
-            // The twins summon Thanatos.
             if (npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<Artemis>())
-                return CalamityGlobalNPC.draedonExoMechWorm != -1;
-
-            return false;
+                return secondaryMechNPCType;
+            return 0;
         }
+
+        public static int GetFinalMechType(NPC npc)
+        {
+            int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
+            int destroyerType = ModContent.NPCType<ThanatosHead>();
+            if (secondaryMechNPCType == ModContent.NPCType<AthenaNPC>() || npc.type == ModContent.NPCType<AthenaNPC>())
+                destroyerType = ModContent.NPCType<AthenaNPC>();
+            List<int> mechsInUse = new()
+            {
+                destroyerType,
+                ModContent.NPCType<AresBody>(),
+                ModContent.NPCType<Apollo>(),
+            };
+            mechsInUse.Remove(npc.type);
+            mechsInUse.Remove(secondaryMechNPCType);
+            return mechsInUse.First();
+        }
+
+        public static bool ComplementMechIsPresent(NPC npc) => NPC.AnyNPCs(GetComplementMechType(npc));
 
         public static bool ShouldHaveSecondComboPhaseResistance(NPC npc)
         {
@@ -305,54 +322,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Clear away projectiles.
             ClearAwayTransitionProjectiles();
 
-            // Thanatos and twins summon Ares.
-            // Only Apollo does the summoning.
-            if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>())
-            {
-                Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
-                NPC ares = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
+            int complementMechType = GetComplementMechType(npc);
+            if (npc.type == ModContent.NPCType<Artemis>())
+                return;
 
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-                ares.velocity = ares.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
-                ares.Opacity = 0.01f;
+            Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1500f;
+            int complementMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, complementMechType, 1);
+            NPC complementMech = Main.npc[complementMechIndex];
+            npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMechIndex;
 
-                ares.netUpdate = true;
-            }
-
-            // Athena summons the twins.
-            if (npc.type == ModContent.NPCType<AthenaNPC>())
-            {
-                Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
-                NPC apollo = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
-
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                apollo.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-
-                apollo.netUpdate = true;
-            }
-
-            // Ares summons Thanatos.
-            if (npc.type == ModContent.NPCType<AresBody>())
-            {
-                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
-                NPC thanatos = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
-
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-                thanatos.Opacity = 0.01f;
-
-                thanatos.netUpdate = true;
-            }
+            // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
+            complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+            complementMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+            complementMech.velocity = complementMech.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
+            complementMech.Opacity = 0.01f;
+            complementMech.netUpdate = true;
         }
 
         public static void SummonFinalMech(NPC npc)
@@ -366,55 +350,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Clear away projectiles.
             ClearAwayTransitionProjectiles();
 
-            // Ares and Thanatos summon the twins.
-            // Only Apollo is spawned since Apollo summons Artemis directly in its AI.
-            if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<ThanatosHead>())
-            {
-                Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
-                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
-                NPC apollo = Main.npc[finalMech];
-                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
-                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
+            int finalMechType = GetFinalMechType(npc);
+            if (npc.type == ModContent.NPCType<Artemis>())
+                return;
 
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-                apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                apollo.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+            Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
+            int finalMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, finalMechType, 1);
+            NPC afinalMech = Main.npc[finalMechIndex];
+            npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMechIndex;
+            Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMechIndex;
 
-                apollo.netUpdate = true;
-            }
+            // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
+            afinalMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+            afinalMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
-            // Athena summons Ares.
-            if (npc.type == ModContent.NPCType<AthenaNPC>())
-            {
-                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
-                NPC ares = Main.npc[finalMech];
-                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
-                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
-
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                ares.ai[0] = (int)AresBodyAttackType.IdleHover;
-                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-
-                ares.netUpdate = true;
-            }
-
-            // Twins summon Thanatos.
-            if (npc.type == ModContent.NPCType<Apollo>())
-            {
-                Vector2 thanatosSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(npc.GetSource_FromAI(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
-                NPC thanatos = Main.npc[finalMech];
-                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
-                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
-
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-
-                thanatos.netUpdate = true;
-            }
+            afinalMech.netUpdate = true;
         }
 
         public static int TotalMechs

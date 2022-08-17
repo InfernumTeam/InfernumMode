@@ -9,12 +9,12 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class PlasmaGas : ModProjectile
+    public class FireGas : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Superheated Fire");
 
         public override void SetDefaults()
         {
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity * 0.8f;
-            Color drawColor = new Color(141, 255, 105) * opacity;
+            Color drawColor = new Color(255, 188, 89) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
             Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;

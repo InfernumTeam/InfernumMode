@@ -20,7 +20,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ThanatosAres_ElectricCage,
 
             TwinsAthena_ThermoplasmaDance,
-            TwinsAthena_ThermoplasmaChargeupBursts
+            TwinsAthena_ThermoplasmaChargeupBursts,
+
+            TwinsThanatos_ThermoplasmaDashes,
+            TwinsThanatos_CircledLaserSweep
         }
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
@@ -64,10 +67,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (complementMech is null)
                 return false;
 
-            bool aresAndTwins = initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<AresBody>();
-            bool athenaAndTwins = initialMech.type == ModContent.NPCType<AthenaNPC>() && complementMech.type == ModContent.NPCType<Apollo>();
+            bool aresAndTwins = (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
+                (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<Apollo>());
+            bool athenaAndTwins = (initialMech.type == ModContent.NPCType<AthenaNPC>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
+                (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<AthenaNPC>());
             bool thanatosAndAres = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
                 (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
+            bool thanatosAndTwins = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
+                (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
 
             if (aresAndTwins)
             {
@@ -117,6 +124,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     (int)ExoMechComboAttackType.ThanatosAres_LaserCircle => (int)ExoMechComboAttackType.ThanatosAres_ElectricCage,
                     _ => (int)ExoMechComboAttackType.ThanatosAres_LaserCircle,
+                };
+
+                // Inform all mechs of the change.
+                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
+                InformAllMechsOfComboAttackChange((int)newAttack);
+                return true;
+            }
+
+            if (thanatosAndTwins)
+            {
+                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
+                attackSelector.Add(ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes);
+
+                initialMech.ai[0] = (int)initialMech.ai[0] switch
+                {
+                    (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => (int)ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep,
+                    _ => (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes,
                 };
 
                 // Inform all mechs of the change.

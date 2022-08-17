@@ -67,6 +67,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 }
             }
 
+            // Ensure that the player has a bit of time to compose themselves after killing the third mech.
+            bool secondTwoAtOncePhase = CurrentAresPhase == 3 || CurrentThanatosPhase == 3 || CurrentTwinsPhase == 3 || CurrentAthenaPhase == 3;
+            if (initialMech.Infernum().ExtraAI[23] < 180f && attackTimer >= 3f && secondTwoAtOncePhase)
+            {
+                initialMech.Infernum().ExtraAI[23]++;
+                attackTimer = 3f;
+            }
+
             Player target = Main.player[initialMech.target];
             switch ((ExoMechComboAttackType)initialMech.ai[0])
             {
@@ -94,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int spinTime = attackTime - attackDelay;
             int totalLasers = 8;
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
-            
+
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
                 attackDelay -= 24;
@@ -163,10 +171,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 // Create telegraphs.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == attackDelay - telegraphTime)
                 {
-                    generalAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < totalLasers; i++)
                     {
-                        Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+                        Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
                         int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f);
                         if (Main.projectile.IndexInRange(telegraph))
                         {

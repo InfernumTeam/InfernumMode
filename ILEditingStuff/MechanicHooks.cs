@@ -68,6 +68,18 @@ namespace InfernumMode.ILEditingStuff
             set;
         } = 1f;
 
+        public static ExoMech? PrimaryMechToSummon
+        {
+            get;
+            set;
+        } = null;
+
+        public static ExoMech? DestroyerTypeToSummon
+        {
+            get;
+            set;
+        } = null;
+
         internal static void DrawSelectionUI(ILContext context)
         {
             ILCursor cursor = new(context);
@@ -82,18 +94,20 @@ namespace InfernumMode.ILEditingStuff
             Vector2 destroyerIconDrawOffset = new(-78f, -124f);
             Vector2 primeIconDrawOffset = new(0f, -140f);
             Vector2 twinsIconDrawOffset = new(78f, -124f);
-            Vector2 athenaIconDrawOffset = new(78f, -130f);
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                destroyerIconDrawOffset = new Vector2(-78f, -130f);
-                primeIconDrawOffset = new Vector2(-26f, -130f);
-                twinsIconDrawOffset = new Vector2(26f, -130f);
+                bool hoveringOverAnyIcon = false;
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2 iconDrawOffset = new(MathHelper.Lerp(-92f, 92f, i / 3f), -104f);
+                    hoveringOverAnyIcon |= HandleInteractionWithButton(baseDrawPosition + iconDrawOffset, i + 1, PrimaryMechToSummon == null);
+                }
 
-                HandleInteractionWithButton(baseDrawPosition + destroyerIconDrawOffset, (int)ExoMech.Destroyer);
-                HandleInteractionWithButton(baseDrawPosition + primeIconDrawOffset, (int)ExoMech.Prime);
-                HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, (int)ExoMech.Twins);
-                HandleInteractionWithButton(baseDrawPosition + athenaIconDrawOffset, 4);
+                // Reset the selections if the player clicks on something other than the icons.
+                if (!hoveringOverAnyIcon && Main.mouseLeft && Main.mouseLeftRelease)
+                    PrimaryMechToSummon = DestroyerTypeToSummon = null;
+
                 return;
             }
 
@@ -102,7 +116,7 @@ namespace InfernumMode.ILEditingStuff
             ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, ExoMech.Twins);
         }
 
-        public static void HandleInteractionWithButton(Vector2 drawPosition, int exoMech)
+        public static bool HandleInteractionWithButton(Vector2 drawPosition, int exoMech, bool selectingPrimaryMech)
         {
             float iconScale;
             string description;
@@ -138,42 +152,51 @@ namespace InfernumMode.ILEditingStuff
             Rectangle clickArea = Utils.CenteredRectangle(drawPosition, iconMechTexture.Size() * iconScale * 0.9f);
 
             // Check if the mouse is hovering over the contact button area.
+            bool alreadySelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == exoMech || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == exoMech;
+
+            // Disable summoning Thanatos/Athena together.
+            bool athenaIsSelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == 4 || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == 4;
+            bool thanatosIsSelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == 1 || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == 1;
+            if (exoMech == (int)ExoMech.Destroyer && athenaIsSelected)
+                alreadySelected = true;
+            if (exoMech == 4 && thanatosIsSelected)
+                alreadySelected = true;
+
             bool hoveringOverIcon = ExoMechSelectionUI.MouseScreenArea.Intersects(clickArea);
             if (hoveringOverIcon)
             {
                 // If so, cause the button to inflate a little bit.
                 iconScale = MathHelper.Clamp(iconScale + 0.0375f, 1f, 1.35f);
 
-                // Make the selection known if a click is done.
+                // Make the selection known if a click is done and the icon isn't already in use.
                 if (Main.mouseLeft && Main.mouseLeftRelease)
                 {
-                    CalamityWorld.DraedonMechToSummon = (ExoMech)exoMech;
-
-                    if (Main.netMode != NetmodeID.SinglePlayer)
-                    {
-                        var netMessage = InfernumMode.CalamityMod.GetPacket();
-                        netMessage.Write((byte)CalamityModMessageType.ExoMechSelection);
-                        netMessage.Write((int)CalamityWorld.DraedonMechToSummon);
-                        netMessage.Send();
-                    }
+                    if (selectingPrimaryMech)
+                        PrimaryMechToSummon = alreadySelected ? null : (ExoMech)exoMech;
+                    else
+                        DestroyerTypeToSummon = alreadySelected ? null : (ExoMech)exoMech;
 
                     int draedon = NPC.FindFirstNPC(ModContent.NPCType<Draedon>());
-                    if (draedon != -1)
+                    if (draedon != -1 && PrimaryMechToSummon.HasValue && DestroyerTypeToSummon.HasValue)
                     {
                         Main.npc[draedon].ai[0] = Draedon.ExoMechChooseDelay + 8f;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
                             DraedonBehaviorOverride.SummonExoMech(Main.player[Main.npc[draedon].target]);
+                            PrimaryMechToSummon = DestroyerTypeToSummon = null;
+                        }
                     }
                 }
                 Main.blockMouse = Main.LocalPlayer.mouseInterface = true;
             }
 
-            // Otherwise, if not hovering, cause the button to deflate back to its normal size.
-            else
+            // Otherwise, if not hovering and not selected, cause the button to deflate back to its normal size.
+            else if (!alreadySelected)
                 iconScale = MathHelper.Clamp(iconScale - 0.05f, 1f, 1.2f);
 
             // Draw the icon with the new scale.
-            Main.spriteBatch.Draw(iconMechTexture, drawPosition, null, Color.White, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
+            Color iconColor = alreadySelected ? Color.Black * 0.8f : Color.White;
+            Main.spriteBatch.Draw(iconMechTexture, drawPosition, null, iconColor, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
 
             // Draw the descrption if hovering over the icon.
             if (hoveringOverIcon)
@@ -199,6 +222,7 @@ namespace InfernumMode.ILEditingStuff
                     AthenaIconScale = iconScale;
                     break;
             }
+            return hoveringOverIcon;
         }
 
         public void Load() => ExoMechSelectionUIDraw += DrawSelectionUI;

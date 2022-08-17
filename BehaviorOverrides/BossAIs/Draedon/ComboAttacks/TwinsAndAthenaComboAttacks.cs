@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (CurrentTwinsPhase >= 2)
                 twinsShootRate -= 8;
-            if (CurrentTwinsPhase is not 4 and >= 2)
+            if (CurrentTwinsPhase != 4 && CurrentAthenaPhase != 4 && CurrentTwinsPhase >= 2)
             {
                 twinsShootRate -= 20;
                 chargeTime += 6;
@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (CurrentTwinsPhase >= 2)
                 artemisShootRate -= 8;
-            if (CurrentTwinsPhase is not 4 and >= 2)
+            if (CurrentTwinsPhase != 4 && CurrentAthenaPhase != 4 && CurrentTwinsPhase >= 2)
             {
                 artemisShootRate -= 15;
                 artemisShootSpeed += 2.5f;

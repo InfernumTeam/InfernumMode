@@ -263,6 +263,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                     SelectNextAttack(npc);
+                if (ExoMechComboAttackContent.UseTwinsThanatosComboAttack(npc, 1f, ref attackTimer, ref frameType))
+                    SelectNextAttack(npc);
             }
             else
             {

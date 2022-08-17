@@ -7,6 +7,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
+using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -30,9 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int PostBattleMusicLength = 5120;
 
         // Projectile damage values.
-        public const int NormalShotDamage = 455;
+        public const int NormalShotDamage = 470;
 
-        public const int StrongerNormalShotDamage = 480;
+        public const int StrongerNormalShotDamage = 495;
 
         public const int PowerfulShotDamage = 775;
 
@@ -305,20 +306,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static void SummonExoMech(Player playerToFollow)
         {
-            switch (CalamityWorld.DraedonMechToSummon)
+            int secondaryMech = (int)DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon;
+            if (secondaryMech == (int)ExoMech.Destroyer)
+                secondaryMech = ModContent.NPCType<ThanatosHead>();
+            if (secondaryMech == (int)ExoMech.Prime)
+                secondaryMech = ModContent.NPCType<AresBody>();
+            if (secondaryMech == (int)ExoMech.Twins)
+                secondaryMech = ModContent.NPCType<Apollo>();
+            if (secondaryMech == 4)
+                secondaryMech = ModContent.NPCType<AthenaNPC>();
+
+            switch (DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon)
             {
                 // Summon Thanatos underground.
                 case ExoMech.Destroyer:
                     Vector2 thanatosSpawnPosition = playerToFollow.Center + Vector2.UnitY * 2100f;
                     NPC thanatos = CalamityUtils.SpawnBossBetter(thanatosSpawnPosition, ModContent.NPCType<ThanatosHead>());
                     if (thanatos != null)
+                    {
                         thanatos.velocity = thanatos.SafeDirectionTo(playerToFollow.Center) * 40f;
+                        thanatos.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
+                    }
                     break;
 
                 // Summon Ares in the sky, directly above the player.
                 case ExoMech.Prime:
                     Vector2 aresSpawnPosition = playerToFollow.Center - Vector2.UnitY * 1400f;
-                    CalamityUtils.SpawnBossBetter(aresSpawnPosition, ModContent.NPCType<AresBody>());
+                    NPC ares = CalamityUtils.SpawnBossBetter(aresSpawnPosition, ModContent.NPCType<AresBody>());
+                    if (ares != null)
+                        ares.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
                     break;
 
                 // Summon Apollo and Artemis above the player to their sides.
@@ -326,13 +342,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     Vector2 artemisSpawnPosition = playerToFollow.Center + new Vector2(-1100f, -1600f);
                     Vector2 apolloSpawnPosition = playerToFollow.Center + new Vector2(1100f, -1600f);
                     CalamityUtils.SpawnBossBetter(artemisSpawnPosition, ModContent.NPCType<Artemis>());
-                    CalamityUtils.SpawnBossBetter(apolloSpawnPosition, ModContent.NPCType<Apollo>());
+                    NPC apollo = CalamityUtils.SpawnBossBetter(apolloSpawnPosition, ModContent.NPCType<Apollo>());
+                    if (apollo != null)
+                        apollo.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
                     break;
 
                 // Summon Athena above the player.
                 case (ExoMech)4:
                     Vector2 athenaSpawnPosition = playerToFollow.Center - Vector2.UnitY * 1500f;
-                    CalamityUtils.SpawnBossBetter(athenaSpawnPosition, ModContent.NPCType<AthenaNPC>());
+                    NPC athena = CalamityUtils.SpawnBossBetter(athenaSpawnPosition, ModContent.NPCType<AthenaNPC>());
+                    if (athena != null)
+                        athena.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
                     break;
             }
         }

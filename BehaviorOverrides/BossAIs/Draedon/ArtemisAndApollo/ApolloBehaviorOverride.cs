@@ -265,8 +265,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Perform specific combo attack behaviors.
             if (ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame))
                 SelectNextAttack(npc);
-
             if (ExoMechComboAttackContent.UseTwinsAthenaComboAttack(npc, hoverSide, ref attackTimer, ref frame))
+                SelectNextAttack(npc);
+            if (ExoMechComboAttackContent.UseTwinsThanatosComboAttack(npc, hoverSide, ref attackTimer, ref frame))
                 SelectNextAttack(npc);
 
             attackTimer++;
@@ -1150,6 +1151,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     // Calculate the charge flash.
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
+
+                    // Create a beam telegraph.
+                    if (attackTimer == 4f)
+                    {
+                        SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int telegraph = Utilities.NewProjectileBetter(npc.Center, -hoverOffsetDirection.ToRotationVector2(), ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(telegraph))
+                                Main.projectile[telegraph].ai[1] = npc.whoAmI;
+                        }
+                    }
 
                     // Fire the laser.
                     if (attackTimer >= shootDelay)

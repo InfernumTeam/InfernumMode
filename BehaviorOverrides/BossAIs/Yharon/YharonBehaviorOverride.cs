@@ -1257,7 +1257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             }
                         }
                     }
-                    SoundEngine.PlaySound(YharonBoss.RoarSound, npc.Center);
+                    SoundEngine.PlaySound(BigFlare.FlareSound, npc.Center);
                 }
                 MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
@@ -1296,6 +1296,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Spawn vortices of doom. They periodically shoot homing fire projectiles and are telegraphed prior to spawning.
             if (attackTimer == flameVortexSpawnDelay && Main.netMode != NetmodeID.MultiplayerClient)
             {
+                SoundEngine.PlaySound(YharonBoss.OrbSound);
+
                 for (int i = 0; i < totalFlameVortices; i++)
                 {
                     float angle = MathHelper.TwoPi * i / totalFlameVortices;
@@ -1703,17 +1705,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if ((YharonAttackType)(int)npc.ai[0] == YharonAttackType.SpawnEffects)
             {
                 // Open mouth for a little bit.
-                if (npc.frameCounter >= 30 &&
-                    npc.frameCounter <= 40)
-                {
+                if (npc.frameCounter is >= 30 and <= 40)
                     npc.frame.Y = 0;
-                }
+
                 // Otherwise flap wings.
                 else if (npc.frameCounter % 5 == 4)
                 {
                     npc.frame.Y += frameHeight;
 
-                    if (npc.frame.Y > frameHeight * Main.npcFrameCount[npc.type])
+                    if (npc.frame.Y >= frameHeight * 5)
                         npc.frame.Y = 0;
                 }
             }

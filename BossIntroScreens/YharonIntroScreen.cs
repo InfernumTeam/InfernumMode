@@ -36,7 +36,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/YharonRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/Yharon/YharonRoar");
 
         public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
 

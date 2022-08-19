@@ -53,7 +53,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
-            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
+            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>() && !Main.dayTime)
             {
                 Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
                 float clampedTime = Main.GlobalTimeWrappedHourly % 5f / 5f;
@@ -84,10 +84,7 @@ namespace InfernumMode.GlobalInstances
                     size[i] = sizeScale + (i + 1) * sizeScalar;
                     size[i] *= 0.3f;
 
-                    Color color = Main.hslToRgb(i / (float)totalAurasToDraw, 1f, 0.5f);
-                    if (!Main.dayTime)
-                        color = Color.Lerp(Color.Cyan, Color.Indigo, i / (float)totalAurasToDraw);
-
+                    Color color = Color.Lerp(Color.Cyan, Color.Indigo, i / (float)totalAurasToDraw);
                     color.A = 24;
 
                     int fadeTime = 30;

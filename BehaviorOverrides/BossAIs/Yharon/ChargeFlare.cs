@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -77,6 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void Kill(int timeLeft)
         {
+            SoundEngine.PlaySound(BigFlare.FlareSound);
+
             if (Projectile.owner == Main.myPlayer)
             {
                 int xTileCoords = (int)(Projectile.Center.X / 16f);

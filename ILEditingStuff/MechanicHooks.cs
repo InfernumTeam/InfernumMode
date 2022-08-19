@@ -430,7 +430,7 @@ namespace InfernumMode.ILEditingStuff
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<MoonlordDeathDrama>("DrawWhite")))
                 return;
 
-            cursor.EmitDelegate(() =>
+            cursor.EmitDelegate<Action>(() =>
             {
                 float fadeToBlack = 0f;
                 if (CalamityGlobalNPC.signus != -1)

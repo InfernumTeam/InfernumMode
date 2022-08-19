@@ -869,7 +869,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             // Create the particles.
-            GeneralParticleHandler.SpawnParticle(new GroundImpactParticle(npc.Bottom, Vector2.UnitY, Color.Lerp(Color.Yellow, Color.Orange, 0.45f), 32, 1.1f));
+            //GeneralParticleHandler.SpawnParticle(new GroundImpactParticle(npc.Bottom, Vector2.UnitY, Color.Lerp(Color.Yellow, Color.Orange, 0.45f), 32, 1.1f));
             for (int i = 0; i < 15; i++)
             {
                 float horizontalOffsetInterpolant = Main.rand.NextFloat();

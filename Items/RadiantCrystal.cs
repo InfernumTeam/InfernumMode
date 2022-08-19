@@ -32,6 +32,7 @@ namespace InfernumMode.Items
             recipe.AddIngredient(ItemID.UnicornHorn);
             recipe.AddIngredient(ItemID.CrystalShard, 10);
             recipe.AddIngredient(ItemID.PixieDust, 10);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
 

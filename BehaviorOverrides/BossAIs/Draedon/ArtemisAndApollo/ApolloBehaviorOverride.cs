@@ -182,8 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 if (phaseTransitionAnimationTime == 1f)
                 {
                     SelectNextAttack(npc);
-                    foreach (Projectile flamethrower in Utilities.AllProjectilesByID(ModContent.ProjectileType<ApolloFlamethrower>()))
-                        flamethrower.Kill();
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(), ModContent.ProjectileType<ArtemisLaser>(), ModContent.ProjectileType<ArtemisGatlingLaser>());
                 }
 
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;

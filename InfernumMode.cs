@@ -28,11 +28,13 @@ namespace InfernumMode
 
         internal static Mod CalamityMod = null;
 
+        internal static Mod FargowiltasSouls = null;
+
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
 
         internal static bool BossRushApplies => false;
 
-        internal static readonly Color HiveMindSkyColor = new(53, 42, 81);
+        internal static readonly Color HiveMindSkyColor = new(53, 42, 82);
 
         public static float BlackFade = 0f;
 
@@ -44,10 +46,21 @@ namespace InfernumMode
             set;
         }
 
+        public static bool EmodeIsActive
+        {
+            get
+            {
+                if (FargowiltasSouls is null)
+                    return false;
+                return (bool)FargowiltasSouls?.Call("Emode");
+            }
+        }
+
         public override void Load()
         {
             Instance = this;
             CalamityMod = ModLoader.GetMod("CalamityMod");
+            ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
 
             OverridingListManager.Load();
             BalancingChangesManager.Load();

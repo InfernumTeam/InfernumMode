@@ -38,11 +38,13 @@ namespace InfernumMode.Items
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
             recipe.AddIngredient(ItemID.Vertebrae, 7);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
 
             recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
             recipe.AddIngredient(ItemID.RottenChunk, 7);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }
 

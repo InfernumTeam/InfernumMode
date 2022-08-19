@@ -1078,6 +1078,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     Vector2 spiralVelocity = ((attackTimer - shootDelay) * MathHelper.TwoPi / 105f).ToRotationVector2() * crystalShootSpeed;
                     Utilities.NewProjectileBetter(crystalCenter, spiralVelocity, ModContent.ProjectileType<AcceleratingCrystalShard>(), 225, 0f);
+                    int telegraph = Utilities.NewProjectileBetter(crystalCenter, spiralVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].ai[1] = 30f;
                 }
 
                 // Release bursts of crystals.

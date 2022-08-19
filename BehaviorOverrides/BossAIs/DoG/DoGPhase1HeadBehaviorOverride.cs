@@ -233,10 +233,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         for (int i = 0; i < 16; i++)
                         {
                             Vector2 spawnOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 1650f + Main.rand.NextVector2Circular(130f, 130f);
-                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(30f, 36f) + Main.rand.NextVector2Circular(3f, 3f);
+                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
                             int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
                             if (Main.projectile.IndexInRange(laser))
-                                Main.projectile[laser].MaxUpdates = 2;
+                                Main.projectile[laser].MaxUpdates = 3;
                         }
                     }
                 }

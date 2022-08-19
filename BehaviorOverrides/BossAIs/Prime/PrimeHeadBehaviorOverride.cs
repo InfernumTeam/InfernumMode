@@ -622,7 +622,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < 12; i++)
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
-                            Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f + laserDirection).ToRotationVector2();
+                            Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f).ToRotationVector2();
 
                             int beam = Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<LaserRayIdle>(), 230, 0f);
                             if (Main.projectile.IndexInRange(beam))
@@ -888,24 +888,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[5];
-
-                // I don't know where this angular offset comes from, but it exists.
-                // It was fixed by comparing the lines in an image editing program and performing calculations with arctangents to determine what the precise
-                // discrepency is. The calculations of such are shown below:
-                // p0 = (1252, 395)
-                // p1 = (1543, 432)
-                // p2 = (1519, 445)
-                // slope of telegraph = (p1.y - p0.y) / (p1.x - p0.x) = 0.127147
-                // slope of laser = (p2.y - p0.y) / (p2.x - p0.x) = 0.187266
-                // d = arctan(slope of laser) - arctan(slope of telegraph) = -0.0586534
-                float angularDiscrepancy = -0.0586534f;
                 Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset - angularDiscrepancy).ToRotationVector2();
+                    Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset).ToRotationVector2();
                     Vector2 drawPosition = npc.Center - Vector2.UnitY * 16f + beamDirection * 2f - Main.screenPosition;
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
                     Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);

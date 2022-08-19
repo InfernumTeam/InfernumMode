@@ -409,8 +409,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
             SoundEngine.PlaySound(SoundID.Item14, npc.Bottom);
 
             // Create the particles.
-            for (int i = 0; i < 3; i++)
-                GeneralParticleHandler.SpawnParticle(new GroundImpactParticle(npc.Bottom, Vector2.UnitY, stompColor, 32, 0.5f));
+            //for (int i = 0; i < 3; i++)
+                //GeneralParticleHandler.SpawnParticle(new GroundImpactParticle(npc.Bottom, Vector2.UnitY, stompColor, 32, 0.5f));
             for (int i = 0; i < 15; i++)
             {
                 float horizontalOffsetInterpolant = Main.rand.NextFloat();

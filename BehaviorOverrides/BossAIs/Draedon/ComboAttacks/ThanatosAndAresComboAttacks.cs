@@ -166,7 +166,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 }
 
                 // Decide frames.
-                frame = (int)AresBodyFrameType.Normal;
+                frame = (int)AresBodyFrameType.Laugh;
+                if (attackTimer >= attackDelay - 45f)
+                {
+                    frame = (int)AresBodyFrameType.Laugh;
+                    if (attackTimer == attackDelay - 45f)
+                        DoLaughEffect(npc, target);
+                }
 
                 // Create telegraphs.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == attackDelay - telegraphTime)

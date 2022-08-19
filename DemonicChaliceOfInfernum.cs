@@ -44,7 +44,7 @@ namespace InfernumMode
                 return false;
 
             // Go fuck yourself.
-            if (Main.masterMode || Main.getGoodWorld)
+            if (Main.masterMode || Main.getGoodWorld || InfernumMode.EmodeIsActive)
                 return false;
 
             return true;

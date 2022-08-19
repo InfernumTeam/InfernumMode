@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 return;
             }
 
-            Projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[3]).ToRotationVector2();
+            Projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[5]).ToRotationVector2();
             Projectile.Center = Main.npc[OwnerIndex].Center - Vector2.UnitY * 16f + Projectile.velocity * 2f;
         }
 

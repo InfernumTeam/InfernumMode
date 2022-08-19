@@ -3,6 +3,7 @@ using CalamityMod.Items.Armor.Silva;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -63,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
                 if (npc.timeLeft < 180)
                     npc.timeLeft = 180;
-                if (!npc.WithinRange(target.Center, 2000f))
+                if (!npc.WithinRange(target.Center, 2000f) || target.dead)
                     npc.active = false;
                 return false;
             }
@@ -234,7 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Move back and re-appear.
-            if (attackTimer > 30f && attackTimer < 75f)
+            if (attackTimer is > 30f and < 75f)
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75, attackTimer, true));
                 npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
@@ -253,13 +254,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Vector2 spawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.Zero) * 40f;
                     Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 40f, ModContent.ProjectileType<ProfanedSpear>(), 210, 0f);
                     Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 47f, ModContent.ProjectileType<ProfanedSpear>(), 200, 0f);
+                    int telegraph = Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].ai[1] = 30f;
                 }
 
                 npc.netUpdate = true;
             }
 
             // Arc around a bit.
-            if (attackTimer >= 75f && attackTimer < 150f)
+            if (attackTimer is >= 75f and < 150f)
             {
                 npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
 

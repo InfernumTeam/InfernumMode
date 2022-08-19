@@ -343,7 +343,7 @@ namespace InfernumMode
                 CalamityWorld.revenge = true;
 
             // I said FUCK OFF.
-            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld;
+            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || InfernumMode.EmodeIsActive;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive)
             {
                 if (Main.netMode == NetmodeID.MultiplayerClient)

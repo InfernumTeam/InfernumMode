@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Set start of telegraph to the npc center.
-            Projectile.Center = ThingToAttachTo.Center + ThingToAttachTo.ai[3].ToRotationVector2() * 64f + Vector2.UnitY * 16f;
+            Projectile.Center = ThingToAttachTo.Center + new Vector2(ThingToAttachTo.spriteDirection * -78f, 16f).RotatedBy(ThingToAttachTo.rotation);
 
             if (Destination == Vector2.Zero)
             {

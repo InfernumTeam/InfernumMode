@@ -278,6 +278,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (NPC.Opacity <= 0f)
                     NPC.Center = Target.Center - Vector2.UnitY * 1600f;
 
+                Exowl.MakeAllExowlsExplode();
+
                 AttackTimer = 0f;
                 AttackState = AthenaAttackType.AimedPulseLasers;
                 NPC.Calamity().ShouldCloseHPBar = true;
@@ -359,6 +361,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 DoBehavior_DeathAnimation();
 
             if (ExoMechComboAttackContent.UseTwinsAthenaComboAttack(NPC, 1f, ref AttackTimer, ref NPC.localAI[0]))
+                SelectNextAttack();
+            if (ExoMechComboAttackContent.UseAthenaAresComboAttack(NPC, ref AttackTimer, ref NPC.localAI[0]))
                 SelectNextAttack();
 
             AttackTimer++;

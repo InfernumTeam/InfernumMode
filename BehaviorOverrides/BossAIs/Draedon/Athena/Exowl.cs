@@ -31,6 +31,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public float CircleOffsetAngle;
 
+        public float ChargeSpeedFactor = 1f;
+
         public Vector2 CircleCenter;
 
         public PrimitiveTrail FlameTrail = null;
@@ -95,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type == ModContent.NPCType<Exowl>())
+                if (Main.npc[i].type == ModContent.NPCType<Exowl>() && Main.npc[i].ModNPC<Exowl>().ExplodeCountdown <= 0)
                 {
                     Main.npc[i].ModNPC<Exowl>().ExplodeCountdown = 60;
                     Main.npc[i].netUpdate = true;
@@ -170,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         flySpeed += 30f;
 
                     Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * horizontalOffset, -240f);
-                    Vector2 idealVelocity = NPC.SafeDirectionTo(flyDestination) * flySpeed;
+                    Vector2 idealVelocity = NPC.SafeDirectionTo(flyDestination) * flySpeed * ChargeSpeedFactor;
                     NPC.velocity = (NPC.velocity * 29f + idealVelocity) / 29f;
                     NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, enraged ? 8f : 1.5f);
 
@@ -207,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         SoundEngine.PlaySound(SoundID.Zombie68, NPC.Center);
                         AttackState = 2f;
                         IndividualAttackTimer = 0f;
-                        NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
+                        NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed * ChargeSpeedFactor;
                         NPC.netUpdate = true;
                     }
                     break;

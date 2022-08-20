@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 int enrageBoltCount = 7;
                 float enrageBoltSpread = 0.71f;
                 float enrageBoltShootSpeed = 12f;
-                
+
                 // Get really, really, really angry if the target leaves the arena.
                 pupilRotation = npc.AngleTo(target.Center);
                 if (enrageTimer < 60f)
@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
 
                 // Release the barrage of eyes.
-                if (attackTimer % 5f== 4f)
+                if (attackTimer % 5f == 4f)
                 {
                     SoundEngine.PlaySound(SoundID.Item12, npc.Center);
 
@@ -394,7 +394,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 spinOffset -= 20f;
                 chargeSpeed += 3f;
             }
-            
+
             if (MoonLordCoreBehaviorOverride.IsEnraged)
             {
                 chargeTelegraphTime = 30;
@@ -849,8 +849,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Main.spriteBatch.ResetBlendState();
                 }
             }
-            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage ||
-                core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath)
+            if (core.ai[0] is
+                ((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage) or
+                ((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath))
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)

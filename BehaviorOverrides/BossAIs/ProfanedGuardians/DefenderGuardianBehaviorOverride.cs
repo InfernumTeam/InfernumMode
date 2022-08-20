@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             NPC thingToDefend = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            int fieldSpawnRate = 210;
             float thingToDefendLifeRatio = thingToDefend.life / (float)thingToDefend.lifeMax;
             ref float attackTimer = ref npc.Infernum().ExtraAI[0];
 
@@ -32,20 +34,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             int healerIndex = NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianHealer>());
             if (Main.npc.IndexInRange(healerIndex) && Main.npc[healerIndex].life / (float)Main.npc[healerIndex].lifeMax < thingToDefendLifeRatio)
                 thingToDefend = Main.npc[healerIndex];
+            else
+                fieldSpawnRate -= 96;
 
             npc.target = thingToDefend.target;
             npc.damage = 0;
             npc.spriteDirection = thingToDefend.spriteDirection;
             npc.alpha = 128;
 
-            // Cast rocks from time to time.
-            float wrappedAttackTimer = attackTimer % 360f;
-            if (wrappedAttackTimer > 330f && wrappedAttackTimer % 5f == 4f && !npc.WithinRange(Main.player[npc.target].Center, 250f))
+            // Cast profaned fields from time to time.
+            if (attackTimer % fieldSpawnRate == fieldSpawnRate - 1f && !npc.WithinRange(Main.player[npc.target].Center, 250f))
             {
-                SoundEngine.PlaySound(SoundID.Item89, npc.Center);
+                SoundEngine.PlaySound(ProvidenceNPC.SpawnSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<MagicProfanedRock>(), 235, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedField>(), 235, 0f);
                     npc.netUpdate = true;
                 }
             }

@@ -380,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 {
                     if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
                         continue;
-                    if (!Main.npc[i].active || Main.npc[i].Opacity <= 0f)
+                    if (!Main.npc[i].active || ExoMechAIUtilities.ShouldExoMechVanish(Main.npc[i]))
                         continue;
 
                     count++;

@@ -30,6 +30,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 ModContent.NPCType<AresPlasmaFlamethrower>(),
                 ModContent.NPCType<AresLaserCannon>(),
                 ModContent.NPCType<AresPulseCannon>() },
+
+            [ExoMechComboAttackType.AthenaAres_ExowlPressureCannons] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
+                ModContent.NPCType<AresPlasmaFlamethrower>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPulseCannon>() },
         };
 
         public static bool ArmCurrentlyBeingUsed(NPC npc)

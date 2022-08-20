@@ -295,6 +295,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
+            if (ExoMechComboAttackContent.UseAthenaAresComboAttack(npc, ref attackTimer, ref frameType))
+                SelectNextAttack(npc);
             npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.0065f, 0.2f);
 
             attackTimer++;

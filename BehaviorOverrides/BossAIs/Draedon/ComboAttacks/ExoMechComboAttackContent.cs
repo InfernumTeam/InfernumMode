@@ -23,7 +23,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             TwinsAthena_ThermoplasmaChargeupBursts,
 
             TwinsThanatos_ThermoplasmaDashes,
-            TwinsThanatos_CircledLaserSweep
+            TwinsThanatos_CircledLaserSweep,
+
+            AthenaAres_ExowlPressureCannons
         }
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
@@ -75,14 +77,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
             bool thanatosAndTwins = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
                 (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
+            bool athenaAndAres = (initialMech.type == ModContent.NPCType<AthenaNPC>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
+                (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<AthenaNPC>());
 
             if (aresAndTwins)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
-
-                attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
-                attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
-
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
                     (int)ExoMechComboAttackType.AresTwins_DualLaserCharges => (int)ExoMechComboAttackType.AresTwins_CircleAttack,
@@ -97,11 +96,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (athenaAndTwins)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
-
-                attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance);
-                attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts);
-
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
                     (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance => (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts,
@@ -116,10 +110,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (thanatosAndAres)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectricCage);
-
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
                     (int)ExoMechComboAttackType.ThanatosAres_LaserCircle => (int)ExoMechComboAttackType.ThanatosAres_ElectricCage,
@@ -134,13 +124,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (thanatosAndTwins)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
-                attackSelector.Add(ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes);
-
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
                     (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => (int)ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep,
                     _ => (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes,
+                };
+
+                // Inform all mechs of the change.
+                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
+                InformAllMechsOfComboAttackChange((int)newAttack);
+                return true;
+            }
+
+            if (athenaAndAres)
+            {
+                initialMech.ai[0] = (int)initialMech.ai[0] switch
+                {
+                    _ => (int)ExoMechComboAttackType.AthenaAres_ExowlPressureCannons,
                 };
 
                 // Inform all mechs of the change.

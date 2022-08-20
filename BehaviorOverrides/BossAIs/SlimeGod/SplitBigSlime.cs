@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void AI()
         {
-            if (!Main.npc.IndexInRange(OwnerIndex))
+            if (!Main.npc.IndexInRange(OwnerIndex) || !Main.npc[OwnerIndex].active)
             {
                 NPC.active = false;
                 return;
@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override bool CheckDead()
         {
-            if (!Main.npc.IndexInRange(OwnerIndex))
+            if (!Main.npc.IndexInRange(OwnerIndex) || !Main.npc[OwnerIndex].active)
                 return base.CheckDead();
 
             Main.npc[OwnerIndex].life -= NPC.lifeMax;

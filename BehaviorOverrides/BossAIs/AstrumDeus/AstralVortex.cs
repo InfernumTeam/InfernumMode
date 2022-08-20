@@ -64,9 +64,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 float flyTogetherInterpolant = Utils.GetLerpValue(ScaleFadeinTime + 180f, ScaleFadeinTime + 225f, Timer, true);
                 if (!Projectile.WithinRange(otherVortex.Center, MathHelper.Clamp(1100f - Timer * 2f, 100f, 1100f)))
-                    Projectile.velocity += Projectile.SafeDirectionTo(otherVortex.Center) * 1.2f;
+                    Projectile.velocity += Projectile.SafeDirectionTo(otherVortex.Center) * 1.45f;
 
-                if (Projectile.velocity.Length() < 14f)
+                if (Projectile.velocity.Length() < 17f)
                 {
                     Vector2 vortexOffset = otherVortex.Center - Projectile.Center;
                     if (Math.Abs(vortexOffset.X) < 0.01f)

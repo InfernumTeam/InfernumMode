@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
         public static bool DoBehavior_AresTwins_DualLaserCharges(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
-            int laserBurstCount = 2;
+            int laserBurstCount = 1;
             int redirectTime = 195;
             int chargeupTime = 40;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;

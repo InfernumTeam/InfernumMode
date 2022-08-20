@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
         public static bool DoBehavior_ThanatosAres_LaserCircle(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 95;
+            int attackDelay = 108;
             int telegraphTime = 50;
             int attackTime = 780;
             int spinTime = attackTime - attackDelay;
@@ -104,10 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
-            {
-                attackDelay -= 24;
                 totalLasers += 4;
-            }
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)

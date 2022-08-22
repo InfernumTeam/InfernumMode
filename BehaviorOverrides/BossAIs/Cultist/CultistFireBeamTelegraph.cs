@@ -67,6 +67,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Main.projectile[beam].ai[1] = aimDirection * 0.0254f;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
     }
 }

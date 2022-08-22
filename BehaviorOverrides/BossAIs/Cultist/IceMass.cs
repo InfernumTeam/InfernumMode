@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override bool PreDraw(ref Color lightColor)
         {

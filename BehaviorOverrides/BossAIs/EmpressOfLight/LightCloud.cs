@@ -73,19 +73,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 laserVelocity = (MathHelper.TwoPi * i / 4f + TelegraphDirection).ToRotationVector2();
                         int laser = Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<SpinningPrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].ai[0] = aimDirection * 0.0167f;
+                            Main.projectile[laser].ai[0] = aimDirection * 0.0131f;
                     }
                 }
             }
 
             // Periodically release bursts of light.
-            if (Time >= LaserTelegraphTime && Time % 30f == 29f && Projectile.timeLeft >= 64)
+            if (Time >= LaserTelegraphTime && Time % 40f == 39f && Projectile.timeLeft >= 64)
             {
                 SoundEngine.PlaySound(SoundID.Item28, Projectile.Center);
 
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < 12; i++)
                 {
-                    Vector2 boltVelocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * Main.rand.NextFloat(12f, 18f);
+                    Vector2 boltVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * Main.rand.NextFloat(11f, 13f);
                     int bolt = Utilities.NewProjectileBetter(Projectile.Center, boltVelocity, ModContent.ProjectileType<LightBolt>(), EmpressOfLightBehaviorOverride.PrismaticBoltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
                         Main.projectile[bolt].ai[1] = Main.rand.NextFloat();

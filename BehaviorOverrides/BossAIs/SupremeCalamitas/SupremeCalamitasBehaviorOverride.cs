@@ -527,7 +527,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 condemnationSpinTime = 36;
                 condemnationChargePuffRate = 12;
                 shootSpeed = 15f;
-                angularVariance = 3.23f;
+                angularVariance = 3.63f;
             }
 
             if (currentPhase >= 3)

@@ -574,6 +574,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
 
+            // Ensure that the backarm swap state is consistent.
+            npc.Infernum().ExtraAI[14] = 240f;
+
             // Enforce an initial delay prior to firing.
             if (attackTimer < shootDelay)
                 return;

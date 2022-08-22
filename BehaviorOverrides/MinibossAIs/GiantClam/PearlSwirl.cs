@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             Projectile.frame = frame;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }
 }

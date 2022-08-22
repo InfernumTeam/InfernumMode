@@ -36,6 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             return (ExoMechComboAttackType)initialMech.ai[0] switch
             {
                 ExoMechComboAttackType.AthenaAres_ExowlPressureCannons => DoBehavior_AthenaAres_ExowlPressureCannons(npc, target, ref attackTimer, ref frameType),
+                ExoMechComboAttackType.AthenaAres_ExowlCannonTheft => DoBehavior_AthenaAres_ExowlCannonTheft(npc, target, ref attackTimer, ref frameType),
                 _ => false,
             };
         }
@@ -164,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             {
                                 Main.npc[exowl].ModNPC<Exowl>().UseConfusionEffect = true;
                                 Main.npc[exowl].ModNPC<Exowl>().IsIllusion = i != realExowlIndex;
-                                Main.npc[exowl].ModNPC<Exowl>().ChargeSpeedFactor = 0.56f;
+                                Main.npc[exowl].ModNPC<Exowl>().ChargeSpeedFactor = 0.5f;
                             }
                         }
                         npc.netUpdate = true;
@@ -177,6 +178,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             }
 
             return attackTimer >= attackDuration;
+        }
+
+        public static bool DoBehavior_AthenaAres_ExowlCannonTheft(NPC npc, Player target, ref float attackTimer, ref float frame)
+        {
+            // Ares' body hovers above the player and sometimes fires electric bolts from his core.
+            if (npc.type == ModContent.NPCType<AresBody>())
+            {
+                frame = (int)AresBodyBehaviorOverride.AresBodyFrameType.Normal;
+
+                // Ensure that the backarm swap state is consistent.
+                npc.Infernum().ExtraAI[14] = 240f;
+                npc.Infernum().ExtraAI[15] = 1f;
+                
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 375f;
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 27f, 84f);
+            }
+
+            return false;
         }
     }
 }

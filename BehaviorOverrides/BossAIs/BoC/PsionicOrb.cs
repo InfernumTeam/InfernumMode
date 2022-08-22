@@ -129,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public float WidthFunction(float completionRatio)
         {

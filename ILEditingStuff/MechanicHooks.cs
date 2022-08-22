@@ -7,7 +7,6 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.UI;
-using CalamityMod.World;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
@@ -299,7 +298,7 @@ namespace InfernumMode.ILEditingStuff
                 return;
 
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate<Action<Projectile>>(HandleAttachment);
+            c.EmitDelegate(HandleAttachment);
 
             // Go to the last instance of AI_007_GrapplingHooks_CanTileBeLatchedOnTo.
             while (c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Projectile>("AI_007_GrapplingHooks_CanTileBeLatchedOnTo"))) { }
@@ -384,7 +383,7 @@ namespace InfernumMode.ILEditingStuff
                 return;
 
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate<Func<Projectile, bool>>(PlatformRequirement);
+            c.EmitDelegate(PlatformRequirement);
             c.Emit(OpCodes.Brtrue, tileHitLogic);
 
             c.Index = placeToPutPlatformCoordAdjustments;

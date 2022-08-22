@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 

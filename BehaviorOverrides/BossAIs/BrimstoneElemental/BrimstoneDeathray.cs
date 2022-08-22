@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.Center = OwnerEyePosition;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override void Kill(int timeLeft)
         {

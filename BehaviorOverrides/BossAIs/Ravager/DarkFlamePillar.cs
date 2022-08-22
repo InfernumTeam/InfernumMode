@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity >= 0.9f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public float WidthFunction(float completionRatio)
         {

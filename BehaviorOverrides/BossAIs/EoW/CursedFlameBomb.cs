@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 120);
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
     }
 }

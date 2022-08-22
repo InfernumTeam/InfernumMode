@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
     }
 }

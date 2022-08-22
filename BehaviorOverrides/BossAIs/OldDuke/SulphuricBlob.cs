@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 240);
 

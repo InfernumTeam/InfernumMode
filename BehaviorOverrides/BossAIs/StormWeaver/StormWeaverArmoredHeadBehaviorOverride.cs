@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
-            if (attackTimer >= 480f)
+            if (attackTimer >= 240f)
                 SelectNewAttack(npc);
         }
 
@@ -142,9 +142,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 7; i++)
+                    for (int i = 0; i < 11; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.41f, 0.41f, i / 6f);
+                        float offsetAngle = MathHelper.Lerp(-0.44f, 0.44f, i / 10f);
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 8f;
                         Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 245, 0f);
                     }
@@ -162,14 +162,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             if (npc.WithinRange(target.Center, 285f))
                 moveSpeed *= 1.01f;
-            else if (npc.velocity.Length() > 10.5f)
+            else if (npc.velocity.Length() > 9f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 7f, 17f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 6f, 13f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
-            if (attackTimer % 60f == 59f)
+            if (attackTimer % 48f == 47f)
             {
                 if (!npc.WithinRange(target.Center, 210f))
                 {
@@ -177,16 +177,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 10; i++)
+                        for (int i = 0; i < 5; i++)
                         {
-                            Vector2 lightningVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.05f) / 10f) * 6.6f;
-                            int arc = Utilities.NewProjectileBetter(npc.Center + lightningVelocity * 2f, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 245, 0f);
-                            if (Main.projectile.IndexInRange(arc))
-                            {
-                                Main.projectile[arc].ai[0] = lightningVelocity.ToRotation();
-                                Main.projectile[arc].ai[1] = Main.rand.Next(100);
-                                Main.projectile[arc].tileCollide = false;
-                            }
+                            Vector2 lightningVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.1f) / 5f) * 6.6f;
+                            Utilities.NewProjectileBetter(npc.Center + lightningVelocity * 2f, lightningVelocity, ModContent.ProjectileType<HomingWeaverSpark>(), 245, 0f);
+                        }
+                        for (int i = 0; i < 11; i++)
+                        {
+                            Vector2 lightningVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.05f) / 11f) * 6.6f;
+                            Utilities.NewProjectileBetter(npc.Center + lightningVelocity * 2f, lightningVelocity, ModContent.ProjectileType<WeaverSpark>(), 245, 0f);
                         }
                     }
                 }

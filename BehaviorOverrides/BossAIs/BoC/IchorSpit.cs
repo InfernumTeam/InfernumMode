@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Time++;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Ichor, 45);
 

@@ -36,9 +36,17 @@ namespace InfernumMode
 
         internal static readonly Color HiveMindSkyColor = new(53, 42, 82);
 
-        public static float BlackFade = 0f;
+        public static float BlackFade
+        {
+            get;
+            set;
+        } = 0f;
 
-        public static float DraedonThemeTimer = 0f;
+        public static float DraedonThemeTimer
+        {
+            get;
+            set;
+        } = 0f;
 
         public static float ProvidenceArenaTimer
         {
@@ -189,6 +197,8 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
                 Main.QueueMainThreadAction(() => CalamityMod.Call("LoadParticleInstances", this));
+
+            _ = new InfernumDifficulty();
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);

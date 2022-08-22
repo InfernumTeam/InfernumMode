@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override bool PreDraw(ref Color lightColor)
         {

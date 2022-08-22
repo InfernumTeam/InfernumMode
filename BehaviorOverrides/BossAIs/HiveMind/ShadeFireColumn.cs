@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             target.AddBuff(BuffID.CursedInferno, 240);
             target.AddBuff(ModContent.BuffType<Shadowflame>(), 140);
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 67f;

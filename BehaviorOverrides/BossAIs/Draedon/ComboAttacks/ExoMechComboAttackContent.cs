@@ -1,7 +1,9 @@
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -11,6 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
+        
         public enum ExoMechComboAttackType
         {
             AresTwins_DualLaserCharges = 100,
@@ -25,8 +28,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             TwinsThanatos_ThermoplasmaDashes,
             TwinsThanatos_CircledLaserSweep,
 
-            AthenaAres_ExowlPressureCannons
+            AthenaAres_ExowlPressureCannons,
+            AthenaAres_ExowlCannonTheft
         }
+
+        public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
+        {
+            [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
+                ModContent.NPCType<AresPlasmaFlamethrower>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPulseCannon>() },
+
+            [ExoMechComboAttackType.AthenaAres_ExowlPressureCannons] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
+                ModContent.NPCType<AresPlasmaFlamethrower>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPulseCannon>() },
+
+            [ExoMechComboAttackType.AthenaAres_ExowlCannonTheft] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
+                ModContent.NPCType<AresPlasmaFlamethrower>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPulseCannon>() },
+        };
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
         {
@@ -140,6 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             {
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
+                    (int)ExoMechComboAttackType.AthenaAres_ExowlPressureCannons => (int)ExoMechComboAttackType.AthenaAres_ExowlCannonTheft,
                     _ => (int)ExoMechComboAttackType.AthenaAres_ExowlPressureCannons,
                 };
 

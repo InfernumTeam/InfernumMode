@@ -76,7 +76,5 @@ namespace InfernumMode.BaseEntities
             Main.spriteBatch.ExitShaderRegion();
             return false;
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
     }
 }

@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             RotationalSpeed = MathHelper.Pi / Lifetime * -OrangeLaserbeam.FullCircleRotationFactor;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public override bool? CanDamage() => Time > 35f ? null : false;
 

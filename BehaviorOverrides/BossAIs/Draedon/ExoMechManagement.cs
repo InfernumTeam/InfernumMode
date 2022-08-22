@@ -39,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int Ares_ProjectileDamageBoostIndex = 8;
         public const int Ares_LineTelegraphInterpolantIndex = 17;
         public const int Ares_LineTelegraphRotationIndex = 18;
+        public const int Ares_CannonInUseByExowl = 25;
 
         public const int Athena_EnragedIndex = 8;
 

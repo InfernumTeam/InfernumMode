@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 60);
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
 
         public override bool PreDraw(ref Color lightColor)

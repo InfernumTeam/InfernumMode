@@ -170,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

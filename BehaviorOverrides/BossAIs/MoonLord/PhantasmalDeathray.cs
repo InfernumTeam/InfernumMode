@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
 
         public float WidthFunction(float completionRatio)
         {

@@ -43,14 +43,6 @@ namespace InfernumMode.GlobalInstances
     {
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            return;
-            switch (npc.type)
-            {
-                case NPCID.BloodNautilus:
-                    npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
-                    break;
-            }
-
             // Relic hell.
             if (npc.type == NPCID.KingSlime)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<KingSlimeRelic>());
@@ -105,7 +97,10 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<WallOfFleshRelic>());
 
             if (npc.type == NPCID.BloodNautilus)
+            {
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DreadnautilusRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
+            }
 
             if (npc.type == NPCID.QueenSlimeBoss)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<QueenSlimeRelic>());

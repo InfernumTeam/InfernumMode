@@ -624,6 +624,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1080f;
 
+                // Periodically release plasma fireballs at the target.
+                if (attackTimer % 36f == 35f)
+                {
+                    SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                        Utilities.NewProjectileBetter(npc.Center + plasmaShootVelocity * 3f, plasmaShootVelocity, ModContent.ProjectileType<AstralPlasmaFireball>(), 200, 0f);
+                        npc.netUpdate = true;
+                    }
+                }
+
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
                 if (!Utilities.AnyProjectiles(ModContent.ProjectileType<AstralVortex>()) && !Utilities.AnyProjectiles(ModContent.ProjectileType<AstralFlame2>()))

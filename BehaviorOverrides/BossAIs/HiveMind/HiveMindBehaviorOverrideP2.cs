@@ -123,17 +123,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 finalPhaseInvinciblityTime--;
                 return false;
             }
-
-            // Idly release fire columns.
+            
             if (flameColumnCountdown > 0f)
             {
-                if (flameColumnCountdown % 60f == 30f - 1f)
-                {
-                    WorldUtils.Find((target.Top - Vector2.UnitY * 320f).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new Conditions.IsSolid()), out Point result);
-                    if (Math.Abs(result.X) > 10000)
-                        result = (target.Bottom + Vector2.UnitY * 120f).ToTileCoordinates();
-                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 78, 0f);
-                }
                 flameColumnCountdown--;
             }
 

@@ -24,19 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
-        public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
-        {
-            [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPulseCannon>() },
-
-            [ExoMechComboAttackType.AthenaAres_ExowlPressureCannons] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPulseCannon>() },
-        };
-
         public static bool ArmCurrentlyBeingUsed(NPC npc)
         {
             // Return false Ares is not present.

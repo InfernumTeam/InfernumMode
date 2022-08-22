@@ -62,6 +62,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Utils.PoofOfSmoke(Projectile.Center);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        
     }
 }

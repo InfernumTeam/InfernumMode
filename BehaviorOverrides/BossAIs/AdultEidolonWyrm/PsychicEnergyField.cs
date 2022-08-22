@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;

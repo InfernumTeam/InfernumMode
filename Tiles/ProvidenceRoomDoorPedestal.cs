@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -24,6 +25,7 @@ namespace InfernumMode.Tiles
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
+            Main.tileNoAttach[ModContent.TileType<ProfanedCrystal>()] = false;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
             TileObjectData.newTile.Width = Width;

@@ -84,7 +84,7 @@ namespace InfernumMode.Systems
         public static void GenerateProfanedArena(GenerationProgress _, GameConfiguration _2)
         {
             bool _3 = false;
-            Point bottomLeftOfWorld = new(Main.maxTilesX - 30, Main.maxTilesY - 30);
+            Point bottomLeftOfWorld = new(Main.maxTilesX - 30, Main.maxTilesY - 42);
             PlaceSchematic<Action<Chest>>("Profaned Arena", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _3);
             SchematicMetaTile[,] schematic = TileMaps["Profaned Arena"];
             int width = schematic.GetLength(0);

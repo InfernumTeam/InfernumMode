@@ -86,6 +86,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     float sweepInterpolant = (float)Math.Pow(Utils.GetLerpValue(sweepDelay, attackDuration - 24f, attackTimer, true), 1.67);
                     cannonPressureAngle = MathHelper.Lerp(MathHelper.PiOver2, MathHelper.Pi - maximumPressureAngle, sweepInterpolant);
                 }
+
+                // Give the taret infinite flight time.
+                target.wingTime = target.wingTimeMax;
             }
 
             // Refer to the above comment for behavioral details.
@@ -114,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             }
 
             // In the second to last phase, Ares' secondary cannons slowly fire projectiles at the target.
-            // To prevent being unfair, they do not split, connect, or do any other fancy effects like that.
+            // To prevent being unfair, they do not split, connect, or do any other fancy effects.
             if (isNonPressureArm)
             {
                 float _ = 0f;

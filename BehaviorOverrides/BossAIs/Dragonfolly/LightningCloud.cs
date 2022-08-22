@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < Main.rand.Next(2, 5 + 1); i++)
+            for (int i = 0; i < Main.rand.Next(1, 3 + 1); i++)
             {
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
                 spawnPosition -= offsetDirection * 2500f;

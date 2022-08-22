@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
         public override void SetDefaults()
         {
             Projectile.width = 36;
-            Projectile.height = 480;
+            Projectile.height = 440;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;

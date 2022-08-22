@@ -40,10 +40,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.HallowedMimic
 
             float inertia = Projectile.WithinRange(target.Center, 250f) ? 15f : 45f;
             if (Time >= 60f)
-                Projectile.velocity = (Projectile.velocity * (inertia - 1f) + Projectile.SafeDirectionTo(target.Center) * 11f) / inertia;
-            if (Time % 15f == 14f || Projectile.velocity.Length() < 9f)
+                Projectile.velocity = (Projectile.velocity * (inertia - 1f) + Projectile.SafeDirectionTo(target.Center) * 14f) / inertia;
+            if ((Time % 15f == 14f || Projectile.velocity.Length() < 9f) && !Projectile.WithinRange(target.Center, 270f))
             {
-                Vector2 impulse = Projectile.SafeDirectionTo(target.Center) * 11f;
+                Vector2 impulse = Projectile.SafeDirectionTo(target.Center) * 5f;
                 Projectile.velocity = (Projectile.velocity + impulse).ClampMagnitude(9.1f, 21.5f);
                 Projectile.netUpdate = true;
             }

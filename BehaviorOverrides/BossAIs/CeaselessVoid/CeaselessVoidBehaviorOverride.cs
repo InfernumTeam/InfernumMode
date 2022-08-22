@@ -100,6 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             npc.timeLeft = 3600;
+            npc.chaseable = true;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
@@ -397,28 +398,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             else
                 npc.velocity *= 0.9f;
 
-            // Prepare dust line telegraphs.
+            // Prepare particle line telegraphs.
             if (attackTimer == hoverTime + barrageShootRate - barrageTelegraphTime)
             {
                 SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
-                playerShootDirection = npc.AngleTo(target.Center);
-                for (int i = 0; i < barrageCount; i++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
-
-                    for (int frames = 8; frames < 75; frames += 2)
+                    playerShootDirection = npc.AngleTo(target.Center);
+                    for (int i = 0; i < barrageCount; i++)
                     {
-                        Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
-                        Dust magic = Dust.NewDustPerfect(linePosition, 267, -Vector2.UnitY);
-                        magic.fadeIn = 0.4f;
-                        magic.scale = 1.6f;
-                        magic.color = Color.Lerp(Color.Cyan, Color.Fuchsia, frames / 75f);
-                        magic.noGravity = true;
+                        float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
+
+                        for (int frames = 8; frames < 64; frames += 5)
+                        {
+                            Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
+                            int shard = Utilities.NewProjectileBetter(linePosition, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraphShard>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(shard))
+                                Main.projectile[shard].ai[0] = frames / 75f;
+                        }
                     }
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
                 }
-                npc.velocity = Vector2.Zero;
-                npc.netUpdate = true;
             }
 
             // Shoot.

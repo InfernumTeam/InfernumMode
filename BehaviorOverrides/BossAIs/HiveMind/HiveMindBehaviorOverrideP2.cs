@@ -293,7 +293,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (npc.alpha >= 0 && hasFadedInFlag == 0f)
             {
-                npc.alpha -= 7;
+                npc.alpha -= 4;
                 npc.Center = target.Center + Vector2.UnitY * SpinRadius;
                 npc.velocity = Vector2.Zero;
                 if (npc.alpha <= 0f)
@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             attackTimer++;
-            npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
+            npc.alpha = Utils.Clamp(npc.alpha - 6, 0, 255);
             spinIncrement += (float)Math.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 0.6D);
 
             // Decide the spin direction if it has yet to be.
@@ -432,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (npc.alpha > 0)
             {
-                npc.alpha -= 4;
+                npc.alpha -= 3;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center;
@@ -628,7 +628,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (npc.alpha > 0)
             {
-                npc.alpha -= 9;
+                npc.alpha -= 6;
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, false);

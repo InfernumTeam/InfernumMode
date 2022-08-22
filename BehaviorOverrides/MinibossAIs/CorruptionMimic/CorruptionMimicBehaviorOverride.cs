@@ -181,6 +181,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
             int sitTime = 40;
             int projID = ModContent.ProjectileType<CursedBullet>();
             int cinderCount = 7;
+            float cinderSpeed = 9.6f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float gravity = MathHelper.Lerp(0.8f, 1.12f, 1f - lifeRatio);
             float maxSlamSpeed = MathHelper.Lerp(15.4f, 21f, 1f - lifeRatio);
@@ -196,6 +197,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
             if (npc.type == NPCID.BigMimicHallow)
             {
+                cinderSpeed = 4.6f;
                 projID = ModContent.ProjectileType<CrystalShard>();
                 sparkColor = Color.Lerp(Color.Cyan, Color.DeepPink, 0.3f);
                 stompColor = Color.HotPink;
@@ -244,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
                         for (int i = 0; i < cinderCount; i++)
                         {
                             float cinderShootOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, i / (float)(cinderCount - 1f));
-                            Vector2 cinderVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(cinderShootOffsetAngle) * 9.6f;
+                            Vector2 cinderVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(cinderShootOffsetAngle) * cinderSpeed;
                             Utilities.NewProjectileBetter(npc.Center, cinderVelocity, projID, 115, 0f);
                         }
                     }
@@ -348,8 +350,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
         public static void DoBehavior_ChainGuillotineBursts(NPC npc, Player target, ref float attackTimer, ref float currentFrame)
         {
-            int hideTime = 45;
-            int guillotineShootDelay = 90;
+            int hideTime = 25;
+            int guillotineShootDelay = 105;
             int guillotineCount = 13;
             ref float aimDirection = ref npc.Infernum().ExtraAI[0];
 

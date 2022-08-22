@@ -46,8 +46,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public Color SunColorFunction(float completionRatio)
         {
-            Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
-            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
+            if (!Main.dayTime)
+                return Color.Lerp(Color.Cyan, Color.Lime, 0.33f) with { A = 92 } * Projectile.Opacity;
+
+            return Color.Lerp(Color.Yellow, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)

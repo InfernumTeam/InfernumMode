@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public const int Athena_EnragedIndex = 8;
 
-        public const int Twins_ComplementMechEnrageTimerIndex = 15;
+        public const int Twins_ComplementMechEnrageTimerIndex = 26;
         public const int Twins_SideSwitchDelayIndex = 18;
 
         public const float Phase2LifeRatio = 0.85f;

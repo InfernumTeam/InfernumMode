@@ -46,7 +46,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             Projectile.frame = frame;
         }
 
-        
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }
 }

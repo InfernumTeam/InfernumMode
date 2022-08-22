@@ -579,7 +579,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Enforce an initial delay prior to firing.
             if (attackTimer < shootDelay)
-                return;
+            {
+                if (Utilities.AnyProjectiles(ModContent.ProjectileType<AresSpinningDeathBeam>()))
+                    attackTimer = shootDelay + telegraphTime + spinTime + repositionTime;
+                else
+                    return;
+            }
 
             // Delete projectiles after the delay has concluded.
             if (attackTimer == shootDelay + 1f)
@@ -898,7 +903,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Color afterimageBaseColor = Color.White;
 
             // Become red if enraged.
-            if (npc.Infernum().ExtraAI[13] == 1f)
+            if (npc.Infernum().ExtraAI[13] == 1f || ExoMechComboAttackContent.EnrageTimer > 0f)
                 afterimageBaseColor = Color.Red;
 
             Color armGlowmaskColor = afterimageBaseColor;

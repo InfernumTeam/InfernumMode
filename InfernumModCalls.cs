@@ -1,8 +1,10 @@
+using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Systems;
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode
 {
@@ -51,6 +53,8 @@ namespace InfernumMode
                     return false;
                 return Main.npc[npcIndex].Infernum().ExtraAI[10] >= MoonLordCoreBehaviorOverride.IntroSoundLength;
             }
+            if (npcID == ModContent.NPCType<Draedon>())
+                return NPC.AnyNPCs(npcID);
 
             return false;
         }

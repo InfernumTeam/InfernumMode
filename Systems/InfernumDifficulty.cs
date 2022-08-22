@@ -65,7 +65,7 @@ namespace InfernumMode.Systems
 
             for (int i = 0; i < Difficulties.Length; i++)
             {
-                //if we are at a new tier, create a new list of difficulties at that tier.
+                // If at a new tier, create a new list of difficulties at that tier.
                 if (currentTier != Difficulties[i].DifficultyScale)
                 {
                     DifficultyTiers.Add(new DifficultyMode[] { Difficulties[i] });
@@ -73,12 +73,10 @@ namespace InfernumMode.Systems
                     tierIndex++;
                 }
 
-                //if the tier already exists, just add it to the list of other difficulties at that tier.
+                // If the tier already exists, just add it to the list of other difficulties at that tier.
                 else
                 {
-                    //ugly
                     DifficultyTiers[tierIndex] = DifficultyTiers[tierIndex].Append(Difficulties[i]).ToArray();
-
                     MostAlternateDifficulties = Math.Max(DifficultyTiers[tierIndex].Length, MostAlternateDifficulties);
                 }
             }

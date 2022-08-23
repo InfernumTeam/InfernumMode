@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float Radius => ref Projectile.ai[1];
 
-        public const float MaxRadius = 600f;
+        public const float MaxRadius = 336f;
 
         public override void SetStaticDefaults()
         {

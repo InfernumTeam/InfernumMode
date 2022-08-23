@@ -647,6 +647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Slow down and rotate towards the player.
             if (attackTimer < chargeDelay)
             {
+                npc.damage = 0;
                 npc.velocity *= 0.97f;
                 npc.spriteDirection = (target.Center.X - npc.Center.X < 0).ToDirectionInt();
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(chargeDestination) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);

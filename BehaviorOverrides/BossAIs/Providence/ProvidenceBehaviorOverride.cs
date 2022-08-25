@@ -337,7 +337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (phase2AnimationTimer == 1f)
             {
                 float startY = Utilities.GetGroundPositionFrom(Main.player[npc.target].Center).Y - 50f;
-                for (float i = -3650f; i < 3650f; i += 32f)
+                for (float i = -3650f; i < 3650f; i += 50f)
                 {
                     Vector2 top = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY), new Searches.Up(9001)).Floor();
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY)).Floor();

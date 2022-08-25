@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Projectiles
@@ -26,6 +27,9 @@ namespace InfernumMode.Projectiles
 
         public override void AI()
         {
+            // Why.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 300;
+
             // Decide a frame to use on the first frame this projectile exists.
             if (Projectile.localAI[0] == 0f)
             {

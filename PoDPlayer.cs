@@ -221,7 +221,7 @@ namespace InfernumMode
 
             for (int i = 0; i < 3; i++)
             {
-                if (!Main.rand.NextBool(cinderSpawnRate))
+                if (!Main.rand.NextBool(cinderSpawnRate) || Main.gfxQuality < 0.35f)
                     continue;
 
                 Vector2 cinderSpawnOffset = new(Main.rand.NextFloatDirection() * 1550f, 650f);

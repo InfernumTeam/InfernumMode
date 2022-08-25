@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
@@ -180,42 +181,10 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DragonfollyRelic>());
 
             if (npc.type == ModContent.NPCType<Providence>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
-
-            if (npc.type == ModContent.NPCType<CeaselessVoid>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CeaselessVoidRelic>());
-
-            if (npc.type == ModContent.NPCType<StormWeaverHead>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<StormWeaverRelic>());
-
-            if (npc.type == ModContent.NPCType<Signus>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SignusRelic>());
-
-            if (npc.type == ModContent.NPCType<Polterghast>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PolterghastRelic>());
-
-            if (npc.type == ModContent.NPCType<OldDuke>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DevourerOfGodsRelic>());
-
-            if (npc.type == ModContent.NPCType<Yharon>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
-
-            if (Utilities.IsExoMech(npc))
             {
-                LeadingConditionRule lastMechStanding = new(DropHelper.If(_ => 
-                    NPC.CountNPCS(ModContent.NPCType<ThanatosHead>()) + 
-                    NPC.CountNPCS(ModContent.NPCType<Apollo>()) +
-                    NPC.CountNPCS(ModContent.NPCType<AresBody>()) +
-                    NPC.CountNPCS(ModContent.NPCType<AthenaNPC>()) <= 1 && InfernumMode.CanUseCustomAIs));
-                lastMechStanding.Add(ModContent.ItemType<DraedonRelic>());
-                npcLoot.Add(lastMechStanding);
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ElysianAegis>());
             }
-            
-            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
         }
     }
 }

@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Vector2 projectileSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * -32f, 12f);
                     for (int i = 0; i < 6; i++)
                     {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 12.5f;
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 12f;
                         Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
                     }
                 }

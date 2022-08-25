@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 250;
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 600;
             if (CalamityGlobalNPC.holyBoss == -1 || !Main.npc[CalamityGlobalNPC.holyBoss].active || Main.npc[CalamityGlobalNPC.holyBoss].type != ModContent.NPCType<ProvidenceBoss>())
             {
                 Projectile.Kill();
@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             if (SpikesShouldExtendOutward)
-                SpikeReach = MathHelper.Clamp(SpikeReach + 8f, 0f, 50f);
+                SpikeReach = MathHelper.Clamp(SpikeReach + 8f, 0f, 125f);
 
             // Create a visual warning effect on the ground before releasing spikes so that the player knows to avoid it.
             else
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SpikeReach = 0f;
             }
 
-            for (int i = 12; i < 50; i++)
+            for (int i = 12; i < 125; i++)
             {
                 if (Collision.SolidCollision(Projectile.Center + SpikeDirection.ToRotationVector2() * i, 1, 1))
                 {

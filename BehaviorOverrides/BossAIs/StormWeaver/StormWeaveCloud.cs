@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 for (int i = 0; i < Projectile.width / 105f; i++)
                 {
-                    if (!Main.rand.NextBool(92))
+                    if (!Main.rand.NextBool(104))
                         continue;
 
                     SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, Projectile.Center);
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Variant <= 0f || Variant > 4f)
+            if (Variant is <= 0f or > 4f)
                 return false;
 
             Texture2D texture = ModContent.Request<Texture2D>($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}").Value;

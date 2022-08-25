@@ -182,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 float idealHoverSpeed = MathHelper.Lerp(33.5f, 50f, attackTimer / hoverRedirectTime);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
-                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true).MoveTowards(idealVelocity, 0.12f) * idealVelocity.Length();
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true).MoveTowards(idealVelocity.SafeNormalize(Vector2.Zero), 0.12f) * idealVelocity.Length();
 
                 // Stop hovering if close to the hover destination
                 if (npc.WithinRange(hoverDestination, 80f))
@@ -198,7 +198,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Determine a charge velocity to adjust to.
             if (attackTimer == hoverRedirectTime)
             {
-                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * MathHelper.Lerp(37f, 45f, 1f - lifeRatio);
+                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * MathHelper.Lerp(34.5f, 42f, 1f - lifeRatio);
                 if (BossRushEvent.BossRushActive)
                     idealChargeVelocity *= 1.2f;
                 idealChargeVelocityX = idealChargeVelocity.X;
@@ -457,20 +457,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 npc.Infernum().ExtraAI[i] = 0f;
 
             ref float attackState = ref npc.ai[1];
-            float oldAttackState = npc.ai[1];
-            WeightedRandom<float> newStatePicker = new(Main.rand);
-            newStatePicker.Add((int)StormWeaverAttackType.NormalMove, 1.5);
-            newStatePicker.Add((int)StormWeaverAttackType.LightningCharge);
-            newStatePicker.Add((int)StormWeaverAttackType.StaticChargeup);
-            newStatePicker.Add((int)StormWeaverAttackType.IceStorm);
+            ref float attackCycle = ref npc.Infernum().ExtraAI[5];
 
-            if (lifeRatio < 0.4f)
-                newStatePicker.Add((int)StormWeaverAttackType.StormWeave, 5D);
-
-            do
-                attackState = newStatePicker.Get();
-            while (attackState == oldAttackState);
-
+            attackCycle++;
+            switch ((int)attackCycle % 5)
+            {
+                case 0:
+                    attackState = (int)StormWeaverAttackType.NormalMove;
+                    break;
+                case 1:
+                    attackState = (int)StormWeaverAttackType.LightningCharge;
+                    break;
+                case 2:
+                    attackState = (int)StormWeaverAttackType.IceStorm;
+                    break;
+                case 3:
+                    attackState = (int)(lifeRatio < 0.4f ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
+                    break;
+                case 4:
+                    attackState = (int)StormWeaverAttackType.StaticChargeup;
+                    break;
+            }
+            
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<StormWeaveCloud>(), ModContent.ProjectileType<WeaverSpark2>());
 
             npc.TargetClosest();

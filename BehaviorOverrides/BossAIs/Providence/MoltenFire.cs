@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -32,12 +33,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             if (Projectile.velocity.Length() < 14f)
                 Projectile.velocity *= 1.02f;
-
+            
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Main.dayTime)
+                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
+            else
+                target.AddBuff(ModContent.BuffType<Nightwither>(), 60);
         }
 
         public override bool PreDraw(ref Color lightColor)

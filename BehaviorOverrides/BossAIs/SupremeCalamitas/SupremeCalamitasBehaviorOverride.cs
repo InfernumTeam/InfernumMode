@@ -468,7 +468,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Hover to the side of the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 700f;
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 840f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.2f);
 
             if (attackTimer >= shootDelay)

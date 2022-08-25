@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,6 +51,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 holyFire.scale = 1.7f;
                 holyFire.noGravity = true;
             }
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Main.dayTime)
+                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
+            else
+                target.AddBuff(ModContent.BuffType<Nightwither>(), 60);
         }
 
         public override bool PreDraw(ref Color lightColor)

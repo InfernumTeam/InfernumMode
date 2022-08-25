@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
-            if (attackTimer >= 240f)
+            if (attackTimer >= 180f)
                 SelectNewAttack(npc);
         }
 
@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 450f)
+            if (attackTimer >= 300f)
                 SelectNewAttack(npc);
         }
 
@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 320f)
+            if (attackTimer >= 270f)
                 SelectNewAttack(npc);
         }
 

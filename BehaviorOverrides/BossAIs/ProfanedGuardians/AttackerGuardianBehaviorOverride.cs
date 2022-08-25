@@ -77,7 +77,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float attackDelay = ref npc.ai[3];
             ref float shouldHandsBeInvisibleFlag = ref npc.localAI[2];
+
+            // Wait before attacking.
+            if (attackDelay < 90f)
+            {
+                attackDelay++;
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 6f, 0.025f);
+                npc.dontTakeDamage = true;
+                return false;
+            }
 
             shouldHandsBeInvisibleFlag = 0f;
             switch ((AttackGuardianAttackState)attackState)
@@ -224,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reel back.
             if (attackTimer == 30f)
             {
-                npc.Center = target.Center + (MathHelper.PiOver2 * Main.rand.Next(4)).ToRotationVector2() * 720f;
+                npc.Center = target.Center + (MathHelper.PiOver2 * Main.rand.Next(4)).ToRotationVector2() * 600f;
                 npc.velocity = -npc.SafeDirectionTo(target.Center);
                 npc.rotation = npc.AngleTo(target.Center);
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -336,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static void DoBehavior_SpearBarrage(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int teleportDelay = 30;
-            int reelbackTime = 30;
+            int reelbackTime = 38;
             int chargeTime = 50;
             int slowdownTime = 25;
             int frontSpearCount = 5;
@@ -398,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
 
                 npc.Opacity = 1f;
-                npc.Center = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 960f;
+                npc.Center = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 700f;
                 npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.spriteDirection = npc.direction;
                 npc.velocity = Vector2.Zero;
@@ -496,7 +506,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (horizontalOffset == 0f)
                 horizontalOffset = Math.Sign((npc.Center - target.Center).X);
 
-            Vector2 destination = target.Center + new Vector2(horizontalOffset * 620f, -300f);
+            Vector2 destination = target.Center + new Vector2(horizontalOffset * 600f, -300f);
             Vector2 flyVelocity = (destination - npc.Center).SafeNormalize(Vector2.UnitY) * 17f;
 
             // Hover in place to the top left/right of the target. Firing is handled by the hand's AI.

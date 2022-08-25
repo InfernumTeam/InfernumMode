@@ -489,6 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_CrystalSpikes(NPC npc, bool inPhase2, bool inPhase3, Rectangle arenaArea, ref float attackTimer)
         {
+            SelectNextAttack(npc);
             int spikeCreationDelay = 110;
             int spikeCreationRate = 45;
             int spikeCount = 3;
@@ -598,12 +599,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int explosionCountdown = (int)(bombShootRate * blastShootCount - universalAttackTimer) + explosionDelay;
             if (attackTimer >= bombShootRate && !npc.WithinRange(target.Center, 200f))
             {
-                if (bombShootCounter >= blastShootCount)
-                {
-                    SelectNextAttack(npc);
-                    return;
-                }
-
                 if (explosionCountdown >= 160f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
@@ -635,6 +630,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     }
                 }
             }
+
+            if (explosionCountdown <= 0)
+                SelectNextAttack(npc);
+
             universalAttackTimer++;
         }
 

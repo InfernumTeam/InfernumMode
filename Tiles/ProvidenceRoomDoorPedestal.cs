@@ -130,7 +130,7 @@ namespace InfernumMode.Tiles
                 Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason($"{Main.LocalPlayer.name} was somehow impaled by a pillar of crystals."), 100, 0);
                 Main.LocalPlayer.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
-            Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = Utils.Remap(Main.LocalPlayer.Distance(bottom), 750f, 180f, 0f, 0.4f);
+            Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = Utils.Remap(Main.LocalPlayer.Distance(bottom), 750f, 100f, 0f, 0.4f);
         }
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)

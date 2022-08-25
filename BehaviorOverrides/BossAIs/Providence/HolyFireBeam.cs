@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -70,8 +71,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-        
-
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
@@ -89,6 +88,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         }
 
         public override bool ShouldUpdatePosition() => false;
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Main.dayTime)
+                target.AddBuff(ModContent.BuffType<HolyFlames>(), 360);
+            else
+                target.AddBuff(ModContent.BuffType<Nightwither>(), 180);
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {

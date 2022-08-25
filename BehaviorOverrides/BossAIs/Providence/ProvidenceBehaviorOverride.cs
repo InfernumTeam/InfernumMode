@@ -267,6 +267,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     npc.ai[2] = -1f;
                     SelectNextAttack(npc);
+
+                    Color textColor = Main.dayTime ? Color.Yellow : Color.Lerp(Color.Cyan, Color.Lime, 0.15f);
+                    string text = "The blazing air rises...";
+                    if (!Main.dayTime)
+                        text = "The blue flames roar...";
+
+                    Utilities.DisplayText(text, textColor);
                 }
 
                 npc.Opacity = 1f;

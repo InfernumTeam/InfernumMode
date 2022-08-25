@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public static bool ReadyToUseBuffedAI => OverridingListManager.Registered<ProvidenceNPC>();
+        public static bool ReadyToUseBuffedAI => false;
 
         #region Enumerations
         public enum CloneAttackType

@@ -1,4 +1,5 @@
 using CalamityMod.Systems;
+using CalamityMod.World;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +18,12 @@ namespace InfernumMode.Systems
         public override bool Enabled
         {
             get => WorldSaveSystem.InfernumMode;
-            set => WorldSaveSystem.InfernumMode = value;
+            set
+            {
+                WorldSaveSystem.InfernumMode = value;
+                if (value)
+                    CalamityWorld.revenge = true;
+            }
         }
 
         private Asset<Texture2D> _texture;
@@ -46,7 +52,7 @@ namespace InfernumMode.Systems
         {
             DifficultyScale = 99999999f;
             Name = "Infernum";
-            ShortDescription = "[c/B32E81:A distinct challenge for the those who seek something vastly different yet also more demanding than Death mode.]";
+            ShortDescription = "[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode. This mode does not work with Master, For the Worthy, or Fargo's Eternity Mode.]";
 
             ActivationTextKey = "Mods.InfernumMode.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.InfernumText2";

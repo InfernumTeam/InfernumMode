@@ -549,8 +549,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         fadeToRed = (float)Math.Sin(Utils.GetLerpValue(0f, 18f, attackTimer, true) * MathHelper.Pi);
 
                         npc.alpha = Utils.Clamp(npc.alpha + 10, 0, 255);
-                        if (npc.Hitbox.Intersects(target.Hitbox))
-                            target.AddBuff(BuffID.Confused, 150);
                         npc.damage = 0;
                     }
 

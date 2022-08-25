@@ -450,16 +450,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int blastShootCount = 12;
-            int totalBlobsFromBlasts = 8;
-            int blastShootRate = 27;
+            int blastShootCount = 14;
+            int totalBlobsFromBlasts = 10;
+            int blastShootRate = 24;
             float moltenBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
 
             if (!Main.dayTime)
             {
-                blastShootCount += 4;
-                totalBlobsFromBlasts += 4;
-                blastShootRate -= 13;
+                blastShootCount += 3;
+                totalBlobsFromBlasts += 3;
+                blastShootRate -= 10;
             }
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
@@ -498,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             SelectNextAttack(npc);
             int spikeCreationDelay = 110;
-            int spikeCreationRate = 45;
+            int spikeCreationRate = 40;
             int spikeCount = 3;
             float offsetPerSpike = 150f;
 
@@ -647,11 +647,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_AcceleratingCrystalFan(NPC npc, Player target, bool useSinusoidalFan, bool inPhase2, bool inPhase3, Vector2 crystalCenter, ref float attackTimer)
         {
             int crystalFireDelay = 70;
-            int crystalReleaseRate = 3;
+            int crystalReleaseRate = 2;
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
-            float maxFanOffsetAngle = 1.09f;
-            float crystalSpeed = 9.6f;
+            float maxFanOffsetAngle = 1.16f;
+            float crystalSpeed = 11.5f;
 
             if (inPhase2)
             {
@@ -667,8 +667,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             if (!Main.dayTime)
             {
-                crystalReleaseRate--;
-                maxFanOffsetAngle += 0.3f;
+                crystalReleaseRate = 1;
+                maxFanOffsetAngle += 0.24f;
                 crystalSpeed += 4f;
             }
 
@@ -849,8 +849,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int shootDelay = 90;
             int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
-            int crystalBurstShootRate = (int)MathHelper.Lerp(36f, 24f, 1f - lifeRatio);
-            int totalCrystalsPerBurst = 24;
+            int crystalBurstShootRate = (int)MathHelper.Lerp(32f, 20f, 1f - lifeRatio);
+            int totalCrystalsPerBurst = 28;
             int transitionDelay = 120;
 
             if (inPhase2)
@@ -864,8 +864,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             
             if (!Main.dayTime)
             {
-                crystalBurstShootRate -= 6;
-                totalCrystalsPerBurst += 7;
+                crystalBurstShootRate -= 4;
+                totalCrystalsPerBurst += 5;
             }
             
             ref float burstTimer = ref npc.Infernum().ExtraAI[2];
@@ -967,9 +967,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_CrystalBladesWithLaser(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int laserShootDelay = 180;
-            int bladeRelaseRate = 45;
+            int bladeRelaseRate = 38;
             int laserShootTime = HolyFireBeam.Lifetime;
-            float bladeSpeed = 9.6f;
+            float bladeSpeed = 11.25f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
             
             if (!Main.dayTime)
@@ -1139,17 +1139,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_HolyBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int blastShootCount = 8;
-            int blastShootRate = 40;
-            int boltCount = 9;
-            float boltSpeed = 10f;
+            int blastShootCount = 11;
+            int blastShootRate = 32;
+            int boltCount = 11;
+            float boltSpeed = 11f;
             float holyBlastSpeed = MathHelper.Lerp(14f, 21f, 1f - lifeRatio);
 
             if (!Main.dayTime)
             {
-                blastShootCount += 5;
-                blastShootRate -= 15;
-                boltCount += 5;
+                blastShootCount += 3;
+                blastShootRate -= 9;
+                boltCount += 3;
                 holyBlastSpeed += 3f;
                 boltSpeed += 4f;
             }

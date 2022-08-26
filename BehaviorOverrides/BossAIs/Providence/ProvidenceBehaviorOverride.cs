@@ -190,6 +190,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.dontTakeDamage = true;
                 npc.velocity *= 0.9f;
 
+                // Move towards the player if inside of walls, to ensure that the loot is obtainable.
+                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    npc.Center = npc.Center.MoveTowards(target.Center, 10f);
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int shootRate = (int)MathHelper.Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
@@ -1402,7 +1406,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         }
 
         // Visceral rage. Debugging doesn't work for unexplained reasons due to local functions unless this external method is used.
-        public static void DrawProvidenceWings(NPC npc, SpriteBatch spriteBatch, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
+        public static void DrawProvidenceWings(NPC npc, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
         {
             Color deathEffectColor = new(6, 6, 6, 0);
             float deathEffectInterpolant = Utils.GetLerpValue(0f, 35f, npc.Infernum().ExtraAI[6], true);
@@ -1525,7 +1529,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
 
                 // Draw the wings.
-                DrawProvidenceWings(npc, Main.spriteBatch, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
+                DrawProvidenceWings(npc, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
 
                 // Draw the crystals. They become more and more rainbow as Providence gets closer to death.
                 // This effect fades away as she burns.

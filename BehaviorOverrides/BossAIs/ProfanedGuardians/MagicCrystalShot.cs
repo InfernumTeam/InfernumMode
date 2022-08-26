@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            for (int i = 0; i < Projectile.oldPos.Length / 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 if (targetHitbox.Intersects(Utils.CenteredRectangle(Projectile.oldPos[i] + Projectile.Size * 0.5f, Projectile.Size)))
                     return true;
@@ -111,11 +111,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
             if (Projectile.timeLeft > 15)
                 Projectile.timeLeft = 15;
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
     }
 }

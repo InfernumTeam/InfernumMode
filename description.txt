@@ -1,10 +1,10 @@
 An extension mod for Calamity that adds an extra difficulty - Infernum
 
-This difficulty is harder than Death mode and can be activated with the Infernal Chalice when Revengeance Mode is active.
+This difficulty is harder than Death mode and can be activated with the difficulty selection UI in Calamity is active.
 The primary focus of the mod is expansive reworking of boss AIs.
 
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.
 Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy.
 
-NOTE: As of now, only Pre-HM and HM boss AIs are included, and bosses may be subject to rebalancing.
+NOTE: As of now, only Pre-HM, HM, and some Post-ML boss AIs are included, and bosses may be subject to rebalancing.
 Furthermore, the mod is not supported for multiplayer at this time.

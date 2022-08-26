@@ -569,9 +569,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_HolyBombs(NPC npc, Player target, float lifeRatio, bool inPhase2, bool inPhase3, ref float attackTimer)
         {
-            int blastShootCount = 6;
-            int boltCount = 11;
-            int bombShootRate = 84;
+            int blastShootCount = 5;
+            int boltCount = 9;
+            int bombShootRate = 96;
             int explosionDelay = 120;
             float boltSpeed = 10f;
             float bombExplosionRadius = 1500f;
@@ -626,7 +626,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         int fireBoltDamage = Main.dayTime ? 220 : 335;
                         for (int i = 0; i < boltCount; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.59f, 0.59f, i / (float)(boltCount - 1f));
+                            float offsetAngle = MathHelper.Lerp(-0.64f, 0.64f, i / (float)(boltCount - 1f));
                             Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * boltSpeed;
                             Utilities.NewProjectileBetter(npc.Center, boltShootVelocity, ModContent.ProjectileType<MoltenFire>(), fireBoltDamage, 0f);
                         }
@@ -650,8 +650,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int crystalReleaseRate = 2;
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
-            float maxFanOffsetAngle = 1.16f;
-            float crystalSpeed = 11.5f;
+            float maxFanOffsetAngle = 1.06f;
+            float crystalSpeed = 13.25f;
 
             if (inPhase2)
             {
@@ -969,8 +969,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int laserShootDelay = 180;
             int bladeRelaseRate = 38;
             int laserShootTime = HolyFireBeam.Lifetime;
-            float bladeSpeed = 11.25f;
-            float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
+            float bladeSpeed = 12f;
+            float maxLaserAngularVelocity = MathHelper.ToRadians(0.78f + (1f - lifeRatio) * 0.195f);
             
             if (!Main.dayTime)
             {
@@ -1140,8 +1140,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_HolyBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int blastShootCount = 11;
-            int blastShootRate = 32;
-            int boltCount = 11;
+            int blastShootRate = 36;
+            int boltCount = 9;
             float boltSpeed = 11f;
             float holyBlastSpeed = MathHelper.Lerp(14f, 21f, 1f - lifeRatio);
 
@@ -1166,6 +1166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 if (blastShootCounter >= blastShootCount)
                 {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<MoltenFire>(), ModContent.ProjectileType<HolyBlast>(), ModContent.ProjectileType<HolyFire2>());
                     SelectNextAttack(npc);
                     return;
                 }
@@ -1184,7 +1185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * boltSpeed;
                         Utilities.NewProjectileBetter(npc.Center, boltShootVelocity, ModContent.ProjectileType<MoltenFire>(), fireDamage, 0f);
                     }
-
+                    
                     attackTimer = 0f;
                     blastShootCounter++;
                     npc.netUpdate = true;

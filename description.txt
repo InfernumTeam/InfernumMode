@@ -1,6 +1,6 @@
 An extension mod for Calamity that adds an extra difficulty - Infernum
 
-This difficulty is harder than Death mode and can be activated with the difficulty selection UI in Calamity is active.
+This difficulty is harder than Death mode and can be activated with the difficulty selection UI in Calamity.
 The primary focus of the mod is expansive reworking of boss AIs.
 
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.

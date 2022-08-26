@@ -1151,8 +1151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             if (!Main.dayTime)
             {
-                blastShootCount += 3;
-                blastShootRate -= 9;
+                blastShootRate -= 3;
                 boltCount += 3;
                 holyBlastSpeed += 3f;
                 boltSpeed += 4f;

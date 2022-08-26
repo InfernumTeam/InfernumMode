@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -42,9 +43,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Weakly home in on the target before accelerating.
             if (Time < 135f)
             {
+                float flySpeed = BossRushEvent.BossRushActive ? 19.5f : 14f;
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 if (!Projectile.WithinRange(target.Center, 200f))
-                    Projectile.velocity = (Projectile.velocity * 39f + Projectile.SafeDirectionTo(target.Center) * 14f) / 40f;
+                    Projectile.velocity = (Projectile.velocity * 39f + Projectile.SafeDirectionTo(target.Center) * flySpeed) / 40f;
             }
             else if (Projectile.velocity.Length() < 23.5f)
                 Projectile.velocity *= 1.015f;

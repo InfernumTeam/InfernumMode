@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
@@ -76,6 +77,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public override void UpdateLaserMotion()
         {
             float spinSpeed = Utils.GetLerpValue(0f, 60f, Time, true) * 0.016f;
+            if (BossRushEvent.BossRushActive)
+                spinSpeed *= 1.64f;
+
             Projectile.velocity = Projectile.velocity.RotatedBy(spinSpeed);
         }
 

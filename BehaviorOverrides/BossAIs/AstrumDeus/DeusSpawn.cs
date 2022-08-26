@@ -80,9 +80,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             // If the spawn shouldn't orbit deus, have it weakly home in on targets and do damage again.
+            float flySpeed = BossRushEvent.BossRushActive ? 28f : 19.5f;
             NPC.damage = NPC.defDamage;
             NPC.target = astrumDeus.target;
-            NPC.velocity = (NPC.velocity * 59f + NPC.SafeDirectionTo(Target.Center) * 19.5f) / 60f;
+            NPC.velocity = (NPC.velocity * 59f + NPC.SafeDirectionTo(Target.Center) * flySpeed) / 60f;
             NPC.spriteDirection = (NPC.velocity.X > 0f).ToDirectionInt();
             NPC.rotation = NPC.rotation.AngleLerp(NPC.velocity.X * 0.02f, 0.25f);
 

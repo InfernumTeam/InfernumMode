@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Shadow Demon");
+            DisplayName.SetDefault("Shadow Hydra");
         }
 
         public override void SetDefaults()

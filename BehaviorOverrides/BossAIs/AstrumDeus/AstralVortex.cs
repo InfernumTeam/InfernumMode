@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
@@ -62,11 +63,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Move towards the nearest player and try to stay near the other 
             if (Projectile.velocity.Length() > 0.001f)
             {
+                float generalSpeedFactor = 1f;
+                float flameSpeed = 9f;
                 float flyTogetherInterpolant = Utils.GetLerpValue(ScaleFadeinTime + 180f, ScaleFadeinTime + 225f, Timer, true);
-                if (!Projectile.WithinRange(otherVortex.Center, MathHelper.Clamp(1100f - Timer * 2f, 100f, 1100f)))
-                    Projectile.velocity += Projectile.SafeDirectionTo(otherVortex.Center) * 1.45f;
 
-                if (Projectile.velocity.Length() < 17f)
+                if (BossRushEvent.BossRushActive)
+                {
+                    generalSpeedFactor = 1.55f;
+                    flameSpeed = 16f;
+                }
+
+                if (!Projectile.WithinRange(otherVortex.Center, MathHelper.Clamp(1100f - Timer * 2f, 100f, 1100f)))
+                    Projectile.velocity += Projectile.SafeDirectionTo(otherVortex.Center) * generalSpeedFactor * 1.45f;
+
+                if (Projectile.velocity.Length() < generalSpeedFactor * 17f)
                 {
                     Vector2 vortexOffset = otherVortex.Center - Projectile.Center;
                     if (Math.Abs(vortexOffset.X) < 0.01f)
@@ -76,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
                     float minPushSpeed = MathHelper.Lerp(0.02f, 0.08f, flyTogetherInterpolant);
                     Vector2 force = (Vector2.One * (flyTogetherInterpolant * 3f + 1f) * 0.4f / vortexOffset + Projectile.SafeDirectionTo(otherVortex.Center) * minPushSpeed * 0.25f).ClampMagnitude(minPushSpeed, 20f);
-                    Projectile.velocity += force + Projectile.SafeDirectionTo(Target.Center) * 0.24f;
+                    Projectile.velocity += force * generalSpeedFactor + Projectile.SafeDirectionTo(Target.Center) * generalSpeedFactor * 0.24f;
                 }
                 else
                     Projectile.velocity *= 0.9f;
@@ -90,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                         SoundEngine.PlaySound(SoundID.Item92, Projectile.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 crystalVelocity = (crystalSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 9f;
+                            Vector2 crystalVelocity = (crystalSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * flameSpeed;
                             Utilities.NewProjectileBetter(crystalSpawnPosition, crystalVelocity, ModContent.ProjectileType<AstralFlame2>(), 200, 0f);
                         }
                     }

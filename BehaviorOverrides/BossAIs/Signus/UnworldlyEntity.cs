@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             // Charge after this.
             else
             {
-                Vector2 idealVelocity = NPC.SafeDirectionTo(Target.Center) * 17f;
+                Vector2 idealVelocity = NPC.SafeDirectionTo(Target.Center) * 12.75f;
                 NPC.velocity = (NPC.velocity * 29f + idealVelocity) / 30f;
                 NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 0.15f);
                 NPC.rotation = NPC.rotation.AngleLerp(NPC.velocity.X * 0.02f, 0.15f);
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         float ai0 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
                         float ai1 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
 
-                        int tentacle = Projectile.NewProjectile(NPC.GetSource_FromAI(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 250, 0f);
+                        int tentacle = Projectile.NewProjectile(NPC.GetSource_FromAI(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 90, 0f);
                         if (Main.projectile.IndexInRange(tentacle))
                         {
                             Main.projectile[tentacle].ai[0] = ai0;

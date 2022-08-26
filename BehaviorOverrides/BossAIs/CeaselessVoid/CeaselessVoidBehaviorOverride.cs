@@ -275,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 SelectNewAttack(npc);
             }
         }
-
+        
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int chargeTime = 42;
@@ -296,6 +296,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 scaleFactorDelta += 0.8f;
                 chargeDistance += 900f;
             }
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 6;
+                scaleFactorDelta += 0.6f;
+            }
+
             if (enraged)
                 scaleFactorDelta = 1.45f;
 
@@ -377,6 +383,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
             if (enraged)
                 initialBarrageSpeed += 7.5f;
+            if (BossRushEvent.BossRushActive)
+                initialBarrageSpeed += 8f;
 
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float playerShootDirection = ref npc.Infernum().ExtraAI[1];
@@ -467,6 +475,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 burstShootRate -= 8;
                 laserBurstCount += 3;
                 burstShootSpeed += 7.5f;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                laserBurstCount += 2;
+                burstShootSpeed += 8.4f;
             }
 
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.AstrumDeus;
@@ -56,6 +57,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2.4f, 10f);
+                    if (BossRushEvent.BossRushActive)
+                        sparkVelocity *= 1.6f;
+
                     Utilities.NewProjectileBetter(Projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), 200, 0f);
                 }
             }

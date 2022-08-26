@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Particles;
@@ -81,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                    Vector2 flyVelocity = Projectile.SafeDirectionTo(target.Center) * 19.5f;
+                    Vector2 flyVelocity = Projectile.SafeDirectionTo(target.Center) * (BossRushEvent.BossRushActive ? 28f : 19.5f);
                     Utilities.NewProjectileBetter(Projectile.Center + flyVelocity * 10f, flyVelocity, ModContent.ProjectileType<DarkBoltLarge>(), 200, 0f);
                 }
             }

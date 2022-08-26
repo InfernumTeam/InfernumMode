@@ -110,15 +110,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int fadeInTime = 12;
             int riseTime = 25;
-            int chargeTime = 32;
-            int knifeReleaseRate = 6;
+            int chargeTime = 28;
+            int knifeReleaseRate = 5;
             int fadeOutTime = 25;
             int chargeCount = 3;
 
             if (lifeRatio < Phase2LifeRatio)
             {
-                chargeTime -= 7;
-                knifeReleaseRate -= 2;
+                chargeTime -= 3;
+                knifeReleaseRate--;
             }
             if (lifeRatio < Phase3LifeRatio)
             {
@@ -234,6 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             {
                 // Attempt to hover over the target.
                 case 0:
+                    bool dontTransitionYet = npc.WithinRange(target.Center, 200f);
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 375f, -200f);
                     Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 20.5f;
                     npc.velocity = (npc.velocity * 24f + idealVelocity) / 25f;
@@ -241,7 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.rotation = npc.velocity.X * 0.02f;
 
-                    if (attackTimer > 55f || npc.WithinRange(hoverDestination, 90f))
+                    if ((attackTimer > 60f || npc.WithinRange(hoverDestination, 300f)) && !dontTransitionYet)
                     {
                         attackTimer = 0f;
                         attackSubstate++;
@@ -775,7 +776,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             }
 
             Player target = Main.player[npc.target];
-            drawInstance(npc.Center, true, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+            drawInstance(npc.Center, false, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
 
             Vector2 cloneDrawPosition = new(target.Center.X, npc.Center.Y);
             cloneDrawPosition.X += target.Center.X - npc.Center.X;

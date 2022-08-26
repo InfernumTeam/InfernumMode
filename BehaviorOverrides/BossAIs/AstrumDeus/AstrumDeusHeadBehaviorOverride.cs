@@ -337,6 +337,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (phase3)
                 meteorReleaseRate--;
 
+            if (BossRushEvent.BossRushActive)
+            {
+                meteorReleaseRate--;
+                meteorSpeed += 3.5f;
+            }
+            
             // Apply distance-enrage buffs.
             meteorReleaseRate = Utils.Clamp((int)(meteorReleaseRate - beaconAngerFactor * 5f), 3, 20);
             meteorSpeed = MathHelper.Lerp(meteorSpeed, 24.5f, beaconAngerFactor);
@@ -505,6 +511,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 flameSpawnRate -= 12;
             if (phase3)
                 flameSpawnRate -= 15;
+            if (BossRushEvent.BossRushActive)
+                flameSpawnRate -= 8;
 
             ref float lemniscateCenterX = ref npc.Infernum().ExtraAI[0];
             ref float lemniscateCenterY = ref npc.Infernum().ExtraAI[1];
@@ -608,7 +616,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
                     foreach (Projectile vortex in Utilities.AllProjectilesByID(ModContent.ProjectileType<AstralVortex>()))
                     {
-                        vortex.velocity = vortex.SafeDirectionTo(target.Center) * 11f;
+                        vortex.velocity = vortex.SafeDirectionTo(target.Center) * (BossRushEvent.BossRushActive ? 24f : 11f);
                         vortex.ModProjectile<AstralVortex>().FlameSpawnRate = flameSpawnRate;
                         vortex.netUpdate = true;
                     }
@@ -630,7 +638,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                        Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * (BossRushEvent.BossRushActive ? 20.5f : 13f);
                         Utilities.NewProjectileBetter(npc.Center + plasmaShootVelocity * 3f, plasmaShootVelocity, ModContent.ProjectileType<AstralPlasmaFireball>(), 200, 0f);
                         npc.netUpdate = true;
                     }
@@ -668,6 +676,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 plasmaShootRate -= 10;
                 crystalShootRate -= 6;
                 flySpeed *= 1.25f;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                flySpeed += 8.4f;
+                plasmaShootSpeed += 7f;
             }
 
             // Fly near the target and snap at them if sufficiently close.
@@ -733,6 +746,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             float plasmaShootSpeed = 12f;
             float flySpeed = 17.25f;
             float flyTurnSpeed = 0.035f;
+            float spawnFlySpeed = 9f;
 
             if (phase2)
             {
@@ -743,6 +757,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 planetCount += 2;
                 plasmaShootRate -= 9;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                plasmaShootSpeed += 6.5f;
+                spawnFlySpeed += 7f;
             }
 
             int deusSpawnID = ModContent.NPCType<DeusSpawn>();
@@ -810,7 +829,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                         continue;
 
                     Main.npc[i].ai[3] = 1f;
-                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * 9f;
+                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * spawnFlySpeed;
                     Main.npc[i].netUpdate = true;
                 }
             }

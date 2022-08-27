@@ -90,6 +90,10 @@ namespace InfernumMode
             if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedShard>() || item.type == ModContent.ItemType<ProfanedCore>()))
                 return false;
 
+            bool illegalItemForProvArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb;
+            if (illegalItemForProvArena && player.Infernum().InProfanedArenaAntiCheeseZone)
+                return false;
+
             return base.CanUseItem(item, player);
         }
         public override bool? UseItem(Item item, Player player)/* tModPorter Suggestion: Return null instead of false */
@@ -98,6 +102,7 @@ namespace InfernumMode
             {
                 NPC.NewNPC(player.GetSource_ItemUse(item), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
             }
+
             return base.UseItem(item, player);
         }
 

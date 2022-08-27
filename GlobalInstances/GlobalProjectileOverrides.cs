@@ -5,6 +5,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -46,6 +47,14 @@ namespace InfernumMode.GlobalInstances
             // h.
             bool isTomb = projectile.type is ProjectileID.Tombstone or ProjectileID.Gravestone or ProjectileID.RichGravestone1 or ProjectileID.RichGravestone2 or 
                 ProjectileID.RichGravestone3 or ProjectileID.RichGravestone4 or ProjectileID.RichGravestone4 or ProjectileID.Headstone;
+
+            bool illegalRocket = projectile.type is ProjectileID.DryRocket or ProjectileID.DryGrenade or ProjectileID.DryMine or ProjectileID.DrySnowmanRocket;
+            illegalRocket |= projectile.type is ProjectileID.WetRocket or ProjectileID.WetGrenade or ProjectileID.WetMine or ProjectileID.WetBomb or ProjectileID.WetSnowmanRocket;
+            illegalRocket |= projectile.type is ProjectileID.HoneyRocket or ProjectileID.HoneyGrenade or ProjectileID.HoneyMine or ProjectileID.HoneyBomb or ProjectileID.HoneySnowmanRocket;
+            illegalRocket |= projectile.type is ProjectileID.LavaRocket or ProjectileID.LavaGrenade or ProjectileID.LavaMine or ProjectileID.LavaBomb or ProjectileID.LavaSnowmanRocket;
+            if (illegalRocket && new Rectangle((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena))
+                projectile.active = false;
+
             if (isTomb)
                 projectile.active = false;
 

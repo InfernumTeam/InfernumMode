@@ -58,6 +58,20 @@ namespace InfernumMode
                 return Player.Hitbox.Intersects(arena);
             }
         }
+        public bool InProfanedArenaAntiCheeseZone
+        {
+            get
+            {
+                Rectangle arena = WorldSaveSystem.ProvidenceArena;
+                arena.X *= 16;
+                arena.Y *= 16;
+                arena.Width *= 16;
+                arena.Height *= 16;
+                arena.Inflate(1080, 1080);
+
+                return Player.Hitbox.Intersects(arena);
+            }
+        }
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
@@ -144,7 +158,7 @@ namespace InfernumMode
             MusicMuffleFactor = 0f;
 
             // Disable block placement and destruction in the profaned arena.
-            if (InProfanedArena)
+            if (InProfanedArenaAntiCheeseZone)
             {
                 Player.AddBuff(BuffID.NoBuilding, 10);
                 Player.noBuilding = true;

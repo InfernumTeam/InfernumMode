@@ -1,4 +1,5 @@
 using CalamityMod.NPCs.Providence;
+using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Projectiles;
@@ -17,6 +18,8 @@ namespace InfernumMode.Systems
             NetcodeHandler.Update();
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
+            if (CalamityWorld.death)
+                CalamityWorld.revenge = true;
 
             bool arenaShouldApply = Utilities.AnyProjectiles(ModContent.ProjectileType<ProvidenceSummonerProjectile>()) || NPC.AnyNPCs(ModContent.NPCType<Providence>());
             InfernumMode.ProvidenceArenaTimer = MathHelper.Clamp(InfernumMode.ProvidenceArenaTimer + arenaShouldApply.ToDirectionInt(), 0f, 120f);

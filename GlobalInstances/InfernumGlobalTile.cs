@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using System.Linq;
 using Terraria;
@@ -28,12 +29,18 @@ namespace InfernumMode.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)))
+                return false;
+
             return base.CanExplode(i, j, type);
         }
 
         public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged)
         {
             if (ShouldNotBreakDueToAboveTile(i, j))
+                return false;
+
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i * 16, j * 16, 16, 16)))
                 return false;
 
             return base.CanKillTile(i, j, type, ref blockDamaged);

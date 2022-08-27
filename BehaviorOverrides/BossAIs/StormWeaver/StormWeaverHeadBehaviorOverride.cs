@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -27,6 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         #region AI
 
+        public const float MaxLightningBrightness = 0.55f;
+
         public static bool PreAI(NPC npc)
         {
             // Do targeting.
@@ -39,33 +43,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);
 
-            // Start rain.
-            if (npc.localAI[0] == 0f)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    CalamityUtils.StartRain(true);
-                    Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = 160;
-                    Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedTarget = 1.56f;
-                    Main.windSpeedCurrent = Main.windSpeedTarget;
-                    Main.maxRaining = 0.9f;
-                }
-
-                npc.localAI[0] = 1f;
-            }
-
             float fadeToBlue = 0f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[1];
             ref float attackTimer = ref npc.ai[2];
+            ref float lightningSkyBrightness = ref npc.ModNPC<StormWeaverHead>().lightning;
 
             // Lol. Lmao.
             if (target.HasBuff(BuffID.Chilled))
                 target.ClearBuff(BuffID.Chilled);
             if (target.HasBuff(BuffID.Frozen))
                 target.ClearBuff(BuffID.Frozen);
+
+            lightningSkyBrightness = MathHelper.Clamp(lightningSkyBrightness - 0.05f, 0f, 1f);
+
+            if (lifeRatio < 0.1f)
+                CalamityMod.CalamityMod.StopRain();
+            else if (!Main.raining || Main.maxRaining < 0.7f)
+            {
+                CalamityUtils.StartRain(false, true);
+                Main.cloudBGActive = 1f;
+                Main.numCloudsTemp = 160;
+                Main.numClouds = Main.numCloudsTemp;
+                Main.windSpeedCurrent = 1.04f;
+                Main.windSpeedTarget = Main.windSpeedCurrent;
+                Main.maxRaining = 0.96f;
+            }
 
             switch ((StormWeaverAttackType)(int)attackState)
             {
@@ -76,23 +79,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     DoAttack_SparkBurst(npc, target, lifeRatio, attackTimer);
                     break;
                 case StormWeaverAttackType.LightningCharge:
-                    DoAttack_LightningCharge(npc, target, lifeRatio, ref attackTimer, ref fadeToBlue);
+                    DoAttack_LightningCharge(npc, target, lifeRatio, ref lightningSkyBrightness, ref attackTimer, ref fadeToBlue);
                     break;
                 case StormWeaverAttackType.StaticChargeup:
                     DoAttack_StaticChargeup(npc, target, ref attackTimer, ref fadeToBlue);
                     break;
                 case StormWeaverAttackType.IceStorm:
-                    DoAttack_IceStorm(npc, target, ref attackTimer);
+                    DoAttack_IceStorm(npc, target, ref lightningSkyBrightness, ref attackTimer);
                     break;
                 case StormWeaverAttackType.StormWeave:
-                    DoAttack_StormWeave(npc, target, ref attackTimer);
+                    DoAttack_StormWeave(npc, target, ref lightningSkyBrightness, ref attackTimer);
                     break;
             }
 
             Main.rainTime = 480;
 
             // Determine rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = (npc.position - npc.oldPosition).ToRotation() + MathHelper.PiOver2;
 
             // Determine the blue fade.
             npc.Calamity().newAI[0] = MathHelper.Lerp(280f, 400f, MathHelper.Clamp(fadeToBlue, 0f, 1f));
@@ -115,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
-            if (attackTimer >= 300f)
+            if (attackTimer >= 1f)
                 SelectNewAttack(npc);
         }
 
@@ -160,11 +163,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 450f)
+            if (attackTimer >= 360f)
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_LightningCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float fadeToBlue)
+        public static void DoAttack_LightningCharge(NPC npc, Player target, float lifeRatio, ref float lightningSkyBrightness, ref float attackTimer, ref float fadeToBlue)
         {
             int hoverRedirectTime = 240;
             Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt(), (target.Center.Y < npc.Center.Y).ToDirectionInt()) * 600f;
@@ -212,6 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 Vector2 idealChargeVelocity = new(idealChargeVelocityX, idealChargeVelocityY);
                 npc.velocity = npc.velocity.RotateTowards(idealChargeVelocity.ToRotation(), 0.08f, true) * MathHelper.Lerp(npc.velocity.Length(), idealChargeVelocity.Length(), 0.15f);
                 npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 5f);
+                lightningSkyBrightness = MathHelper.Lerp(lightningSkyBrightness, MaxLightningBrightness, 0.25f);
             }
 
             // Release lightning from behind the worm once the charge has begun.
@@ -264,9 +268,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int spinDelay = 30;
             int totalSpins = 3;
             int spinTime = 270;
-            float sparkShootSpeed = 5.6f;
             int sparkShootRate = 8;
             int orbShootRate = 75;
+            int attackTransitionDelay = 108;
+            float sparkShootSpeed = 5.6f;
             float spinSpeed = 18f;
             if (BossRushEvent.BossRushActive)
             {
@@ -285,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Attempt to move towards the target if far away from them.
             if (!npc.WithinRange(target.Center, attackStartDistanceThreshold) && attackTimer < initialAttackWaitDelay)
             {
-                float idealMoventSpeed = (npc.Distance(target.Center) - attackStartDistanceThreshold) / 45f + 24f;
+                float idealMoventSpeed = (npc.Distance(target.Center) - attackStartDistanceThreshold) / 45f + 31f;
                 npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(target.Center) * idealMoventSpeed) / 40f;
 
                 attackTimer = 0f;
@@ -303,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             // Do the spin, and create the sparks from the point at which the weaver is spinning.
-            if (attackTimer > spinDelay + initialAttackWaitDelay)
+            if (attackTimer > spinDelay + initialAttackWaitDelay && attackTimer <= spinDelay + initialAttackWaitDelay + spinTime)
             {
                 npc.velocity = npc.velocity.RotatedBy(angularSpinVelocity);
                 Vector2 spinCenter = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalSpins / MathHelper.TwoPi;
@@ -351,11 +356,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= spinDelay + initialAttackWaitDelay + spinTime)
+            if (attackTimer >= spinDelay + initialAttackWaitDelay + spinTime + attackTransitionDelay)
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_IceStorm(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_IceStorm(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int shootCount = 3;
@@ -363,22 +368,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int delayBeforeFiring = 60;
             int shootRate = delayBeforeFiring + 54;
 
-            // Lazily move towards the target.
-            if (!npc.WithinRange(target.Center, 200f))
-            {
-                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 13f;
-                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.036f, true) * idealVelocity.Length();
-            }
+            // Circle the target.
+            Vector2 flyDestination = target.Center - Vector2.UnitY.RotatedBy(attackTimer / 30f) * 630f;
+            npc.Center = npc.Center.MoveTowards(flyDestination, 22f);
+
+            Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 33f;
+            npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.036f, true) * idealVelocity.Length();
+            npc.velocity = npc.velocity.MoveTowards(idealVelocity, 4f);
+
+            // Disable contact damage.
+            npc.damage = 0;
 
             if (attackTimer % shootRate == 1f)
             {
                 // Play a sound on the player getting frost waves rained on them, as a telegraph.
                 SoundEngine.PlaySound(SoundID.Item120, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float shootOffsetAngle = Main.rand.NextFloatDirection() * MathHelper.PiOver4;
-                    for (int dx = -1750; dx < 1750; dx += shotSpacing)
+                    for (float dx = -1750; dx < 1750; dx += shotSpacing + Main.rand.NextFloatDirection() * 60f)
                     {
                         Vector2 spawnOffset = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * 1600f + shootOffsetAngle.ToRotationVector2() * dx;
                         Vector2 maxShootVelocity = Vector2.UnitY.RotatedBy(shootOffsetAngle) * 9f;
@@ -393,13 +403,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                         }
                     }
                 }
+                lightningSkyBrightness = MaxLightningBrightness;
             }
 
             if (attackTimer >= shootRate * shootCount)
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_StormWeave(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_StormWeave(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
         {
             int hoverRedirectTime = 240;
             int chargeTime = 150;
@@ -410,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 hoverDestination.Y = 300f;
 
             float chargeSpeed = cloudCoverArea / chargeTime;
-            int chargeSlowdownTime = 200;
+            int chargeSlowdownTime = 90;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
 
             // Attempt to get into position for a charge.
@@ -424,6 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 // Stop hovering if close to the hover destination
                 if (npc.WithinRange(hoverDestination, 40f))
                 {
+                    lightningSkyBrightness = MaxLightningBrightness;
                     attackTimer = hoverRedirectTime;
                     npc.netUpdate = true;
                 }
@@ -444,7 +456,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             if (attackTimer > hoverRedirectTime + chargeTime + chargeSlowdownTime)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 2000f;
                 SelectNewAttack(npc);
+            }
         }
 
         public static void SelectNewAttack(NPC npc)
@@ -479,7 +494,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     break;
             }
             
-            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<StormWeaveCloud>(), ModContent.ProjectileType<WeaverSpark2>());
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<StormWeaveCloud>());
+            foreach (Projectile spark in Utilities.AllProjectilesByID(ModContent.ProjectileType<WeaverSpark2>()))
+            {
+                spark.ai[1] = 1f;
+                spark.netUpdate = true;
+            }
 
             npc.TargetClosest();
             npc.ai[1] = (int)attackState;

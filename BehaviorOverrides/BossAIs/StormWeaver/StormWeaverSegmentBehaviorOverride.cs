@@ -41,6 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             npc.Opacity = head.Opacity;
             npc.Calamity().DR = head.Calamity().DR;
             npc.Calamity().unbreakableDR = head.Calamity().unbreakableDR;
+            npc.damage = head.damage > 0 ? npc.defDamage : 0;
 
             if (npc.type == ModContent.NPCType<StormWeaverTail>())
             {

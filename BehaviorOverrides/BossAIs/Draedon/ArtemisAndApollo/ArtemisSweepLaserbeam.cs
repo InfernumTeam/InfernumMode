@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override void AttachToSomething()
         {
-            if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<Artemis>())
+            if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<Artemis>() && Main.npc[OwnerIndex].Opacity > 0.25f)
             {
                 Vector2 fireFrom = Main.npc[OwnerIndex].Center + Vector2.UnitY * Main.npc[OwnerIndex].gfxOffY;
                 fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * 50f;

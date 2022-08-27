@@ -110,8 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int fadeInTime = 12;
             int riseTime = 25;
-            int chargeTime = 28;
-            int knifeReleaseRate = 5;
+            int chargeTime = 25;
+            int knifeReleaseRate = 4;
             int fadeOutTime = 25;
             int chargeCount = 3;
 
@@ -129,6 +129,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+            ref float shootKunaiSlower = ref npc.Infernum().ExtraAI[2];
+            ref float chargeDirection = ref npc.Infernum().ExtraAI[3];
 
             // Become invulnerable once sufficiently invisible.
             npc.dontTakeDamage = npc.Opacity < 0.4f;
@@ -161,8 +163,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.rotation = npc.velocity.X * 0.02f;
 
                     // Select a location to teleport near the target.
-                    if (attackTimer == riseTime - 10f)
+                    if (attackTimer == riseTime - 20f)
                     {
+                        chargeDirection = npc.AngleTo(target.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int telegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowDashTelegraph>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(telegraph))
+                            {
+                                Main.projectile[telegraph].ai[0] = 20f;
+                                Main.projectile[telegraph].ai[1] = chargeDirection;
+                            }
+                        }
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.velocity = Vector2.Zero;
                         npc.netUpdate = true;
@@ -172,8 +184,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     {
                         attackSubstate = 2f;
                         attackTimer = 0f;
-                        Vector2 chargeDestination = target.Center + npc.SafeDirectionTo(target.Center) * 400f;
-                        npc.velocity = npc.SafeDirectionTo(chargeDestination) * npc.Distance(chargeDestination) / chargeTime;
+                        shootKunaiSlower = npc.WithinRange(target.Center, 400f).ToInt();
+                        Vector2 chargeDestination = target.Center + chargeDirection.ToRotationVector2() * 400f;
+                        npc.velocity = chargeDirection.ToRotationVector2() * npc.Distance(chargeDestination) / chargeTime;
                         npc.netUpdate = true;
                     }
                     break;
@@ -184,6 +197,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.01f, -0.45f, 0.45f);
 
                     // Release redirecting kunai.
+                    if (shootKunaiSlower == 1f)
+                        knifeReleaseRate *= 2;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % knifeReleaseRate == knifeReleaseRate - 1f && attackTimer < chargeTime)
                     {
                         Vector2 knifeVelocity = -Vector2.UnitY * 10f;
@@ -206,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         chargeCounter++;
                         attackSubstate = 0f;
                         attackTimer = 0f;
-
+                        shootKunaiSlower = 0f;
                         if (chargeCounter >= chargeCount)
                             SelectNextAttack(npc);
 
@@ -218,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public static void DoAttack_ScytheTeleportThrow(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int totalScythesToCreate = (int)MathHelper.Lerp(13f, 24f, 1f - lifeRatio);
+            int totalScythesToCreate = (int)MathHelper.Lerp(20f, 34f, 1f - lifeRatio);
             int chargeSlowdownDelay = (int)MathHelper.Lerp(32f, 48f, 1f - lifeRatio);
             int slowdownTime = 25;
             float scytheSpread = MathHelper.SmoothStep(0.95f, 1.34f, 1f - lifeRatio);
@@ -300,20 +315,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int redirectTime = 20;
             int telegraphTime = 30;
-            int blackTime = 85;
+            int blackTime = 72;
             float maxInitialSlashDistance = 350f;
-            float slashMovementSpeed = 40f;
+            float slashMovementSpeed = 46f;
             int finalDelay = 130;
 
             if (lifeRatio < Phase2LifeRatio)
             {
-                blackTime += 10;
+                blackTime -= 10;
                 maxInitialSlashDistance -= 50f;
                 slashMovementSpeed += 4f;
             }
             if (lifeRatio < Phase3LifeRatio)
             {
-                blackTime += 5;
+                blackTime -= 5;
                 maxInitialSlashDistance -= 15f;
                 finalDelay -= 15;
             }
@@ -406,6 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         // It attempts to start at Signus' position, but will not start too far off from the target.
                         if (slashPositionX == 0f || slashPositionY == 0f)
                         {
+                            npc.Center = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 960f;
                             Vector2 startingPosition = npc.Center;
 
                             // Ensure that the starting position is never too far away from the target.
@@ -456,10 +472,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int chargeCount = 3;
             int hoverTime = 75;
-            int chargeTime = 45;
+            int chargeTime = 42;
             float chargeSpeed = 45f;
-            int slowdownTime = 20;
+            int slowdownTime = 16;
             int kunaiCount = 11;
+            float kunaiSpeed = npc.Distance(target.Center) * 0.01f + 35f;
 
             if (lifeRatio < Phase2LifeRatio)
             {
@@ -520,9 +537,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     {
                         for (int i = 0; i < kunaiCount; i++)
                         {
+                            // Don't create a kunai at the very center, to leave an opening for the player.
+                            if (i == 0)
+                                continue;
+
                             float offsetAngle = MathHelper.Lerp(-1.13f, 1.13f, i / (float)(kunaiCount - 1f));
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 35f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * kunaiSpeed;
+                            Vector2 spawnOffset = shootVelocity * 7f;
+                            if (npc.WithinRange(target.Center, 450f))
+                                spawnOffset *= 0.3f;
+
+                            if (!target.WithinRange(npc.Center + spawnOffset, 275f))
+                                Utilities.NewProjectileBetter(npc.Center + spawnOffset, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
                         }
                     }
                 }
@@ -551,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         public static void DoAttack_CosmicFlameChargeBombs(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int chargeCount = 2;
-            float inertia = 12f;
+            float inertia = 10f;
             float chargeSpeed = MathHelper.Lerp(15f, 21f, 1f - lifeRatio);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
@@ -591,7 +617,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.spriteDirection = Math.Sign(npc.velocity.X);
 
                     // Release bombs.
-                    bool canReleaseBomb = attackTimer % 15f == 14f && !npc.WithinRange(target.Center, 200f);
+                    bool canReleaseBomb = attackTimer % 12f == 11f && !npc.WithinRange(target.Center, 200f);
                     if (canReleaseBomb)
                     {
                         SoundEngine.PlaySound(SoundID.Item73, npc.Center);
@@ -604,16 +630,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     }
 
                     Vector2 idealFlyDirection = (target.Center - npc.Center).SafeNormalize(Vector2.UnitY);
-
                     if (!npc.WithinRange(target.Center, 250f))
                     {
                         npc.velocity = npc.velocity.ClampMagnitude(8f, 42f);
                         npc.velocity = (npc.velocity * (inertia - 1f) + idealFlyDirection * (npc.velocity.Length() + 0.15f * inertia)) / inertia;
                     }
                     else
-                        npc.velocity *= 1.01f;
+                        npc.velocity *= 1.0125f;
 
-                    if (attackTimer >= 360f || ((target.Center.Y < npc.Center.Y - 200f) && attackTimer >= 90f))
+                    if (attackTimer >= 300f || ((target.Center.Y < npc.Center.Y - 200f) && attackTimer >= 90f))
                     {
                         attackTimer = 0f;
                         attackSubstate = 0f;
@@ -640,12 +665,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 npc.rotation = npc.velocity.X * 0.02f;
                 npc.Opacity = Utils.GetLerpValue(0f, 35f, attackTimer, true);
                 if (attackTimer == 1f)
-                    npc.Center = target.Center - Vector2.UnitY * 350f;
+                    npc.Center = target.Center - Vector2.UnitY * 440f;
                 return;
             }
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            // Disable contact damage.
+            npc.damage = 0;
 
             // And create entities.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % entitySummonRate == entitySummonRate - 1f)
@@ -704,7 +732,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Texture2D NPCTexture;
                 Texture2D glowMaskTexture;
 
-                int afterimageCount = 5;
                 Rectangle frame = npc.frame;
                 int frameCount = Main.npcFrameCount[npc.type];
 
@@ -712,7 +739,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 {
                     NPCTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt2").Value;
                     glowMaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt2Glow").Value;
-                    afterimageCount = 10;
                     int frameY = 94 * (int)(npc.frameCounter / 12.0);
                     if (frameY >= 94 * 6)
                         frameY = 0;
@@ -722,7 +748,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 {
                     NPCTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt").Value;
                     glowMaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAltGlow").Value;
-                    afterimageCount = 7;
                 }
                 else
                 {
@@ -735,48 +760,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 float rotation = npc.rotation * canDrawAfterimages.ToDirectionInt();
                 float offsetY = npc.gfxOffY;
 
-                if (canDrawAfterimages && CalamityConfig.Instance.Afterimages)
-                {
-                    for (int i = 1; i < afterimageCount; i += 2)
-                    {
-                        Color afterimageColor = lightColor;
-                        afterimageColor = Color.Lerp(afterimageColor, Color.White, 0.5f);
-                        afterimageColor = npc.GetAlpha(afterimageColor);
-                        afterimageColor *= (afterimageCount - i) / 15f;
-                        Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                        afterimageDrawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
-                        afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        Main.spriteBatch.Draw(NPCTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
-                    }
-                }
-
                 Vector2 drawPosition = baseDrawPosition - Main.screenPosition;
                 drawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
                 drawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
                 Main.spriteBatch.Draw(NPCTexture, drawPosition, new Rectangle?(frame), npc.GetAlpha(lightColor), rotation, origin, scale, direction, 0f);
 
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.5f);
-
-                if (canDrawAfterimages && CalamityConfig.Instance.Afterimages)
-                {
-                    for (int i = 1; i < afterimageCount; i++)
-                    {
-                        Color afterimageColor = glowmaskColor;
-                        afterimageColor = Color.Lerp(afterimageColor, Color.White, 0.5f);
-                        afterimageColor = npc.GetAlpha(afterimageColor);
-                        afterimageColor *= (afterimageCount - i) / 15f;
-                        Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                        afterimageDrawPosition -= new Vector2(glowMaskTexture.Width, glowMaskTexture.Height / frameCount) * scale / 2f;
-                        afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        Main.spriteBatch.Draw(glowMaskTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
-                    }
-                }
-
                 Main.spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
             }
 
             Player target = Main.player[npc.target];
-            drawInstance(npc.Center, false, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+            drawInstance(npc.Center, true, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
 
             Vector2 cloneDrawPosition = new(target.Center.X, npc.Center.Y);
             cloneDrawPosition.X += target.Center.X - npc.Center.X;

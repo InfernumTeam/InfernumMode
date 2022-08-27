@@ -106,6 +106,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 shootTime -= 30;
                 totalPulseBlastsPerBurst++;
             }
+            if (aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
+            {
+                totalPulseBlastsPerBurst--;
+                blastShootSpeed -= 0.92f;
+            }
 
             // Get very pissed off if Ares is enraged.
             if (aresBody.Infernum().ExtraAI[13] == 1f)

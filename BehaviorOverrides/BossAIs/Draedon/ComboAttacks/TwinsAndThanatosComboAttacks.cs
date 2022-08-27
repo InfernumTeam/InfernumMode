@@ -3,21 +3,20 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {

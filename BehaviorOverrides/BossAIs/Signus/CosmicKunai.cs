@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (Time < 30f)
             {
                 float spinSlowdown = Utils.GetLerpValue(28f, 15f, Time, true);
-                Projectile.velocity *= 0.85f;
+                Projectile.velocity *= 0.7f;
                 Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
                 if (spinSlowdown < 1f)
                     Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);

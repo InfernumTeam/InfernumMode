@@ -210,6 +210,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 int specialAttackTransitionPreparationTime = 135;
                 if (performingSpecialAttack == 0f)
                 {
+                    // Disappear immediately if the target is gone.
+                    if (!target.active || target.dead)
+                        npc.active = false;
+
                     // The charge gate attack happens much more frequently when DoG is close to death.
                     specialAttackTimer += nearDeath && specialAttackTimer < specialAttackDelay - specialAttackTransitionPreparationTime - 5f ? 2f : 1f;
 
@@ -277,6 +281,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (performingSpecialAttack == 1f)
                 {
+                    // Disappear immediately if the target is gone.
+                    if (!target.active || target.dead)
+                        npc.active = false;
+                    
                     bool doingSpecialAttacks = DoSpecialAttacks(npc, target, nearDeath, ref performingSpecialAttack, ref specialAttackTimer, ref portalIndex, ref segmentFadeType);
                     if (doingSpecialAttacks)
                         phaseCycleTimer = 0f;

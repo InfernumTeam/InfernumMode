@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.SlimeGod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,7 +17,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
-        public ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
+        public bool HasCreatedSlimeExplosion
+        {
+            get => NPC.localAI[1] == 1f;
+            set => NPC.localAI[1] = value.ToInt();
+        }
         public ref float Time => ref NPC.ai[0];
         public ref float ShurikenShootCountdown => ref NPC.ai[1];
         public ref float TimeOfFlightCountdown => ref NPC.ai[2];
@@ -26,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         public ref float KatanaRotation => ref NPC.Infernum().ExtraAI[2];
         public ref float AttackDelayFuckYou => ref NPC.Infernum().ExtraAI[3];
         public ref float StuckTimer => ref NPC.localAI[0];
+        public static ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ninja");
@@ -62,6 +68,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 NPC.active = false;
                 NPC.netUpdate = true;
                 return;
+            }
+
+            // Create an explosion of slime and play a slimy sound to indicate that he escaped the King Slime.
+            if (!HasCreatedSlimeExplosion)
+            {
+                SoundEngine.PlaySound(SlimeGodCore.PossessionSound, NPC.Center);
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust slime = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(20f, 20f), 4);
+                    slime.color = new Color(78, 136, 255, 80);
+                    slime.noGravity = true;
+                    slime.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 14.5f);
+                    slime.scale = 2.3f;
+                }
+                HasCreatedSlimeExplosion = true;
             }
 
             NPC.damage = KatanaUseTimer > 0 ? 115 : 0;

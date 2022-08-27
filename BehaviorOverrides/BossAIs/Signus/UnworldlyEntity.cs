@@ -103,37 +103,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             NPC.spriteDirection = (NPC.velocity.X < 0f).ToDirectionInt();
             Timer++;
 
-            // Explode into strange tentacles if close to the target or enough time has passed.
+            // Explode into a bomb if close to the target.
             if (NPC.WithinRange(Target.Center, 40f))
-            {
-                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        // Randomize tentacle behavior variables.
-                        float ai0 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
-                        float ai1 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
-
-                        int tentacle = Projectile.NewProjectile(NPC.GetSource_FromAI(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 90, 0f);
-                        if (Main.projectile.IndexInRange(tentacle))
-                        {
-                            Main.projectile[tentacle].ai[0] = ai0;
-                            Main.projectile[tentacle].ai[1] = ai1;
-                        }
-                    }
-                }
-
-                NPC.life = 0;
-                NPC.checkDead();
                 NPC.active = false;
-            }
         }
 
         public override bool PreKill() => false;
 
         public override bool CheckDead()
         {
+            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.Center);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int bomb = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(Target.Center) * 15f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f);
+                if (Main.projectile.IndexInRange(bomb))
+                    Main.projectile[bomb].ModProjectile<DarkCosmicBomb>().ExplosionRadius = 500f;
+            }
+
             DeathCountdown = 60f;
 
             NPC.life = NPC.lifeMax;

@@ -37,7 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 float homeSpeed = Power * 8.5f + 21.5f;
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 14f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 15f;
+                if (!Projectile.WithinRange(target.Center, 200f))
+                    Projectile.velocity = (Projectile.velocity * 14f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 15f;
             }
             else if (Projectile.velocity.Length() < 24f)
                 Projectile.velocity *= Power * 0.025f + 1.02f;

@@ -233,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 9.6f;
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9.6f;
                         int fuckYou = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f);
                         if (Main.projectile.IndexInRange(fuckYou))
                             Main.projectile[fuckYou].ai[0] = 270 / 4;
@@ -278,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
-            int chargeTime = 42;
+            int chargeTime = 37;
             int repositionTime = 210;
             int chargeCount = 3;
             float hoverOffset = 640f;
@@ -357,6 +357,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
                         if (chargeCounter >= chargeCount)
                             SelectNewAttack(npc);
+                        else
+                            npc.velocity *= 0.3f;
                     }
                     break;
             }
@@ -371,14 +373,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int barrageCount = 13;
             int attackTransitionDelay = 40;
             float maxShootOffsetAngle = 1.49f;
-            float initialBarrageSpeed = 11f;
+            float initialBarrageSpeed = 16f;
             if (phase2)
+            {
                 initialBarrageSpeed += 1.8f;
+                barrageTelegraphTime -= 5;
+                barrageShootRate -= 6;
+            }
             if (phase3)
             {
                 initialBarrageSpeed += 3f;
-                barrageShootRate -= 9;
-                barrageTelegraphTime -= 9;
+                barrageShootRate -= 6;
+                barrageTelegraphTime -= 6;
                 attackTransitionDelay -= 14;
             }
             if (enraged)
@@ -418,12 +424,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     {
                         float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
 
-                        for (int frames = 8; frames < 64; frames += 5)
+                        List<Vector2> telegraphPoints = new();
+                        for (int frames = 1; frames < 84; frames += 4)
                         {
                             Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
-                            int shard = Utilities.NewProjectileBetter(linePosition, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraphShard>(), 0, 0f);
-                            if (Main.projectile.IndexInRange(shard))
-                                Main.projectile[shard].ai[0] = frames / 75f;
+                            telegraphPoints.Add(linePosition);
+                        }
+
+                        int shard = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(shard))
+                        {
+                            Main.projectile[shard].ai[0] = i / (float)barrageCount;
+                            Main.projectile[shard].ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
                         }
                     }
                     npc.velocity = Vector2.Zero;
@@ -460,9 +472,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public static void DoBehavior_SlowEnergySpirals(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
             int shootDelay = 96;
-            int burstShootRate = 32;
-            int laserBurstCount = 12;
-            float burstShootSpeed = 11.5f;
+            int burstShootRate = 26;
+            int laserBurstCount = 14;
+            float burstShootSpeed = 13.75f;
             if (phase2)
                 burstShootRate -= 4;
             if (phase3)
@@ -482,38 +494,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 burstShootSpeed += 8.4f;
             }
 
-            ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
+            ref float spinOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
-            // Redirect quickly towards the target if necessary.
-            if (moveTowardsTarget == 1f)
-            {
-                if (npc.WithinRange(target.Center, 360f))
-                {
-                    npc.velocity *= 0.8f;
-                    npc.damage = 0;
-                    if (npc.velocity.Length() < 2.4f)
-                    {
-                        npc.velocity = Vector2.Zero;
-                        moveTowardsTarget = 0f;
-                        npc.netUpdate = true;
-                    }
-                    return;
-                }
-
-                CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 200f - npc.Center, 40f, 0.75f, true);
-            }
-
-            // Make Ceaseless Void move quickly towards the target if they go too far away.
-            if (!npc.WithinRange(target.Center, 800f))
-            {
-                moveTowardsTarget = 1f;
-                npc.netUpdate = true;
-            }
-            else
-            {
-                // Slow down.
-                npc.velocity *= 0.9f;
-            }
+            // Make Ceaseless Void circle the target.
+            npc.velocity *= 0.9f;
+            npc.Center = npc.Center.MoveTowards(target.Center - Vector2.UnitY.RotatedBy(spinOffsetAngle) * 480f, 30f);
+            spinOffsetAngle += MathHelper.ToRadians(1.8f);
 
             // Release lasers.
             if (attackTimer % burstShootRate == burstShootRate - 1f && attackTimer >= shootDelay && attackTimer < 400f)
@@ -608,6 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create the black hole on the first frame.
             if (hasCreatedBlackHole == 0f)
             {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ConvergingCelestialBarrage>(), ModContent.ProjectileType<SpiralEnergyLaser>(), ModContent.ProjectileType<CelestialBarrage>());
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), blackHoleDamage, 0f);
                 hasCreatedBlackHole = 1f;
             }

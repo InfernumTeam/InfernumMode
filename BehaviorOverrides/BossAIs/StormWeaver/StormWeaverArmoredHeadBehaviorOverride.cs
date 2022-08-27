@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Don't naturally despawn.
             npc.timeLeft = 3600;
 
-            if (npc.life < npc.lifeMax * 0.8f)
+            if (npc.life < npc.lifeMax * 0.9f)
             {
                 if (phase2 == 0f)
                 {

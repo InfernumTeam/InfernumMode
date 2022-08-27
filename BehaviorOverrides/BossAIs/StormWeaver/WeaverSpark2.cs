@@ -9,6 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
     public class WeaverSpark2 : ModProjectile
     {
+        public bool FadeOutYouBitch => Projectile.ai[1] == 1f;
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Spark");
 
         public override void SetDefaults()
@@ -24,8 +26,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            if (FadeOutYouBitch)
+            {
+                Projectile.damage = 0;
+                if (Projectile.timeLeft > 30)
+                    Projectile.timeLeft = 30;
+                Projectile.Opacity = Projectile.timeLeft / 30f;
+            }
+            else
+                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
         }
 
         public override Color? GetAlpha(Color lightColor)

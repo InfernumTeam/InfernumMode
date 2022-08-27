@@ -14,8 +14,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             DisplayName.SetDefault("Dark Energy");
             Main.projFrames[Projectile.type] = 6;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override Color? GetAlpha(Color lightColor)
         {
             float alpha = Utils.GetLerpValue(0f, 30f, Time, true);
-            return new Color(1f, 1f, 1f, alpha) * Projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
+            return lightColor * Projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
@@ -57,11 +57,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Texture2D glowmask1 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow").Value;
             Texture2D glowmask2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow2").Value;
 
-            lightColor.A = 0;
-
+            Utilities.DrawAfterimagesCentered(Projectile, Color.Fuchsia with { A = 0 }, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor with { A = 0}, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, glowmask1);
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, glowmask2);
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
 

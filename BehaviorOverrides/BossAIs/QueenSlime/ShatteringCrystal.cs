@@ -36,9 +36,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.Opacity = Utils.GetLerpValue(0f, 40f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
 
             // Shatter if colliding with another crystal.
+            bool justDieAlreadyYouStupidCunt = Time >= 108f;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (i != Projectile.whoAmI && Main.projectile[i].type == Projectile.type && Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox) && Main.projectile[i].active)
+                if (MathHelper.Distance(AngularOffset, 0f) >= 0.02f)
+                    break;
+
+                if ((i != Projectile.whoAmI && Main.projectile[i].type == Projectile.type && Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox) && Main.projectile[i].active) || justDieAlreadyYouStupidCunt)
                 {
                     Projectile.Center = Main.projectile[i].Center;
                     Main.projectile[i].Kill();

@@ -439,7 +439,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 4f) * chargeSpeed;
-                    npc.velocity = (npc.velocity * new Vector2(1f, 0.5f)).SafeNormalize(Vector2.UnitY) * npc.velocity.Length();
                     npc.netUpdate = true;
                 }
             }

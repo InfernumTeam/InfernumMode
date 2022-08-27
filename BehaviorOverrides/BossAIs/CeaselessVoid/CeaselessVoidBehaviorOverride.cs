@@ -119,6 +119,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             }
             if (currentPhase == 1f && phase3)
             {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<CelestialBarrage>(), ModContent.ProjectileType<ConvergingCelestialBarrage>(), ModContent.ProjectileType<DarkEnergyBolt>(),
+                    ModContent.ProjectileType<EnergyTelegraph>(), ModContent.ProjectileType<SpiralEnergyLaser>());
                 currentPhase = 2f;
                 SelectNewAttack(npc);
             }
@@ -317,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Get into position for the horizontal charge.
                 case 0:
                     if (attackTimer == 1f)
-                        verticalHoverOffset = Main.rand.NextFloat(-hoverOffset * 0.7f, 0f);
+                        verticalHoverOffset = Main.rand.NextFloat(-0.84f, 0.84f) * hoverOffset;
 
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverOffset;
                     hoverDestination.Y += verticalHoverOffset;

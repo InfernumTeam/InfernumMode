@@ -421,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 hoverDestination.Y = 300f;
 
             float chargeSpeed = cloudCoverArea / chargeTime;
-            int chargeSlowdownTime = 90;
+            int chargeSlowdownTime = 150;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
 
             // Attempt to get into position for a charge.

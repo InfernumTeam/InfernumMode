@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = Projectile.MaxUpdates * 150;
+            Projectile.timeLeft = Projectile.MaxUpdates * 135;
         }
 
         public override void AI()

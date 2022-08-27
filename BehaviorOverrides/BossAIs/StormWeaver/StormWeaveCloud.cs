@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.height = 72;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 420;
             Projectile.Opacity = 0f;
             Projectile.scale = 0.01f;
         }

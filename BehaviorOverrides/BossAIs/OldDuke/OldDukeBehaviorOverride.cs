@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -184,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 8400f && target.position.X < Main.maxTilesX * 16f - 8400f;
+            bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 10800f && target.position.X < Main.maxTilesX * 16f - 10800f;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float frameType = ref npc.localAI[0];
@@ -192,6 +193,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             ref float phaseTransitionTimer = ref npc.Infernum().ExtraAI[7];
             ref float phaseTransitionSharkSpawnOffset = ref npc.Infernum().ExtraAI[8];
             ref float despawnTimer = ref npc.Infernum().ExtraAI[9];
+
+            if (target.HasBuff(ModContent.BuffType<Irradiated>()))
+                target.ClearBuff(ModContent.BuffType<Irradiated>());
 
             // Enter new phases.
             if (phaseTransitionState == 0f && lifeRatio < Phase2LifeRatio)
@@ -247,6 +251,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
                 if (npc.Opacity <= 0f)
                 {
+                    // Clear a bunch of stray projectiles.
+                    int sharkronID = ModContent.NPCType<SulphurousSharkron>();
+                    int toothBallID = ModContent.NPCType<OldDukeToothBall>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        bool npcTypeThatShouldDisappear = npc.type == sharkronID || npc.type == toothBallID;
+                        if (Main.npc[i].active && npcTypeThatShouldDisappear)
+                            Main.npc[i].active = false;
+                    }
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HomingAcid>(), ModContent.ProjectileType<SandPoisonCloudOldDuke>(), ModContent.ProjectileType<SulphuricBlob>(), ModContent.ProjectileType<SharkSummonVortex>(),
+                        ModContent.ProjectileType<OldDukeGore>());
+
                     npc.life = 0;
                     npc.active = false;
                     npc.netUpdate = true;

@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.value = Item.buyPrice(0, 35, 0, 0);
             
             if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
-                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/Void");
+                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/CeaselessVoid");
             else
                 npc.ModNPC.Music = MusicID.Boss3;
             npc.aiStyle = -1;

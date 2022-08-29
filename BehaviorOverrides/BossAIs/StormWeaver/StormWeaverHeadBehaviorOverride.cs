@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             if (target.HasBuff(BuffID.Chilled))
                 target.ClearBuff(BuffID.Chilled);
             if (target.HasBuff(BuffID.Frozen))
-                target.ClearBuff(BuffID.Frozen);
+                target.ClearBuff(BuffID.Frozen);            
 
             lightningSkyBrightness = MathHelper.Clamp(lightningSkyBrightness - 0.05f, 0f, 1f);
 
@@ -69,6 +69,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 Main.windSpeedTarget = Main.windSpeedCurrent;
                 Main.maxRaining = 0.96f;
             }
+
+            // Reset DR.
+            npc.Calamity().DR = 0.1f;
 
             switch ((StormWeaverAttackType)(int)attackState)
             {
@@ -288,6 +291,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 sparkShootSpeed *= 1.8f;
             }
 
+            // Reset DR.
+            npc.Calamity().DR = 0.55f;
+
             float angularSpinVelocity = MathHelper.TwoPi * totalSpins / spinTime;
             ref float sparkShootCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -463,9 +469,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
+            if (attackTimer >= hoverRedirectTime + chargeTime)
+            {
+                npc.velocity = Vector2.Zero;
+                npc.Center = target.Center - Vector2.UnitY * 2100f;
+            }
+
             if (attackTimer > hoverRedirectTime + chargeTime + chargeSlowdownTime)
             {
-                npc.Center = target.Center - Vector2.UnitY * 2000f;
                 SelectNewAttack(npc);
             }
         }
@@ -495,7 +506,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     attackState = (int)StormWeaverAttackType.IceStorm;
                     break;
                 case 3:
-                    attackState = (int)(lifeRatio < 0.4f ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
+                    attackState = (int)(lifeRatio > 0.4f ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
                     break;
                 case 4:
                     attackState = (int)StormWeaverAttackType.StaticChargeup;

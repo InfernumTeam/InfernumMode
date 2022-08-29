@@ -196,6 +196,9 @@ namespace InfernumMode
                 {
                     int x = (int)(Player.Center.X / 16f + dx);
                     int y = (int)(Player.Center.Y / 16f + dy);
+                    if (!WorldGen.InWorld(x, y))
+                        continue;
+
                     if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == profanedFountainID && Main.tile[x, y].TileFrameX < 36)
                     {
                         ProfanedLavaFountain = true;

@@ -143,15 +143,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             int shootCycleTime = 80;
             int shootPrepareTime = 30;
-            int totalShotsToDo = 3;
+            int shotCount = 3;
 
             if (phase2)
             {
                 shootCycleTime += 15;
-                totalShotsToDo++;
+                shotCount++;
             }
             if (phase3)
-                totalShotsToDo++;
+                shotCount++;
 
             float wrappedTime = attackTimer % shootCycleTime;
             bool preparingToShoot = wrappedTime > shootCycleTime - shootPrepareTime;
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 npc.SimpleFlyMovement(Vector2.Lerp(idealVelocity, (hoverDestination - npc.Center) * 0.15f, Utils.GetLerpValue(180f, 540f, distanceToDestination, true)), 0.4f);
             }
 
-            if (attackTimer >= totalShotsToDo * shootCycleTime)
+            if (attackTimer >= shotCount * shootCycleTime)
                 SelectNextAttack(npc);
         }
 

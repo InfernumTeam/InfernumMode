@@ -557,26 +557,7 @@ namespace InfernumMode.ILEditingStuff
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
-
-                // TODO -- Fix this shit.
-                /*
-                Rectangle arena = Main.npc[moonLordIndex].Infernum().arenaRectangle;
-                Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight);
-                Vector2 topLeft = (arena.TopLeft() + Vector2.One * 8f - Main.screenPosition) / screenArea / Main.GameViewMatrix.Zoom * 4f;
-                Vector2 bottomRight = (arena.BottomRight() + Vector2.One * 16f - Main.screenPosition) / screenArea / Main.GameViewMatrix.Zoom * 4f;
-                Matrix zoomMatrix = Main.GameViewMatrix.TransformationMatrix;
-
-                Vector2 scale = screenArea / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom;
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uTopLeftFreeArea"].SetValue(topLeft);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uBottomRightFreeArea"].SetValue(bottomRight);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseColor(Color.Gray);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
-                Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), screenArea.Y * (Main.GameViewMatrix.Zoom.Y - 1f));
-                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hell * -0.5f, null, Color.Black, 0f, Vector2.Zero, scale * 1.5f, 0, 0f);
-                */
+                
                 Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
                 Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, Vector2.Zero, null, Color.Black, 0f, Vector2.Zero, scale * 1.5f, 0, 0f);
 

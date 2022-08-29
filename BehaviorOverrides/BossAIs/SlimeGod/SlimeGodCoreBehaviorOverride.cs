@@ -71,11 +71,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             // Disappear if the target is gone.
             npc.timeLeft = 3600;
-            if (!target.active || target.dead || !npc.WithinRange(target.Center, 5000f))
+            if (!target.active || target.dead || !npc.WithinRange(target.Center, 8400f))
             {
                 npc.TargetClosest();
                 target = Main.player[npc.target];
-                if (!target.active || target.dead || !npc.WithinRange(target.Center, 5000f))
+                if (!target.active || target.dead || !npc.WithinRange(target.Center, 8400f))
                     npc.active = false;
             }
 
@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             int spinTime = 180;
             int chargeTime = 54;
             int slowdownTime = 30;
-            int burstShootRate = 25;
+            int burstShootRate = 35;
             int blobsInBurst = 8;
             float blobShootSpeed = 6.5f;
             ref float spinAngleOffset = ref npc.Infernum().ExtraAI[0];
@@ -353,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public static void DoBehavior_VerticalHoverBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int blobShootRate = 32;
+            int blobShootRate = 42;
             int blobsPerBurst = 5;
             int shootDelay = 90;
             int shootTime = 360;

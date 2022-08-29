@@ -1,4 +1,3 @@
-using CalamityMod.NPCs.ExoMechs.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

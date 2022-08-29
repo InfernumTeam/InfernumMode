@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
+using CalamityMod.Projectiles.Melee;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Systems;
@@ -52,7 +53,10 @@ namespace InfernumMode.GlobalInstances
             illegalRocket |= projectile.type is ProjectileID.WetRocket or ProjectileID.WetGrenade or ProjectileID.WetMine or ProjectileID.WetBomb or ProjectileID.WetSnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.HoneyRocket or ProjectileID.HoneyGrenade or ProjectileID.HoneyMine or ProjectileID.HoneyBomb or ProjectileID.HoneySnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.LavaRocket or ProjectileID.LavaGrenade or ProjectileID.LavaMine or ProjectileID.LavaBomb or ProjectileID.LavaSnowmanRocket;
+            illegalRocket |= projectile.type is ProjectileID.DirtBomb or ProjectileID.DirtStickyBomb;
             if (illegalRocket && new Rectangle((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena))
+                projectile.active = false;
+            if (projectile.type == ModContent.ProjectileType<CrystylCrusherRay>() && new Rectangle((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena))
                 projectile.active = false;
 
             if (isTomb)

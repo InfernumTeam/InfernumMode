@@ -185,6 +185,15 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ElysianAegis>());
             }
+
+            if (npc.type == ModContent.NPCType<CeaselessVoid>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CeaselessVoidRelic>());
+
+            if (npc.type == ModContent.NPCType<StormWeaverHead>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<StormWeaverRelic>());
+
+            if (npc.type == ModContent.NPCType<Signus>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SignusRelic>());
         }
     }
 }

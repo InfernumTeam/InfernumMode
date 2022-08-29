@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public const float Phase2LifeRatio = 0.75f;
         public const float Phase3LifeRatio = 0.35f;
-        public const float Phase4LifeRatio = 0.125f;
+        public const float Phase4LifeRatio = 0.15f;
         public const float PhaseTransitionTime = 150f;
 
         public const float TeleportPauseTime = 30f;
@@ -385,7 +385,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
             // Decide frames.
-            if (phaseTransitionTimer < PhaseTransitionTime - 48f && phaseTransitionTimer > PhaseTransitionTime - 65f)
+            if (phaseTransitionTimer is < (PhaseTransitionTime - 48f) and > (PhaseTransitionTime - 65f))
                 frameType = (int)OldDukeFrameType.Roar;
             else
             {
@@ -428,9 +428,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.velocity *= 0.97f;
 
             // Right before and after the spawn animation dust stuff, roar.
-            if (attackTimer > 52f && attackTimer < 64f)
+            if (attackTimer is > 52f and < 64f)
                 frameType = (int)OldDukeFrameType.Roar;
-
+            
             // Otherwise, flap wings.
             else
             {
@@ -462,7 +462,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
-            bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
+            bool goingToCharge = upcomingAttack is OldDukeAttackState.Charge or OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
             if (goingToCharge)
                 waitDelay = 30;
@@ -998,7 +998,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (currentAttack == OldDukeAttackState.AttackSelectionWait)
                 afterimageCount = 7;
 
-            if (currentAttack == OldDukeAttackState.AcidBubbleFountain || currentAttack == OldDukeAttackState.AcidBelch)
+            if (currentAttack is OldDukeAttackState.AcidBubbleFountain or OldDukeAttackState.AcidBelch)
                 afterimageCount = 4;
 
             if (currentAttack == OldDukeAttackState.Charge || inPhase3)

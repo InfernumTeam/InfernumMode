@@ -15,7 +15,7 @@ namespace InfernumMode.Waters
 
         public override string SlopeTexturePath => LavaTexturePath + "_Slope";
 
-        public override bool ChooseLavaStyle() => Main.LocalPlayer.Infernum().ZoneProfaned;
+        public override bool ChooseLavaStyle() => Main.LocalPlayer.Infernum().ZoneProfaned || Main.LocalPlayer.Infernum().ProfanedLavaFountain;
 
         public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("InfernumMode/ProfanedLavaflow").Slot;
 

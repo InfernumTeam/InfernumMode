@@ -9,6 +9,7 @@ using InfernumMode.MachineLearning;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using System;
@@ -78,6 +79,12 @@ namespace InfernumMode
 
         internal Point? CornerOne = null;
         internal Point? CornerTwo = null;
+
+        public bool ProfanedLavaFountain
+        {
+            get;
+            set;
+        }
 
         // Property with a getter that dynamically assembles the corners to produce a meaningful Rectangle.
         internal Rectangle? SelectedProvidenceArena
@@ -181,6 +188,23 @@ namespace InfernumMode
         #region Update
         public override void PreUpdate()
         {
+            ProfanedLavaFountain = false;
+            int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();
+            for (int dx = -75; dx < 75; dx++)
+            {
+                for (int dy = -75; dy < 75; dy++)
+                {
+                    int x = (int)(Player.Center.X / 16f + dx);
+                    int y = (int)(Player.Center.Y / 16f + dy);
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == profanedFountainID && Main.tile[x, y].TileFrameX < 36)
+                    {
+                        ProfanedLavaFountain = true;
+                        goto LeaveLoop;
+                    }
+                }
+            }
+            LeaveLoop:
+
             if (Main.netMode == NetmodeID.Server)
                 return;
 

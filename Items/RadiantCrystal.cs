@@ -9,6 +9,7 @@ namespace InfernumMode.Items
     {
         public override void SetStaticDefaults()
         {
+            SacrificeTotal = 1;
             DisplayName.SetDefault("Radiant Crystal");
             Tooltip.SetDefault("Summons the Empress of Light\n" +
                 "Does not need to be used in the Hallow\n" +

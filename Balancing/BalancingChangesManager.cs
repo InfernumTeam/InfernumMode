@@ -115,16 +115,17 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCID.CultistDragonBody4, Do(new PierceResistBalancingRule(0.1f))),
 
                 // Astrum Deus.
-                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new PierceResistBalancingRule(0.35f))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.65f, ProjectileID.SolarWhipSword, ProjectileID.SolarWhipSwordExplosion))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ClassResistBalancingRule(0.6f, ClassType.Summon))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<MalachiteProj>(), ProjectileType<MalachiteBolt>()))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<MountedScannerLaser>()))),
+                new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new PierceResistBalancingRule(0.35f))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.325f, ProjectileType<FallenPaladinsHammerProj>()))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.01f, ProjectileType<TenebreusTidesWaterProjectile>(), ProjectileType<TenebreusTidesWaterSpear>()))),
 
                 // Storm Weaver.
                 new NPCBalancingChange(NPCType<StormWeaverBody>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<BloodBoilerFire>()))),
+                new NPCBalancingChange(NPCType<StormWeaverTail>(), Do(new ProjectileResistBalancingRule(0.33f, ProjectileType<PrecisionBolt>()))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),

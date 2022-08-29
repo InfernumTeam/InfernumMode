@@ -475,14 +475,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             int shootDelay = 96;
             int burstShootRate = 26;
-            int laserBurstCount = 14;
-            float burstShootSpeed = 13.75f;
+            int laserBurstCount = 12;
+            float burstShootSpeed = 13f;
             if (phase2)
                 burstShootRate -= 4;
             if (phase3)
             {
                 burstShootRate -= 4;
-                laserBurstCount += 4;
+                laserBurstCount += 2;
+                burstShootSpeed -= 1.6f;
             }
             if (enraged)
             {
@@ -496,11 +497,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 burstShootSpeed += 8.4f;
             }
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             ref float spinOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
             // Make Ceaseless Void circle the target.
             npc.velocity *= 0.9f;
-            npc.Center = npc.Center.MoveTowards(target.Center - Vector2.UnitY.RotatedBy(spinOffsetAngle) * 480f, 30f);
+            npc.Center = npc.Center.MoveTowards(target.Center - Vector2.UnitY.RotatedBy(spinOffsetAngle) * 540f, 30f);
             spinOffsetAngle += MathHelper.ToRadians(1.8f);
 
             // Release lasers.
@@ -607,11 +611,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Redirect quickly towards the target if necessary.
             if (moveTowardsTarget == 1f)
             {
-                if (npc.WithinRange(target.Center, 360f))
+                if (npc.WithinRange(target.Center, 480f))
                 {
                     npc.velocity *= 0.8f;
                     npc.damage = 0;
-                    if (npc.velocity.Length() < 1f)
+                    if (npc.velocity.Length() < 4f)
                     {
                         npc.velocity = Vector2.Zero;
                         moveTowardsTarget = 0f;
@@ -620,12 +624,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     return;
                 }
 
-                CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 200f - npc.Center, 40f, 0.75f, true);
+                CalamityUtils.SmoothMovement(npc, 0f, target.Center - Vector2.UnitY * 360f - npc.Center, 40f, 0.75f, true);
                 return;
             }
 
             // Make Ceaseless Void move quickly towards the target if they go too far away.
-            if (!npc.WithinRange(target.Center, 1280f))
+            if (!npc.WithinRange(target.Center, 1320f))
             {
                 moveTowardsTarget = 1f;
                 npc.netUpdate = true;

@@ -25,20 +25,15 @@ namespace InfernumMode.Systems
                 tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateUndergroundDesertArea));
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
             if (finalCleanupIndex != -1)
-                tasks.Insert(floatingIslandIndex, new PassLegacy("Jungle Digout Area", GenerateUndergroundJungleArea));
-            int finalIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
-            if (finalIndex != -1)
             {
-                int currentFinalIndex = finalIndex;
-                tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", (progress, config) =>
+                tasks.Insert(++finalCleanupIndex, new PassLegacy("Jungle Digout Area", GenerateUndergroundJungleArea));
+                tasks.Insert(++finalCleanupIndex, new PassLegacy("Dungeon Digout Area", GenerateDungeonArea));
+                tasks.Insert(++finalCleanupIndex, new PassLegacy("Prov Arena", (progress, config) =>
                 {
                     progress.Message = "Constructing a temple for an ancient goddess";
                     GenerateProfanedArena(progress, config);
                 }));
             }
-
-            int astralChestIndex = tasks.FindIndex(genpass => genpass.Name.Equals("CalamityDungeonBiomeChests"));
-            tasks.RemoveAt(astralChestIndex);
         }
 
         public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration config)
@@ -79,6 +74,36 @@ namespace InfernumMode.Systems
                     break;
                 }
             }
+        }
+
+        public static void GenerateDungeonArea(GenerationProgress progress, GameConfiguration configuration)
+        {
+            int boxArea = 95;
+            ushort dungeonWallID = 0;
+            ushort dungeonTileID = 0;
+            switch (WorldGen.crackedType)
+            {
+                case TileID.CrackedBlueDungeonBrick:
+                    dungeonWallID = WallID.BlueDungeonSlabUnsafe;
+                    dungeonTileID = TileID.BlueDungeonBrick;
+                    break;
+                case TileID.CrackedGreenDungeonBrick:
+                    dungeonWallID = WallID.GreenDungeonSlabUnsafe;
+                    dungeonTileID = TileID.GreenDungeonBrick;
+                    break;
+                case TileID.CrackedPinkDungeonBrick:
+                    dungeonWallID = WallID.PinkDungeonSlabUnsafe;
+                    dungeonTileID = TileID.PinkDungeonBrick;
+                    break;
+            }
+
+            int index = WorldGen.numDungeonPlatforms / 2;
+            Point dungeonCenter = new(WorldGen.dungeonPlatformX[index], WorldGen.dungeonPlatformY[index]);
+            WorldUtils.Gen(dungeonCenter, new Shapes.Rectangle(boxArea, boxArea), Actions.Chain(
+                new Actions.SetTile(dungeonTileID, true)));
+            WorldUtils.Gen(new(dungeonCenter.X + 2, dungeonCenter.Y + 2), new Shapes.Rectangle(boxArea - 2, boxArea - 2), Actions.Chain(
+                new Actions.ClearTile(),
+                new Actions.PlaceWall(dungeonWallID)));
         }
 
         public static void GenerateProfanedArena(GenerationProgress _, GameConfiguration _2)

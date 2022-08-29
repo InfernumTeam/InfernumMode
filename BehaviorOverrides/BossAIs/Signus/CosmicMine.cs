@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
             for (int i = 0; i < 50; i++)
             {
-                Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(18f, 55f);
+                Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(18f, 85f);
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
             }
         }

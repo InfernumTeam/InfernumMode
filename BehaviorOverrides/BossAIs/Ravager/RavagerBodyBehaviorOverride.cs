@@ -36,8 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
-            public bool ShouldBeBuffed =>
-                DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && OverridingListManager.Registered<ProvidenceNPC>();
+            public static bool ShouldBeBuffed => false;
 
             public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
             {
@@ -255,11 +254,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 jumpIntensityFactor *= 1.125f;
             if (!phaseInfo.LegsAreAlive)
                 jumpIntensityFactor *= 1.125f;
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                emberBurstCount += 2;
-                jumpIntensityFactor *= 1.25f;
-            }
 
             ref float jumpSubstate = ref npc.Infernum().ExtraAI[0];
             ref float jumpCounter = ref npc.Infernum().ExtraAI[1];
@@ -416,12 +410,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 shootDelay -= 10;
                 bloodShootRate -= 2;
             }
-            
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                bloodShootRate -= 2;
-                bloodDamage += 135;
-            }
 
             if (multiplePerShot)
             {
@@ -498,14 +486,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 projectileShootCount += 5;
                 slamCount++;
                 horizontalSpikeSpeed *= 1.3f;
-            }
-
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                projectileShootCount += 4;
-                horizontalSpikeSpeed *= 1.3f;
-                bloodDamage += 135;
-                spikeDamage += 135;
             }
 
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
@@ -620,14 +600,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[1];
-
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                fireReleaseRate -= 4;
-                spikeReleaseRate -= 12;
-                flamePillarDamage += 135;
-                spikeDamage += 135;
-            }
 
             // Hover in place.
             if (attackTimer < hoverTime && hasDoneGroundHitEffects == 0f)
@@ -746,12 +718,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (phaseInfo.FreeHeadExists)
                 wallCreateRate += 10;
             
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                wallCreateRate -= 5;
-                wallDamage += 135;
-            }
-
             // Wait before creating walls.
             if (attackTimer < shootDelay)
                 return;
@@ -779,12 +745,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
             ref float wallCreationCounter = ref npc.Infernum().ExtraAI[0];
-
-            if (phaseInfo.ShouldBeBuffed)
-            {
-                wallCreateRate -= 10;
-                wallDamage += 135;
-            }
 
             // Create rock pillars.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % wallCreateRate == wallCreateRate - 1f)

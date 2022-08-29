@@ -21,14 +21,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.height = 72;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 420;
+            Projectile.timeLeft = 600;
             Projectile.Opacity = 0f;
             Projectile.scale = 0.01f;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(600f, 585f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
             Projectile.scale = MathHelper.Clamp(Projectile.Opacity + 0.065f, 0f, 1f);
 
             if (Variant == 0f)
@@ -68,8 +68,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     {
                         Vector2 sparkVelocity = Vector2.UnitY * Main.rand.NextFloat(12f, 16f);
                         Vector2 sparkSpawnPosition = Projectile.Bottom + new Vector2(Main.rand.NextFloatDirection() * Projectile.width * 0.45f, Main.rand.NextFloat(-8f, 0f));
-                        Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
-                        Utilities.NewProjectileBetter(sparkSpawnPosition, -sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
+                        Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 280, 0f);
+                        Utilities.NewProjectileBetter(sparkSpawnPosition, -sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 280, 0f);
                     }
                 }
             }

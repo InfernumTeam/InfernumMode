@@ -233,11 +233,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public static void DoAttack_ScytheTeleportThrow(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int totalScythesToCreate = (int)MathHelper.Lerp(20f, 34f, 1f - lifeRatio);
-            int chargeSlowdownDelay = (int)MathHelper.Lerp(32f, 48f, 1f - lifeRatio);
-            int slowdownTime = 25;
-            float scytheSpread = MathHelper.SmoothStep(0.95f, 1.34f, 1f - lifeRatio);
-            int attackCycleCount = lifeRatio < Phase3LifeRatio ? 1 : 2;
+            int totalScythesToCreate = 25;
+            int scytheShootDelay = 10;
+            float scytheSpread = MathHelper.SmoothStep(1.51f, 1.67f, 1f - lifeRatio);
+            int attackCycleCount = lifeRatio < Phase3LifeRatio ? 2 : 3;
 
             if (BossRushEvent.BossRushActive)
                 totalScythesToCreate += 7;
@@ -247,37 +246,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
             switch ((int)attackSubstate)
             {
-                // Attempt to hover over the target.
+                // Teleport near the target and fade in.
                 case 0:
-                    bool dontTransitionYet = npc.WithinRange(target.Center, 200f);
-                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 375f, -200f);
-                    Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 20.5f;
-                    npc.velocity = (npc.velocity * 24f + idealVelocity) / 25f;
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.6f);
-                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.rotation = npc.velocity.X * 0.02f;
+                    if (attackTimer == 1f)
+                    {
+                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(500f, 500f);
+                        npc.netUpdate = true;
+                    }
 
-                    if ((attackTimer > 60f || npc.WithinRange(hoverDestination, 300f)) && !dontTransitionYet)
+                    npc.Opacity = Utils.GetLerpValue(0f, 15f, attackTimer, true);
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.velocity *= 0.9f;
+                    npc.rotation = npc.velocity.X * 0.02f;
+                    npc.damage = 0;
+
+                    if (attackTimer >= 15f)
                     {
                         attackTimer = 0f;
                         attackSubstate++;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 27.5f;
                         npc.netUpdate = true;
                     }
                     break;
 
                 // Charge quickly at the target, slow down, and create a bunch of scythes.
                 case 1:
-                    if (attackTimer < chargeSlowdownDelay + slowdownTime + 30f)
-                        npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
-                    if (attackTimer > chargeSlowdownDelay)
+                    if (attackTimer > scytheShootDelay)
                         npc.velocity *= 0.98f;
-                    if (attackTimer > chargeSlowdownDelay + slowdownTime)
+                    if (attackTimer > scytheShootDelay)
                         npc.velocity *= 0.9f;
 
                     npc.rotation = npc.velocity.X * 0.02f;
 
-                    if (attackTimer == chargeSlowdownDelay + slowdownTime + 30f)
+                    if (attackTimer == scytheShootDelay)
                     {
                         // Create a bunch of scythes in front of Signus. The quantity of scythes and their spread is dependant on Signus' life ratio.
                         float baseShootAngle = npc.AngleTo(target.Center);
@@ -296,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         npc.netUpdate = true;
                     }
 
-                    if (attackTimer > chargeSlowdownDelay + slowdownTime + 85f)
+                    if (attackTimer > scytheShootDelay + 70f)
                     {
                         attackTimer = 0f;
                         attackSubstate = 0f;
@@ -317,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             int telegraphTime = 30;
             int blackTime = 72;
             float maxInitialSlashDistance = 350f;
-            float slashMovementSpeed = 46f;
+            float slashMovementSpeed = 41.5f;
             int finalDelay = 130;
 
             if (lifeRatio < Phase2LifeRatio)
@@ -420,8 +420,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.
                         if (slashPositionX == 0f || slashPositionY == 0f)
-                        {
-                            npc.Center = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 960f;
+                        {                           
+                            npc.Center = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 1020f;
                             Vector2 startingPosition = npc.Center;
 
                             // Ensure that the starting position is never too far away from the target.
@@ -632,11 +632,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     Vector2 idealFlyDirection = (target.Center - npc.Center).SafeNormalize(Vector2.UnitY);
                     if (!npc.WithinRange(target.Center, 250f))
                     {
-                        npc.velocity = npc.velocity.ClampMagnitude(8f, 42f);
+                        npc.velocity = npc.velocity.ClampMagnitude(10f, 52.5f);
                         npc.velocity = (npc.velocity * (inertia - 1f) + idealFlyDirection * (npc.velocity.Length() + 0.15f * inertia)) / inertia;
                     }
                     else
-                        npc.velocity *= 1.0125f;
+                        npc.velocity *= 1.0135f;
 
                     if (attackTimer >= 300f || ((target.Center.Y < npc.Center.Y - 200f) && attackTimer >= 90f))
                     {

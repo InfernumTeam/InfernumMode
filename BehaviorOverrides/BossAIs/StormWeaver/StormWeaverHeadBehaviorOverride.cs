@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 lightningSkyBrightness = MathHelper.Lerp(lightningSkyBrightness, MaxLightningBrightness, 0.25f);
             }
 
-            // Release lightning from behind the worm once the charge has begun.
+            // Release lightning and sparks from behind the worm once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
                 SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
@@ -235,6 +235,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                             Main.projectile[arc].ai[1] = Main.rand.Next(100);
                             Main.projectile[arc].tileCollide = false;
                         }
+                    }
+
+                    NPC tail = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>())];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float shootOffsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / 3f);
+                        Vector2 sparkVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 6.7f;
+                        Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
                     }
                 }
             }
@@ -270,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int spinTime = 270;
             int sparkShootRate = 8;
             int orbShootRate = 75;
-            int attackTransitionDelay = 108;
+            int attackTransitionDelay = 65;
             float sparkShootSpeed = 5.6f;
             float spinSpeed = 18f;
             if (BossRushEvent.BossRushActive)
@@ -330,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
                             Vector2 predictiveOffset = target.velocity * predictivenessFactor * 15f;
                             Vector2 shootVelocity = (target.Center - spinCenter + predictiveOffset).SafeNormalize(Vector2.UnitY).RotatedBy(angularOffset).RotatedByRandom(angularImprecision * 0.59f) * sparkShootSpeed;
-                            Utilities.NewProjectileBetter(spinCenter, shootVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
+                            Utilities.NewProjectileBetter(spinCenter, shootVelocity, ModContent.ProjectileType<WeaverSpark>(), 280, 0f);
                         }
                         sparkShootCounter++;
                     }
@@ -363,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         public static void DoAttack_IceStorm(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int shootCount = 3;
+            int shootCount = 4;
             int shotSpacing = (int)MathHelper.Lerp(175f, 145f, 1f - lifeRatio);
             int delayBeforeFiring = 60;
             int shootRate = delayBeforeFiring + 54;
@@ -395,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                         int telegraph = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f);
                         if (Main.projectile.IndexInRange(telegraph))
                             Main.projectile[telegraph].ai[1] = maxShootVelocity.Length();
-                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.1f, ProjectileID.FrostWave, 260, 0f);
+                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.15f, ProjectileID.FrostWave, 260, 0f);
                         if (Main.projectile.IndexInRange(wave))
                         {
                             Main.projectile[wave].ai[0] = -delayBeforeFiring;
@@ -415,13 +423,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int hoverRedirectTime = 240;
             int chargeTime = 150;
             float cloudCoverArea = 5800f;
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -1350f);
+            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -750f);
             Vector2 hoverDestination = target.Center + hoverOffset;
             if (hoverDestination.Y < 300f)
                 hoverDestination.Y = 300f;
 
             float chargeSpeed = cloudCoverArea / chargeTime;
-            int chargeSlowdownTime = 150;
+            int chargeSlowdownTime = 270;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
 
             // Attempt to get into position for a charge.

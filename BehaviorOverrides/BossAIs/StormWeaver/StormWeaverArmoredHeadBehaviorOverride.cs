@@ -102,10 +102,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             if (npc.WithinRange(target.Center, 285f))
                 moveSpeed *= 1.015f;
-            else if (npc.velocity.Length() > 13f + attackTimer / 35f)
+            else if (npc.velocity.Length() > 24.5f + attackTimer / 35f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 12f, 25f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 20f, 31f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 

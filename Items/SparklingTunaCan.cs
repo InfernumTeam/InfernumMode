@@ -12,6 +12,7 @@ namespace InfernumMode.Items
     {
         public override void SetStaticDefaults()
         {
+            SacrificeTotal = 1;
             DisplayName.SetDefault("Sparkling Mollusk Can");
             Tooltip.SetDefault("Summons the Giant Clam\n" +
                 "Can only be used in the sunken sea\n" +

@@ -14,6 +14,7 @@ namespace InfernumMode.Items
         public int frame = 0;
         public override void SetStaticDefaults()
         {
+            SacrificeTotal = 1;
             DisplayName.SetDefault("Dungeon's Curse");
             Tooltip.SetDefault("Summons Skeletron\n" +
                 "Can only be used at night\n" +

@@ -297,12 +297,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.TargetClosestIfTargetIsInvalid();
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                npc.velocity.Y -= 0.8f;
+                npc.velocity.Y -= 1.3f;
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                if (npc.timeLeft > 120)
-                    npc.timeLeft = 120;
                 if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
+                {
+                    // Delete projectiles when disappearing.
+                    int[] yharonProjectiles = new int[]
+                    {
+                        ModContent.ProjectileType<ChargeFlare>(),
+                        ModContent.ProjectileType<ExpandingFireball>(),
+                        ModContent.ProjectileType<Infernado>(),
+                        ModContent.ProjectileType<Infernado2>(),
+                        ModContent.ProjectileType<RedirectingYharonMeteor>(),
+                        ModContent.ProjectileType<VortexOfFlame>(),
+                        ModContent.ProjectileType<YharonFlamethrower>(),
+                        ModContent.ProjectileType<YharonHeatFlashFireball>(),
+                    };
+                    Utilities.DeleteAllProjectiles(true, yharonProjectiles);
                     npc.active = false;
+                }
                 return false;
             }
             else

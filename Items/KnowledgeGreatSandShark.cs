@@ -8,6 +8,7 @@ namespace InfernumMode.Items
     {
         public override void SetStaticDefaults()
         {
+            SacrificeTotal = 1;
             DisplayName.SetDefault("The Great Sand Shark");
             Tooltip.SetDefault("Nature proves itself to be a formidable mistress.\n" +
                 "Even in the most extreme of environmental circumstances it seems that there is no shortage of such displays of resilience.");

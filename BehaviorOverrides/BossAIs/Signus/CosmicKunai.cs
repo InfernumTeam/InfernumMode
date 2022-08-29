@@ -35,24 +35,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Time, true) * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true);
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Time < 30f)
+            if (Time < 20f)
             {
-                float spinSlowdown = Utils.GetLerpValue(28f, 15f, Time, true);
+                float spinSlowdown = Utils.GetLerpValue(18f, 5f, Time, true);
                 Projectile.velocity *= 0.7f;
                 Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
                 if (spinSlowdown < 1f)
                     Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
             }
 
-            if (Time == 30f)
+            if (Time == 20f)
             {
                 Projectile.velocity = Projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
                 if (BossRushEvent.BossRushActive)
                     Projectile.velocity *= 1.75f;
                 SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
             }
-            if (Time > 30f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
-                Projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.0185f;
+            if (Time > 20f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
+                Projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.021f;
 
             Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.4f);
             Time++;
@@ -79,6 +79,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Vector2 afterimageOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * i * -20f;
                 Color afterimageColor = new Color(198, 118, 204, 0) * (1f - i / 5f) * 0.7f;
                 Main.spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.7f, SpriteEffects.None, 0f);
+            }
+
+            // Draw backglow effects.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Color afterimageColor = new Color(1f, 1f, 1f, 0f) * 0.7f;
+                Main.spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);

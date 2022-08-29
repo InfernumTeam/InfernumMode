@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public const float BaseDR = 0.12f;
         public const float InvincibleDR = 0.99999f;
         public const float RoseCircleRadius = 1279f;
-        public static bool ReadyToUseBuffedAI => OverridingListManager.Registered<ProvidenceNPC>();
+        public static bool ReadyToUseBuffedAI => false;
 
         #region Enumerations
         public enum BrimmyAttackType

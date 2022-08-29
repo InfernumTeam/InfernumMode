@@ -3,6 +3,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,19 @@ namespace InfernumMode
             {
                 var tooltip1 = tooltips.FirstOrDefault(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
                 if (tooltip1 != null)
+                {
                     tooltip1.Text = "Summons the Profaned Guardians when used in the profaned garden at the far right of the underworld";
+
+                    tooltips.RemoveAt(tooltips.IndexOf(tooltip1) + 1);
+                    if (!WorldSaveSystem.HasGeneratedProfanedShrine)
+                    {
+                        TooltipLine warningTooltip = new(Mod, "Warning",
+                            "Your world does not currently have a garden. kill the Moon Lord again to generate it\n" +
+                            "Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab");
+                        warningTooltip.OverrideColor = Color.Orange;
+                        tooltips.Insert(tooltips.IndexOf(tooltip1) + 1, warningTooltip);
+                    }
+                }
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())

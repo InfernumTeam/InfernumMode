@@ -15,16 +15,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     public class PolterghastLeg : ModNPC
     {
         public Vector2 IdealPosition;
+
         public LimbCollection Limbs;
+
         public PrimitiveTrailCopy LimbDrawer = null;
+
         public Player Target => Main.player[NPC.target];
+
         public int Direction => (NPC.ai[0] >= 2f).ToDirectionInt();
+
         public ref float IdealPositionTimer => ref NPC.ai[1];
+
+        public ref float FadeToRed => ref NPC.localAI[1];
+
         public static PolterghastBehaviorOverride.PolterghastAttackType CurrentAttack => (PolterghastBehaviorOverride.PolterghastAttackType)(int)Polterghast.ai[0];
+
         public static float AttackTimer => Polterghast.ai[1];
+
         public static bool Enraged => Polterghast.ai[3] == 1f;
+
         public static NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ghostly Leg");
 
         public override void SetDefaults()
@@ -62,30 +75,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 NPC.localAI[0] = 1f;
             }
 
-            Limbs.Update(Polterghast.Center, IdealPosition);
+            Limbs.Update(Polterghast.Center, NPC.Center);
 
+            bool isBeingControlled = Polterghast.Infernum().ExtraAI[9] == NPC.whoAmI;
             float moveSpeed = 28f + Polterghast.velocity.Length() * 1.2f;
-            if (!NPC.WithinRange(IdealPosition, moveSpeed + 4f))
-                NPC.velocity = NPC.SafeDirectionTo(IdealPosition) * moveSpeed;
-            else
-            {
-                NPC.Center = IdealPosition;
-                NPC.velocity = Vector2.Zero;
-            }
-            
-            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.CloneSplit && AttackTimer % 180f == 30f)
-                IdealPositionTimer = 40f;
 
-            if (!NPC.WithinRange(Polterghast.Center, 650f))
-                IdealPositionTimer++;
-            float repositionRate = 30f - Polterghast.velocity.Length() - Utils.GetLerpValue(350f, 600f, IdealPositionTimer, true) * 10f;
-            repositionRate = MathHelper.Clamp(repositionRate, 5f, 35f);
-            if (IdealPositionTimer >= repositionRate)
+            // Reposition and move to the ideal position if not being manually controlled in Polter's AI.
+            NPC.damage = NPC.defDamage;
+            if (!isBeingControlled)
             {
-                DecideNewPositionToStickTo();
-                IdealPositionTimer = 0f;
-                NPC.netUpdate = true;
+                NPC.damage = 0;
+
+                if (!NPC.WithinRange(IdealPosition, moveSpeed + 4f))
+                    NPC.velocity = NPC.SafeDirectionTo(IdealPosition) * moveSpeed;
+                else
+                {
+                    NPC.Center = IdealPosition;
+                    NPC.velocity = Vector2.Zero;
+                }
+
+                if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.CloneSplit && AttackTimer % 180f == 30f)
+                    IdealPositionTimer = 40f;
+
+                if (!NPC.WithinRange(Polterghast.Center, 650f))
+                    IdealPositionTimer++;
+                float repositionRate = 30f - Polterghast.velocity.Length() - Utils.GetLerpValue(350f, 600f, IdealPositionTimer, true) * 10f;
+                repositionRate = MathHelper.Clamp(repositionRate, 5f, 35f);
+                if (IdealPositionTimer >= repositionRate)
+                {
+                    DecideNewPositionToStickTo();
+                    IdealPositionTimer = 0f;
+                    NPC.netUpdate = true;
+                }
             }
+
+            // Fade to red based on whether the leg is being controlled.
+            FadeToRed = MathHelper.Clamp(FadeToRed + isBeingControlled.ToDirectionInt(), 0.3f, 1f);
 
             NPC.target = Polterghast.target;
         }
@@ -169,8 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            float redFade = 0.35f;
-            Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade) * Utils.GetLerpValue(54f, 45f, Polterghast.ai[2], true);
+            Color baseColor = Color.Lerp(Color.Cyan, Color.HotPink, FadeToRed) * Utils.GetLerpValue(54f, 45f, Polterghast.ai[2], true);
             return baseColor * Utils.GetLerpValue(0.02f, 0.1f, completionRatio, true) * Utils.GetLerpValue(0.98f, 0.9f, completionRatio, true);
         }
 

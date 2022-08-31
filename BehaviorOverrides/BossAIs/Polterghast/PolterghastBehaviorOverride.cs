@@ -19,7 +19,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using static CalamityMod.CalamityUtils;
 using PolterghastBoss = CalamityMod.NPCs.Polterghast.Polterghast;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
@@ -37,6 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         #region Enumerations
         public enum PolterghastAttackType
         {
+            LegSwipes,
+            WispCircleCharges,
             AsgoreRingSoulAttack,
             EctoplasmUppercutCharges,
             ArcingSouls,
@@ -47,6 +49,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         #endregion
 
         #region AI
+
+        public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, 0f, 0.2f, 3);
+
+        public static CurveSegment Slash => new(EasingType.SineIn, 0.18f, 0.2f, 0.8f);
+
+        public static CurveSegment Recovery => new(EasingType.PolyIn, 0.5f, 1f, -1f, 100);
 
         public override bool PreAI(NPC npc)
         {
@@ -60,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 for (int i = 0; i < 4; i++)
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PolterghastLeg>(), 0, i);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PolterghastLeg>(), 1, i);
                 npc.localAI[3] = 1f;
             }
 
@@ -80,7 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             ref float dyingTimer = ref npc.Infernum().ExtraAI[6];
             ref float initialDeathPositionX = ref npc.Infernum().ExtraAI[7];
             ref float initialDeathPositionY = ref npc.Infernum().ExtraAI[8];
-            ref float telegraphOpacity = ref npc.Infernum().ExtraAI[9];
+            ref float legToManuallyControlIndex = ref npc.Infernum().ExtraAI[9];
+            ref float telegraphOpacity = ref npc.localAI[1];
             ref float telegraphDirection = ref npc.localAI[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -120,6 +129,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             switch (attackState)
             {
+                case PolterghastAttackType.LegSwipes:
+                    DoBehavior_LegSwipes(npc, target, ref legToManuallyControlIndex, ref attackTimer);
+                    break;
+                case PolterghastAttackType.WispCircleCharges:
+                    DoBehavior_WispCircleCharges(npc, target, ref attackTimer);
+                    break;
                 case PolterghastAttackType.AsgoreRingSoulAttack:
                     DoBehavior_AsgoreRingSoulAttack(npc, target, ref totalReleasedSouls, ref attackTimer);
                     break;
@@ -164,14 +179,59 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
-            PolterghastAttackType oldAttackState = (PolterghastAttackType)(int)npc.ai[0];
-            PolterghastAttackType newAttackState = PolterghastAttackType.EctoplasmUppercutCharges;
+            PolterghastAttackType[] phase1Cycle = new PolterghastAttackType[]
+            {
+                PolterghastAttackType.LegSwipes,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.WispCircleCharges,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.SpiritPetal,
+            };
+            PolterghastAttackType[] phase2Cycle = new PolterghastAttackType[]
+            {
+                PolterghastAttackType.AsgoreRingSoulAttack,
+                PolterghastAttackType.VortexCharge,
+                PolterghastAttackType.ArcingSouls,
+                PolterghastAttackType.SpiritPetal,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.LegSwipes,
+                PolterghastAttackType.VortexCharge,
+                PolterghastAttackType.WispCircleCharges,
+                PolterghastAttackType.ArcingSouls,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.LegSwipes,
+                PolterghastAttackType.SpiritPetal,
+            };
+            PolterghastAttackType[] phase3Cycle = new PolterghastAttackType[]
+            {
+                PolterghastAttackType.CloneSplit,
+                PolterghastAttackType.AsgoreRingSoulAttack,
+                PolterghastAttackType.VortexCharge,
+                PolterghastAttackType.ArcingSouls,
+                PolterghastAttackType.SpiritPetal,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.LegSwipes,
+                PolterghastAttackType.CloneSplit,
+                PolterghastAttackType.VortexCharge,
+                PolterghastAttackType.WispCircleCharges,
+                PolterghastAttackType.ArcingSouls,
+                PolterghastAttackType.EctoplasmUppercutCharges,
+                PolterghastAttackType.LegSwipes,
+                PolterghastAttackType.SpiritPetal,
+            };
 
             npc.TargetClosest();
-            npc.ai[0] = (int)newAttackState;
+            if (phase3)
+                npc.ai[0] = (int)phase3Cycle[(int)npc.Infernum().ExtraAI[10] % phase3Cycle.Length];
+            else if (phase2)
+                npc.ai[0] = (int)phase2Cycle[(int)npc.Infernum().ExtraAI[10] % phase2Cycle.Length];
+            else
+                npc.ai[0] = (int)phase1Cycle[(int)npc.Infernum().ExtraAI[10] % phase1Cycle.Length];
+
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+            npc.Infernum().ExtraAI[10]++;
 
             npc.netUpdate = true;
         }
@@ -359,6 +419,161 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
         }
 
+        public static void DoBehavior_LegSwipes(NPC npc, Player target, ref float legToManuallyControlIndex, ref float attackTimer)
+        {
+            int swingDelay = 60;
+            int swipeTime = 75;
+            int swipeCount = 7;
+            int vortexReleaseRate = 4;
+            float hoverSpeed = 26f;
+            float swipeArc = 0.89f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            ref float swipeCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (lifeRatio < Phase2LifeRatio)
+                vortexReleaseRate--;
+            if (lifeRatio < Phase3LifeRatio)
+                swipeTime -= 10;
+
+            // Hover near the target.
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -225f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 0.5f);
+            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+            // Decide the leg to control.
+            if (attackTimer == swingDelay)
+            {
+                // Order legs based on their angular difference with Polterghast's direction to the target.
+                // Legs behind Polterghast have a large angular difference while ones in front have a smaller angular difference.
+                // This is ideal because you don't want Polterghast to try to somehow swipe at you with a leg that's on the opposite side.
+                List<NPC> legsOrderedByPlayerAngleOffset = Main.npc.Take(Main.maxNPCs).Where(n => n.type == ModContent.NPCType<PolterghastLeg>() && n.active).
+                    OrderByDescending(l => npc.SafeDirectionTo(target.Center).AngleBetween(l.SafeDirectionTo(npc.Center))).ToList();
+
+                legToManuallyControlIndex = legsOrderedByPlayerAngleOffset[Main.rand.Next(2)].whoAmI;
+                return;
+            }
+
+            // Make the leg swing.
+            NPC legToControl = Main.npc[(int)legToManuallyControlIndex];
+            float swingCompletion = (attackTimer - swingDelay) % swipeTime / swipeTime;
+            if (legToManuallyControlIndex != 0f)
+            {
+                float swingAnimationCompletion = PiecewiseAnimation(swingCompletion, Anticipation, Slash, Recovery);
+                float legOffsetAngle = MathHelper.Lerp(-swipeArc, swipeArc, swingAnimationCompletion) + legToControl.ModNPC<PolterghastLeg>().Direction * 0.24f;
+                Vector2 legDirection = npc.SafeDirectionTo(target.Center).RotatedBy(legOffsetAngle);
+                Vector2 legDestination = npc.Center + legDirection * (Convert01To010(swingCompletion) * 100f + 350f);
+
+                legToControl.velocity = Vector2.Zero.MoveTowards(legDestination - legToControl.Center, 34f);
+            }
+
+            // Release vortices from the leg.
+            if (attackTimer >= swingDelay && attackTimer % vortexReleaseRate == vortexReleaseRate - 1f && swingCompletion > 0.2f && swingCompletion < 0.6f)
+            {
+                SoundEngine.PlaySound(SoundID.Item104, legToControl.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 vortexVelocity = npc.SafeDirectionTo(legToControl.Center) * 4f;
+                    Utilities.NewProjectileBetter(legToControl.Center + vortexVelocity * 4f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
+                }
+            }
+
+            // Increment the swipe counter.
+            if (attackTimer >= swingDelay && (attackTimer - swingDelay) % swipeTime == swipeTime - 1f)
+            {
+                swipeCounter++;
+                if (swipeCounter >= swipeCount)
+                {
+                    legToManuallyControlIndex = 0f;
+                    SelectNextAttack(npc);
+                }
+            }
+        }
+
+        public static void DoBehavior_WispCircleCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int hoverTime = 150;
+            int chargeCount = 6;
+            int slowdownTime = 12;
+            int chargeTime = 45;
+            int ectoplasmPerRing = 8;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float offsetPerRing = 200f;
+            float maxRingOffset = 2000f;
+            float chargeSpeed = 33f;
+            float spinAngularVelocity = MathHelper.ToRadians(0.75f);
+
+            if (lifeRatio < Phase2LifeRatio)
+            {
+                maxRingOffset += 300f;
+                chargeSpeed += 2.7f;
+                spinAngularVelocity *= 1.2f;
+            }
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                ectoplasmPerRing += 2;
+                chargeSpeed += 3.5f;
+            }
+
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Create a circle of ectoplasm wisps around Polter on the first frame.
+            if (attackTimer == 1f)
+            {
+                bool clockwise = true;
+                for (float radius = 120f; radius < maxRingOffset; radius += offsetPerRing)
+                {
+                    for (int i = 0; i < ectoplasmPerRing; i++)
+                    {
+                        int ectoplasm = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CirclingEctoplasm>(), 300, 0f);
+                        if (Main.projectile.IndexInRange(ectoplasm))
+                        {
+                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitCenter = target.Center - Vector2.UnitY * 200f;
+                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitRadius = radius;
+                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitAngularVelocity = spinAngularVelocity * clockwise.ToDirectionInt();
+                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = MathHelper.TwoPi * i / ectoplasmPerRing;
+                        }
+                    }
+                    clockwise = !clockwise;
+                }
+            }
+
+            // Hover to the top left/right of the target.
+            if (attackTimer < hoverTime)
+            {
+                float flySpeedFactor = Utils.GetLerpValue(0f, hoverTime * 0.55f, attackTimer, true);
+                float hoverSpeed = chargeSpeed * flySpeedFactor * 1.5f;
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 475f, -175f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 0.55f);
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                return;
+            }
+
+            float wrappedAttackTimer = (attackTimer - hoverTime) % (slowdownTime + chargeTime);
+
+            // Slow down and look at the target.
+            if (wrappedAttackTimer <= slowdownTime)
+            {
+                npc.velocity *= 0.925f;
+                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
+                if (wrappedAttackTimer == slowdownTime)
+                {
+                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    npc.netUpdate = true;
+                }
+            }
+            else
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Increment the charge counter at the end of charges.
+            if (wrappedAttackTimer == slowdownTime + chargeTime - 1f)
+            {
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+            }
+        }
+
         public static void DoBehavior_AsgoreRingSoulAttack(NPC npc, Player target, ref float totalReleasedSouls, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -366,7 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int soulsPerRing = 24;
             int ringReleaseRate = 75;
             int ringCreationDelay = 60;
-            float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.7f, 1f - lifeRatio);
+            float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.84f, 1f - lifeRatio);
             float ringOpeningAngleSpread = MathHelper.ToRadians(41f);
             int actualSoulsPerRing = (int)(soulsPerRing * (MathHelper.TwoPi - ringOpeningAngleSpread) / MathHelper.TwoPi);
             ref float ringShootCounter = ref npc.Infernum().ExtraAI[0];
@@ -459,6 +674,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int ectoplasmReleaseRate = 6;
             float downwardOffset = 1325f;
             float chargeSpeed = 36.5f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            if (lifeRatio < Phase2LifeRatio)
+            {
+                chargeTime -= 5;
+                chargeSpeed += 4f;
+            }
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                telegraphTime -= 2;
+                chargeTime -= 5;
+                chargeSpeed += 5f;
+            }
+
             ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
             ref float hasCreatedLight = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -556,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int shootDelay = 35;
             int shootRate = 42;
             int shootTime = 240;
-            int attackTransitionDelay = 60;
+            int attackTransitionDelay = 90;
             int soulCount = (int)MathHelper.Lerp(5f, 9f, 1f - lifeRatio);
             float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
 
@@ -576,7 +805,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
                 npc.velocity = (npc.velocity * 9f + npc.SafeDirectionTo(destination) * 20f) / 10f;
 
-                if (attackTimer % shootRate == shootRate - 1f && attackTimer < shootTime + attackTransitionDelay)
+                if (attackTimer % shootRate == shootRate - 1f && attackTimer < shootTime)
                 {
                     SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -685,11 +914,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public static void DoBehavior_DoVortexCharge(NPC npc, Player target, ref float attackTimer, bool enraged)
         {
-            int aimTime = 50;
-            int slowdownTime = 20;
-            int chargeTime = 48;
+            int aimTime = 20;
+            int slowdownTime = 12;
+            int chargeTime = 40;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float chargeSpeed = MathHelper.Lerp(30f, 39.75f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(35f, 43f, 1f - lifeRatio);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.45f;
 
@@ -719,23 +948,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 vortexVelocity = npc.velocity.RotatedBy(MathHelper.Lerp(-0.21f, 0.21f, i / 2f)).SafeNormalize(Vector2.UnitY) * 11f;
+                        Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 4f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
+                    }
                     npc.netUpdate = true;
                 }
             }
 
-            // And release accelerating stones.
+            // And release accelerating vortices.
             if (attackTimer >= aimTime + slowdownTime && attackTimer < aimTime + slowdownTime + chargeTime)
             {
-                npc.velocity *= 1.004f;
+                // Accelerate.
+                npc.velocity *= 1.005f;
 
-                // Release a burst of rocks.
-                int shootRate = enraged ? 2 : 4;
+                int shootRate = enraged ? 2 : 3;
+                if (lifeRatio > Phase2LifeRatio)
+                    shootRate++;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
-                    Vector2 rockVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
-                    rockVelocity *= -1f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
+                    Vector2 vortexVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
+                    Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 20f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
+                    vortexVelocity *= -1f;
+                    Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 20f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
                 }
             }
 
@@ -743,7 +980,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer >= aimTime + slowdownTime + chargeTime)
             {
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.275f);
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.0425f) * 0.96f;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.1f) * 0.9f;
             }
 
             if (attackTimer >= aimTime + slowdownTime + chargeTime + slowdownTime * 2)
@@ -758,6 +995,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int hoverTime = 25;
             int chargeTime = 34;
             int postChargeDelay = 20;
+            if (attackTimer < 90f + hoverTime + chargeTime + postChargeDelay)
+                splitDelay = 90;
+
             int attackCycleLength = splitDelay + hoverTime + chargeTime + postChargeDelay;
             float chargeSpeed = enraged || BossRushEvent.BossRushActive ? 38f : 32f;
             float adjustedTimer = attackTimer % attackCycleLength;
@@ -800,6 +1040,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 for (int i = 0; i < polterghasts.Count(); i++)
                 {
                     Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / polterghasts.Count()) * 540f;
+                    while (target.WithinRange(newPosition, 380f))
+                        newPosition.Y += 10f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -845,7 +1087,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public static Color TelegraphColorFunction(NPC npc, float completionRatio)
         {
             float endFadeOpacity = Utils.GetLerpValue(0f, 0.15f, completionRatio, true) * Utils.GetLerpValue(1f, 0.8f, completionRatio, true);
-            return Color.LightCyan * endFadeOpacity * npc.Infernum().ExtraAI[9] * 0.4f;
+            return Color.LightCyan * endFadeOpacity * npc.localAI[1] * 0.4f;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

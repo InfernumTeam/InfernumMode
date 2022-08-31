@@ -445,12 +445,13 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == ModContent.NPCType<PolterghastNPC>() && OverridingListManager.Registered(npc.type))
+            if (npc.type == ModContent.NPCType<PolterghastNPC>() && OverridingListManager.Registered(npc.type) && npc.Infernum().ExtraAI[11] == 0f)
             {
                 if (npc.Infernum().ExtraAI[6] > 0f)
                     return true;
 
                 npc.Infernum().ExtraAI[6] = 1f;
+                npc.Infernum().ExtraAI[11] = 1f;
                 npc.life = 1;
                 npc.netUpdate = true;
                 npc.dontTakeDamage = true;

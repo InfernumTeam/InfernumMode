@@ -13,6 +13,7 @@ namespace InfernumMode.Items
             DisplayName.SetDefault("Radiant Crystal");
             Tooltip.SetDefault("Summons the Empress of Light\n" +
                 "Does not need to be used in the Hallow\n" +
+                "The Empress enrages during daytime" +
                 "Not consumable");
         }
 

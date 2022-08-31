@@ -17,6 +17,7 @@ namespace InfernumMode.Items
             SacrificeTotal = 1;
             DisplayName.SetDefault("Dungeon's Curse");
             Tooltip.SetDefault("Summons Skeletron\n" +
+                "Skeletron enrages during daytime" +
                 "Can only be used at night\n" +
                 "Not consumable");
         }

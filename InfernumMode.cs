@@ -187,6 +187,9 @@ namespace InfernumMode
                 Ref<Effect> cutoutShader = new(Assets.Request<Effect>("Effects/CircleCutoutShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:CircleCutout"] = new MiscShaderData(cutoutShader, "CutoutPass");
 
+                cutoutShader = new(Assets.Request<Effect>("Effects/CircleCutoutShader2", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:CircleCutout2"] = new MiscShaderData(cutoutShader, "CutoutPass");
+
                 Ref<Effect> streakShader = new(Assets.Request<Effect>("Effects/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
 

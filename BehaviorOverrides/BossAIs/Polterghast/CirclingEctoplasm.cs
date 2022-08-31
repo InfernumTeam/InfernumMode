@@ -117,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.9f ? null : false;
+        public override bool? CanDamage() => Projectile.timeLeft < 1480 ? null : false;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

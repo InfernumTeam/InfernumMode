@@ -50,7 +50,7 @@ namespace InfernumMode
 
         public static void SyncInfernumActivity(int sender)
         {
-            // Don't bother sending packets in singleplayer.
+            // Don't bother trying to send packets in singleplayer.
             if (Main.netMode == NetmodeID.SinglePlayer)
                 return;
 
@@ -113,10 +113,7 @@ namespace InfernumMode
                     // Send the packet again to the other clients if this packet was received on the server.
                     // Since ModPackets go solely to the server when sent by a client this is necesssary
                     // to ensure that all clients are informed of what happened.
-                    int sender = reader.ReadInt32();
-                    WorldSaveSystem.InfernumMode = ((BitsByte)reader.ReadByte())[0];
-                    if (Main.netMode == NetmodeID.Server)
-                        SyncInfernumActivity(sender);
+                    RecieveInfernumActivitySync(reader);
                     break;
             }
         }

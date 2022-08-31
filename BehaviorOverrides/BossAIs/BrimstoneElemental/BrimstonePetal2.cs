@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             for (int i = 0; i < 6; i++)
             {
-                Color magicAfterimageColor = Color.Red * Projectile.Opacity * 0.22f;
+                Color magicAfterimageColor = Color.White * Projectile.Opacity * 0.3f;
                 magicAfterimageColor.A = 0;
 
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * Projectile.Opacity * 4f;
@@ -64,11 +64,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 120);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
     }
 }

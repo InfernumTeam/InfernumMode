@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.width = Projectile.height = 18;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 270;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hostile = true;
@@ -54,12 +54,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (ShouldFall)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                if (Projectile.timeLeft > 270f)
+                if (Projectile.timeLeft > 180f)
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * 17f, 0.05f);
             }
             else
                 Projectile.velocity *= 0.985f;
-            Projectile.Opacity = Utils.GetLerpValue(360f, 340f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(270f, 250f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Emit ectoplasm dust.

@@ -93,10 +93,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 }
             }
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

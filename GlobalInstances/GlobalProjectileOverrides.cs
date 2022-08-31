@@ -209,6 +209,14 @@ namespace InfernumMode.GlobalInstances
             return base.PreKill(projectile, timeLeft);
         }
 
+        public override Color? GetAlpha(Projectile projectile, Color lightColor)
+        {
+            if (projectile.type == ProjectileID.PhantasmalEye)
+                return Color.White * projectile.Opacity;
+
+            return base.GetAlpha(projectile, lightColor);
+        }
+
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
             if (InfernumMode.CanUseCustomAIs)

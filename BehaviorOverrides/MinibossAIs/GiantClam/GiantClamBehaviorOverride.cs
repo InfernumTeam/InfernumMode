@@ -76,6 +76,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             npc.TargetClosest(true);
             Player target = Main.player[npc.target];
 
+            // Disappear if the target is no longer present
+            if (target.dead || !target.active)
+            {
+                npc.active = false;
+                return false;
+            }
+
             switch ((GiantClamAttackState)(int)attackState)
             {
                 case GiantClamAttackState.PearlSwirl:

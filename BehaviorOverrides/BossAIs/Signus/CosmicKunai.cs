@@ -94,10 +94,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

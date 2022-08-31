@@ -185,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 10800f && target.position.X < Main.maxTilesX * 16f - 10800f;
+            bool outOfOcean = false;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float frameType = ref npc.localAI[0];
@@ -495,7 +495,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.frameCounter++;
 
             if (attackTimer >= waitDelay)
+            {
+                if (upcomingAttack is OldDukeAttackState.FastRegularCharge)
+                    SoundEngine.PlaySound(OldDukeBoss.VomitSound with { Volume = 1.5f, Pitch = -0.225f }, target.Center);
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
@@ -511,9 +515,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             if (inPhase3)
             {
-                chargeTime -= inPhase4 ? 6 : 5;
-                chargeSpeed += inPhase4 ? 9f : 5f;
-                aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.GetLerpValue(200f, 525f, npc.Distance(target.Center), true));
+                chargeTime -= inPhase4 ? 7 : 5;
+                chargeSpeed += inPhase4 ? 10.5f : 5f;
+                aimAheadFactor = MathHelper.Lerp(1f, 1.25f, Utils.GetLerpValue(200f, 525f, npc.Distance(target.Center), true));
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -533,7 +537,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (attackTimer == 1f)
             {
                 int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 14.25f) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 13.75f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
 
                 npc.rotation = npc.velocity.ToRotation();
@@ -617,9 +621,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
-            int shootDelay = inPhase2 ? 45 : 55;
-            int belchCount = inPhase2 ? 6 : 4;
-            int belchRate = inPhase2 ? 36 : 48;
+            int shootDelay = inPhase2 ? 40 : 50;
+            int belchCount = inPhase2 ? 5 : 4;
+            int belchRate = inPhase2 ? 20 : 32;
             if (BossRushEvent.BossRushActive)
                 belchRate -= 8;
 
@@ -704,7 +708,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
-            int spinTime = 120;
+            int spinTime = 90;
             float spinSpeed = 34f;
             float totalRotations = 2f;
 
@@ -760,9 +764,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
-            int shootDelay = inPhase3 ? 50 : 65;
-            int belchCount = inPhase3 ? 8 : 6;
-            int belchRate = inPhase3 ? 28 : 48;
+            int shootDelay = inPhase3 ? 42 : 55;
+            int belchCount = inPhase3 ? 7 : 5;
+            int belchRate = inPhase3 ? 18 : 30;
             if (BossRushEvent.BossRushActive)
                 belchRate -= 8;
 
@@ -808,6 +812,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
+            int goreShootDelay = 92;
             int goreCount = inPhase3 ? 50 : 32;
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.velocity *= 0.97f;
@@ -819,7 +824,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.rotation += MathHelper.Pi;
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.1f).AngleTowards(idealRotation, 0.1f);
 
-            if (attackTimer < 145f)
+            if (attackTimer < goreShootDelay - 5f)
             {
                 frameType = (int)OldDukeFrameType.FlapWings;
                 npc.frameCounter++;
@@ -827,26 +832,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
                 frameType = (int)OldDukeFrameType.Roar;
 
-            if (attackTimer == 150f)
+            if (attackTimer == goreShootDelay)
             {
                 SoundEngine.PlaySound(OldDukeBoss.VomitSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < goreCount; i++)
                     {
-                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(16f, 23f);
+                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(10f, 15.6f);
                         Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
                     }
                 }
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 150f && attackTimer < 180f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > goreShootDelay && attackTimer < goreShootDelay + 30f)
             {
                 Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(13f, 18f);
                 Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
             }
 
-            if (attackTimer >= 180f)
+            if (attackTimer >= goreShootDelay + 30f)
                 SelectNextAttack(npc);
         }
 

@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 35f, Time, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 35f, Time, true) * Utils.GetLerpValue(0f, 56f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Time++;
 

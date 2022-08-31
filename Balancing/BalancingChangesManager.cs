@@ -32,6 +32,8 @@ namespace InfernumMode.Balancing
 
         public const float AdrenalineChargeTimeFactor = 1.6f;
 
+        public const int DashDelay = 20;
+
         internal static void Load()
         {
             int corrosiveSpineCloud1 = ProjectileType<Corrocloud1>();

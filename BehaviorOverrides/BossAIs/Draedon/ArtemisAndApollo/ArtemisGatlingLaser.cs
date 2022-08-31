@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 58f : 30f;
             Vector2 overallOffset = (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
             if (Projectile.localAI[0] != 0f)
-                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * Projectile.localAI[0] * 66f;
+                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * Projectile.localAI[0] * 88f;
 
             if (TelegraphDelay > TelegraphTotalTime)
             {

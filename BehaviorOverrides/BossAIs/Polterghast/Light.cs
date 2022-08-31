@@ -29,15 +29,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 origin = new(66f, 86f);
-            Vector2 drawPosition = new(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
-            Vector2 scale = new(1.4f, 1.6f);
-            lightColor = new(205, 10, 205, 0);
-            Color coloredLight = new(255, 180, 255, 0);
+            Vector2 drawPosition = new(Projectile.Center.X - Main.screenPosition.X, Main.screenHeight + 10f);
+            Vector2 scale = new(0.75f, 1.9f);
+            lightColor = new(205, 109, 155, 0);
+            Color coloredLight = lightColor;
             float completion = 0f;
-            if (Time < 30f)
-                completion = Utils.GetLerpValue(0f, 30f, Time, true);
+            if (Time < 10f)
+                completion = Utils.GetLerpValue(0f, 10f, Time, true);
             else if (Time < 40f)
-                completion = 1f + Utils.GetLerpValue(30f, 40f, Time, true);
+                completion = 1f + Utils.GetLerpValue(10f, 40f, Time, true);
 
             Vector2 scaleFactor1 = new(1f, 1f);
             Vector2 scaleFactor2 = new(0.8f, 2f);

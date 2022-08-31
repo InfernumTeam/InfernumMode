@@ -72,19 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 NPC.Center = IdealPosition;
                 NPC.velocity = Vector2.Zero;
             }
-
-            // Make spider patterns during the bestial explosion.
-            if (AttackTimer >= 90f && AttackTimer < 315f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == 90f)
-                {
-                    Vector2 searchDirection = Polterghast.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * (NPC.ai[0] - 1f) / 4f + MathHelper.PiOver4);
-                    IdealPosition = Polterghast.Center + searchDirection * 1600f;
-                    NPC.netUpdate = true;
-                }
-                return;
-            }
-
+            
             if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.CloneSplit && AttackTimer % 180f == 30f)
                 IdealPositionTimer = 40f;
 
@@ -106,8 +94,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             for (int tries = 0; tries < 20000; tries++)
             {
-                int checkArea = (int)(30f * (tries / 20000f)) + 25;
-                Point limbTilePosition = (Polterghast.Center / 16f + Main.rand.NextVector2Square(-checkArea, checkArea)).ToPoint();
+                int checkArea = (int)(40f * (tries / 20000f)) + 25;
+                Point limbTilePosition = (Polterghast.Center / 16f + (MathHelper.TwoPi * NPC.ai[0] / 4f).ToRotationVector2().RotatedByRandom(0.69f) * Main.rand.NextFloat(checkArea)).ToPoint();
 
                 if (!WorldGen.InWorld(limbTilePosition.X, limbTilePosition.Y, 4))
                     continue;
@@ -132,13 +120,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 Vector2 endPosition = limbTilePosition.ToWorldCoordinates(8, 16);
 
-                if (!Polterghast.WithinRange(endPosition, 650f))
+                if (!Polterghast.WithinRange(endPosition, 720f))
                     continue;
 
                 if (Math.Abs(MathHelper.WrapAngle(Polterghast.AngleTo(endPosition) - MathHelper.Pi * Direction)) > 0.5f)
                     continue;
 
-                if (tries < 15000 && !Collision.CanHitLine(Polterghast.Center, 16, 16, endPosition, 16, 16))
+                bool outOfGeneralDirection = Polterghast.SafeDirectionTo(endPosition).AngleBetween((MathHelper.TwoPi * NPC.ai[0] / 4f).ToRotationVector2()) > 1.05f; 
+                if (tries < 15000 && (!Collision.CanHitLine(Polterghast.Center, 16, 16, endPosition, 16, 16) || outOfGeneralDirection))
                     continue;
 
                 bool farFromOtherLimbs = false;
@@ -180,38 +169,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
             float redFade = 0.35f;
-
-            // Have the legs turn red to signal that they do damage.
-            if (AttackTimer >= 90f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion)
-                redFade += Utils.GetLerpValue(90f, 130f, AttackTimer, true) * Utils.GetLerpValue(310f, 290f, AttackTimer, true) * 0.32f;
-            
-            Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade);
-            if (!actsAsBorder)
-                baseColor *= Utils.GetLerpValue(54f, 45f, Polterghast.ai[2], true);
+            Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade) * Utils.GetLerpValue(54f, 45f, Polterghast.ai[2], true);
             return baseColor * Utils.GetLerpValue(0.02f, 0.1f, completionRatio, true) * Utils.GetLerpValue(0.98f, 0.9f, completionRatio, true);
         }
 
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-        {
-            if (Polterghast.ai[2] > 48f)
-                return false;
-
-            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
-            if (actsAsBorder)
-            {
-                float _ = 0f;
-                float lineWidth = PrimitiveWidthFunction(0f);
-                for (int i = 0; i < Limbs.Limbs.Length; i++)
-                {
-                    if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint, lineWidth, ref _))
-                        return true;
-                }
-            }
-
-            return false;
-        }
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

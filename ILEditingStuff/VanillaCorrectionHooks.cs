@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Balancing;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Schematics;
@@ -15,6 +16,7 @@ using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
+using InfernumBalancingManager = InfernumMode.Balancing.BalancingChangesManager;
 
 namespace InfernumMode.ILEditingStuff
 {
@@ -102,6 +104,29 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => SpawnProvLootBox += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
 
         public void Unload() => SpawnProvLootBox -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+    }
+
+    public class ReducePlayerDashDelay : IHookEdit
+    {
+        internal static void ReduceDashDelays(ILContext il)
+        {
+            ILCursor c = new(il);
+            c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalDashCooldown));
+            c.Emit(OpCodes.Pop);
+            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+
+            c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalShieldSlamCooldown));
+            c.Emit(OpCodes.Pop);
+            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+
+            c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalShieldBonkCooldown));
+            c.Emit(OpCodes.Pop);
+            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+        }
+
+        public void Load() => DashMovement += ReduceDashDelays;
+
+        public void Unload() => DashMovement -= ReduceDashDelays;
     }
 
     public class AureusPlatformWalkingHook : IHookEdit

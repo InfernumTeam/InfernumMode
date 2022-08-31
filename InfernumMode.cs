@@ -186,7 +186,10 @@ namespace InfernumMode
 
                 Ref<Effect> cutoutShader = new(Assets.Request<Effect>("Effects/CircleCutoutShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:CircleCutout"] = new MiscShaderData(cutoutShader, "CutoutPass");
-                
+
+                Ref<Effect> streakShader = new(Assets.Request<Effect>("Effects/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
+
                 Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
                 Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();

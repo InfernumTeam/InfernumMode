@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-    public class DeathAnimationSoul : ModProjectile
+    public class NonReturningSoul : ModProjectile
     {
         public bool Cyan => Projectile.ai[0] == 1f;
         public bool CompleteFadein => Projectile.ai[1] == 1f;
@@ -25,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
             Projectile.timeLeft = 500;
         }
 
@@ -75,6 +76,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return color * Projectile.Opacity;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
     }
 }

@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.friendly = false;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
         }
 

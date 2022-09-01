@@ -40,6 +40,9 @@ namespace InfernumMode.GlobalInstances
         {
             if (InfernumMode.CanUseCustomAIs)
             {
+                if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
+                    projectile.ModProjectile.CooldownSlot = 1;
+
                 if (OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                     return (bool)OverridingListManager.InfernumProjectilePreAIOverrideList[projectile.type].DynamicInvoke(projectile);
             }
@@ -257,6 +260,7 @@ namespace InfernumMode.GlobalInstances
                 if (projectile.type == ProjectileID.PhantasmalBolt)
                     return projectile.Infernum().ExtraAI[0] > 40f;
             }
+
             return base.CanHitPlayer(projectile, target);
         }
     }

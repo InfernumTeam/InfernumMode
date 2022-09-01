@@ -14,6 +14,7 @@ float2 uImageSize0;
 float2 uImageSize1;
 float4 uShaderSpecificData;
 float uCircleRadius;
+float ectoplasmCutoffOffsetMax;
 
 float TriangleWave(float x)
 {
@@ -41,7 +42,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     
     float4 ectoplasmColor = tex2D(uImage1, ectoplasmCoords);
     float cutoff = uCircleRadius / length(uImageSize0);
-    float ectoplasmCutoffOffset = (TriangleWave(coords.y * 74 + uTime * 4.56) * 50) / uImageSize0.x;
+    float ectoplasmCutoffOffset = (TriangleWave(coords.y * 74 + uTime * 4.56) * ectoplasmCutoffOffsetMax) / uImageSize0.x;
     float opacity = InverseLerp(cutoff * 0.8, cutoff, distanceFromCenter);
     float ectoplasmInterpolant = InverseLerp(cutoff * 0.85 + ectoplasmCutoffOffset, cutoff * 1.6, distanceFromCenter) * InverseLerp(cutoff * 2.25, cutoff * 1.64, distanceFromCenter);
     return color * sampleColor * opacity + ectoplasmColor * ectoplasmInterpolant;

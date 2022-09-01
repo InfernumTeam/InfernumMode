@@ -3,6 +3,7 @@ using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -98,6 +99,9 @@ namespace InfernumMode.GlobalInstances
                 if (DoGPhase2HeadBehaviorOverride.InPhase2)
                     rotation = npc.rotation;
             }
+
+            if (npc.type == ModContent.NPCType<Polterghast>())
+                rotation = npc.rotation;
         }
 
         #endregion

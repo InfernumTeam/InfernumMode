@@ -19,6 +19,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public bool ShouldFall => Projectile.ai[0] == 1f;
 
+        public ref float Lifetime => ref Projectile.ai[1];
+
         public Color StreakBaseColor => Color.Lerp(CalamityUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet), Color.White, 0.2f);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
@@ -35,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.width = Projectile.height = 18;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 270;
+            Projectile.timeLeft = 1200;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hostile = true;
@@ -44,8 +46,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
-            if (Projectile.timeLeft < 15)
+            if (Projectile.timeLeft < 1215f - Lifetime)
                 Projectile.damage = 0;
+
+            if (Projectile.timeLeft < 1200f - Lifetime)
+                Projectile.Kill();
 
             // Initialize the hue.
             if (Projectile.ai[1] == 0f)
@@ -54,12 +59,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (ShouldFall)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                if (Projectile.timeLeft > 180f)
+                if (Projectile.timeLeft > 1080f)
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * 17f, 0.05f);
             }
             else
                 Projectile.velocity *= 0.985f;
-            Projectile.Opacity = Utils.GetLerpValue(270f, 250f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(1200f, 1180f, Projectile.timeLeft, true) * Utils.GetLerpValue(1200f - Lifetime, 1220f - Lifetime, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Emit ectoplasm dust.
@@ -87,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 float fade = (float)Math.Pow(completionRatio, 2D);
                 float scale = Projectile.scale * MathHelper.Lerp(0.88f, 0.48f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
                     MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
-                Color drawColor = Color.Lerp(StreakBaseColor, new Color(229, 255, 255), fade) * (1f - fade) * Projectile.Opacity;
+                Color drawColor = Color.HotPink * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;
 
                 Vector2 drawPosition = Projectile.oldPos[i - 1] + Projectile.Size * 0.5f - Main.screenPosition;

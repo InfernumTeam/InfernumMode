@@ -8,6 +8,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
     public class GhostlyVortex : ModProjectile
     {
+        public ref float MaxSpeed => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Phantoplasm Vortex");
@@ -17,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 60;
+            Projectile.width = Projectile.height = 52;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -30,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < 27f)
+            if (Projectile.velocity.Length() < (MaxSpeed > 0f ? MaxSpeed : 27f))
                 Projectile.velocity *= 1.045f;
 
             Projectile.rotation -= MathHelper.Pi / 12f;

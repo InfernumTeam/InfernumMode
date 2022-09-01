@@ -40,12 +40,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Time < 80f)
                 return;
 
-            float idealFlySpeed = BossRushEvent.BossRushActive ? 29f : 19f;
+            float idealFlySpeed = BossRushEvent.BossRushActive ? 32f : 24f;
             if (!Projectile.WithinRange(ClosestPlayer.Center, 1200f))
                 idealFlySpeed *= 0.5f;
 
             if (!Projectile.WithinRange(ClosestPlayer.Center, 150f))
-                Projectile.velocity = (Projectile.velocity * 49f + Projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 50f;
+                Projectile.velocity = (Projectile.velocity * 69f + Projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 70f;
 
             if (Projectile.WithinRange(ClosestPlayer.Center, 20f))
                 Projectile.Kill();

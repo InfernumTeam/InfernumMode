@@ -17,6 +17,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;

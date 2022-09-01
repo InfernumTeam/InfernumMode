@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 15f);
+            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 50f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -816,6 +816,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             int goreCount = inPhase3 ? 50 : 32;
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.velocity *= 0.97f;
+
+            if (attackTimer == 1f && !npc.WithinRange(target.Center, 1050f))
+            {
+                SelectNextAttack(npc);
+                return;
+            }
 
             float idealRotation = MathHelper.Pi / 6f * npc.spriteDirection;
             if (npc.rotation > MathHelper.Pi)

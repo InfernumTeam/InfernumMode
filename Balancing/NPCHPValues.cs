@@ -16,6 +16,7 @@ using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.Signus;
@@ -109,7 +110,8 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 864000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 1232100 : 646400,
             [ModContent.NPCType<CeaselessVoid>()] = BossRushEvent.BossRushActive ? -1 : 455525,
-            [ModContent.NPCType<Signus>()] = BossRushEvent.BossRushActive ? 848210 : 666102,
+            [ModContent.NPCType<Signus>()] = BossRushEvent.BossRushActive ? 848210 : 606102,
+            [ModContent.NPCType<Polterghast>()] = BossRushEvent.BossRushActive ? 1475910 : 544440,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 1000001,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1223500,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 2444440 : 1970020,

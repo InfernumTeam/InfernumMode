@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 Projectile.netUpdate = true;
             }
             Radius -= SpinSpeedFactor * 6f;
-            SpinOffsetAngle -= MathHelper.ToRadians(MathHelper.Lerp(SpinSpeedFactor, 1f, 0.3f) * 2f) * CounterclockwiseSpin.ToDirectionInt();
+            SpinOffsetAngle -= MathHelper.ToRadians(MathHelper.Lerp(SpinSpeedFactor, 1f, 0.3f) * 1.5f) * CounterclockwiseSpin.ToDirectionInt();
             Projectile.Center = polterghast.Center + SpinOffsetAngle.ToRotationVector2() * Radius;
             if (Radius <= 20f)
                 Projectile.Kill();

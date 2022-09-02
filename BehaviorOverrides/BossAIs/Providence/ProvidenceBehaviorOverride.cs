@@ -1577,8 +1577,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 Color baseColor = Color.White * (MathHelper.Lerp(0.4f, 0.8f, burnIntensity) / totalProvidencesToDraw * 7f);
                 baseColor.A = 0;
-
                 baseColor = Color.Lerp(Color.White, baseColor, burnIntensity);
+                if (!Main.dayTime)
+                    baseColor = Color.Lerp(baseColor, Color.Cyan with { A = 0 }, 0.5f);
 
                 drawProvidenceInstance(drawPosition, 0, baseColor);
             }

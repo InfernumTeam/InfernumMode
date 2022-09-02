@@ -40,6 +40,8 @@ namespace InfernumMode
                 return NPC.AnyNPCs(npcID);
             if (npcID is NPCID.Retinazer or NPCID.Spazmatism or NPCID.SkeletronPrime or NPCID.TheDestroyer)
                 return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.Plantera)
+                return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.HallowBoss)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.DukeFishron)

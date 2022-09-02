@@ -13,6 +13,7 @@ using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -327,8 +328,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     // Delete projectiles when disappearing.
                     int[] yharonProjectiles = new int[]
                     {
+                        ProjectileID.CultistBossFireBall,
                         ModContent.ProjectileType<ChargeFlare>(),
-                        ModContent.ProjectileType<ExpandingFireball>(),
+                        ModContent.ProjectileType<DragonFireball>(),
                         ModContent.ProjectileType<Infernado>(),
                         ModContent.ProjectileType<Infernado2>(),
                         ModContent.ProjectileType<RedirectingYharonMeteor>(),
@@ -456,11 +458,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             YharonAttackType nextAttackType = patternToUse[(int)((attackType + 1) % patternToUse.Length)];
 
+            if (invincibilityTime > 0f)
+            {
+                float fadeIn = Utils.GetLerpValue(phase2InvincibilityTime, phase2InvincibilityTime - 45f, invincibilityTime, true);
+                float fadeOut = Utils.GetLerpValue(0f, 45f, invincibilityTime, true);
+                fireIntensity = fadeIn * fadeOut;
+            }
             if (subphaseTransitionTimer > 0)
             {
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.15f);
                 npc.velocity *= 0.96f;
-                fireIntensity = Utils.GetLerpValue(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true);
+
+                if (invincibilityTime <= 0f)
+                    fireIntensity = Utils.GetLerpValue(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
                 if (subphaseTransitionTimer < 18f)
@@ -475,20 +485,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 return false;
             }
 
-            if (transitionDRCountdown > 0f)
-                fireIntensity = transitionDRCountdown / TransitionDRBoostTime;
+            if (invincibilityTime <= 0f)
+            {
+                if (transitionDRCountdown > 0f)
+                    fireIntensity = transitionDRCountdown / TransitionDRBoostTime;
+                else if (nextAttackType is not YharonAttackType.PhoenixSupercharge and not YharonAttackType.HeatFlashRing)
+                    fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
+            }
 
             // Adjust various values before doing anything else. If these need to be changed later, they will be,
             npc.dontTakeDamage = false;
             Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
             npc.Infernum().ExtraAI[10] = 0f;
 
-            if (nextAttackType is not YharonAttackType.PhoenixSupercharge and not YharonAttackType.HeatFlashRing)
-                fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
-
             float chargeSpeed = 46f;
             float chargeDelay = 36;
-            float chargeTime = 45f;
+            float chargeTime = 32f;
             float fastChargeSpeedMultiplier = 1.4f;
 
             float fireballBreathShootDelay = 34f;
@@ -534,7 +546,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     break;
                 case YharonAttackType.PhoenixSupercharge:
                     chargeDelay = berserkChargeMode ? 30 : 60;
-                    chargeTime = berserkChargeMode ? 20f : 35f;
+                    chargeTime = berserkChargeMode ? 20f : 30f;
                     fastChargeSpeedMultiplier = berserkChargeMode ? 1.4f : 1.7f;
                     break;
             }
@@ -549,7 +561,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.dontTakeDamage = true;
                 chargeSpeed += 21f;
                 chargeDelay /= 2;
-                chargeTime = 30f;
+                chargeTime = 18f;
 
                 fireballBreathShootDelay = 25f;
                 totalFireballBreaths = 25f;
@@ -579,7 +591,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
                     Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
                 }
-                fireIntensity = Utils.GetLerpValue(phase2InvincibilityTime, phase2InvincibilityTime - 45f, invincibilityTime, true) * Utils.GetLerpValue(0f, 45f, invincibilityTime, true);
                 npc.dontTakeDamage = true;
                 invincibilityTime--;
             }
@@ -1056,7 +1067,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             burstSpeed *= Main.rand.NextFloat(1.5f, 2.7f);
 
                         Vector2 burstVelocity = npc.SafeDirectionTo(mouthPosition).RotatedBy(offsetAngle) * burstSpeed;
-                        int fire = Utilities.NewProjectileBetter(mouthPosition, burstVelocity, ProjectileID.CultistBossFireBall, 500, 0f, Main.myPlayer);
+                        int fire = Utilities.NewProjectileBetter(mouthPosition, burstVelocity, ModContent.ProjectileType<DragonFireball>(), 500, 0f, Main.myPlayer);
                         Main.projectile[fire].tileCollide = false;
                     }
                 }
@@ -1762,83 +1773,107 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.frameCounter++;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static void DrawInstance(NPC npc, Player target, Vector2? position = null, float rotationOffset = 0f, bool changeDirection = false)
         {
-            void drawYharon(Vector2 position, float rotationOffset = 0f, bool changeDirection = false)
+            Texture2D tex = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
+
+            // Use defaults for the draw position.
+            position ??= npc.Center;
+
+            // Define draw variables.
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            SpriteEffects spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (changeDirection)
+                spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+            // Determine variables for the fire effect.
+            int afterimageCount = 1;
+            float afterimageOffsetMax = 32f;
+            float fireIntensity = npc.Infernum().ExtraAI[9];
+            bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.2f;
+            if (inLastSubphases)
+                fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
+
+            if (fireIntensity > 0f)
+                afterimageCount += (int)(fireIntensity * 8f);
+
+            Main.spriteBatch.EnterShaderRegion();
+
+            Color burnColor = Color.Orange;
+            float phase2InvincibilityCountdown = npc.Infernum().ExtraAI[3];
+            if (phase2InvincibilityCountdown > 0f)
             {
-                Texture2D texture = TextureAssets.Npc[npc.type].Value;
-                Vector2 origin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[npc.type] / 2);
-                Color color = lightColor;
-                YharonAttackType attackType = (YharonAttackType)(int)npc.ai[0];
+                float backBackToRegularColor = Utils.GetLerpValue(75f, 0f, phase2InvincibilityCountdown, true);
+                Color phase2Color = Color.Lerp(Color.Pink, Color.Yellow, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
+                burnColor = Color.Lerp(phase2Color, burnColor, backBackToRegularColor);
+            }
+            if (npc.life < npc.lifeMax * 0.2f)
+            {
+                burnColor = Color.LightYellow;
+            }
 
-                bool doingMajesticCharge = attackType == YharonAttackType.SpinCharge && npc.velocity.Length() > 32f;
+            GameShaders.Misc["Infernum:YharonBurn"].UseOpacity(fireIntensity * 0.7f);
+            GameShaders.Misc["Infernum:YharonBurn"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            GameShaders.Misc["Infernum:YharonBurn"].UseColor(burnColor * 0.7f);
+            GameShaders.Misc["Infernum:YharonBurn"].UseSecondaryColor(Color.White * 0.08f);
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uTimeFactor"].SetValue(1.1f);
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uZoomFactor"].SetValue(new Vector2(1f, 1f));
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uNoiseReadZoomFactor"].SetValue(new Vector2(0.2f, 0.2f));
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uSecondaryLavaPower"].SetValue(10f);
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uZoomFactorSecondary"].SetValue(0.5f);
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uNPCRectangle"].SetValue(new Vector4(npc.frame.X, npc.frame.Y, npc.frame.Width, npc.frame.Height));
+            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uActualImageSize0"].SetValue(tex.Size());
+            GameShaders.Misc["Infernum:YharonBurn"].Apply();
 
-                int afterimageCount = 1;
-                bool phase2 = npc.Infernum().ExtraAI[2] == 1f;
-                bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.2f && phase2;
+            float opacity = npc.Opacity;
 
-                // Cloak Yharon in a blazing white forme if in the last 4 subphases, performing a heat flash attack/phoenix supercharge/majestic charge,
-                // or if the phase transition/phase 2 invincibility countdowns are active.
-                if (inLastSubphases ||
-                    attackType == YharonAttackType.PhoenixSupercharge ||
-                    attackType == YharonAttackType.HeatFlashRing ||
-                    doingMajesticCharge ||
-                    npc.Infernum().ExtraAI[3] > 0f ||
-                    npc.Infernum().ExtraAI[9] > 0.01f ||
-                    npc.Infernum().ExtraAI[11] > 0f)
+            // Draw backglow textures.
+            if (fireIntensity > 0f)
+            {
+                for (int i = afterimageCount - 1; i >= 0; i--)
                 {
-                    // Determine the intensity of the effect. This varies based the conditions by which is started but in certain cases
-                    // depends on ExtraAI[9];
-                    float fireIntensity = npc.Infernum().ExtraAI[9];
+                    float afterimageOpacity = 1f;
+                    if (afterimageCount >= 2)
+                        afterimageOpacity = i / (float)(afterimageCount - 1f);
 
-                    if (inLastSubphases)
-                        fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
-
-                    afterimageCount += (int)(fireIntensity * 20);
-
-                    // Fade to a rainbow color.
-                    color = Color.Lerp(color, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0), fireIntensity);
-
-                    // And then brighten it to a point of searing white flames.
-                    float whiteBlend = MathHelper.Lerp(0.9f, 0.5f, Utils.GetLerpValue(0f, 14f, npc.velocity.Length(), true));
-                    color = Color.Lerp(color, Color.White, whiteBlend);
-
-                    // This effect is reduced if Yharon is moving slowly/standing still, however.
-                    if (npc.velocity.Length() < 3f)
-                        color *= MathHelper.Lerp(1f, 0.5f + (float)Math.Cos(Main.GlobalTimeWrappedHourly) * 0.08f, Utils.GetLerpValue(3f, 0f, npc.velocity.Length()));
-
-                    color.A = 0;
-                }
-
-                // Cylicly change the base color to pink/lavender if doing a majestic charge.
-                // The result is still mostly white, however, due to additive coloring.
-                if (doingMajesticCharge)
-                {
-                    color = Color.Lerp(Color.HotPink, Color.Lavender, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
-                    color.A = 0;
-                }
-
-                afterimageCount = Utils.Clamp(afterimageCount, 1, 35);
-                for (int i = 0; i < afterimageCount; i++)
-                {
-                    Vector2 drawOffset = Vector2.Zero;
-
-                    // Use a draw offset that becomes stronger the slower Yharon is. If he's fast enough,
-                    // no draw offset is used.
-                    if (npc.velocity.Length() < 7f)
+                    Color color = npc.GetAlpha(Color.White) * (1f - afterimageOpacity);
+                    Color afterimageColor = color;
+                    Vector2 drawPosition = position.Value - Main.screenPosition;
+                    drawPosition -= npc.velocity * 0.6f * i;
+                    for (int j = 0; j < 6; j++)
                     {
-                        float angle = MathHelper.TwoPi * i / afterimageCount;
-                        drawOffset = angle.ToRotationVector2() * MathHelper.Lerp(0.5f, 16f + (float)Math.Cos(Main.GlobalTimeWrappedHourly) * 4f, Utils.GetLerpValue(7f, 0f, npc.velocity.Length()));
+                        Vector2 circularDrawOffset = (MathHelper.TwoPi * j / 6f).ToRotationVector2() * fireIntensity * afterimageOpacity * afterimageOffsetMax;
+                        Color offsetColor = afterimageColor * opacity * 0.4f;
+                        offsetColor.A = 0;
+                        Main.spriteBatch.Draw(tex, drawPosition + circularDrawOffset, npc.frame, offsetColor, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
                     }
-                    Color afterimageColor = afterimageCount == 1 ? color : color * (i / (float)afterimageCount);
-                    Vector2 drawPosition = position + drawOffset - Main.screenPosition;
-                    drawPosition -= npc.velocity * 0.3f * i;
-                    SpriteEffects spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                    if (changeDirection)
-                        spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                    Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor * npc.Opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
                 }
             }
+
+            // Draw afterimages.
+            for (int i = afterimageCount - 1; i >= 0; i--)
+            {
+                float afterimageOpacity = 0f;
+                if (afterimageCount >= 2)
+                    afterimageOpacity = i / (float)(afterimageCount - 1f);
+
+                Color color = npc.GetAlpha(Color.White) * (1f - afterimageOpacity);
+                Color afterimageColor = color;
+                if (i == 0 && afterimageCount >= 2)
+                    afterimageColor.A = 184;
+
+                Vector2 drawPosition = position.Value - Main.screenPosition;
+                drawPosition -= npc.velocity * 0.6f * i;
+
+                Main.spriteBatch.Draw(tex, drawPosition, npc.frame, afterimageColor * opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
+            }
+
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Player target = Main.player[npc.target];
             int illusionCount = (int)npc.Infernum().ExtraAI[10];
             if (illusionCount > 0)
             {
@@ -1849,12 +1884,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     float distanceFromPlayer = npc.Distance(player.Center);
                     Vector2 directionFromPlayer = npc.DirectionFrom(player.Center);
                     Vector2 drawPosition = Main.player[npc.target].Center + directionFromPlayer.RotatedBy(offsetAngle) * distanceFromPlayer;
-                    drawYharon(drawPosition, offsetAngle, (drawPosition.X > player.Center.X).ToDirectionInt() != npc.spriteDirection);
+                    DrawInstance(npc, target, drawPosition, offsetAngle, (drawPosition.X > player.Center.X).ToDirectionInt() != npc.spriteDirection);
                 }
             }
             else
-                drawYharon(npc.Center);
+                DrawInstance(npc, target);
 
+            // Draw the death animation white twinkle effect.
             float giantTwinkleSize = Utils.GetLerpValue(2650f, 2000f, npc.life, true) * Utils.GetLerpValue(1500f, 2000f, npc.life, true);
             if (giantTwinkleSize > 0f)
             {

@@ -658,6 +658,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             int entitySummonRate = (int)MathHelper.Lerp(10f, 15f, 1f - lifeRatio);
             ref float entitySummonCounter = ref npc.Infernum().ExtraAI[0];
 
+            // Lol. Lmao.
+            SelectNextAttack(npc);
+
             // Slow down at first and appear above the target.
             if (attackTimer < 90f)
             {

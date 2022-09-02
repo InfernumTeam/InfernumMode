@@ -6,6 +6,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -101,6 +102,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType.LegSwipes,
             PolterghastAttackType.SpiritPetal,
         };
+
+        public const float MinGhostCircleRadius = 600f;
 
         public override bool PreAI(NPC npc)
         {
@@ -1137,6 +1140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float overallRingSpeedFactor = 1.75f;
             float ringOpeningAngleSpread = MathHelper.ToRadians(55f);
 
+            int finalAttackStartTime = attackDelay + vortexSpiralTime + spiritFlameTime;
             int soulBurstCount = 33;
 
             ref float soulBurstDelay = ref npc.Infernum().ExtraAI[0];
@@ -1158,6 +1162,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             npc.Center = npc.Center.MoveTowards(target.Center, 4f);
 
             vignetteInterpolant = Utils.GetLerpValue(0f, vignetteFadeinTime, attackTimer, true);
+
+            // Hurt the player if they leave the circle.
+            if (attackTimer < finalAttackStartTime + soulBurstDelay && !npc.WithinRange(target.Center, MinGhostCircleRadius + 90f))
+                target.AddBuff(ModContent.BuffType<Madness>(), 8);
 
             if (attackTimer < attackDelay)
                 return;
@@ -1218,11 +1226,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<SpinningSoul>());
 
             // Release barrages of souls at an accelerating pace that are telegraphed by large lines.
-            int startingTime = attackDelay + vortexSpiralTime + spiritFlameTime;
-            if (attackTimer >= startingTime + soulBurstDelay && soulBurstCounter < soulBurstCount)
+            if (attackTimer >= finalAttackStartTime + soulBurstDelay && soulBurstCounter < soulBurstCount)
             {
                 soulBurstDelay = MathHelper.Clamp(soulBurstDelay - 1f, 13f, 36f);
-                attackTimer = startingTime;
+                attackTimer = finalAttackStartTime;
                 soulBurstCounter++;
 
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
@@ -1237,23 +1244,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Make the radius fade inward.
-            if (attackTimer >= startingTime + soulBurstDelay + 120f)
+            if (attackTimer >= finalAttackStartTime + soulBurstDelay + 120f)
             {
                 radiusDecreaseFactor = MathHelper.Lerp(radiusDecreaseFactor, 0f, 0.12f);
-                vignetteInterpolant = Utils.GetLerpValue(startingTime + soulBurstDelay + 240f, startingTime + soulBurstDelay + 120f, attackTimer, true);
-                if (attackTimer == startingTime + soulBurstDelay + 120f)
+                vignetteInterpolant = Utils.GetLerpValue(finalAttackStartTime + soulBurstDelay + 240f, finalAttackStartTime + soulBurstDelay + 120f, attackTimer, true);
+                if (attackTimer == finalAttackStartTime + soulBurstDelay + 120f)
                 {
                     SoundEngine.PlaySound(npc.DeathSound, target.Center);
                     SoundEngine.PlaySound(ScorchedEarth.ShootSound with { Pitch = -0.27f, Volume = 1.5f }, target.Center);
                     npc.NPCLoot();
                 }
 
-                if (attackTimer >= startingTime + soulBurstDelay + 175f)
+                if (attackTimer >= finalAttackStartTime + soulBurstDelay + 175f)
                     npc.active = false;
             }
             else
             {
-                float closeFactor = Utils.Remap(attackTimer, startingTime + soulBurstDelay, startingTime + soulBurstDelay + 72f, 0f, 0.995f);
+                float closeFactor = Utils.Remap(attackTimer, finalAttackStartTime + soulBurstDelay, finalAttackStartTime + soulBurstDelay + 72f, 0f, 0.995f);
                 radiusDecreaseFactor = MathHelper.Lerp(radiusDecreaseFactor, closeFactor, 0.15f);
             }
         }
@@ -1356,7 +1363,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
             // Draw the circle.
-            float circleRadius = MathHelper.Lerp(3000f, 600f, npc.Infernum().ExtraAI[12]) * (1f - npc.Infernum().ExtraAI[13]);
+            float circleRadius = MathHelper.Lerp(3000f, MinGhostCircleRadius, npc.Infernum().ExtraAI[12]) * (1f - npc.Infernum().ExtraAI[13]);
             Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
 
             if (npc.Infernum().ExtraAI[12] > 0.1f)

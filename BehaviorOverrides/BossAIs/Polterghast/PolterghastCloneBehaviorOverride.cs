@@ -35,9 +35,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             polterghast.ai[2] = 54f;
             polterghast.scale = 0.85f;
 
-            float attackTimer = polterghast.ai[1] % 180f;
+            float attackTimer = polterghast.Infernum().ExtraAI[2];
 
-            if (attackTimer > 50f)
+            if (polterghast.Infernum().ExtraAI[3] == 1f)
             {
                 npc.damage = npc.defDamage;
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * polterghast.velocity.Length();
@@ -57,30 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 else
                     npc.velocity *= 0.97f;
             }
-
-            if (attackTimer > 100f)
-                npc.Opacity = MathHelper.Lerp(1f, 0.35f, Utils.GetLerpValue(120f, 100f, attackTimer, true));
-            else
-                npc.Opacity = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(45f, 30f, attackTimer, true));
-
-            if (attackTimer == 120f || Main.npc[CalamityGlobalNPC.ghostBoss].Infernum().ExtraAI[6] > 0f)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 18; i++)
-                    {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(polterghast.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
-                        int soul = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(soul))
-                            Main.projectile[soul].timeLeft = 20;
-                    }
-
-                    npc.active = false;
-                    npc.netUpdate = true;
-                }
-                SoundEngine.PlaySound(SoundID.NPCHit36, npc.Center);
-                return false;
-            }
+            npc.Opacity = 1f;
 
             return false;
         }

@@ -6,6 +6,7 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
+using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -324,6 +325,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     SoundEngine.PlaySound(SCalBoss.SpawnSound, target.Center);
 
                 return false;
+            }
+
+            // Randomly create symbols far from the target.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(12))
+            {
+                Vector2 arenaEdge = npc.Infernum().Arena.Center.ToVector2();
+                Vector2 symbolSpawnPosition = arenaEdge + Main.rand.NextVector2Unit() * npc.Infernum().Arena.Size() * Main.rand.NextFloat(1.4f, 1.96f) * 0.5f;
+                Utilities.NewProjectileBetter(symbolSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SCalSymbol>(), 0, 0f);
             }
 
             // Enter new phases.

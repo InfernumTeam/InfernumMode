@@ -437,6 +437,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public static void DoBehavior_LegSwipes(NPC npc, Player target, ref float legToManuallyControlIndex, ref float attackTimer)
         {
+            int attackTransitionDelay = 128;
             int swingDelay = 96;
             int swipeTime = 75;
             int swipeCount = 7;
@@ -445,6 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float swipeArc = 0.89f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float swipeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float doneAttacking = ref npc.Infernum().ExtraAI[1];
 
             if (lifeRatio < Phase2LifeRatio)
                 vortexReleaseRate--;
@@ -456,6 +458,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 840f, -225f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, acceleration);
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+            if (doneAttacking == 1f)
+            {
+                if (attackTimer >= attackTransitionDelay)
+                    SelectNextAttack(npc);
+                return;
+            }
 
             // Decide the leg to control.
             if (attackTimer == swingDelay)
@@ -500,9 +509,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 swipeCounter++;
                 if (swipeCounter >= swipeCount)
                 {
+                    attackTimer = 0f;
+                    doneAttacking = 1f;
                     legToManuallyControlIndex = 0f;
-                    SelectNextAttack(npc);
                 }
+                npc.netUpdate = true;
             }
         }
 
@@ -1048,6 +1059,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int attackCycleLength = splitDelay + hoverTime + chargeTime + postChargeDelay;
             float chargeSpeed = enraged || BossRushEvent.BossRushActive ? 38f : 32f;
             float adjustedTimer = attackTimer % attackCycleLength;
+            npc.Infernum().ExtraAI[2] = adjustedTimer;
+            npc.Infernum().ExtraAI[3] = (adjustedTimer >= splitDelay + hoverTime).ToInt();
 
             int cloneID = ModContent.NPCType<PolterPhantom>();
             IEnumerable<int> polterghasts = Main.npc.Take(Main.maxNPCs).
@@ -1062,7 +1075,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(destination) * 18f) / 16f;
             }
 
-            if (adjustedTimer == splitDelay)
+            if (attackTimer == splitDelay)
             {
                 // Summon three new clones.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1127,7 +1140,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (attackTimer >= totalCharges * attackCycleLength)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == cloneID)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int j = 0; j < 18; j++)
+                            {
+                                Vector2 shootVelocity = Main.npc[i].SafeDirectionTo(npc.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
+                                int soul = Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(soul))
+                                    Main.projectile[soul].timeLeft = 20;
+                            }
+
+                            Main.npc[i].active = false;
+                            Main.npc[i].netUpdate = true;
+                        }
+                        SoundEngine.PlaySound(SoundID.NPCHit36, Main.npc[i].Center);
+                    }
+                }
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_DesperationAttack(NPC npc, Player target, ref float attackTimer, ref float vignetteInterpolant, ref float radiusDecreaseFactor)
@@ -1283,6 +1318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.ai[0] = (int)Phase2AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase2AttackCycle.Length];
             else
                 npc.ai[0] = (int)Phase1AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase1AttackCycle.Length];
+            npc.ai[0] = (int)PolterghastAttackType.CloneSplit;
 
             // Transition to the desperation phase after dying.
             if (npc.Infernum().ExtraAI[11] == 1f)

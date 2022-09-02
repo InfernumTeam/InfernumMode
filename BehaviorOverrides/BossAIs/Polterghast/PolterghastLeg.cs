@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
-            NPC.width = NPC.height = 900;
+            NPC.width = NPC.height = 1800;
             NPC.damage = 245;
             NPC.lifeMax = 5000;
             NPC.dontTakeDamage = true;
@@ -198,7 +198,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return baseColor * Utils.GetLerpValue(0.02f, 0.1f, completionRatio, true) * Utils.GetLerpValue(0.98f, 0.9f, completionRatio, true);
         }
 
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            for (int i = 0; i < Limbs.Limbs.Length; i++)
+            {
+                float _ = 0f;
+                if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint))
+                    return true;
+            }
+            return false;
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

@@ -16,9 +16,13 @@ namespace InfernumMode.Skies
     {
         public override bool IsSceneEffectActive(Player player) => NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHead>()) && !BossRushEvent.BossRushActive;
 
+        public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
+
         public override void SpecialVisuals(Player player, bool isActive)
         {
             player.ManageSpecialBiomeVisuals("InfernumMode:Deus", isActive);
+            if (isActive)
+                SkyManager.Instance["InfernumMode:Deus"].Update(new());
         }
     }
 
@@ -39,53 +43,82 @@ namespace InfernumMode.Skies
             public float AlphaAmplitude;
         }
 
-        private bool isActive = false;
-        private float intensity = 1f;
         private float nebulaIntensity = 1f;
         private int nebulaTimer = 0;
         private AstralStar[] Stars;
+        public bool isActive = true;
+        public float Intensity = 0f;
+        public int DeusIndex = -1;
 
         public override void Update(GameTime gameTime)
         {
-            int deus = NPC.FindFirstNPC(ModContent.NPCType<AstrumDeusHead>());
-            if (isActive && nebulaIntensity < 1f && !Main.dayTime && deus != -1 && Main.npc[deus].life < Main.npc[deus].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
-                nebulaIntensity += 0.01f;
-            else if (!isActive && intensity > 0f)
-                nebulaIntensity -= 0.01f;
+            if (isActive && Intensity < 1f)
+                Intensity += 0.01f;
+            else if (!isActive && Intensity > 0f)
+                Intensity -= 0.01f;
+            nebulaIntensity = MathHelper.Clamp(nebulaIntensity + isActive.ToDirectionInt() * 0.01f, 0f, 1f);
 
-            intensity = MathHelper.Clamp(intensity, 0f, 1f);
-            nebulaIntensity = MathHelper.Clamp(nebulaIntensity, 0f, 1f);
-
-            if (nebulaIntensity <= 0f)
+            if (nebulaIntensity <= 0f || Main.npc[DeusIndex].life >= Main.npc[DeusIndex].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
                 nebulaTimer = 0;
             else
                 nebulaTimer++;
         }
 
-        private float GetIntensity() => intensity * 0.85f;
+        private float GetIntensity()
+        {
+            return UpdatePIndex() ? Main.npc[DeusIndex].Infernum().ExtraAI[8] : 0.5f;
+        }
+
+        public override Color OnTileColor(Color inColor) => inColor;
+
+        private bool UpdatePIndex()
+        {
+            int ProvType = ModContent.NPCType<AstrumDeusHead>();
+            if (DeusIndex >= 0 && Main.npc[DeusIndex].active && Main.npc[DeusIndex].type == ProvType)
+            {
+                return true;
+            }
+            DeusIndex = -1;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == ProvType)
+                {
+                    DeusIndex = i;
+                    break;
+                }
+            }
+            return DeusIndex != -1;
+        }
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
+            if (maxDepth >= 0 && minDepth < 0)
+            {
+                float Intensity = this.GetIntensity();
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * Intensity);
+            }
+
             if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
                 return;
 
-            Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * GetIntensity());
-
             // Draw nebulous gas behind everything if Deus is below a certain life threshold.
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
-            for (int i = 0; i < 135; i++)
+            if (nebulaTimer > 0f)
             {
-                Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
-                Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
-                float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
-                drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
-                float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
-                float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
-                Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                for (int i = 0; i < 135; i++)
+                {
+                    Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
+                    Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
+                    float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
+                    drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
+                    float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
+                    float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
+                    Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
-                Main.spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                }
+                Main.spriteBatch.ResetBlendState();
             }
-            Main.spriteBatch.ResetBlendState();
 
             int startingDrawIndex = -1;
             int endingDrawIndex = 0;
@@ -128,7 +161,7 @@ namespace InfernumMode.Skies
                     if (j % 140 == 139)
                         drawColor = Stars[j].Blue ? Color.MediumPurple : Color.Goldenrod;
 
-                    drawColor *= opacity * (1f - minorFade) * intensity * 0.56f;
+                    drawColor *= opacity * (1f - minorFade) * Intensity * 0.56f;
                     if (!Main.BackgroundEnabled)
                         drawColor *= 0.45f;
 
@@ -151,7 +184,10 @@ namespace InfernumMode.Skies
             }
         }
 
-        public override float GetCloudAlpha() => 1f - intensity;
+        public override float GetCloudAlpha()
+        {
+            return 0f;
+        }
 
         public override void Activate(Vector2 position, params object[] args)
         {
@@ -191,7 +227,7 @@ namespace InfernumMode.Skies
 
         public override bool IsActive()
         {
-            return isActive || intensity > 0f;
+            return isActive || Intensity > 0f;
         }
     }
 }

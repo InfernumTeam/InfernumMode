@@ -176,6 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             telegraphOpacity = 0f;
             npc.hide = false;
             npc.dontTakeDamage = false;
+            npc.defDamage = 315;
             npc.damage = npc.defDamage;
             npc.Calamity().DR = 0.1f;
             if (veryFirstAttack == 0f)
@@ -452,7 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // Hover near the target.
             float acceleration = attackTimer < swingDelay ? 0.8f : 0.225f;
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 800f, -225f);
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 840f, -225f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, acceleration);
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -513,9 +514,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int chargeTime = 45;
             int ectoplasmPerRing = 8;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float offsetPerRing = 275f;
+            float offsetPerRing = 245f;
             float maxRingOffset = 6000f;
-            float chargeSpeed = 33f;
+            float chargeSpeed = 36f;
             float spinAngularVelocity = MathHelper.ToRadians(0.75f);
 
             if (lifeRatio < Phase2LifeRatio)
@@ -595,7 +596,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int ringCount = 7;
             int soulsPerRing = 24;
-            int ringReleaseRate = 75;
+            int ringReleaseRate = 67;
             int ringCreationDelay = 60;
             float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.84f, 1f - lifeRatio);
             float ringOpeningAngleSpread = MathHelper.ToRadians(56f);
@@ -849,7 +850,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                             for (int i = 0; i < soulCount / 2; i++)
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(0.35f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
-                                float soulAngularVelocity = -shootOffsetAngle * 0.012f;
+                                float soulAngularVelocity = -shootOffsetAngle * 0.00825f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);
                                 if (Main.projectile.IndexInRange(soul))
@@ -871,7 +872,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             int slowdownTime = 60;
             int shootTime = 240;
-            float soulSpeed = Utils.Remap(attackTimer, slowdownTime, slowdownTime + 100f, 7.11f, 19.5f);
+            float soulSpeed = Utils.Remap(attackTimer, slowdownTime, slowdownTime + 100f, 7.11f, 20.5f);
             int attackDuration = slowdownTime + shootTime;
 
             // Slow down and look at the target.
@@ -1004,6 +1005,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.velocity *= 1.005f;
 
                 int shootRate = enraged ? 2 : 4;
+                if (lifeRatio < Phase3LifeRatio)
+                    shootRate--;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
                     Vector2 vortexVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
@@ -1130,7 +1134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             int vignetteFadeinTime = 60;
             int attackDelay = 102;
-            int vortexSpiralCount = 3;
+            int vortexSpiralCount = 4;
             int vortexSpiralSpawnRate = 24;
             int vortexSpiralTime = 540;
 
@@ -1141,8 +1145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float ringOpeningAngleSpread = MathHelper.ToRadians(55f);
 
             int finalAttackStartTime = attackDelay + vortexSpiralTime + spiritFlameTime;
-            int soulBurstCount = 33;
-
+            int soulBurstCount = 30;
             ref float soulBurstDelay = ref npc.Infernum().ExtraAI[0];
             ref float soulBurstCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -1228,15 +1231,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Release barrages of souls at an accelerating pace that are telegraphed by large lines.
             if (attackTimer >= finalAttackStartTime + soulBurstDelay && soulBurstCounter < soulBurstCount)
             {
-                soulBurstDelay = MathHelper.Clamp(soulBurstDelay - 1f, 13f, 36f);
+                soulBurstDelay = MathHelper.Clamp(soulBurstDelay - 1f, 15f, 36f);
                 attackTimer = finalAttackStartTime;
                 soulBurstCounter++;
 
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 soulTelegraphSpawnPosition = target.Center - Vector2.UnitY.RotatedByRandom(0.77f) * Main.rand.NextBool().ToDirectionInt() * 1180f;
-                    Vector2 soulTelegraphDirection = (target.Center - soulTelegraphSpawnPosition).SafeNormalize(Vector2.UnitY);
+                    Vector2 soulTelegraphSpawnPosition = target.Center - Vector2.UnitY.RotatedByRandom(1.15f) * Main.rand.NextBool().ToDirectionInt() * 1180f;
+                    Vector2 soulTelegraphDirection = (target.Center - soulTelegraphSpawnPosition + Main.rand.NextVector2Circular(450f, 450f)).SafeNormalize(Vector2.UnitY);
                     Utilities.NewProjectileBetter(soulTelegraphSpawnPosition, soulTelegraphDirection, ModContent.ProjectileType<SoulTelegraphLine>(), 0, 0f);
                 }
 

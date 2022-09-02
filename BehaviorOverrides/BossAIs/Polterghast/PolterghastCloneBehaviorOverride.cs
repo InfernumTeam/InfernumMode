@@ -39,11 +39,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             if (attackTimer > 50f)
             {
+                npc.damage = npc.defDamage;
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * polterghast.velocity.Length();
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             }
             else
             {
+                npc.damage = 0;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
                 if (attackTimer < 40f && !npc.WithinRange(target.Center, 300f))
                 {

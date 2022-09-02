@@ -379,9 +379,11 @@ namespace InfernumMode
                 Player.mount.Dismount(Player);
             }
 
-            // Ensure that Revengeance Mode is always active while Infernum is active.
+            // Ensure that Death+Revengeance Mode is always active while Infernum is active.
             if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
+            if (WorldSaveSystem.InfernumMode && !CalamityWorld.death)
+                CalamityWorld.death = true;
 
             // I said FUCK OFF.
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || InfernumMode.EmodeIsActive;

@@ -96,13 +96,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.41f);
 
-            for (int i = ChargePositions.Length - 2; i >= 0; i--)
+            float chargeCompletion = (1f - Projectile.timeLeft / (float)PressurePhantasmalDeathray.LifetimeConstant) * ChargePositions.Length;
+            int chargeCount = (int)chargeCompletion - 1;
+            if (chargeCount < 0)
+                chargeCount = 0;
+
+            float chargeInterpolant = chargeCompletion % 1f;
+            for (int i = ChargePositions.Length - 2; i >= chargeCount; i--)
             {
                 Vector2[] positions = new Vector2[2]
                 {
                     ChargePositions[i],
                     ChargePositions[i + 1]
                 };
+                if (i == chargeCount)
+                    positions[0] = Vector2.Lerp(positions[0], positions[1], chargeInterpolant);
 
                 // Stand-in variable used to differentiate between the beams.
                 // It is not used anywhere else.

@@ -112,7 +112,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
                 ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
-                ExoMechComboAttackContent.UseAthenaAresComboAttack(npc, ref aresBody.ai[1], ref _);
                 return false;
             }
 

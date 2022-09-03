@@ -31,7 +31,6 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.Items.Relics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;

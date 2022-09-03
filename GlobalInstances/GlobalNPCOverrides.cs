@@ -30,7 +30,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
@@ -65,7 +64,6 @@ namespace InfernumMode.GlobalInstances
 
         internal static int Cryogen = -1;
         internal static int AstrumAureus = -1;
-        internal static int Athena = -1;
 
         #endregion
 
@@ -95,7 +93,6 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
-            ResetSavedIndex(ref Athena, ModContent.NPCType<AthenaNPC>());
         }
         #endregion Reset Effects
 
@@ -261,12 +258,11 @@ namespace InfernumMode.GlobalInstances
 
             int apolloID = ModContent.NPCType<Apollo>();
             int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int athenaID = ModContent.NPCType<AthenaNPC>();
             int aresID = ModContent.NPCType<AresBody>();
             int totalExoMechs = 0;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
                     continue;
                 if (!Main.npc[i].active)
                     continue;

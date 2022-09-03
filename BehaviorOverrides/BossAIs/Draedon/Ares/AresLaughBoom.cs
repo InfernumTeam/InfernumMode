@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class ExowlCircleSummonBoom : BaseWaveExplosionProjectile
+    public class AresLaughBoom : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 60;
         public override float MaxRadius => 1000f;

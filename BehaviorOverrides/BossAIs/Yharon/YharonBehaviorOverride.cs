@@ -1808,8 +1808,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 burnColor = Color.Lerp(phase2Color, burnColor, backBackToRegularColor);
             }
             if (npc.life < npc.lifeMax * 0.2f)
-            {
                 burnColor = Color.LightYellow;
+            if (npc.life < npc.lifeMax * 0.075f)
+            {
+                burnColor = Color.White;
+                fireIntensity += 0.325f;
             }
 
             GameShaders.Misc["Infernum:YharonBurn"].UseOpacity(fireIntensity * 0.7f);

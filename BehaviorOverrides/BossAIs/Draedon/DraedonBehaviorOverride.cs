@@ -6,7 +6,6 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
@@ -43,8 +42,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int AresPhotonRipperContactDamage = 550;
 
         public const int TwinsChargeContactDamage = 550;
-
-        public const int AthenaChargeContactDamage = 550;
 
         public const int ExowlContactDamage = 500;
 
@@ -313,8 +310,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 secondaryMech = ModContent.NPCType<AresBody>();
             if (secondaryMech == (int)ExoMech.Twins)
                 secondaryMech = ModContent.NPCType<Apollo>();
-            if (secondaryMech == 4)
-                secondaryMech = ModContent.NPCType<AthenaNPC>();
 
             switch (DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon)
             {
@@ -345,14 +340,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     NPC apollo = CalamityUtils.SpawnBossBetter(apolloSpawnPosition, ModContent.NPCType<Apollo>());
                     if (apollo != null)
                         apollo.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
-                    break;
-
-                // Summon Athena above the player.
-                case (ExoMech)4:
-                    Vector2 athenaSpawnPosition = playerToFollow.Center - Vector2.UnitY * 1500f;
-                    NPC athena = CalamityUtils.SpawnBossBetter(athenaSpawnPosition, ModContent.NPCType<AthenaNPC>());
-                    if (athena != null)
-                        athena.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
                     break;
             }
         }

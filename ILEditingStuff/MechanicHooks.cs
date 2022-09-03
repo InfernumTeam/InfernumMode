@@ -9,7 +9,6 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
@@ -29,6 +28,7 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
+    /*
     public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)
@@ -43,9 +43,6 @@ namespace InfernumMode.ILEditingStuff
                 if (NPC.AnyNPCs(ModContent.NPCType<AresBody>()))
                     return true;
 
-                if (NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>()))
-                    return true;
-
                 if (NPC.AnyNPCs(ModContent.NPCType<Artemis>()) || NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
                     return true;
 
@@ -58,15 +55,9 @@ namespace InfernumMode.ILEditingStuff
 
         public void Unload() => ExoMechIsPresent -= ChangeExoMechIsActiveDefinition;
     }
-
+    */
     public class DrawDraedonSelectionUIWithAthena : IHookEdit
     {
-        public static float AthenaIconScale
-        {
-            get;
-            set;
-        } = 1f;
-
         public static ExoMech? PrimaryMechToSummon
         {
             get;
@@ -97,9 +88,9 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs)
             {
                 bool hoveringOverAnyIcon = false;
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    Vector2 iconDrawOffset = new(MathHelper.Lerp(-92f, 92f, i / 3f), -104f);
+                    Vector2 iconDrawOffset = new(MathHelper.Lerp(-92f, 92f, i / 2f), -145f);
                     hoveringOverAnyIcon |= HandleInteractionWithButton(baseDrawPosition + iconDrawOffset, i + 1, PrimaryMechToSummon == null);
                 }
 
@@ -134,16 +125,10 @@ namespace InfernumMode.ILEditingStuff
                     description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
                     break;
                 case 3:
+                default:
                     iconScale = ExoMechSelectionUI.TwinsIconScale;
                     iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo").Value;
                     description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
-                    break;
-                case 4:
-                default:
-                    iconScale = AthenaIconScale;
-                    iconMechTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HeadIcon_Athena").Value;
-                    description = "Athena, a giant supercomputer with multiple mounted pulse turrets.";
-                    drawPosition.Y += 2f;
                     break;
             }
 
@@ -152,15 +137,6 @@ namespace InfernumMode.ILEditingStuff
 
             // Check if the mouse is hovering over the contact button area.
             bool alreadySelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == exoMech || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == exoMech;
-
-            // Disable summoning Thanatos/Athena together.
-            bool athenaIsSelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == 4 || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == 4;
-            bool thanatosIsSelected = (int)(PrimaryMechToSummon ?? (ExoMech)999) == 1 || (int)(DestroyerTypeToSummon ?? (ExoMech)999) == 1;
-            if (exoMech == (int)ExoMech.Destroyer && athenaIsSelected)
-                alreadySelected = true;
-            if (exoMech == 4 && thanatosIsSelected)
-                alreadySelected = true;
-
             bool hoveringOverIcon = ExoMechSelectionUI.MouseScreenArea.Intersects(clickArea);
             if (hoveringOverIcon)
             {
@@ -216,9 +192,6 @@ namespace InfernumMode.ILEditingStuff
                     break;
                 case 3:
                     ExoMechSelectionUI.TwinsIconScale = iconScale;
-                    break;
-                case 4:
-                    AthenaIconScale = iconScale;
                     break;
             }
             return hoveringOverIcon;

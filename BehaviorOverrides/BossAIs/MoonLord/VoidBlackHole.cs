@@ -88,6 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
+        public override bool? CanDamage() => Timer >= 150f ? null : false;
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);

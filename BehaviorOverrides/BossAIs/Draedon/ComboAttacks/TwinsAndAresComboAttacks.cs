@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 return false;
 
             // Ensure that the player has a bit of time to compose themselves after killing the third mech.
-            bool secondTwoAtOncePhase = CurrentAresPhase == 3 || CurrentThanatosPhase == 3 || CurrentTwinsPhase == 3 || CurrentAthenaPhase == 3;
+            bool secondTwoAtOncePhase = CurrentAresPhase == 3 || CurrentThanatosPhase == 3 || CurrentTwinsPhase == 3;
             if (initialMech.Infernum().ExtraAI[23] < 180f && attackTimer >= 3f && secondTwoAtOncePhase)
             {
                 initialMech.Infernum().ExtraAI[23]++;

@@ -25,7 +25,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -295,8 +294,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
-            if (ExoMechComboAttackContent.UseAthenaAresComboAttack(npc, ref attackTimer, ref frameType))
-                SelectNextAttack(npc);
             npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.0065f, 0.2f);
 
             attackTimer++;
@@ -307,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f }, target.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
-                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<ExowlCircleSummonBoom>(), 0, 0f);
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
         }
 
         public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)

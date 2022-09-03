@@ -390,10 +390,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 // Cause the entire screen to melt into black, slash violently in an attempt to kill the target, and then release a bomb that explodes
                 // into kunai after the black screen fade effect is over.
                 case 1:
-                    fadeToBlack = Utils.GetLerpValue(0f, telegraphTime, attackTimer, true) * Utils.GetLerpValue(telegraphTime + blackTime + 12f, telegraphTime + blackTime, attackTimer, true);
+                    fadeToBlack = Utils.GetLerpValue(0f, telegraphTime, attackTimer, true) * Utils.GetLerpValue(telegraphTime + blackTime + 12f, telegraphTime + blackTime, attackTimer, true) * 0.725f;
+                    npc.Opacity = 1f - fadeToBlack;
 
                     // Become invincible once the black screen fade is noticeably strong.
-                    npc.dontTakeDamage = fadeToBlack > 0.7f;
+                    npc.dontTakeDamage = fadeToBlack > 0.5f;
 
                     // Drift towards the target very quickly.
                     if (attackTimer == 1f)

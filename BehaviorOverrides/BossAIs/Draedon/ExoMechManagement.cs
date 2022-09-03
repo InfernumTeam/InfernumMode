@@ -5,7 +5,6 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
@@ -70,30 +69,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
                     return 3;
                 if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
-                    return 2;
-
-                return 1;
-            }
-        }
-
-        public static int CurrentAthenaPhase
-        {
-            get
-            {
-                if (!NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>()))
-                    return 0;
-
-                NPC athena = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AthenaNPC>())];
-
-                if (FindFinalMech() is null && athena.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
-                    return TotalMechs == 1 ? 6 : 3;
-                if (FindFinalMech() == athena)
-                    return 5;
-                if (ComplementMechIsPresent(athena) || athena.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
-                    return 4;
-                if (athena.life <= athena.lifeMax * Phase3LifeRatio)
-                    return 3;
-                if (athena.life <= athena.lifeMax * Phase2LifeRatio)
                     return 2;
 
                 return 1;
@@ -192,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static int GetComplementMechType(NPC npc)
         {
             int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
-            if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<AthenaNPC>())
+            if (npc.type == ModContent.NPCType<ThanatosHead>())
                 return secondaryMechNPCType;
 
             if (npc.type == ModContent.NPCType<AresBody>())
@@ -206,12 +181,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static int GetFinalMechType(NPC npc)
         {
             int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
-            int destroyerType = ModContent.NPCType<ThanatosHead>();
-            if (secondaryMechNPCType == ModContent.NPCType<AthenaNPC>() || npc.type == ModContent.NPCType<AthenaNPC>())
-                destroyerType = ModContent.NPCType<AthenaNPC>();
             List<int> mechsInUse = new()
             {
-                destroyerType,
+                ModContent.NPCType<ThanatosHead>(),
                 ModContent.NPCType<AresBody>(),
                 ModContent.NPCType<Apollo>(),
             };
@@ -234,14 +206,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int apolloID = ModContent.NPCType<Apollo>();
             int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int athenaID = ModContent.NPCType<AthenaNPC>();
             int aresID = ModContent.NPCType<AresBody>();
             NPC initialMech = null;
 
             // Find the initial mech. If it cannot be found, return nothing.
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
                     continue;
                 if (!Main.npc[i].active)
                     continue;
@@ -299,11 +270,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<AresSpinningRedDeathray>(),
                 ModContent.ProjectileType<ExolaserBomb>(),
                 ModContent.ProjectileType<RefractionRotor>(),
-                ModContent.ProjectileType<PulseBeamStart>(),
                 ModContent.ProjectileType<ThanatosComboLaser>(),
                 ModContent.ProjectileType<ApolloRocketInfernum>(),
                 ModContent.ProjectileType<LightOverloadRay>(),
-                ModContent.ProjectileType<PulseLaser>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -374,12 +343,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 int apolloID = ModContent.NPCType<Apollo>();
                 int thanatosID = ModContent.NPCType<ThanatosHead>();
-                int athenaID = ModContent.NPCType<AthenaNPC>();
                 int aresID = ModContent.NPCType<AresBody>();
                 int count = 0;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
                         continue;
                     if (!Main.npc[i].active || ExoMechAIUtilities.ShouldExoMechVanish(Main.npc[i]))
                         continue;

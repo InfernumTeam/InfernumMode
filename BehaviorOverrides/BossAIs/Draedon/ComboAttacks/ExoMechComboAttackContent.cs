@@ -2,7 +2,6 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -22,29 +21,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ThanatosAres_LaserCircle,
             ThanatosAres_ElectricCage,
 
-            TwinsAthena_ThermoplasmaDance,
-            TwinsAthena_ThermoplasmaChargeupBursts,
-
             TwinsThanatos_ThermoplasmaDashes,
             TwinsThanatos_CircledLaserSweep,
-
-            AthenaAres_ExowlPressureCannons,
-            AthenaAres_ExowlCannonTheft
         }
 
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
         {
             [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPulseCannon>() },
-
-            [ExoMechComboAttackType.AthenaAres_ExowlPressureCannons] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPulseCannon>() },
-
-            [ExoMechComboAttackType.AthenaAres_ExowlCannonTheft] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
                 ModContent.NPCType<AresPlasmaFlamethrower>(),
                 ModContent.NPCType<AresLaserCannon>(),
                 ModContent.NPCType<AresPulseCannon>() },
@@ -54,13 +37,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
         {
             int apolloID = ModContent.NPCType<Apollo>();
             int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int athenaID = ModContent.NPCType<AthenaNPC>();
             int aresID = ModContent.NPCType<AresBody>();
 
             // Find the initial mech. If it cannot be found, return nothing.
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
                     continue;
                 if (!Main.npc[i].active)
                     continue;
@@ -93,14 +75,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             bool aresAndTwins = (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
                 (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<Apollo>());
-            bool athenaAndTwins = (initialMech.type == ModContent.NPCType<AthenaNPC>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
-                (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<AthenaNPC>());
             bool thanatosAndAres = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
                 (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
             bool thanatosAndTwins = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
                 (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
-            bool athenaAndAres = (initialMech.type == ModContent.NPCType<AthenaNPC>() && complementMech.type == ModContent.NPCType<AresBody>()) ||
-                (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<AthenaNPC>());
 
             if (aresAndTwins)
             {
@@ -108,20 +86,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     (int)ExoMechComboAttackType.AresTwins_DualLaserCharges => (int)ExoMechComboAttackType.AresTwins_CircleAttack,
                     _ => (int)ExoMechComboAttackType.AresTwins_DualLaserCharges,
-                };
-
-                // Inform all mechs of the change.
-                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
-                InformAllMechsOfComboAttackChange((int)newAttack);
-                return true;
-            }
-
-            if (athenaAndTwins)
-            {
-                initialMech.ai[0] = (int)initialMech.ai[0] switch
-                {
-                    (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance => (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts,
-                    _ => (int)ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance,
                 };
 
                 // Inform all mechs of the change.
@@ -150,20 +114,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => (int)ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep,
                     _ => (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes,
-                };
-
-                // Inform all mechs of the change.
-                newAttack = (ExoMechComboAttackType)initialMech.ai[0];
-                InformAllMechsOfComboAttackChange((int)newAttack);
-                return true;
-            }
-
-            if (athenaAndAres)
-            {
-                initialMech.ai[0] = (int)initialMech.ai[0] switch
-                {
-                    (int)ExoMechComboAttackType.AthenaAres_ExowlPressureCannons => (int)ExoMechComboAttackType.AthenaAres_ExowlCannonTheft,
-                    _ => (int)ExoMechComboAttackType.AthenaAres_ExowlPressureCannons,
                 };
 
                 // Inform all mechs of the change.

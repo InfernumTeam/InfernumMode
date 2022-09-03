@@ -69,6 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
             npc.ai[3] = 1f;
             npc.dontTakeDamage = false;
+            npc.Calamity().KillTime = 10;
 
             bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;

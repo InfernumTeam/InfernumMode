@@ -1,4 +1,5 @@
 using CalamityMod.Items.Ammo;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Items.Weapons.Ranged;
@@ -27,6 +28,9 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<Lazhar>()] = 42,
             [ModContent.ItemType<Omniblade>()] = 54,
             [ModContent.ItemType<BrinyBaron>()] = 65,
+            [ModContent.ItemType<WavePounder>()] = 47,
+            [ModContent.ItemType<NightsGaze>()] = 396,
+            [ModContent.ItemType<Valediction>()] = 139,
             [ModContent.ItemType<PridefulHuntersPlanarRipper>()] = 48,
             [ModContent.ItemType<FinalDawn>()] = 855,
             [ModContent.ItemType<DragonsBreath>()] = 132,

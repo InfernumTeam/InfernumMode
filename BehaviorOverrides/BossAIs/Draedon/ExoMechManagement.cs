@@ -413,9 +413,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 var attack = (TwinsAttackType)(int)npc.ai[0];
 
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.LaserRayScarletBursts)
+                if (attack == TwinsAttackType.ArtemisLaserRay)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.PlasmaCharges)
+                if (attack == TwinsAttackType.ApolloPlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)
@@ -445,9 +445,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 var attack = (TwinsAttackType)(int)Main.npc[apollo].ai[0];
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.LaserRayScarletBursts)
+                if (attack == TwinsAttackType.ArtemisLaserRay)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.PlasmaCharges)
+                if (attack == TwinsAttackType.ApolloPlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)

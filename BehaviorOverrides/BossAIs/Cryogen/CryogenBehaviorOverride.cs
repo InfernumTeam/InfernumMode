@@ -893,10 +893,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         #endregion AI
 
         #region Drawing
-        internal static void SetupCustomBossIcon()
-        {
-            InfernumMode.Instance.AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon", -1);
-        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {

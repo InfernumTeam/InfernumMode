@@ -89,6 +89,10 @@ namespace InfernumMode.GlobalInstances
             // Have Cryogen use a custom map icon.
             if (npc.type == ModContent.NPCType<Cryogen>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
+
+            // Have Dreadnautilus use a custom map icon.
+            if (npc.type == NPCID.BloodNautilus)
+                index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

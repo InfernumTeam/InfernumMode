@@ -34,8 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             BasicShots,
             FireCharge,
             SingleLaserBlasts,
-            PlasmaCharges,
-            LaserRayScarletBursts,
+            ApolloPlasmaCharges,
+            ArtemisLaserRay,
             GatlingLaserAndPlasmaFlames
         }
 
@@ -245,17 +245,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     case TwinsAttackType.FireCharge:
                         DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.PlasmaCharges:
-                        DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                    case TwinsAttackType.ApolloPlasmaCharges:
+                        DoBehavior_ApolloPlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.LaserRayScarletBursts:
-                        DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+                    case TwinsAttackType.ArtemisLaserRay:
+                        DoBehavior_ArtemisLaserRay(npc, target, ref frame, ref attackTimer);
                         break;
                     case TwinsAttackType.GatlingLaserAndPlasmaFlames:
                         DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
                 }
             }
+
+            // Perform the death animation.
             else
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ArtemisSpinLaser>());
@@ -944,7 +946,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 frame += 60f;
         }
 
-        public static void DoBehavior_PlasmaCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
+        public static void DoBehavior_ApolloPlasmaCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
             // Make Artemis go away so Apollo can do its attack without interference.
             if (npc.type == ModContent.NPCType<Artemis>())
@@ -1080,7 +1082,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             attackDelay++;
         }
 
-        public static void DoBehavior_LaserRayScarletBursts(NPC npc, Player target, ref float frame, ref float attackTimer)
+        public static void DoBehavior_ArtemisLaserRay(NPC npc, Player target, ref float frame, ref float attackTimer)
         {
             // Make Apollo go away so Artemis can do its attack without interference.
             if (npc.type == ModContent.NPCType<Apollo>())
@@ -1386,7 +1388,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (Main.rand.NextBool(3))
                             npc.ai[0] = (int)TwinsAttackType.GatlingLaserAndPlasmaFlames;
                         if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-                            npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.LaserRayScarletBursts : TwinsAttackType.PlasmaCharges);
+                            npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.ArtemisLaserRay : TwinsAttackType.ApolloPlasmaCharges);
                         tries++;
 
                         if (tries >= 1000)

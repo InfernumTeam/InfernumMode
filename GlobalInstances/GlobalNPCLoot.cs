@@ -194,6 +194,12 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Signus>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SignusRelic>());
+
+            if (npc.type == ModContent.NPCType<Polterghast>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PolterghastRelic>());
+
+            if (npc.type == ModContent.NPCType<OldDuke>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());
         }
     }
 }

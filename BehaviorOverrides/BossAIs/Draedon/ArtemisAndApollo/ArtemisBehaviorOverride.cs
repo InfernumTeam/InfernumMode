@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
-            if (apolloAttackType is not TwinsAttackType.LaserRayScarletBursts and not TwinsAttackType.PlasmaCharges)
+            if (apolloAttackType is not TwinsAttackType.ArtemisLaserRay and not TwinsAttackType.ApolloPlasmaCharges)
             {
                 attackState = (int)apollo.ai[0];
                 attackTimer = apollo.ai[1];
@@ -165,11 +165,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     case TwinsAttackType.FireCharge:
                         DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.PlasmaCharges:
-                        DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                    case TwinsAttackType.ApolloPlasmaCharges:
+                        DoBehavior_ApolloPlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.LaserRayScarletBursts:
-                        DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+                    case TwinsAttackType.ArtemisLaserRay:
+                        DoBehavior_ArtemisLaserRay(npc, target, ref frame, ref attackTimer);
                         break;
                     case TwinsAttackType.GatlingLaserAndPlasmaFlames:
                         DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);

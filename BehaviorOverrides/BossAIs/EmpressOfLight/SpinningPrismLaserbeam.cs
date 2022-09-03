@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -12,17 +13,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class SpinningPrismLaserbeam : ModProjectile
     {
+        public int LaserCount;
+
+        public float LaserbeamIDRatio;
+
+        public float AngularOffset;
+
+        public float VerticalSpinDirection;
+
         public PrimitiveTrail RayDrawer = null;
 
-        public ref float AngularVelocity => ref Projectile.ai[0];
-
-        public ref float LaserLength => ref Projectile.ai[1];
+        public ref float LaserLength => ref Projectile.ai[0];
 
         public ref float Time => ref Projectile.localAI[0];
 
-        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+        public const int Lifetime = 300;
 
         public const float MaxLaserLength = 4800f;
+
+        public const float SpinRate = 5f;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {
@@ -37,10 +48,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = LightCloud.LaserLifetime;
+            Projectile.timeLeft = Lifetime;
             Projectile.hide = true;
             Projectile.netImportant = true;
             Projectile.Calamity().DealsDefenseDamage = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(LaserCount);
+            writer.Write(LaserbeamIDRatio);
+            writer.Write(AngularOffset);
+            writer.Write(VerticalSpinDirection);
+            writer.Write(Time);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            LaserCount = reader.ReadInt32();
+            LaserbeamIDRatio = reader.ReadSingle();
+            AngularOffset = reader.ReadSingle();
+            VerticalSpinDirection = reader.ReadSingle();
+            Time = reader.ReadSingle();
         }
 
         public override void AI()
@@ -50,7 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.02f, 0.05f, maxScale);
 
             // Spin the laserbeam.
-            Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity * Utils.GetLerpValue(0f, 32f, Time, true));
+            float deviationAngle = (Time * MathHelper.TwoPi / 40f + LaserbeamIDRatio * SpinRate) / (LaserCount * SpinRate) * MathHelper.TwoPi;
+            float sinusoidYOffset = (float)Math.Cos(deviationAngle) * AngularOffset;
+            Projectile.velocity = Vector2.UnitY.RotatedBy(sinusoidYOffset) * VerticalSpinDirection;
 
             // Update the laser length.
             LaserLength = MaxLaserLength;
@@ -61,14 +92,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Time++;
         }
 
-        internal float PrimitiveWidthFunction(float completionRatio) => Projectile.scale * 27f;
+        internal float PrimitiveWidthFunction(float completionRatio) => Projectile.scale * 12f;
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) * 
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
                 (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
-            Color c = Main.hslToRgb((completionRatio * 5f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
+            Color c = Main.hslToRgb((completionRatio * 8f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
             c.A = 0;
 
             return c;
@@ -82,19 +113,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
 
-            Vector2[] basePoints = new Vector2[24];
+            Vector2[] basePoints = new Vector2[8];
             for (int i = 0; i < basePoints.Length; i++)
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 92);
+            RayDrawer.Draw(basePoints, overallOffset, 16);
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.scale * 25f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.scale * 12f, ref _);
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)

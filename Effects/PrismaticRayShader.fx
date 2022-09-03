@@ -53,7 +53,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (uOpacity >= 0)
         coordsFactor *= uOpacity;
     
-    float laserbeamCutoffOpacity = tex2D(uImage2, frac(coords * float2(coordsFactor, 1) - float2(uTime * 3.43, 0))).r;
+    float laserbeamCutoffOpacity = tex2D(uImage2, sin(frac(coords * float2(coordsFactor, 1) - float2(uTime * 3.43, 0)) * 3.141 + 1.57)).r;
     laserbeamCutoffOpacity = laserbeamCutoffOpacity + tex2D(uImage1, coords * 0.3).r * 4.4;
     
     float bloomOpacity = pow(sin(coords.y * 3.141), 4);

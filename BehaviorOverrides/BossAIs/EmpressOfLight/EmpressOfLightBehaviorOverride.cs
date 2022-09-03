@@ -30,7 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             DanceOfSwords,
             LightOverload,
             ShimmeringDiamondLanceBarrage,
-            LaserStorm,
             InfiniteBrilliance,
             ContinuousLanceBarrages,
         }
@@ -97,7 +96,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage,
             EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.LightOverload,
-            EmpressOfLightAttackType.LaserStorm,
             EmpressOfLightAttackType.LanceOctagon,
             EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.RainbowWispForm,
@@ -110,7 +108,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.LanceOctagon,
             EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage,
-            EmpressOfLightAttackType.LaserStorm,
             EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.HorizontalCharge,
@@ -120,12 +117,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.InfiniteBrilliance,
-            EmpressOfLightAttackType.LaserStorm,
             EmpressOfLightAttackType.LightOverload,
             EmpressOfLightAttackType.InfiniteBrilliance,
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.LaserStorm,
             EmpressOfLightAttackType.InfiniteBrilliance,
             EmpressOfLightAttackType.LightOverload,
             EmpressOfLightAttackType.HorizontalCharge,
@@ -259,9 +254,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     break;
                 case EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage:
                     DoBehavior_ShimmeringDiamondLanceBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
-                    break;
-                case EmpressOfLightAttackType.LaserStorm:
-                    DoBehavior_LaserStorm(npc, target, initialXPosition, ref attackTimer, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.InfiniteBrilliance:
                     DoBehavior_InfiniteBrilliance(npc, target, initialXPosition, ref attackTimer);
@@ -1240,54 +1232,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_LaserStorm(NPC npc, Player target, float horizontalArenaCenter, ref float attackTimer, ref float rightArmFrame)
-        {
-            int shootDelay = 35;
-
-            // Fade in and slow down.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
-            npc.velocity *= 0.95f;
-
-            // Teleport above the target and descend.
-            // To prevent scenarios where the player cannot circle around the light cloud, the teleport has a safeguard that prevents teleports
-            // at the edges of the arena.
-            if (attackTimer == 1f)
-            {
-                npc.Center = target.Center - Vector2.UnitY * 420f;
-                npc.position.X = MathHelper.Clamp(npc.position.X, horizontalArenaCenter - BorderWidth * 0.5f + 600f, horizontalArenaCenter + BorderWidth * 0.5f - 600f);
-                if (npc.position.Y < 2000f)
-                    npc.position.Y = 2000f;
-
-                npc.velocity = Vector2.UnitY * 5f;
-                npc.Opacity = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Raise the right arm pointer finger in the air, towards the sky.
-            if (attackTimer < shootDelay + 15f)
-                rightArmFrame = 4f;
-
-            // Summon the cloud.
-            if (attackTimer == shootDelay - 1f)
-            {
-                Vector2 fingerPosition = npc.Center + new Vector2(35f, -45f);
-                Vector2 cloudSpawnPosition = fingerPosition - Vector2.UnitY * 450f;
-                while (target.WithinRange(cloudSpawnPosition, 270f))
-                    cloudSpawnPosition.X++;
-
-                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, fingerPosition);
-                Dust.QuickDustLine(fingerPosition, cloudSpawnPosition, 250f, Color.LightSkyBlue);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightCloud>(), CloudDamage, 0f);
-                    Utilities.NewProjectileBetter(fingerPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
-                }
-            }
-
-            if (attackTimer >= shootDelay + LightCloud.CloudLifetime)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_InfiniteBrilliance(NPC npc, Player target, float horizontalArenaCenter, ref float attackTimer)
         {
             int telegraphTime = 175;
@@ -1337,13 +1281,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         for (int j = -1; j <= 1; j += 2)
                         {
-                            int laser = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<SpinningPrismLaserbeam2>(), laserDamage, 0f);
+                            int laser = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<SpinningPrismLaserbeam>(), laserDamage, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam2>().LaserbeamIDRatio = MathHelper.Lerp(-0.5f, 0.5f, i / (float)laserbeamCount) * laserbeamCount;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam2>().VerticalSpinDirection = j;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam2>().AngularOffset = MathHelper.PiOver2 - maxTelegraphTilt;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam2>().LaserCount = laserbeamCount;
+                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().LaserbeamIDRatio = MathHelper.Lerp(-0.5f, 0.5f, i / (float)laserbeamCount) * laserbeamCount;
+                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().VerticalSpinDirection = j;
+                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().AngularOffset = MathHelper.PiOver2 - maxTelegraphTilt;
+                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().LaserCount = laserbeamCount;
                             }
                         }
                     }
@@ -1384,7 +1328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackTimer >= telegraphTime + SpinningPrismLaserbeam2.Lifetime)
+            if (attackTimer >= telegraphTime + SpinningPrismLaserbeam.Lifetime)
                 SelectNextAttack(npc);
         }
 
@@ -1440,13 +1384,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 ModContent.ProjectileType<EmpressSword>(),
                 ModContent.ProjectileType<EtherealLance>(),
                 ModContent.ProjectileType<LightBolt>(),
-                ModContent.ProjectileType<LightCloud>(),
                 ModContent.ProjectileType<LightOrb>(),
                 ModContent.ProjectileType<LightOverloadBeam>(),
                 ModContent.ProjectileType<PrismaticBolt>(),
                 ModContent.ProjectileType<PrismLaserbeam>(),
                 ModContent.ProjectileType<SpinningPrismLaserbeam>(),
-                ModContent.ProjectileType<SpinningPrismLaserbeam2>(),
             };
 
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -1905,7 +1847,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                     Vector2 telegraphDirection = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, telegraphSlope);
                     Vector2 start = npc.Center + Vector2.UnitY * 8f;
-                    Vector2 end = start + telegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam2.MaxLaserLength;
+                    Vector2 end = start + telegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam.MaxLaserLength;
                     spriteBatch.DrawLineBetter(start, end, Main.hslToRgb(hue, 1f, 0.7f), telegraphWidth);
                     spriteBatch.DrawLineBetter(start, end, Color.White, telegraphWidth * 0.5f);
 
@@ -1915,7 +1857,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         for (int j = 0; j < 18; j++)
                         {
                             Vector2 currentTelegraphDirection = Vector2.Lerp(telegraphDirection, aheadDirection, j / 17f);
-                            end = start + currentTelegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam2.MaxLaserLength;
+                            end = start + currentTelegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam.MaxLaserLength;
                             spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
                             spriteBatch.DrawLineBetter(start, end, Color.White, telegraphWidth * 0.5f);
                         }

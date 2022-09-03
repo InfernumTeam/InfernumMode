@@ -33,6 +33,8 @@ float Noise(float2 coords)
     return tex2D(uImage1, coords * uNoiseReadZoomFactor).r;
 }
 
+// Creates distortions in the noise patterns by picking offset positions and subtracting.
+// This helps in creating a flow-like effect.
 float2 Gradient2D(float2 coords)
 {
     float2 flattenedCoords = coords;
@@ -43,52 +45,58 @@ float2 Gradient2D(float2 coords)
 
 float CalculateLavaFlowIntensity(float2 p)
 {
-    float z = 2.;
-    float rz = 0.;
-    float2 bp = p;
+    float gain = 2.2;
+    float amplitude = 0.5;
+    float result = 0;
+    float2 p2 = p;
+    
+    // Create increasingly detailed lava based on repeated, increasingly small "bumps".
+    // This technique is analogous to fractal noise, which makes crisp textures by repeatedly summing noise of different frequencies and diminishing amplitudes.
+    // https://thebookofshaders.com/13/ provides a good overview of this concept.
     for (float i = 1; i < 7; i++)
     {
-		//primary flow speed
+        // Offset based on time.
         p += uTime * uTimeFactor * 0.2;
-		
-		//secondary flow speed (speed of the perceived flow)
-        bp -= uTime * uTimeFactor * 0.4;
-		
-		//displacement field (try changing time multiplier)
-        float2 gr = Gradient2D(i * p * 0.34 + uTime * uTimeFactor * 0.1);
-		
-		//rotation of the displacement field
-        gr = RotatedBy(gr, uTime * uTimeFactor * 0.6 - (0.05 * p.x + 0.03 * p.y) * 40.);
-		
-		//displace the system
-        p += gr * .5;
-		
-		//add noise octave
-        rz += (sin(Noise(p).r * 7.0) * 0.5 + 0.5) / z;
-		
-		//blend factor (blending displaced system with base system)
-		//you could call this advection factor (.5 being low, .95 being high)
-        p = lerp(bp, p, 0.77);
-		
-		//intensity scaling
-        z *= 1.4;
-		//octave scaling
-        p *= 2.2;
-        bp *= 1.4;
+        p2 -= uTime * uTimeFactor * 0.4;
+        
+        float2 gradient = Gradient2D(i * p * 0.34 + uTime * uTimeFactor * 0.1);
+        
+        // Rotate the displacement field.
+        float positionBasedRotationalOffset = dot(p, float2(0.05, 0.03)) * 40;
+        gradient = RotatedBy(gradient, uTime * uTimeFactor * 0.6 - positionBasedRotationalOffset);
+        
+        // Displace the point based on the gradient.
+        p += gradient * 0.5;
+        
+        // Add noise octaves.
+        result += (sin(Noise(p) * 7) * 0.5 + 0.5) * amplitude;
+        
+        // Advect between the two points.
+        p = lerp(p2, p, 0.75);
+        
+        amplitude *= 0.714;
+        p *= gain;
+        p2 *= gain - 0.8;
     }
-    return rz;
+    return result;
 }
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    // Adjust coords such that <0,0> is the top left of the frame and <1, 1> is the bottom right of the frame instead of the entire sheet.
     float2 framedCoords = (coords * uActualImageSize0 - uNPCRectangle.xy) / uNPCRectangle.zw;
     
     float4 color = tex2D(uImage0, coords);
+    
+    // Main lava color.
     float4 burnColor1 = float4(uColor, 1) / CalculateLavaFlowIntensity(framedCoords * uZoomFactor);
+    
+    // Additive burn color.
     float4 burnColor2 = float4(uSecondaryColor, 1) * pow(CalculateLavaFlowIntensity(framedCoords * uZoomFactor * uZoomFactorSecondary), uSecondaryLavaPower);
     if (uOpacity <= 0)
         return color * sampleColor;
     
+    // Clear any opacity artifacts. This might be a bit unoptimal but it works fine.
     float3 resultingColorRGB = burnColor1 + burnColor2;
     float4 resultingColor = float4(resultingColorRGB, 1) * sampleColor;
     return lerp(color * sampleColor, resultingColor * color.a, uOpacity);

@@ -2175,6 +2175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 horizontalGleamScaleBig = horizontalGleamScaleSmall * (1f + eyePulse * 2f);
                 Vector2 verticalGleamScaleBig = verticalGleamScaleSmall * (1f + eyePulse * 2f);
                 Color eyeGleamColorSmall = Color.Violet * berserkPhaseInterpolant;
+                eyeGleamColorSmall.A = 0;
                 Color eyeGleamColorBig = eyeGleamColorSmall * (1f - eyePulse);
 
                 // Draw a pulsating red eye.

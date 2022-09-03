@@ -241,6 +241,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (BossRushEvent.BossRushActive)
                 totalScythesToCreate += 7;
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
 

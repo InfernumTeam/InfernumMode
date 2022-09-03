@@ -17,7 +17,7 @@ namespace InfernumMode.Skies
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:SCal", isActive);
+            //player.ManageSpecialBiomeVisuals("InfernumMode:SCal", isActive);
         }
     }
 

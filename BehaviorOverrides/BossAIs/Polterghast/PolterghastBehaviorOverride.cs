@@ -609,10 +609,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int soulsPerRing = 24;
             int ringReleaseRate = 67;
             int ringCreationDelay = 60;
+            int attackTransitionDelay = 96;
             float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.84f, 1f - lifeRatio);
             float ringOpeningAngleSpread = MathHelper.ToRadians(56f);
             int actualSoulsPerRing = (int)(soulsPerRing * (MathHelper.TwoPi - ringOpeningAngleSpread) / MathHelper.TwoPi);
             ref float ringShootCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (ringShootCounter >= ringCount)
+            {
+                npc.velocity *= 0.9f;
+                if (attackTimer >= attackTransitionDelay)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<SpinningSoul>());
+                    SelectNextAttack(npc);
+                }
+                return;
+            }
 
             // Teleport near the target. A net-update is already fired in the teleport method.
             if (attackTimer == 1f)
@@ -646,7 +658,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // Cast rings of souls that converge inward on the Polterghast. The player is expected to weave through the open gap.
             // This attack is very similar to the flame circles in Asgore's fight from Undertale.
-            if (attackTimer >= ringCreationDelay + 54f && attackTimer % ringReleaseRate == ringReleaseRate - 1f)
+            if (attackTimer >= ringCreationDelay + 54f && attackTimer % ringReleaseRate == ringReleaseRate - 1f && ringShootCounter < ringCount)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -654,8 +666,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     if (ringShootCounter >= ringCount)
                     {
                         totalReleasedSouls = 0f;
-                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<SpinningSoul>());
-                        SelectNextAttack(npc);
+                        attackTimer = 0f;
                         return;
                     }
 
@@ -830,7 +841,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int shootDelay = 35;
             int shootRate = 56;
-            int shootTime = 240;
+            int shootTime = 300;
             int attackTransitionDelay = 90;
             int soulCount = (int)MathHelper.Lerp(5f, 9f, 1f - lifeRatio);
             float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
@@ -860,7 +871,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         {
                             for (int i = 0; i < soulCount / 2; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(0.35f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float shootOffsetAngle = MathHelper.Lerp(0.13f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.00825f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);
@@ -1127,9 +1138,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Charge.
             if (Main.netMode != NetmodeID.MultiplayerClient && adjustedTimer == splitDelay + hoverTime)
             {
-                for (int i = 0; i < 13; i++)
+                for (int i = 0; i < 19; i++)
                 {
-                    Vector2 soulVelocity = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * 11.5f;
+                    Vector2 soulVelocity = (MathHelper.TwoPi * i / 19f).ToRotationVector2() * 12.5f;
                     Utilities.NewProjectileBetter(npc.Center + soulVelocity * 2f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 300, 0f);
                 }
                 for (int i = 0; i < polterghasts.Count(); i++)
@@ -1318,7 +1329,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.ai[0] = (int)Phase2AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase2AttackCycle.Length];
             else
                 npc.ai[0] = (int)Phase1AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase1AttackCycle.Length];
-            npc.ai[0] = (int)PolterghastAttackType.CloneSplit;
 
             // Transition to the desperation phase after dying.
             if (npc.Infernum().ExtraAI[11] == 1f)

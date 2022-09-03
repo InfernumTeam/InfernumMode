@@ -34,17 +34,24 @@ float InverseLerp(float x, float a, float b)
 {
     return saturate((x - a) / (b - a));
 }
+float RectangularDistance(float2 a, float2 b)
+{
+    float n = 100;
+    float2 absoluteDistance = abs(a - b);
+    absoluteDistance.x *= 1.72;
+    return pow(pow(absoluteDistance.x, n) + pow(absoluteDistance.y, n), 1.0 / n);
+}
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float2 arenaCenter = uvArenaArea.xy + uvArenaArea.zw * 0.5;
-    float distanceFromCenter = distance(arenaCenter, coords * float2(1.3, 1));
+    float distanceFromCenter = RectangularDistance(arenaCenter, coords);
     float2 noiseCoordsBase = coords * 1.2;
     float4 noise1 = tex2D(uImage1, noiseCoordsBase + float2(0, uTime * 0.064));
-    float4 noise2 = tex2D(uImage1, noiseCoordsBase + float2(uTime * 0.012, uTime * -0.049));
+    float4 noise2 = tex2D(uImage1, noiseCoordsBase + float2(uTime * 0.022, uTime * -0.049));
     float4 noise = (noise1 + noise2) * 0.6;
-    float noiseFadeInterpolant = InverseLerp(distanceFromCenter, 0.9, 1.4);
-    float4 noiseColor = noise * (InverseLerp(distanceFromCenter, 1.5, 1) * noiseFadeInterpolant * 1.4 + 0.2);
+    float noiseFadeInterpolant = InverseLerp(distanceFromCenter, 0.7, 1.4);
+    float4 noiseColor = pow(noise, 3) * (InverseLerp(distanceFromCenter, 1.5, 1) * noiseFadeInterpolant * 2.4 + 0.2);
     
     float4 color = tex2D(uImage0, coords);
     return lerp(color, noiseColor, noiseFadeInterpolant * 0.5);

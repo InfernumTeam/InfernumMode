@@ -1,4 +1,5 @@
 using CalamityMod.NPCs.OldDuke;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
@@ -38,6 +39,7 @@ namespace InfernumMode.Skies
             {
                 UseTargetPosition(Main.npc[OldDukeIndex].Center);
             }
+            UseColor(Color.Lerp(Color.AliceBlue, Color.Black, 0.6f));
             base.Apply();
         }
     }

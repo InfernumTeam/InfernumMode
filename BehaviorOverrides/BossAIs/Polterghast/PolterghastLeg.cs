@@ -188,8 +188,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         internal float PrimitiveWidthFunction(float completionRatio)
         {
+            float fadeToMax = MathHelper.Lerp(0f, 1f, (float)Math.Sin(MathHelper.Pi * completionRatio) * (NPC.localAI[2] == 1f ? 0.5f : 1f));
             float pulse = MathHelper.Lerp(-0.4f, 2f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4.6f) * 0.5f + 0.5f);
-            return MathHelper.Lerp(9.5f, 12f + pulse, (float)Math.Sin(MathHelper.Pi * completionRatio)) * MathHelper.Clamp(Polterghast.scale, 0.75f, 1.5f);
+            return MathHelper.Lerp(9.5f, 12f + pulse, fadeToMax) * MathHelper.Clamp(Polterghast.scale, 0.75f, 1.5f);
         }
 
         internal Color PrimitiveColorFunction(float completionRatio)
@@ -226,12 +227,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
+                NPC.localAI[2] = 0f;
                 if (Limbs.Limbs[i] is null)
                     return false;
 
                 Vector2 offsetToNext = Vector2.Zero;
                 if (i < Limbs.Limbs.Length - 1)
+                {
                     offsetToNext = Limbs.Limbs[i + 1].EndPoint - Limbs.Limbs[i].EndPoint;
+                    NPC.localAI[2] = 0f;
+                }
+
                 Vector2 directionToNext = offsetToNext.SafeNormalize(Vector2.Zero);
 
                 for (int j = 4; j >= 0; j--)

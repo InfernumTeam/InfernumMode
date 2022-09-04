@@ -31,7 +31,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalDance,
             PhantasmalBarrage,
             ExplodingConstellations,
-            UnstableNebulae,
             PhantasmalWrath,
             VoidAccretionDisk
         }
@@ -208,9 +207,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 case MoonLordAttackState.DeathEffects:
                     DoBehavior_DeathEffects(npc, ref deathAttackTimer);
                     break;
-                case MoonLordAttackState.UnstableNebulae:
-                    DoBehavior_UnstableNebulae(npc, target, ref attackTimer);
-                    break;
                 case MoonLordAttackState.VoidAccretionDisk:
                     DoBehavior_VoidAccretionDisk(npc, target, ref attackTimer);
                     break;
@@ -378,64 +374,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             attackTimer++;
         }
 
-        public static void DoBehavior_UnstableNebulae(NPC npc, Player target, ref float attackTimer)
-        {
-            DoBehavior_IdleHover(npc, target, ref attackTimer);
-
-            int vortexSummonRate = 27;
-            int nebulaSummonCount = 3;
-            int nebulaSummonRate = 240;
-            if (InFinalPhase)
-                vortexSummonRate -= 4;
-
-            // Create a bunch of nebulae across the arena.
-            if (attackTimer % nebulaSummonRate == 1f)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int nebulaSeed = Main.rand.Next(1000);
-                    Rectangle arena = npc.Infernum().Arena;
-                    for (float x = arena.Left; x < arena.Right; x += Main.rand.NextFloat(80f, 115f))
-                    {
-                        for (float y = arena.Top; y < arena.Bottom; y += Main.rand.NextFloat(80f, 115f))
-                        {
-                            float noise = CalamityUtils.PerlinNoise2D(x / 800f, y / 800f, 2, nebulaSeed) * 0.5f + 0.5f;
-                            float xInterpolant = Utils.GetLerpValue(arena.Left, arena.Right, x, true);
-                            float yInterpolant = Utils.GetLerpValue(arena.Top, arena.Bottom, y, true);
-                            Vector2 playerCenter = new(Utils.GetLerpValue(arena.Left, arena.Right, target.Center.X, true),
-                                Utils.GetLerpValue(arena.Top, arena.Bottom, target.Center.Y, true));
-                            float edgeInterpolant = Vector2.Distance(playerCenter, new Vector2(xInterpolant, yInterpolant)) * 1.414f;
-
-                            // Bias noise towards 0 if close to the center.
-                            noise = MathHelper.Lerp(noise, 0f, Utils.GetLerpValue(0.4f, 0.27f, edgeInterpolant, true));
-
-                            // Create nebulae.
-                            Vector2 nebulaSpawnPosition = new(x, y);
-                            if (!target.WithinRange(nebulaSpawnPosition, Main.rand.NextFloat(325f, 400f)) && noise > 0.53f)
-                            {
-                                Vector2 nebulaVelocity = Main.rand.NextVector2Circular(2f, 2f);
-                                Utilities.NewProjectileBetter(nebulaSpawnPosition, nebulaVelocity, ModContent.ProjectileType<NebulaCloud>(), 215, 0f);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Create portals around the target.
-            if (attackTimer % nebulaSummonRate >= 60f && attackTimer % vortexSummonRate == vortexSummonRate - 1f)
-            {
-                Vector2 portalSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 700f);
-                int vortex = Utilities.NewProjectileBetter(target.Center + portalSpawnOffset, Vector2.Zero, ModContent.ProjectileType<NebulaVortex>(), 0, 0f);
-                if (Main.projectile.IndexInRange(vortex))
-                    Main.projectile[vortex].ai[1] = portalSpawnOffset.ToRotation() + MathHelper.Pi;
-            }
-
-            if (attackTimer >= nebulaSummonRate * nebulaSummonCount)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_VoidAccretionDisk(NPC npc, Player target, ref float attackTimer)
         {
             DoBehavior_IdleHover(npc, target, ref attackTimer);
@@ -499,14 +437,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     attackCycle = new MoonLordAttackState[]
                     {
                         MoonLordAttackState.PhantasmalDance,
-                        MoonLordAttackState.UnstableNebulae,
                         MoonLordAttackState.PhantasmalRush,
                         MoonLordAttackState.PhantasmalBarrage,
                         MoonLordAttackState.ExplodingConstellations,
                         MoonLordAttackState.PhantasmalDance,
                         MoonLordAttackState.PhantasmalWrath,
                         MoonLordAttackState.PhantasmalBarrage,
-                        MoonLordAttackState.UnstableNebulae,
                         MoonLordAttackState.ExplodingConstellations,
                         MoonLordAttackState.PhantasmalWrath,
                     };

@@ -1795,7 +1795,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
             if (fireIntensity > 0f)
-                afterimageCount += (int)(fireIntensity * 8f);
+                afterimageCount += (int)(fireIntensity * 13f);
 
             Main.spriteBatch.EnterShaderRegion();
 

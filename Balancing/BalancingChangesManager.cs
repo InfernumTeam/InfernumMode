@@ -8,6 +8,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -128,6 +129,9 @@ namespace InfernumMode.Balancing
                 // Storm Weaver.
                 new NPCBalancingChange(NPCType<StormWeaverBody>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<BloodBoilerFire>()))),
                 new NPCBalancingChange(NPCType<StormWeaverTail>(), Do(new ProjectileResistBalancingRule(0.33f, ProjectileType<PrecisionBolt>()))),
+
+                // Polterghast.
+                new NPCBalancingChange(NPCType<Polterghast>(), Do(new ProjectileResistBalancingRule(0.25f, ProjectileType<PrecisionBolt>()))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),

@@ -7,6 +7,7 @@ using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Ravager;
@@ -131,7 +132,10 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<StormWeaverTail>(), Do(new ProjectileResistBalancingRule(0.33f, ProjectileType<PrecisionBolt>()))),
 
                 // Polterghast.
-                new NPCBalancingChange(NPCType<Polterghast>(), Do(new ProjectileResistBalancingRule(0.25f, ProjectileType<PrecisionBolt>()))),
+                new NPCBalancingChange(NPCType<Polterghast>(), Do(new ProjectileResistBalancingRule(0.67f, ProjectileType<PrecisionBolt>()))),
+                
+                // Old Duke.
+                new NPCBalancingChange(NPCType<OldDuke>(), Do(new ProjectileResistBalancingRule(0.65f, ProjectileType<FatesRevealFlame>()))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),

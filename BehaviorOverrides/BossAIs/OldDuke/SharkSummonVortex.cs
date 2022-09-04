@@ -30,13 +30,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 120;
+            Projectile.timeLeft = 72;
             CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(MathHelper.Pi * Time / 120f) * 1.35f;
+            Projectile.Opacity = (float)Math.Sin(MathHelper.Pi * Time / 72f) * 1.35f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             Projectile.scale = Projectile.Opacity;
@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Time == 0f)
                 SoundEngine.PlaySound(OldDukeVortex.SpawnSound, Projectile.Center);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 12f == 11f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 10f == 9f)
             {
                 Vector2 sharkVelocity = (MathHelper.TwoPi * Time / 120f).ToRotationVector2() * 8f;
                 int shark = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<SulphurousSharkron>());

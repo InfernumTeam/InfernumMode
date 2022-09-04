@@ -39,6 +39,7 @@ namespace InfernumMode.Systems
         public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration config)
         {
             Vector2 cutoutAreaCenter = WorldGen.UndergroundDesertLocation.Center.ToVector2();
+            cutoutAreaCenter.Y -= 100f;
 
             for (int i = 0; i < 4; i++)
             {

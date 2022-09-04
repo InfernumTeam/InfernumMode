@@ -373,6 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         // Bias attacks back to a normal on completion.
         // This does not happen if the player dies to the attack.
+        /*
         public static void DoPostAttackSelections(NPC npc)
         {
             Player player = Main.player[npc.target];
@@ -422,5 +423,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     player.Infernum().TwinsSpecialAttackTypeSelector.BiasInFavorOf(attackToReinforce);
             }
         }
+        */
     }
 }

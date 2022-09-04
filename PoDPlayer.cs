@@ -1,11 +1,11 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.Polterghast;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
-using InfernumMode.MachineLearning;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
@@ -104,40 +104,6 @@ namespace InfernumMode
                 int height = Math.Abs(c1.Y - c2.Y);
                 return new Rectangle(startingX, startingY, width, height);
             }
-        }
-
-        private MLAttackSelector thanatosLaserTypeSelector = null;
-        private MLAttackSelector aresSpecialAttackTypeSelector = null;
-        private MLAttackSelector twinsSpecialAttackTypeSelector = null;
-        public MLAttackSelector ThanatosLaserTypeSelector
-        {
-            get
-            {
-                if (thanatosLaserTypeSelector is null)
-                    thanatosLaserTypeSelector = new MLAttackSelector(3, "ThanatosLaser");
-                return thanatosLaserTypeSelector;
-            }
-            set => thanatosLaserTypeSelector = value;
-        }
-        public MLAttackSelector AresSpecialAttackTypeSelector
-        {
-            get
-            {
-                if (aresSpecialAttackTypeSelector is null)
-                    aresSpecialAttackTypeSelector = new MLAttackSelector(2, "AresSpecialAttack");
-                return aresSpecialAttackTypeSelector;
-            }
-            set => twinsSpecialAttackTypeSelector = value;
-        }
-        public MLAttackSelector TwinsSpecialAttackTypeSelector
-        {
-            get
-            {
-                if (twinsSpecialAttackTypeSelector is null)
-                    twinsSpecialAttackTypeSelector = new MLAttackSelector(2, "TwinsSpecialAttack");
-                return twinsSpecialAttackTypeSelector;
-            }
-            set => twinsSpecialAttackTypeSelector = value;
         }
 
         public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>());
@@ -303,12 +269,6 @@ namespace InfernumMode
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
         #endregion
-        #region Kill
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            ExoMechManagement.RecordAttackDeath(Player);
-        }
-        #endregion Kill
         #region Life Regen
         public override void UpdateLifeRegen()
         {
@@ -330,7 +290,7 @@ namespace InfernumMode
                 Player.statDefense -= 8;
             }
             if (Madness)
-                causeLifeRegenLoss(50);
+                causeLifeRegenLoss(NPC.AnyNPCs(ModContent.NPCType<Polterghast>()) ? 800 : 50);
             MadnessTime = Utils.Clamp(MadnessTime + (Madness ? 1 : -8), 0, 660);
         }
         #endregion
@@ -357,17 +317,11 @@ namespace InfernumMode
         #region Saving and Loading
         public override void SaveData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
         {
-            ThanatosLaserTypeSelector?.Save(tag);
-            AresSpecialAttackTypeSelector?.Save(tag);
-            TwinsSpecialAttackTypeSelector?.Save(tag);
             tag["ProfanedTempleAnimationHasPlayed"] = ProfanedTempleAnimationHasPlayed;
         }
 
         public override void LoadData(TagCompound tag)
         {
-            ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
-            AresSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "AresSpecialAttack");
-            TwinsSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "TwinsSpecialAttack");
             ProfanedTempleAnimationHasPlayed = tag.GetBool("ProfanedTempleAnimationHasPlayed");
         }
         #endregion Saving and Loading

@@ -1362,9 +1362,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             TwinsAttackType oldAttackType = (TwinsAttackType)(int)npc.ai[0];
             ref float previousSpecialAttack = ref npc.Infernum().ExtraAI[17];
 
-            // Update learning stuff.
-            ExoMechManagement.DoPostAttackSelections(npc);
-
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
             {
                 npc.ai[0] = (int)newAttack;

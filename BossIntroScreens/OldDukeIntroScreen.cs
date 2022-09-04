@@ -28,7 +28,7 @@ namespace InfernumMode.BossIntroScreens
                 if (IntroScreenManager.ShouldDisplayJokeIntroText)
                     return "Speed Demon\nThe Old Duke";
 
-                return "Sulpuric Terror\nThe Old Duke";
+                return "Sulphuric Terror\nThe Old Duke";
             }
         }
 

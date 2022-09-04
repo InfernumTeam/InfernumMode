@@ -718,7 +718,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float offsetPerLaser = 80f;
             float laserWallSpeed = 16f;
-            if (attackTimer % 90f == 89f)
+            if (attackTimer % 90f == 89f && attackTimer < SpecialAttackDuration - 90f)
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
 

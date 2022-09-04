@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Cooldowns;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -48,8 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase2LifeRatio = 0.75f;
-        public const float Phase3LifeRatio = 0.35f;
-        public const float Phase4LifeRatio = 0.15f;
+        public const float Phase3LifeRatio = 0.375f;
+        public const float Phase4LifeRatio = 0.2f;
         public const float PhaseTransitionTime = 150f;
 
         public const float TeleportPauseTime = 30f;
@@ -131,6 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
+            OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -174,6 +176,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
         };
         #endregion Phase Patterns
 
@@ -212,6 +216,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             {
                 phaseTransitionTimer = 1f;
                 phaseTransitionState = 2f;
+                CleanupLeftoverEntities();
+                SelectNextAttack(npc);
                 attackTimer = 0f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && !BossRushEvent.BossRushActive)
@@ -233,7 +239,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.ai[0] = 0f;
                 npc.ai[2] = 0f;
                 npc.ai[3] = 0f;
+                phaseTransitionTimer = 1f;
                 phaseTransitionState = 3f;
+                CleanupLeftoverEntities();
+                SelectNextAttack(npc);
                 attackTimer = 0f;
 
                 npc.netUpdate = true;
@@ -251,18 +260,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
                 if (npc.Opacity <= 0f)
                 {
-                    // Clear a bunch of stray projectiles.
-                    int sharkronID = ModContent.NPCType<SulphurousSharkron>();
-                    int toothBallID = ModContent.NPCType<OldDukeToothBall>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        bool npcTypeThatShouldDisappear = npc.type == sharkronID || npc.type == toothBallID;
-                        if (Main.npc[i].active && npcTypeThatShouldDisappear)
-                            Main.npc[i].active = false;
-                    }
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HomingAcid>(), ModContent.ProjectileType<SandPoisonCloudOldDuke>(), ModContent.ProjectileType<SulphuricBlob>(), ModContent.ProjectileType<SharkSummonVortex>(),
-                        ModContent.ProjectileType<OldDukeGore>());
-
+                    CleanupLeftoverEntities();
                     npc.life = 0;
                     npc.active = false;
                     npc.netUpdate = true;
@@ -286,8 +284,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = npc.defDamage;
 
             // Reset the hitbox.
-            npc.width = 152;
-            npc.height = 152;
+            npc.width = 166;
+            npc.height = 166;
 
             // Handle phase transitions.
             if (phaseTransitionTimer > 0f)
@@ -305,6 +303,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     phaseTransitionSharkSpawnOffset = 0f;
                     phaseTransitionTimer = 0f;
+                    npc.Center = target.Center - target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 350f;
+                    npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;
                 }
 
@@ -380,6 +380,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_PhaseTransitionEffects(NPC npc, float phaseTransitionTimer, ref float frameType, ref float phaseTransitionSharkSpawnOffset)
         {
+            // Disable damage.
+            npc.damage = 0;
+
             // Slow down and rotate towards 0 degrees.
             npc.velocity *= 0.965f;
             npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.02f);
@@ -396,9 +399,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             // Roar and summon sharks below the boss.
             if (phaseTransitionTimer == PhaseTransitionTime - 60f)
-                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, Main.player[npc.target].Center);
 
-            if (phaseTransitionTimer >= PhaseTransitionTime - 60f)
+            if (phaseTransitionTimer >= PhaseTransitionTime - 60f && npc.life > npc.lifeMax * Phase3LifeRatio)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient && phaseTransitionTimer % 6f == 0f)
                 {
@@ -460,7 +463,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, bool inPhase4, float attackTimer, ref float frameType)
         {
-            npc.damage = 0;
+            if (attackTimer >= 25f)
+                npc.damage = 0;
 
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
             bool goingToCharge = upcomingAttack is OldDukeAttackState.Charge or OldDukeAttackState.FastRegularCharge;
@@ -506,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
         {
             int chargeTime = 21;
-            float chargeSpeed = 34.5f;
+            float chargeSpeed = 36f;
             float aimAheadFactor = 0.95f;
 
             if (inPhase2)
@@ -516,15 +520,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             if (inPhase3)
             {
-                chargeTime -= inPhase4 ? 7 : 5;
+                chargeTime -= inPhase4 ? 6 : 5;
                 chargeSpeed += inPhase4 ? 10.5f : 5f;
-                aimAheadFactor = MathHelper.Lerp(1f, 1.25f, Utils.GetLerpValue(200f, 525f, npc.Distance(target.Center), true));
             }
             if (BossRushEvent.BossRushActive)
             {
                 chargeTime -= 3;
-                chargeSpeed += 5.4f;
+                chargeSpeed += 6f;
             }
+
+            // Speed up the farther away the target is.
+            chargeSpeed += npc.Distance(target.Center) * 0.00775f;
 
             if (attackTimer >= chargeTime)
             {
@@ -538,7 +544,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (attackTimer == 1f)
             {
                 int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 13.75f) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 11f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
 
                 npc.rotation = npc.velocity.ToRotation();
@@ -624,9 +630,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             int shootDelay = inPhase2 ? 40 : 50;
             int belchCount = inPhase2 ? 5 : 4;
-            int belchRate = inPhase2 ? 20 : 32;
+            int belchRate = inPhase2 ? 14 : 23;
             if (BossRushEvent.BossRushActive)
-                belchRate -= 8;
+                belchRate -= 5;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -709,7 +715,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
-            int spinTime = 90;
+            int spinTime = 72;
             float spinSpeed = 34f;
             float totalRotations = 2f;
 
@@ -818,7 +824,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.velocity *= 0.97f;
 
-            if (attackTimer == 1f && !npc.WithinRange(target.Center, 1050f))
+            if (attackTimer == 1f && !npc.WithinRange(target.Center, 1360f))
             {
                 SelectNextAttack(npc);
                 return;
@@ -887,10 +893,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Teleport.
             if (attackTimer == fadeTime)
             {
-                SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
+                SoundEngine.PlaySound(OldDukeBoss.RoarSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f);
+                    npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * -560f, -200f);
                     npc.netUpdate = true;
                 }
             }
@@ -941,6 +947,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             npc.netUpdate = true;
         }
+
+        public static void CleanupLeftoverEntities()
+        {
+            // Clear a bunch of stray projectiles.
+            int sharkronID = ModContent.NPCType<SulphurousSharkron>();
+            int toothBallID = ModContent.NPCType<OldDukeToothBall>();
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                bool npcTypeThatShouldDisappear = Main.npc[i].type == sharkronID || Main.npc[i].type == toothBallID;
+                if (Main.npc[i].active && npcTypeThatShouldDisappear)
+                    Main.npc[i].active = false;
+            }
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HomingAcid>(), ModContent.ProjectileType<SandPoisonCloudOldDuke>(), ModContent.ProjectileType<SulphuricBlob>(), ModContent.ProjectileType<SharkSummonVortex>(),
+                ModContent.ProjectileType<OldDukeGore>());
+        }
+
         #endregion Utilities
 
         #endregion AI

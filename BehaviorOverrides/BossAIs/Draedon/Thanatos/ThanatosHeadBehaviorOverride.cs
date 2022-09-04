@@ -1102,9 +1102,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float previousSpecialAttack = ref npc.Infernum().ExtraAI[18];
 
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
-            // Update learning stuff.
-            ExoMechManagement.DoPostAttackSelections(npc);
-
             bool wasCharging = oldAttackType is ThanatosHeadAttackType.AggressiveCharge or ThanatosHeadAttackType.MaximumOverdrive;
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

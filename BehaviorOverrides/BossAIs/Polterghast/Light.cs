@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Vector2 origin = new(66f, 86f);
             Vector2 drawPosition = new(Projectile.Center.X - Main.screenPosition.X, Main.screenHeight + 10f);
             Vector2 scale = new(0.75f, 1.9f);
-            lightColor = new(205, 109, 155, 0);
+            lightColor = new(205, 109, 155);
             Color coloredLight = lightColor;
             float completion = 0f;
             if (Time < 10f)
@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 completion = 1f + Utils.GetLerpValue(10f, 40f, Time, true);
 
             Vector2 scaleFactor1 = new(1f, 1f);
-            Vector2 scaleFactor2 = new(0.8f, 2f);
+            Vector2 scaleFactor2 = new Vector2(0.8f, 2f) * 0.4f;
             if (completion < 1f)
                 scaleFactor1.X *= completion;
 
@@ -56,16 +56,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 lightColor *= fade;
                 coloredLight *= fade;
             }
-            lightColor *= 0.42f;
-            coloredLight *= 0.42f;
-            Texture2D texture7 = TextureAssets.Extra[60].Value;
+            lightColor *= 0.7f;
+            coloredLight *= 0.7f;
+            Texture2D texture7 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/Light").Value;
 
             scale.X *= Main.screenWidth / texture7.Width;
-            Main.spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, origin, scale * scaleFactor2, SpriteEffects.None, 0f);
+
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, new(265f, 354f), scale * scaleFactor1 * new Vector2(0.6f, 0.45f), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, new(265f, 354f), scale * scaleFactor2 * new Vector2(0.6f, 0.45f), SpriteEffects.None, 0f);
 
             Texture2D lightTexture = TextureAssets.Extra[59].Value;
             Main.spriteBatch.Draw(lightTexture, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1 * new Vector2(1f, 0.3f), SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
 
             return false;
         }

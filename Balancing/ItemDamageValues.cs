@@ -31,8 +31,14 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<WavePounder>()] = 47,
             [ModContent.ItemType<TerrorBlade>()] = 495,
             [ModContent.ItemType<SoulEdge>()] = 140,
+<<<<<<< Updated upstream
             [ModContent.ItemType<NightsGaze>()] = 454,
             [ModContent.ItemType<Valediction>()] = 189,
+=======
+            [ModContent.ItemType<NightsGaze>()] = 396,
+            [ModContent.ItemType<Valediction>()] = 139,
+            [ModContent.ItemType<TheSevensStriker>()] = 543,
+>>>>>>> Stashed changes
             [ModContent.ItemType<PhosphorescentGauntlet>()] = 990,
             [ModContent.ItemType<PridefulHuntersPlanarRipper>()] = 48,
             [ModContent.ItemType<FinalDawn>()] = 855,

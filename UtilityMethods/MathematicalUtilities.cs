@@ -1,4 +1,3 @@
-using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -142,22 +141,6 @@ namespace InfernumMode
         }
 
         /// <summary>
-        /// Gives an approximation of a derivative of a function at a given point based on the limit (f(x+h) - f(x)) / h, with an extremely small value for h across an entire matrix.
-        /// </summary>
-        /// <param name="fx">The function.</param>
-        /// <param name="matrix">The function input.</param>
-        public static GeneralMatrix ApproximateDerivative(Func<double, double> fx, GeneralMatrix matrix)
-        {
-            GeneralMatrix result = new(matrix.TotalRows, matrix.TotalColumns);
-            for (int i = 0; i < result.TotalRows; i++)
-            {
-                for (int j = 0; j < result.TotalColumns; j++)
-                    result[i, j] = ApproximateDerivative(fx, matrix[i, j]);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Approximates the partial derivative of a function at a given input for a specific variable.
         /// </summary>
         /// <param name="fxy">The function.</param>
@@ -175,66 +158,12 @@ namespace InfernumMode
         }
 
         /// <summary>
-        /// Approximates the partial derivative of a function at a given input for a specific variable.
-        /// </summary>
-        /// <param name="fx">The function.</param>
-        /// <param name="m1">The first function input.</param>
-        /// <param name="m2">The second function input.</param>
-        public static GeneralMatrix ApproximatePartialDerivative(Func<double, double, double> fx, GeneralMatrix m1, GeneralMatrix m2, int term)
-        {
-            GeneralMatrix result = new(m1.TotalRows, m1.TotalColumns);
-            for (int i = 0; i < result.TotalRows; i++)
-            {
-                for (int j = 0; j < result.TotalColumns; j++)
-                    result[i, j] = ApproximatePartialDerivative(fx, m1[i, j], m2[i, j], term);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Returns a number between a minimum and maximum range.
         /// </summary>
         /// <param name="rng">The random number generator.</param>
         /// <param name="min">The lower bound for randomness.</param>
         /// <param name="max">The upper bound for randomness.</param>
         public static double NextRange(this UnifiedRandom rng, double min, double max) => rng.NextDouble() * (max - min) + min;
-
-        /// <summary>
-        /// Generates a 2D array of an arbitrary width and height and randomizes it with upper and lower bounds.
-        /// </summary>
-        /// <param name="rng">The random number generator.</param>
-        /// <param name="width">The width of the array.</param>
-        /// <param name="height">The height of the array.</param>
-        /// <param name="min">The lower bound for randomness.</param>
-        /// <param name="max">The upper bound for randomness.</param>
-        public static GeneralMatrix GenerateRandomMatrix(this UnifiedRandom rng, int width, int height, double min, double max)
-        {
-            GeneralMatrix result = new(width, height);
-
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                    result[i, j] = rng.NextRange(min, max);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Applies a specific function to the indices of a generalized matrix.
-        /// </summary>
-        /// <param name="matrix">The matrix to apply the function to.</param>
-        /// <param name="function">The function.</param>
-        public static GeneralMatrix ApplyFunctionToMatrix(GeneralMatrix matrix, Func<double, double> function)
-        {
-            GeneralMatrix result = new(matrix.TotalRows, matrix.TotalColumns);
-            for (int i = 0; i < result.TotalRows; i++)
-            {
-                for (int j = 0; j < result.TotalColumns; j++)
-                    result[i, j] = function(matrix[i, j]);
-            }
-            return result;
-        }
 
         /// <summary>
         /// Performs a logistic sigmoid function on an input.

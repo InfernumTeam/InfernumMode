@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 52;
+            Projectile.width = Projectile.height = 38;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -32,7 +32,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < (MaxSpeed > 0f ? MaxSpeed : 27f))
+            float maxSpeed = MaxSpeed > 0f ? MaxSpeed : 27f;
+            if (Projectile.timeLeft < 90f)
+                maxSpeed += 12f;
+
+            if (Projectile.velocity.Length() < maxSpeed)
                 Projectile.velocity *= 1.045f;
 
             Projectile.rotation -= MathHelper.Pi / 12f;

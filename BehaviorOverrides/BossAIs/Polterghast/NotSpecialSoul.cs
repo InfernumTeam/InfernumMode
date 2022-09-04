@@ -10,6 +10,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     public class NotSpecialSoul : ModProjectile
     {
         public bool Cyan => Projectile.ai[0] == 1f;
+
+        public bool AcceleratesAndHomes => Projectile.ai[1] == 1f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul");
@@ -25,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
         }
 
@@ -38,17 +41,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
-            Projectile.Opacity = Utils.GetLerpValue(200f, 195f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
 
+            // Fade in/out and rotate.
+            Projectile.Opacity = Utils.GetLerpValue(300f, 295f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
+            // Handle frames.
             Projectile.frameCounter++;
             if (Projectile.frameCounter % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
 
+            // Create periodic puffs of dust.
             if (Projectile.timeLeft % 18 == 17)
             {
-                // Release a circle of dust every so often.
                 for (int i = 0; i < 16; i++)
                 {
                     Vector2 dustOffset = Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f) * new Vector2(4f, 1f);
@@ -63,6 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 }
             }
 
+            // Return to the polterghast.
             if (Projectile.timeLeft < 3)
             {
                 Projectile.Center = Vector2.Lerp(Projectile.Center, polterghast.Center, 0.06f);
@@ -74,6 +80,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     Projectile.Kill();
                 }
                 Projectile.timeLeft = 2;
+            }
+
+            // Accelerate and home.
+            else if (Projectile.timeLeft < 135f && AcceleratesAndHomes)
+            {
+                float WHATTHEFUCKDOYOUWANTFROMME = Projectile.velocity.Length() + 0.01f;
+                Player target = Main.player[polterghast.target];
+                Projectile.velocity = (Projectile.velocity * 169f + Projectile.SafeDirectionTo(target.Center) * WHATTHEFUCKDOYOUWANTFROMME) / 170f;
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * WHATTHEFUCKDOYOUWANTFROMME;
             }
         }
 

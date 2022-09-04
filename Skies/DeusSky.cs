@@ -58,6 +58,13 @@ namespace InfernumMode.Skies
                 Intensity -= 0.01f;
             nebulaIntensity = MathHelper.Clamp(nebulaIntensity + isActive.ToDirectionInt() * 0.01f, 0f, 1f);
 
+            if (DeusIndex < 0)
+            {
+                if (nebulaTimer >= 1)
+                    nebulaTimer--;
+                return;
+            }
+
             if (nebulaIntensity <= 0f || Main.npc[DeusIndex].life >= Main.npc[DeusIndex].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
                 nebulaTimer = 0;
             else

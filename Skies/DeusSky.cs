@@ -65,7 +65,7 @@ namespace InfernumMode.Skies
                 return;
             }
 
-            if (nebulaIntensity <= 0f || Main.npc[DeusIndex].life >= Main.npc[DeusIndex].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeThreshold)
+            if (nebulaIntensity <= 0f || Main.npc[DeusIndex].life >= Main.npc[DeusIndex].lifeMax * AstrumDeusHeadBehaviorOverride.Phase2LifeRatio)
                 nebulaTimer = 0;
             else
                 nebulaTimer++;

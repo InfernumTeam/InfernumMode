@@ -45,9 +45,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         #region AI
 
         public const float Phase2LifeRatio = 0.7f;
+
         public const float Phase3LifeRatio = 0.3f;
+
         public const float Phase4LifeRatio = 0.15f;
+
         public const int FinalPhaseTransitionTime = 180;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

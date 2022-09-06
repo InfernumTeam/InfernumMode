@@ -66,18 +66,41 @@ namespace InfernumMode.OverridingSystem
                 if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCFindFrame))
                     getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCFindFrame);
                 BehaviorOverrides[instance.NPCOverrideType] = instance;
+            }
+        }
+
+        internal static void LoadPhaseIndicaors()
+        {
+            foreach (int npcID in BehaviorOverrides.Keys)
+            {
+                NPCBehaviorOverride instance = BehaviorOverrides[npcID];
+                float[] phaseThresholds = instance.PhaseLifeRatioThresholds;
+                if (!Main.dedServ && InfernumMode.PhaseIndicator != null && phaseThresholds.Length >= 1)
+                {
+                    foreach (float lifeRatio in phaseThresholds)
+                        InfernumMode.PhaseIndicator.Call(0, npcID, (NPC npc, float difficulty) => lifeRatio);
+                }
 
                 HatGirlTipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
             }
         }
 
         public virtual int? NPCIDToDeferToForTips => null;
+
+        public virtual float[] PhaseLifeRatioThresholds => Array.Empty<float>();
+
         public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
+
         public abstract int NPCOverrideType { get; }
+
         public abstract NPCOverrideContext ContentToOverride { get; }
+
         public virtual void SetDefaults(NPC npc) { }
+
         public virtual bool PreAI(NPC npc) => true;
+
         public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
+
         public virtual void FindFrame(NPC npc, int frameHeight) { }
     }
 }

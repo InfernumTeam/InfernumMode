@@ -18,6 +18,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
+        public const float Phase2LifeRatio = 0.45f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
+
         #region AI
 
         public override bool PreAI(NPC npc)

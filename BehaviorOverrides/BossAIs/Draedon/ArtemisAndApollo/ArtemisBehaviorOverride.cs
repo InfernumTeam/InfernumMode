@@ -22,6 +22,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ExoMechManagement.Phase3LifeRatio,
+            ExoMechManagement.Phase4LifeRatio
+        };
+
         #region AI
 
         // Most attacks are present in Apollo's AI, since Apollo is supposed to be a "manager" for the twins, handling

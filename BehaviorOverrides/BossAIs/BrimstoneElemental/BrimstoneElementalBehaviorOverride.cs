@@ -31,6 +31,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public const float BaseDR = 0.12f;
         public const float InvincibleDR = 0.99999f;
         public const float RoseCircleRadius = 1279f;
+
+        public const float Phase2LifeRatio = 0.5f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
+
         public static bool ReadyToUseBuffedAI => false;
 
         #region Enumerations
@@ -153,9 +161,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public static void DoBehavior_FlameTeleportBombardment(NPC npc, Player target, float lifeRatio, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
         {
-            int bombardCount = lifeRatio < 0.5f ? 7 : 6;
+            int bombardCount = lifeRatio < Phase2LifeRatio ? 7 : 6;
             int bombardTime = 75;
-            int fireballShootRate = lifeRatio < 0.5f ? 6 : 9;
+            int fireballShootRate = lifeRatio < Phase2LifeRatio ? 6 : 9;
             int fadeOutTime = (int)MathHelper.Lerp(48f, 27f, 1f - lifeRatio);
             float skullShootSpeed = 11f;
             float horizontalTeleportOffset = MathHelper.Lerp(950f, 820f, 1f - lifeRatio);
@@ -500,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.ClosedShell;
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
-            int fireReleaseRate = lifeRatio < 0.5f ? 5 : 7;
+            int fireReleaseRate = lifeRatio < Phase2LifeRatio ? 5 : 7;
             int bulletHellTime = 520;
             float shootSpeedFactor = 1f;
             if (shouldBeBuffed)
@@ -754,7 +762,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 BrimmyAttackType.FlameTeleportBombardment,
                 BrimmyAttackType.GrimmBulletHellCopyLmao
             };
-            possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < 0.5f);
+            possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < Phase2LifeRatio);
 
             possibleAttacks.Remove((BrimmyAttackType)(int)npc.ai[0]);
 

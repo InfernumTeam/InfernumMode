@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const float Phase2LifeRatio = 0.8f;
 
-        public const float Phase3LifeRatio = 0.45f;
+        public const float Phase3LifeRatio = 0.5f;
 
         public const float Phase4LifeRatio = 0.2f;
 
@@ -128,6 +128,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.InfiniteBrilliance,
             EmpressOfLightAttackType.DanceOfSwords,
         };
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
+
         #endregion Constants and Attack Patterns
 
         #region AI and Behaviors

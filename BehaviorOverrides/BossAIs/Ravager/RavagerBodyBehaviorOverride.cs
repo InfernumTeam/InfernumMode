@@ -1,12 +1,10 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.Particles;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
-using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

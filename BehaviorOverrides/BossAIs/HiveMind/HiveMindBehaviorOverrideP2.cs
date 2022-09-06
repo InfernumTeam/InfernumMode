@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public static bool PreAI(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool below20 = lifeRatio < 0.2f || npc.Infernum().ExtraAI[10] == 1f;
+            bool below20 = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio || npc.Infernum().ExtraAI[10] == 1f;
             ref float attackTimer = ref npc.ai[3];
             ref float slowdownCountdown = ref npc.Infernum().ExtraAI[4];
             ref float fadeoutCountdown = ref npc.Infernum().ExtraAI[6];
@@ -56,8 +56,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Act as though the boss is at 20% life if that amount of life has already been reached.
             // This is done to ensure that the regeneration doesn't weaken attacks.
-            if (below20 && lifeRatio > 0.2f)
-                lifeRatio = 0.1995f;
+            if (below20 && lifeRatio > HiveMindBehaviorOverrideP1.Phase3LifeRatio)
+                lifeRatio = HiveMindBehaviorOverrideP1.Phase3LifeRatio * 0.99f;
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public static void DoBehavior_SuspensionStateDrift(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            float driftTime = lifeRatio < 0.2 ? 75f : 150f;
+            float driftTime = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 75f : 150f;
             float reelbackTime = 45f;
             bool fadingAway = attackTimer > driftTime - reelbackTime;
 
@@ -270,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
             while (nextAttack == previousAttack);
 
-            if (lifeRatio < 0.2f && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobBurst)
+            if (lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobBurst)
                 nextAttack = HiveMindP2AttackState.BlobBurst;
 
             // Reset things.
@@ -342,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public static void DoBehavior_SpinLunge(NPC npc, Player target, bool enraged, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
-            int spinTime = lifeRatio < 0.2f ? 75 : 90;
+            int spinTime = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 75 : 90;
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
             ref float initialSpinRotation = ref npc.Infernum().ExtraAI[3];
@@ -519,10 +519,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // And release the Eater of Souls wall.
             else
             {
-                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 4.35f : 4.15f);
+                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 4.35f : 4.15f);
 
                 Vector2 wallSpawnOffset = new(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
-                Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
+                Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? MathHelper.ToRadians(10f) : 0f) * 10f;
 
                 if (enraged)
                     wallVelocity *= 1.35f;
@@ -557,7 +557,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 dashDirection = Main.rand.NextBool().ToDirectionInt();
 
                 float horizontalTeleportOffset = MathHelper.Lerp(510f, 400f, 1f - lifeRatio);
-                if (lifeRatio < 0.2f)
+                if (lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio)
                     horizontalTeleportOffset -= 75f;
 
                 npc.position = target.Center + new Vector2(horizontalTeleportOffset * -dashDirection, 350f);
@@ -565,9 +565,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.netUpdate = true;
             }
 
-            float waitTime = lifeRatio < 0.2f ? 70f : 50f;
-            float moveTime = lifeRatio < 0.2f ? 50f : 80f;
-            float dashSpeed = lifeRatio < 0.2f ? 24f : 22.25f;
+            float waitTime = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 70f : 50f;
+            float moveTime = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 50f : 80f;
+            float dashSpeed = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 24f : 22.25f;
             if (enraged)
             {
                 waitTime = (int)(waitTime * 0.67f);
@@ -598,7 +598,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Release clots upward if below the necessary phase threshold.
-            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 7f == 6f)
+            if (attackTimer > waitTime && lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio && attackTimer % 7f == 6f)
             {
                 int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 9f), ModContent.ProjectileType<VileClot>(), 74, 0f);
                 Main.projectile[vileClot].tileCollide = false;
@@ -640,9 +640,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 attackTimer++;
 
-                int clotSpawnRate = lifeRatio < 0.2f ? 9 : 11;
-                int cloudSpawnRate = lifeRatio < 0.2f ? 30 : 36;
-                int attackTime = lifeRatio < 0.2f ? 180 : 200;
+                int clotSpawnRate = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 9 : 11;
+                int cloudSpawnRate = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 30 : 36;
+                int attackTime = lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 180 : 200;
                 if (enraged)
                 {
                     clotSpawnRate /= 2;
@@ -665,7 +665,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 // Make flame columns appear.
                 if ((int)attackTimer == 160f)
                 {
-                    flameColumnCountdown = (lifeRatio < 0.2f ? 4f : 3f) * 60f;
+                    flameColumnCountdown = (lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio ? 4f : 3f) * 60f;
                     npc.netUpdate = true;
                 }
 

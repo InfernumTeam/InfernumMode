@@ -21,6 +21,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
+        public const float Phase2LifeRatio = 0.625f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
+
         #region Fields, Properties, and Enumerations
         public enum QueenSlimeAttackType
         {
@@ -812,7 +819,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         #region Misc Utilities
 
-        public static bool InPhase2(NPC npc) => npc.life < npc.lifeMax * 0.625f;
+        public static bool InPhase2(NPC npc) => npc.life < npc.lifeMax * Phase2LifeRatio;
 
         public static bool OnSolidGround(NPC npc)
         {

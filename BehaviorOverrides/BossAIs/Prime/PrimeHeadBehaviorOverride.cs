@@ -55,12 +55,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             armCycleTimer %= 1800f;
             if (armCycleTimer < 450f)
-                return armType == NPCID.PrimeSaw || armType == NPCID.PrimeVice;
+                return armType is NPCID.PrimeSaw or NPCID.PrimeVice;
             if (armCycleTimer < 900f)
-                return armType == NPCID.PrimeVice || armType == NPCID.PrimeCannon;
+                return armType is NPCID.PrimeVice or NPCID.PrimeCannon;
             if (armCycleTimer < 1350f)
-                return armType == NPCID.PrimeCannon || armType == NPCID.PrimeLaser;
-            return armType == NPCID.PrimeLaser || armType == NPCID.PrimeSaw;
+                return armType is NPCID.PrimeCannon or NPCID.PrimeLaser;
+            return armType is NPCID.PrimeLaser or NPCID.PrimeSaw;
         }
 
         public static void ArmHoverAI(NPC npc)
@@ -73,6 +73,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         }
 
         public const float Phase2LifeRatio = 0.4f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

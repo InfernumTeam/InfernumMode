@@ -18,9 +18,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-        public const float Phase2LifeRatio = 0.95f;
-        public const float Phase3LifeRatio = 0.65f;
-        public const float Phase4LifeRatio = 0.3f;
+        public const float Phase2LifeRatio = 0.65f;
+
+        public const float Phase3LifeRatio = 0.3f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         #region Enumerations
         internal enum PlanteraAttackState
@@ -61,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int hookCount = 3;
             bool enraged = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool inPhase4 = lifeRatio < Phase4LifeRatio;
+            bool inPhase4 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float phaseTransitionCounter = ref npc.ai[2];
@@ -87,17 +93,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             npc.ai[3] = 1.25f;
 
             // Handle phase transitions.
-            if (phaseTransitionCounter == 0f && lifeRatio < Phase2LifeRatio)
+            if (phaseTransitionCounter == 0f)
             {
-                phase2TransitionTimer = 180f;
                 phaseTransitionCounter++;
-
-                SelectNextAttack(npc);
-                DeleteHostileThings();
-
                 npc.netUpdate = true;
             }
-            if (phaseTransitionCounter == 1f && lifeRatio < Phase3LifeRatio)
+            if (phaseTransitionCounter == 1f && lifeRatio < Phase2LifeRatio)
             {
                 phase3TransitionTimer = 180f;
                 phaseTransitionCounter++;
@@ -107,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
                 npc.netUpdate = true;
             }
-            if (phaseTransitionCounter == 2f && lifeRatio < Phase4LifeRatio)
+            if (phaseTransitionCounter == 2f && lifeRatio < Phase3LifeRatio)
             {
                 phaseTransitionCounter++;
                 npc.netUpdate = true;
@@ -719,7 +720,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     newAttackType = PlanteraAttackState.PetalBurst;
                     break;
                 case PlanteraAttackState.PetalBurst:
-                    newAttackType = lifeRatio < Phase4LifeRatio ? PlanteraAttackState.PoisonousGasRelease : PlanteraAttackState.RedBlossom;
+                    newAttackType = lifeRatio < Phase3LifeRatio ? PlanteraAttackState.PoisonousGasRelease : PlanteraAttackState.RedBlossom;
                     break;
                 case PlanteraAttackState.PoisonousGasRelease:
                     newAttackType = PlanteraAttackState.TentacleSnap;
@@ -734,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     newAttackType = PlanteraAttackState.Charge;
                     break;
                 case PlanteraAttackState.Charge:
-                    newAttackType = lifeRatio < Phase4LifeRatio ? PlanteraAttackState.RedBlossom : PlanteraAttackState.PoisonousGasRelease;
+                    newAttackType = lifeRatio < Phase3LifeRatio ? PlanteraAttackState.RedBlossom : PlanteraAttackState.PoisonousGasRelease;
                     break;
             }
 
@@ -784,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.frame.Y += frameHeight;
             }
 
-            bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
+            bool inPhase3 = npc.life < npc.lifeMax * Phase2LifeRatio;
             if (phase3TransitionTimer > 20f)
                 inPhase3 = false;
 
@@ -807,7 +808,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraTexture").Value;
             Texture2D bulbTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraBulbTexture").Value;
-            Color bulbColor = npc.GetAlpha(Color.Lerp(new Color(143, 215, 29), new Color(225, 104, 206), npc.localAI[1]).MultiplyRGB(lightColor));
+            Color bulbColor = npc.GetAlpha(new(225, 104, 206)).MultiplyRGB(lightColor);
             Color baseColor = npc.GetAlpha(lightColor);
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 

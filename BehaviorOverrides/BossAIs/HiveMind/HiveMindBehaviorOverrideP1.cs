@@ -20,6 +20,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const float Phase2LifeRatio = 0.8f;
+
+        public const float Phase3LifeRatio = 0.2f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
@@ -37,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             ref float phase2 = ref npc.Infernum().ExtraAI[20];
 
-            if (lifeRatio < 0.8f)
+            if (lifeRatio < Phase2LifeRatio)
             {
                 if (phase2 == 0f)
                 {

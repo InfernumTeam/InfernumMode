@@ -118,6 +118,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public const float Phase3LifeRatio = 0.3333f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             DetermineTarget(npc, out bool despawning);

@@ -86,6 +86,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.SpinDash,
         };
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];

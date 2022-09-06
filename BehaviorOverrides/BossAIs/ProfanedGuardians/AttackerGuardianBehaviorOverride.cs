@@ -33,13 +33,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianHealer>()).ToInt();
 
         public const float ImmortalUntilPhase2LifeRatio = 0.75f;
-        public const float Subphase2LifeRatio = 0.6f;
-        public const float Subphase3LifeRatio = 0.45f;
-        public const float Subphase4LifeRatio = 0.25f;
+        public const float Phase2LifeRatio = 0.6f;
+        public const float Phase3LifeRatio = 0.45f;
+        public const float Phase4LifeRatio = 0.25f;
 
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianCommander>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ImmortalUntilPhase2LifeRatio,
+            Phase4LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {
@@ -286,14 +292,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 int lightReleaseTime = 21;
                 int spearReleaseTime = -1;
-                if (lifeRatio < Subphase2LifeRatio)
+                if (lifeRatio < Phase2LifeRatio)
                     lightReleaseTime -= 4;
-                if (lifeRatio < Subphase3LifeRatio)
+                if (lifeRatio < Phase3LifeRatio)
                 {
                     lightReleaseTime -= 4;
                     spearReleaseTime = 50;
                 }
-                if (lifeRatio < Subphase4LifeRatio)
+                if (lifeRatio < Phase4LifeRatio)
                     lightReleaseTime -= 5;
 
                 // Release crystal lights when spinning.
@@ -358,17 +364,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float chargeSpeed = MathHelper.Lerp(19f, 23f, Utils.GetLerpValue(ImmortalUntilPhase2LifeRatio, 0f, lifeRatio, true));
             float chargeAcceleration = 1.018f;
 
-            if (lifeRatio < Subphase2LifeRatio)
+            if (lifeRatio < Phase2LifeRatio)
             {
                 reelbackTime -= 5;
                 spearBurstCount += 2;
             }
-            if (lifeRatio < Subphase3LifeRatio)
+            if (lifeRatio < Phase3LifeRatio)
             {
                 totalCharges--;
                 spearBurstCount += 2;
             }
-            if (lifeRatio < Subphase4LifeRatio)
+            if (lifeRatio < Phase4LifeRatio)
             {
                 spearBurstCount++;
                 spearBurstSpeed *= 1.25f;
@@ -493,11 +499,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             int spearShootRate = 55;
 
-            if (lifeRatio < Subphase2LifeRatio)
+            if (lifeRatio < Phase2LifeRatio)
                 spearShootRate -= 6;
-            if (lifeRatio < Subphase3LifeRatio)
+            if (lifeRatio < Phase3LifeRatio)
                 spearShootRate -= 4;
-            if (lifeRatio < Subphase4LifeRatio)
+            if (lifeRatio < Phase4LifeRatio)
                 spearShootRate -= 6;
 
             ref float horizontalOffset = ref npc.ai[2];
@@ -530,7 +536,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 attackTimer = 0f;
                 horizontalOffset = 0f;
                 npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
-                if (lifeRatio < Subphase4LifeRatio)
+                if (lifeRatio < Phase4LifeRatio)
                     npc.ai[0] = (int)AttackGuardianAttackState.ThrowingHands;
 
                 npc.TargetClosest();

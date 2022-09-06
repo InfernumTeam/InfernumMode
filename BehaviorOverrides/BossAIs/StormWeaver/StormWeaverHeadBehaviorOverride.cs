@@ -506,7 +506,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     attackState = (int)StormWeaverAttackType.IceStorm;
                     break;
                 case 3:
-                    attackState = (int)(lifeRatio > 0.4f ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
+                    attackState = (int)(lifeRatio > StormWeaverArmoredHeadBehaviorOverride.Phase3LifeRatio ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
                     break;
                 case 4:
                     attackState = (int)StormWeaverAttackType.StaticChargeup;

@@ -134,14 +134,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public static Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable => new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase2LifeRatio and >= Phase3LifeRatio,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase3LifeRatio and >= Phase4LifeRatio,
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio,
         };
 
         public const float Phase2LifeRatio = 0.7f;
+
         public const float Phase3LifeRatio = 0.4f;
+
         public const float Phase4LifeRatio = 0.2f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
         #endregion
 
         #region AI

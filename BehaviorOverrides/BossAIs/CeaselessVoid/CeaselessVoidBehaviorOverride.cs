@@ -27,7 +27,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override int NPCOverrideType => ModContent.NPCType<CeaselessVoidBoss>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
-        
+
+        public const float Phase2LifeRatio = 0.65f;
+
+        public const float Phase3LifeRatio = 0.3f;
+
+        public const float DarkEnergyOffsetRadius = 1120f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         #region Enumerations
         public enum CeaselessVoidAttackType
         {
@@ -68,12 +80,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         #endregion Set Defaults
 
         #region AI
-
-        public const float Phase2LifeRatio = 0.65f;
-
-        public const float Phase3LifeRatio = 0.3f;
-
-        public const float DarkEnergyOffsetRadius = 1120f;
 
         public override bool PreAI(NPC npc)
         {

@@ -34,6 +34,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public const float Phase3LifeRatio = 0.25f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override void SetDefaults(NPC npc)
         {
             NPCID.Sets.TrailCacheLength[npc.type] = 8;

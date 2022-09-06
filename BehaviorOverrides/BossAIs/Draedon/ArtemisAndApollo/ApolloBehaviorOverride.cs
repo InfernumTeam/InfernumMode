@@ -45,6 +45,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public const int Phase2TransitionTime = 270;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ExoMechManagement.Phase3LifeRatio,
+            ExoMechManagement.Phase4LifeRatio
+        };
+
         #region AI
         public override bool PreAI(NPC npc)
         {

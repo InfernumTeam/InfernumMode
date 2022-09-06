@@ -18,6 +18,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         #region Enumerations
         internal enum BoCAttackState
         {
@@ -64,8 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
             bool enraged = enrageTimer > 300f;
-            bool phase2 = npc.life < npc.lifeMax * Subphase2LifeRatio;
-            bool phase3 = npc.life < npc.lifeMax * Subphase3LifeRatio;
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
 
             npc.dontTakeDamage = enraged;
@@ -489,8 +495,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         #region AI Utility Methods
 
-        internal const float Subphase2LifeRatio = 0.75f;
-        internal const float Subphase3LifeRatio = 0.45f;
+        internal const float Phase2LifeRatio = 0.75f;
+        internal const float Phase3LifeRatio = 0.45f;
         public static void GotoNextAttackState(NPC npc)
         {
             // Select a new target.
@@ -504,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             switch (oldAttackType)
             {
                 case BoCAttackState.IdlyFloat:
-                    newAttackType = lifeRatio < Subphase2LifeRatio ? BoCAttackState.DiagonalCharge : BoCAttackState.BloodDashSwoop;
+                    newAttackType = lifeRatio < Phase2LifeRatio ? BoCAttackState.DiagonalCharge : BoCAttackState.BloodDashSwoop;
                     break;
                 case BoCAttackState.DiagonalCharge:
                     newAttackType = BoCAttackState.BloodDashSwoop;
@@ -513,7 +519,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     newAttackType = BoCAttackState.CreeperBloodDripping;
                     break;
                 case BoCAttackState.CreeperBloodDripping:
-                    newAttackType = lifeRatio < Subphase3LifeRatio ? (Main.rand.NextBool() ? BoCAttackState.PsionicBombardment : BoCAttackState.DashingIllusions) : BoCAttackState.IdlyFloat;
+                    newAttackType = lifeRatio < Phase3LifeRatio ? (Main.rand.NextBool() ? BoCAttackState.PsionicBombardment : BoCAttackState.DashingIllusions) : BoCAttackState.IdlyFloat;
                     break;
                 case BoCAttackState.DashingIllusions:
                     newAttackType = BoCAttackState.PsionicBombardment;
@@ -538,7 +544,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (npc.Opacity < 1f)
                 npc.damage = 0;
 
-            if (npc.life / (float)npc.lifeMax < Subphase3LifeRatio)
+            if (npc.life / (float)npc.lifeMax < Phase3LifeRatio)
                 teleportFadeTime = (int)(teleportFadeTime * 0.6f);
 
             // Fade out and teleport after a bit.

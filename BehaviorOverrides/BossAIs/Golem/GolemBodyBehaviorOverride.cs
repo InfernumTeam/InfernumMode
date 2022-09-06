@@ -44,12 +44,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static int ArenaWidth = 115;
+
         public static int ArenaHeight = 105;
+
         public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
+
         public const int Phase2TransitionAnimationTime = 180;
+
         public const float ConstAttackCooldown = 125f;
+
         public const float Phase2LifeRatio = 0.6f;
+
         public const float Phase3LifeRatio = 0.3f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         public static NPC GetLeftFist(NPC npc) => Main.npc[(int)npc.Infernum().ExtraAI[0]];
 

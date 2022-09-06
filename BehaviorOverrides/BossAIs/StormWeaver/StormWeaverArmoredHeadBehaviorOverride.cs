@@ -17,6 +17,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
+        public const float Phase2LifeRatio = 0.9f;
+
+        public const float Phase3LifeRatio = 0.4f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         #region Enumerations
         public enum StormWeaverArmoredAttackType
         {
@@ -45,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Don't naturally despawn.
             npc.timeLeft = 3600;
 
-            if (npc.life < npc.lifeMax * 0.9f)
+            if (npc.life < npc.lifeMax * Phase2LifeRatio)
             {
                 if (phase2 == 0f)
                 {

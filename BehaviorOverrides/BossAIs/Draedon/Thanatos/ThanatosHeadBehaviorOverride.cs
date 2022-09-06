@@ -50,9 +50,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const int SegmentCount = 100;
+
         public const int TransitionSoundDelay = 80;
+
         public const float OpenSegmentDR = 0f;
+
         public const float ClosedSegmentDR = 0.98f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ExoMechManagement.Phase4LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

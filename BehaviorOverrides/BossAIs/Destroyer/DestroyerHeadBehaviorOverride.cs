@@ -55,10 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.DiveBombing,
-            // DestroyerAttackType.SuperchargedProbeBombing,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.EnergyBlasts,
-            // DestroyerAttackType.SuperchargedProbeBombing,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
@@ -71,19 +69,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.DiveBombing,
-            // DestroyerAttackType.SuperchargedProbeBombing,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.EnergyBlasts,
-            // DestroyerAttackType.SuperchargedProbeBombing,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
         };
 
         public const int BodySegmentCount = 60;
+
         public const float Phase2LifeRatio = 0.825f;
+
         public const float Phase3LifeRatio = 0.45f;
+
         public const float Phase4LifeRatio = 0.2f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

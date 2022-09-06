@@ -49,6 +49,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ExoMechManagement.Phase4LifeRatio
+        };
+
         public const float Phase1ArmChargeupTime = 240f;
 
         public static int ProjectileDamageBoost

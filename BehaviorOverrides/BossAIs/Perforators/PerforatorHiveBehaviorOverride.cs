@@ -33,12 +33,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         }
 
         public const float Phase2LifeRatio = 0.7f;
+
         public const float Phase3LifeRatio = 0.5f;
+
         public const float Phase4LifeRatio = 0.25f;
 
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHive>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio
+        };
 
         #region AI
 

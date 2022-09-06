@@ -30,6 +30,8 @@ namespace InfernumMode
 
         internal static Mod FargowiltasSouls = null;
 
+        internal static Mod PhaseIndicator = null;
+
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
 
         internal static bool BossRushApplies => false;
@@ -69,6 +71,7 @@ namespace InfernumMode
             Instance = this;
             CalamityMod = ModLoader.GetMod("CalamityMod");
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
+            ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
 
             OverridingListManager.Load();
             BalancingChangesManager.Load();
@@ -217,6 +220,11 @@ namespace InfernumMode
                 Main.QueueMainThreadAction(() => CalamityMod.Call("LoadParticleInstances", this));
 
             _ = new InfernumDifficulty();
+        }
+
+        public override void PostSetupContent()
+        {
+            NPCBehaviorOverride.LoadPhaseIndicaors();
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);

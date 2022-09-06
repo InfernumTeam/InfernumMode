@@ -40,6 +40,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            ComboAttackManager.LeviathanSummonLifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.

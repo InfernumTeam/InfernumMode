@@ -65,6 +65,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int BodySegmentFadeTypeAIIndex = 37;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            DoGPhase2HeadBehaviorOverride.CanUseSpecialAttacksLifeRatio,
+            DoGPhase2HeadBehaviorOverride.FinalPhaseLifeRatio
+        };
+
         #region AI
         public override bool PreAI(NPC npc)
         {
@@ -109,6 +116,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.player[npc.target].HasBuff(ModContent.BuffType<WhisperingDeath>()))
                 Main.player[npc.target].ClearBuff(ModContent.BuffType<WhisperingDeath>());
 
+            DoGPhase1BodyBehaviorOverride.KillUnbalancedDebuffs(npc);
+
             // Emit light.
             Lighting.AddLight((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f), 0.2f, 0.05f, 0.2f);
 
@@ -131,6 +140,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Do through the portal once ready to enter the second phase.
             if (CurrentPhase2TransitionState != Phase2TransitionState.NotEnteringPhase2)
             {
+                // Set music.
+                npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
+                
                 HandlePhase2TransitionEffect(npc, ref portalIndex);
                 getInTheFuckingPortalTimer++;
                 if (getInTheFuckingPortalTimer >= 540f)
@@ -178,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
                     {
                         int segment;
-                        if (segmentSpawn >= 0 && segmentSpawn < 80)
+                        if (segmentSpawn is >= 0 and < 80)
                             segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type, npc.whoAmI);
                         else
                             segment = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type, npc.whoAmI);
@@ -234,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         {
                             Vector2 spawnOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 1650f + Main.rand.NextVector2Circular(130f, 130f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
-                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 455, 0f);
                             if (Main.projectile.IndexInRange(laser))
                                 Main.projectile[laser].MaxUpdates = 3;
                         }

@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 int laserShootRate = 120;
                 float wallAttackTimer = Main.npc[Main.wofNPCIndex].ai[3];
                 float hoverSpeedFactor = 1f;
-                bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wofNPCIndex].life > Main.npc[Main.wofNPCIndex].lifeMax * 0.45f;
+                bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wofNPCIndex].life > Main.npc[Main.wofNPCIndex].lifeMax * WallOfFleshMouthBehaviorOverride.Phase2LifeRatio;
                 Vector2 hoverOffset = (MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] + wallAttackTimer / laserShootRate) / 4f).ToRotationVector2() * 360f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 if (!doCircleAttack)

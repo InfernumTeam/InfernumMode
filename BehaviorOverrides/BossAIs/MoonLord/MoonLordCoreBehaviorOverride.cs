@@ -107,6 +107,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Stop rain.

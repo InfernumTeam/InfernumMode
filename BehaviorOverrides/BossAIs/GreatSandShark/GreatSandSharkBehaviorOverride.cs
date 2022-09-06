@@ -34,7 +34,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase2LifeRatio = 0.6f;
+
         public const float Phase3LifeRatio = 0.3f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         public override void SetDefaults(NPC npc)
         {

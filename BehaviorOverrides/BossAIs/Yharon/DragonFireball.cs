@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 180;
 			Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
         }

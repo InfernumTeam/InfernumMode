@@ -42,7 +42,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         };
 
         public const float Phase2LifeRatio = 0.75f;
+
         public const float Phase3LifeRatio = 0.3f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

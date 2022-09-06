@@ -64,6 +64,7 @@ namespace InfernumMode.GlobalInstances
 
         internal static int Cryogen = -1;
         internal static int AstrumAureus = -1;
+        internal static int Yharon = -1;
 
         #endregion
 
@@ -93,6 +94,7 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
+            ResetSavedIndex(ref Yharon, ModContent.NPCType<Yharon>());
         }
         #endregion Reset Effects
 

@@ -37,6 +37,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio,
+            Phase5LifeRatio
+        };
+
+        public const float Phase2LifeRatio = 0.7f;
+
+        public const float Phase3LifeRatio = 0.5f;
+
+        public const float Phase4LifeRatio = 0.35f;
+
+        public const float Phase5LifeRatio = 0.15f;
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
@@ -89,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             Player target = Main.player[npc.target];
             float speedFactor = 1f;
             float enrageFactor = 1f - lifeRatio;
-            if (lifeRatio < 0.33f)
+            if (lifeRatio < Phase4LifeRatio)
                 speedFactor *= 1.15f;
 
             // Enrage if the target leaves the ocean.
@@ -434,8 +450,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.023f, 0.0285f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            float acceleration = MathHelper.Lerp(0.023f, 0.0285f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
+            float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
             idealRotation += (float)Math.Sin(generalTimer / 43f) * Utils.GetLerpValue(360f, 425f, npc.Distance(target.Center), true) * 0.74f;
             movementSpeed *= speedFactor;
@@ -471,8 +487,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             AquaticScourgeAttackType attackType = (AquaticScourgeAttackType)(int)npc.ai[2];
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
+            float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
             movementSpeed *= speedFactor * (BossRushEvent.BossRushActive ? 2.1f : 1f);
             acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
@@ -523,15 +539,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             WeightedRandom<AquaticScourgeAttackType> attackSelector = new();
 
-            if (lifeRatio > 0.15f)
+            if (lifeRatio > Phase5LifeRatio)
             {
                 attackSelector.Add(AquaticScourgeAttackType.BelchAcid, 1f);
                 attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
                 attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
-                attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.5f ? 1.4f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.ProjectileSpin, lifeRatio < 0.5f ? 1.4f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.35f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < Phase2LifeRatio && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < Phase3LifeRatio ? 1.4f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.ProjectileSpin, lifeRatio < Phase3LifeRatio ? 1.4f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < Phase4LifeRatio && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
 
                 do
                     nextAttack = attackSelector.Get();

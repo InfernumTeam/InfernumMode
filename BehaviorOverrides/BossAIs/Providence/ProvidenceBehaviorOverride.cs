@@ -70,6 +70,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;

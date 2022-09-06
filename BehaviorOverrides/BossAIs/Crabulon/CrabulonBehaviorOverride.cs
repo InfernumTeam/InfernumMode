@@ -22,6 +22,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
+        public const float Phase2LifeRatio = 0.85f;
+
+        public const float Phase3LifeRatio = 0.45f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         #region Enumerations
         internal enum CrabulonAttackState
         {
@@ -33,9 +43,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         #endregion
 
         #region AI
-
-        public const float Phase2LifeRatio = 0.85f;
-        public const float Phase3LifeRatio = 0.45f;
 
         public override bool PreAI(NPC npc)
         {

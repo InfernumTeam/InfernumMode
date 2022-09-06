@@ -37,14 +37,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             ConstellationExplosions
         }
 
-        public const float Phase2LifeThreshold = 0.6f;
-        public const float Phase3LifeThreshold = 0.33333f;
+        public const float Phase2LifeRatio = 0.6f;
+        public const float Phase3LifeRatio = 0.33333f;
 
         public const float EnrageStartDistance = 4800f;
 
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {
@@ -86,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             ref float releasingParticlesFlag = ref npc.localAI[1];
             ref float inFinalPhase = ref npc.Infernum().ExtraAI[7];
 
-            bool phase2 = lifeRatio < Phase2LifeThreshold;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = inFinalPhase == 1f;
 
             // Save the beacon anger factor in a variable for use by the sky code.
@@ -105,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Prevent natural despawns.
             npc.timeLeft = 3600;
 
-            bool enteringLastPhase = lifeRatio < Phase3LifeThreshold && inFinalPhase == 0f;
+            bool enteringLastPhase = lifeRatio < Phase3LifeRatio && inFinalPhase == 0f;
 
             // Clamp position into the world.
             npc.position.X = MathHelper.Clamp(npc.position.X, 700f, Main.maxTilesX * 16f - 700f);
@@ -1158,13 +1164,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             DeusAttackType newAttackState;
 
             WeightedRandom<DeusAttackType> attackSelector = new();
-            if (lifeRatio < Phase2LifeThreshold)
+            if (lifeRatio < Phase2LifeRatio)
             {
                 attackSelector.Add(DeusAttackType.ConstellationExplosions, 2);
                 attackSelector.Add(DeusAttackType.VortexLemniscate, 2);
                 attackSelector.Add(DeusAttackType.AstralSolarSystem, 2);
             }
-            if (lifeRatio < Phase3LifeThreshold)
+            if (lifeRatio < Phase3LifeRatio)
             {
                 attackSelector.Add(DeusAttackType.DarkGodsOutburst, 7.5);
                 attackSelector.Add(DeusAttackType.AstralGlobRush, 5);

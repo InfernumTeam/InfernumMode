@@ -52,6 +52,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public static readonly List<Vector2> LaserbeamSpawnOffsets = new()
         {
             new Vector2(0f, -52f),
@@ -62,7 +68,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         };
 
         public const float Phase2LifeRatio = 0.6f;
+
         public const float Phase3LifeRatio = 0.45f;
+
         public const float EnragedDamageFactor = 1.5f;
 
         public override bool PreAI(NPC npc)

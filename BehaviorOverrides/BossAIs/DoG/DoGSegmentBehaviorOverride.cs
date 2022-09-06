@@ -32,7 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             NPC head = Main.npc[(int)npc.ai[2]];
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
-            npc.defense = 0;
+            npc.defense = 70;
+            npc.Calamity().DR = 0.3f;
             if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
                 npc.life = 0;

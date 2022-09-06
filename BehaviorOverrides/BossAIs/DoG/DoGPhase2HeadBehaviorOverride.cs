@@ -99,9 +99,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #region AI
         public static bool Phase2AI(NPC npc, ref float phaseCycleTimer, ref float passiveAttackDelay, ref float portalIndex, ref float segmentFadeType)
         {
-            // Set music.
-            npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
-
             int specialAttackDelay = 1335;
             int specialAttackTransitionPreparationTime = 135;
             ref float performingSpecialAttack = ref npc.Infernum().ExtraAI[14];
@@ -414,7 +411,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         {
                             Vector2 spawnOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 1580f + Main.rand.NextVector2Circular(105f, 105f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
-                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 455, 0f);
                             if (Main.projectile.IndexInRange(laser))
                                 Main.projectile[laser].MaxUpdates = 3;
                         }
@@ -606,7 +603,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.Center = npc.Center.MoveTowards(target.Center, InPhase2 ? 1.8f : 2.4f);
             bool targetHasDash = target.dash > 0 || target.Calamity().HasCustomDash;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.046f, 0.036f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
             float flySpeedFactor = 1.45f + (1f - lifeRatio) * 0.4f;
@@ -663,7 +660,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Try to stay within a general speed.
                 if (speed < 18.5f)
                     speed += 0.08f;
-                if (speed > 26f)
+                if (speed > 27f)
                     speed -= 0.08f;
 
                 // Speed up if close to aiming at the target, but not too close (within a margin of 32-60 degrees).
@@ -675,7 +672,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     speed -= 0.1f;
 
                 // Clamp the speed.
-                speed = MathHelper.Clamp(speed, flySpeedFactor * 15f, flySpeedFactor * 35f);
+                speed = MathHelper.Clamp(speed, flySpeedFactor * 17f, flySpeedFactor * 36.25f);
 
                 // And handle movement.
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
@@ -719,7 +716,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Body segments should be invisible along with the head.
             segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
-            float offsetPerLaser = 80f;
+            float offsetPerLaser = 94f;
             float laserWallSpeed = 16f;
             if (attackTimer % 90f == 89f && attackTimer < SpecialAttackDuration - 90f)
             {
@@ -741,10 +738,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Vector2 laserVelocityLeft = Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
                         Vector2 laserVelocityRight = -Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
 
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 415, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 455, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
-                        laser = Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 415, 0f);
+                        laser = Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 455, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }
@@ -754,7 +751,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, 1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = -Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 415, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 455, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }
@@ -764,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, -1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 415, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 455, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }

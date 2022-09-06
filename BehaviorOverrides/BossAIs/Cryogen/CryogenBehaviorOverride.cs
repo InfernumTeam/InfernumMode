@@ -20,6 +20,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const float Phase2LifeRatio = 0.9f;
+
+        public const float Phase3LifeRatio = 0.7f;
+
+        public const float Phase4LifeRatio = 0.55f;
+
+        public const float Phase5LifeRatio = 0.35f;
+
+        public const float Phase6LifeRatio = 0.2f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+            Phase4LifeRatio,
+            Phase5LifeRatio,
+            Phase6LifeRatio,
+        };
+
         #region Enumerations
         internal enum CryogenAttackState
         {
@@ -35,12 +54,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         #endregion
 
         #region AI
-
-        public const float Phase2LifeRatio = 0.9f;
-        public const float Phase3LifeRatio = 0.7f;
-        public const float Phase4LifeRatio = 0.55f;
-        public const float Phase5LifeRatio = 0.35f;
-        public const float Phase6LifeRatio = 0.2f;
 
         public override bool PreAI(NPC npc)
         {

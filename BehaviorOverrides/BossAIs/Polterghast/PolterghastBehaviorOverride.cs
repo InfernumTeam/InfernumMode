@@ -105,6 +105,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public const float MinGhostCircleRadius = 600f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI index.

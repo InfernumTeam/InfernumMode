@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Balancing;
+using CalamityMod.ILEditing;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Schematics;
@@ -104,6 +105,32 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => SpawnProvLootBox += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
 
         public void Unload() => SpawnProvLootBox -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+    }
+
+    public class AddWarningAboutNonExpertOnWorldSelectionHook : IHookEdit
+    {
+        internal static void SwapDescriptionKeys(ILContext il)
+        {
+            var c = new ILCursor(il);
+
+            if (!c.TryGotoNext(MoveType.After, x => x.MatchLdstr("UI.WorldDescriptionNormal")))
+                return;
+
+            // Pop original value off.
+            c.Emit(OpCodes.Pop);
+            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+
+            if (!c.TryGotoNext(MoveType.After, x => x.MatchLdstr("UI.WorldDescriptionMaster")))
+                return;
+
+            // Pop original value off.
+            c.Emit(OpCodes.Pop);
+            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+        }
+
+        public void Load() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;
+
+        public void Unload() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions -= SwapDescriptionKeys;
     }
 
     public class ReducePlayerDashDelay : IHookEdit

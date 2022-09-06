@@ -1019,7 +1019,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Make the telegraphs disappear and and make the lasers move.
             else
             {
-                float laserAngularVelocity = Utils.GetLerpValue(0f, 60f, attackTimer - laserShootDelay, true) * maxLaserAngularVelocity;
+                float laserAngularVelocity = Utils.GetLerpValue(0f, 135f, attackTimer - laserShootDelay, true) * maxLaserAngularVelocity;
                 laserOffsetAngle += laserAngularVelocity;
                 telegraphOpacity = 0f;
 

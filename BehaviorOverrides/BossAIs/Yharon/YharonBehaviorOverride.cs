@@ -127,6 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FastCharge,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.MassiveInfernadoSummon,
@@ -178,13 +179,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.CarpetBombing,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.CarpetBombing,
             YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FastCharge,
@@ -758,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 predictivenessFactor = 4.25f;
             }
             else
-                chargeDelay += 6f;
+                chargeDelay += 18f;
 
             if (releaseFire)
                 chargeDelay += 25f;
@@ -778,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     fireIntensity = MathHelper.Max(fireIntensity, attackTimer / chargeDelay);
 
                 // Teleport prior to the charge happening if the attack calls for it.
-                if (attackTimer == chargeDelay - 30f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
+                if (attackTimer == chargeDelay - 42f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
                 {
                     Vector2 offsetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
 
@@ -845,6 +852,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
                 chargeDelay = (int)(chargeDelay * 0.8f);
+            else if (attackTimer == 1f)
+                SoundEngine.PlaySound(YharonBoss.ShortRoarSound with { Pitch = -0.56f, Volume = 1.6f }, target.Center);
 
             // Slow down and rotate towards the player.
             if (attackTimer < chargeDelay)

@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         #region Attacks
         public static void DoAttack_CursedBombBurst(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
-            int totalFireballsPerBurst = (int)(TotalSplitsToPerform - splitCounter + 1f);
+            int totalFireballsPerBurst = 1;
             float flySpeed = enraged ? 11f : 8f;
             float turnSpeedFactor = enraged ? 1.7f : 1f;
             flySpeed *= MathHelper.Lerp(1f, 1.35f, splitCounter / TotalSplitsToPerform);
@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
+            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 72 : 90;
             if (splitCounter == TotalSplitsToPerform)
                 shootRate += 18;
 

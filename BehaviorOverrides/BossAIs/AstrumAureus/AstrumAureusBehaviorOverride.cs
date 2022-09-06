@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                                 jumpIntensity = 1f + distanceBelowTarget * intensityFactor;
                             }
 
-                            jumpIntensity *= 1.15f;
+                            jumpIntensity *= 1.05f;
                             if (enraged)
                                 jumpIntensity *= 1.4f;
 

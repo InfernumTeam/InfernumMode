@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -69,6 +70,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex] = head.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
             npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = head.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex];
             Player target = Main.player[npc.target];
+
+            // Kill debuffs.
+            DoGPhase1BodyBehaviorOverride.KillUnbalancedDebuffs(npc);
 
             // Handle open behavior and frames.
             ThanatosHeadAttackType headAttackType = (ThanatosHeadAttackType)(int)head.ai[0];

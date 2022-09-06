@@ -53,7 +53,7 @@ float CalculateLavaFlowIntensity(float2 p)
     // Create increasingly detailed lava based on repeated, increasingly small "bumps".
     // This technique is analogous to fractal noise, which makes crisp textures by repeatedly summing noise of different frequencies and diminishing amplitudes.
     // https://thebookofshaders.com/13/ provides a good overview of this concept.
-    for (float i = 1; i < 7; i++)
+    for (float i = 1; i < 5; i++)
     {
         // Offset based on time.
         p += uTime * uTimeFactor * 0.2;

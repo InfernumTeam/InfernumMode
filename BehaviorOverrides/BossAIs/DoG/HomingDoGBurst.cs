@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Home towards the nearest target. The speed of the homing is maintained after direction change calculations are made.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.velocity = (Projectile.velocity * 69f + Projectile.SafeDirectionTo(target.Center) * 23f) / 70f;
+            Projectile.velocity = (Projectile.velocity * 59f + Projectile.SafeDirectionTo(target.Center) * 26f) / 60f;
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }

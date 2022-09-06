@@ -343,6 +343,7 @@ namespace InfernumMode
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || InfernumMode.EmodeIsActive;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive)
             {
+                Utilities.DisplayText("Infernum is not allowed in Master Mode, For the Worthy, or Eternity Mode.", Color.Red);
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
                 WorldSaveSystem.InfernumMode = false;

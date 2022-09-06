@@ -102,9 +102,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Set music.
             npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
 
+            int specialAttackDelay = 1335;
+            int specialAttackTransitionPreparationTime = 135;
             ref float performingSpecialAttack = ref npc.Infernum().ExtraAI[14];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
-            ref float nearDeathFlag = ref npc.Infernum().ExtraAI[16];
+            ref float hasEnteredFinalPhaseFlag = ref npc.Infernum().ExtraAI[16];
             ref float spawnedSegmentsFlag = ref npc.Infernum().ExtraAI[17];
             ref float sentinelAttackTimer = ref npc.Infernum().ExtraAI[18];
             ref float signusAttackState = ref npc.Infernum().ExtraAI[19];
@@ -179,6 +181,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool nearDeath = lifeRatio < FinalPhaseLifeRatio;
             bool doPassiveMovement = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) >= AggressiveMovementTimeP2 && !nearDeath;
 
+            // Instantly transition to charge combos when entering the final phase.
+            if (hasEnteredFinalPhaseFlag == 0f && nearDeath)
+            {
+                hasEnteredFinalPhaseFlag = 1f;
+                doPassiveMovement = false;
+                specialAttackTimer = specialAttackDelay - specialAttackTransitionPreparationTime - 1f;
+                Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
+                npc.netUpdate = true;
+            }
+
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
             npc.damage = npc.dontTakeDamage ? 0 : 3000;
@@ -206,8 +218,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (canPerformSpecialAttacks)
             {
                 // Handle special attack transition.
-                int specialAttackDelay = 1335;
-                int specialAttackTransitionPreparationTime = 135;
                 if (performingSpecialAttack == 0f)
                 {
                     // Disappear immediately if the target is gone.
@@ -307,13 +317,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Reset the attack type selection once the special attacks are cleared.
             if (performingSpecialAttack == 0f)
                 npc.Infernum().ExtraAI[2] = 0f;
-
-            // Say some edgy things if close to death as an indicator that the final phase has been entered.
-            if (nearDeath && nearDeathFlag == 0f)
-            {
-                Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
-                nearDeathFlag = 1f;
-            }
 
             // Increment the universal attack timer.
             time++;
@@ -676,7 +679,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 // And handle movement.
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 15f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 27.5f);
             }
 
             // Jaw opening when near player.
@@ -775,7 +778,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
             float radius = MathHelper.Lerp(700f, 550f, 1f - npc.life / (float)npc.lifeMax);
-            if (attackTimer % 80f == 79f)
+            if (attackTimer % 70f == 69f && attackTimer < SpecialAttackDuration - 120f)
             {
                 float spawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 for (int i = 0; i < 6; i++)
@@ -793,7 +796,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
 
             int fireballCount = 8;
-            int idealPortalTelegraphTime = 52;
+            int idealPortalTelegraphTime = 48;
             float wrappedAttackTimer = attackTimer % 135f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -884,7 +887,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < fireballCount; i++)
                     {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 15f;
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 19f;
                         Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
                     }
 

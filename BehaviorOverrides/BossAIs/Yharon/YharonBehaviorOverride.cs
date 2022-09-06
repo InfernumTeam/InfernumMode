@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             FireballBurst,
             FlamethrowerAndMeteors,
             FlarenadoAndDetonatingFlameSpawn,
-            SpinCharge,
+            FireTrailCharge,
             InfernadoAndFireShotgunBreath,
             MassiveInfernadoSummon,
             TeleportingCharge,
@@ -65,13 +65,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.Charge,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
+            YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.FireballBurst,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
+            YharonAttackType.Charge,
             YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.Charge,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
             YharonAttackType.Charge,
@@ -85,14 +88,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
+            YharonAttackType.Charge,
+            YharonAttackType.FastCharge,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
+            YharonAttackType.Charge,
+            YharonAttackType.FastCharge,
             YharonAttackType.FireballBurst,
             YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.Charge,
+            YharonAttackType.FastCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
@@ -104,8 +113,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static readonly YharonAttackType[] Subphase3Pattern = new YharonAttackType[]
         {
             YharonAttackType.FastCharge,
-            YharonAttackType.SpinCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.MassiveInfernadoSummon,
@@ -114,15 +124,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.FastCharge,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.FireballBurst,
-            YharonAttackType.SpinCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
-            YharonAttackType.SpinCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.MassiveInfernadoSummon,
@@ -165,14 +176,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.SummonFlareRing,
             YharonAttackType.CarpetBombing,
             YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.SpinCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.CarpetBombing,
             YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
-            YharonAttackType.SpinCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
@@ -217,8 +229,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -499,8 +515,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.Infernum().ExtraAI[10] = 0f;
 
             float chargeSpeed = 46f;
-            float chargeDelay = 36;
-            float chargeTime = 32f;
+            float chargeDelay = 32f;
+            float chargeTime = 28f;
             float fastChargeSpeedMultiplier = 1.4f;
 
             float fireballBreathShootDelay = 34f;
@@ -508,8 +524,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float fireballBreathShootRate = 5f;
 
             int totalFlamethrowerBursts = 2;
-            float flamethrowerHoverTime = 105f;
-            float flamethrowerFlySpeed = 44.5f;
+            float flamethrowerHoverTime = 75f;
+            float flamethrowerFlySpeed = 55.5f;
 
             int totalShotgunBursts = 3;
             float shotgunBurstFireRate = 30f;
@@ -542,11 +558,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             switch ((YharonAttackType)(int)attackType)
             {
                 case YharonAttackType.FastCharge:
-                    chargeDelay = 90;
+                    chargeDelay = 60;
                     break;
                 case YharonAttackType.PhoenixSupercharge:
-                    chargeDelay = berserkChargeMode ? 30 : 60;
-                    chargeTime = berserkChargeMode ? 20f : 30f;
+                    chargeDelay = berserkChargeMode ? 24 : 34;
+                    chargeTime = berserkChargeMode ? 18f : 24f;
                     fastChargeSpeedMultiplier = berserkChargeMode ? 1.4f : 1.7f;
                     break;
             }
@@ -577,7 +593,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (phase2)
             {
-                chargeDelay = (int)(chargeDelay * 0.775);
+                chargeDelay = (int)(chargeDelay * 0.8);
                 chargeSpeed += 2.7f;
                 fastChargeSpeedMultiplier += 0.08f;
             }
@@ -603,7 +619,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     break;
                 case YharonAttackType.Charge:
                 case YharonAttackType.TeleportingCharge:
-                    DoBehavior_ChargesAndTeleportCharges(npc, target, chargeDelay, chargeTime, chargeSpeed, teleportChargeCounter, ref attackTimer, ref attackType, ref specialFrameType);
+                case YharonAttackType.FireTrailCharge:
+                    DoBehavior_ChargesAndTeleportCharges(npc, target, chargeDelay, chargeTime, chargeSpeed, teleportChargeCounter, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.FastCharge:
                 case YharonAttackType.PhoenixSupercharge:
@@ -617,9 +634,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     break;
                 case YharonAttackType.FlarenadoAndDetonatingFlameSpawn:
                     DoBehavior_FlarenadoAndDetonatingFlameSpawn(npc, mouthPosition, ref attackTimer, ref attackType, ref specialFrameType);
-                    break;
-                case YharonAttackType.SpinCharge:
-                    DoBehavior_SpinCharge(npc, target, mouthPosition, chargeSpeed * fastChargeSpeedMultiplier, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.InfernadoAndFireShotgunBreath:
                     DoBehavior_InfernadoAndFireShotgunBreath(npc, target, mouthPosition, enraged, fireballBreathShootDelay, shotgunBurstFireRate, totalShotgunBursts, ref attackTimer, ref attackType, ref specialFrameType);
@@ -677,14 +691,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.damage = 0;
         }
 
-        public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float attackTimer, ref float attackType, ref float specialFrameType)
+        public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
+            bool releaseFire = (YharonAttackType)(int)attackType == YharonAttackType.FireTrailCharge;
             float predictivenessFactor = 0f;
             if ((YharonAttackType)(int)attackType != YharonAttackType.TeleportingCharge)
             {
                 chargeDelay = (int)(chargeDelay * 0.8f);
                 predictivenessFactor = 4.25f;
             }
+            if (releaseFire)
+                chargeDelay += 25f;
 
             Vector2 chargeDestination = target.Center + target.velocity * predictivenessFactor;
 
@@ -692,9 +709,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (attackTimer < chargeDelay)
             {
                 npc.damage = 0;
-                npc.velocity *= 0.97f;
+                npc.velocity *= 0.93f;
                 npc.spriteDirection = (target.Center.X - npc.Center.X < 0).ToDirectionInt();
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(chargeDestination) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
+
+                // Have Yharon engulph himself in flames before charging if he will release fire.
+                if (releaseFire)
+                    fireIntensity = MathHelper.Max(fireIntensity, attackTimer / chargeDelay);
 
                 // Teleport prior to the charge happening if the attack calls for it.
                 if (attackTimer == chargeDelay - 25f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
@@ -738,9 +759,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Charge at the target.
             else if (attackTimer == chargeDelay)
             {
-                npc.velocity = npc.SafeDirectionTo(chargeDestination) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(chargeDestination) * (chargeSpeed + npc.Distance(target.Center) * 0.0108f);
                 npc.rotation = npc.AngleTo(chargeDestination) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 specialFrameType = (int)YharonFrameDrawingType.IdleWings;
+                if (releaseFire)
+                    SoundEngine.PlaySound(YharonBoss.OrbSound, target.Center);
 
                 npc.netUpdate = true;
 
@@ -748,6 +771,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
             else if (attackTimer >= chargeDelay + chargeTime)
                 SelectNextAttack(npc, ref attackType);
+
+            // Release dragon fire from behind.
+            if (attackTimer >= chargeDelay && releaseFire)
+            {
+                fireIntensity = MathHelper.Max(fireIntensity, Utils.GetLerpValue(chargeDelay + chargeTime - 1f, chargeDelay + chargeTime - 8f, attackTimer, true));
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(16f, 16f), npc.velocity * 0.3f, ModContent.ProjectileType<LingeringDragonFlames>(), 500, 0f);
+            }
         }
 
         public static void DoBehavior_FastCharges(NPC npc, Player target, bool berserkChargeMode, float chargeDelay, float chargeTime, float chargeSpeed, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
@@ -779,7 +810,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Charge at the target.
             else if (attackTimer == chargeDelay)
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * (chargeSpeed + npc.Distance(target.Center) * 0.011f);
                 npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 specialFrameType = (int)YharonFrameDrawingType.IdleWings;
 
@@ -805,7 +836,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             if (attackTimer >= chargeDelay + chargeTime)
+            {
+                npc.velocity *= 0.4f;
                 SelectNextAttack(npc, ref attackType);
+            }
         }
 
         public static void DoBehavior_FireballBurst(NPC npc, Player target, Vector2 mouthPosition, float fireballBreathShootDelay, float fireballBreathShootRate, float totalFireballBreaths, ref float attackTimer, ref float attackType, ref float specialFrameType)
@@ -940,92 +974,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             else
                 SelectNextAttack(npc, ref attackType);
         }
-
-        public static void DoBehavior_SpinCharge(NPC npc, Player target, Vector2 mouthPosition, float chargeSpeed, ref float attackTimer, ref float attackType, ref float specialFrameType)
-        {
-            float upwardFlyTime = 120f;
-            float horizontalMovementDelay = 45f;
-            float totalSpins = 2f;
-            float spinTime = 45f;
-
-            // Slow down quickly during the delay.
-            if (attackTimer < 45f)
-                npc.velocity *= 0.97f;
-
-            // Approach a position to the top left/right of the target.
-            if (attackTimer > 45f && attackTimer < upwardFlyTime)
-            {
-                ref float xAimOffset = ref npc.Infernum().ExtraAI[4];
-                if (xAimOffset == 0f)
-                    xAimOffset = 820f * Math.Sign((npc.Center - target.Center).X);
-
-                Vector2 destination = target.Center + new Vector2(xAimOffset, -450f);
-
-                if (npc.WithinRange(destination, 16f))
-                    npc.Center = destination;
-                else
-                    npc.velocity = npc.SafeDirectionTo(destination) * 16f;
-
-                npc.spriteDirection = (npc.velocity.X < 0).ToDirectionInt();
-                npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-
-                if (npc.WithinRange(destination, 42f))
-                    attackTimer = upwardFlyTime - 1f;
-
-                specialFrameType = (int)YharonFrameDrawingType.FlapWings;
-            }
-
-            // Charge after either the hover position is reached or enough time has passed.
-            if (attackTimer == upwardFlyTime)
-            {
-                int direction = Math.Sign(npc.SafeDirectionTo(target.Center).X);
-                npc.velocity = Vector2.UnitX * direction * 35f;
-                npc.spriteDirection = (npc.velocity.X < 0).ToDirectionInt();
-                specialFrameType = (int)YharonFrameDrawingType.IdleWings;
-            }
-
-            // Spin and charge at the target once the spin happens to point very closely at the target.
-            if (attackTimer > upwardFlyTime + horizontalMovementDelay && (attackTimer - upwardFlyTime - horizontalMovementDelay) % 90f <= spinTime)
-            {
-                ref float hasChargedYet01Flag = ref npc.Infernum().ExtraAI[5];
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
-                    Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
-                }
-
-                // Release fireballs.
-                if (attackTimer % 5f == 4f)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int fire = Utilities.NewProjectileBetter(mouthPosition, npc.velocity * 0.667f, ProjectileID.CultistBossFireBall, 450, 0f);
-                        Main.projectile[fire].tileCollide = false;
-                    }
-                    SoundEngine.PlaySound(YharonBoss.ShortRoarSound, npc.Center);
-                }
-
-                // Reset the attack timer if an opening for a charge is found, and charge towards the player.
-                if (hasChargedYet01Flag == 0f)
-                {
-                    // Spin 2 win.
-                    npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi / spinTime);
-
-                    bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.ToRadians(18f);
-                    if (attackTimer >= upwardFlyTime + horizontalMovementDelay + 75f * (totalSpins - 1) && aimedTowardsPlayer)
-                    {
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                        attackTimer = upwardFlyTime + horizontalMovementDelay + 75f * (totalSpins - 1);
-                        hasChargedYet01Flag = 1f;
-                    }
-                }
-                npc.spriteDirection = (npc.velocity.X < 0).ToDirectionInt();
-                npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
-            }
-            if (attackTimer >= upwardFlyTime + horizontalMovementDelay + totalSpins * 75f)
-                SelectNextAttack(npc, ref attackType);
-        }
-
         public static void DoBehavior_InfernadoAndFireShotgunBreath(NPC npc, Player target, Vector2 mouthPosition, bool enraged, float fireballBreathShootDelay, float shotgunBurstFireRate, float totalShotgunBursts, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
             if (attackTimer < fireballBreathShootDelay)
@@ -1216,6 +1164,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (attackTimer == heatFlashIdleDelay && !npc.WithinRange(target.Center, 360f))
             {
                 npc.Center = target.Center - Vector2.UnitY * 420f;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
                 if (!Main.dedServ)
                 {
                     for (int j = 0; j < 30; j++)
@@ -1775,6 +1725,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DrawInstance(NPC npc, Player target, Vector2? position = null, float rotationOffset = 0f, bool changeDirection = false)
         {
+            YharonAttackType attackType = (YharonAttackType)npc.ai[0];
             Texture2D tex = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
 
             // Use defaults for the draw position.
@@ -1809,6 +1760,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
             if (npc.life < npc.lifeMax * 0.2f)
                 burnColor = Color.LightYellow;
+            if (attackType == YharonAttackType.FireTrailCharge)
+                burnColor = Color.OrangeRed;
             if (npc.life < npc.lifeMax * 0.075f)
             {
                 burnColor = Color.White;
@@ -1818,7 +1771,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             GameShaders.Misc["Infernum:YharonBurn"].UseOpacity(fireIntensity * 0.7f);
             GameShaders.Misc["Infernum:YharonBurn"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
             GameShaders.Misc["Infernum:YharonBurn"].UseColor(burnColor * 0.7f);
-            GameShaders.Misc["Infernum:YharonBurn"].UseSecondaryColor(Color.White * 0.08f);
+            GameShaders.Misc["Infernum:YharonBurn"].UseSecondaryColor(Color.White * 0.12f);
             GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uTimeFactor"].SetValue(1.1f);
             GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uZoomFactor"].SetValue(new Vector2(1f, 1f));
             GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uNoiseReadZoomFactor"].SetValue(new Vector2(0.2f, 0.2f));

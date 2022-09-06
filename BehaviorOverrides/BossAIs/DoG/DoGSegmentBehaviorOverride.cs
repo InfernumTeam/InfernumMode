@@ -1,5 +1,8 @@
+using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Projectiles.Typeless;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,6 +41,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.netUpdate = true;
                 return;
             }
+
+            // FUCK YOU stupid debuffs! GO FUCK YOURSELF!
+            KillUnbalancedDebuffs(npc);
 
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
@@ -163,6 +169,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * segmentOffset;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
+        }
+
+        public static void KillUnbalancedDebuffs(NPC npc)
+        {
+            // Check out NPCDebuffs.cs as this function sets the debuff immunities for all enemies in Cal bar the ones described below.
+            npc.SetNPCDebuffImmunities();
+
+            for (int i = 0; i < npc.buffImmune.Length; i++)
+                npc.buffImmune[i] = true;
+
+            // Most bosses and boss servants are not immune to Kami Flu.
+            if (YanmeisKnifeSlash.CanRecieveCoolEffectsFrom(npc))
+                npc.buffImmune[ModContent.BuffType<KamiFlu>()] = false;
+
+            // Nothing should be immune to Enraged.
+            npc.buffImmune[ModContent.BuffType<Enraged>()] = false;
         }
 
         public override bool PreAI(NPC npc)

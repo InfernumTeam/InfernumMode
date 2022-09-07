@@ -403,6 +403,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public const float BaseDR = 0.3f;
 
+        // Factor for how much Yharon deceleratrs once a charge concludes.
+        // This exists as a way of reducing Yharon's momentum after a charge so that he can more easily get into position for the next charge.
+        // The lower this value is, the quicker his charges will be.
+        public const float PostChargeDecelerationFactor = 0.42f;
+
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -913,7 +918,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (attackTimer >= chargeDelay + chargeTime)
             {
-                npc.velocity *= 0.42f;
+                npc.velocity *= PostChargeDecelerationFactor;
                 SelectNextAttack(npc, ref attackType);
             }
         }
@@ -1477,7 +1482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 if (wrappedAttackTimer == chargeCycleTime - 1f)
-                    npc.velocity *= 0.4f;
+                    npc.velocity *= PostChargeDecelerationFactor;
 
                 // Define the total instance count; 2 clones and the original.
                 npc.Infernum().ExtraAI[IllusionCountIndex] = 3f;
@@ -1602,8 +1607,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
 
                     npc.Center = target.Center - Vector2.UnitY * 1500f;
-                    Dust.QuickDustLine(oldPosition, npc.Center, 275, Color.Orange);
                     npc.velocity *= 0.3f;
+                    Dust.QuickDustLine(oldPosition, npc.Center, 275, Color.Orange);
                     hasTeleportedFlag = 1f;
                     npc.netUpdate = true;
                 }
@@ -1854,7 +1859,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
             if (fireIntensity > 0f)
-                afterimageCount += (int)(fireIntensity * 13f);
+                afterimageCount += (int)(fireIntensity * 8f);
 
             Main.spriteBatch.EnterShaderRegion();
 
@@ -1927,7 +1932,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     afterimageColor.A = 184;
 
                 Vector2 drawPosition = position.Value - Main.screenPosition;
-                drawPosition -= npc.velocity * 0.6f * i;
+                drawPosition -= npc.velocity * i * 1.16f;
 
                 Main.spriteBatch.Draw(tex, drawPosition, npc.frame, afterimageColor * opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
             }

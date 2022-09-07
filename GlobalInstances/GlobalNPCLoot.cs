@@ -199,6 +199,12 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<OldDuke>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());
+
+            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DevourerOfGodsRelic>());
+
+            if (npc.type == ModContent.NPCType<Yharon>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
         }
     }
 }

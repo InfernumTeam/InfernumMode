@@ -265,6 +265,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
+        public static void HandleBodyPartDeathTriggers(NPC npc, double realDamage)
+        {
+            if (npc.life - realDamage > 1000)
+                return;
+
+            npc.life = 0;
+            npc.StrikeNPCNoInteraction(9999, 0f, 0);
+            npc.checkDead();
+        }
+
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackTimer)
         {
             // Don't do damage during spawn effects.

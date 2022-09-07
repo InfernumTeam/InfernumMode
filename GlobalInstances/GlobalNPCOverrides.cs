@@ -25,12 +25,15 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
+using InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.Buffs;
@@ -163,25 +166,6 @@ namespace InfernumMode.GlobalInstances
                     }
                 }
 
-                // Make perf worms immune to debuffs.
-                int[] perforatorIDs = new int[]
-                {
-                    ModContent.NPCType<PerforatorHeadLarge>(),
-                    ModContent.NPCType<PerforatorBodyLarge>(),
-                    ModContent.NPCType<PerforatorTailLarge>(),
-                    ModContent.NPCType<PerforatorHeadMedium>(),
-                    ModContent.NPCType<PerforatorBodyMedium>(),
-                    ModContent.NPCType<PerforatorTailMedium>(),
-                    ModContent.NPCType<PerforatorHeadSmall>(),
-                    ModContent.NPCType<PerforatorBodySmall>(),
-                    ModContent.NPCType<PerforatorTailSmall>()
-                };
-                if (perforatorIDs.Contains(npc.type) && OverridingListManager.Registered<PerforatorHive>())
-                {
-                    for (int k = 0; k < npc.buffImmune.Length; k++)
-                        npc.buffImmune[k] = true;
-                }
-
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
                 {
                     // Disable the effects of timed DR.
@@ -214,46 +198,7 @@ namespace InfernumMode.GlobalInstances
                 return base.PreKill(npc);
 
             if (npc.type == NPCID.EaterofWorldsHead && OverridingListManager.Registered(npc.type))
-            {
-                if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
-                {
-                    Main.npc[npc.realLife].NPCLoot();
-                    Main.npc[npc.realLife].Infernum().ExtraAI[9] = 1f;
-                    return false;
-                }
-
-                if (npc.ai[2] >= 2f)
-                {
-                    npc.boss = true;
-
-                    if (npc.Infernum().ExtraAI[10] == 0f)
-                    {
-                        npc.Infernum().ExtraAI[10] = 1f;
-                        if (BossRushEvent.BossRushActive)
-                            typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, Mod });
-                        else
-                            npc.NPCLoot();
-                    }
-                }
-
-                else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
-                {
-                    npc.Infernum().ExtraAI[10] = 1f;
-                    EoWHeadBehaviorOverride.HandleSplit(npc, ref npc.ai[2]);
-                }
-
-                return npc.ai[2] >= 2f;
-            }
-
-            // Clear lightning.
-            if (npc.type == NPCID.BrainofCthulhu && OverridingListManager.Registered(npc.type))
-            {
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].type == ProjectileID.CultistBossLightningOrbArc || Main.projectile[i].type == ModContent.ProjectileType<PsionicOrb>())
-                        Main.projectile[i].active = false;
-                }
-            }
+                return EoWHeadBehaviorOverride.PerformDeathEffect(npc);
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>() && OverridingListManager.Registered(npc.type))
                 CalamityMod.CalamityMod.StopRain();
@@ -281,16 +226,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
-
-            if (npc.type == NPCID.WallofFlesh && OverridingListManager.Registered(npc.type))
-            {
-                for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
-                {
-                    int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 95, 0f);
-                    Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
-                }
-            }
-
+            
             bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSlimeGod>() || npc.type == ModContent.NPCType<CrimulanSlimeGod>();
             if (bigSlimeGod && OverridingListManager.Registered(npc.type))
             {
@@ -347,54 +283,23 @@ namespace InfernumMode.GlobalInstances
                     npc.NPCLoot();
             }
 
-            double realDamage = crit ? damage * 2 : damage;
-            int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
+            double realDamage = crit ? damage * 2D : damage;
 
             // Make DoG enter the second phase once ready.
-            if (OverridingListManager.Registered<DevourerofGodsHead>())
-            {
-                if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                     life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
-                {
-                    damage = 0;
-                    npc.dontTakeDamage = true;
-                    DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
-                    return false;
-                }
-
-                if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                     life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
-                {
-                    damage = 0;
-                    npc.dontTakeDamage = true;
-                    if (npc.Infernum().ExtraAI[32] == 0f)
-                    {
-                        SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                        npc.Infernum().ExtraAI[32] = 1f;
-                    }
-                    return false;
-                }
-            }
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG && OverridingListManager.Registered<DevourerofGodsHead>())
+                DoGPhase1HeadBehaviorOverride.HandleDoGLifeBasedHitTriggers(npc, realDamage, ref damage);
 
             // Register damage from the tail to the shield when it's vulnerable.
             if (npc.type == ModContent.NPCType<AdultEidolonWyrmTail>() && OverridingListManager.Registered<AdultEidolonWyrmHead>())
-            {
-                Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
-                Main.npc[npc.realLife].netUpdate = true;
-            }
+                AEWHeadBehaviorOverride.HandleTailShieldDamageTriggers(npc, damage, crit);
 
             if ((npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead) && OverridingListManager.Registered(NPCID.MoonLordCore))
-            {
-                if (npc.life - realDamage <= 1000)
-                {
-                    npc.life = 0;
-                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
-                    npc.checkDead();
-                }
-            }
+                MoonLordCoreBehaviorOverride.HandleBodyPartDeathTriggers(npc, realDamage);
 
+            // Make Thanatos' head take a flat multiplier in terms of final damage, as a means of allowing direct hits to be effective.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && OverridingListManager.Registered(npc.type))
-                damage = (int)(damage * 1.65f);
+                damage = (int)(damage * ThanatosHeadBehaviorOverride.FlatDamageBoostFactor);
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }
@@ -413,32 +318,12 @@ namespace InfernumMode.GlobalInstances
                 return base.CheckDead(npc);
 
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
-                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                    if (Main.npc.IndexInRange(Main.wofNPCIndex))
-                        Main.npc[Main.wofNPCIndex].StrikeNPC(1550, 0f, 0);
-                }
-
-                npc.life = 1;
-                npc.ai[1] = 0f;
-                npc.Infernum().ExtraAI[2] = 1f;
-                npc.active = true;
-                npc.netUpdate = true;
-                return false;
-            }
+                return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() && OverridingListManager.Registered(npc.type))
             {
                 npc.life = 1;
                 npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[20] == 0f)
-                {
-                    SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, npc.Center);
-                    npc.Infernum().ExtraAI[20] = 1f;
-                }
                 npc.active = true;
                 npc.netUpdate = true;
                 return false;

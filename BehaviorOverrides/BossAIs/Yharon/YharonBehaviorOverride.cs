@@ -401,6 +401,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public const float Phase2LifeRatio = 0.5f;
 
+        public const float BaseDR = 0.3f;
+
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -415,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 npc.velocity.Y -= 1.3f;
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
+                if (!npc.WithinRange(Main.player[npc.target].Center, 2200f))
                 {
                     // Delete projectiles when disappearing, so that there isn't anything still around if the player wants to immediately challenge Yharon again.
                     ClearAllEntities();
@@ -423,8 +425,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
                 return false;
             }
-            else
-                npc.timeLeft = 7200;
+
+            // Prevent stupid fucking natural despawns.
+            npc.timeLeft = 7200;
 
             Player target = Main.player[npc.target];
 
@@ -517,7 +520,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Determine DR. This becomes very powerful as Yharon transitions to a new attack, to prevent skipping multiple subphases with adrenaline.
-            npc.Calamity().DR = MathHelper.Lerp(0.4f, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.3));
+            npc.Calamity().DR = MathHelper.Lerp(BaseDR, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.3));
 
             // Decrement the transition DR countdown. This doesn't happen if Yharon is still in his brief invincibility period.
             if (transitionDRCountdown > 0f && !npc.dontTakeDamage)
@@ -729,6 +732,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             int spawnEffectsTime = 288;
 
+            // Disable damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
             // Idly spawn pretty sparkles.
             if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool())
             {
@@ -785,7 +792,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     fireIntensity = MathHelper.Max(fireIntensity, attackTimer / chargeDelay);
 
                 // Teleport prior to the charge happening if the attack calls for it.
-                if (attackTimer == chargeDelay - 42f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
+                if (attackTimer == chargeDelay - 35f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
                 {
                     Vector2 offsetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
 
@@ -906,7 +913,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (attackTimer >= chargeDelay + chargeTime)
             {
-                npc.velocity *= 0.4f;
+                npc.velocity *= 0.48f;
                 SelectNextAttack(npc, ref attackType);
             }
         }
@@ -995,7 +1002,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
 
-                SoundEngine.PlaySound(YharonBoss.FireSound, npc.Center);
+                SoundEngine.PlaySound(YharonBoss.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f);
@@ -1307,7 +1314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             }
                         }
                     }
-                    SoundEngine.PlaySound(BigFlare.FlareSound, npc.Center);
+                    SoundEngine.PlaySound(BigFlare.FlareSound, target.Center);
                 }
                 MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
@@ -1393,6 +1400,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             int totalTimeSpentPerCarpetBomb = (int)(splittingMeteorRiseTime + splittingMeteorBombTime);
 
             int totalBerserkCharges = 10;
+            int berserkChargeTime = 54;
             float berserkChargeSpeed = 42f;
 
             ref float attackTimer = ref npc.ai[1];
@@ -1538,7 +1546,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Lastly, do multiple final, powerful charges.
-            else if (attackTimer <= totalCharges * chargeCycleTime + totalTimeSpentPerCarpetBomb + totalBerserkCharges * 45f)
+            else if (attackTimer <= totalCharges * chargeCycleTime + totalTimeSpentPerCarpetBomb + totalBerserkCharges * berserkChargeTime)
             {
                 finalAttackCompletionState = 0f;
 
@@ -1558,7 +1566,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity = 1.5f;
 
                 // Hover and charge.
-                if (attackTimer % 45f < 20)
+                float wrappedAttackTimer = attackTimer % berserkChargeTime;
+                if (wrappedAttackTimer < 20)
                 {
                     npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
                     ref float xAimOffset = ref npc.Infernum().ExtraAI[0];
@@ -1571,7 +1580,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                 }
-                if (attackTimer % 45 == 20)
+                if (wrappedAttackTimer == 20)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * berserkChargeSpeed;
                     npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;

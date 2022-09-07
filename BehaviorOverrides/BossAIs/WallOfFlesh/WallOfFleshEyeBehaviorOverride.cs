@@ -16,6 +16,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const int IsDetachedFlagIndex = 2;
+
+        public static bool HandleDeathEffects(NPC npc)
+        {
+            // Do direct damage to the wall and have the eye "pop" out, as though it's detatching.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (Main.npc.IndexInRange(Main.wofNPCIndex))
+                    Main.npc[Main.wofNPCIndex].StrikeNPC(1550, 0f, 0);
+            }
+
+            npc.life = 1;
+            npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[IsDetachedFlagIndex] = 1f;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -35,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             int circleHoverCount = 0;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[2] == 0f)
+                if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
                     continue;
 
                 circleHoverCount++;
@@ -45,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             npc.damage = 0;
 
             // Attack the target independently after being "killed".
-            if (npc.Infernum().ExtraAI[2] == 1f)
+            if (npc.Infernum().ExtraAI[IsDetachedFlagIndex] == 1f)
             {
                 int laserShootRate = 120;
                 float wallAttackTimer = Main.npc[Main.wofNPCIndex].ai[3];
@@ -69,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 int circleHoverOffsetIndex = 0;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[2] == 0f)
+                    if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
                         continue;
 
                     Main.npc[i].Infernum().ExtraAI[1] = circleHoverOffsetIndex;
@@ -166,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float verticalOffsetFactor = ref npc.ai[0];
 
             // Don't draw any chains once free.
-            if (npc.Infernum().ExtraAI[2] == 1f)
+            if (npc.Infernum().ExtraAI[IsDetachedFlagIndex] == 1f)
             {
                 Texture2D texture = TextureAssets.Npc[npc.type].Value;
                 Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;

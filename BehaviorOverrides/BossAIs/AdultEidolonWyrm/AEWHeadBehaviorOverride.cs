@@ -58,6 +58,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return c;
         }
 
+        public static void HandleTailShieldDamageTriggers(NPC npc, double damage, bool crit)
+        {
+            Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
+            Main.npc[npc.realLife].netUpdate = true;
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Use the default AI if SCal and Draedon are not both dead.

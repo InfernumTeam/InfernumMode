@@ -1,3 +1,4 @@
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -33,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Release the laser burst a second after spawning.
             if (Time == 60f)
             {
-                SoundEngine.PlaySound(SoundID.Item12, Projectile.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

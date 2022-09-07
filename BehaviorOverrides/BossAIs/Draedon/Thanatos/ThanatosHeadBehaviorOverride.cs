@@ -57,6 +57,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public const float ClosedSegmentDR = 0.98f;
 
+        public const float FlatDamageBoostFactor = 1.66f;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ExoMechManagement.Phase4LifeRatio

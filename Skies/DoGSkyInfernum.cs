@@ -1,4 +1,5 @@
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,17 +16,15 @@ namespace InfernumMode.Skies
 {
     public class DoGSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => false;
+        public override bool IsSceneEffectActive(Player player) => InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.DoGHead != -1;
 
         // FUCK YOU FUCK YOU
-        public override SceneEffectPriority Priority => (SceneEffectPriority)10000;
+        public override SceneEffectPriority Priority => SceneEffectPriority.BiomeLow;
 
         public override float GetWeight(Player player) => 0.9f;
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
-            if (isActive)
-                SkyManager.Instance.Deactivate("CalamityMod:DevourerofGodsHead");
             player.ManageSpecialBiomeVisuals("InfernumMode:DoG", isActive);
         }
     }
@@ -40,20 +39,11 @@ namespace InfernumMode.Skies
             public Color LightningColor;
         }
 
-        public float BackgroundIntensity;
-        public float LightningIntensity;
+        public bool isActive = false;
+        public float Intensity = 0f;
+        public int EdgyWormIndex = -1;
         public List<Lightning> LightningBolts = new();
-        public static bool CanSkyBeActive
-        {
-            get
-            {
-                if (!InfernumMode.CanUseCustomAIs)
-                    return false;
-
-                return CalamityGlobalNPC.DoGHead != -1;
-            }
-        }
-
+        
         public static void CreateLightningBolt(Color color, int count = 1, bool playSound = false)
         {
             if (Main.netMode == NetmodeID.Server)
@@ -70,59 +60,62 @@ namespace InfernumMode.Skies
                 };
                 (SkyManager.Instance["InfernumMode:DoG"] as DoGSkyInfernum).LightningBolts.Add(lightning);
             }
-
-            // Make the sky flash if enough lightning bolts are created.
-            if (count >= 10)
-            {
-                (SkyManager.Instance["InfernumMode:DoG"] as DoGSkyInfernum).LightningIntensity = 1f;
-                playSound = true;
-            }
-
+            
             if (playSound && !Main.gamePaused)
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { Volume = 0.5f }, Main.LocalPlayer.Center);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (!CanSkyBeActive)
-            {
-                LightningIntensity = 0f;
-                BackgroundIntensity = MathHelper.Clamp(BackgroundIntensity - 0.08f, 0f, 1f);
-                LightningBolts.Clear();
-                Deactivate();
-                return;
-            }
-
-            LightningIntensity = MathHelper.Clamp(LightningIntensity * 0.95f - 0.025f, 0f, 1f);
-            BackgroundIntensity = MathHelper.Clamp(BackgroundIntensity + 0.01f, 0f, 1f);
+            if (isActive && Intensity < 1f)
+                Intensity += 0.01f;
+            else if (!isActive && Intensity > 0f)
+                Intensity -= 0.01f;
 
             for (int i = 0; i < LightningBolts.Count; i++)
             {
                 LightningBolts[i].Lifetime--;
             }
+            LightningBolts.RemoveAll(l => l.Lifetime <= 0);
+        }
 
-            Opacity = BackgroundIntensity;
+        private float GetIntensity()
+        {
+            UpdatePIndex();
+            return 1f;
+        }
+
+        public override Color OnTileColor(Color inColor)
+        {
+            float Intensity = this.GetIntensity();
+            return new Color(Vector4.Lerp(new Vector4(0.5f, 0.8f, 1f, 1f), inColor.ToVector4(), 1f - Intensity));
+        }
+
+        private bool UpdatePIndex()
+        {
+            int ProvType = ModContent.NPCType<DevourerofGodsHead>();
+            if (EdgyWormIndex >= 0 && Main.npc[EdgyWormIndex].active && Main.npc[EdgyWormIndex].type == ProvType)
+            {
+                return true;
+            }
+            EdgyWormIndex = -1;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == ProvType)
+                {
+                    EdgyWormIndex = i;
+                    break;
+                }
+            }
+            return EdgyWormIndex != -1;
         }
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            if (!CanSkyBeActive)
-                return;
-
-            if (maxDepth >= float.MaxValue)
+            if (maxDepth >= 0 && minDepth < 0)
             {
-                // Draw lightning in the background based on Main.magicPixel.
-                // It is a long, white vertical strip that exists for some reason.
-                // This lightning effect is achieved by expanding this to fit the entire background and then drawing it as a distinct element.
-                Vector2 scale = new(Main.screenWidth * 1.1f / TextureAssets.MagicPixel.Value.Width, Main.screenHeight * 1.1f / TextureAssets.MagicPixel.Value.Height);
-                Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
-                Color drawColor = Color.White * MathHelper.Lerp(0f, 0.24f, LightningIntensity) * BackgroundIntensity;
-
-                // Draw a grey background as base.
-                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, OnTileColor(Color.Transparent), 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-
-                for (int i = 0; i < 2; i++)
-                    Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, screenArea, null, drawColor, 0f, TextureAssets.MagicPixel.Value.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                float Intensity = this.GetIntensity();
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * Intensity);
             }
 
             Texture2D flashTexture = ModContent.Request<Texture2D>("Terraria/Images/Misc/VortexSky/Flash").Value;
@@ -152,14 +145,29 @@ namespace InfernumMode.Skies
             }
         }
 
-        public override float GetCloudAlpha() => 0f;
+        public override float GetCloudAlpha()
+        {
+            return 0f;
+        }
 
-        public override void Reset() { }
+        public override void Activate(Vector2 position, params object[] args)
+        {
+            isActive = true;
+        }
 
-        public override void Activate(Vector2 position, params object[] args) { }
+        public override void Deactivate(params object[] args)
+        {
+            isActive = false;
+        }
 
-        public override void Deactivate(params object[] args) { }
+        public override void Reset()
+        {
+            isActive = false;
+        }
 
-        public override bool IsActive() => CanSkyBeActive && !Main.gameMenu;
+        public override bool IsActive()
+        {
+            return isActive || Intensity > 0f;
+        }
     }
 }

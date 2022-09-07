@@ -35,14 +35,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public const int BaseBodySegmentCount = 32;
         public const int TotalSplitsToPerform = 2;
 
+        public const int EnrageTimerIndex = 5;
+
+        public const int AttackStateIndex = 6;
+
+        public const int AttackTimerIndex = 7;
+
         public override bool PreAI(NPC npc)
         {
-            ref float attackState = ref npc.Infernum().ExtraAI[7];
-            ref float attackTimer = ref npc.Infernum().ExtraAI[8];
             ref float splitCounter = ref npc.ai[2];
             ref float segmentCount = ref npc.ai[3];
             ref float initializedFlag = ref npc.localAI[0];
-            ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[EnrageTimerIndex];
+            ref float attackState = ref npc.Infernum().ExtraAI[AttackStateIndex];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[AttackTimerIndex];
 
             // Fuck.
             npc.Calamity().newAI[1] = MathHelper.Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
@@ -104,8 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 npc.life = Main.npc[npc.realLife].life;
                 npc.lifeMax = Main.npc[npc.realLife].lifeMax;
-                npc.Infernum().ExtraAI[7] = Main.npc[npc.realLife].Infernum().ExtraAI[7];
-                npc.Infernum().ExtraAI[8] = Main.npc[npc.realLife].Infernum().ExtraAI[8];
+                npc.Infernum().ExtraAI[AttackStateIndex] = Main.npc[npc.realLife].Infernum().ExtraAI[AttackStateIndex];
+                npc.Infernum().ExtraAI[AttackTimerIndex] = Main.npc[npc.realLife].Infernum().ExtraAI[AttackTimerIndex];
             }
 
             npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.05f);
@@ -113,6 +119,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             attackTimer++;
 
             return false;
+        }
+
+        public static bool PerformDeathEffect(NPC npc)
+        {
+            if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
+            {
+                Main.npc[npc.realLife].NPCLoot();
+                Main.npc[npc.realLife].Infernum().ExtraAI[9] = 1f;
+                return false;
+            }
+
+            if (npc.ai[2] >= 2f)
+            {
+                npc.boss = true;
+
+                if (npc.Infernum().ExtraAI[10] == 0f)
+                {
+                    npc.Infernum().ExtraAI[10] = 1f;
+                    if (BossRushEvent.BossRushActive)
+                        BossRushEvent.OnBossKill(npc, InfernumMode.Instance);
+                    else
+                        npc.NPCLoot();
+                }
+            }
+
+            else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
+            {
+                npc.Infernum().ExtraAI[10] = 1f;
+                HandleSplit(npc, ref npc.ai[2]);
+            }
+
+            return npc.ai[2] >= 2f;
         }
 
         #region Attacks
@@ -416,8 +454,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
             npc.TargetClosest();
-            npc.Infernum().ExtraAI[7] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
-            npc.Infernum().ExtraAI[8] = 0f;
+            npc.Infernum().ExtraAI[AttackStateIndex] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
+            npc.Infernum().ExtraAI[AttackTimerIndex] = 0f;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

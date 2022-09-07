@@ -37,6 +37,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             npc.dontCountMe = true;
             npc.Calamity().DR = 0f;
 
+            // Disable most debuffs.
+            for (int k = 0; k < npc.buffImmune.Length; k++)
+                npc.buffImmune[k] = true;
+
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.03f);

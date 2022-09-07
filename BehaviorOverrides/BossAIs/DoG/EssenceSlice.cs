@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             DisplayName.SetDefault("Essence Slice");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }
 
         public override void SetDefaults()
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 15);
+            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 10);
             return false;
         }
     }

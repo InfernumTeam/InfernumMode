@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
-
+using static InfernumMode.BehaviorOverrides.BossAIs.DoG.DoGPhase1HeadBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.DoG.DoGPhase2HeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
@@ -32,8 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             NPC head = Main.npc[(int)npc.ai[2]];
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
-            npc.defense = 70;
-            npc.Calamity().DR = 0.3f;
+            npc.defense = BodySegmentDefense;
+            npc.Calamity().DR = BodySegmentDR;
             if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
                 npc.life = 0;
@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.scale = aheadSegment.scale;
 
             // Reset sizes if the head has transitioned to phase 2 but this segment has yet to inherit that property.
-            if (npc.Infernum().ExtraAI[33] == 0f && InPhase2)
+            if (npc.Infernum().ExtraAI[InPhase2FlagIndex] == 0f && InPhase2)
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                 {
@@ -72,15 +72,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Inherit the phase 2 state from the head.
-            npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
+            npc.Infernum().ExtraAI[InPhase2FlagIndex] = head.Infernum().ExtraAI[InPhase2FlagIndex];
 
-            bool headOutOfWorld = head.Center.X < -10001f || head.Center.X > Main.maxTilesX * 16f + 10001f ||
-                head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
+            float worldCheckFluff = 10001f;
+            bool headOutOfWorld = head.Center.X < -worldCheckFluff || head.Center.X > Main.maxTilesX * 16f + worldCheckFluff ||
+                head.Center.Y < -worldCheckFluff || head.Center.Y > Main.maxTilesY * 16f + worldCheckFluff;
 
             // Enter phase two once the tail enters the transition portal.
-            if (!InPhase2 && head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.Phase2PortalProjectileIndexAIIndex] >= 0f)
+            if (!InPhase2 && head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex] >= 0f)
             {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.Phase2PortalProjectileIndexAIIndex]].Hitbox) || headOutOfWorld)
+                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex]].Hitbox) || headOutOfWorld)
                 {
                     npc.alpha += 140;
                     if (npc.alpha > 255)
@@ -91,8 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (npc.type == tailType)
                         {
                             InPhase2 = true;
-                            Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[10] = 0f;
-                            Main.npc[CalamityGlobalNPC.DoGHead].netUpdate = true;
+                            CurrentPhase2TransitionState = Phase2TransitionState.NotEnteringPhase2;
                         }
                     }
                 }
@@ -100,10 +100,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else
             {
                 // Do what the head says in regards to opacity inheritance if not doing phase two transition stuff.
-                switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.BodySegmentFadeTypeAIIndex])
+                switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[BodySegmentFadeTypeIndex])
                 {
                     case BodySegmentFadeType.EnterPortal:
-                        int portalIndex = (int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.Phase2PortalProjectileIndexAIIndex];
+                        int portalIndex = (int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex];
                         if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
 

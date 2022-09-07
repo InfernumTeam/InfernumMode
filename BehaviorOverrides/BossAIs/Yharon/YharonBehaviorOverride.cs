@@ -330,7 +330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public const float Subphase8LifeRatio = 0.2f;
 
-        public const float Subphase9LifeRatio = 0.075f;
+        public const float Subphase9LifeRatio = 0.1f;
 
         public const float Subphase10LifeRatio = 0.025f;
 
@@ -590,9 +590,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             int infernadoAttackPowerupTime = 90;
 
-            float splittingMeteorBombingSpeed = 24f;
-            int splittingMeteorRiseTime = 120;
-            int splittingMeteorBombTime = 90;
+            float splittingMeteorBombingSpeed = 30f;
+            int splittingMeteorRiseTime = 90;
+            int splittingMeteorBombTime = 72;
 
             // Determine important phase variables.
             bool phase2 = npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 1f;
@@ -647,7 +647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 shotgunBurstFireRate = 15;
 
-                splittingMeteorBombingSpeed = 31f;
+                splittingMeteorBombingSpeed = 40f;
             }
             
             // Reset damage to its default value as it was at the time the NPC was created.
@@ -913,7 +913,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (attackTimer >= chargeDelay + chargeTime)
             {
-                npc.velocity *= 0.48f;
+                npc.velocity *= 0.42f;
                 SelectNextAttack(npc, ref attackType);
             }
         }
@@ -1186,7 +1186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             else if (attackTimer == splittingMeteorRiseTime)
             {
                 Vector2 velocity = npc.SafeDirectionTo(target.Center);
-                velocity.Y *= 0.15f;
+                velocity.Y *= 0.3f;
                 velocity = velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection);
 
                 specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
@@ -1214,10 +1214,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_HeatFlashRing(NPC npc, Player target, float chargeDelay, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
-            float heatFlashStartDelay = 60f;
+            float heatFlashStartDelay = 45f;
             float heatFlashIdleDelay = 30f;
-            float heatFlashFlashTime = 60f;
-            float heatFlashEndDelay = 32f;
+            float heatFlashFlashTime = 40f;
+            float heatFlashEndDelay = 27f;
             int heatFlashTotalFlames = 24;
 
             // Don't do contact damage during the heat flash ring, to prevent cheap shots.

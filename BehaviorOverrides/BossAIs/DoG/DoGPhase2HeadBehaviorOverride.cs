@@ -90,9 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public const int SpecialAttackTransitionPreparationTime = 135;
 
         public const float CanUseSpecialAttacksLifeRatio = 0.7f;
-
-        public const float CanUseCeaselessVoidSentinelAttackLifeRatio = 0.6f;
-
+        
         public const float CanUseSignusSentinelAttackLifeRatio = 0.5f;
 
         public const float FinalPhaseLifeRatio = 0.2f;

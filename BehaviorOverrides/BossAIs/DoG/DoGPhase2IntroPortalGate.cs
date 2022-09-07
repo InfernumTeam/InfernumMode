@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.netMode != NetmodeID.Server)
             {
                 SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound with { Volume = 2.5f }, Main.LocalPlayer.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound with { Volume = 3f }, Main.LocalPlayer.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound with { Volume = 5f }, Main.LocalPlayer.Center);
                 SoundEngine.PlaySound(TeslaCannon.FireSound with { Pitch = 0.2f, Volume = 3f }, Main.LocalPlayer.Center);
             }
         }

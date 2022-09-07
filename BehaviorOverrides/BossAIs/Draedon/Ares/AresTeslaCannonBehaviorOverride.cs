@@ -58,10 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
-            {
-                totalOrbsPerBurst = 6;
                 orbShootSpeed *= 0.75f;
-            }
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)
@@ -69,14 +66,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
-                shootTime += 40;
-                totalOrbsPerBurst = 9;
+                shootTime += 30;
                 orbShootSpeed *= 1.33f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime += 40;
-                totalOrbsPerBurst = 11;
+                shootTime += 45;
+                totalOrbsPerBurst = 9;
             }
 
             // Get very pissed off if Ares is enraged.

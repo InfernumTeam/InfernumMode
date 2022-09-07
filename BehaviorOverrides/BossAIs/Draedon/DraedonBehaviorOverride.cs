@@ -30,24 +30,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int PostBattleMusicLength = 5120;
 
         // Projectile damage values.
-        public const int NormalShotDamage = 470;
+        public const int NormalShotDamage = 520;
 
-        public const int StrongerNormalShotDamage = 495;
+        public const int StrongerNormalShotDamage = 540;
 
-        public const int PowerfulShotDamage = 775;
+        public const int PowerfulShotDamage = 850;
 
         // Contact damage values.
         public const int AresChargeContactDamage = 650;
 
-        public const int AresPhotonRipperContactDamage = 550;
+        public const int AresPhotonRipperContactDamage = 600;
 
-        public const int TwinsChargeContactDamage = 550;
+        public const int TwinsChargeContactDamage = 600;
+        
+        public const int ThanatosHeadDamage = 800;
 
-        public const int ExowlContactDamage = 500;
-
-        public const int ThanatosHeadDamage = 775;
-
-        public const int ThanatosHeadDamageMaximumOverdrive = 900;
+        public const int ThanatosHeadDamageMaximumOverdrive = 960;
 
         public override bool PreAI(NPC npc)
         {
@@ -293,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (talkTimer > ExoMechChooseDelay + 10f && !ExoMechIsPresent)
             {
-                HandleDefeatStuff(npc, playerToFollow, ref npc.ModNPC<DraedonNPC>().DefeatTimer);
+                HandleDefeatStuff(npc, ref npc.ModNPC<DraedonNPC>().DefeatTimer);
                 npc.ModNPC<DraedonNPC>().DefeatTimer++;
             }
 
@@ -344,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
-        public static void HandleDefeatStuff(NPC npc, Player playerToFollow, ref float defeatTimer)
+        public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)
         {
             // Become vulnerable after being defeated after a certain point.
             bool hasBeenKilled = npc.localAI[2] == 1f;

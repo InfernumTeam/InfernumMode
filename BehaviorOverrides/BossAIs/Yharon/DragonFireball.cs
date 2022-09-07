@@ -26,7 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.timeLeft = 180;
 			Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
-        }
+			CooldownSlot = ImmunityCooldownID.Bosses;
+		}
 
         public override void AI()
         {

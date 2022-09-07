@@ -1051,8 +1051,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
             {
-                if (ExoMechManagement.CurrentThanatosPhase >= 2)
+                if (ExoMechManagement.CurrentThanatosPhase <= 2)
                     generalSpeedFactor *= 1.1f;
+                if (ExoMechManagement.CurrentThanatosPhase >= 3)
+                    generalSpeedFactor *= 1.15f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
                     generalSpeedFactor *= 1.18f;
@@ -1073,10 +1075,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (!npc.WithinRange(destination, 250f))
             {
                 float flySpeed = npc.velocity.Length();
-                if (flySpeed < 13f)
+                if (flySpeed < 14f)
                     flySpeed += 0.06f;
 
-                if (flySpeed > 15f)
+                if (flySpeed > 16.5f)
                     flySpeed -= 0.065f;
 
                 if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
@@ -1085,7 +1087,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
                     flySpeed -= 0.1f;
 
-                flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
+                flySpeed = MathHelper.Clamp(flySpeed, 14f, 20.5f) * generalSpeedFactor;
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
             }
 

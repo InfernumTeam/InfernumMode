@@ -21,7 +21,16 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldCoverScreen => true;
 
-        public override string TextToDisplay => "Unwavering Guardian\nYharon";
+        public override string TextToDisplay
+        {
+            get
+            {
+                if (IntroScreenManager.ShouldDisplayJokeIntroText)
+                    return "Grand\nYharon";
+
+                return "Unwavering Guardian\nYharon";
+            }
+        }
 
         public override float TextScale => MajorBossTextScale;
 
@@ -36,7 +45,16 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/Yharon/YharonRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation
+        {
+            get
+            {
+                if (CachedText == "Grand\nYharon")
+                    return new SoundStyle("InfernumMode/Sounds/Custom/YharonRoarTroll");
+
+                return new SoundStyle("CalamityMod/Sounds/Custom/Yharon/YharonRoar");
+            }
+        }
 
         public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
 

@@ -1,5 +1,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
@@ -21,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.ignoreWater = true;
             Projectile.alpha = 50;
             Projectile.timeLeft = Lifetime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

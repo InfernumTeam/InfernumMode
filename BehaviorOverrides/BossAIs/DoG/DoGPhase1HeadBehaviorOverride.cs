@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int BodySegmentDefense = 70;
 
-        public const float BodySegmentDR = 0.4f;
+        public const float BodySegmentDR = 0.8f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {

@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public const int LifetimeConst = 540;
 
         public override float MaxScale => 1f;
-        public override float MaxLaserLength => 4800f;
+        public override float MaxLaserLength => 6500f;
         public override float Lifetime => LifetimeConst;
         public override Color LaserOverlayColor => new(250, 180, 100, 100);
         public override Color LightCastColor => Color.White;

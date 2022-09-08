@@ -1226,8 +1226,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int laserbeamSweepTime = ArtemisSweepLaserbeam.LifetimeConst;
             int laserbeamAttackTime = laserbeamTelegraphTime + laserbeamSweepTime;
             int attackTransitionDelay = 30;
-            float spinRadius = 560f;
-            float spinArc = MathHelper.Pi * 6f;
+            float spinRadius = 600f;
+            float spinArc = MathHelper.Pi * 5f;
             float plasmaBlastShootSpeed = 12f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)

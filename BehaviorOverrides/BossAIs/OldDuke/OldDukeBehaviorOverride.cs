@@ -528,8 +528,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             if (inPhase3)
             {
-                chargeTime -= inPhase4 ? 6 : 5;
-                chargeSpeed += inPhase4 ? 10.5f : 5f;
+                chargeTime -= inPhase4 ? 4 : 3;
+                chargeSpeed += inPhase4 ? 7.5f : 4f;
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -538,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             // Speed up the farther away the target is.
-            chargeSpeed += npc.Distance(target.Center) * 0.00775f;
+            chargeSpeed += npc.Distance(target.Center) * 0.0075f;
 
             if (attackTimer >= chargeTime)
             {

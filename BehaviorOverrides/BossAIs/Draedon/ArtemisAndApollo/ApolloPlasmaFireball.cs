@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
     public class ApolloPlasmaFireball : ModProjectile
     {
-        public bool ShouldExplodeDiagonally => Projectile.ai[0] == 1f;
+        public bool ShouldExplodeDiagonally => Projectile.ai[0] == 0f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Volatile Plasma Blast");
@@ -175,11 +175,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 plasma.scale = scale;
                 plasma.noGravity = true;
             }
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
     }
 }

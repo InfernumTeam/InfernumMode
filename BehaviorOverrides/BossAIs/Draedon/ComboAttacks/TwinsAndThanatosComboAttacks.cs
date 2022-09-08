@@ -32,12 +32,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             return (ExoMechComboAttackType)initialMech.ai[0] switch
             {
                 ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => DoBehavior_TwinsThanatos_ThermoplasmaDashes(npc, target, ref attackTimer, ref frameType),
-                ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep => DoBehavior_TwinsThanatos_CircledLaserSweep(npc, target, twinsHoverSide, ref attackTimer, ref frameType),
+                ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep => DoBehavior_TwinsThanatos_CircledLaserSweep(npc, target, ref attackTimer, ref frameType),
                 _ => false,
             };
         }
 
-        public static bool DoBehavior_TwinsThanatos_ThermoplasmaDashes(NPC npc, Player target, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_TwinsThanatos_ThermoplasmaDashes(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             bool isApollo = npc.type == ModContent.NPCType<Apollo>();
             bool isEitherExoTwin = isApollo || npc.type == ModContent.NPCType<Artemis>();
@@ -84,11 +84,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frameType = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (attackTimer > fastFlyDelay)
-                    frame += 10f;
+                    frameType += 10f;
                 if (ExoTwinsAreInSecondPhase)
-                    frame += 60f;
+                    frameType += 60f;
 
                 // Fire blasts.
                 if (attackTimer >= fastFlyDelay && attackTimer % exoTwinShootRate == exoTwinShootRate - 1f && !npc.WithinRange(target.Center, 360f))
@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             else
             {
                 // Decide frames.
-                frame = (int)ThanatosHeadBehaviorOverride.ThanatosFrameType.Open;
+                frameType = (int)ThanatosHeadBehaviorOverride.ThanatosFrameType.Open;
                 ThanatosHeadBehaviorOverride.DoAggressiveChargeMovement(npc, target, attackTimer, thanatosFlySpeedFactor);
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             }
@@ -121,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             return attackTimer >= fastFlyDelay + chargeTime;
         }
 
-        public static bool DoBehavior_TwinsThanatos_CircledLaserSweep(NPC npc, Player target, float hoverSide, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_TwinsThanatos_CircledLaserSweep(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             int apolloShootRate = 48;
             int laserbeamTelegraphTime = 60;
@@ -168,7 +168,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     npc.rotation = npc.rotation.AngleTowards((attackTimer + 8f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.25f);
 
                 // Decide frames.
-                frame = (int)ThanatosHeadBehaviorOverride.ThanatosFrameType.Open;
+                frameType = (int)ThanatosHeadBehaviorOverride.ThanatosFrameType.Open;
             }
 
             // Have Artemis reposition before the other mechs attack.
@@ -234,13 +234,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frameType = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (ExoTwinsAreInSecondPhase)
-                    frame += 60f;
+                    frameType += 60f;
 
                 if (attackTimer >= laserbeamTelegraphTime)
                 {
-                    frame += 10f;
+                    frameType += 10f;
                     float spinAngle = (attackTimer - laserbeamTelegraphTime) / laserbeamSweepTime * spinArc * -spinDirection;
                     npc.velocity = Vector2.Zero;
                     npc.Center = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY.RotatedBy(spinAngle) * spinRadius;
@@ -288,9 +288,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 30f % 1f));
+                frameType = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 30f % 1f));
                 if (ExoTwinsAreInSecondPhase)
-                    frame += 60f;
+                    frameType += 60f;
             }
 
             return attackTimer >= laserbeamTelegraphTime + laserbeamSweepTime;

@@ -1022,7 +1022,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public static void DoAggressiveChargeMovement(NPC npc, Player target, float attackTimer, float speedMultiplier = 1f)
         {
-            speedMultiplier *= 0.9f;
+            speedMultiplier *= 1.1f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float flyAcceleration = MathHelper.Lerp(0.045f, 0.037f, lifeRatio);

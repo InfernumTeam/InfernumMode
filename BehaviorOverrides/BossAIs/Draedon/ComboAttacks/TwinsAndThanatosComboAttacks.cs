@@ -126,8 +126,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int apolloShootRate = 48;
             int laserbeamTelegraphTime = 60;
             int laserbeamSweepTime = ArtemisSweepLaserbeam.LifetimeConst;
-            float spinRadius = 500f;
-            float spinArc = MathHelper.Pi * 4f;
+            float spinRadius = 720f;
+            float spinArc = MathHelper.Pi * 5f;
             float plasmaBlastShootSpeed = 11f;
             NPC artemis = Main.npc[CalamityGlobalNPC.draedonExoMechTwinRed];
             ref float artemisHasRepositioned = ref artemis.Infernum().ExtraAI[0];
@@ -158,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     npc.damage = 0;
 
                 generalTimer++;
-                Vector2 spinDestination = target.Center + (generalTimer * MathHelper.TwoPi / 105f).ToRotationVector2() * 1600f;
+                Vector2 spinDestination = target.Center + (generalTimer * MathHelper.TwoPi / 105f).ToRotationVector2() * 2150f;
 
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);

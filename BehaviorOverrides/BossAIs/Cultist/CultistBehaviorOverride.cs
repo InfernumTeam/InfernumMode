@@ -268,15 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Main.LocalPlayer.Infernum().CurrentScreenShakePower = 15f;
                 return;
             }
-
-            // Focus on the boss as it spawns.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 4000f))
-            {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(300f, 292f, deathTimer, true);
-            }
-
+            
             if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(36) && deathTimer >= 75f && deathTimer < 210f)
                 Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Unit(), ModContent.ProjectileType<LightBeam>(), 0, 0f);
 

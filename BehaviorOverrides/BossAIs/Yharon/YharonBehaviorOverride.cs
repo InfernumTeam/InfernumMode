@@ -735,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackType, ref float attackTimer)
         {
-            int spawnEffectsTime = 288;
+            int spawnEffectsTime = 336;
 
             // Disable damage.
             npc.dontTakeDamage = true;
@@ -1377,8 +1377,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (attackTimer > flameVortexSpawnDelay && attackTimer % 7 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float horizontalOffset = (attackTimer - flameVortexSpawnDelay) / 7f * 205f + 260f;
-                Utilities.NewProjectileBetter(npc.Center + new Vector2(-horizontalOffset, -90f), Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
-                Utilities.NewProjectileBetter(npc.Center + new Vector2(horizontalOffset, -90f), Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+                Vector2 fireballSpawnPosition = npc.Center + new Vector2(horizontalOffset, -90f);
+                if (!target.WithinRange(fireballSpawnPosition, 350f))
+                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+
+                fireballSpawnPosition = npc.Center + new Vector2(-horizontalOffset, -90f);
+                if (!target.WithinRange(fireballSpawnPosition, 350f))
+                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
             }
             if (attackTimer > flameVortexSpawnDelay + totalFlameWaves * 7)
                 SelectNextAttack(npc, ref attackType);

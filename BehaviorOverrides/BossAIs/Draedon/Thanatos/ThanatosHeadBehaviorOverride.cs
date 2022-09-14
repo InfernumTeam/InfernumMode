@@ -3,10 +3,12 @@ using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
@@ -159,8 +161,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
             npc.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(npc);
+            npc.Calamity().unbreakableDR = false;
+            bool dontResetDR = false;
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
+            {
                 npc.dontTakeDamage = true;
+                if (Main.npc[(int)complementMechIndex].type == ModContent.NPCType<Apollo>())
+                {
+                    dontResetDR = true;
+                    npc.dontTakeDamage = false;
+                    npc.Calamity().DR = 0.9999999f;
+                    npc.Calamity().unbreakableDR = true;
+                }
+            }
 
             // Become invincible and disappear if necessary.
             npc.Calamity().newAI[1] = 0f;
@@ -178,6 +191,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+
+            // Kill debuffs.
+            DoGPhase1BodyBehaviorOverride.KillUnbalancedDebuffs(npc);
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)
@@ -234,7 +250,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Handle smoke venting and open/closed DR.
-            npc.Calamity().DR = ClosedSegmentDR;
+            if (!dontResetDR)
+                npc.Calamity().DR = ClosedSegmentDR;
             npc.Calamity().unbreakableDR = true;
             npc.chaseable = false;
             npc.defense = 0;
@@ -294,7 +311,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
                     npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
                 }
-                npc.Calamity().DR = OpenSegmentDR - 0.125f;
+                if (!dontResetDR)
+                    npc.Calamity().DR = OpenSegmentDR - 0.125f;
                 npc.Calamity().unbreakableDR = false;
                 npc.chaseable = true;
             }
@@ -990,7 +1008,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 550f);
             hoverDestination.Y -= 550f;
 
-            float idealFlySpeed = 17f;
+            float idealFlySpeed = 23f;
 
             if (ExoMechManagement.CurrentThanatosPhase == 4)
                 idealFlySpeed *= 0.7f;
@@ -1023,6 +1041,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public static void DoAggressiveChargeMovement(NPC npc, Player target, float attackTimer, float speedMultiplier = 1f)
         {
             speedMultiplier *= 1.1f;
+            if (!target.HasShieldBash())
+                speedMultiplier *= 0.67f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float flyAcceleration = MathHelper.Lerp(0.045f, 0.037f, lifeRatio);

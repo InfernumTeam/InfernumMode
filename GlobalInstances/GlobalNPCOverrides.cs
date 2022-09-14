@@ -299,7 +299,14 @@ namespace InfernumMode.GlobalInstances
 
             // Make Thanatos' head take a flat multiplier in terms of final damage, as a means of allowing direct hits to be effective.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && OverridingListManager.Registered(npc.type))
+            {
                 damage = (int)(damage * ThanatosHeadBehaviorOverride.FlatDamageBoostFactor);
+                if (npc.Calamity().DR > 0.999f)
+                {
+                    damage = 0D;
+                    return false;
+                }
+            }
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }

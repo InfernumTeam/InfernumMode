@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (CalamityWorld.TalkedToDraedon)
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonResummonText", TextColorEdgy);
                 else
-                    Utilities.DisplayText("My creations will not forget your failures. Choose wisely.", TextColorEdgy);
+                    Utilities.DisplayText("Now choose.", TextColorEdgy);
 
                 // Mark Draedon as talked to.
                 if (!CalamityWorld.TalkedToDraedon)

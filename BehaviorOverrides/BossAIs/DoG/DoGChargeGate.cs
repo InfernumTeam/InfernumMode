@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (TelegraphDelay < TelegraphTotalTime * 0.8f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Vector2 idealDestination = target.Center + target.velocity * new Vector2(30f, 20f);
+                Vector2 idealDestination = target.Center + target.velocity * new Vector2(36f, 27f);
                 if (Destination == Vector2.Zero)
                     Destination = idealDestination;
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);

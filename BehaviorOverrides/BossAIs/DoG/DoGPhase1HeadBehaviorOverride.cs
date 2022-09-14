@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int BodySegmentDefense = 70;
 
-        public const float BodySegmentDR = 0.8f;
+        public const float BodySegmentDR = 0.925f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -209,6 +209,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
 
+            npc.dontTakeDamage = CurrentPhase2TransitionState == Phase2TransitionState.EnteringPortal;
+
             // Defer all further execution to the second phase AI manager if in the second phase.
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
@@ -237,8 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            // Reset invulnerability and fade in.
-            npc.dontTakeDamage = false;
+            // Reset opacity.
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
 
             // Select a new target if an old one was lost.
@@ -261,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.netUpdate = true;
             }
 
-            npc.damage = npc.dontTakeDamage ? 0 : 2500;
+            npc.damage = npc.dontTakeDamage ? 0 : 885;
 
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -395,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
-                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, Main.spriteBatch, lightColor);
+                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, lightColor);
 
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)

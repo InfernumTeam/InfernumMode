@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -7,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class HomingDoGBurst : ModProjectile
+    public class AcceleratingDoGBurst : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -43,11 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.frame = Projectile.frameCounter / 6 % Main.projFrames[Projectile.type];
             Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
 
-            // Home towards the nearest target. The speed of the homing is maintained after direction change calculations are made.
-            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.velocity = (Projectile.velocity * 59f + Projectile.SafeDirectionTo(target.Center) * 26f) / 60f;
-            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            if (Projectile.velocity.Length() < 37f)
+                Projectile.velocity *= 1.028f;
         }
 
         public override bool PreDraw(ref Color lightColor)

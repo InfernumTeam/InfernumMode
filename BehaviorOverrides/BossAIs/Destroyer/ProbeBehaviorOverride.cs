@@ -34,11 +34,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Lighting.AddLight(npc.Center, Color.Red.ToVector3() * 1.6f);
 
             // Have a brief moment of no damage.
-            npc.damage = generalTimer > 60f ? npc.defDamage : 0;
+            npc.damage = npc.ai[0] == 2f ? npc.defDamage : 0;
 
             float hoverSpeed = 22f;
             if (BossRushEvent.BossRushActive)
                 hoverSpeed *= 1.5f;
+            ref float time = ref npc.ai[1];
 
             if (npc.ai[0] == 0f)
             {
@@ -54,7 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (npc.ai[0] == 1f)
             {
-                ref float time = ref npc.ai[1];
                 npc.velocity *= 0.975f;
                 time++;
 

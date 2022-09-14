@@ -236,6 +236,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             else
                 Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
 
+            if (head.Calamity().unbreakableDR)
+                npc.Calamity().DR = 0.9999999f;
+
             if (head.Infernum().ExtraAI[17] >= 1f)
                 npc.takenDamageMultiplier *= 0.5f;
 

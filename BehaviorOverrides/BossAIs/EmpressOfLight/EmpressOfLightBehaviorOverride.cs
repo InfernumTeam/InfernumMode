@@ -1495,12 +1495,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             Color baseColor = Color.White * npc.Opacity;
-            Texture2D wingOutlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsOutline").Value;
-            Texture2D leftArmTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightLeftArm").Value;
-            Texture2D rightArmTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightRightArm").Value;
-            Texture2D wingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWings").Value;
-            Texture2D tentacleTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightTentacles").Value;
-            Texture2D dressGlowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightGlowmask").Value;
+            Texture2D wingOutlineTexture = TextureAssets.Extra[ExtrasID.HallowBossWingsBack].Value;
+            Texture2D leftArmTexture = TextureAssets.Extra[ExtrasID.HallowBossArmsLeft].Value;
+            Texture2D rightArmTexture = TextureAssets.Extra[ExtrasID.HallowBossArmsRight].Value;
+            Texture2D wingTexture = TextureAssets.Extra[ExtrasID.HallowBossWings].Value;
+            Texture2D tentacleTexture = TextureAssets.Extra[ExtrasID.HallowBossTentacles].Value;
+            Texture2D dressGlowmaskTexture = TextureAssets.Extra[ExtrasID.HallowBossSkirt].Value;
 
             Rectangle tentacleFrame = tentacleTexture.Frame(1, 8, 0, (int)(WingFrameCounter / 5f) % 8);
             Rectangle wingFrame = wingOutlineTexture.Frame(1, 11, 0, (int)(WingFrameCounter / 5f) % 11);

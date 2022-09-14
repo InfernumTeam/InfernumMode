@@ -89,9 +89,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int SpecialAttackTransitionPreparationTime = 135;
 
-        public const float CanUseSpecialAttacksLifeRatio = 0.7f;
+        public const float CanUseSpecialAttacksLifeRatio = 0.8f;
         
-        public const float CanUseSignusSentinelAttackLifeRatio = 0.5f;
+        public const float CanUseSignusSentinelAttackLifeRatio = 0.7f;
 
         public const float FinalPhaseLifeRatio = 0.2f;
 
@@ -136,6 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
 
                 npc.Opacity = 0f;
+                npc.dontTakeDamage = true;
                 segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
                 // Stay far above the player, but get increasing close as the animation goes on.
@@ -185,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
-            npc.damage = npc.dontTakeDamage ? 0 : 3000;
+            npc.damage = npc.dontTakeDamage ? 0 : 1100;
             npc.Calamity().DR = 0.3f;
 
             // Stay in the world.
@@ -269,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         int[] projectilesToDelete = new int[]
                         {
                             ProjectileID.CultistBossLightningOrbArc,
-                            ModContent.ProjectileType<HomingDoGBurst>(),
+                            ModContent.ProjectileType<AcceleratingDoGBurst>(),
                             ModContent.ProjectileType<EssenceSliceTelegraphLine>()
                         };
                         for (int i = 0; i < Main.maxProjectiles; i++)
@@ -338,7 +339,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) == AggressiveMovementTimeP2 + 1f)
                     DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
 
-                if (passiveAttackDelay >= 300f)
+                bool aboutToFinishAttacking = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) > AggressiveMovementTimeP2 + AggressiveMovementTimeP2 - 96f;
+                if (passiveAttackDelay >= 300f && !aboutToFinishAttacking)
                 {
                     // Increment the sentinal attack timer if DoG is completely visible.
                     if (totalSentinelAttacks >= 1 && npc.Opacity >= 1f)
@@ -368,26 +370,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void Despawn(NPC npc)
         {
-            // Fly rapidly into the sky.
-            npc.velocity.Y -= 3f;
-            if (npc.position.Y < Main.topWorld + 16f)
-                npc.velocity.Y -= 3f;
-
             // Despawn all segments once SCal has reached space.
             int headID = ModContent.NPCType<DevourerofGodsHead>();
             int bodyID = ModContent.NPCType<DevourerofGodsBody>();
             int tailID = ModContent.NPCType<DevourerofGodsTail>();
-            if (npc.Center.Y < 200f)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].type != headID && Main.npc[i].type != bodyID && Main.npc[i].type != tailID)
-                        return;
+                if (Main.npc[i].type != headID && Main.npc[i].type != bodyID && Main.npc[i].type != tailID)
+                    break;
 
-                    Main.npc[i].active = false;
-                    Main.npc[i].netUpdate = true;
-                }
+                Main.npc[i].active = false;
+                Main.npc[i].netUpdate = true;
             }
+            npc.active = false;
+            npc.netUpdate = true;
         }
 
         public static void DoSentinelAttacks(NPC npc, Player target, float attackTimer, ref float sentinelAttackTimer)
@@ -650,6 +646,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 flySpeedFactor = 1.55f;
             }
 
+            if (!target.HasShieldBash())
+                flySpeedFactor *= 0.66f;
+
             float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
 
             // Charge if the player is far away.
@@ -808,7 +807,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Transform into the antimatter form.
             FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
 
-            int fireballCount = 8;
+            int fireballCount = 13;
             int idealPortalTelegraphTime = 48;
             float wrappedAttackTimer = attackTimer % 135f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -817,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // This is done as a means of indicating desparation, and acts as a sort of final stand.
             if (lifeRatio < 0.15f)
             {
-                fireballCount -= 2;
+                fireballCount -= 3;
                 idealPortalTelegraphTime -= 12;
             }
             if (lifeRatio < 0.1f)
@@ -892,7 +891,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             segmentCount++;
                         }
                     }
-                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)chargeGatePortalIndex].ModProjectile<DoGChargeGate>().Destination) * chargeSpeed;
+                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)chargeGatePortalIndex].ModProjectile<DoGChargeGate>().Destination) * (chargeSpeed + npc.Distance(target.Center) * 0.0126f);
                     npc.Opacity = 1f;
                     npc.netUpdate = true;
 
@@ -900,8 +899,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < fireballCount; i++)
                     {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 19f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 13f;
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 415, 0f);
                     }
 
                     // Create the portal to go through.
@@ -952,7 +951,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Create the portal to teleport out of.
                 if (specialAttackTimer == SpecialAttackDuration + SpecialAttackPortalCreationDelay)
                 {
-                    Vector2 portalSpawnPosition = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 450f;
+                    Vector2 portalSpawnPosition = target.Center - Vector2.UnitY * 500f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         specialAttackPortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
@@ -1049,7 +1048,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #endregion AI
 
         #region Drawing
-        public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static bool PreDraw(NPC npc, Color lightColor)
         {
             npc.scale = 1f;
             SpriteEffects spriteEffects = SpriteEffects.None;

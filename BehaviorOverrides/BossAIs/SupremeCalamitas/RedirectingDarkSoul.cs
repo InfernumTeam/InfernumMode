@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -40,8 +41,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.rotation += MathHelper.Pi;
 
             // Slow down dramatically on the vertical axis and speed upon the horizontal one.
-            Projectile.velocity.X *= 1.03f;
-            Projectile.velocity.Y *= 0.96f;
+            if (Math.Abs(Projectile.velocity.X) < 25f)
+                Projectile.velocity.X *= 1.036f;
+            Projectile.velocity.Y *= 0.984f;
 
             Time++;
         }

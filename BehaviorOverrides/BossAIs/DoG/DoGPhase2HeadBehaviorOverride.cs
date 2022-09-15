@@ -115,6 +115,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            // Get rid of the dumb edgy on-hit text.
+            target.Calamity().dogTextCooldown = 20;
+
+            // Disable teleportations.
             target.Calamity().normalityRelocator = false;
             target.Calamity().spectralVeil = false;
 
@@ -339,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) == AggressiveMovementTimeP2 + 1f)
                     DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
 
-                bool aboutToFinishAttacking = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) > AggressiveMovementTimeP2 + AggressiveMovementTimeP2 - 96f;
+                bool aboutToFinishAttacking = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) > AggressiveMovementTimeP2 + AggressiveMovementTimeP2 - 172f;
                 if (passiveAttackDelay >= 300f && !aboutToFinishAttacking)
                 {
                     // Increment the sentinal attack timer if DoG is completely visible.
@@ -891,7 +895,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             segmentCount++;
                         }
                     }
-                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)chargeGatePortalIndex].ModProjectile<DoGChargeGate>().Destination) * (chargeSpeed + npc.Distance(target.Center) * 0.0126f);
+                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)chargeGatePortalIndex].ModProjectile<DoGChargeGate>().Destination) * (chargeSpeed + npc.Distance(target.Center) * 0.0127f);
                     npc.Opacity = 1f;
                     npc.netUpdate = true;
 

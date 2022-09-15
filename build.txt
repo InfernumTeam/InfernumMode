@@ -1,9 +1,10 @@
 author = Dominic Karma
-version = 1.6.1
+version = 1.7.0
 displayName = Calamity Mod Infernum Mode
 modReferences=CalamityMod
 sortAfter=CalamityMod
-hideCode=false
-hideResources=true
-includeSource = true
+hideCode=true
+hideResources=false
+includeSource = false
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+homepage = https://discord.gg/cKh6nyrSE7

@@ -32,7 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             CondemnationFanBurst,
             ExplosiveCharges,
             HellblastBarrage,
-            BurningSoulBarrage,
             BecomeBerserk,
             SummonSuicideBomberDemons,
             BrimstoneJewelBeam,
@@ -144,12 +143,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
-            SCalAttackType.BurningSoulBarrage,
             SCalAttackType.SummonSuicideBomberDemons,
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
-            SCalAttackType.BurningSoulBarrage,
             SCalAttackType.SummonSuicideBomberDemons,
         };
 
@@ -162,7 +159,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HorizontalDarkSoulRelease,
-            SCalAttackType.BurningSoulBarrage,
             SCalAttackType.HellblastBarrage,
             SCalAttackType.SummonSuicideBomberDemons,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
@@ -170,7 +166,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
-            SCalAttackType.BurningSoulBarrage,
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.SummonSuicideBomberDemons,
@@ -393,9 +388,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SCalAttackType.HellblastBarrage:
                     DoBehavior_HellblastBarrage(npc, target, (int)currentPhase, inBerserkPhase, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
-                case SCalAttackType.BurningSoulBarrage:
-                    DoBehavior_BurningSoulBarrage(npc, target, (int)currentPhase, inBerserkPhase, ref frameType, ref frameChangeSpeed, ref attackTimer);
-                    break;
                 case SCalAttackType.BecomeBerserk:
                     DoBehavior_BecomeBerserk(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
@@ -451,19 +443,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int boltBurstReleaseCount = 2;
             int shootDelay = 60;
             int shootTime = 180;
-            int shootRate = 8;
+            int shootRate = 7;
             float soulShootSpeed = 8.5f;
 
             if (currentPhase >= 1)
             {
-                shootRate--;
-                soulShootSpeed += 2f;
+                shootRate -= 2;
             }
             if (inBerserkPhase)
-            {
                 shootRate = 4;
-                soulShootSpeed += 4.5f;
-            }
 
             if (Enraged)
             {
@@ -484,8 +472,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Hover to the side of the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 840f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.2f);
+
+            float hoverAcceleration = target.HoldingTrueMeleeWeapon() ? 0.37f : 0.9f;
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 740f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, hoverAcceleration);
 
             if (attackTimer >= shootDelay)
             {
@@ -505,7 +495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         int shootCounter = (int)((attackTimer - shootDelay) / shootRate);
                         float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, shootCounter % 3f / 2f) + Main.rand.NextFloatDirection() * 0.25f;
-                        Vector2 soulVelocity = (Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt()).RotatedBy(offsetAngle) * soulShootSpeed;
+                        Vector2 soulVelocity = (Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt()).RotatedBy(offsetAngle) * soulShootSpeed * new Vector2(0.67f, 1f);
                         soulVelocity.Y += target.velocity.Y;
 
                         Utilities.NewProjectileBetter(handPosition, soulVelocity, ModContent.ProjectileType<RedirectingDarkSoul>(), 500, 0f);
@@ -531,19 +521,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int fanShootTime = 52;
             int shootRate = 2;
             int shootCount = 3;
+            bool dartConvergence = false;
             float shootSpeed = 11.25f;
             float angularVariance = 2.94f;
 
             if (currentPhase >= 1)
+            {
                 shootSpeed += 3.5f;
+                dartConvergence = true;
+            }
 
             if (inBerserkPhase)
             {
-                shootRate = 1;
                 condemnationSpinTime = 36;
                 condemnationChargePuffRate = 12;
                 shootSpeed = 15f;
-                angularVariance = 3.63f;
+                angularVariance = 3.03f;
+                dartConvergence = true;
             }
 
             if (currentPhase >= 3)
@@ -625,6 +619,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     chargeMagic.scale = Main.rand.NextFloat(1f, 1.5f);
                     chargeMagic.color = Color.Violet;
                     chargeMagic.noGravity = true;
+                }
+            }
+
+            // Spawn darts around the player that slowly converge inward in later phases, to incentivize not sitting in the same place.
+            // These darts spawn behind the player if they are moving, to prevent telegraphed, and adjust their speed so that they reach their destination
+            // just before the attack concludes.
+            if (dartConvergence && attackTimer == chargeupTime)
+            {
+                SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
+                    Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
+                    Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
                 }
             }
 
@@ -1431,90 +1439,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_BurningSoulBarrage(NPC npc, Player target, int currentPhase, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
-        {
-            int shootDelay = 105;
-            int shootCycleTime = 150;
-            int shootTime = 480;
-            int endOfAttackShootBlockTime = 90;
-            float hoverSpeedFactor = Utilities.Remap(attackTimer, 0f, shootDelay * 0.65f, 0.36f, 1f);
-            float maxFanOffsetAngle = 1.09f;
-            float soulSpeed = 14.5f;
-
-            if (currentPhase >= 1)
-            {
-                maxFanOffsetAngle += 0.11f;
-                shootCycleTime -= 20;
-            }
-
-            if (inBerserkPhase)
-            {
-                maxFanOffsetAngle += 0.49f;
-                soulSpeed += 6f;
-            }
-            
-            if (Enraged)
-                soulSpeed = 34.5f;
-
-            float wrappedAttackTimer = (attackTimer - shootDelay) % shootCycleTime;
-            bool hasBegunFiring = attackTimer >= shootDelay;
-            Vector2 handPosition = CalculateHandPosition();
-            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
-            ref float initialDirection = ref npc.Infernum().ExtraAI[1];
-
-            // Handle slowdown effects once firing.
-            if (hasBegunFiring)
-                hoverSpeedFactor = Utilities.Remap(wrappedAttackTimer, 0f, shootCycleTime * 0.4f, 1f, 0.08f);
-
-            // Hover towards the center of the arena.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = npc.Infernum().Arena.Center.ToVector2();
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * MathHelper.Min(npc.Distance(hoverDestination), 32f);
-            npc.SimpleFlyMovement(idealVelocity, hoverSpeedFactor * 2.25f);
-            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
-
-            // Use the magic cast animation when firing and a magic circle prior to that, as a charge-up effect.
-            frameChangeSpeed = 0.2f;
-            frameType = (int)(hasBegunFiring ? SCalFrameType.OutwardHandCast : SCalFrameType.MagicCircle);
-
-            // Create an explosion effect prior to firing.
-            if (attackTimer == shootDelay)
-            {
-                npc.Center = target.Center - Vector2.UnitY * 475f + Main.rand.NextVector2Circular(5f, 5f);
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Release a spread of lost spirits.
-            if (wrappedAttackTimer >= shootCycleTime * 0.4f && attackTimer < shootDelay + shootTime)
-            {
-                // Initialize the shoot direction of the souls.
-                if (wrappedAttackTimer == (int)Math.Ceiling(shootCycleTime * 0.4f))
-                {
-                    initialDirection = (target.Center - handPosition).ToRotation();
-                    npc.netUpdate = true;
-                }
-
-                SoundEngine.PlaySound(SoundID.NPCDeath52, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float fanInterpolant = Utils.GetLerpValue(shootCycleTime * 0.4f, shootCycleTime, wrappedAttackTimer, true);
-                    float offsetAngle = (float)Math.Sin(MathHelper.Pi * 3f * fanInterpolant) * maxFanOffsetAngle;
-                    Vector2 shootVelocity = (initialDirection + offsetAngle).ToRotationVector2() * soulSpeed;
-                    Utilities.NewProjectileBetter(handPosition, shootVelocity, ModContent.ProjectileType<LostSoulProj>(), 500, 0f);
-                }
-            }
-
-            if (attackTimer >= shootDelay + shootTime + endOfAttackShootBlockTime)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             // Darken the screen.
@@ -2084,7 +2008,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.ai[0] = (int)Utils.SelectRandom(Main.rand,
                     SCalAttackType.CondemnationFanBurst,
                     SCalAttackType.ExplosiveCharges,
-                    SCalAttackType.BurningSoulBarrage,
                     SCalAttackType.HellblastBarrage);
             }
             else

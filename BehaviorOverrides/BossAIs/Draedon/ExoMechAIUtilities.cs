@@ -166,5 +166,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
         }
+
+        public static void HealInFinalPhase(NPC npc, float phaseTransitionAnimationTime)
+        {
+            ref float startingHP = ref npc.Infernum().ExtraAI[ExoMechManagement.StartingFinalPhaseAnimationHPIndex];
+            if (startingHP == 0f)
+            {
+                startingHP = npc.life;
+                npc.netUpdate = true;
+            }
+
+            npc.life = (int)MathHelper.SmoothStep(startingHP, npc.lifeMax * ExoMechManagement.Phase4LifeRatio, phaseTransitionAnimationTime / ExoMechManagement.FinalPhaseTransitionTime);
+        }
     }
 }

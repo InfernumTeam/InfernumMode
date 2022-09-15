@@ -229,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
+            if (finalPhaseAnimationTime <= ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 attackType = (int)AresBodyAttackType.IdleHover;
                 finalPhaseAnimationTime++;
@@ -332,6 +332,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Use close to the minimum HP.
             npc.life = 50000;
 
+            // Clear away projectiles.
+            ExoMechManagement.ClearAwayTransitionProjectiles();
+
             // Disable damage.
             npc.damage = 0;
             npc.dontTakeDamage = true;
@@ -398,11 +401,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, ref float frame, float phaseTransitionAnimationTime)
         {
+            // Clear away projectiles.
+            ExoMechManagement.ClearAwayTransitionProjectiles();
+
             npc.velocity *= 0.925f;
             npc.rotation = 0f;
 
             // Determine frames.
             frame = (int)AresBodyFrameType.Laugh;
+
+            // Heal HP.
+            ExoMechAIUtilities.HealInFinalPhase(npc, phaseTransitionAnimationTime);
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 15f)

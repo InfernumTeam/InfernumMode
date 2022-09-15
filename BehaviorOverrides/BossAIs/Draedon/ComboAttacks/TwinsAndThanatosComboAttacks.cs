@@ -56,7 +56,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 thanatosFlySpeedFactor += 0.07f;
                 exoTwinShootRate -= 8;
 
-                if (CurrentThanatosPhase != 4 || CurrentTwinsPhase != 4)
+                bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 0;
+                if (twinsInSecondPhase || CurrentThanatosPhase != 4)
                 {
                     thanatosFlySpeedFactor += 0.07f;
                     exoTwinShootRate -= 12;

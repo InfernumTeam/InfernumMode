@@ -50,8 +50,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 135;
             int totalOrbsPerBurst = 4;
-            float aimPredictiveness = 25f;
+            float aimPredictiveness = 27f;
             float orbShootSpeed = 12f;
+            if (ExoMechManagement.CurrentAresPhase >= 5)
+                aimPredictiveness += 6.5f;
+
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 
             // Shoot slower if pointing downward.

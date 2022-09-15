@@ -143,10 +143,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int shootCount = 4;
             int blastShootDelay = 8;
-            int chargeDelay = 45;
+            int chargeDelay = 20;
             int chargeTime = 40;
             float chargeSpeed = 32f;
-            float blastShootSpeed = 17f;
+            float blastShootSpeed = 23f;
             ref float shootCounter = ref scal.Infernum().ExtraAI[0];
             ref float attackSubstate = ref scal.Infernum().ExtraAI[1];
 

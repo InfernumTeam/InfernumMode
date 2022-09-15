@@ -216,7 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
+            if (finalPhaseAnimationTime <= ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 frameType = (int)ThanatosFrameType.Closed;
                 attackState = (int)ThanatosHeadAttackType.AggressiveCharge;
@@ -336,6 +336,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float deathAnimationTimer, ref float frameType)
         {
+            // Clear away projectiles.
+            ExoMechManagement.ClearAwayTransitionProjectiles();
+
             bool isHead = npc.type == ModContent.NPCType<ThanatosHead>();
             bool closeToDying = deathAnimationTimer >= 180f;
 
@@ -955,7 +958,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int attackTime = 720;
             int cooloffTime = 360;
             float chargeSpeedInterpolant = Utils.GetLerpValue(0f, 45f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - 45f, attackTimer, true);
-            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.3f, chargeSpeedInterpolant);
+            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.25f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
@@ -1008,7 +1011,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 550f);
             hoverDestination.Y -= 550f;
 
-            float idealFlySpeed = 23f;
+            float idealFlySpeed = 19.5f;
 
             if (ExoMechManagement.CurrentThanatosPhase == 4)
                 idealFlySpeed *= 0.7f;
@@ -1077,8 +1080,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     generalSpeedFactor *= 1.15f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
-                    generalSpeedFactor *= 1.18f;
-                    flyAcceleration *= 1.18f;
+                    generalSpeedFactor *= 1.1f;
+                    flyAcceleration *= 1.1f;
                 }
             }
 
@@ -1122,7 +1125,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, float phaseTransitionAnimationTime)
         {
+            // Clear away projectiles.
+            ExoMechManagement.ClearAwayTransitionProjectiles();
+
             DoProjectileShootInterceptionMovement(npc, target, 0.6f);
+
+            // Heal HP.
+            ExoMechAIUtilities.HealInFinalPhase(npc, phaseTransitionAnimationTime);
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)

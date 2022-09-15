@@ -13,11 +13,13 @@ using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
+using CalamityMod.Projectiles.Summon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using System.Collections.Generic;
@@ -139,6 +141,9 @@ namespace InfernumMode.Balancing
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),
+
+                // Yharon.
+                new NPCBalancingChange(NPCType<Yharon>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<SarosAura>(), ProjectileType<SarosSunfire>(), ProjectileType<SarosMicrosun>()))),
 
                 // Exo Mechs.
                 new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),

@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Signus;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
@@ -93,6 +94,10 @@ namespace InfernumMode.GlobalInstances
             // Have Dreadnautilus use a custom map icon.
             if (npc.type == NPCID.BloodNautilus)
                 index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
+
+            // Have Sepulcher use a custom map icon.
+            if (npc.type == ModContent.NPCType<SepulcherHead>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon");
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

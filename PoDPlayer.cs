@@ -212,6 +212,9 @@ namespace InfernumMode
                 }
             }
 
+            if (CalamityPlayer.areThereAnyDamnBosses && Player.Calamity().momentumCapacitorBoost > 1.8f)
+                Player.Calamity().momentumCapacitorBoost = 1.8f;
+
             if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
                 return;
 

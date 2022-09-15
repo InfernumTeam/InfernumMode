@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalPhaseTimerIndex = 16;
         public const int DeathAnimationTimerIndex = 19;
         public const int DeathAnimationHasStartedIndex = 22;
+        public const int StartingFinalPhaseAnimationHPIndex = 27;
 
         // Destroyer variant from non-Destroyer variants, regular mech for Destroyer variants.
         // For example, Thanatos could have Ares, while Apollo could have Thanatos.
@@ -273,6 +274,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ThanatosComboLaser>(),
                 ModContent.ProjectileType<ApolloRocketInfernum>(),
                 ModContent.ProjectileType<LightOverloadRay>(),
+                ModContent.ProjectileType<ArtemisSweepLaserbeam>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

@@ -112,7 +112,7 @@ namespace InfernumMode.Skies
             if (nebulaTimer > 0f)
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
-                for (int i = 0; i < 135; i++)
+                for (int i = 0; i < 185; i++)
                 {
                     Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
                     Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
@@ -199,8 +199,8 @@ namespace InfernumMode.Skies
         public override void Activate(Vector2 position, params object[] args)
         {
             isActive = true;
-            int horizontalArea = 60;
-            int verticalArea = 12;
+            int horizontalArea = 90;
+            int verticalArea = 22;
             Stars = new AstralStar[horizontalArea * verticalArea];
             int starIndex = 0;
             for (int i = 0; i < horizontalArea; i++)

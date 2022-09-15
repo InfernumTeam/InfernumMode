@@ -100,6 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 shootTime += 60;
                 totalPulseBlastsPerBurst += 2;
                 blastShootSpeed *= 1.25f;
+                aimPredictiveness += 5.5f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {

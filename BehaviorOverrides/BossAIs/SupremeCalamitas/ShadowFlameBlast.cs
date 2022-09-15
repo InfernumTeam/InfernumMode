@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             Projectile.velocity *= 0.995f;
             Projectile.frameCounter++;
-            Projectile.frame = (int)Math.Ceiling((1f - Projectile.timeLeft / (float)Lifetime) * Main.projFrames[Type]);
+            Projectile.frame = (int)Math.Ceiling((1f - Projectile.timeLeft / (float)Lifetime) * 4f);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 

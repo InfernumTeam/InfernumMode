@@ -904,7 +904,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 SoundEngine.PlaySound(OldDukeBoss.RoarSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * -560f, -200f);
+                    npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * -620f, -250f);
                     npc.netUpdate = true;
                 }
             }

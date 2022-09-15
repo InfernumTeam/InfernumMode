@@ -76,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 totalLasersPerBurst += 2;
                 shootTime += 105;
+                aimPredictiveness += 5.5f;
             }
 
             if (aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)

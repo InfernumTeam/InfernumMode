@@ -822,7 +822,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int waitTime = 8;
             int chargeTime = 45;
             int totalCharges = 5;
-            int sparkCount = 18;
+            int sparkCount = 21;
             float chargeSpeed = 54f;
             float chargePredictiveness = 10f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -838,6 +838,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
                 totalCharges--;
+            if (!target.HasShieldBash())
+                chargeSpeed *= 0.65f;
+
             if (ExoMechComboAttackContent.EnrageTimer > 0f)
             {
                 chargeSpeed += 27f;
@@ -1236,10 +1239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 plasmaBlastShootSpeed += 0.84f;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
-            {
                 apolloShootRate -= 9;
-                spinArc += MathHelper.Pi;
-            }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
                 apolloShootRate -= 18;

@@ -12,6 +12,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     {
         public int Time;
 
+        public bool TelegraphShouldAim = true;
+
         public Vector2 Destination;
 
         public float TelegraphDelay
@@ -25,6 +27,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public ref float TelegraphTotalTime => ref Projectile.ai[1];
 
         public ref float Lifetime => ref Projectile.localAI[1];
+
+        public const int DefaultLifetime = 225;
+
+        public const int FadeoutTime = 45;
 
         public const float TelegraphFadeTime = 18f;
 
@@ -46,12 +52,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(Time);
+            writer.Write(TelegraphShouldAim);
             writer.WriteVector2(Destination);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Time = reader.ReadInt32();
+            TelegraphShouldAim = reader.ReadBoolean();
             Destination = reader.ReadVector2();
         }
 
@@ -61,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (TelegraphTotalTime == 0f)
                 TelegraphTotalTime = 75f;
             if (Lifetime == 0f)
-                Lifetime = 225f;
+                Lifetime = DefaultLifetime;
 
             if (!NoTelegraph && !NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
             {
@@ -79,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
             // Adjust the aim destination such that it approaches the closest player. This stops right before the telegraph line dissipates.
-            if (TelegraphDelay < TelegraphTotalTime * 0.8f)
+            if (TelegraphDelay < TelegraphTotalTime * 0.8f && TelegraphShouldAim)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 Vector2 idealDestination = target.Center + target.velocity * new Vector2(36f, 27f);
@@ -94,8 +102,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(ref Color lightColor)
         {
             float fade = Utils.GetLerpValue(0f, 35f, Time, true);
-            if (Time >= Lifetime - 45f)
-                fade = Utils.GetLerpValue(Lifetime, Lifetime - 45f, Time, true);
+            if (Time >= Lifetime - FadeoutTime)
+                fade = Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
 
             Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -109,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(new Color(1f, 0.2f, 1f, 0f));
                 GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-                Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 3.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, Projectile.scale * 3.5f, SpriteEffects.None, 0f);
                 Main.spriteBatch.ExitShaderRegion();
                 return false;
             }

@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         // This is only used in drawing to represent increments as a semi-hack. Don't mess with it.
         public float RayHue = 0f;
 
-        public const int Lifetime = 65;
+        public const int Lifetime = 45;
         public ref float Time => ref Projectile.ai[0];
         public ref float LaserSpread => ref Projectile.ai[1];
         public ref float LaserLength => ref Projectile.localAI[0];

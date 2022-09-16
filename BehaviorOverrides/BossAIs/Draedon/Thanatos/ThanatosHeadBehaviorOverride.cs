@@ -717,7 +717,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.damage = 0;
 
             int initialRedirectTime = 360;
-            int lightTelegraphTime = 105;
+            int lightTelegraphTime = 95;
             int lightLaserFireDelay = 20;
             int lightLaserShootTime = LightOverloadRay.Lifetime;
             int redirectCount = 3;

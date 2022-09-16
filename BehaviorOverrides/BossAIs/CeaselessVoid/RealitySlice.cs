@@ -14,6 +14,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
+        public bool Cosmilite;
+
         public Vector2 Start;
 
         public Vector2 End;
@@ -40,8 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void AI()
         {
-            // Disappear if the Ceaseless Void is not present.
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.voidBoss))
+            // Disappear if neither the Ceaseless Void nor DoG not present.
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.voidBoss) && !Main.npc.IndexInRange(CalamityGlobalNPC.DoGHead))
             {
                 Projectile.Kill();
                 return;
@@ -63,16 +65,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         #region Drawing
         internal float WidthFunction(float completionRatio)
         {
-            return CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * 40f;
+            float width = Cosmilite ? 80f : 40f;
+            return CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * width;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
+            Color baseColor = Color.White;
+            if (Cosmilite)
+                baseColor = (Projectile.localAI[0] == 0f ? Color.Cyan : Color.Fuchsia) with { A = 0 };
+
             float opacity = CalamityUtils.Convert01To010(completionRatio) * 1.4f;
             if (opacity >= 1f)
                 opacity = 1f;
             opacity *= Projectile.Opacity;
-            return Color.White * opacity;
+            return baseColor * opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -82,7 +89,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 72);
+
+            Projectile.localAI[0] = 0f;
+            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+            if (Cosmilite)
+            {
+                Projectile.localAI[0] = 1f;
+                LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+            }
+
             return false;
         }
         #endregion

@@ -77,19 +77,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float worldCheckFluff = 10001f;
             bool headOutOfWorld = head.Center.X < -worldCheckFluff || head.Center.X > Main.maxTilesX * 16f + worldCheckFluff ||
                 head.Center.Y < -worldCheckFluff || head.Center.Y > Main.maxTilesY * 16f + worldCheckFluff;
+            bool isTail = npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            Player target = Main.player[head.target];
 
-            // Enter phase two once the tail enters the transition portal.
+            // Handle transitions once the tail enters the transition portal.
             if (!InPhase2 && head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex] >= 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex]].Hitbox) || headOutOfWorld)
                 {
                     npc.alpha += 140;
-                    if (npc.alpha > 255)
+                    if (npc.alpha >= 255)
                     {
                         npc.alpha = 255;
 
-                        int tailType = ModContent.NPCType<DevourerofGodsTail>();
-                        if (npc.type == tailType)
+                        if (isTail)
                         {
                             InPhase2 = true;
                             CurrentPhase2TransitionState = Phase2TransitionState.NotEnteringPhase2;
@@ -102,10 +103,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Do what the head says in regards to opacity inheritance if not doing phase two transition stuff.
                 switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[BodySegmentFadeTypeIndex])
                 {
-                    case BodySegmentFadeType.EnterPortal:
+                    case BodySegmentFadeType.EnteringPortal:
                         int portalIndex = (int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex];
                         if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
+
+                        // Update the surprise portal attack state if the tail has entered the portal.
+                        bool performTeleportTransition = npc.Opacity <= 0f || !npc.WithinRange(target.Center, 20000f);
+                        if (isTail && SurprisePortalAttackState == PerpendicularPortalAttackState.EnteringPortal && performTeleportTransition)
+                        {
+                            SurprisePortalAttackState = PerpendicularPortalAttackState.Waiting;
+                            foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                            {
+                                portal.ModProjectile<DoGChargeGate>().Time = (int)portal.ModProjectile<DoGChargeGate>().Lifetime - 45;
+                                portal.netUpdate = true;
+                            }
+
+                            npc.netUpdate = true;
+                            head.netUpdate = true;
+                        }
 
                         break;
 
@@ -149,6 +165,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
                 directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 1f);
+                if (SurprisePortalAttackState != PerpendicularPortalAttackState.NotPerformingAttack)
+                    npc.rotation = aheadSegment.rotation;
             }
 
             // Decide segment offset stuff.

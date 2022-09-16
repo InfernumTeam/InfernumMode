@@ -116,6 +116,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int SentinelAttackTimerIndex = 27;
 
+        public const int Phase2AggressiveChargeCycleCounterIndex = 28;
+
+        public const int PerpendicularPortalAttackStateIndex = 29;
+
+        public const int PerpendicularPortalAttackTimerIndex = 30;
+
+        public const int PerpendicularPortalAngleIndex = 31;
+
         public const int BodySegmentDefense = 70;
 
         public const float BodySegmentDR = 0.925f;
@@ -317,7 +325,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) == AggressiveMovementTimeP1 + 1f)
                     DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
 
-                DoGPhase2HeadBehaviorOverride.DoPassiveFlyMovement(npc, ref jawRotation, ref chompEffectsCountdown);
+                DoGPhase2HeadBehaviorOverride.DoPassiveFlyMovement(npc, ref jawRotation, ref chompEffectsCountdown, false);
 
                 // Idly release laserbeams.
                 if (phaseCycleTimer % 150f == 0f && passiveAttackDelay >= 300f)

@@ -496,8 +496,6 @@ namespace InfernumMode.GlobalInstances
                 return false;
             if (npc.type == NPCID.SkeletronHand && OverridingListManager.Registered(NPCID.SkeletronHead))
                 return false;
-            if (npc.type == ModContent.NPCType<GreatSandShark>() && OverridingListManager.Registered(npc.type))
-                return false;
             if (npc.type == NPCID.AncientCultistSquidhead && OverridingListManager.Registered(NPCID.CultistBoss))
                 return false;
             if (npc.type == NPCID.MoonLordFreeEye && OverridingListManager.Registered(NPCID.MoonLordCore))

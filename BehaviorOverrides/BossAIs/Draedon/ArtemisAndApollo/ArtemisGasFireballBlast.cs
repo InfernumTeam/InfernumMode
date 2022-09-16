@@ -124,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Release fire gas.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int type = ModContent.ProjectileType<FireGas>();
+                int type = ModContent.ProjectileType<SuperheatedExofireGas>();
                 for (int i = 0; i < 30; i++)
                 {
                     Vector2 fireVelocity = Main.rand.NextVector2Circular(15f, 15f);

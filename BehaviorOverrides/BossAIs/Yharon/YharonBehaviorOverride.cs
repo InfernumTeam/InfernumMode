@@ -543,8 +543,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Following this Yharon will recieve a DR boost. The code for this up a small bit.
             if (subphaseTransitionTimer > 0)
             {
-                npc.rotation = npc.rotation.AngleTowards(0f, 0.15f);
-                npc.velocity *= 0.96f;
+                npc.damage = 0;
+                npc.rotation = npc.rotation.AngleTowards(0f, 0.2f);
+                npc.velocity *= 0.925f;
 
                 if (invincibilityTime <= 0f)
                     fireIntensity = Utils.GetLerpValue(TransitionDRBoostTime, TransitionDRBoostTime - 75f, subphaseTransitionTimer, true);

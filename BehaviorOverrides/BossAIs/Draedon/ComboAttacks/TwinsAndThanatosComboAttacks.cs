@@ -97,8 +97,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int blastID = isApollo ? ModContent.ProjectileType<ApolloGasPlasmaBlast>() : ModContent.ProjectileType<ArtemisGasFireballBlast>();
-                        Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * exoTwinsBlastShootSpeed, blastID, StrongerNormalShotDamage, 0f);
+                        int blastID = isApollo ? ModContent.ProjectileType<ApolloPlasmaFireball>() : ModContent.ProjectileType<ArtemisGasFireballBlast>();
+                        int shotIndex = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * exoTwinsBlastShootSpeed, blastID, StrongerNormalShotDamage, 0f);
+                        if (Main.projectile.IndexInRange(shotIndex) && isApollo)
+                            Main.projectile[shotIndex].ModProjectile<ApolloPlasmaFireball>().GasExplosionVariant = true;
                     }
                 }
             }
@@ -115,8 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             // Delete blasts and gas before transitioning to the next attack.
             if (attackTimer == fastFlyDelay + chargeTime - 1f)
             {
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ArtemisGasFireballBlast>(), ModContent.ProjectileType<ApolloGasPlasmaBlast>(),
-                    ModContent.ProjectileType<FireGas>(), ModContent.ProjectileType<PlasmaGas>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ArtemisGasFireballBlast>(), ModContent.ProjectileType<ApolloPlasmaFireball>(),
+                    ModContent.ProjectileType<SuperheatedExofireGas>(), ModContent.ProjectileType<PlasmaGas>());
             }
 
             return attackTimer >= fastFlyDelay + chargeTime;

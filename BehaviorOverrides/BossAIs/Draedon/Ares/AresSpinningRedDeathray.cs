@@ -104,9 +104,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (float offset = 0f; offset < 5f; offset += 1.2f)
                 {
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 35);
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f + (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 35);
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 35);
+                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 24);
+                    BeamDrawer.Draw(points, Projectile.Size * 0.5f + (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
+                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
                 }
             }
             return false;

@@ -3,19 +3,22 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
+using AresTeslaOrbInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresTeslaOrb;
+using ArtemisLaserInfernum= InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
+using ThanatosLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosLaser;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -258,23 +261,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Clear away old projectiles.
             int[] projectilesToDelete = new int[]
             {
-                ModContent.ProjectileType<ArtemisLaser>(),
-                ModContent.ProjectileType<ArtemisGatlingLaser>(),
-                ModContent.ProjectileType<PlasmaGas>(),
-                ModContent.ProjectileType<ElectricGas>(),
-                ModContent.ProjectileType<TeslaSpark>(),
-                ModContent.ProjectileType<AresTeslaOrb>(),
-                ModContent.ProjectileType<ExofireSpark>(),
-                ModContent.ProjectileType<PlasmaSpark>(),
-                ModContent.ProjectileType<AresRocket>(),
+                ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(),
+                ModContent.ProjectileType<ApolloFlamethrower>(),
+                ModContent.ProjectileType<ApolloPlasmaFireball>(),
+                ModContent.ProjectileType<ApolloRocket>(),
+                ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(),
+                ModContent.ProjectileType<AresBeamExplosion>(),
+                ModContent.ProjectileType<AresCannonLaser>(),
+                ModContent.ProjectileType<AresGaussNukeProjectile>(),
+                ModContent.ProjectileType<AresGaussNukeProjectileBoom>(),
+                ModContent.ProjectileType<AresGaussNukeProjectileSpark>(),
+                ModContent.ProjectileType<AresPlasmaFireballInfernum>(),
+                ModContent.ProjectileType<AresPlasmaBolt>(),
+                ModContent.ProjectileType<AresPulseBlast>(),
                 ModContent.ProjectileType<AresSpinningDeathBeam>(),
                 ModContent.ProjectileType<AresSpinningRedDeathray>(),
-                ModContent.ProjectileType<ExolaserBomb>(),
-                ModContent.ProjectileType<RefractionRotor>(),
-                ModContent.ProjectileType<ThanatosComboLaser>(),
-                ModContent.ProjectileType<ApolloRocketInfernum>(),
-                ModContent.ProjectileType<LightOverloadRay>(),
+                ModContent.ProjectileType<AresTeslaOrbInfernum>(),
+                ModContent.ProjectileType<AresTeslaSpark>(),
+                ModContent.ProjectileType<AresTeslaGasField>(),
+                ModContent.ProjectileType<ArtemisGasFireballBlast>(),
+                ModContent.ProjectileType<ArtemisGatlingLaser>(),
+                ModContent.ProjectileType<ArtemisLaserInfernum>(),
+                ModContent.ProjectileType<ArtemisSpinLaser>(),
                 ModContent.ProjectileType<ArtemisSweepLaserbeam>(),
+                ModContent.ProjectileType<DetatchedThanatosLaser>(),
+                ModContent.ProjectileType<ExoburstSpark>(),
+                ModContent.ProjectileType<ExolaserBomb>(),
+                ModContent.ProjectileType<ExolaserSpark>(),
+                ModContent.ProjectileType<LightOverloadRay>(),
+                ModContent.ProjectileType<PhotonRipperCrystal>(),
+                ModContent.ProjectileType<PlasmaGas>(),
+                ModContent.ProjectileType<RefractionRotor>(),
+                ModContent.ProjectileType<SmallPlasmaSpark>(),
+                ModContent.ProjectileType<SuperheatedExofireGas>(),
+                ModContent.ProjectileType<ThanatosAresComboLaser>(),
+                ModContent.ProjectileType<ThanatosLaserInfernum>()
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -372,59 +393,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Main.npc[CalamityGlobalNPC.draedon].ai[0] = DraedonNPC.ExoMechPhaseDialogueTime;
             }
         }
-
-        // Bias attacks back to a normal on completion.
-        // This does not happen if the player dies to the attack.
-        /*
-        public static void DoPostAttackSelections(NPC npc)
-        {
-            Player player = Main.player[npc.target];
-            if (npc.type == ModContent.NPCType<Apollo>())
-            {
-                var attack = (TwinsAttackType)(int)npc.ai[0];
-
-                int attackToReinforce = -1;
-                if (attack == TwinsAttackType.ArtemisLaserRay)
-                    attackToReinforce = 0;
-                if (attack == TwinsAttackType.ApolloPlasmaCharges)
-                    attackToReinforce = 1;
-
-                if (attackToReinforce != -1)
-                    player.Infernum().ThanatosLaserTypeSelector.BiasAwayFrom(attackToReinforce);
-            }
-        }
-
-        public static void RecordAttackDeath(Player player)
-        {
-            int ares = CalamityGlobalNPC.draedonExoMechPrime;
-            int apollo = CalamityGlobalNPC.draedonExoMechTwinGreen;
-
-            if (ares != -1)
-            {
-                var attack = (AresBodyAttackType)(int)Main.npc[ares].ai[0];
-                int attackToReinforce = -1;
-                if (attack == AresBodyAttackType.LaserSpinBursts)
-                    attackToReinforce = 0;
-                if (attack == AresBodyAttackType.DirectionChangingSpinBursts)
-                    attackToReinforce = 1;
-
-                if (attackToReinforce != -1)
-                    player.Infernum().AresSpecialAttackTypeSelector.BiasInFavorOf(attackToReinforce);
-            }
-
-            if (apollo != -1)
-            {
-                var attack = (TwinsAttackType)(int)Main.npc[apollo].ai[0];
-                int attackToReinforce = -1;
-                if (attack == TwinsAttackType.ArtemisLaserRay)
-                    attackToReinforce = 0;
-                if (attack == TwinsAttackType.ApolloPlasmaCharges)
-                    attackToReinforce = 1;
-
-                if (attackToReinforce != -1)
-                    player.Infernum().TwinsSpecialAttackTypeSelector.BiasInFavorOf(attackToReinforce);
-            }
-        }
-        */
     }
 }

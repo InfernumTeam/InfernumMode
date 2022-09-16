@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -11,7 +12,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
     public class ApolloPlasmaFireball : ModProjectile
     {
+        public bool GasExplosionVariant
+        {
+            get;
+            set;
+        } = false;
+
         public bool ShouldExplodeDiagonally => Projectile.ai[0] == 0f;
+       
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Volatile Plasma Blast");
@@ -127,16 +135,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
 
+            // Explode into plasma.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int projectileCount = 6;
-                int type = ModContent.ProjectileType<AresPlasmaBolt>();
-                for (int i = 0; i < projectileCount; i++)
+                if (GasExplosionVariant)
                 {
-                    Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
-                    if (ShouldExplodeDiagonally)
-                        shootVelocity = shootVelocity.RotatedBy(MathHelper.Pi / projectileCount);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
+                    int type = ModContent.ProjectileType<PlasmaGas>();
+                    for (int i = 0; i < 30; i++)
+                    {
+                        Vector2 plasmaVelocity = Main.rand.NextVector2Circular(15f, 15f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, plasmaVelocity, type, Projectile.damage, 0f, Main.myPlayer);
+                    }
+                }
+                else
+                {
+                    int projectileCount = 6;
+                    int type = ModContent.ProjectileType<AresPlasmaBolt>();
+                    for (int i = 0; i < projectileCount; i++)
+                    {
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
+                        if (ShouldExplodeDiagonally)
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Pi / projectileCount);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
+                    }
                 }
             }
 

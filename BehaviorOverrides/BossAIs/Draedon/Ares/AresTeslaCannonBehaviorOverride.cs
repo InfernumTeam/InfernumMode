@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 30;
-                orbShootSpeed *= 1.33f;
+                orbShootSpeed *= 1.15f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
@@ -193,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         for (int i = 0; i < 7; i++)
                         {
                             Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
-                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), teslaSparkDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<AresTeslaSpark>(), teslaSparkDamage, 0f);
                         }
                     }
 
@@ -204,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         for (int i = 0; i < 85; i++)
                         {
                             Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), teslaGasDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<AresTeslaGasField>(), teslaGasDamage, 0f);
                         }
                     }
                 }

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -63,6 +64,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.defense = 20;
+
+            npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
             
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

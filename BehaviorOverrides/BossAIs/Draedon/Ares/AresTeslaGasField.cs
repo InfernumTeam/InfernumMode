@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class ElectricGas : ModProjectile
+    public class AresTeslaGasField : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Electric Cloud");

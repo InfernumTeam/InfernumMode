@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Adjust DR and defense.
             npc.defense = 0;
-            npc.Calamity().DR = 0f;
+            npc.Calamity().DR = 0.3f;
             npc.takenDamageMultiplier = 2f;
 
             // Declare this NPC as the occupant of the DoG whoAmI index.

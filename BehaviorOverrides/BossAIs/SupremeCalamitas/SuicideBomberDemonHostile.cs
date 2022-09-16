@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.owner = Player.FindClosest(Projectile.Center, 1, 1);
 
             // Rapidly fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Anti-clumping behavior.
             float pushForce = 0.08f;

@@ -155,10 +155,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

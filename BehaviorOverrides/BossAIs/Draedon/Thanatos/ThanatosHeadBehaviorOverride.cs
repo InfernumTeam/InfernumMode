@@ -39,7 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public enum ThanatosHeadAttackType
         {
             AggressiveCharge,
-            TopwardSlam,
             LaserBarrage,
             ExoBomb,
             ExoLightBarrage,
@@ -268,9 +267,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     case ThanatosHeadAttackType.AggressiveCharge:
                         DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
                         break;
-                    case ThanatosHeadAttackType.TopwardSlam:
-                        DoBehavior_TopwardSlam(npc, target, ref attackTimer, ref frameType);
-                        break;
                     case ThanatosHeadAttackType.LaserBarrage:
                         DoBehavior_LaserBarrage(npc, target, ref attackTimer, ref frameType);
                         break;
@@ -422,124 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer > 720f)
                 SelectNextAttack(npc);
         }
-
-        // TODO -- This attack is quite janky at the moment. Consider changing it before adding it back to the attack pool.
-        public static void DoBehavior_TopwardSlam(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Open;
-
-            int hoverRedirectTime = 270;
-            float redirectSpeedMultiplier = 1f;
-            float initialChargeSpeed = 36f;
-            float maxChargeSpeed = 62f;
-            int timeToReachMaxChargeSpeed = 30;
-            int chargeTime = 56;
-            int chargeCount = 4;
-            bool canFireSparks = false;
-
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-
-            if (ExoMechManagement.CurrentThanatosPhase >= 2)
-            {
-                hoverRedirectTime -= 40;
-                redirectSpeedMultiplier += 0.075f;
-                initialChargeSpeed += 5f;
-                maxChargeSpeed += 3f;
-            }
-            if (ExoMechManagement.CurrentThanatosPhase >= 3)
-            {
-                redirectSpeedMultiplier += 0.1f;
-                initialChargeSpeed += 3f;
-                maxChargeSpeed += 3.5f;
-                chargeTime -= 8;
-                canFireSparks = true;
-            }
-            if (ExoMechManagement.CurrentThanatosPhase >= 5)
-            {
-                timeToReachMaxChargeSpeed -= 5;
-                redirectSpeedMultiplier += 0.1f;
-                initialChargeSpeed += 6f;
-                maxChargeSpeed += 4.5f;
-                chargeTime -= 8;
-            }
-            if (ExoMechManagement.CurrentThanatosPhase >= 6)
-            {
-                timeToReachMaxChargeSpeed -= 6;
-                redirectSpeedMultiplier += 0.1f;
-                initialChargeSpeed += 3.5f;
-                maxChargeSpeed += 5f;
-                chargeTime -= 7;
-                chargeCount++;
-            }
-
-            float chargeAcceleration = (float)Math.Pow(maxChargeSpeed / initialChargeSpeed, 1D / timeToReachMaxChargeSpeed);
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -400f);
-            Vector2 hoverDestination = target.Center + hoverOffset;
-
-            // Attempt to get into position for a charge.
-            if (attackTimer < hoverRedirectTime)
-            {
-                float idealHoverSpeed = MathHelper.Lerp(43.5f, 80f, attackTimer / hoverRedirectTime);
-                idealHoverSpeed *= Utils.GetLerpValue(35f, 300f, npc.Distance(target.Center), true) * redirectSpeedMultiplier;
-
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
-                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, redirectSpeedMultiplier * 10f);
-
-                // Play a telegraph sound.
-                if (npc.WithinRange(hoverDestination, 1400f) && attackTimer > 35f && attackTimer < hoverRedirectTime - 90f)
-                {
-                    SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, npc.Center);
-                    attackTimer = hoverRedirectTime - 90f;
-                    npc.netUpdate = true;
-                }
-
-                // Stop hovering if close to the hover destination and prepare the charge.
-                if (npc.WithinRange(hoverDestination, 130f) && attackTimer > 115f && npc.velocity.AngleBetween(idealVelocity) < 0.44f)
-                {
-                    attackTimer = hoverRedirectTime;
-                    idealVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * initialChargeSpeed;
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 7.5f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.66f);
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * initialChargeSpeed;
-
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Play a telegraph sound and release sparks after the charge begins.
-            if (attackTimer == hoverRedirectTime + 1f)
-            {
-                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient && canFireSparks)
-                {
-                    for (int i = 0; i < 18; i++)
-                    {
-                        Vector2 sparkVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 24f;
-                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<LaserSpark>(), NormalShotDamage, 0f);
-                    }
-                }
-            }
-
-            // Accelerate after the charge has begun.
-            if (attackTimer > hoverRedirectTime && npc.velocity.Length() < maxChargeSpeed)
-                npc.velocity *= chargeAcceleration;
-
-            // Play a sound prior to switching attacks.
-            if (chargeCounter >= chargeCount - 1f && attackTimer == hoverRedirectTime + 1f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
-
-            if (attackTimer > hoverRedirectTime + chargeTime)
-            {
-                npc.velocity = npc.velocity.ClampMagnitude(0f, 35f) * 0.56f;
-                chargeCounter++;
-                if (chargeCounter >= chargeCount)
-                    SelectNextAttack(npc);
-
-                attackTimer = 0f;
-            }
-        }
-
+        
         public static void DoBehavior_LaserBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.

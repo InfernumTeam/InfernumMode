@@ -25,6 +25,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Balancing
@@ -141,6 +142,8 @@ namespace InfernumMode.Balancing
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),
+                new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),
+                new NPCBalancingChange(NPCType<DevourerofGodsHead>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),
 
                 // Yharon.
                 new NPCBalancingChange(NPCType<Yharon>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<SarosAura>(), ProjectileType<SarosSunfire>(), ProjectileType<SarosMicrosun>()))),

@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
             npc.damage = npc.dontTakeDamage ? 0 : 1100;
-            npc.Calamity().DR = 0.3f;
+            npc.Calamity().DR = 0.425f;
 
             // Stay in the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 180f, Main.maxTilesY * 16f - 180f);
@@ -811,7 +811,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Transform into the antimatter form.
             FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
 
-            int fireballCount = 13;
+            int fireballCount = 16;
             int idealPortalTelegraphTime = 48;
             float wrappedAttackTimer = attackTimer % 135f;
             float lifeRatio = npc.life / (float)npc.lifeMax;

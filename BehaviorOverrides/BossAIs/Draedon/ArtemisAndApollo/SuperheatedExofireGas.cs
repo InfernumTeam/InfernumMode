@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class FireGas : ModProjectile
+    public class SuperheatedExofireGas : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Superheated Fire");

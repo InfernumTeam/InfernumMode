@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -8,21 +7,23 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class ThanatosComboLaser : ModProjectile
+    public class AresCannonLaser : ModProjectile
     {
-        public ref float TelegraphDelay => ref Projectile.ai[0];
-        public ref float PulseFlash => ref Projectile.localAI[0];
-        public ref float InitialSpeed => ref Projectile.localAI[1];
+        public float TelegraphDelay
+        {
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
+        }
+
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
 
-        public Vector2 InitialDestination;
         public Vector2 Destination;
         public Vector2 Velocity;
-        public const float TelegraphTotalTime = 55f;
+        public const float TelegraphTotalTime = 30f;
         public const float TelegraphFadeTime = 15f;
-        public const float TelegraphWidth = 1950f;
+        public const float TelegraphWidth = 4200f;
         public const float LaserVelocity = 10f;
 
         public override void SetStaticDefaults()
@@ -41,45 +42,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;
-            Projectile.timeLeft = 960;
+            Projectile.timeLeft = 600;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(InitialSpeed);
             writer.WriteVector2(Destination);
             writer.WriteVector2(Velocity);
-            writer.WriteVector2(InitialDestination);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            InitialSpeed = reader.ReadSingle();
             Destination = reader.ReadVector2();
             Velocity = reader.ReadVector2();
-            InitialDestination = reader.ReadVector2();
         }
 
         public override void AI()
         {
-            // Die if Ares is not present.
-            if (CalamityGlobalNPC.draedonExoMechPrime == -1 || !Main.npc[CalamityGlobalNPC.draedonExoMechPrime].active)
-            {
-                Projectile.Kill();
-                return;
-            }
-
-            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-
             Projectile.frameCounter++;
             if (Projectile.frameCounter > 12)
             {
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= Main.projFrames[Projectile.type])
+            if (Projectile.frame > 3)
                 Projectile.frame = 0;
 
             Lighting.AddLight(Projectile.Center, 0.6f, 0f, 0f);
@@ -91,8 +79,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 return;
             }
 
-            if (InitialSpeed == 0f)
-                InitialSpeed = Projectile.velocity.Length();
+            // Direction and rotation.
+            Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Projectile.spriteDirection == -1)
+                Projectile.rotation += MathHelper.Pi;
 
             // Fade in after telegraphs have faded.
             if (TelegraphDelay > TelegraphTotalTime)
@@ -105,75 +96,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // If a velocity is in reserve, set the true velocity to it and make it as "taken" by setting it to <0,0>
                 if (Velocity != Vector2.Zero)
                 {
-                    Projectile.extraUpdates = 3;
+                    Projectile.extraUpdates = 2;
                     Projectile.velocity = Velocity;
                     Velocity = Vector2.Zero;
                     Projectile.netUpdate = true;
                 }
-
-                // Direction and rotation.
-                if (Projectile.velocity.X < 0f)
-                {
-                    Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
-                }
-                else
-                {
-                    Projectile.spriteDirection = 1;
-                    Projectile.rotation = Projectile.velocity.ToRotation();
-                }
-
-                if (Projectile.WithinRange(aresBody.Center + Vector2.UnitY * 34f, 60f))
-                    Projectile.Kill();
+                return;
             }
-            else if (Destination == Vector2.Zero)
-            {
-                // Set start of telegraph to the npc center.
-                Projectile.Center = ThingToAttachTo.Center;
 
+            // Set start of telegraph to the npc center.
+            Projectile.Center = ThingToAttachTo.Center + new Vector2(ThingToAttachTo.spriteDirection * -78f, 16f).RotatedBy(ThingToAttachTo.rotation);
+
+            if (Destination == Vector2.Zero)
+            {
                 // Set destination of the laser, the target's center.
-                Destination = InitialDestination;
+                Destination = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
 
                 // Calculate and store the velocity that will be used for laser telegraph rotation and beam firing.
-                Vector2 projectileDestination = Destination - ThingToAttachTo.Center;
-                Velocity = Vector2.Normalize(projectileDestination) * InitialSpeed;
+                Velocity = Projectile.velocity;
 
                 // Set velocity to zero.
                 Projectile.velocity = Vector2.Zero;
                 Projectile.netUpdate = true;
-
-                // Direction and rotation.
-                if (Projectile.velocity.X < 0f)
-                {
-                    Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
-                }
-                else
-                {
-                    Projectile.spriteDirection = 1;
-                    Projectile.rotation = Projectile.velocity.ToRotation();
-                }
             }
             else
             {
-                // Set start of telegraph to the npc center.
-                Projectile.Center = ThingToAttachTo.Center;
-
                 // Calculate and store the velocity that will be used for laser telegraph rotation and beam firing.
-                Vector2 projectileDestination = Destination - ThingToAttachTo.Center;
-                Velocity = Vector2.Normalize(projectileDestination) * InitialSpeed;
-
-                // Direction and rotation.
-                if (Projectile.velocity.X < 0f)
-                {
-                    Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
-                }
-                else
-                {
-                    Projectile.spriteDirection = 1;
-                    Projectile.rotation = Projectile.velocity.ToRotation();
-                }
+                if (Projectile.velocity != Vector2.Zero)
+                    Velocity = Projectile.velocity;
             }
 
             TelegraphDelay++;
@@ -215,15 +165,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, yScale, TelegraphDelay / 15f);
+                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
-            Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
+            Vector2 scaleOuter = scaleInner * new Vector2(1f, 2.2f);
 
-            Color colorOuter = Color.Lerp(Color.Red, Color.White, TelegraphDelay / TelegraphTotalTime * 0.4f);
+            Color colorOuter = Color.Lerp(Color.Red, Color.Crimson, TelegraphDelay / TelegraphTotalTime * 2f % 1f); // Iterate through crimson and red once and then flash.
+            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
+
+            colorOuter *= 0.6f;
+            colorInner *= 0.6f;
+
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             return false;
         }

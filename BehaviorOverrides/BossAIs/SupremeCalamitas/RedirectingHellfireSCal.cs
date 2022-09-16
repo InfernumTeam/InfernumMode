@@ -61,8 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int initialAccelerationTime = 30;
             int redirectTime = 70;
-            float maxRedirectSpeed = 16f;
-            float maxAccelerateSpeed = 42f;
+            float maxRedirectSpeed = 15f;
+            float maxAccelerateSpeed = 37f;
             float currentSpeed = Projectile.velocity.Length();
 
             // Accelerate a little bit prior to redirecting.
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // After redirecting, accelerate a bit.
             if (Time >= initialAccelerationTime + redirectTime && currentSpeed < maxAccelerateSpeed)
-                Projectile.velocity *= 1.032f;
+                Projectile.velocity *= 1.028f;
         }
 
         public override bool PreDraw(ref Color lightColor)

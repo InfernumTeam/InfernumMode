@@ -157,14 +157,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                                 }
                                 break;
                             case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
-                                type = ModContent.ProjectileType<ThanatosComboLaser>();
+                                type = ModContent.ProjectileType<ThanatosAresComboLaser>();
                                 shootSpeed = generalShootSpeedFactor * 10f;
                                 projectileDestination = Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Center + Vector2.UnitY * 34f;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, StrongerNormalShotDamage, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<ThanatosComboLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ModProjectile<ThanatosAresComboLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
                                     Main.projectile[laser].netUpdate = true;
                                 }

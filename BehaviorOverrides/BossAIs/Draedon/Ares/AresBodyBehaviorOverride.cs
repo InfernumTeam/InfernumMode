@@ -506,10 +506,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 16f) * 11.5f;
                             Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
-                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), StrongerNormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), StrongerNormalShotDamage, 0f);
 
                             shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 16f) * 11.5f;
-                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), StrongerNormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), StrongerNormalShotDamage, 0f);
                         }
                     }
                     SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
@@ -599,25 +599,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Delete projectiles after the delay has concluded.
             if (attackTimer == shootDelay + 1f)
-            {
-                List<int> projectilesToDelete = new()
-                {
-                    ModContent.ProjectileType<AresPlasmaFireball>(),
-                    ModContent.ProjectileType<AresPlasmaFireball2>(),
-                    ModContent.ProjectileType<PlasmaGas>(),
-                    ModContent.ProjectileType<AresTeslaOrb>(),
-                    ModContent.ProjectileType<ElectricGas>(),
-                    ModContent.ProjectileType<AresGaussNukeProjectile>(),
-                    ModContent.ProjectileType<AresGaussNukeProjectileBoom>(),
-                    ModContent.ProjectileType<CannonLaser>(),
-                };
-
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
-                        Main.projectile[i].active = false;
-                }
-            }
+                ExoMechManagement.ClearAwayTransitionProjectiles();
 
             // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;

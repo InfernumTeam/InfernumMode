@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -271,11 +272,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         }
                     }
                 }
-
-                // Teleport above the player.
-                Vector2 oldPosition = npc.Center;
-                npc.Center = target.Center - Vector2.UnitY * 160f;
-                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
                 npc.ModNPC<SCalBoss>().initialRitualPosition = npc.Center + Vector2.UnitY * 24f;
                 attackDelay = 270f;
@@ -1426,10 +1422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Summon rituals.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % ritualCreationRate == ritualCreationRate - 1f)
-                {
-                    Vector2 circleSpawnPosition = target.Center + target.velocity * 48f;
-                    Utilities.NewProjectileBetter(circleSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SuicideBomberRitual>(), 0, 0f);
-                }
+                    Utilities.NewProjectileBetter(target.Center - target.velocity * 5f, Vector2.Zero, ModContent.ProjectileType<SuicideBomberRitual>(), 0, 0f);
             }
 
             if (attackTimer >= jewelChargeupTime + laserbeamLifetime)
@@ -1441,8 +1434,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
+            int fadeInTime = 96;
+            int blackScreenTime = 30;
+            int attackTransitionDelay = 100;
+            int fadeOutTime = 30;
+
             // Darken the screen.
-            InfernumMode.BlackFade = Utils.GetLerpValue(0f, 180f, attackTimer, true) * Utils.GetLerpValue(270f, 240f, attackTimer, true);
+            InfernumMode.BlackFade = Utils.GetLerpValue(0f, fadeInTime, attackTimer, true) * Utils.GetLerpValue(fadeOutTime, 0f, attackTimer - fadeInTime - blackScreenTime, true);
 
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
@@ -1458,14 +1456,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameType = (int)SCalFrameType.MagicCircle;
 
             // Summon the demon.
-            if (attackTimer == 210f)
+            if (attackTimer == fadeInTime + blackScreenTime)
             {
                 SoundEngine.PlaySound(BrimstoneMonster.SpawnSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1200, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 850, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
             }
 
-            if (attackTimer >= 400f)
+            if (attackTimer >= fadeInTime - blackScreenTime + attackTransitionDelay)
                 SelectNextAttack(npc);
         }
 
@@ -1597,8 +1595,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_SummonSepulcher(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
-            int screenShakeTime = 135;
-            
+            int heartCount = 13;
+            int animationDelay = 60;
+            int heartSpinAnimationTime = 150;
+            int focusTime = 92;
+            int laserFadeoutTime = 90;
+            int heartID = ModContent.ProjectileType<RitualBrimstoneHeart>();
+            float maxHeartRadius = 135f;
+            ref float heartSpinAngle = ref npc.Infernum().ExtraAI[0];
+
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
             if (npc.velocity.Length() < 8f)
@@ -1612,30 +1617,62 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameChangeSpeed = 0.2f;
             frameType = (int)SCalFrameType.MagicCircle;
 
-            // Shake the screen.
-            float screenShakeDistanceFade = Utils.GetLerpValue(npc.Distance(target.Center), 2600f, 1375f, true);
-            float screenShakeFactor = Utils.Remap(attackTimer, 25f, screenShakeTime, 2f, 12.5f) * screenShakeDistanceFade;
-            if (attackTimer >= screenShakeTime)
-                screenShakeFactor = 0f;
+            if (attackTimer < animationDelay)
+                return;
 
-            target.Calamity().GeneralScreenShakePower = screenShakeFactor;
+            float adjustedAttackTimer = attackTimer - animationDelay;
+            float heartFadeout = Utils.GetLerpValue(laserFadeoutTime, 45f, adjustedAttackTimer - heartSpinAnimationTime - focusTime, true);
+            float heartRadius = Utils.Remap(adjustedAttackTimer, 0f, animationDelay, 2f, maxHeartRadius) * heartFadeout;
 
-            if (attackTimer == screenShakeTime - 60f)
-                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 2f }, npc.Center);
+            // Create the hearts.
+            if (adjustedAttackTimer == 1f)
+            {
+                for (int i = 0; i < heartCount; i++)
+                {
+                    int heartIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, heartID, 0, 0f);
+                    if (Main.projectile.IndexInRange(heartIndex))
+                        Main.projectile[heartIndex].ai[0] = i / (float)(heartCount - 1f);
+                }
+            }
+
+            // Make the hearts spin.
+            float focusInterpolant = Utils.GetLerpValue(0f, focusTime, adjustedAttackTimer - heartSpinAnimationTime, true);
+            if (focusInterpolant <= 0f)
+                heartSpinAngle += Utils.Remap(adjustedAttackTimer, 0f, heartSpinAnimationTime, 0.001f, MathHelper.Pi / 27f) * Utils.GetLerpValue(0f, -36f, adjustedAttackTimer - heartSpinAnimationTime);
+            
+            List<Projectile> brimstoneHearts = Main.projectile.Take(Main.maxProjectiles).Where(n => n.active && n.type == heartID).ToList();
+            foreach (Projectile heart in brimstoneHearts)
+            {
+                float heartOffsetAngle = MathHelper.WrapAngle(MathHelper.TwoPi * heart.ai[0] + heartSpinAngle);
+                if (heartOffsetAngle < 0f)
+                    heartOffsetAngle += MathHelper.TwoPi;
+
+                float focusAngle = -MathHelper.PiOver2 + MathHelper.Lerp(-0.87f, 0.87f, (float)Math.Sin(heart.ai[0] * MathHelper.TwoPi + attackTimer / 19f) * 0.5f + 0.5f);
+
+                // Have hearts hover a fixed distance away from SCal.
+                heart.Center = npc.Center + heartOffsetAngle.AngleLerp(focusAngle, focusInterpolant).ToRotationVector2() * heartRadius;
+                heart.ai[1] = focusInterpolant;
+                heart.Infernum().ExtraAI[0] = heartFadeout;
+            }
 
             // Summon Sepulcher.
-            if (attackTimer == screenShakeTime - 10f)
+            if (adjustedAttackTimer == heartSpinAnimationTime + focusTime)
             {
                 SoundEngine.PlaySound(SCalBoss.SepulcherSummonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 1700, ModContent.NPCType<SepulcherHead>(), 1);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 2100, ModContent.NPCType<SepulcherHead>(), 1);
                     npc.netUpdate = true;
                 }
             }
 
-            if (attackTimer >= screenShakeTime + SupremeCalamitasBrotherPortal.Lifetime && !NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
-                SelectNextAttack(npc);
+            if (adjustedAttackTimer >= heartSpinAnimationTime + focusTime + laserFadeoutTime + 50f)
+            {
+                Utilities.DeleteAllProjectiles(false, heartID);
+
+                if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
+                    SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_PhaseTransition(NPC npc, Player target, int currentPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)

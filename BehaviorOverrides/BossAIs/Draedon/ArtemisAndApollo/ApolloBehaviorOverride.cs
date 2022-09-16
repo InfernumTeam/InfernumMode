@@ -117,21 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 SelectNextAttack(npc);
 
                 // Clear away projectiles to prevent lingering, unfair things so that the combo attacks have a clean, open area.
-                List<int> projectilesToDelete = new()
-                {
-                    ModContent.ProjectileType<ArtemisLaser>(),
-                    ModContent.ProjectileType<ApolloPlasmaFireball>(),
-                    ModContent.ProjectileType<AresPlasmaBolt>(),
-                    ModContent.ProjectileType<ExofireSpark>(),
-                    ModContent.ProjectileType<PlasmaSpark>(),
-                    ModContent.ProjectileType<ApolloFlamethrower>()
-                };
-
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
-                        Main.projectile[i].active = false;
-                }
+                ExoMechManagement.ClearAwayTransitionProjectiles();
 
                 npc.netUpdate = true;
             }
@@ -918,7 +904,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             for (int i = 0; i < sparkCount; i++)
                             {
                                 Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
-                                Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<AcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
+                                Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
                             }
                         }
 

@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class ShadowFlameBlast : ModProjectile
     {
-        public const int Lifetime = 90;
+        public const int Lifetime = 32;
 
         public override void SetStaticDefaults()
         {

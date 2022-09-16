@@ -180,9 +180,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     {
                         Vector2 laserShootVelocity = aimDirection * laserShootSpeed;
                         if (laserCount > 1)
-                            laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.41f, 0.41f, i / (float)(laserCount - 1f)));
+                            laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.52f, 0.52f, i / (float)(laserCount - 1f)));
                         laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), laserDamage, 0f);
+                        int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].ai[1] = npc.whoAmI;
                     }

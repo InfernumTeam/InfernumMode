@@ -11,6 +11,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPlasmaFireball : ModProjectile
     {
+        public bool GasExplosionVariant
+        {
+            get;
+            set;
+        } = false;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Volatile Plasma Blast");
@@ -128,16 +134,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
 
-            // Release plasma bolts.
+            // Release plasma.
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] != -1f)
             {
                 int totalProjectiles = 10;
-                int type = ModContent.ProjectileType<AresPlasmaBolt>();
+                if (GasExplosionVariant)
+                {
+                    totalProjectiles = 6;
+                    int plasmaGasID = ModContent.ProjectileType<PlasmaGas>();
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Vector2 plasmaVelocity = Main.rand.NextVector2Circular(13f, 13f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, plasmaVelocity, plasmaGasID, Projectile.damage, 0f, Main.myPlayer);
+                    }
+                }
+
+                int boltID = ModContent.ProjectileType<AresPlasmaBolt>();
                 Vector2 spinningPoint = Main.rand.NextVector2Circular(0.5f, 0.5f);
                 for (int i = 0; i < totalProjectiles; i++)
                 {
                     Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, boltID, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
                 }
             }
 

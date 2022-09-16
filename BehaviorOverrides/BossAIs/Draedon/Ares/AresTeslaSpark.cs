@@ -3,18 +3,17 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class ExofireSpark : ModProjectile
+    public class AresTeslaSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exofire Spark");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Tesla Spark");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
+            Projectile.width = Projectile.height = 18;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.hostile = true;
@@ -27,34 +26,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public override void AI()
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation += Projectile.velocity.X * 0.025f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.timeLeft > 240f)
-            {
-                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * 19f) / 20f;
-            }
-            else if (Projectile.velocity.Length() < 32f)
+            if (Projectile.velocity.Length() < 14f)
                 Projectile.velocity *= 1.0225f;
-
-            // Emit dust.
-            for (int i = 0; i < 2; i++)
-            {
-                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 267);
-                fire.scale *= 0.8f;
-                fire.color = Color.Orange;
-                fire.velocity = fire.velocity * 0.4f + Main.rand.NextVector2Circular(0.4f, 0.4f);
-                fire.fadeIn = 0.4f;
-                fire.noGravity = true;
-            }
-        }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.Opacity != 1f)
-                return;
-
-            target.AddBuff(BuffID.OnFire, 120);
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -85,9 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            behindProjectiles.Add(index);
+            drawCacheProjsBehindProjectiles.Add(index);
         }
     }
 }

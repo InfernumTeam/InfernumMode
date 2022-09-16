@@ -265,13 +265,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (npc.type == ModContent.NPCType<AresLaserCannon>())
             {
-                armShootType = ModContent.ProjectileType<CannonLaser>();
+                armShootType = ModContent.ProjectileType<AresCannonLaser>();
                 hoverOffset = new Vector2(-borderOffset, -borderOffset);
                 shootSound = CommonCalamitySounds.LaserCannonSound;
             }
             if (npc.type == ModContent.NPCType<AresTeslaCannon>())
             {
-                armShootType = ModContent.ProjectileType<TeslaSpark>();
+                armShootType = ModContent.ProjectileType<AresTeslaSpark>();
                 hoverOffset = new Vector2(-borderOffset, borderOffset);
                 shootSound = CommonCalamitySounds.PlasmaBoltSound;
             }
@@ -324,10 +324,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(laser) && armShootType == ModContent.ProjectileType<CannonLaser>())
+                        if (Main.projectile.IndexInRange(laser) && armShootType == ModContent.ProjectileType<AresCannonLaser>())
                         {
                             Main.projectile[laser].ai[1] = npc.whoAmI;
-                            Main.projectile[laser].ModProjectile<CannonLaser>().Destination = npc.Center + aimDirection * 2000f;
+                            Main.projectile[laser].ModProjectile<AresCannonLaser>().Destination = npc.Center + aimDirection * 2000f;
                         }
                     }
                 }
@@ -384,14 +384,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         {
                             Vector2 boltShootVelocity = (MathHelper.TwoPi * i / aresCircularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 13f;
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), NormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
                         }
 
                         for (int i = 0; i < aresShotBoltCount; i++)
                         {
                             Vector2 boltShootVelocity = telegraphRotation.ToRotationVector2() * 31f + Main.rand.NextVector2Circular(5f, 5f);
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 21f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), NormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
                         }
                     }
                 }

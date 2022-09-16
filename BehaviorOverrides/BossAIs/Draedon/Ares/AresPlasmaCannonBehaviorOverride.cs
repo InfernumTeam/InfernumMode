@@ -162,8 +162,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         int flameDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
                         Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
                         int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
-                        if (ExoMechManagement.CurrentAresPhase >= 2)
-                            fireballType = ModContent.ProjectileType<AresPlasmaFireball2>();
                         if (fireballCount > 1)
                         {
                             flameShootVelocity = flameShootVelocity.RotatedByRandom(0.34f);
@@ -171,7 +169,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                                 flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
                         }
 
-                        Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, flameDamage, 0f);
+                        int plasmaFireball = Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, flameDamage, 0f);
+                        if (Main.projectile.IndexInRange(plasmaFireball))
+                            Main.projectile[plasmaFireball].ModProjectile<AresPlasmaFireball>().GasExplosionVariant = ExoMechManagement.CurrentAresPhase >= 2;
                     }
 
                     npc.netUpdate = true;

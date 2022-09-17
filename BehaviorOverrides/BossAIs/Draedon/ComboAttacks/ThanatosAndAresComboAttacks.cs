@@ -5,7 +5,6 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;

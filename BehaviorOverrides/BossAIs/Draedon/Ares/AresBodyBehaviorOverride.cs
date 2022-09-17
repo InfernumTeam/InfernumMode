@@ -5,7 +5,6 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;

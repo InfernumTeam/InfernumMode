@@ -1,13 +1,7 @@
 using CalamityMod;
-using CalamityMod.CalPlayer;
-using InfernumMode.Systems;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff

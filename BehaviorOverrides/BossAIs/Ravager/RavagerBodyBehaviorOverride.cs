@@ -14,7 +14,6 @@ using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {

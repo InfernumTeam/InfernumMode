@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Cooldowns;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;

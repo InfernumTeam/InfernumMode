@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;

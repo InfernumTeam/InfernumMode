@@ -5,7 +5,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks

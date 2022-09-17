@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Events;
 using Terraria;
 using Terraria.Audio;

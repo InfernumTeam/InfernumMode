@@ -25,7 +25,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Balancing
@@ -37,7 +36,7 @@ namespace InfernumMode.Balancing
 
         public const float AdrenalineChargeTimeFactor = 1.6f;
 
-        public const int DashDelay = 20;
+        public const int DashDelay = 15;
 
         internal static void Load()
         {

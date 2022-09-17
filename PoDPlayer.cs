@@ -3,7 +3,6 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;

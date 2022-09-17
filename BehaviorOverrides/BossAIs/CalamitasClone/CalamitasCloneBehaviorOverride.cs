@@ -16,7 +16,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
-using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {

@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Balancing;
-using CalamityMod.ILEditing;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Schematics;

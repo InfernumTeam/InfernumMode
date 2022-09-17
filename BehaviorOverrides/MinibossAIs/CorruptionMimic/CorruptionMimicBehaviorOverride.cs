@@ -3,7 +3,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.QueenSlime;
 using InfernumMode.OverridingSystem;
-using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

@@ -12,7 +12,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 using Terraria.WorldBuilding;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {

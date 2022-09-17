@@ -1,7 +1,5 @@
 using CalamityMod.Schematics;
-using CalamityMod.Tiles.FurnitureProfaned;
 using CalamityMod.Walls;
-using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

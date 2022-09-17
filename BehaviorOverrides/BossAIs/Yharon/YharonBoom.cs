@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Projectiles;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

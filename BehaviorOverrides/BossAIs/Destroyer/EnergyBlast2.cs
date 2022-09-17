@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;

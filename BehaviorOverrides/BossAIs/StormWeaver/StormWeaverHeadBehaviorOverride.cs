@@ -9,7 +9,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {

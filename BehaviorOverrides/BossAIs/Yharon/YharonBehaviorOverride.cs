@@ -11,7 +11,6 @@ using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
-using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;

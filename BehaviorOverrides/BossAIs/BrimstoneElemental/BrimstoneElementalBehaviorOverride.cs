@@ -18,7 +18,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using BrimmyNPC = CalamityMod.NPCs.BrimstoneElemental.BrimstoneElemental;
-using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {

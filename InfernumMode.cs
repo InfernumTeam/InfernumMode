@@ -1,8 +1,5 @@
 using CalamityMod.Events;
-using CalamityMod.Particles;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Balancing;
-using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;

@@ -1,16 +1,12 @@
 using CalamityMod;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
-using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Particles;
 using InfernumMode.Sounds;
-using InfernumMode.Systems;
-using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

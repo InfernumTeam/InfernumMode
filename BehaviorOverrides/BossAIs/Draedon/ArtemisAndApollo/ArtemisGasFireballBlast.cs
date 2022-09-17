@@ -1,5 +1,4 @@
 using CalamityMod;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;

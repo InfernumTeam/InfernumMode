@@ -10,7 +10,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {

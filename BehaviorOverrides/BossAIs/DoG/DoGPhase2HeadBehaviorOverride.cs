@@ -1000,7 +1000,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void PerformPerpendicularPortalAttack(NPC npc, Player target, ref float portalIndex, ref float segmentFadeType, ref float perpendicularPortalAttackTimer, ref float perpendicularPortalAngle)
         {
-            int portalTelegraphTime = 30;
+            int portalTelegraphTime = 34;
             int waitBeforeSnappingAgain = 16;
             float chargeSpeed = 67f;
 
@@ -1017,7 +1017,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float scaleFactor = 1.6f;
-                            perpendicularPortalAngle = npc.velocity.ToRotation();
+                            perpendicularPortalAngle = MathHelper.PiOver2 * (float)Math.Round(npc.velocity.ToRotation() / MathHelper.PiOver2);
+
                             portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 64f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                             Main.projectile[(int)portalIndex].localAI[0] = 1f;
                             Main.projectile[(int)portalIndex].scale *= scaleFactor;
@@ -1200,6 +1201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     specialAttackPortalIndex = -1f;
                     performingSpecialAttack = 0f;
                     specialAttackTimer = 0f;
+                    DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
                 }
 
                 // Make sure to return early to inform the AI that it should not execute any code beyond the special attack section.

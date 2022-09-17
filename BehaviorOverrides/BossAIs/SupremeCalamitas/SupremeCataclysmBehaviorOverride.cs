@@ -314,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             projectileType = ModContent.ProjectileType<CatastropheSlash>();
                             projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 125f;
-                            shootVelocity = Vector2.UnitX * npc.spriteDirection * 17.5f;
+                            shootVelocity = Vector2.UnitX * npc.spriteDirection * 11.75f;
                             firingFromRight = firingFromRight == 0f ? 1f : 0f;
                         }
 

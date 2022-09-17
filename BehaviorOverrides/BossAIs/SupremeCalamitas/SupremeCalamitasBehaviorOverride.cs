@@ -525,11 +525,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 shootSpeed += 3.5f;
                 dartConvergence = true;
+                condemnationSpinTime += 36;
+                chargeupTime += 35;
             }
 
             if (inBerserkPhase)
             {
-                condemnationSpinTime = 36;
+                condemnationSpinTime -= 12;
                 condemnationChargePuffRate = 12;
                 shootSpeed = 15f;
                 angularVariance = 3.03f;

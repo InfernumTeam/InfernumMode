@@ -18,13 +18,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
-        #region AI
         public override bool PreAI(NPC npc)
         {
             SupremeCataclysmBehaviorOverride.DoAI(npc);
             return false;
         }
-        #endregion AI
 
         #region Frames and Drawcode
         public override void FindFrame(NPC npc, int frameHeight)

@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
-            float yScale = 2f;
+            float yScale = 4f;
             if (TelegraphDelay < TelegraphFadeTime)
             {
                 yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
@@ -141,6 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             colorOuter *= 0.7f;
             colorInner *= 0.7f;
+            colorInner.A = 72;
 
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.AngleTo(Destination), origin, scaleInner, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.AngleTo(Destination), origin, scaleOuter, SpriteEffects.None, 0f);

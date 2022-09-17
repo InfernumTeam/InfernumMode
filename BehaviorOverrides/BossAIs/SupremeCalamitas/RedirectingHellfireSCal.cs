@@ -1,3 +1,4 @@
+using CalamityMod.NPCs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -29,6 +30,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
+            // Die of Supreme Cataclysm is not present.
+            if (!NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()))
+            {
+                Projectile.Kill();
+                return;
+            }
+
             CreateVisuals();
             PerformMovement();
             Time++;

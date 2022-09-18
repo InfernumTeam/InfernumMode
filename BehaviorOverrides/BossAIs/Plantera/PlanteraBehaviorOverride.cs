@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -124,6 +125,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             {
                 DoPhase3Transition(npc, target, phase3TransitionTimer);
                 phase3TransitionTimer--;
+                if (phase3TransitionTimer <= 0f)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Plantera isn't keeping anything back, watch out!");
                 return false;
             }
 
@@ -378,6 +381,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), 165, 0f);
                 }
             }
+
+            if (attackTimer == gasReleaseRate)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!");
 
             // Periodically release gas.
             if (attackTimer % gasReleaseRate == gasReleaseRate - 1f)

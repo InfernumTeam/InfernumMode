@@ -248,11 +248,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             Vector2? hoverOffset = null;
             float borderOffset = 950f;
             Rectangle borderArea = Utils.CenteredRectangle(aresBody.Center, Vector2.One * borderOffset * 2f);
+
             int armShootType = -1;
-            SoundStyle shootSound = default;
+            bool canShoot = true;
             float armShootSpeed = 10f;
             float perpendicularOffset = 0f;
             bool enraged = aresBody.Infernum().ExtraAI[13] == 1f;
+            SoundStyle shootSound = default;
 
             if (enraged)
             {
@@ -264,7 +266,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (npc.type == ModContent.NPCType<AresLaserCannon>())
             {
-                armShootType = ModContent.ProjectileType<AresCannonLaser>();
+                armShootType = ModContent.ProjectileType<AresLaserDeathray>();
+                canShoot = !Utilities.AnyProjectiles(armShootType);
                 hoverOffset = new Vector2(-borderOffset, -borderOffset);
                 shootSound = CommonCalamitySounds.LaserCannonSound;
             }
@@ -282,7 +285,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             }
             if (npc.type == ModContent.NPCType<AresPulseCannon>())
             {
-                armShootType = ModContent.ProjectileType<AresPulseBlast>();
+                armShootType = ModContent.ProjectileType<AresPulseDeathray>();
+                canShoot = !Utilities.AnyProjectiles(armShootType);
                 hoverOffset = new Vector2(borderOffset, -borderOffset);
                 shootSound = PulseRifle.FireSound;
                 armShootSpeed = 2f;
@@ -316,17 +320,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 npc.ai[3] = rotationToEndOfCannon;
                 Vector2 endOfCannon = npc.Center + aimDirection * 120f + aimDirection.RotatedBy(npc.spriteDirection * -MathHelper.PiOver2) * perpendicularOffset;
 
-                if (attackTimer % 9f == 8f)
+                if (attackTimer % 9f == 8f && canShoot)
                 {
                     if (Main.rand.NextBool(5) && shootSound != default)
                         SoundEngine.PlaySound(shootSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(laser) && armShootType == ModContent.ProjectileType<AresCannonLaser>())
+                        int shot = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f);
+                        if (Main.projectile.IndexInRange(shot))
                         {
-                            Main.projectile[laser].ai[1] = npc.whoAmI;
-                            Main.projectile[laser].ModProjectile<AresCannonLaser>().Destination = npc.Center + aimDirection * 2000f;
+                            if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
+                                Main.projectile[shot].ai[0] = npc.whoAmI;
                         }
                     }
                 }
@@ -457,6 +461,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 }
             }
 
+            if (attackTimer == 840f)
+                ClearAwayTransitionProjectiles();
             return attackTimer > 840f;
         }
     }

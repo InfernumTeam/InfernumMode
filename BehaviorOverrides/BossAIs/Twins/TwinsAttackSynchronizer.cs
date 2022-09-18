@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -304,7 +305,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.05f, npc.lifeMax * 0.3f, 1f - healCountdown / TwinsShield.HealTime);
                     if (healCountdown == TwinsShield.HealTime - 5)
+                    {
                         Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: ERROR DETECTING SECONDARY UNIT. BURNING EXCESS FUEL RESERVES.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
+                        HatGirl.SayThingWhileOwnerIsAlive(Target, "Watch out, that last twin is gonna hit you with everything it's got! Don't let up!");
+                    }
                     healCountdown--;
                 }
                 else

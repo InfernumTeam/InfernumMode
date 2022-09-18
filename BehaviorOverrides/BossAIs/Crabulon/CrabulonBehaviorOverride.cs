@@ -12,6 +12,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 using Terraria.WorldBuilding;
+using System.Collections.Generic;
+using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -20,6 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override int NPCOverrideType => ModContent.NPCType<CrabulonNPC>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+
+        public const int MushroomStompBarrageInterval = 3;
 
         public const float Phase2LifeRatio = 0.85f;
 
@@ -230,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                         }
                         jumpCount++;
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % 3f == 2f)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % MushroomStompBarrageInterval == MushroomStompBarrageInterval - 1f)
                         {
                             for (int i = 0; i < sporeCloudCount; i++)
                             {
@@ -482,5 +486,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
         }
         #endregion Frames
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
+            yield return n => "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "There isnt Mushroom for the three of us, and I can tell who won the roullete.";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

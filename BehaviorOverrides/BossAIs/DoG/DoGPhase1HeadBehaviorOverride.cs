@@ -124,6 +124,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int PerpendicularPortalAngleIndex = 31;
 
+        public const int PreviousSpecialAttackTypeIndex = 32;
+
+        public const int PreviousSnapAngleIndex = 33;
+
+        public const int TimeSinceLastSnapIndex = 34;
+
+        public const int DamageImmunityCountdownIndex = 35;
+
         public const int BodySegmentDefense = 70;
 
         public const float BodySegmentDR = 0.925f;

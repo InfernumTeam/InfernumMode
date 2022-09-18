@@ -271,6 +271,12 @@ namespace InfernumMode
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
         #endregion
+        #region Kill
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            HatGirlTipsManager.PotentialTipToUse = HatGirlTipsManager.SelectTip();
+        }
+        #endregion Kill
         #region Life Regen
         public override void UpdateLifeRegen()
         {

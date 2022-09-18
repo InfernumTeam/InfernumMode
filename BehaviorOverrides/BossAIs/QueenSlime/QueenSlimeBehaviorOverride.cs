@@ -12,6 +12,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.DataStructures;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using CalamityMod.NPCs.SlimeGod;
+using System.Collections.Generic;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
@@ -837,5 +838,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             return solidGround;
         }
         #endregion Misc Utilities
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Keep your feet working! This gelatinous queen will stop at nothing to crush her foes!";
+            yield return n => "Short hops may help better than trying to fly away from all the crystal shrapnel!";
+        }
+        #endregion Tips
     }
 }

@@ -2,9 +2,12 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -119,10 +122,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 npc.localAI[2] = 1f;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
+            if (npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
-                hasSummonedNinjaFlag = 1f;
+                HatGirl.SayThingWhileOwnerIsAlive(target, "The ninja shoots more shurikens the farther you are, so don't go too far!");
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
+                    hasSummonedNinjaFlag = 1f;
+                    npc.netUpdate = true;
+                }
             }
 
             if (npc.life < npc.lifeMax * Phase2LifeRatio && jewelSummonTimer == 0f && npc.scale >= 0.8f)
@@ -387,5 +395,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             return false;
         }
         #endregion Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Try to learn King Slime's jump pattern! It could help you plan your next move better.";
+            yield return n => "With a jump that high, I wonder if you could duck beneath him?";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Quite a sticky situation you had to deal with...";
+                return string.Empty;
+            };
+        }
+        #endregion
     }
 }

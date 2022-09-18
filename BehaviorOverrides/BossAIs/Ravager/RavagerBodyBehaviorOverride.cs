@@ -356,6 +356,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (jumpSubstate == 1f)
             {
                 gravity *= jumpIntensityFactor;
+                if (attackTimer < 16f)
+                {
+                    npc.damage = 0;
+                    npc.dontTakeDamage = true;
+                }
 
                 // Make stomp sounds and particles when hitting the ground again.
                 if (npc.velocity.Y == 0f)

@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -521,6 +522,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                 previousIndex = nextIndex;
             }
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "The Scourge usually roars when it's about to whip up a sandstorm, get to high grounds!";
+            yield return n => "A Hook may prove useful to quickly get out of the Scourge's mandibles!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "I loath sand, its grainy and itchy and sticks to every part of my feet.";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "You better have dessert for me after this...";
+                return string.Empty;
+            };
         }
     }
 }

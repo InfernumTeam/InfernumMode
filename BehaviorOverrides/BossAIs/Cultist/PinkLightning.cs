@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override int Lifetime => 72;
 
-        public override int TrailPointCount => 10;
+        public override int TrailPointCount => 8;
 
         public override float LightningTurnRandomnessFactor => 0.6f;
 

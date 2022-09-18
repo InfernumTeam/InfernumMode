@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -367,5 +368,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Be sure to run the opposite direction!";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

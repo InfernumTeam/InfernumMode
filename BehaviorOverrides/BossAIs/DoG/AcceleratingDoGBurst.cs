@@ -42,8 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.velocity.Length() < 35f)
-                Projectile.velocity *= 1.025f;
+            if (Projectile.velocity.Length() < 38f)
+                Projectile.velocity *= 1.022f;
         }
 
         public override bool PreDraw(ref Color lightColor)

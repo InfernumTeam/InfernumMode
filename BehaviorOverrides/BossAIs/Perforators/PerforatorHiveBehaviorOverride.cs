@@ -5,9 +5,11 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -106,6 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     // Rise upward and create an explosion sound.
                     if (finalPhaseTransitionTimer == 45f)
                     {
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "It's still going?!");
                         SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 2.2f, Pitch = -0.4f }, npc.Center);
 
@@ -181,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 return;
             }
 
-            // Medium worm phase.
+            // Large worm phase.
             if (inPhase4 && wormSummonState == 2f)
             {
                 SelectNextAttack(npc);
@@ -894,7 +897,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             // Have the worm erupt from the hive.
             if (attackTimer == wormSummonTime)
+            {
                 MakeWormEruptFromHive(npc, -Vector2.UnitY, 1f, ModContent.NPCType<PerforatorHeadMedium>());
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Staying calm and still will help dodge the slow projectiles!");
+            }
 
             // Go to the next attack if the small perforator is dead.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= wormSummonTime + 1f && !NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadMedium>()))
@@ -1274,5 +1280,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Perhaps a long platform or two could help avoid some of the attacks?";
+            yield return n => "The Hive spews out a ton of lingering ichor, so space management is key!";
+        }
+        #endregion Tips
     }
 }

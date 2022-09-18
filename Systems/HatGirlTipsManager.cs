@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Systems
 {
@@ -12,6 +13,16 @@ namespace InfernumMode.Systems
         internal static NPC BossBeingFought;
 
         internal static Dictionary<int, List<Func<NPC, string>>> TipsRegistry = new();
+
+        internal static List<string> SaidText = new();
+
+        public static string PotentialTipToUse
+        {
+            get;
+            internal set;
+        }
+
+        public static bool ShouldUseJokeText => Main.rand.NextBool(300);
 
         public override void Unload()
         {
@@ -39,11 +50,21 @@ namespace InfernumMode.Systems
 
             // This func evaluates the state of the NPC in question, after it died.
             IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips();
-            IEnumerable<string> possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t));
+            var possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t) && !SaidText.Contains(t)).ToList();
             if (potentialTips is null || !potentialTips.Any())
                 return string.Empty;
 
-            return possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count()));
+            return possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count));
+        }
+
+        public override void SaveWorldData(TagCompound tag)
+        {
+            tag["SaidText"] = SaidText;
+        }
+
+        public override void LoadWorldData(TagCompound tag)
+        {
+            SaidText = (List<string>)tag.GetList<string>("SaidText");
         }
     }
 }

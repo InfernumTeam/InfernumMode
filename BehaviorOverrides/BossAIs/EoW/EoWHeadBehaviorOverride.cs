@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -533,5 +534,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         }
 
         #endregion AI Utility Methods
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
+            yield return n => "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "I guess it eats more than just worlds.";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

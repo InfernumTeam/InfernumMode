@@ -97,5 +97,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             return false;
         }
         #endregion AI
+
+        #region Tips
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<SlimeGodCore>();
+        #endregion Tips
     }
 }

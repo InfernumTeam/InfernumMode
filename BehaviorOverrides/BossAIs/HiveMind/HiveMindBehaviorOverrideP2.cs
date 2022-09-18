@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -75,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.Infernum().ExtraAI[10] = 1f;
                 finalPhaseInvinciblityTime = 300f;
+                HatGirl.SayThingWhileOwnerIsAlive(target, "It's still going?!");
                 npc.netUpdate = true;
             }
 
@@ -779,7 +781,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             SoundEngine.PlaySound(SoundID.Roar, npc.Center);
         }
 
-        public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static bool PreDraw(NPC npc, Color lightColor)
         {
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;

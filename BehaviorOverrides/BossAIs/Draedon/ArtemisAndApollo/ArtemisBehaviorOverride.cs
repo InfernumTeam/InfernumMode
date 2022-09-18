@@ -158,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             // Perform specific attack behaviors.
-            PerformSpecificAttackBehaviors(npc, target, performingDeathAnimation, attackState, sideSwitchAttackDelay, hoverSide, ref frame, ref attackTimer, ref deathAnimationTimer);
+            PerformSpecificAttackBehaviors(npc, target, performingDeathAnimation, attackState, sideSwitchAttackDelay, hoverSide, ref apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex], ref frame, ref attackTimer, ref deathAnimationTimer);
             return false;
         }
 
@@ -221,16 +221,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (npc.ModNPC<Artemis>().RibbonTrail is null)
                 npc.ModNPC<Artemis>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
+            
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechTwinGreen) || !Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen].active)
+                return false;
 
             // Prepare the flame trail shader with its map texture.
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
+            NPC apollo = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen];
             int numAfterimages = npc.ModNPC<Artemis>().ChargeFlash > 0f ? 0 : 5;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f ? Color.Red : Color.White;
+            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f || apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f ? Color.Red : Color.White;
 
             // Draws a single instance of a regular, non-glowmask based Artemis.
             // This is created to allow easy duplication of them when drawing the charge.

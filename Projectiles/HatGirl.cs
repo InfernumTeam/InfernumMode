@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Projectiles
@@ -65,6 +64,19 @@ namespace InfernumMode.Projectiles
             fallThrough = !Owner.WithinRange(Projectile.Center, 200f);
             return true;
         }
+
+        public static void SayThingWhileOwnerIsAlive(Player owner, string text)
+        {
+            if (owner.dead || !owner.active || owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0)
+                return;
+
+            if (HatGirlTipsManager.SaidText.Contains(text))
+                return;
+
+            owner.Infernum().HatGirlShouldGiveAdvice = true;
+            HatGirlTipsManager.PotentialTipToUse = text;
+            HatGirlTipsManager.SaidText.Add(text);
+        }
         
         public override void AI()
         {
@@ -86,10 +98,16 @@ namespace InfernumMode.Projectiles
             // Give some advice if the player died to a boss.
             if (modPlayer.HatGirlShouldGiveAdvice && !Owner.dead)
             {
-                Color messageColor = Color.DeepPink;
-                CombatText.NewText(Projectile.Hitbox, messageColor, Language.GetTextValue(HatGirlTipsManager.SelectTip()), true);
-                Owner.Infernum().HatGirlShouldGiveAdvice = false;
-                TalkAnimationCounter = 1f;
+                string tipText = HatGirlTipsManager.PotentialTipToUse;
+                if (!string.IsNullOrEmpty(tipText))
+                {
+                    Color messageColor = Color.DeepPink;
+                    CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
+                    Owner.Infernum().HatGirlShouldGiveAdvice = false;
+                    TalkAnimationCounter = 1f;
+                    
+                    HatGirlTipsManager.SaidText.Add(tipText);
+                }
             }
 
             // Reset things.

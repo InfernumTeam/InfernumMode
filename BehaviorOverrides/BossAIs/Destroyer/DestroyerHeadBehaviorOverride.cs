@@ -4,8 +4,10 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -641,6 +643,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (phase4)
                 patternToUse = Phase4AttackPattern;
             DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
+            if (nextAttackType == DestroyerAttackType.LaserSpin)
+                HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!");
 
             // Go to the next AI state.
             npc.ai[1] = (int)nextAttackType;
@@ -654,5 +658,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         }
 
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "The more you hurt it, the more probes it will spawn. Don't bite off more than you can chew!";
+        }
+        #endregion Tips
     }
 }

@@ -3,9 +3,11 @@ using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -944,6 +946,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 }
             }
             return false;
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
+            yield return n => "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Deer god...";
+                return string.Empty;
+            };
         }
     }
 }

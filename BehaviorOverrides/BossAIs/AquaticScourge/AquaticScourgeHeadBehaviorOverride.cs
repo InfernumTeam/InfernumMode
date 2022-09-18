@@ -7,6 +7,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -554,7 +555,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 while (nextAttack == currentAttack);
             }
             else
+            {
+                if (currentAttack != AquaticScourgeAttackType.JustCharges)
+                    HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "The Scourge will stop at nothing to snack on you! Stay on the move!");
                 nextAttack = AquaticScourgeAttackType.JustCharges;
+            }
 
             // Get a new target.
             npc.TargetClosest();
@@ -571,5 +576,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         #endregion AI Utility Methods
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "If you can't handle dodging at high speeds, try baiting it into circling you!";
+        }
+        #endregion Tips
     }
 }

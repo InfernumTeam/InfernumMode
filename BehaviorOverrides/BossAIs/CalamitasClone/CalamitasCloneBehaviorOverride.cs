@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -191,7 +192,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
                 if (finalPhaseTransitionCountdown == 60f)
+                {
                     Utilities.DisplayText("I will not be defeated so easily.", Color.Orange);
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "It seems like she's going to give it all she has! Brace yourself!");
+                }
 
                 if (finalPhaseTransitionCountdown == 0f)
                 {
@@ -236,14 +240,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 brotherFadeoutTime = MathHelper.Clamp(brotherFadeoutTime + brotherIsPresent.ToDirectionInt(), 0f, 90f);
                 npc.Opacity = 1f - brotherFadeoutTime / 90f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f && transitionState == 1f)
+                if (brotherFadeoutTime == 30f && transitionState == 1f)
                 {
-                    // Summon Catatrophe and Cataclysm.
-                    int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
-                    CalamityUtils.BossAwakenMessage(cataclysm);
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Try and move as precisely as possible here; you don't want to waste arena space!");
 
-                    int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
-                    CalamityUtils.BossAwakenMessage(catastrophe);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // Summon Catatrophe and Cataclysm.
+                        int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
+                        CalamityUtils.BossAwakenMessage(cataclysm);
+
+                        int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
+                        CalamityUtils.BossAwakenMessage(catastrophe);
+                    }
                 }
 
                 Vector2 hoverDestination = target.Center;

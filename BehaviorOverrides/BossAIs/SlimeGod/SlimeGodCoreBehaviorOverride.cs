@@ -5,6 +5,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -342,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 }
 
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.15f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 90f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 64f)
                 {
                     attackTimer = 0f;
                     SelectNextAttack(npc);
@@ -496,5 +497,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             return false;
         }
         #endregion Drawing
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?";
+            yield return n =>
+            {
+                if (SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase)
+                    return "Dont let all the projectiles intimidate you, be very cautious with your movement!";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

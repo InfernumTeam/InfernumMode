@@ -1,8 +1,10 @@
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -732,5 +734,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Watch out for those teeth bombs! The teeth spew away from the bomb's landing, try staying close!";
+            yield return n => "Investing in a hook or high mobility could prove great to dodge the Eye of Cthulhu's Charges!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Eye can't believe you died to that.";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

@@ -6,6 +6,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -293,6 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 circleCenterX = target.Center.X;
                 circleCenterY = target.Center.Y;
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Stay near the center of your arena if you can. Those thorns are really good at cornering you!");
                 npc.netUpdate = true;
             }
 
@@ -655,12 +657,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     float wrappedTime = attackTimer % 210f;
                     Vector2 deathrayDirection = new Vector2(telegraphDirectionX, telegraphDirectionY).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime == 1f)
+                    if (wrappedTime == 1f)
                     {
-                        deathrayDirection = npc.SafeDirectionTo(target.Center);
-                        int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f);
-                        if (Main.npc.IndexInRange(beam))
-                            Main.projectile[beam].ai[1] = npc.whoAmI;
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "The beam predicts your position, try baiting it into shooting away from you!");
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            deathrayDirection = npc.SafeDirectionTo(target.Center);
+                            int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f);
+                            if (Main.npc.IndexInRange(beam))
+                                Main.projectile[beam].ai[1] = npc.whoAmI;
+                        }
                     }
 
                     if (wrappedTime < 35f)

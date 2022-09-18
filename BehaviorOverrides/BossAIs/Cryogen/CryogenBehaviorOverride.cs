@@ -5,6 +5,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -978,5 +979,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         }
 
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Move as little as possible while it's above you. That should calm down its spastic jittering!";
+            yield return n => "Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!";
+        }
+        #endregion Tips
     }
 }

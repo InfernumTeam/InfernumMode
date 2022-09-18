@@ -4,6 +4,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -612,6 +613,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             return false;
         }
 
-        #endregion
+        #endregion Drawing
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "The Brain of Cthulhu uses a lot of prediction and deception in its attacks, so play extra smart!";
+            yield return n => "The Brain is going to try to decieve you with various mind games, keep your eyes on the real one!";
+        }
+        #endregion Tips
     }
 }

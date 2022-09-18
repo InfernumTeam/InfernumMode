@@ -813,11 +813,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.type == ModContent.NPCType<PhotonRipperNPC>())
                 return false;
 
+            bool isPulseOrGauss = npc.type == ModContent.NPCType<AresPulseCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>();
             return ((int)aresBody.Infernum().ExtraAI[5] % 3) switch
             {
-                0 => npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>(),
+                0 => !isPulseOrGauss && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>(),
                 1 => npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>(),
-                2 => npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>(),
+                2 => npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && !isPulseOrGauss,
                 _ => false,
             };
         }

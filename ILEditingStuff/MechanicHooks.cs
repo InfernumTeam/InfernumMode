@@ -20,38 +20,11 @@ using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI.Chat;
 using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-    /*
-    public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
-    {
-        public static void ChangeExoMechIsActiveDefinition(ILContext il)
-        {
-            ILCursor cursor = new(il);
-
-            cursor.EmitDelegate<Func<bool>>(() =>
-            {
-                if (NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
-                    return true;
-
-                if (NPC.AnyNPCs(ModContent.NPCType<AresBody>()))
-                    return true;
-
-                if (NPC.AnyNPCs(ModContent.NPCType<Artemis>()) || NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
-                    return true;
-
-                return false;
-            });
-            cursor.Emit(OpCodes.Ret);
-        }
-
-        public void Load() => ExoMechIsPresent += ChangeExoMechIsActiveDefinition;
-
-        public void Unload() => ExoMechIsPresent -= ChangeExoMechIsActiveDefinition;
-    }
-    */
     public class DrawDraedonSelectionUIWithAthena : IHookEdit
     {
         public static ExoMech? PrimaryMechToSummon
@@ -94,6 +67,18 @@ namespace InfernumMode.ILEditingStuff
                 if (!hoveringOverAnyIcon && Main.mouseLeft && Main.mouseLeftRelease)
                     PrimaryMechToSummon = DestroyerTypeToSummon = null;
 
+                var font = FontAssets.MouseText.Value;
+                string pickTwoText = "Pick two. The first mech will be fought alone. Once sufficiently damaged, the second mech will be summoned and the two will fight together.";
+                Vector2 pickToDrawPosition = baseDrawPosition - Vector2.UnitY * 250f;
+                foreach (string line in Utils.WordwrapString(pickTwoText, font, 600, 10, out _))
+                {
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    Vector2 textArea = font.MeasureString(line);
+                    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, line, pickToDrawPosition - Vector2.UnitX * textArea * 0.5f, Draedon.TextColorEdgy, 0f, textArea * new Vector2(0f, 0.5f), Vector2.One);
+                    pickToDrawPosition.Y += 50f;
+                }
                 return;
             }
 

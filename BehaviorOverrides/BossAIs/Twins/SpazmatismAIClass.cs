@@ -4,6 +4,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
@@ -132,6 +133,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
                 npc.frame.Y += frameHeight * 3;
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Having trouble dodging during the spin? Three can play at that game, Spin!";
         }
     }
 }

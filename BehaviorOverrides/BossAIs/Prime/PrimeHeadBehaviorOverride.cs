@@ -4,6 +4,7 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -699,6 +700,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer == slowdownTime)
             {
                 SoundEngine.PlaySound(Karasawa.FireSound, target.Center);
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those blue tesla mines are going to explode into gas; take cover!");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < bombCount; i++)

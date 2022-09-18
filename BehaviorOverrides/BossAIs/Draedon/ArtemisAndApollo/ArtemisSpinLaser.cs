@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             set => Projectile.ai[0] = value;
         }
 
-        public const int LaserLifetime = 90;
+        public const int LaserLifetime = 72;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => 3600f;
         public override float Lifetime => LaserLifetime;

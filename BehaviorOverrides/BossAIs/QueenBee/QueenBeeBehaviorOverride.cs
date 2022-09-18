@@ -1,8 +1,10 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -554,5 +556,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             }
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!";
+            yield return n => "Getting rid of those extra hornets should be your top priority!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "I can't Bee-lieve that, totally uncalled for!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Oof, that mustve Stung...";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

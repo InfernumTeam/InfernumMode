@@ -8,6 +8,7 @@ using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,6 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
     public class AstrumAureusBehaviorOverride : NPCBehaviorOverride
     {
+        public override int NPCOverrideType => ModContent.NPCType<AureusBoss>();
+
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+
+        #region Enumerations
         public enum AureusAttackType
         {
             SpawnActivation,
@@ -47,10 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Jump,
             Stomp
         }
+        #endregion Enumerations
 
-        public override int NPCOverrideType => ModContent.NPCType<AureusBoss>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        #region AI
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -414,6 +419,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         }
 
                         // Perform stomp effects.
+                        if (meteorSlam)
+                            HatGirl.SayThingWhileOwnerIsAlive(target, "Those meteorites fall ahead of you. Try baiting them for a little more breathing room!");
+
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int shockwaveDamage = 200;
@@ -995,6 +1003,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         #endregion Misc AI Operations
 
+        #endregion AI
+
+        #region Frames and Drawcode
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frameCounter++;
@@ -1099,5 +1110,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             return false;
         }
+        #endregion Frames and Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Stay somewhat close, otherwise you may be caught off guard!";
+        }
+        #endregion Tips
     }
 }

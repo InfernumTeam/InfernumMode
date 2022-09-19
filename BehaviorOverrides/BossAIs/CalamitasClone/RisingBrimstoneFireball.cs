@@ -52,15 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
-
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
-            int fireDamage = shouldBeBuffed ? 380 : 160;
-
+            
+            int fireDamage = 160;
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center) * 18.5f;
-            if (shouldBeBuffed)
-                shootVelocity *= 1.7f;
-
             Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
         }
 

@@ -5,6 +5,7 @@ using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -91,6 +92,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             // Reset things.
             bool shouldGoAway = ComboAttackManager.FightState == LeviAnahitaFightState.LeviathanAlone;
             bool enraged = ComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
+            if (enraged)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Home stretch! Do the same as you did before!");
+
             frameState = 0f;
             horizontalAfterimageInterpolant = 0f;
             npc.damage = 0;
@@ -191,6 +195,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LeviathanSpawner>(), 0, 0f);
                     hasSummonedLeviathan = 1f;
                 }
+
                 // Set the whoAmI variable.
                 CalamityGlobalNPC.siren = npc.whoAmI;
 
@@ -733,6 +738,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, baseColor, npc.rotation, origin, npc.scale, direction, 0f);
             return false;
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "You can weave through the clefs if you manipulate her movement well!";
+            yield return n => NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()) ? "The meteors all split in the same way; use this to your advantage!" : string.Empty;
         }
     }
 }

@@ -53,8 +53,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             NPC.target = calamitas.target;
             NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * RingRadius;
             NPC.Opacity = 1f - calamitas.Opacity;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
-
             float idealRotation = RingAngle;
             if (!Target.WithinRange(calamitas.Center, RingRadius + 60f))
             {
@@ -64,8 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 AttackTimer++;
                 if (AttackTimer >= MathHelper.Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
                 {
-                    int dartDamage = shouldBeBuffed ? 350 : 150;
-                    Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * (shouldBeBuffed ? 30f : 20f);
+                    int dartDamage = 150;
+                    Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * 21f;
                     int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
                     if (Main.projectile.IndexInRange(dart))
                     {

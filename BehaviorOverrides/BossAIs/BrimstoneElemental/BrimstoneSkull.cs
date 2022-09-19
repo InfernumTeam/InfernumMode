@@ -71,10 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180);
-            else
-                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
 
         public override void Kill(int timeLeft)
@@ -82,11 +79,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             for (int dust = 0; dust < 6; dust++)
                 Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
     }
 }

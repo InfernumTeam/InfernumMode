@@ -28,19 +28,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
-        public const float BaseDR = 0.12f;
-        public const float InvincibleDR = 0.99999f;
-        public const float RoseCircleRadius = 1279f;
-
-        public const float Phase2LifeRatio = 0.5f;
-
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
-            Phase2LifeRatio
-        };
-
-        public static bool ReadyToUseBuffedAI => false;
-
         #region Enumerations
         public enum BrimmyAttackType
         {
@@ -60,6 +47,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         #endregion
 
         #region AI
+
+        public const float BaseDR = 0.12f;
+
+        public const float InvincibleDR = 0.99999f;
+
+        public const float RoseCircleRadius = 1279f;
+
+        public const float Phase2LifeRatio = 0.5f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {
@@ -87,7 +87,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f && !BossRushEvent.BossRushActive;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -108,23 +107,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 case BrimmyAttackType.FlameTeleportBombardment:
                     npc.damage = 0;
-                    DoBehavior_FlameTeleportBombardment(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
+                    DoBehavior_FlameTeleportBombardment(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.BrimstoneRoseBurst:
                     npc.damage = npc.defDamage;
-                    DoBehavior_BrimstoneRoseBurst(npc, target, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
+                    DoBehavior_BrimstoneRoseBurst(npc, target, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.FlameChargeSkullBlasts:
                     npc.damage = 0;
-                    DoBehavior_FlameChargeSkullBlasts(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
+                    DoBehavior_FlameChargeSkullBlasts(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.GrimmBulletHellCopyLmao:
                     npc.damage = npc.defDamage;
-                    DoBehavior_CocoonBulletHell(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
+                    DoBehavior_CocoonBulletHell(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.EyeLaserbeams:
                     npc.damage = 0;
-                    DoBehavior_EyeLaserbeams(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
+                    DoBehavior_EyeLaserbeams(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
             }
 
@@ -159,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.Calamity().unbreakableDR = true;
         }
 
-        public static void DoBehavior_FlameTeleportBombardment(NPC npc, Player target, float lifeRatio, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_FlameTeleportBombardment(NPC npc, Player target, float lifeRatio, bool pissedOff, ref float attackTimer, ref float frameType)
         {
             int bombardCount = lifeRatio < Phase2LifeRatio ? 7 : 6;
             int bombardTime = 75;
@@ -172,13 +171,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float bombardCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackState = ref npc.Infernum().ExtraAI[1];
 
-            if (shouldBeBuffed)
-            {
-                bombardTime -= 35;
-                fadeOutTime = (int)(fadeOutTime * 0.6);
-                horizontalTeleportOffset *= 0.8f;
-                fireballShootRate /= 2;
-            }
             if (pissedOff)
             {
                 fadeOutTime = (int)(fadeOutTime * 0.45);
@@ -237,9 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         SoundEngine.PlaySound(SoundID.Item20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int skullDamage = shouldBeBuffed ? 310 : 125;
-                            skullDamage += (int)((1f - lifeRatio) * 35);
-
+                            int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * skullShootSpeed;
                             int skull = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
@@ -268,13 +258,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public static void DoBehavior_BrimstoneRoseBurst(NPC npc, Player target, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_BrimstoneRoseBurst(NPC npc, Player target, bool pissedOff, ref float attackTimer, ref float frameType)
         {
             // Use the flying animation.
             frameType = (int)BrimmyFrameType.TypicalFly;
 
-            int totalRosesToSpawn = shouldBeBuffed ? 14 : 10;
-            int castingAnimationTime = shouldBeBuffed ? 30 : 50;
+            int totalRosesToSpawn = 10;
+            int castingAnimationTime = 50;
             if (pissedOff || BossRushEvent.BossRushActive)
                 totalRosesToSpawn += 5;
 
@@ -302,9 +292,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
             {
                 int roseDamage = Main.rand.Next(120, 135);
-                if (DownedBossSystem.downedProvidence && ReadyToUseBuffedAI)
-                    roseDamage = (int)(roseDamage * 1.75);
-
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
                 target.Hurt(PlayerDeathReason.ByCustomReason($"{target.name} was violently pricked by roses."), roseDamage, 0);
             }
@@ -372,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public static void DoBehavior_FlameChargeSkullBlasts(NPC npc, Player target, float lifeRatio, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_FlameChargeSkullBlasts(NPC npc, Player target, float lifeRatio, bool pissedOff, ref float attackTimer, ref float frameType)
         {
             // Use the open eye fly animation.
             frameType = (int)BrimmyFrameType.OpenEye;
@@ -383,13 +370,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float burstCounter = ref npc.Infernum().ExtraAI[1];
-
-            if (shouldBeBuffed)
-            {
-                chargeTime -= 45;
-                totalBursts = 4;
-                burstRate -= 20;
-            }
 
             switch ((int)attackState)
             {
@@ -448,9 +428,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         {
                             // Release waving skulls.
                             int skullCount = (int)MathHelper.Lerp(4f, 9f, 1f - lifeRatio);
-                            int skullDamage = shouldBeBuffed ? 310 : 125;
+                            int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
                             float skullShootSpeed = 10f;
-                            skullDamage += (int)((1f - lifeRatio) * 35);
 
                             if (pissedOff)
                                 skullCount += 8;
@@ -503,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public static void DoBehavior_CocoonBulletHell(NPC npc, Player target, float lifeRatio, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_CocoonBulletHell(NPC npc, Player target, float lifeRatio, bool pissedOff, ref float attackTimer, ref float frameType)
         {
             // Use the cocoon animation.
             frameType = (int)BrimmyFrameType.ClosedShell;
@@ -512,11 +491,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             int fireReleaseRate = lifeRatio < Phase2LifeRatio ? 5 : 7;
             int bulletHellTime = 520;
             float shootSpeedFactor = 1f;
-            if (shouldBeBuffed)
-            {
-                fireReleaseRate -= 1;
-                bulletHellTime += 60;
-            }
             if (pissedOff)
                 fireReleaseRate = 2;
             if (BossRushEvent.BossRushActive)
@@ -552,7 +526,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 SoundEngine.PlaySound(SoundID.Item100, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireDamage = shouldBeBuffed ? 320 : 130;
+                    int fireDamage = 130;
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 shootDirection = Main.rand.NextVector2Unit();
@@ -583,7 +557,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public static void DoBehavior_EyeLaserbeams(NPC npc, Player target, float lifeRatio, bool pissedOff, bool shouldBeBuffed, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_EyeLaserbeams(NPC npc, Player target, float lifeRatio, bool pissedOff, ref float attackTimer, ref float frameType)
         {
             // Use the open eye fly animation.
             frameType = (int)BrimmyFrameType.OpenEye;
@@ -594,7 +568,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             int totalLaserbeamBursts = 2;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
 
-            if (pissedOff || shouldBeBuffed || BossRushEvent.BossRushActive)
+            if (pissedOff || BossRushEvent.BossRushActive)
                 hoverTime -= 25;
 
             ref float attackState = ref npc.Infernum().ExtraAI[2];
@@ -675,8 +649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         npc.velocity = Vector2.Zero;
 
-                        int laserbeamDamage = shouldBeBuffed ? 450 : 205;
-
+                        int laserbeamDamage = 215;
                         if (wrappedTime % 120f == 119f)
                         {
                             SoundEngine.PlaySound(SoundID.Item74, npc.Center);

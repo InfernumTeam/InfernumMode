@@ -1,7 +1,9 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.Leviathan;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -29,6 +31,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         }
 
         public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
+
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<Anahita>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
@@ -87,6 +91,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             bool enraged = ComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
+            if (enraged)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Home stretch! try focusing on yourself more than the boss!");
+
             Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 380f, -45f);
 
             // Do spawn animation stuff.

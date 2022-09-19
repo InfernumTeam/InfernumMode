@@ -63,7 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -75,11 +74,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             switch ((CataclysmAttackType)(int)attackType)
             {
                 case CataclysmAttackType.HorizontalCharges:
-                    DoBehavior_HorizontalCharges(npc, target, lifeRatio, otherBrotherIsPresent, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_HorizontalCharges(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
                     break;
                 case CataclysmAttackType.BrimstoneFireBurst:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, otherBrotherIsPresent, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
                     break;
             }
 
@@ -87,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return false;
         }
 
-        public static void DoBehavior_HorizontalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_HorizontalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
         {
             float horizontalChargeOffset = 450f;
             float redirectSpeed = 19f;
@@ -98,14 +97,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (otherBrotherIsPresent)
                 chargeSpeed *= 0.85f;
-
-            if (shouldBeBuffed)
-            {
-                chargeSpeed *= 1.5f;
-                redirectSpeed += 6f;
-                chargeTime -= 4;
-                chargeCount--;
-            }
 
             if (BossRushEvent.BossRushActive)
             {
@@ -137,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                         if (!otherBrotherIsPresent)
                         {
-                            int fireballDamage = shouldBeBuffed ? 340 : 145;
+                            int fireballDamage = 150;
                             for (int i = 0; i < 12; i++)
                             {
                                 Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 8f;
@@ -173,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
@@ -187,14 +178,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 hoverHorizontalOffset += 60f;
                 fireballReleaseRate += 40;
-            }
-
-            if (shouldBeBuffed)
-            {
-                attackCycleCount--;
-                fireballReleaseRate /= 2;
-                hoverSpeed += 9f;
-                fireballSpeed += 8.5f;
             }
 
             if (BossRushEvent.BossRushActive)
@@ -234,7 +217,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         int fireballCount = otherBrotherIsPresent ? 5 : 6;
                         for (int i = 0; i < fireballCount; i++)
                         {
-                            int fireballDamage = shouldBeBuffed ? 340 : 145;
+                            int fireballDamage = 150;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
                             shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.8f, 0.8f, i / (fireballCount - 1f)));
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);

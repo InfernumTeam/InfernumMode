@@ -63,7 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -76,10 +75,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 case CatastropheAttackType.BrimstoneCarpetBombing:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneCarpetBombing(npc, target, lifeRatio, otherBrotherIsPresent, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_BrimstoneCarpetBombing(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
                     break;
                 case CatastropheAttackType.VerticalCharges:
-                    DoBehavior_VerticalCharges(npc, target, lifeRatio, otherBrotherIsPresent, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_VerticalCharges(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
                     break;
             }
 
@@ -87,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return false;
         }
 
-        public static void DoBehavior_BrimstoneCarpetBombing(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_BrimstoneCarpetBombing(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
         {
             int redirectTime = 240;
             float redirectSpeed = 16f;
@@ -103,12 +102,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 carpetBombRate += 6;
                 carpetBombSpeed *= 0.75f;
-            }
-
-            if (shouldBeBuffed)
-            {
-                redirectSpeed += 7f;
-                carpetBombChargeSpeed *= 1.35f;
             }
 
             if (BossRushEvent.BossRushActive)
@@ -191,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_VerticalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_VerticalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
         {
             float verticalChargeOffset = 380f;
             float redirectSpeed = 17f;
@@ -202,14 +195,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (otherBrotherIsPresent)
                 chargeSpeed *= 0.85f;
-
-            if (shouldBeBuffed)
-            {
-                chargeSpeed *= 1.35f;
-                redirectSpeed += 6f;
-                chargeCount--;
-            }
-
+            
             if (BossRushEvent.BossRushActive)
             {
                 chargeSpeed *= 1.56f;

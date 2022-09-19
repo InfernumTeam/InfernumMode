@@ -6,7 +6,9 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -204,15 +206,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
             else
                 npc.timeLeft = 7200;
-
-            if (npc.Infernum().Arena != null)
-            {
-                Rectangle arena = npc.Infernum().Arena;
-
-                // 0 is normal. 1 is enraged.
-                EnrageState = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
-                npc.TargetClosest(false);
-            }
+            
+            Rectangle arena = npc.Infernum().Arena;
+            
+            // 0 is normal. 1 is enraged.
+            EnrageState = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
+            npc.TargetClosest(false);
 
             // Reset telegraph interpolants.
             eyeLaserRayInterpolant = 0f;
@@ -286,7 +285,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             // Create a boom as a phase transition for phase 3.
             if (Main.netMode != NetmodeID.MultiplayerClient && inPhase3 && phase3TransitionTimer < 90f)
+            {
                 phase3TransitionTimer++;
+                if (phase3TransitionTimer == 45f && HatGirlTipsManager.ShouldUseJokeText)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "You're gonna have a bad time...");
+            }
 
             // Reset things.
             npc.dontTakeDamage = true;
@@ -1621,7 +1624,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             return false;
         }
 
-        private void CreateGolemArena(NPC npc)
+        private static void CreateGolemArena(NPC npc)
         {
             DeleteGolemArena();
 
@@ -1731,6 +1734,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     }
                 }
             }
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
         }
     }
 }

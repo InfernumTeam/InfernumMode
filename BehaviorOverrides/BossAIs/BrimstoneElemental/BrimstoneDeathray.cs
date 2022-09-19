@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int petalDamage = (DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 310 : 140;
+            int petalDamage = 130;
             for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
             {
                 Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;
@@ -90,10 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Time <= 50f)
                 return;
 
-            if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 300);
-            else
-                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);
+            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);
         }
     }
 }

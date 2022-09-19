@@ -10,10 +10,10 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 using Terraria.WorldBuilding;
 using System.Collections.Generic;
 using InfernumMode.Systems;
+using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -22,18 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override int NPCOverrideType => ModContent.NPCType<CrabulonNPC>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
-        public const int MushroomStompBarrageInterval = 3;
-
-        public const float Phase2LifeRatio = 0.85f;
-
-        public const float Phase3LifeRatio = 0.45f;
-
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
-            Phase2LifeRatio,
-            Phase3LifeRatio
-        };
 
         #region Enumerations
         internal enum CrabulonAttackState
@@ -46,6 +34,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         #endregion
 
         #region AI
+
+        public const int MushroomStompBarrageInterval = 3;
+
+        public const float Phase2LifeRatio = 0.85f;
+
+        public const float Phase3LifeRatio = 0.45f;
+
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio
+        };
 
         public override bool PreAI(NPC npc)
         {

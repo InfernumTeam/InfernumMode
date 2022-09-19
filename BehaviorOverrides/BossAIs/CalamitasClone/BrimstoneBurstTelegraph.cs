@@ -47,8 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
-            int fireDamage = shouldBeBuffed ? 380 : 160;
+            int fireDamage = 160;
             Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<BrimstoneBurst>(), fireDamage, 0f);
         }
 

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -764,6 +765,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
+            if (attackTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Keep track of where the long charge stops! You might get swept up by a tidal wave!");
+
             if (attackTimer < redirectTime)
             {
                 Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(target.velocity.X / 20f * MathHelper.ToRadians(26f)) * 430f;
@@ -866,21 +870,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             }
 
             // Summon tornadoes.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
+            if (attackTimer == hoverTime - 45f)
             {
-                List<int> xSpawnPositions = new()
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Try your best to weave through the razorblades and brace youself!");
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
-                    (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
-                };
+                    List<int> horizontalSpawnPositions = new()
+                    {
+                        (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
+                        (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
+                    };
 
-                int y = Utils.Clamp((int)target.Center.Y / 16 + 95, 20, Main.maxTilesY - 20);
-                foreach (int x in xSpawnPositions)
-                {
-                    Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
-                    int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
-                    Main.projectile[tornado].ai[1] = 1f;
-                    Main.projectile[tornado].Bottom = spawnPosition;
+                    int y = Utils.Clamp((int)target.Center.Y / 16 + 95, 20, Main.maxTilesY - 20);
+                    foreach (int x in horizontalSpawnPositions)
+                    {
+                        Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
+                        int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
+                        Main.projectile[tornado].ai[1] = 1f;
+                        Main.projectile[tornado].Bottom = spawnPosition;
+                    }
                 }
             }
 

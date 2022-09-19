@@ -1643,5 +1643,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         }
 
         #endregion Drawing and Frames
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "That guy was quite a lunatic, You might want extra mobility!";
+        }
+        #endregion Tips
     }
 }

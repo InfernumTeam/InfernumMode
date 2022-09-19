@@ -38,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
+        #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -189,6 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             return false;
         }
+        #endregion AI
 
         #region Specific Behaviors
 

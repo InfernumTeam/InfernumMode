@@ -14,16 +14,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     public class HomingBrimstoneSkull : ModProjectile
     {
         public Vector2 StartingVelocity;
+
         public ref float Time => ref Projectile.ai[0];
-        public static float MaxSpeed
-        {
-            get
-            {
-                if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                    return 17f;
-                return 13f;
-            }
-        }
+
+        public static float MaxSpeed => BossRushEvent.BossRushActive ? 17f : 13f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Hellblast");
@@ -93,10 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((DownedBossSystem.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
-                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180);
-            else
-                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
 
         public override void Kill(int timeLeft)

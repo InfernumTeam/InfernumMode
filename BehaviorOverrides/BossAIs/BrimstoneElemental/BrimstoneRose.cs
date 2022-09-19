@@ -57,10 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI) || BossRushEvent.BossRushActive)
-                target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180);
-            else
-                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
 
         public override void Kill(int timeLeft)
@@ -72,9 +69,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int petalCount = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 3 : 2;
-                int petalDamage = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 325 : 145;
-                float petalShootSpeed = DownedBossSystem.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 13.5f : 10f;
+                int petalCount = 2;
+                int petalDamage = 135;
+                float petalShootSpeed = 10f;
                 if (BossRushEvent.BossRushActive)
                 {
                     petalCount = 3;

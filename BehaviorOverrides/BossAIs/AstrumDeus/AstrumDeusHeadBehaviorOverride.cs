@@ -23,6 +23,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
     public class AstrumDeusHeadBehaviorOverride : NPCBehaviorOverride
     {
+        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
+
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
+        #region Enumerations
         public enum DeusAttackType
         {
             WarpCharge,
@@ -36,15 +41,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             AstralGlobRush,
             ConstellationExplosions
         }
+        #endregion Enumerations
 
+        #region AI
         public const float Phase2LifeRatio = 0.6f;
+
         public const float Phase3LifeRatio = 0.33333f;
 
         public const float EnrageStartDistance = 4800f;
-
-        public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -1238,6 +1242,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
 
         #endregion Misc AI Operations
+
+        #endregion AI
 
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

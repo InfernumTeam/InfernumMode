@@ -12,6 +12,9 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.OldDuke;
@@ -25,7 +28,9 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Items.Relics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -197,6 +202,16 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Yharon>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
+
+            bool isExoMech = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<AresBody>();
+            if (isExoMech)
+                npcLoot.AddIf(() => ExoMechManagement.TotalMechs <= 1 && InfernumMode.CanUseCustomAIs, ModContent.ItemType<DraedonRelic>());
+
+            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
+            {
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DemonicChaliceOfInfernum>());
+            }
         }
     }
 }

@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int chargeTime = 600;
             int exoTwinShootRate = 60;
             float exoTwinsBlastShootSpeed = 13f;
-            float thanatosFlySpeedFactor = 1.15f;
+            float thanatosFlySpeedFactor = 1.1f;
 
             // Halt attacking if Artemis and Apollo are busy entering their second phase.
             if (ExoTwinsAreEnteringSecondPhase)
@@ -53,13 +53,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
             if (ExoTwinsAreInSecondPhase)
             {
-                thanatosFlySpeedFactor += 0.07f;
+                thanatosFlySpeedFactor += 0.04f;
                 exoTwinShootRate -= 8;
 
                 bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 0;
                 if (twinsInSecondPhase || CurrentThanatosPhase != 4)
                 {
-                    thanatosFlySpeedFactor += 0.07f;
+                    thanatosFlySpeedFactor += 0.045f;
                     exoTwinShootRate -= 12;
                 }
             }
@@ -296,7 +296,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     frameType += 60f;
             }
 
-            return attackTimer >= laserbeamTelegraphTime + laserbeamSweepTime;
+            if (attackTimer >= laserbeamTelegraphTime + laserbeamSweepTime)
+            {
+                artemisHasRepositioned = 0f;
+                return true;
+            }
+
+            return false;
         }
     }
 }

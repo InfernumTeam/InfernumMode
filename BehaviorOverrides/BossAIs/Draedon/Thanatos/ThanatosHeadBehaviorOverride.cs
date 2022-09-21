@@ -952,9 +952,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             else
             {
                 if (ExoMechManagement.CurrentThanatosPhase <= 2)
-                    generalSpeedFactor *= 1.1f;
+                    generalSpeedFactor *= 1.08f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    generalSpeedFactor *= 1.15f;
+                    generalSpeedFactor *= 1.1f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
                     generalSpeedFactor *= 1.1f;

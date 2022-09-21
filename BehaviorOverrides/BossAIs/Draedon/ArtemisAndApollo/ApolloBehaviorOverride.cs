@@ -965,7 +965,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             int shootDelay = 64;
             float spinRadius = 640f;
-            float spinArc = MathHelper.Pi * 1.23f;
+            float spinArc = MathHelper.Pi * 1.1f;
 
             npc.dontTakeDamage = false;
 

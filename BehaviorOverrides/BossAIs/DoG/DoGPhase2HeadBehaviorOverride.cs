@@ -220,16 +220,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.netUpdate = true;
             }
 
-            // Don't take damage when fading out.
+            // Don't take damage when fading out or in the middle of a damage cooldown.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
             npc.damage = npc.dontTakeDamage ? 0 : 1100;
+            npc.Calamity().DR = 0.2f;
             if (damageImmunityCountdown > 0f)
             {
+                npc.Calamity().DR = 0.9999999f;
+                npc.Calamity().unbreakableDR = true;
                 npc.dontTakeDamage = true;
                 damageImmunityCountdown--;
             }
-
-            npc.Calamity().DR = 0.2f;
             
             // Stay in the world.
             if (SurprisePortalAttackState == PerpendicularPortalAttackState.NotPerformingAttack)

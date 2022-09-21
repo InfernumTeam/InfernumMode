@@ -999,7 +999,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Move towards the center of the arena when not firing the lasers.
             if (attackTimer < laserShootDelay - 30f)
-                npc.Center = npc.Center.MoveTowards(target.Center, 7.5f);
+            {
+                float flySpeed = 7.5f;
+                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    flySpeed *= 2.3f;
+
+                npc.Center = npc.Center.MoveTowards(target.Center, flySpeed);
+            }
 
             // Initialize the laser offset angle on the first frame.
             if (attackTimer == 1f)

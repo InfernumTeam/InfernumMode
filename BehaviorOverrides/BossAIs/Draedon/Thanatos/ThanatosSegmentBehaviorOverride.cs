@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
                 // Emit smoke.
-                npc.takenDamageMultiplier = 196f;
+                npc.takenDamageMultiplier = 242f;
                 if (npc.Opacity > 0.6f)
                 {
                     if (npc.type == ModContent.NPCType<ThanatosBody1>())

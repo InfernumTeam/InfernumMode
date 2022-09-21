@@ -11,6 +11,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
 	public class QueenSlimeCrown : ModProjectile
     {
+        public int DefaultDamage;
+
         public ref float Time => ref Projectile.ai[0];
 
         public ref float ChargeGlowTelegraphInterpolant => ref Projectile.localAI[0];
@@ -45,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
             // Reset damage and the charge glow interpolant.
             ChargeGlowTelegraphInterpolant = 0f;
-            if (Projectile.Calamity().defDamage == 0)
-                Projectile.Calamity().defDamage = Projectile.damage;
+            if (DefaultDamage == 0)
+                DefaultDamage = Projectile.damage;
 
             Projectile.damage = 0;
             NPC queenSlime = Main.npc[queenSlimeIndex];
@@ -128,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     Time = 0f;
                     Projectile.netUpdate = true;
                 }
-                Projectile.damage = Projectile.Calamity().defDamage;
+                Projectile.damage = DefaultDamage;
             }
         }
 

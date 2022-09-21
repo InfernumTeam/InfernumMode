@@ -14,6 +14,8 @@ float2 uImageSize0;
 float2 uImageSize1;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
+float uCoordinateZoom;
+float uTimeFactor;
 bool useOutline;
 
 struct VertexShaderInput
@@ -49,16 +51,16 @@ float InverseLerp(float x, float min, float max)
 
 float4 StarColorFunction(float2 coords)
 {
-    float4 c1 = tex2D(uImage1, coords + float2(sin(uTime * 0.12) * 0.5, uTime * 0.03));
-    float4 c2 = tex2D(uImage1, coords + float2(uTime * -0.019, sin(uTime * -0.09 + 0.754) * 0.6));
+    float timeFactor = uTimeFactor + 1;
+    float4 c1 = tex2D(uImage1, coords + float2(sin(uTime * timeFactor * 0.12) * 0.5, uTime * timeFactor * 0.03));
+    float4 c2 = tex2D(uImage1, coords + float2(uTime * timeFactor * -0.019, sin(uTime * timeFactor * -0.09 + 0.754) * 0.6));
     return pow(c1 + c2, 2.6);
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float2 coords = input.TextureCoordinates;
-    float3 from = float3(uTime * 0.01 + 1, uTime * 0.03 + 0.5, 0.5);
-    float4 color = StarColorFunction(coords * float2(1, 0.1)) * input.Color;
+    float4 color = StarColorFunction(coords * float2(1, 0.1) * (uCoordinateZoom + 1)) * input.Color;
     
     float bloomPulse = sin(uTime * 7.1 - coords.x * 12.55) * 0.5 + 0.5;
     float opacity = pow(sin(3.141 * coords.y), 4 - bloomPulse * 2);
@@ -69,7 +71,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (useOutline)
         color *= (pow(1 - sin(3.141 * coords.y), 9) * 35000) + 1;
     
-    return color * opacity * 1.6;
+    return color * opacity * (uSaturation + 1) * 1.6;
 }
 
 technique Technique1

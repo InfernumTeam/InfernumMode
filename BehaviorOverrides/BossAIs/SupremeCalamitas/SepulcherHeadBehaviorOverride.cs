@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -20,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             AttackDelay,
             ErraticCharges,
             PerpendicularBoneCharges,
-            SoulBarrages
+            SoulBombBursts
         }
 
         public const int MinLength = 39;
@@ -62,6 +63,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedSegments = ref npc.Infernum().ExtraAI[5];
 
+            // Don't get stopped by weird freezing debuffs.
+            npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
+            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
+            npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
+            npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedSegments == 0f)
             {
                 SummonSegments(npc);
@@ -90,8 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SepulcherAttackType.PerpendicularBoneCharges:
                     DoBehavior_PerpendicularBoneCharges(npc, target, ref attackTimer);
                     break;
-                case SepulcherAttackType.SoulBarrages:
-                    DoBehavior_SoulBarrages(npc, target, ref attackTimer);
+                case SepulcherAttackType.SoulBombBursts:
+                    DoBehavior_SoulBombBursts(npc, target, ref attackTimer);
                     break;
             }
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -171,9 +178,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int chargeTime = 40;
             int chargeCount = 3;
-            int boneReleaseRate = 3;
+            int boneReleaseRate = 4;
             int chargeRedirectTime = 10;
-            float chargeSpeed = 39.5f;
+            float chargeSpeed = 36.5f;
             
             if (SupremeCalamitasBehaviorOverride.Enraged)
                 chargeSpeed = 78f;
@@ -223,8 +230,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.NPCHit2, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 leftVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-MathHelper.PiOver2) * 5f;
-                    Vector2 rightVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 5f;
+                    Vector2 leftVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-MathHelper.PiOver2) * 4f;
+                    Vector2 rightVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 4f;
                     Utilities.NewProjectileBetter(npc.Center, leftVelocity, ModContent.ProjectileType<SepulcherBone>(), 500, 0f);
                     Utilities.NewProjectileBetter(npc.Center, rightVelocity, ModContent.ProjectileType<SepulcherBone>(), 500, 0f);
                 }
@@ -242,38 +249,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_SoulBarrages(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SoulBombBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int soulReleaseDelay = 105;
-            int soulReleaseRate = 8;
-            int soulShootTime = 420;
-            int attackTransitionDelay = 96;
-
-            if (SupremeCalamitasBehaviorOverride.Enraged)
-                soulReleaseRate = 2;
+            int bombID = ModContent.ProjectileType<SepulcherSoulBomb>();
+            int bombHoverTime = 75;
+            int bombExplodeDelay = 48;
+            int bombReleaseRate = 172;
+            int bombLaunchCount = 3;
+            bool bombExists = Utilities.AnyProjectiles(bombID);
+            float wrappedAttackTimer = attackTimer % bombReleaseRate;
+            float bombFlySpeed = 23f;
+            ref float bombLaunchCounter = ref npc.Infernum().ExtraAI[0];
 
             // Slowly approach the target.
-            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 14f;
-            npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.037f);
-            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
-
-            if (attackTimer < soulReleaseDelay)
-                return;
-
-            if (attackTimer < soulReleaseDelay + soulShootTime &&
-                attackTimer % (int)(soulShootTime * 0.5f) > soulShootTime * 0.25f &&
-                attackTimer % soulReleaseRate == soulReleaseRate - 1f)
+            if (wrappedAttackTimer < bombHoverTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath52, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.037f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
+            }
+
+            // Create the bomb.
+            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 1f && !bombExists)
+            {
+                if (bombLaunchCounter < bombLaunchCount)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, bombID, 0, 0f);
+                else
                 {
-                    Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.73f) * Main.rand.NextFloat(8f, 17f);
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<RedirectingLostSoulProj>(), 500, 0f);
+                    SelectNextAttack(npc);
+                    return;
                 }
             }
 
-            if (attackTimer >= soulReleaseDelay + soulShootTime + attackTransitionDelay)
-                SelectNextAttack(npc);
+            // Launch the bomb.
+            if (wrappedAttackTimer == bombHoverTime)
+            {
+                foreach (Projectile bomb in Utilities.AllProjectilesByID(bombID))
+                {
+                    bomb.ModProjectile<SepulcherSoulBomb>().ExplodeCountdown = bombExplodeDelay;
+                    bomb.velocity = npc.SafeDirectionTo(target.Center) * bombFlySpeed;
+                    bomb.netUpdate = true;
+                }
+                bombLaunchCounter++;
+                npc.netUpdate = true;
+            }
         }
 
         public static void SummonSegments(NPC npc)
@@ -347,9 +366,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.ai[1] = (int)SepulcherAttackType.PerpendicularBoneCharges;
                     break;
                 case SepulcherAttackType.PerpendicularBoneCharges:
-                    npc.ai[1] = (int)SepulcherAttackType.SoulBarrages;
+                    npc.ai[1] = (int)SepulcherAttackType.SoulBombBursts;
                     break;
-                case SepulcherAttackType.SoulBarrages:
+                case SepulcherAttackType.SoulBombBursts:
                     npc.ai[1] = (int)SepulcherAttackType.ErraticCharges;
                     break;
             }

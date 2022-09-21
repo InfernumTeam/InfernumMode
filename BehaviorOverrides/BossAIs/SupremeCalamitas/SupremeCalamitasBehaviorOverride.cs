@@ -153,6 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static SCalAttackType[] Phase2AttackCycle => new SCalAttackType[]
         {
+            SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HellblastBarrage,
             SCalAttackType.BrimstoneJewelBeam,
@@ -165,9 +166,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.ExplosiveCharges,
+            SCalAttackType.HellblastBarrage,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HorizontalDarkSoulRelease,
+            SCalAttackType.HellblastBarrage,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.SummonSuicideBomberDemons,
         };
@@ -1524,7 +1527,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int chargeupTime = 75;
             int vigilanceSpinTime = 36;
             int seekerSummonCount = 24;
-            int seekerSummonRate = 8;
+            int seekerSummonRate = 5;
             int seekerSummonTime = seekerSummonRate * seekerSummonCount;
             float fanCompletionInterpolant = Utils.GetLerpValue(0f, seekerSummonTime, attackTimer - chargeupTime, true);
             ref float vigilanceIndex = ref npc.Infernum().ExtraAI[0];
@@ -1774,10 +1777,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float flamePillarHorizontalStep = 300f;
 
             int bulletHellDuration = 1200;
-            int bulletHellBombShootRate = 65;
+            int bulletHellBombShootRate = 90;
             int bulletHellSkullShootRate = 23;
-            int bulletHellHellblastShootRate = 13;
-            int bulletHellGigablastShootRate = 270;
+            int bulletHellHellblastShootRate = 12;
+            int bulletHellGigablastShootRate = 240;
             float bulletHellBombExplosionRadius = 1075f;
             float bulletHellHellblastSpeed = 4f;
 
@@ -1897,7 +1900,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Shoot exploding bombs.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellBombShootRate == bulletHellBombShootRate - 1f)
                 {
-                    Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 30f) * 17f;
+                    Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 16f) * 17f;
                     int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 500, 0f);
                     if (Main.projectile.IndexInRange(bomb))
                     {

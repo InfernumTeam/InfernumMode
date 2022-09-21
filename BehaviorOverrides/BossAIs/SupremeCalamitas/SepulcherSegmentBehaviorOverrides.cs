@@ -66,7 +66,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.defense = 20;
 
             npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
-            
+            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
+            npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
+            npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.04f);

@@ -265,6 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ApolloFlamethrower>(),
                 ModContent.ProjectileType<ApolloPlasmaFireball>(),
                 ModContent.ProjectileType<ApolloRocket>(),
+                ModContent.ProjectileType<ApolloRocketInfernum>(),
                 ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(),
                 ModContent.ProjectileType<AresBeamExplosion>(),
                 ModContent.ProjectileType<AresCannonLaser>(),

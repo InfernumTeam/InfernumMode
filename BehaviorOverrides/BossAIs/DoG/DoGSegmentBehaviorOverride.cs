@@ -43,6 +43,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return;
             }
 
+            if (head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.DamageImmunityCountdownIndex] > 0f)
+            {
+                npc.Calamity().DR = 0.9999999f;
+                npc.Calamity().unbreakableDR = true;
+            }
+
             // FUCK YOU stupid debuffs! GO FUCK YOURSELF!
             KillUnbalancedDebuffs(npc);
 

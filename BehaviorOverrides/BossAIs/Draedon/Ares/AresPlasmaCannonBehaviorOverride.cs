@@ -148,8 +148,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
-            // Fire plasma.
-            if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
+            // Fire plasma. This has a delay before firing, unlike the other cannons, to start a bit later than the tesla cannon, as was requested by testers.
+            if (attackTimer >= chargeDelay && (int)(attackTimer + shootRate * 0.7f) % shootRate == shootRate - 1f)
             {
                 SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
 

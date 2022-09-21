@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
 using Terraria.Chat;
@@ -214,6 +215,41 @@ namespace InfernumMode
                 Main.NewText(text, color ?? Color.White);
             else if (Main.netMode == NetmodeID.Server)
                 ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
+        }
+
+        public static void GetCircleVertices(int sideCount, float radius, Vector2 center, out List<short> triangleIndices, out List<PrimitiveTrailCopy.VertexPosition2DColor> vertices)
+        {
+            vertices = new();
+            triangleIndices = new();
+
+            // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
+            float sideAngle = MathHelper.TwoPi / sideCount;
+            float sideLength = (float)Math.Sqrt(2D - Math.Cos(sideAngle) * 2D) * radius;
+
+            // Calculate vertices by approximating a circle with a bunch of triangles.
+            for (int i = 0; i < sideCount; i++)
+            {
+                float completionRatio = i / (float)(sideCount - 1f);
+                float nextCompletionRatio = (i + 1) / (float)(sideCount - 1f);
+                Vector2 orthogonal = (MathHelper.TwoPi * completionRatio + MathHelper.PiOver2).ToRotationVector2();
+                Vector2 radiusOffset = (MathHelper.TwoPi * completionRatio).ToRotationVector2() * radius;
+                Vector2 leftEdgeInner = center;
+                Vector2 rightEdgeInner = center;
+                Vector2 leftEdge = leftEdgeInner + radiusOffset + orthogonal * sideLength * -0.5f;
+                Vector2 rightEdge = rightEdgeInner + radiusOffset + orthogonal * sideLength * 0.5f;
+
+                vertices.Add(new(leftEdge - Main.screenPosition, Color.White, new(completionRatio, 1f)));
+                vertices.Add(new(rightEdge - Main.screenPosition, Color.White, new(nextCompletionRatio, 1f)));
+                vertices.Add(new(rightEdgeInner - Main.screenPosition, Color.White, new(nextCompletionRatio, 0f)));
+                vertices.Add(new(leftEdgeInner - Main.screenPosition, Color.White, new(completionRatio, 0f)));
+
+                triangleIndices.Add((short)(i * 4));
+                triangleIndices.Add((short)(i * 4 + 1));
+                triangleIndices.Add((short)(i * 4 + 2));
+                triangleIndices.Add((short)(i * 4));
+                triangleIndices.Add((short)(i * 4 + 2));
+                triangleIndices.Add((short)(i * 4 + 3));
+            }
         }
 
         public static string InfernalRelicText

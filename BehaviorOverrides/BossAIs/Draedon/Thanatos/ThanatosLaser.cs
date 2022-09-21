@@ -112,6 +112,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Projectile.spriteDirection = 1;
                     Projectile.rotation = Projectile.velocity.ToRotation();
                 }
+
+                if (Projectile.velocity.Length() < 19f && TelegraphDelay > TelegraphTotalTime + 60f)
+                    Projectile.velocity *= 1.01f;
             }
             else if (Destination == Vector2.Zero)
             {
@@ -172,11 +175,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             if (TelegraphDelay > TelegraphTotalTime)
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 180);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

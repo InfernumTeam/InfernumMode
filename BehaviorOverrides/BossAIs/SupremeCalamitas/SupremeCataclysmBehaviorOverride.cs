@@ -266,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Increment the attack timer.
-            attackSpecificTimer += isCataclysm ? 8f : 3f;
+            attackSpecificTimer += isCataclysm ? 4.75f : 3f;
 
             float hoverOffsetDirection = isCataclysm.ToDirectionInt() * ((int)(attackTimer / attackCycleTime) % 2 == 0).ToDirectionInt();
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 550f, isCataclysm.ToInt() * -255f);

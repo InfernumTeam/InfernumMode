@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,6 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     public class YharonHeatFlashFireball : ModProjectile
     {
         public const int Lifetime = 720;
+        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
@@ -33,6 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.timeLeft < Lifetime - 30;
+
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {

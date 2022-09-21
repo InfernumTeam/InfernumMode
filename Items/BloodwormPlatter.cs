@@ -28,7 +28,6 @@ namespace InfernumMode.Items
             Item.useTime = 40;
             Item.useStyle = ItemUseStyleID.EatFood;
             Item.consumable = false;
-            Item.Calamity().customRarity = CalamityRarity.PureGreen;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<OldDuke>()) && player.Calamity().ZoneSulphur;

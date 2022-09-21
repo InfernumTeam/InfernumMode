@@ -469,11 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 chargeTime -= 4;
                 chargeSpeed += 4f;
             }
-
-            // Have a bit longer of a delay for the first charge.
-            if (attackTimer < hoverTime + chargeTime)
-                hoverTime += 35;
-
+            
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
             // Hover above the target before slowing down in anticipation of the charge.
@@ -591,7 +587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (attackTimer < shootDelay)
             {
                 if (Utilities.AnyProjectiles(ModContent.ProjectileType<AresSpinningDeathBeam>()))
-                    attackTimer = shootDelay + telegraphTime + spinTime + repositionTime;
+                    attackTimer = shootDelay + 2f;
                 else
                     return;
             }

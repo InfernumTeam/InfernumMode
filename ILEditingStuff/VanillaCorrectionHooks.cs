@@ -99,11 +99,19 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => PlaceHellLab -= SlideOverHellLab;
     }
 
-    public class GetRidOfYharonOnHitDebuffHook : IHookEdit
+    public class GetRidOfOnHitDebuffsHook : IHookEdit
     {
-        public void Load() => YharonOnHitPlayer += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        public void Load()
+        {
+            YharonOnHitPlayer += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+            SCalOnHitPlayer += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        }
 
-        public void Unload() => YharonOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        public void Unload()
+        {
+            YharonOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+            SCalOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        }
     }
 
     public class GetRidOfProvidenceLootBoxHook : IHookEdit

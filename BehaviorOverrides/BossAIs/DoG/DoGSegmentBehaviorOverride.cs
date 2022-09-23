@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return;
             }
 
-            if (head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.DamageImmunityCountdownIndex] > 0f)
+            if (head.Infernum().ExtraAI[DamageImmunityCountdownIndex] > 0f)
             {
                 npc.Calamity().DR = 0.9999999f;
                 npc.Calamity().unbreakableDR = true;

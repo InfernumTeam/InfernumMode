@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DemonicBomb : ModProjectile
     {
-        public float ExplosionRadius => Projectile.ai[0];
+        public bool ExplodeIntoDarts;
+
+        public ref float ExplosionRadius => ref Projectile.ai[0];
 
         public override void SetStaticDefaults()
         {
@@ -76,6 +79,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 660, 0f);
                 if (Main.projectile.IndexInRange(explosion))
                     Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = ExplosionRadius * 0.7f;
+                if (ExplodeIntoDarts)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Vector2 dartVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 7.4f;
+                        Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                    }
+                }
             }
 
             // Do some some mild screen-shake effects to accomodate the explosion.

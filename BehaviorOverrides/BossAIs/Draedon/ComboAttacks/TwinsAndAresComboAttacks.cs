@@ -72,6 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
         public static bool DoBehavior_AresTwins_DualLaserCharges(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
             int laserBurstCount = 1;
+            int aresLaserbeamCount = 2;
             int redirectTime = 195;
             int chargeupTime = 40;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;
@@ -88,6 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 0;
             if (twinsInSecondPhase || CurrentAresPhase != 4)
             {
+                aresLaserbeamCount++;
                 apolloChargeSpeed += 5f;
                 artemisLaserReleaseRate -= 12;
             }
@@ -415,9 +417,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     int type = ModContent.ProjectileType<AresBeamTelegraph>();
                     for (int b = 0; b < 7; b++)
                     {
-                        for (int i = 0; i < 2; i++)
+                        for (int i = 0; i < aresLaserbeamCount; i++)
                         {
                             int beam = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
+                            float offsetAngle = MathHelper.PiOver2 + MathHelper.TwoPi * i / aresLaserbeamCount;
 
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
                             if (Main.projectile.IndexInRange(beam))
@@ -425,7 +428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 float squishedRatio = (float)Math.Pow((float)Math.Sin(MathHelper.Pi * b / 7f), 2D);
                                 float smoothenedRatio = MathHelper.SmoothStep(0f, 1f, squishedRatio);
                                 Main.projectile[beam].ai[0] = npc.whoAmI;
-                                Main.projectile[beam].localAI[0] = i == 0f ? MathHelper.PiOver2 : MathHelper.Pi * 1.5f;
+                                Main.projectile[beam].localAI[0] = offsetAngle;
                                 Main.projectile[beam].ai[1] = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + Main.projectile[beam].localAI[0];
                             }
                         }
@@ -441,12 +444,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         laserDirection = Main.rand.NextBool().ToDirectionInt();
 
                         int type = ModContent.ProjectileType<AresSpinningRedDeathray>();
-                        int beam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, type, PowerfulShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(beam))
-                            Main.projectile[beam].ai[1] = npc.whoAmI;
-                        beam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, type, PowerfulShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(beam))
-                            Main.projectile[beam].ai[1] = npc.whoAmI;
+                        for (int i = 0; i < aresLaserbeamCount; i++)
+                        {
+                            int beam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f);
+                            if (Main.projectile.IndexInRange(beam))
+                                Main.projectile[beam].ai[1] = npc.whoAmI;
+                        }
+                        
                         npc.netUpdate = true;
                     }
                 }

@@ -448,7 +448,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void DoBehavior_HoverCharge(NPC npc, Player target, ref float attackTimer)
         {
             int chargeCount = 7;
-            int hoverTime = 35;
+            int hoverTime = 54;
             int chargeTime = 28;
             int contactDamage = AresChargeContactDamage;
             float hoverSpeed = 65f;
@@ -801,15 +801,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Opacity <= 0f)
                 return true;
 
-            // Rotate arm usability is as follows (This only applies before phase 5):
+            // Rotate arm usability is as follows (This only applies after phase 2):
             // Pulse Cannon, Laser Cannon, and Tesla Cannon,
             // Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
             // Tesla Cannon, Plasma Flamethrower, and Pulse Cannon
+            // Photon rippers are completely exempt from this.
+
+            // Rotate arm usability is as follows (This only applies before phase 2):
+            // Pulse Cannon, Laser Cannon,
+            // Laser Cannon, Tesla Cannon,
+            // Tesla Cannon, Plasma Flamethrower,
+            // Plasma Flamethrower, Pulse Cannon,
             // Photon rippers are completely exempt from this.
             if (npc.type == ModContent.NPCType<PhotonRipperNPC>())
                 return false;
 
             bool isPulseOrGauss = npc.type == ModContent.NPCType<AresPulseCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>();
+            if (ExoMechManagement.CurrentAresPhase <= 2)
+            {
+                return ((int)aresBody.Infernum().ExtraAI[5] % 4) switch
+                {
+                    0 => !isPulseOrGauss && npc.type != ModContent.NPCType<AresLaserCannon>(),
+                    1 => npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>(),
+                    2 => npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>(),
+                    3 => npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && !isPulseOrGauss,
+                    _ => false,
+                };
+            }
+
             return ((int)aresBody.Infernum().ExtraAI[5] % 3) switch
             {
                 0 => !isPulseOrGauss && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>(),

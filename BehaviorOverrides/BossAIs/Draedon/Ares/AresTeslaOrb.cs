@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void AI()
         {
             if (Projectile.velocity.Length() < 26f)
-                Projectile.velocity *= 1.01f;
+                Projectile.velocity *= 1.0065f;
 
             Projectile.Opacity = Utils.GetLerpValue(125f, 120f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 15f, Projectile.timeLeft, true);
 

@@ -228,7 +228,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 npc.Calamity().DR = 0.9999999f;
                 npc.Calamity().unbreakableDR = true;
-                npc.dontTakeDamage = true;
                 damageImmunityCountdown--;
             }
             
@@ -842,10 +841,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Vector2 laserVelocityLeft = Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
                         Vector2 laserVelocityRight = -Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
 
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 455, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 400, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
-                        laser = Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 455, 0f);
+                        laser = Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 400, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }
@@ -855,7 +854,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, 1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = -Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 455, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }
@@ -865,7 +864,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, -1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 455, 0f);
+                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }
@@ -896,7 +895,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Transform into the antimatter form.
             FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
 
-            int fireballCount = 20;
+            int fireballCount = 17;
             int idealPortalTelegraphTime = 48;
             float wrappedAttackTimer = attackTimer % 135f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -995,10 +994,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < fireballCount; i++)
                     {
                         Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 13f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 415, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 380, 0f);
 
                         flameShootVelocity = flameShootVelocity.RotatedBy(MathHelper.Pi / fireballCount) * 0.5f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 415, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 380, 0f);
                     }
 
                     // Create the portal to go through.
@@ -1139,7 +1138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                         // Go to the next state.
                         perpendicularPortalAttackTimer = 0f;
-                        damageImmunityCountdown = 150f;
+                        damageImmunityCountdown = 90f;
                         SurprisePortalAttackState = PerpendicularPortalAttackState.AttackEndDelay;
                     }
 
@@ -1223,7 +1222,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     specialAttackPortalIndex = -1f;
                     performingSpecialAttack = 0f;
                     specialAttackTimer = 0f;
-                    damageImmunityCountdown = 120f;
+                    damageImmunityCountdown = 60f;
                     npc.Infernum().ExtraAI[PreviousSpecialAttackTypeIndex] = npc.Infernum().ExtraAI[SpecialAttackTypeIndex];
                     DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
                 }

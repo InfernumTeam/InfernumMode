@@ -233,6 +233,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float chargeCounter = ref scal.Infernum().ExtraAI[0];
             ref float attackSubstate = ref scal.Infernum().ExtraAI[1];
 
+            if (chargeCounter == 0f)
+                hoverTime += 180;
+
             // Briefly hover into position.
             if (attackSubstate == 0f)
             {
@@ -242,7 +245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 NPC.velocity = Vector2.Lerp(NPC.velocity, idealVelocity, 0.12f);
 
                 // Charge and release a shadow gigablast if close to the destination or enough time has passed.
-                if (attackTimer >= hoverTime || NPC.WithinRange(hoverDestination, 75f))
+                if (attackTimer >= hoverTime || (NPC.WithinRange(hoverDestination, 75f) && chargeCounter >= 1f))
                 {
                     attackTimer = 0f;
                     attackSubstate = 1f;

@@ -5,6 +5,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -115,11 +116,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.active = false;
                 return;
             }
+
+            float mouthOffset = (float)Math.Pow(Radius / MaxRadius, 2.3) * MaxRadius * 0.92f + 45f;
             NPC sepulcher = Main.npc[sepulcherIndex];
-            Projectile.Center = sepulcher.Center + sepulcher.velocity.SafeNormalize((sepulcher.rotation - MathHelper.PiOver2).ToRotationVector2()) * (Radius * 0.92f + 45f);
+            Projectile.Center = sepulcher.Center + sepulcher.velocity.SafeNormalize((sepulcher.rotation - MathHelper.PiOver2).ToRotationVector2()) * mouthOffset;
+
+            // Create charge-up particles.
+            if (Radius < MaxRadius * 0.98f)
+            {
+                Vector2 magicVelocity = sepulcher.SafeDirectionTo(Projectile.Center).RotatedByRandom(0.7f) * Main.rand.NextFloat(3f, 14f);
+                var brimstoneMagic = new SquishyLightParticle(sepulcher.Center, magicVelocity, 1.6f, Color.Red, 70, 1f, 1.65f);
+                GeneralParticleHandler.SpawnParticle(brimstoneMagic);
+            }
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(targetHitbox.Center.ToVector2(), projHitbox, Radius * 0.8f);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(targetHitbox.Center.ToVector2(), projHitbox, Radius * 0.72f);
+
+        public override bool? CanDamage() => ExplodeCountdown > 0 ? null : false;
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {

@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -54,9 +55,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(InfernumMode.CalamityMod.Find<ModBuff>("GodSlayerInferno").Type, 300);
-            target.AddBuff(BuffID.Frostburn, 300, true);
-            target.AddBuff(BuffID.Darkness, 300, true);
+            target.AddBuff(ModContent.BuffType<GodSlayerInferno>(), 90);
+            target.AddBuff(BuffID.Frostburn, 90, true);
+            target.AddBuff(BuffID.Darkness, 90, true);
         }
         
         public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);

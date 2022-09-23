@@ -16,7 +16,6 @@ namespace InfernumMode.Tiles
 
         public override void SetStaticDefaults()
         {
-            ItemDrop = ModContent.ItemType<DemonicChaliceOfInfernum>();
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
@@ -32,6 +31,11 @@ namespace InfernumMode.Tiles
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(106, 46, 96));
+        }
+
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<DemonicChaliceOfInfernum>());
         }
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)

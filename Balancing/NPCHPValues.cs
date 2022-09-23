@@ -98,7 +98,7 @@ namespace InfernumMode.Balancing
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 104000,
             [NPCID.AncientCultistSquidhead] = BossRushEvent.BossRushActive ? -1 : 9020,
             [NPCID.CultistDragonHead] = BossRushEvent.BossRushActive ? -1 : 36500,
-            [ModContent.NPCType<AstrumDeusHead>()] = BossRushEvent.BossRushActive ? 930000 : 192000,
+            [ModContent.NPCType<AstrumDeusHead>()] = BossRushEvent.BossRushActive ? 930000 : 287000,
             [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 50000,
             [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 281110 : 61000,
             [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 510000 : 135000,

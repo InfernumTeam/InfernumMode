@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas.SepulcherHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -13,9 +14,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
 
         public override void SetDefaults(NPC npc) => DoSetDefaults(npc);
+
+        public override bool PreAI(NPC npc) => DoAI(npc);
 
         public static void DoSetDefaults(NPC npc)
         {
@@ -55,6 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.active = false;
                 npc.netUpdate = true;
             }
+            NPC head = Main.npc[npc.realLife];
             
             // Inherit various attributes from the ahead segment.
             // This code will go upstream across every segment, until it reaches the head.
@@ -79,6 +83,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
+
+            // Disable dart spreads from the energy balls if Sepulcher is creating soul bombs.
+            var attackType = (SepulcherAttackType)head.ai[1];
+            if (npc.type == ModContent.NPCType<SepulcherBodyEnergyBall>() && (attackType == SepulcherAttackType.SoulBombBursts || attackType == SepulcherAttackType.ErraticCharges))
+                npc.ModNPC<SepulcherBodyEnergyBall>().AttackTimer = 0f;
+
             return false;
         }
     }
@@ -87,17 +97,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherBodyEnergyBall>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
 
         public override void SetDefaults(NPC npc) => SepulcherBody1BehaviorOverride.DoSetDefaults(npc);
+
+        public override bool PreAI(NPC npc) => SepulcherBody1BehaviorOverride.DoAI(npc);
     }
 
     public class SepulcherTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherTail>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
 
         public override void SetDefaults(NPC npc) => SepulcherBody1BehaviorOverride.DoSetDefaults(npc);
+
+        public override bool PreAI(NPC npc) => SepulcherBody1BehaviorOverride.DoAI(npc);
     }
 }

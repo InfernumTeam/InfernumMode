@@ -31,10 +31,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft == 22f)
             {
                 Vector2 sliceSpawnPosition = Projectile.Center - Projectile.ai[0].ToRotationVector2() * 3900f;
-                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * 6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
+                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * 6f, ModContent.ProjectileType<EssenceSlice>(), 380, 0f);
 
                 sliceSpawnPosition = Projectile.Center + Projectile.ai[0].ToRotationVector2() * 3900f;
-                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * -6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
+                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * -6f, ModContent.ProjectileType<EssenceSlice>(), 380, 0f);
             }
 
             if (Projectile.timeLeft < 22f)

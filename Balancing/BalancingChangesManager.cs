@@ -5,7 +5,9 @@ using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
@@ -65,6 +67,7 @@ namespace InfernumMode.Balancing
             float sepulcherPierceResistFactor = 0.375f;
 
             var sepulcherProjResists1 = new ProjectileResistBalancingRule(0.3f, ProjectileType<DragonRageStaff>(), ProjectileType<DragonRageFireball>(), ProjectileType<MurasamaSlash>());
+            var sepulcherProjResists2 = new ProjectileResistBalancingRule(0.2f, ProjectileType<ChickenExplosion>());
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {
@@ -154,6 +157,8 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<AresTeslaCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresGaussNuke>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<Artemis>(), Do(new ProjectileResistBalancingRule(0.75f, ProjectileType<ChickenExplosion>()))),
+                new NPCBalancingChange(NPCType<Apollo>(), Do(new ProjectileResistBalancingRule(0.75f, ProjectileType<ChickenExplosion>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),
@@ -166,6 +171,8 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
                 new NPCBalancingChange(NPCType<SepulcherBody>(), Do(sepulcherProjResists1)),
                 new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(sepulcherProjResists1)),
+                new NPCBalancingChange(NPCType<SepulcherBody>(), Do(sepulcherProjResists2)),
+                new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(sepulcherProjResists2)),
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
             };
         }

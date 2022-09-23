@@ -138,6 +138,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(Yharon).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator SCalOnHitPlayer
+        {
+            add => HookEndpointManager.Modify(typeof(SupremeCalamitas).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SupremeCalamitas).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator NPCStatsDefineContactDamage
         {
             add => HookEndpointManager.Modify(typeof(NPCStats).GetMethod("GetNPCDamage", Utilities.UniversalBindingFlags), value);

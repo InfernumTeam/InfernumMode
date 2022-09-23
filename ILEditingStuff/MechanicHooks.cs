@@ -152,6 +152,15 @@ namespace InfernumMode.ILEditingStuff
 
             // Draw the icon with the new scale.
             Color iconColor = alreadySelected ? Color.Black * 0.8f : Color.White;
+            if (alreadySelected)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2 drawOffset = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 4f) * iconScale * 2f;
+                    Main.spriteBatch.Draw(iconMechTexture, drawPosition + drawOffset, null, Color.Red with { A = 80 }, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
+                }
+            }
+
             Main.spriteBatch.Draw(iconMechTexture, drawPosition, null, iconColor, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
 
             // Draw the descrption if hovering over the icon.

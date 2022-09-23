@@ -81,8 +81,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
             {
-                totalLasersPerBurst -= 2;
-                laserShootSpeed -= 1.6f;
+                totalLasersPerBurst = 5;
+                laserShootSpeed -= 2.3f;
             }
 
             // Get very pissed off if Ares is enraged.

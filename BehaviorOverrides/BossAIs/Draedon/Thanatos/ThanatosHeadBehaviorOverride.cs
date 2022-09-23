@@ -411,7 +411,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == 720f - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer > 720f)
                 SelectNextAttack(npc);
@@ -467,7 +467,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == 600f - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
@@ -579,7 +579,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime)
                 SelectNextAttack(npc);
@@ -694,7 +694,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             // Perform the attack again if necessary.
             if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay)
@@ -815,7 +815,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
             {
@@ -876,7 +876,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == attackTime + cooloffTime - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer > attackTime + cooloffTime)
                 SelectNextAttack(npc);

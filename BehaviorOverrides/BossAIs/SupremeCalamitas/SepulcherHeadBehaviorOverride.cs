@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -126,17 +128,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_ErraticCharges(NPC npc, Player target, ref float attackTimer)
         {
-            int chargeCount = 3;
+            int chargeCount = 4;
             int erraticMovementTime = 90;
             int chargeRedirectTime = 12;
             int chargeTime = 54;
-            float chargeSpeed = 42f;
+            int bombReleaseRate = 33;
+            float chargeSpeed = 36f;
 
             if (SupremeCalamitasBehaviorOverride.Enraged)
                 chargeSpeed = 76f;
 
+            float bombRadius = 720f;
+            float maxBombHorizontalOffset = 920f;
             float moveSpeed = chargeSpeed * 0.425f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float bombHorizontalOffsetInterpolant = ref npc.Infernum().ExtraAI[1];
+
+            // Release bombs above the target.
+            if (attackTimer % bombReleaseRate == bombReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SCalNPC.BrimstoneBigShotSound, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    bombHorizontalOffsetInterpolant += 0.11f;
+
+                    Vector2 bombSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-maxBombHorizontalOffset, maxBombHorizontalOffset, bombHorizontalOffsetInterpolant % 1f), -1050f);
+                    int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY * 19f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(bomb))
+                    {
+                        Main.projectile[bomb].timeLeft = 180;
+                        Main.projectile[bomb].ModProjectile<DemonicBomb>().ExplosionRadius = bombRadius;
+                        Main.projectile[bomb].ModProjectile<DemonicBomb>().ExplodeIntoDarts = true;
+                    }
+                }
+            }
 
             // Erratically hover around.
             if (attackTimer < erraticMovementTime)
@@ -145,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center), 0.4f).SafeNormalize(Vector2.UnitY) * moveSpeed;
 
                 else if (!npc.WithinRange(target.Center, 200f))
-                    npc.velocity = npc.velocity.RotatedBy(CalamityUtils.AperiodicSin(MathHelper.TwoPi * attackTimer / 100f) * 0.23f);
+                    npc.velocity = npc.velocity.RotatedBy(CalamityUtils.AperiodicSin(MathHelper.TwoPi * attackTimer / 100f) * 0.1f);
                 return;
             }
 
@@ -153,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackTimer < erraticMovementTime + chargeRedirectTime)
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.2f);
                 if (npc.velocity.Length() < chargeSpeed * 0.4f)
                     npc.velocity *= 1.32f;
                 if (attackTimer == erraticMovementTime + chargeRedirectTime - 1f)
@@ -168,7 +194,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 chargeCounter++;
                 if (chargeCounter >= chargeCount)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<BrimstoneBarrage>());
                     SelectNextAttack(npc);
+                }
 
                 attackTimer = 0f;
             }
@@ -262,18 +291,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float bombLaunchCounter = ref npc.Infernum().ExtraAI[0];
 
             // Slowly approach the target.
-            if (wrappedAttackTimer < bombHoverTime)
+            if (wrappedAttackTimer < bombHoverTime && !npc.WithinRange(target.Center, 600f))
             {
-                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 11f;
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.037f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
             }
+            if (npc.velocity.Length() > 11.5f)
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 11.49f;
+            if (!npc.WithinRange(target.Center, 920f))
+                npc.Center = npc.Center.MoveTowards(target.Center, 15f);
 
             // Create the bomb.
             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 1f && !bombExists)
             {
                 if (bombLaunchCounter < bombLaunchCount)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, bombID, 0, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, bombID, 600, 0f);
                 else
                 {
                     SelectNextAttack(npc);
@@ -284,6 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Launch the bomb.
             if (wrappedAttackTimer == bombHoverTime)
             {
+                SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
                 foreach (Projectile bomb in Utilities.AllProjectilesByID(bombID))
                 {
                     bomb.ModProjectile<SepulcherSoulBomb>().ExplodeCountdown = bombExplodeDelay;

@@ -634,6 +634,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
                     Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
                     Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                    int telegraph = Utilities.NewProjectileBetter(target.Center, dartShootVelocity * 0.001f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                    {
+                        Main.projectile[telegraph].ai[1] = fanShootTime;
+                        Main.projectile[telegraph].localAI[0] = 0f;
+                        Main.projectile[telegraph].localAI[1] = 1f;
+                    }
                 }
             }
 
@@ -1676,7 +1683,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Utilities.DeleteAllProjectiles(false, heartID);
 
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
                     SelectNextAttack(npc);
+                }
             }
         }
 

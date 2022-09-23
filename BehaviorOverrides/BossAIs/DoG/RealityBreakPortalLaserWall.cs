@@ -1,3 +1,4 @@
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < laserCount; i++)
                     {
                         Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
-                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, InfernumMode.CalamityMod.Find<ModProjectile>("DoGDeath").Type, 108, 0f, Projectile.owner);
+                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ModContent.ProjectileType<DoGDeath>(), 96, 0f, Projectile.owner);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 2;
                     }

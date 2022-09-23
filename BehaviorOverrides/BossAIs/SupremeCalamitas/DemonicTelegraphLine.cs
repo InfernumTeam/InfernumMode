@@ -61,12 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float telegraphWidth = MathHelper.Lerp(0.3f, 3f, CalamityUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
-            if (telegraphInterpolant < 1f)
-            {
-                Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
-                Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
-                Main.spriteBatch.DrawLineBetter(start, end, Color.Red, telegraphWidth);
-            }
+            Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Red, telegraphWidth);
             return false;
         }
     }

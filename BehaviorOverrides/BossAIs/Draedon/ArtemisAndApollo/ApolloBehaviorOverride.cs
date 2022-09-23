@@ -495,12 +495,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, float enrageTimer, ref float frame, ref float attackTimer)
         {
-            int totalShots = 11;
+            int totalShots = 12;
             int shootRate = 40;
             int shotsPerBurst = 3;
             float shootSpread = 0.57f;
-            float predictivenessFactor = 22f;
-            float projectileShootSpeed = 7.2f;
+            float predictivenessFactor = 27f;
+            float projectileShootSpeed = 10f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
                 shootRate -= 4;
@@ -516,7 +516,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 shootRate -= 8;
                 totalShots += 5;
                 shootSpread *= 0.64f;
-                predictivenessFactor *= 1.45f;
+                predictivenessFactor *= 1.08f;
             }
             if (enrageTimer > 0f)
             {
@@ -538,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float angleOffsetSeed = ref npc.Infernum().ExtraAI[3];
             ref float shootDelayTimer = ref npc.Infernum().ExtraAI[4];
 
-            if (shootDelayTimer >= 120f)
+            if (shootDelayTimer >= 150f)
             {
                 generalAttackTimer++;
                 if (shootCounter < 0f)
@@ -912,6 +912,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             {
                                 Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
                                 Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
+
+                                sparkShootVelocity = (MathHelper.TwoPi * (i + 0.5f) / sparkCount + offsetAngle).ToRotationVector2() * 7f;
+                                Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 16f, sparkShootVelocity, ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
                             }
                         }
 
@@ -1264,6 +1267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float spinDirection = ref artemis.Infernum().ExtraAI[2];
             ref float spinningPointX = ref artemis.Infernum().ExtraAI[3];
             ref float spinningPointY = ref artemis.Infernum().ExtraAI[4];
+            hoverSide = 1f;
             Vector2 artemisHoverDestination = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY * spinRadius * hoverSide;
 
             // Have Artemis cast a telegraph that indicates where the laserbeam will appear.
@@ -1305,7 +1309,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 // Create the laserbeam.
                 if (attackTimer == laserbeamTelegraphTime)
                 {
-                    SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int laserbeam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisSweepLaserbeam>(), PowerfulShotDamage, 0f);
@@ -1338,6 +1341,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     {
                         spinningPointX = target.Center.X;
                         spinningPointY = target.Center.Y;
+                        if (spinningPointY < 1800f)
+                            spinningPointY = 1800f;
                         npc.netUpdate = true;
                     }
                     npc.Center = artemisHoverDestination;
@@ -1370,7 +1375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * plasmaBlastShootSpeed;
                         Utilities.NewProjectileBetter(plasmaShootCenter, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
 
-                        apolloAngularHoverOffset += MathHelper.TwoPi / 7f;
+                        apolloAngularHoverOffset += MathHelper.TwoPi * hoverSide / 7f;
                         npc.netUpdate = true;
                     }
                 }

@@ -296,13 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     frameType += 60f;
             }
 
-            if (attackTimer >= laserbeamTelegraphTime + laserbeamSweepTime)
-            {
-                artemisHasRepositioned = 0f;
-                return true;
-            }
-
-            return false;
+            return attackTimer >= laserbeamTelegraphTime + laserbeamSweepTime;
         }
     }
 }

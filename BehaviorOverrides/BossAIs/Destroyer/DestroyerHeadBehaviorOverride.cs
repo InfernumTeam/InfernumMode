@@ -330,7 +330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     for (int i = 0; i < 4; i++)
                     {
                         int type = Main.rand.NextBool(2) ? ModContent.ProjectileType<ScavengerLaser>() : ModContent.ProjectileType<DestroyerBomb>();
-                        int damage = type == ModContent.ProjectileType<ScavengerLaser>() ? 110 : 0;
+                        int damage = type == ModContent.ProjectileType<ScavengerLaser>() ? 150 : 0;
                         Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, type, damage, 0f);
                     }
                 }
@@ -445,8 +445,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 if (attackTimer < 20f)
                 {
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center + target.velocity * 26f), 0.15f) * 1.024f;
+
                     int type = ModContent.ProjectileType<ScavengerLaser>();
-                    int damage = 120;
+                    int damage = 150;
                     Vector2 laserVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), -Vector2.UnitY, 0.5f);
                     laserVelocity = laserVelocity.RotatedByRandom(0.8f) * Main.rand.NextFloat(14f, 17f);
                     Utilities.NewProjectileBetter(npc.Center, laserVelocity, type, damage, 0f);
@@ -502,7 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
                             if (BossRushEvent.BossRushActive)
                                 shootVelocity *= 1.56f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 165, 0f);
                         }
                     }
                 }

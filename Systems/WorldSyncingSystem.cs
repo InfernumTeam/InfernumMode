@@ -1,6 +1,7 @@
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
+using static InfernumMode.Systems.WorldSaveSystem;
 
 namespace InfernumMode.Systems
 {
@@ -10,9 +11,10 @@ namespace InfernumMode.Systems
         {
             BitsByte flags = new();
             flags[0] = WorldSaveSystem.InfernumMode;
-            flags[1] = WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay;
-            flags[2] = WorldSaveSystem.HasBeatedInfernumProvRegularly;
-            flags[3] = WorldSaveSystem.HasProvidenceDoorShattered;
+            flags[1] = HasBeatedInfernumNightProvBeforeDay;
+            flags[2] = HasBeatedInfernumProvRegularly;
+            flags[3] = HasProvidenceDoorShattered;
+            flags[4] = HasSepulcherAnimationBeenPlayed;
             writer.Write(flags);
         }
 
@@ -20,9 +22,10 @@ namespace InfernumMode.Systems
         {
             BitsByte flags = reader.ReadByte();
             WorldSaveSystem.InfernumMode = flags[0];
-            WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = flags[1];
-            WorldSaveSystem.HasBeatedInfernumProvRegularly = flags[2];
-            WorldSaveSystem.HasProvidenceDoorShattered = flags[3];
+            HasBeatedInfernumNightProvBeforeDay = flags[1];
+            HasBeatedInfernumProvRegularly = flags[2];
+            HasProvidenceDoorShattered = flags[3];
+            HasSepulcherAnimationBeenPlayed = flags[4];
         }
     }
 }

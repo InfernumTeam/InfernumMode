@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Clear any clones or other things that might remain from other attacks.
             int[] projectilesToClearAway = new int[]
             {
-                ModContent.ProjectileType<Ritual>(),
+                ModContent.ProjectileType<CultistRitual>(),
                 ModContent.ProjectileType<CultistFireBeamTelegraph>(),
                 ModContent.ProjectileType<FireBeam>(),
                 ModContent.ProjectileType<AncientDoom>(),
@@ -213,6 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             };
             int[] npcsToClearAway = new int[]
             {
+                NPCID.AncientLight,
                 NPCID.CultistBossClone,
                 NPCID.CultistDragonHead,
                 NPCID.CultistDragonBody1,
@@ -1001,7 +1002,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public static void DoAttack_PerformRitual(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
             int cloneCount = phase2 ? 11 : 7;
-            int waitDelay = 30 + Ritual.GetWaitTime(phase2);
+            int ritualCreationDelay = 105;
+            int cultistImmunityTime = 60;
+            int fadeinTime = 18;
+            int waitDelay = ritualCreationDelay + CultistRitual.GetWaitTime(phase2);
             ref float fadeCountdown = ref npc.Infernum().ExtraAI[0];
             ref float ritualIndex = ref npc.Infernum().ExtraAI[1];
 
@@ -1024,28 +1028,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
             }
 
-            // Play a chant sound before fading out.
-            if (attackTimer == 15f)
-                SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
-            if (attackTimer <= 30f)
+            // Play a chant sound and clear any remaining ancient lights before fading out.
+            if (attackTimer == ritualCreationDelay - 15f)
             {
-                npc.Opacity = Utils.GetLerpValue(30f, 15f, attackTimer, true);
+                SoundEngine.PlaySound(SoundID.Zombie90, npc.Center);
+                ClearAwayEntities();
+            }
+
+            if (attackTimer <= ritualCreationDelay)
+            {
+                npc.Opacity = Utils.GetLerpValue(ritualCreationDelay, ritualCreationDelay * 0.7f, attackTimer, true);
+                npc.velocity *= 0.95f;
                 frameType = (int)CultistFrameState.Laugh;
             }
 
             // Holds arms out during the ritual.
-            if (attackTimer == 29f)
+            if (attackTimer == ritualCreationDelay - 1f)
                 frameType = (int)CultistFrameState.HoldArmsOut;
 
             // Fade in after summoning a ritual.
             if (fadeCountdown > 0f)
             {
-                npc.Opacity = Utils.GetLerpValue(18f, 0f, fadeCountdown, true);
+                npc.Opacity = Utils.GetLerpValue(fadeinTime, 0f, fadeCountdown, true);
                 fadeCountdown--;
             }
 
             // Attempt to begin a ritual.
-            if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (attackTimer == ritualCreationDelay && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 List<int> cultists = new();
 
@@ -1086,10 +1095,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 // Create the actual ritual.
-                ritualIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), ritualCenter, Vector2.Zero, ModContent.ProjectileType<Ritual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                ritualIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), ritualCenter, Vector2.Zero, ModContent.ProjectileType<CultistRitual>(), 0, 0f, Main.myPlayer, 0f, npc.whoAmI);
 
                 // Prepare to fade back in.
-                fadeCountdown = 18f;
+                fadeCountdown = fadeinTime;
 
                 // Bring all cultists to the ritual and do some fancy shit.
                 for (int i = 0; i < cultists.Count; i++)
@@ -1103,11 +1112,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 createRitualZap(cultists);
             }
 
-            if (attackTimer > 30f && attackTimer < waitDelay - 25f && attackTimer % 65f == 64f)
+            if (attackTimer > ritualCreationDelay && attackTimer < waitDelay - 25f && attackTimer % 65f == 64f)
                 createRitualZap();
 
             // Don't take damage until a bit after the ritual has started.
-            npc.dontTakeDamage = attackTimer <= 90f;
+            npc.dontTakeDamage = attackTimer <= ritualCreationDelay + cultistImmunityTime;
 
             // Cancel the ritual if hit before it's complete.
             if (npc.justHit && attackTimer < waitDelay)

@@ -13,6 +13,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public Vector2 GeneralHoverPosition;
         public Player Target => Main.player[NPC.target];
         public ref float GeneralTimer => ref NPC.ai[0];
+
+        public override string Texture => "InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/SmallDrone";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Small Builder Drone");

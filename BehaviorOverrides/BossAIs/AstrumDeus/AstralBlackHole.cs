@@ -88,6 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
         }
 
+        public override bool? CanDamage() => Timer >= 96f ? null : false;
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);

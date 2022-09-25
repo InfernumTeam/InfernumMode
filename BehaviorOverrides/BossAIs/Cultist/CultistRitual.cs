@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class Ritual : ModProjectile
+    public class CultistRitual : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Texture2D outerRingTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
+            Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/CultistRitualInnerRing").Value;
             Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
             float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
             float auraScale = Projectile.scale * MathHelper.SmoothStep(0.85f, 1.2f, 1f - pulse);

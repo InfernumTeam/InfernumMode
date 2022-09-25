@@ -51,7 +51,8 @@ namespace InfernumMode.Systems
         {
             DifficultyScale = 99999999f;
             Name = "Infernum";
-            ShortDescription = "[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode. This mode does not work with Master, For the Worthy, or Fargo's Eternity Mode.]";
+            ShortDescription = "[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]\n" +
+                "[c/B32E81:This mode does not work in multiplayer, nor is it usable with Master, For the Worthy, or Fargo's Eternity Mode.]";
 
             ActivationTextKey = "Mods.InfernumMode.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.InfernumText2";

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -82,6 +83,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 npc.active = false;
                 return false;
             }
+
+            // Provide the Boss Effects buff to the target once angry.
+            target.AddBuff(ModContent.BuffType<BossEffects>(), 2);
 
             switch ((GiantClamAttackState)(int)attackState)
             {

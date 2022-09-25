@@ -9,6 +9,7 @@ using CalamityMod.Tiles;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -473,7 +474,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
             float hoverAcceleration = target.HoldingTrueMeleeWeapon() ? 0.37f : 0.9f;
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 740f;
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 820f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, hoverAcceleration);
 
             if (attackTimer >= shootDelay)
@@ -1614,6 +1615,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int laserFadeoutTime = 90;
             int heartID = ModContent.ProjectileType<RitualBrimstoneHeart>();
             float maxHeartRadius = 135f;
+            if (WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
+            {
+                animationDelay = 40;
+                heartSpinAnimationTime = 1;
+            }
+
             ref float heartSpinAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down and look at the target.
@@ -1685,6 +1692,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 {
                     Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
+                    {
+                        WorldSaveSystem.HasSepulcherAnimationBeenPlayed = true;
+                        CalamityNetcode.SyncWorld();
+                    }
                     SelectNextAttack(npc);
                 }
             }

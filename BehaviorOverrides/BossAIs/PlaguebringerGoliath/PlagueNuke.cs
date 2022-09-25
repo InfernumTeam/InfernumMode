@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plague Nuke");
-            Main.npcFrameCount[NPC.type] = 7;
+            Main.npcFrameCount[NPC.type] = 12;
         }
 
         public override void SetDefaults()
@@ -146,6 +146,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask").Value;
+            if (ExistTimer >= BuildTime)
+            {
+                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeComplete").Value;
+                glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeCompleteGlowmask").Value;
+            }
+
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Color color = NPC.GetAlpha(drawColor);
@@ -159,6 +165,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             float buildCompletion = MathHelper.Clamp(ExistTimer / BuildTime, 0f, 1f);
             NPC.frame.Y = (int)MathHelper.Lerp(0f, Main.npcFrameCount[NPC.type] - 1f, buildCompletion) * frameHeight;
+            if (ExistTimer >= BuildTime)
+            {
+                NPC.frameCounter++;
+                NPC.frame.Height = 176;
+                NPC.frame.Y = (int)(NPC.frameCounter / 5) % 5 * NPC.frame.Height;
+            }
         }
     }
 }

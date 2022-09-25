@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             switch (state)
             {
                 case TwinsAttackState.ChargeRedirect:
-                    return (int)MathHelper.Lerp(135f, 105f, 1f - CombinedLifeRatio);
+                    return (int)MathHelper.Lerp(155f, 105f, 1f - CombinedLifeRatio);
                 case TwinsAttackState.DownwardCharge:
                     return (int)MathHelper.Lerp(105f, 75f, 1f - CombinedLifeRatio);
                 case TwinsAttackState.SwitchCharges:
@@ -426,14 +426,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 135, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 155, 0f);
                     }
                 }
                 else
                 {
                     float shootSpeed = MathHelper.Lerp(10.75f, 16f, 1f - CombinedLifeRatio);
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 145, 0f);
                 }
             }
         }
@@ -572,7 +572,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                     int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
 
-                    int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 130, 0f);
+                    int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 145, 0f);
                     Main.projectile[proj].tileCollide = false;
                 }
             }
@@ -647,7 +647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     shootSpeed *= 1.6f;
                 Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
                 int projectileType = isRetinazer ? ModContent.ProjectileType<ScavengerLaser>() : ProjectileID.CursedFlameHostile;
-                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, projectileType, 135, 0f);
+                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, projectileType, 155, 0f);
             }
         }
 
@@ -733,7 +733,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         float shootSpeed = 8.5f;
                         Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 12f, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 12f, shootVelocity, ProjectileID.DeathLaser, 145, 0f);
                     }
                     else
                     {

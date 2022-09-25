@@ -139,22 +139,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 chargeSpeed = 76f;
 
             float bombRadius = 720f;
-            float maxBombHorizontalOffset = 920f;
+            float maxBombOffset = 1080f;
             float moveSpeed = chargeSpeed * 0.425f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-            ref float bombHorizontalOffsetInterpolant = ref npc.Infernum().ExtraAI[1];
+            ref float bombOffsetInterpolant = ref npc.Infernum().ExtraAI[1];
+            ref float bombSpawnOffsetAngle = ref npc.Infernum().ExtraAI[2];
+            ref float bombSpawnOffsetAngleDirection = ref npc.Infernum().ExtraAI[3];
 
-            // Release bombs above the target.
+            // Initialize the bomb angular direction;
+            if (bombSpawnOffsetAngleDirection == 0f)
+            {
+                bombSpawnOffsetAngleDirection = Main.rand.NextBool().ToDirectionInt();
+                npc.netUpdate = true;
+            }
+
+            // Release bombs around the target.
             if (attackTimer % bombReleaseRate == bombReleaseRate - 1f)
             {
                 SoundEngine.PlaySound(SCalNPC.BrimstoneBigShotSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    bombHorizontalOffsetInterpolant += 0.11f;
+                    bombOffsetInterpolant += 0.23f;
+                    if (bombOffsetInterpolant >= 1f)
+                    {
+                        bombSpawnOffsetAngle += bombSpawnOffsetAngleDirection * MathHelper.PiOver2;
+                        bombOffsetInterpolant--;
+                    }
 
-                    Vector2 bombSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-maxBombHorizontalOffset, maxBombHorizontalOffset, bombHorizontalOffsetInterpolant % 1f), -1050f);
-                    int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY * 19f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
+                    Vector2 bombSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-maxBombOffset, maxBombOffset, bombOffsetInterpolant % 1f), -maxBombOffset).RotatedBy(bombSpawnOffsetAngle);
+                    int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY.RotatedBy(bombSpawnOffsetAngle) * 17f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
                     if (Main.projectile.IndexInRange(bomb))
                     {
                         Main.projectile[bomb].timeLeft = 180;

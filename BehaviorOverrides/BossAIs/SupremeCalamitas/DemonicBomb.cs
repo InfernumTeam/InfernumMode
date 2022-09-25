@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 0.55f);
 
             Projectile.velocity *= 0.99f;
             Projectile.frameCounter++;

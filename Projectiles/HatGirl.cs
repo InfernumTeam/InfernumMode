@@ -73,6 +73,15 @@ namespace InfernumMode.Projectiles
             if (HatGirlTipsManager.SaidText.Contains(text))
                 return;
 
+            foreach (Projectile hatGirl in Utilities.AllProjectilesByID(ModContent.ProjectileType<HatGirl>()))
+            {
+                if (hatGirl.owner != owner.whoAmI)
+                    continue;
+
+                hatGirl.Center = owner.Center;
+                hatGirl.netUpdate = true;
+            }
+
             owner.Infernum().HatGirlShouldGiveAdvice = true;
             HatGirlTipsManager.PotentialTipToUse = text;
             HatGirlTipsManager.SaidText.Add(text);

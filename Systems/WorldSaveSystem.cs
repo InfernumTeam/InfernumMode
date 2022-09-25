@@ -43,6 +43,12 @@ namespace InfernumMode.Systems
             set;
         }
 
+        public static bool HasSepulcherAnimationBeenPlayed
+        {
+            get;
+            set;
+        }
+
         public static bool HasProvidenceDoorShattered
         {
             get;
@@ -62,6 +68,8 @@ namespace InfernumMode.Systems
                 downed.Add("HasBeatedInfernumNightProvBeforeDay");
             if (HasProvidenceDoorShattered)
                 downed.Add("HasProvidenceDoorShattered");
+            if (HasSepulcherAnimationBeenPlayed)
+                downed.Add("HasSepulcherAnimationBeenPlayed");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -79,6 +87,7 @@ namespace InfernumMode.Systems
             HasBeatedInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly");
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
+            HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
         }

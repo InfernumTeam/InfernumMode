@@ -1005,8 +1005,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float chargeTimer = ref npc.Infernum().ExtraAI[0];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
-            // Disable contact damage.
-            npc.dontTakeDamage = true;
+            // Disable significant contact damage.
+            npc.Calamity().DR = 0.999999f;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)

@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             bool phase2 = Main.npc[mainCultist].ai[2] >= 2f;
-            bool fadingOut = Main.npc[mainCultist].ai[1] >= 30 + Ritual.GetWaitTime(phase2);
+            bool fadingOut = Main.npc[mainCultist].ai[1] >= 30 + CultistRitual.GetWaitTime(phase2);
             ref float phaseState = ref npc.ai[2];
             ref float transitionTimer = ref npc.ai[3];
 
@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.Opacity = Main.npc[mainCultist].Opacity;
                 if (npc.justHit)
                 {
-                    Main.npc[mainCultist].ai[1] = 30 + Ritual.GetWaitTime(phase2);
+                    Main.npc[mainCultist].ai[1] = 30 + CultistRitual.GetWaitTime(phase2);
                     Main.npc[mainCultist].netUpdate = true;
                 }
             }

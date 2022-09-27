@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
-            float flySpeed = MathHelper.SmoothStep(-3f, 26f, Utils.GetLerpValue(15f, 60f, Time, true));
+            float flySpeed = MathHelper.SmoothStep(-3f, 20f, Utils.GetLerpValue(15f, 72f, Time, true));
             Vector2 directionToCenter = -AngularOffset.ToRotationVector2();
             Projectile.velocity = directionToCenter * flySpeed;
             Projectile.rotation = directionToCenter.ToRotation() + MathHelper.PiOver2;

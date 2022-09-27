@@ -41,7 +41,7 @@ namespace InfernumMode.Systems
         {
             get
             {
-                return ("[c/B32E81:Many major foes will be vastly different, having more challenging AI.] \n" +
+                return ("[c/B32E81:Many major foes will be different, having more challenging AI.] \n" +
                         "[c/B32E81:Adrenaline takes considerably longer to charge.] \n" +
                         "[c/FF0055:Adaptability is imperative.]");
             }

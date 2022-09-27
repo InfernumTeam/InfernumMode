@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Items.Mounts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
@@ -196,7 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.ExplosiveCharges
         };
 
-        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase2LifeRatio = 0.75f;
 
         public const float Phase3LifeRatio = 0.45f;
 
@@ -292,6 +293,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.Infernum().ExtraAI[8] = 1f;
             npc.Calamity().DR = 0.4f;
             npc.ModNPC<SCalBoss>().safeBox = npc.Infernum().Arena;
+
+            // Disable the exo box.
+            if (target.mount?.Type == ModContent.MountType<DraedonGamerChairMount>())
+                target.mount.Dismount(target);
 
             // Redfine the hitbox size.
             Vector2 hitboxSize = new(ForcefieldScale * 216f / 1.4142f);
@@ -531,6 +536,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 dartConvergence = true;
                 condemnationSpinTime += 36;
                 chargeupTime += 35;
+                angularVariance -= 0.22f;
             }
 
             if (inBerserkPhase)

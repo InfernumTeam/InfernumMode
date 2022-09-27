@@ -11,7 +11,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
-using static CalamityMod.NPCs.SupremeCalamitas.SoulSeekerSupreme;
+using static InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas.SupremeCalamitasBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Increase DR if the target leaves SCal's arena.
-            npc.Calamity().DR = NormalDR;
-            if (SupremeCalamitasBehaviorOverride.Enraged)
+            npc.Calamity().DR = SoulSeekerSupreme.NormalDR;
+            if (Enraged)
                 npc.Calamity().DR = 0.99999f;
 
             // Get a target
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Vector2 shootVelocity = (Target.Center - eyePosition).SafeNormalize(Vector2.UnitY) * 9f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), eyePosition, shootVelocity, type, damage, 1f, Main.myPlayer);
                 }
-                attackTimer = 0;
+                attackTimer = 0f;
                 npc.netUpdate = true;
             }
 
@@ -91,11 +91,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // In the time it takes to complete the summoning circle with Vigilance seekers already
             // drift somewhat rotationally, meaning that without this check there will be a single large gap in the ring.
-            if (SCal.ai[0] != (int)SupremeCalamitasBehaviorOverride.SCalAttackType.SummonSeekers)
+            var scalAttack = (SCalAttackType)SCal.ai[0];
+            bool dontShoot = scalAttack is SCalAttackType.CondemnationFanBurst or SCalAttackType.ExplosiveCharges or SCalAttackType.FireLaserSpin or SCalAttackType.BrimstoneJewelBeam;
+
+            if (SCal.ai[0] != (int)SCalAttackType.SummonSeekers)
             {
                 npc.ai[1] += 0.5f;
                 npc.dontTakeDamage = false;
-                attackTimer++;
+
+                if (dontShoot)
+                    attackTimer = 0f;
+                else
+                    attackTimer++;
             }
             return false;
 		}

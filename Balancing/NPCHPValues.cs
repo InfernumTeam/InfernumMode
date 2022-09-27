@@ -119,8 +119,8 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<AresBody>()] = 2160000,
             [ModContent.NPCType<Artemis>()] = 2400000,
             [ModContent.NPCType<Apollo>()] = 2400000,
-            [ModContent.NPCType<SupremeCataclysm>()] = BossRushEvent.BossRushActive ? -1 : 384000,
-            [ModContent.NPCType<SupremeCatastrophe>()] = BossRushEvent.BossRushActive ? -1 : 384000,
+            [ModContent.NPCType<SupremeCataclysm>()] = BossRushEvent.BossRushActive ? -1 : 497200,
+            [ModContent.NPCType<SupremeCatastrophe>()] = BossRushEvent.BossRushActive ? -1 : 497200,
             [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? -1 : 3364400,
         };
 

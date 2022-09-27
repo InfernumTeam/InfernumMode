@@ -81,13 +81,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        // Create souls.
-                        for (int i = 0; i < 25; i++)
-                        {
-                            Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f, 28f);
-                            Utilities.NewProjectileBetter(Projectile.Center, soulVelocity, ModContent.ProjectileType<LostSoulProjFriendly>(), 0, 0f);
-                        }
-
                         // Create darts.
                         for (int i = 0; i < dartRingCount; i++)
                         {

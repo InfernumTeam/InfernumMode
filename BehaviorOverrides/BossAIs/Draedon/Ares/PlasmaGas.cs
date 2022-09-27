@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 180;
-            Projectile.scale = 1.5f;
+            Projectile.scale = 1.27f;
             Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity * 0.8f;
+            float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
             Color drawColor = new Color(141, 255, 105) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
             Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);

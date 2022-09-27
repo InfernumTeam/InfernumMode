@@ -483,7 +483,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     }
                 }
 
-
                 sentinelAttackTimer = attackTime;
             }
 
@@ -696,10 +695,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool targetHasDash = target.dash > 0 || target.Calamity().HasCustomDash;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlyAcceleration = MathHelper.Lerp(0.046f, 0.036f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(21f, 15.3f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
             float flySpeedFactor = 1.45f + (1f - lifeRatio) * 0.4f;
             float snakeMovementDistanceThreshold = 650f;
+            float chompDistance = 330f;
+            float chompSpeedFactor = 1.75f;
             ref float timeSinceLastChomp = ref npc.Infernum().ExtraAI[TimeSinceLastSnapIndex];
 
             if (InPhase2)
@@ -711,12 +712,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (BossRushEvent.BossRushActive)
                     idealFlySpeed *= 1.4f;
             }
+            else
+                idealFlySpeed *= 0.9f;
 
             // Increment the time since last snap value.
             timeSinceLastChomp++;
 
             if (!targetHasDash)
-                flyAcceleration *= 0.84f;
+                flyAcceleration *= 0.885f;
 
             Vector2 destination = target.Center;
 
@@ -732,7 +735,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             if (!target.HasShieldBash())
-                flySpeedFactor *= 0.66f;
+            {
+                flySpeedFactor *= 0.62f;
+                chompSpeedFactor *= 0.75f;
+                chompDistance += 160f;
+            }
 
             float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
 
@@ -782,7 +789,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Jaw opening when near player.
             if (!chomping)
             {
-                if ((distanceFromTarget < 330f && targetDirectionAngleDiscrepancy < 38f) || (distanceFromTarget < 550f && targetDirectionAngleDiscrepancy < 30f))
+                if ((distanceFromTarget < chompDistance && targetDirectionAngleDiscrepancy < 38f) || (distanceFromTarget < chompDistance + 200f && targetDirectionAngleDiscrepancy < 30f))
                 {
                     jawRotation = jawRotation.AngleTowards(idealMouthOpeningAngle, 0.028f);
 
@@ -801,7 +808,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool shouldChomp = (distanceFromBaseDestination < 360f && targetDirectionAngleDiscrepancy < 64f && npc.velocity.Length() < idealFlySpeed * 2f) || timeSinceLastChomp >= 360f;
             if (shouldChomp && !dontChompYet)
             {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.75f;
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * chompSpeedFactor;
                 npc.Infernum().ExtraAI[PreviousSnapAngleIndex] = npc.velocity.ToRotation();
                 jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
 

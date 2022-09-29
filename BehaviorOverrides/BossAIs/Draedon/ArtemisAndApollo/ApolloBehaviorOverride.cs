@@ -499,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int shootRate = 40;
             int shotsPerBurst = 3;
             float shootSpread = 0.57f;
-            float predictivenessFactor = 27f;
+            float predictivenessFactor = 22f;
             float projectileShootSpeed = 10f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -367,6 +368,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         return;
                     }
 
+                    // Give a tip.
+                    if (attackTimer == 1f)
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Watch out, he might try to trick you at the end!");
+
                     // Move to the hover position and become moderately faded.
                     npc.Center = Vector2.Lerp(new Vector2(startingCenterX, startingCenterY), new Vector2(chargeHoverCenterX, chargeHoverCenterY), attackTimer / redirectTime);
                     npc.spriteDirection = (chargeHoverCenterX > npc.Center.X).ToDirectionInt();
@@ -600,6 +605,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 23f, 0.04f);
                     npc.ai[0] = 3f;
                     npc.rotation = npc.velocity.X * 0.02f;
+
+                    // Give a tip.
+                    if (attackTimer == 1f && chargeCounter <= 0f)
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Those bombs will explode into kunai that fly towards you. Be careful!");
 
                     if (npc.WithinRange(hoverDestination, 45f) || attackTimer > 180f)
                     {

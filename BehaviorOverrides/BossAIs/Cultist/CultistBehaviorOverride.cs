@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -669,6 +670,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                 frameType = (int)CultistFrameState.Hover;
             }
+
+            // Give a tip.
+            if (attackTimer == lightningBurstTime / 2)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Lightning is going to aim ahead of you! Try to bait it!");
              
             if (attackTimer < lightningBurstTime)
             {
@@ -1195,6 +1200,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Play an ice sound.
                 SoundEngine.PlaySound(SoundID.Item120, target.position);
 
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Try to get between those lines, before the ice barrages explode!");
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 iceMassSpawnPosition = npc.Top - Vector2.UnitY * 20f;
@@ -1212,6 +1220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer >= 480f)
                 SelectNextAttack(npc);
         }
+
         public static void DoAttack_DesperationAttack(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
             int attackDelay = 75;

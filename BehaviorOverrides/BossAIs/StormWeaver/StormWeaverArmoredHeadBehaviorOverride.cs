@@ -2,7 +2,10 @@ using CalamityMod;
 using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -67,7 +70,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     npc.HitSound = SoundID.NPCHit13;
                     npc.DeathSound = SoundID.NPCDeath13;
                     npc.frame = new Rectangle(0, 0, 62, 86);
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "The Weaver has shed its exterior. It will now move far faster!");
+
                     phase2 = 1f;
+                    npc.netUpdate = true;
                 }
                 return StormWeaverHeadBehaviorOverride.PreAI(npc);
             }
@@ -229,5 +235,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             npc.netUpdate = true;
         }
         #endregion AI
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Try to not move too far away when the Weaver spins in place, so you can see the bolts before they accelerate too much!";
+        }
+        #endregion Tips
     }
 }

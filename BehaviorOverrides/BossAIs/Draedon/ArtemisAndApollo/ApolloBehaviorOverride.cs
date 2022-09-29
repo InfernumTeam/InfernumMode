@@ -1667,5 +1667,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             return false;
         }
         #endregion Frames and Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "The Exo-Twins are magnificently in-sync, try finding a rythem to outsmart them!";
+        }
+        #endregion Tips
     }
 }

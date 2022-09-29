@@ -8,6 +8,7 @@ using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -580,6 +581,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 attackTimer = 0f;
                 npc.netUpdate = true;
             }
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Stay away from those energy fields! Being too close to them will hurt you!";
+            yield return n => "Going in a tight circular pattern helps with the attacker guardian's spears!";
         }
     }
 }

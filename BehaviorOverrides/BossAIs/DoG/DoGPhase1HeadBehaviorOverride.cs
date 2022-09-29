@@ -10,6 +10,7 @@ using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -450,5 +451,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             return false;
         }
         #endregion Drawing
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>
+            {
+                if (!Main.LocalPlayer.HasDash())
+                    return "A dashing accessory would be reeaaaally helpful here...";
+                else if (!Main.LocalPlayer.HasShieldBash())
+                    return "Being able to face it head on with a ram sounds like a good idea, don't you think?";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

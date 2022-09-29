@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +17,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class MoonLordHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.MoonLordHead;
+
+        public override int? NPCIDToDeferToForTips => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -226,6 +229,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 deathrayTelegraphTime = idealDeathrayTelegraphTime;
                 deathrayLifetime = idealDeathrayLifetime;
                 angularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Brace yourself! A barrage of slow bolts are going to be released!");
             }
 
             float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);

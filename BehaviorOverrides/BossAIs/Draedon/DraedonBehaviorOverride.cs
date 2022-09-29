@@ -8,6 +8,7 @@ using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -162,9 +163,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine * 4f)
             {
                 if (CalamityWorld.TalkedToDraedon)
+                {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonResummonText", TextColorEdgy);
+                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "If a certain starting combo isnt working too well, maybe experiment with another one?");
+                }
                 else
+                {
                     Utilities.DisplayText("Now choose.", TextColorEdgy);
+                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Better choose well!");
+                }
 
                 // Mark Draedon as talked to.
                 if (!CalamityWorld.TalkedToDraedon)

@@ -55,7 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.netAlways = true;
-            NPC.boss = true;
             NPC.hide = true;
             Music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }

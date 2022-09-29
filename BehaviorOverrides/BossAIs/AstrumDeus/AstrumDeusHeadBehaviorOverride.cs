@@ -7,6 +7,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -142,6 +143,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 if (npc.Center.Y < -3500f || !npc.WithinRange(target.Center, 6000f))
                 {
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "That thing seems to have shed its outer shell. Brace yourself, it's going to be a lot faster now!");
+
                     SelectNextAttack(npc);
                     attackType = (int)DeusAttackType.WarpCharge;
                     inFinalPhase = 1f;
@@ -494,6 +497,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Release rubble upward in a mostly even spread at the apex of the rise.
             if (attackTimer == minDescendTime + minRiseTime + 5f)
             {
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't forget about that rubble! It will rain down from above!");
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -998,6 +1002,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
 
                 npc.netUpdate = true;
+
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't panic while trying to evade the bolts!");
             }
 
             // Disable contact damage.
@@ -1261,5 +1267,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             return false;
         }
         #endregion Drawing
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "That serpent is really fast! Good mobility will be important to defeat it!";
+        }
+        #endregion Tips
     }
 }

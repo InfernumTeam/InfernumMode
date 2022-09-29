@@ -4,10 +4,12 @@ using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -872,6 +874,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     frameType = (int)DragonfollyFrameDrawingType.Screm;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
                         Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Static bolts seem to be flying towards you! Be wary of them, and don't get trapped by the lightning telegraphs!");
                 }
                 else
                 {
@@ -1293,5 +1297,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "The fight against the Dragonfolly is very chaotic and fast paced. Good mobility and reaction time help a lot!";
+            yield return n => "Those large red lightning pillars can be negated by flying below them!";
+        }
+        #endregion Tips
     }
 }

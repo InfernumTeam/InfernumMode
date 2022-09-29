@@ -15,6 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianHealer>();
 
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
+
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)

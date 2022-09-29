@@ -6,9 +6,11 @@ using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -608,7 +610,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (hasCreatedBlackHole == 0f)
             {
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ConvergingCelestialBarrage>(), ModContent.ProjectileType<SpiralEnergyLaser>(), ModContent.ProjectileType<CelestialBarrage>());
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), blackHoleDamage, 0f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), blackHoleDamage, 0f);
+
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "This is the Void's last stand! Try not to get sucked in, and weave through the energy bolts!");
+
                 hasCreatedBlackHole = 1f;
             }
 
@@ -706,5 +714,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
         #endregion Drawing
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Try not to move too much at the start of the battle. Finding a good spot and staying near it helps a lot!";
+            yield return n => "Most of the Void's attacks require fast maneuvering to evade. Be sure to pay attention to any projectiles on-screen!";
+        }
+        #endregion Tips
     }
 }

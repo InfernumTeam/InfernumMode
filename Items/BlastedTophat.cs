@@ -13,8 +13,7 @@ namespace InfernumMode.Items
         {
             SacrificeTotal = 1;
             DisplayName.SetDefault("Blasted Tophat");
-            Tooltip.SetDefault("Summons a small hat girl\n" +
-                "Upon respawning after a boss battle, she sometimes gives you advice");
+            Tooltip.SetDefault("Summons a small hat girl that gives you advice about bosses that you fight");
         }
         public override void SetDefaults()
         {
@@ -38,6 +37,16 @@ namespace InfernumMode.Items
         {
             if (player.whoAmI == Main.myPlayer && player.itemTime == 0)
                 player.AddBuff(Item.buffType, 15, true);
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.TopHat);
+            recipe.AddIngredient(ItemID.Cobweb, 15);
+            recipe.AddIngredient(ItemID.Torch, 15);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
     }
 }

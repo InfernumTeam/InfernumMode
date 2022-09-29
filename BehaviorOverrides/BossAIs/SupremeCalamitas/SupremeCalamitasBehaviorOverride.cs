@@ -9,6 +9,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -452,9 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float soulShootSpeed = 8.5f;
 
             if (currentPhase >= 1)
-            {
                 shootRate -= 2;
-            }
             if (inBerserkPhase)
                 shootRate = 4;
 
@@ -481,6 +480,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float hoverAcceleration = target.HoldingTrueMeleeWeapon() ? 0.37f : 0.9f;
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 820f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, hoverAcceleration);
+
+            // Give a tip.
+            if (attackTimer == shootDelay)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "So many skulls, but it appears they aren't focused directly at you! Try going inbetween!");
 
             if (attackTimer >= shootDelay)
             {
@@ -741,6 +744,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 ShieldRotation = ShieldRotation.AngleTowards(idealRotation, 0.18f);
                 npc.localAI[3] = 1f;
             }
+
+            // Give a tip.
+            if (attackTimer == chargeDelay)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Calamitas' is laying exploding brimstone magic with every charge, try to direct them away from a safe location!");
 
             // Charge rapid-fire.
             if (attackTimer >= chargeDelay)
@@ -1100,6 +1107,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create the orb.
             if (attackTimer == hoverTime + orbCastDelay)
             {
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!");
+
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1854,6 +1864,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (!npc.WithinRange(hoverDestination, 150f))
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.5f);
 
+                // Give a tip.
+                if (attackTimer == 1f)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Even when all hell breaks loose, stay focused on your dodging!");
+
                 if (attackTimer < flamePillarBarrageDuration - 60f)
                 {
                     // Create the telegraphs. They will create the pillars once ready to explode.
@@ -1994,7 +2008,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.velocity = Vector2.Zero;
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = Utils.Remap(teleportCountdown, baseTeleportDelay, 4f, 350f, 1000f);
+                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = Utils.Remap(teleportCountdown, baseTeleportDelay, 4f, 350f, 1500f);
 
                     teleportCountdown -= 2f;
                     attackTimer = 0f;
@@ -2287,7 +2301,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Try dashing through that centipede when it charges at you!";
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Do you want my Witch's hat? Matching her atire could be fun...";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

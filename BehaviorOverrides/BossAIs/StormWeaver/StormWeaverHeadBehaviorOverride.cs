@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
@@ -436,6 +437,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             float chargeSpeed = cloudCoverArea / chargeTime;
             int chargeSlowdownTime = 270;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
+
+            // Give a tip.
+            if (attackTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "The Weaver seems to be creating a bunch of clouds above you! Try to weave through the resulting bolts as they fall!");
 
             // Attempt to get into position for a charge.
             if (attackTimer < hoverRedirectTime)

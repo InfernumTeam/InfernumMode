@@ -2,6 +2,7 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Projectiles;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -78,6 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 (initialMech.type == ModContent.NPCType<AresBody>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
             bool thanatosAndTwins = (initialMech.type == ModContent.NPCType<ThanatosHead>() && complementMech.type == ModContent.NPCType<Apollo>()) ||
                 (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
+
+            // Have the hat girl give comments if a combo attack is happening.
+            HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Seems like they are combining efforts, beware!");
 
             if (aresAndTwins)
             {

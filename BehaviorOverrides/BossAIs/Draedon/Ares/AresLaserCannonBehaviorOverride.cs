@@ -20,6 +20,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
     {
         public override int NPCOverrideType => ModContent.NPCType<AresLaserCannon>();
 
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<AresBody>();
+
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         #region AI

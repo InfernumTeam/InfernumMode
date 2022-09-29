@@ -8,6 +8,7 @@ using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -1252,6 +1253,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer < finalAttackStartTime + soulBurstDelay && !npc.WithinRange(target.Center, MinGhostCircleRadius + 90f))
                 target.AddBuff(ModContent.BuffType<Madness>(), 8);
 
+            // Give a tip.
+            if (attackTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Polterghast's spirits have been released! But they don't seem very happy with us...");
+
             if (attackTimer < attackDelay)
                 return;
 
@@ -1492,5 +1497,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.frame.Y = frameHeight * minFrame;
         }
         #endregion Frames and Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!";
+            yield return n => "If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!";
+        }
+        #endregion Tips
     }
 }

@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -451,6 +452,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Go to phase 2 if at 50%.
             if (!InSecondPhase && lifeRatio < Phase2LifeRatio)
             {
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!");
+
                 InSecondPhase = true;
                 
                 Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
@@ -863,7 +866,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static void DoBehavior_FastCharges(NPC npc, Player target, bool berserkChargeMode, float chargeDelay, float chargeTime, float chargeSpeed, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
             if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
+            {
                 chargeDelay = (int)(chargeDelay * 0.8f);
+                if (attackTimer == 1f)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "This speed is crazy! Make sure you know when it starts; you might get jumpscared!");
+            }
             else if (attackTimer == 1f)
                 SoundEngine.PlaySound(YharonBoss.ShortRoarSound with { Pitch = -0.56f, Volume = 1.6f }, target.Center);
 
@@ -1240,6 +1247,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 Vector2 destinationAbovePlayer = target.Center - Vector2.UnitY * 420f - npc.Center;
                 npc.SimpleFlyMovement((destinationAbovePlayer - npc.velocity).SafeNormalize(Vector2.Zero) * 36f, 3.5f);
+
+                // Give a tip.
+                if (attackTimer == heatFlashIdleDelay - 3f)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Don't let the flashbang faze you! Keep your eyes peeled for where the embers are!");
+
                 return;
             }
 
@@ -1426,6 +1438,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (attackDelay < 45f)
             {
+                // Give a tip.
+                if (attackDelay == 40f)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Yharon's burning some serious energy now! Stay focused!");
+
                 npc.damage = 0;
                 attackTimer = 0f;
                 if (attackDelay == 1f)
@@ -1985,5 +2001,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Subphase10LifeRatio)
+                    return "AND IF I SHOULD DIE BEFORE YOU CONTINUEE, YOU SHALL HAV-... Wait, you died? Come on, I was on a roll here!";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

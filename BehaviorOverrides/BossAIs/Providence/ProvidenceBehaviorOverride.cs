@@ -6,11 +6,13 @@ using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -586,6 +588,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             float boltSpeed = 10f;
             float bombExplosionRadius = 1500f;
 
+            // Give a tip.
+            if (attackTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Pay attention to where you move. Try to stay in one spot so that those bombs aren't all over the arena!");
+
             if (inPhase2)
             {
                 // Make explosions have a slight variance in terms of when they explode, instead of all at once.
@@ -612,7 +618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             else
                 DoVanillaFlightMovement(npc, target, false, ref npc.Infernum().ExtraAI[0]);
 
-            // Release molten blobs.
+            // Release holy bombs, along with a spread of cinders.
             int explosionCountdown = (int)(bombShootRate * blastShootCount - universalAttackTimer) + explosionDelay;
             if (attackTimer >= bombShootRate && !npc.WithinRange(target.Center, 200f))
             {
@@ -887,6 +893,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             else
                 destination = target.Bottom - Vector2.UnitY * 400f;
 
+            // Give a tip.
+            if (attackTimer == shootDelay - 30f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't move around too quickly! Small but quick horizontal movements are important for evading those crystals!");
+
             // Fade into rainbow crystal form at first.
             if (attackTimer < shootDelay)
                 npc.Opacity = 1f - attackTimer / shootDelay;
@@ -996,6 +1006,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Gain extra DR.
             npc.Calamity().DR = 0.8f;
+
+            // Give a tip.
+            if (attackTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Pay attention to where you move. You don't want Providence to fire her lasers when near a wall!");
 
             // Move towards the center of the arena when not firing the lasers.
             if (attackTimer < laserShootDelay - 30f)
@@ -1621,5 +1635,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
+        }
+        #endregion Tips
     }
 }

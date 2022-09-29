@@ -1,11 +1,14 @@
 using CalamityMod;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -397,9 +400,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create the black hole.
             if (attackTimer == 1f)
             {
-                int blackHole = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f);
-                if (Main.projectile.IndexInRange(blackHole))
-                    Main.projectile[blackHole].ai[1] = npc.whoAmI;
+                HatGirl.SayThingWhileOwnerIsAlive(target, "The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!");
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int blackHole = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f);
+                    if (Main.projectile.IndexInRange(blackHole))
+                        Main.projectile[blackHole].ai[1] = npc.whoAmI;
+                }
             }
 
             if (attackTimer >= 540f)
@@ -583,6 +591,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Main.spriteBatch.Draw(coreOutlineTexture, center - Main.screenPosition, null, color, 0f, new Vector2(112f, 101f), 1f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(coreTexture, center - Main.screenPosition, npc.frame, color, 0f, npc.frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
             return false;
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>
+            {
+                if (NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2)
+                    return "Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (HatGirlTipsManager.ShouldUseJokeText)
+                    return "Squib emoji";
+                return string.Empty;
+            };
+            yield return n => "Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!";
         }
     }
 }

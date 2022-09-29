@@ -12,9 +12,12 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -929,6 +932,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             speedMultiplier *= 1.1f;
             if (!target.HasShieldBash())
                 speedMultiplier *= 0.67f;
+            else
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't fret, face fear in the eyes and dash directly into Thanatos' face-plates!");
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float flyAcceleration = MathHelper.Lerp(0.045f, 0.037f, lifeRatio);
@@ -1112,6 +1117,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             npc.ModNPC<ThanatosHead>().SmokeDrawer.DrawSet(npc.Center);
             return false;
+        }
+
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Oh my, so many lasers... better keep on the move!";
         }
     }
 }

@@ -7,6 +7,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
+using InfernumMode.Projectiles;
 using InfernumMode.Skies;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -740,6 +741,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 chompSpeedFactor *= 0.75f;
                 chompDistance += 160f;
             }
+            else
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
 
             float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
 
@@ -1264,6 +1267,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             DoSpecialAttack_ChargeGates(npc, target, finalPhase, ref specialAttackTimer, ref specialAttackPortalIndex, ref segmentFadeType);
                             return false;
                     }
+
+                    if (specialAttackType is SpecialAttackType.LaserWalls or SpecialAttackType.CircularLaserBurst)
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Oh man, theres so many lasers! Slow and precise movements seem like your best bet here...");
                 }
 
                 // Be completely invisible after the special attacks conclude.

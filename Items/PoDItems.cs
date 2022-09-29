@@ -1,8 +1,12 @@
+using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Items;
+using InfernumMode.Projectiles;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -89,6 +93,7 @@ namespace InfernumMode
                         "NOT SO FAST!"
                 };
                 Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
+                HatGirl.SayThingWhileOwnerIsAlive(player, "It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!");
             }
         }
 
@@ -129,6 +134,12 @@ namespace InfernumMode
             }
         }
         */
+
+        public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
+        {
+            if (item.type == ModContent.ItemType<StarterBag>())
+                itemLoot.Add(ModContent.ItemType<BlastedTophat>());
+        }
 
         public override void OpenVanillaBag(string context, Player player, int arg)
         {

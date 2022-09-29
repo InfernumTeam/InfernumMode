@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int artemisLaserBurstCount = 8;
             float maxLaserTurnSpeed = MathHelper.TwoPi / 276f;
 
-            bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 0;
+            bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 1;
             if (twinsInSecondPhase || CurrentAresPhase != 4)
             {
                 aresLaserbeamCount++;
@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int totalNormalShotCount = 11;
             float normalShotShootSpeed = 7.25f;
 
-            bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 0;
+            bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 1;
             if (twinsInSecondPhase || CurrentAresPhase != 4)
             {
                 normalShotShootSpeed += 3f;

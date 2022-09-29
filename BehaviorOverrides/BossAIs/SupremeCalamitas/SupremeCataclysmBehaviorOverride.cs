@@ -232,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_ProjectileShooting(NPC npc, Player target, bool isCataclysm, ref float attackSpecificTimer, ref float currentFrame, ref float firingFromRight, ref float attackTimer)
         {
             // Define attack values when the other brother is alive.
-            int attackShiftDelay = 0;
+            int attackShiftDelay = 60;
             int hoverTime = 60;
             int shootTime = 240;
             int fireBurstCount = 2;

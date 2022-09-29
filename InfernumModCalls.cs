@@ -56,7 +56,7 @@ namespace InfernumMode
                 return Main.npc[npcIndex].Infernum().ExtraAI[10] >= MoonLordCoreBehaviorOverride.IntroSoundLength;
             }
             if (npcID == ModContent.NPCType<Draedon>())
-                return NPC.AnyNPCs(npcID);
+                return NPC.AnyNPCs(npcID) || InfernumMode.DraedonThemeTimer > 0;
 
             return false;
         }

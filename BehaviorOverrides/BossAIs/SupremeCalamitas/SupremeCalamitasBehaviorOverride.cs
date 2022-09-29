@@ -682,7 +682,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         
         public static void DoBehavior_ExplosiveCharges(NPC npc, Player target, int currentPhase, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
-            int chargeDelay = 96;
+            int chargeDelay = 132;
             int chargeTime = 45;
             int chargeCount = 6;
             int explosionDelay = 120;
@@ -1624,7 +1624,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
             {
                 animationDelay = 40;
-                heartSpinAnimationTime = 1;
+                heartSpinAnimationTime = 30;
             }
 
             ref float heartSpinAngle = ref npc.Infernum().ExtraAI[0];

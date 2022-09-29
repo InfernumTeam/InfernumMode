@@ -13,7 +13,7 @@ namespace InfernumMode.Items.Relics
         {
             get
             {
-                if (DownedBossSystem.downedExoMechs)
+                if (DownedBossSystem.downedSCal)
                 {
                     return "Spectacular work. You have conquered all of the major obstacles.\n" +
                         "Take pride in this accomplishment, for you are considerably stronger than you were when you began.";

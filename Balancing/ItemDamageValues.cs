@@ -38,6 +38,7 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<PridefulHuntersPlanarRipper>()] = 48,
             [ModContent.ItemType<FinalDawn>()] = 855,
             [ModContent.ItemType<DragonsBreath>()] = 132,
+            [ModContent.ItemType<TyrannysEnd>()] = 1540,
         };
     }
 }

@@ -1848,7 +1848,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 bulletHellBombShootRate /= 5;
                 bulletHellSkullShootRate /= 5;
                 bulletHellHellblastShootRate = 1;
-                bulletHellGigablastShootRate /= 5;
+                bulletHellGigablastShootRate /= 6;
             }
 
             ref float attackState = ref npc.Infernum().ExtraAI[4];

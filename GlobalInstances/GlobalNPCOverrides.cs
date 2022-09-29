@@ -20,7 +20,6 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
-using InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -282,10 +281,6 @@ namespace InfernumMode.GlobalInstances
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG && OverridingListManager.Registered<DevourerofGodsHead>())
                 DoGPhase1HeadBehaviorOverride.HandleDoGLifeBasedHitTriggers(npc, realDamage, ref damage);
-
-            // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == ModContent.NPCType<AdultEidolonWyrmTail>() && OverridingListManager.Registered<AdultEidolonWyrmHead>())
-                AEWHeadBehaviorOverride.HandleTailShieldDamageTriggers(npc, damage, crit);
 
             if ((npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead) && OverridingListManager.Registered(NPCID.MoonLordCore))
                 MoonLordCoreBehaviorOverride.HandleBodyPartDeathTriggers(npc, realDamage);

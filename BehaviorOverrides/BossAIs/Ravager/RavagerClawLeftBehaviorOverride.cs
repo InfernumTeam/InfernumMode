@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
@@ -134,6 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             else
                                 canPunch = npc.Center.X - 100f < target.Center.X;
 
+                            // Punch at the target.
                             if (canPunch)
                             {
                                 punchTimer = 0f;
@@ -144,6 +146,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                                 npc.velocity = npc.SafeDirectionTo(target.Center) * punchSpeed;
                                 npc.rotation = npc.velocity.ToRotation();
                                 npc.netUpdate = true;
+
+                                SoundEngine.PlaySound(RavagerBody.FistSound, npc.Center);
+
                                 return false;
                             }
                             punchTimer = 0f;

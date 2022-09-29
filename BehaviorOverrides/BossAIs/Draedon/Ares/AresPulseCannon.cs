@@ -3,8 +3,10 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -22,8 +24,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public AresCannonChargeParticleSet EnergyDrawer = new(-1, 15, 40f, Color.Fuchsia);
 
         public ref float AttackTimer => ref NPC.ai[0];
+
         public ref float ChargeDelay => ref NPC.ai[1];
+
         public Vector2 CoreSpritePosition => NPC.Center + NPC.spriteDirection * NPC.rotation.ToRotationVector2() * 35f + (NPC.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
+
+        // This stores the sound slot of the telegraph sound it makes, so it may be properly updated in terms of position.
+        public SlotId TelegraphSoundSlot;
 
         public override void SetStaticDefaults()
         {
@@ -154,6 +161,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 ExoMechComboAttackContent.UseThanatosAresComboAttack(NPC, ref aresBody.ai[1], ref _);
                 ExoMechComboAttackContent.UseTwinsAresComboAttack(NPC, 1f, ref aresBody.ai[1], ref _);
                 return;
+            }
+
+            // Play a sound telegraph before firing.
+            int telegraphTime = Math.Max((int)ChargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
+            if (AttackTimer == telegraphTime && !currentlyDisabled)
+                TelegraphSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.AresPulseCannonChargeSound with { Volume = 1.6f }, NPC.Center);
+
+            // Update the sound telegraph's position.
+            if (SoundEngine.TryGetActiveSound(TelegraphSoundSlot, out var t) && t.IsPlaying)
+            {
+                t.Position = NPC.Center;
+                if (doingHoverCharge)
+                    t.Stop();
             }
 
             // Calculate the direction and rotation this arm should use.

@@ -148,10 +148,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             ref float vignetteInterpolant = ref npc.Infernum().ExtraAI[12];
             ref float vignetteRadiusDecreaseFactor = ref npc.Infernum().ExtraAI[13];
             ref float veryFirstAttack = ref npc.Infernum().ExtraAI[14];
+            ref float currentPhase = ref npc.Infernum().ExtraAI[15];
             ref float telegraphOpacity = ref npc.localAI[1];
             ref float telegraphDirection = ref npc.localAI[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
             bool enraged = npc.Bottom.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             npc.Calamity().CurrentlyEnraged = enraged;
@@ -167,6 +169,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 totalReleasedSouls = 0f;
 
             npc.scale = MathHelper.Lerp(1.225f, 0.68f, MathHelper.Clamp(totalReleasedSouls / 60f, 0f, 1f));
+
+            // Play phase transition sounds.
+            if (currentPhase == 0f && phase2)
+            {
+                SoundEngine.PlaySound(PolterghastBoss.P2Sound with { Volume = 3f }, target.Center);
+                currentPhase = 1f;
+                npc.netUpdate = true;
+            }
+            if (currentPhase == 1f && phase3)
+            {
+                SoundEngine.PlaySound(PolterghastBoss.P3Sound with { Volume = 3f }, target.Center);
+                currentPhase = 2f;
+                npc.netUpdate = true;
+            }
 
             // Perform the death animation as necessary.
             if (dyingTimer > 0f)
@@ -1157,7 +1173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
                     }
                 }
-                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                SoundEngine.PlaySound(PolterghastBoss.PhantomSound with { Volume = 2f }, target.Center);
             }
 
             if (adjustedTimer > splitDelay + hoverTime && adjustedTimer < splitDelay + hoverTime + chargeTime)

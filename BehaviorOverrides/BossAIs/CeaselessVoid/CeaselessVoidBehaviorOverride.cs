@@ -603,6 +603,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().ShouldCloseHPBar = true;
 
             int blackHoleDamage = 750;
+            int soundDuration = 254;
             ref float moveTowardsTarget = ref npc.Infernum().ExtraAI[0];
             ref float hasCreatedBlackHole = ref npc.Infernum().ExtraAI[1];
 
@@ -654,9 +655,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Slow down.
             npc.velocity *= 0.9f;
 
+            // Play the death buildup sound.
+            if (attackTimer == 560f - soundDuration)
+                SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound with { Volume = 1.8f });
+
             if (attackTimer >= 560f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.HeavyExplosionSound with { Volume = 1.6f }, target.Center);
+                SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound with { Volume = 2f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);

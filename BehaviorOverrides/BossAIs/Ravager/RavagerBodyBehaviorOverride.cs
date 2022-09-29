@@ -811,8 +811,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public static void CreateGroundImpactEffects(NPC npc)
         {
             // Play a crash sound.
-            // TODO -- Perhaps try to find something stronger for this?
-            SoundEngine.PlaySound(SoundID.Item14, npc.Bottom);
+            SoundEngine.PlaySound(RavagerBody.JumpSound, npc.Bottom);
 
             // Create dust effects.
             for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)

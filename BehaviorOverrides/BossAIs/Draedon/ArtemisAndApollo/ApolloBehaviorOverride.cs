@@ -304,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 46.5f));
             if (phaseTransitionAnimationTime == pupilPopoffTime)
             {
-                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, npc.Center);
+                SoundEngine.PlaySound(Artemis.LensSound with { Volume = 2.5f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int lensType = ModContent.ProjectileType<BrokenApolloLens>();

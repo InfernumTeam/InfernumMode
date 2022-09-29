@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.TreasureBags;
+using CalamityMod.Items.TreasureBags.MiscGrabBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -123,17 +124,6 @@ namespace InfernumMode
 
             return base.UseItem(item, player);
         }
-
-        /*
-        public override void RightClick(Item item, Player player)
-        {
-            if (item.type == ModContent.ItemType<StarterBag>())
-            {
-                DropHelper.DropItem(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<BlastedTophat>());
-                DropHelper.DropItemCondition(player.GetSource_OpenItem(item.type), player, ModContent.ItemType<DemonicChaliceOfInfernum>(), Main.expertMode);
-            }
-        }
-        */
 
         public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
         {

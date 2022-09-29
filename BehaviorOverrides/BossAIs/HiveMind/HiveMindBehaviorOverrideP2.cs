@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using HiveMindBoss = CalamityMod.NPCs.HiveMind.HiveMind;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
@@ -725,7 +726,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
 
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
             }
 
@@ -750,7 +751,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                    SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
                 }
             }
             else
@@ -768,7 +769,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             if (highPitched)
             {
-                SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
+                SoundEngine.PlaySound(HiveMindBoss.FastRoarSound, npc.Center);
                 return;
             }
 
@@ -778,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
                 fire.noGravity = true;
             }
-            SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+            SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
         }
 
         public static bool PreDraw(NPC npc, Color lightColor)

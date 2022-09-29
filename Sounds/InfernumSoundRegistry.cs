@@ -8,6 +8,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/AresTeslaShot");
 
+        public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Sounds/Custom/AresPulseCannonCharge");
+
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
         public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Sounds/Custom/DeerclopsRubbleAttackDistorted");
@@ -45,5 +47,7 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
+
+        public const int AresTelegraphSoundLength = 183;
     }
 }

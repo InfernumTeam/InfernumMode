@@ -6,8 +6,10 @@ using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -89,6 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float chargeDelay = ref npc.ai[1];
             ref float orbCounter = ref npc.ai[2];
             ref float shouldPrepareToFire = ref npc.ai[3];
+            ref SlotId telegraphSound = ref npc.ModNPC<AresTeslaCannon>().TelegraphSoundSlot;
 
             // Initialize delays and other timers.
             shouldPrepareToFire = 0f;
@@ -126,6 +129,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
                 ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
                 return false;
+            }
+
+            // Play a sound telegraph before firing.
+            int telegraphTime = Math.Max((int)chargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
+            if (attackTimer == telegraphTime && !currentlyDisabled)
+                telegraphSound = SoundEngine.PlaySound(AresPlasmaFlamethrower.TelSound with { Volume = 1.6f }, npc.Center);
+
+            // Update the sound telegraph's position.
+            if (SoundEngine.TryGetActiveSound(telegraphSound, out var t) && t.IsPlaying)
+            {
+                t.Position = npc.Center;
+                if (doingHoverCharge)
+                    t.Stop();
             }
 
             // Calculate the direction and rotation this arm should use.

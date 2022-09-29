@@ -6,5 +6,4 @@ The primary focus of the mod is expansive reworking of boss AIs.
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.
 Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy.
 
-NOTE: As of now, only Pre-HM, HM, and some Post-ML boss AIs are included, and bosses may be subject to rebalancing.
-Furthermore, the mod is not supported for multiplayer at this time.
+NOTE: The mod is not supported for multiplayer at this time.

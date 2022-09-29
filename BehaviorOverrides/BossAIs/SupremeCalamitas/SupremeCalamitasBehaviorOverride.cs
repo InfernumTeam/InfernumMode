@@ -1802,8 +1802,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Transition to the desperation attack when entering the final phase.
+                // Also get rid of the shadow hydra.
                 if (currentPhase == 4f)
+                {
+                    int shadowHydraID = ModContent.NPCType<ShadowDemon>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == shadowHydraID)
+                        {
+                            Main.npc[i].active = false;
+                            Main.npc[i].netUpdate = true;
+                        }
+                    }
+
                     npc.ai[0] = (int)SCalAttackType.DesperationPhase;
+                }
             }
         }
 

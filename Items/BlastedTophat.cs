@@ -44,7 +44,8 @@ namespace InfernumMode.Items
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TopHat);
             recipe.AddIngredient(ItemID.Cobweb, 15);
-            recipe.AddIngredient(ItemID.Torch, 15);
+            recipe.AddIngredient(ItemID.Torch);
+            recipe.AddIngredient(ItemID.Dynamite);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

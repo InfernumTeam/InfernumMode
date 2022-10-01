@@ -6,4 +6,4 @@ The primary focus of the mod is expansive reworking of boss AIs.
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.
 Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy.
 
-NOTE: The mod is not supported for multiplayer at this time.
+NOTE: As of now, the mod is not supported for multiplayer at this time.

@@ -1047,6 +1047,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 case PerpendicularPortalAttackState.EnteringPortal:
                     // Disable contact damage.
                     npc.damage = 0;
+                    npc.dontTakeDamage = true;
 
                     // Create the portal and define the charge angle if it does not exist yet.
                     if (portalIndex == -1f)
@@ -1306,9 +1307,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Texture2D jawTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2JawAntimatter").Value;
 
             npc.frame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
-            if (npc.Size != headTexture.Size())
-                npc.Size = headTexture.Size();
-
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
             drawPosition -= headTexture.Size() * npc.scale * 0.5f;

@@ -228,11 +228,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             npc.dontTakeDamage = CurrentPhase2TransitionState == Phase2TransitionState.EnteringPortal;
 
+            // Determine the hitbox size.
+            npc.Size = Vector2.One * 132f;
+
             // Defer all further execution to the second phase AI manager if in the second phase.
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
                 npc.ModNPC<DoGHead>().Phase2Started = true;
+                npc.Size = Vector2.One * 176f;
                 return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType, ref universalFightTimer);
             }
 

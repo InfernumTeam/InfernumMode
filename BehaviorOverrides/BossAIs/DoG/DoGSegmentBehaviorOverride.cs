@@ -154,10 +154,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Decide segment size stuff.
             Vector2 size = npc.Size;
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && InPhase2)
-                size = new Vector2(102f);
-            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && InPhase2)
-                size = new Vector2(82f, 90f);
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                size = Vector2.One * 102f;
+            if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                size = InPhase2 ? Vector2.One * 84f : Vector2.One * 66f;
 
             if (npc.Size != size)
                 npc.Size = size;

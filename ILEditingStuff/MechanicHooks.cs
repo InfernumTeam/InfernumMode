@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
@@ -66,6 +67,8 @@ namespace InfernumMode.ILEditingStuff
                 // Reset the selections if the player clicks on something other than the icons.
                 if (!hoveringOverAnyIcon && Main.mouseLeft && Main.mouseLeftRelease)
                     PrimaryMechToSummon = DestroyerTypeToSummon = null;
+                if (!hoveringOverAnyIcon)
+                    ExoMechSelectionUI.HoverSoundMechType = null;
 
                 var font = FontAssets.MouseText.Value;
                 string pickTwoText = "Pick two. The first mech will be fought alone. Once sufficiently damaged, the second mech will be summoned and the two will fight together.";
@@ -92,6 +95,7 @@ namespace InfernumMode.ILEditingStuff
             float iconScale;
             string description;
             Texture2D iconMechTexture;
+            SoundStyle hoverSound;
 
             switch (exoMech)
             {
@@ -99,17 +103,20 @@ namespace InfernumMode.ILEditingStuff
                     iconScale = ExoMechSelectionUI.DestroyerIconScale;
                     iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_THanos").Value;
                     description = "Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.";
+                    hoverSound = ExoMechSelectionUI.ThanatosHoverSound;
                     break;
                 case 2:
                     iconScale = ExoMechSelectionUI.PrimeIconScale;
                     iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_Ares").Value;
                     description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
+                    hoverSound = ExoMechSelectionUI.AresHoverSound;
                     break;
                 case 3:
                 default:
                     iconScale = ExoMechSelectionUI.TwinsIconScale;
                     iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo").Value;
                     description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
+                    hoverSound = ExoMechSelectionUI.TwinsHoverSound;
                     break;
             }
 
@@ -123,6 +130,13 @@ namespace InfernumMode.ILEditingStuff
             {
                 // If so, cause the button to inflate a little bit.
                 iconScale = MathHelper.Clamp(iconScale + 0.0375f, 1f, 1.35f);
+
+                // Play the hover sound.
+                if (ExoMechSelectionUI.HoverSoundMechType != (ExoMech)exoMech)
+                {
+                    ExoMechSelectionUI.HoverSoundMechType = (ExoMech)exoMech;
+                    SoundEngine.PlaySound(hoverSound with { Volume = 1.5f });
+                }
 
                 // Make the selection known if a click is done and the icon isn't already in use.
                 if (Main.mouseLeft && Main.mouseLeftRelease)

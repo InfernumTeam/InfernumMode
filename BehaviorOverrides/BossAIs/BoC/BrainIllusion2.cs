@@ -10,11 +10,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     public class BrainIllusion2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
+
         public NPC Owner => Main.npc[NPC.crimsonBoss];
+
         public float OwnerAttackTime => Owner.ai[1];
+
         public ref float AttackTimer => ref NPC.ai[1];
 
-        public override void SetStaticDefaults()
+		public override string Texture => $"Terraria/Images/NPC_{NPCID.BrainofCthulhu}";
+
+		public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brain of Cthulhu");
             Main.npcFrameCount[NPC.type] = 8;

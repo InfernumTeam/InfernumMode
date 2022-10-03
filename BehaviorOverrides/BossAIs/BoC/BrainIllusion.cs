@@ -11,10 +11,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     public class BrainIllusion : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
+
         public Player Target => Main.player[NPC.target];
+
         public NPC Owner => Main.npc[NPC.crimsonBoss];
+
         public float OwnerAttackTime => Owner.ai[1];
+
         public ref float ConvergeOffsetAngle => ref NPC.ai[1];
+
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.BrainofCthulhu}";
 
         public override void SetStaticDefaults()
         {

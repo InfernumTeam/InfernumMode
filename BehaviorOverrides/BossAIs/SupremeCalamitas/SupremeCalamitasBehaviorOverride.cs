@@ -2252,7 +2252,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             intensity *= 0.75f;
             opacity *= npc.Infernum().ExtraAI[8] * 0.75f;
 
-            Texture2D forcefieldTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/CalamitasShield").Value;
+            Texture2D forcefieldTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/ForcefieldTexture").Value;
             GameShaders.Misc["CalamityMod:SupremeShield"].UseImage1("Images/Misc/Perlin");
 
             Color forcefieldColor = Color.DarkViolet;

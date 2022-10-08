@@ -1,5 +1,5 @@
 author = Dominic Karma
-version = 1.7.5
+version = 1.7.6
 displayName = Calamity Mod Infernum Mode
 modReferences=CalamityMod
 sortAfter=CalamityMod

@@ -111,7 +111,9 @@ namespace InfernumMode.Projectiles
                 if (!string.IsNullOrEmpty(tipText))
                 {
                     Color messageColor = Color.DeepPink;
-                    CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
+                    int textIndex = CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
+                    Main.combatText[textIndex].lifeTime *= 3;
+
                     Owner.Infernum().HatGirlShouldGiveAdvice = false;
                     TalkAnimationCounter = 1f;
                     
@@ -192,11 +194,11 @@ namespace InfernumMode.Projectiles
             Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, -24f, 12f);
 
             // Attempt to approach the owner if not close.
-            if (distanceFromOwner > 200f)
+            if (distanceFromOwner > 120f)
             {
                 float horizontalAcceleration = (Owner.Center.X > Projectile.Center.X).ToDirectionInt() * 0.15f;
                 Projectile.velocity.X = MathHelper.Clamp(Projectile.velocity.X + horizontalAcceleration, -8.4f, 8.4f);
-                if (distanceFromOwner >= 700f)
+                if (distanceFromOwner >= 400f)
                 {
                     WalkingNearOwner = false;
                     Projectile.netUpdate = true;

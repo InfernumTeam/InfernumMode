@@ -9,10 +9,6 @@ namespace InfernumMode.Systems
     {
         public override void PostUpdateEverything()
         {
-            // Disable natural GSS spawns.
-            if (InfernumMode.CanUseCustomAIs)
-                CalamityMod.CalamityMod.sharkKillCount = 0;
-
             if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
                 CalamityGlobalNPC.draedon = -1;
         }

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -38,7 +40,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             WalkAndShootLasers,
             LeapAtTarget,
             RocketBarrage,
-            MeteorSlam,
             AstralLaserBursts,
             CreateAureusSpawnRing,
             AstralDrillLaser,
@@ -97,10 +98,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float phase2AnimationTimer = ref npc.localAI[1];
 
             // Reset things every frame.
-            npc.defDefense = 27;
+            npc.defDefense = 20;
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
-            npc.Calamity().DR = 0.4f;
+            npc.Calamity().DR = 0.2f;
+
+            // Disable extra damage from the astral infection debuff. The attacks themselves hit hard enough.
+            if (target.HasBuff(ModContent.BuffType<AstralInfectionDebuff>()))
+                target.ClearBuff(ModContent.BuffType<AstralInfectionDebuff>());
 
             // Reset gravity affection and tile collision.
             npc.noGravity = false;
@@ -137,9 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     DoAttack_WalkAndShootLasers(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.LeapAtTarget:
-                case AureusAttackType.MeteorSlam:
-                    bool meteorSlam = (AureusAttackType)(int)attackState == AureusAttackType.MeteorSlam;
-                    DoAttack_LeapAtTarget(npc, target, meteorSlam, enraged, lifeRatio, ref attackTimer, ref frameType, ref onlyDoOneJump);
+                    DoAttack_LeapAtTarget(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType, ref onlyDoOneJump);
                     break;
                 case AureusAttackType.RocketBarrage:
                     DoAttack_RocketBarrage(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
@@ -299,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool meteorSlam, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float onlyDoOneJump)
+        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float onlyDoOneJump)
         {
             // Reset tile collision.
             npc.noTileCollide = false;
@@ -311,14 +314,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (attackTimer == 1f)
                 npc.frame.Y = 0;
 
-            int jumpDelay = meteorSlam ? 85 : 50;
-            int attackTransitionDelay = meteorSlam ? 50 : 1;
+            int jumpDelay = 32;
+            int minHoverTime = 45;
+            int maxHoverTime = 160;
+            int slamDelay = 25;
+            float slamSpeed = 40f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float stompCounter = ref npc.Infernum().ExtraAI[1];
-            ref float jumpIntensity = ref npc.Infernum().ExtraAI[2];
-
-            if (jumpDelay > 75 && lifeRatio < Phase2LifeRatio)
-                jumpDelay -= 20;
+            ref float slamTelegraphInterpolant = ref npc.Infernum().ExtraAI[2];
 
             switch ((int)attackState)
             {
@@ -332,40 +335,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         // Slow down.
                         npc.velocity.X *= 0.8f;
 
-                        // Jump after a delay.
+                        // Jump upward after a delay.
                         if (attackTimer >= jumpDelay)
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
-                            npc.velocity.X = npc.spriteDirection * 21f;
-
-                            jumpIntensity = 1f;
-                            float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
-
-                            if (distanceBelowTarget > 0f)
-                            {
-                                float intensityFactor = lifeRatio < Phase2LifeRatio ? 0.00115f : 0.0011f;
-                                jumpIntensity = 1f + distanceBelowTarget * intensityFactor;
-                            }
-
-                            jumpIntensity *= 1.05f;
-                            if (enraged)
-                                jumpIntensity *= 1.4f;
-
-                            if (jumpIntensity > 3f)
-                                jumpIntensity = 3f;
-
-                            // Fly upward.
-                            npc.velocity.Y = -17.5f;
-
-                            // Play a sound as an indicator if doing a meteor slam.
-                            if (meteorSlam)
-                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
-
-                            npc.noTileCollide = true;
-
-                            if (jumpIntensity > 1f)
-                                npc.velocity.Y *= jumpIntensity;
-
+                            npc.velocity = new(Math.Sign(target.Center.X - npc.Center.X) * 8f, -23f);
                             attackState++;
                             attackTimer = 0f;
                             npc.netUpdate = true;
@@ -375,139 +349,92 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         attackTimer = 0f;
                     break;
 
-                // Attempt to stomp on the target.
+                // Hover above the target before stomping downward.
                 case 1:
-                    if (npc.velocity.Y == 0f && attackTimer > 30f)
+                    npc.noTileCollide = true;
+                    npc.noGravity = true;
+
+                    if (attackTimer < maxHoverTime)
                     {
-                        // Play a stomp sound.
-                        SoundEngine.PlaySound(AureusBoss.StompSound, npc.Center);
+                        // Disable contact damage.
+                        npc.damage = 0;
 
-                        // Reset the jump intensity.
-                        jumpIntensity = 0f;
-
-                        // Determine whether the attack should be repeated.
-                        int stompCount = meteorSlam ? 3 : 4;
-                        if (onlyDoOneJump == 1f)
-                            stompCount = 1;
-
-                        stompCounter++;
-                        if (stompCounter >= stompCount)
+                        float hoverSpeed = Utils.Remap(attackTimer, 0f, maxHoverTime, 38f, 108f);
+                        Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
+                        npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero.MoveTowards(hoverDestination - npc.Center, hoverSpeed), 0.2f);
+                        if (attackTimer >= minHoverTime)
                         {
-                            npc.noTileCollide = false;
-                            npc.noGravity = false;
-                            attackTimer = 0f;
-                            attackState = 2f;
+                            attackTimer = maxHoverTime;
+                            npc.velocity = Vector2.Zero;
                             npc.netUpdate = true;
-                        }
-                        else
-                        {
-                            npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
-
-                            attackTimer = 0f;
-                            attackState = 0f;
-                            npc.netUpdate = true;
-                        }
-
-                        // Spawn dust on the ground.
-                        for (int i = (int)npc.position.X - 20; i < (int)npc.position.X + npc.width + 40; i += 20)
-                        {
-                            for (int j = 0; j < 4; j++)
-                            {
-                                Dust fire = Dust.NewDustDirect(new Vector2(npc.position.X - 20f, npc.position.Y + npc.height), npc.width + 20, 4, ModContent.DustType<AstralOrange>(), 0f, 0f, 100, default, 1.5f);
-                                fire.velocity *= 0.2f;
-                            }
-                        }
-
-                        // Perform stomp effects.
-                        if (meteorSlam)
-                            HatGirl.SayThingWhileOwnerIsAlive(target, "Those meteorites fall ahead of you. Try baiting them for a little more breathing room!");
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int shockwaveDamage = 200;
-                            if (enraged)
-                                shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
-
-                            if (meteorSlam)
-                            {
-                                int meteorDamage = 180;
-                                if (enraged)
-                                    meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
-
-                                for (int i = 0; i < 2; i++)
-                                {
-                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -640f);
-                                    Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
-                                    if (showerDirection.Y < 0.4f)
-                                    {
-                                        showerDirection.Y = 0.4f;
-                                        showerDirection = showerDirection.SafeNormalize(Vector2.UnitY);
-                                    }
-
-                                    Utilities.NewProjectileBetter(spawnPosition, showerDirection * 16f, ModContent.ProjectileType<AstralMeteor>(), meteorDamage, 0f, Main.myPlayer);
-                                }
-                            }
-                            else
-                            {
-                                int missileDamage = 155;
-                                if (enraged)
-                                    missileDamage = (int)(missileDamage * EnragedDamageFactor);
-
-                                if (lifeRatio < Phase2LifeRatio)
-                                {
-                                    for (int i = 0; i < 6; i++)
-                                    {
-                                        Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.9f) * Main.rand.NextFloat(12f, 18f);
-                                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
-                                    }
-                                }
-                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
-                            }
                         }
                     }
-                    else
+
+                    // Sit in place, creating a downward telegraph, and slam.
+                    else if (attackTimer < maxHoverTime + slamDelay)
+                    {
+                        // Disable contact damage.
+                        npc.damage = 0;
+
+                        frameType = (int)AureusFrameType.Stomp;
+                        slamTelegraphInterpolant = Utils.GetLerpValue(0f, slamDelay, attackTimer - maxHoverTime, true);
+                    }
+
+                    // Slam downward.
+                    if (attackTimer >= maxHoverTime + slamDelay)
                     {
                         frameType = (int)AureusFrameType.Stomp;
+                        slamTelegraphInterpolant = 0f;
 
-                        // Set velocities while falling. This happens before the stomp.
-                        // Fall through tiles if necessary.
-                        if (!target.dead)
+                        npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * slamSpeed, 0.125f);
+
+                        bool hitGround = false;
+                        while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 20))
                         {
-                            if ((target.position.Y > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
-                                npc.noTileCollide = true;
-                            else if ((npc.velocity.Y > 0f && npc.Bottom.Y > Main.player[npc.target].Top.Y) || (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].Center, 1, 1) && !Collision.SolidCollision(npc.position, npc.width, npc.height)))
-                                npc.noTileCollide = false;
+                            hitGround = true;
+                            npc.velocity = Vector2.Zero;
+                            npc.position.Y -= 2f;
                         }
 
-                        if (npc.position.X < target.position.X && npc.position.X + npc.width > target.position.X + target.width)
+                        if (hitGround)
                         {
-                            npc.velocity.X *= 0.9f;
+                            // Play a stomp sound.
+                            SoundEngine.PlaySound(AureusBoss.StompSound, npc.Center);
 
-                            if (npc.Bottom.Y < target.position.Y)
+                            int missileDamage = 155;
+                            int shockwaveDamage = 200;
+                            if (enraged)
                             {
-                                float fallSpeed = MathHelper.Lerp(0.6f, 0.9f, 1f - lifeRatio);
-
-                                if (jumpIntensity > 1f)
-                                    fallSpeed *= jumpIntensity;
-
-                                npc.velocity.Y += fallSpeed;
+                                missileDamage = (int)(missileDamage * EnragedDamageFactor);
+                                shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
                             }
+
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.77f, 0.77f, i / 4f)) * 16f;
+                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralBlueComet>(), missileDamage, 0f);
+                            }
+                            if (lifeRatio < Phase2LifeRatio)
+                            {
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(12f, 18f);
+                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, missileVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                                }
+                            }
+
+                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+
+                            // Determine whether the attack should be repeated.
+                            stompCounter++;
+                            int stompCount = onlyDoOneJump == 1f ? 1 : 4;
+
+                            attackTimer = 0f;
+                            attackState = stompCounter >= stompCount ? 2f : 0f;
+                            npc.netUpdate = true;
                         }
-                        else
-                        {
-                            float horizontalMovementSpeed = Math.Abs(npc.Center.X - target.Center.X) * 0.0001f + 0.08f;
-
-                            if (npc.spriteDirection < 0)
-                                npc.velocity.X -= horizontalMovementSpeed;
-                            else if (npc.spriteDirection > 0)
-                                npc.velocity.X += horizontalMovementSpeed;
-
-                            npc.velocity.X = MathHelper.Clamp(npc.velocity.X, -18f, 18f);
-                        }
-
-                        EnforceCustomGravity(npc);
-                        npc.noGravity = true;
                     }
+
                     break;
 
                 // Sit in place for a moment to allow the target to compose themselves.
@@ -515,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     // Slow down.
                     npc.velocity.X *= 0.8f;
 
-                    if (attackTimer > attackTransitionDelay)
+                    if (attackTimer > 72)
                     {
                         onlyDoOneJump = 0f;
                         attackTimer = 0f;
@@ -749,6 +676,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public static void DoAttack_AstralDrillLaser(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
         {
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
+
             // Adjust directioning.
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
@@ -765,10 +694,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 2.64f;
 
+            // Cast line telegraphs.
+            telegraphInterpolant = Utils.GetLerpValue(0f, laserShootDelay, attackTimer, true);
+            if (telegraphInterpolant >= 1f)
+                telegraphInterpolant = 0f;
+
             if (shouldSlowDown)
             {
                 // Make the attack go by more quickly if close to the target horizontally.
-                if (attackTimer < 360f)
+                if (attackTimer < laserShootDelay - 20f)
                     attackTimer++;
 
                 npc.velocity.X *= 0.8f;
@@ -779,7 +713,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
 
             // Play a charge sound as a telegraph prior to firing.
-            if (attackTimer == laserShootDelay - 155f)
+            if (attackTimer == laserShootDelay - 156f)
                 SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Adjust frames.
@@ -919,7 +853,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             WeightedRandom<AureusAttackType> attackSelector = new(Main.rand);
             attackSelector.Add(AureusAttackType.WalkAndShootLasers);
             attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
-            attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 0.7);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)
@@ -1010,7 +943,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             npc.frameCounter++;
 
-            int frameUpdateRate = 12;
+            int frameUpdateRate = 9;
             AureusFrameType frameType = (AureusFrameType)(int)npc.localAI[0];
 
             if (frameType == AureusFrameType.Walk)
@@ -1026,8 +959,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
         }
 
+        public static float PrimitiveWidthFunction(float completionRatio) => 150f;
+
+        public static Color PrimitiveTrailColor(NPC npc, float completionRatio)
+        {
+            float interpolant = npc.Infernum().ExtraAI[2];
+            float opacity = Utils.GetLerpValue(0f, 0.4f, interpolant, true) * Utils.GetLerpValue(1f, 0.8f, interpolant, true);
+            Color c = Color.Lerp(Color.Cyan, Color.OrangeRed, interpolant) * opacity * (1f - completionRatio) * 0.2f;
+            return c * Utils.GetLerpValue(0.01f, 0.06f, completionRatio, true);
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            npc.Infernum().OptionalPrimitiveDrawer ??= new(PrimitiveWidthFunction, c => PrimitiveTrailColor(npc, c), null, true, GameShaders.Misc["CalamityMod:SideStreakTrail"]);
+
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmaskTexture = TextureAssets.Npc[npc.type].Value;
             SpriteEffects spriteEffects = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -1058,6 +1003,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float scale = npc.scale;
             float rotation = npc.rotation;
             int afterimageCount = 8;
+            AureusAttackType currentAttack = (AureusAttackType)(int)npc.ai[0];
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             // Draw normal afterimages.
@@ -1072,6 +1018,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+
+            // Draw the downward telegraph trail as needed.
+            if (currentAttack == AureusAttackType.LeapAtTarget && npc.Infernum().ExtraAI[2] > 0f)
+            {
+                Vector2[] telegraphPoints = new Vector2[3]
+                {
+                    npc.Center,
+                    npc.Center + Vector2.UnitY * 2000f,
+                    npc.Center + Vector2.UnitY * 4000f
+                };
+                GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 51);
+            }
 
             // Draw the second phase back afterimage if applicable.
             float backAfterimageInterpolant = Utils.GetLerpValue(0f, 180f, npc.localAI[1], true) * npc.Opacity;
@@ -1091,7 +1050,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
 
             // And draw glowmasks (and their afterimages) if not recharging.
-            if ((AureusAttackType)(int)npc.ai[0] != AureusAttackType.Recharge && glowmaskTexture != TextureAssets.Npc[npc.type].Value)
+            if (currentAttack != AureusAttackType.Recharge && glowmaskTexture != TextureAssets.Npc[npc.type].Value)
             {
                 Color glowmaskColor = Color.White;
 
@@ -1108,6 +1067,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, glowmaskColor, rotation, origin, scale, spriteEffects, 0f);
             }
 
+            // Draw the laser line telegraphs as needed.
+            if (currentAttack == AureusAttackType.AstralDrillLaser)
+            {
+                float lineTelegraphInterpolant = npc.Infernum().ExtraAI[0];
+                if (lineTelegraphInterpolant > 0f)
+                {
+                    Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                    Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
+
+                    Color outlineColor = Color.Lerp(Color.Cyan, Color.White, lineTelegraphInterpolant);
+                    Vector2 telegraphOrigin = new(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
+
+                    // Create bloom on the pupil.
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
+                    Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
+
+                    if (npc.Infernum().ExtraAI[0] >= -100f)
+                    {
+                        for (int i = -1; i <= 1; i += 2)
+                        {
+                            float beamRotation = MathHelper.PiOver2 * (1f - lineTelegraphInterpolant) * i + MathHelper.Pi;
+                            Main.spriteBatch.Draw(line, drawPosition - Vector2.UnitY * 12f, null, outlineColor, beamRotation, telegraphOrigin, beamScale, 0, 0f);
+                        }
+                    }
+
+                    Main.spriteBatch.ResetBlendState();
+                }
+            }
             return false;
         }
         #endregion Frames and Drawcode

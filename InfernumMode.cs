@@ -1,4 +1,5 @@
 using CalamityMod.Events;
+using CalamityMod.Particles.Metaballs;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
@@ -16,6 +17,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static CalamityMod.Particles.Metaballs.FusableParticleManager;
 
 namespace InfernumMode
 {
@@ -215,7 +217,19 @@ namespace InfernumMode
                 BossRushChanges.Load();
 
             if (Main.netMode != NetmodeID.Server)
-                Main.QueueMainThreadAction(() => CalamityMod.Call("LoadParticleInstances", this));
+            {
+                Main.QueueMainThreadAction(() =>
+                {
+                    CalamityMod.Call("LoadParticleInstances", this);
+                    ParticleSets = new();
+                    ParticleSetTypes = new();
+                    HasBeenFormallyDefined = true;
+
+                    FindParticleSetTypesInMod(CalamityMod, Main.screenWidth, Main.screenHeight);
+                    foreach (Mod m in ExtraModsToLoadSetsFrom)
+                        FindParticleSetTypesInMod(m, Main.screenWidth, Main.screenHeight);
+                });
+            }
 
             _ = new InfernumDifficulty();
         }

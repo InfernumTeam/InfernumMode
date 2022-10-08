@@ -115,13 +115,13 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 936000,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1776500,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 2444440 : 1840000,
-            [ModContent.NPCType<ThanatosHead>()] = 1456100,
-            [ModContent.NPCType<AresBody>()] = 2160000,
+            [ModContent.NPCType<ThanatosHead>()] = 2000000,
+            [ModContent.NPCType<AresBody>()] = 2250000,
             [ModContent.NPCType<Artemis>()] = 2400000,
             [ModContent.NPCType<Apollo>()] = 2400000,
-            [ModContent.NPCType<SupremeCataclysm>()] = BossRushEvent.BossRushActive ? -1 : 497200,
-            [ModContent.NPCType<SupremeCatastrophe>()] = BossRushEvent.BossRushActive ? -1 : 497200,
-            [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? -1 : 3364400,
+            [ModContent.NPCType<SupremeCataclysm>()] = BossRushEvent.BossRushActive ? -1 : 537200,
+            [ModContent.NPCType<SupremeCatastrophe>()] = BossRushEvent.BossRushActive ? -1 : 537200,
+            [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? -1 : 3564400,
         };
 
         public static int CalculateMechHP(int baseHP)

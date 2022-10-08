@@ -107,7 +107,7 @@ namespace InfernumMode.BossIntroScreens
                 if (isBright)
                     sb.SetBlendState(BlendState.Additive);
 
-                Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
+                Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
                 float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
                 coverScaleFactor *= Utils.GetLerpValue(1f, 0.84f, AnimationCompletion, true);
 

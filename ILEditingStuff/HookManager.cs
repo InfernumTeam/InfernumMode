@@ -9,6 +9,8 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Systems;
 using CalamityMod.UI;
+using CalamityMod.UI.DraedonSummoning;
+using CalamityMod.UI.ModeIndicator;
 using CalamityMod.World;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;

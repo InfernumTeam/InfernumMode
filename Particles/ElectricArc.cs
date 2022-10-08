@@ -15,7 +15,7 @@ namespace InfernumMode.Particles
         public override bool UseAdditiveBlend => true;
         public override bool UseCustomDraw => true;
         public override bool SetLifetime => true;
-        public override string Texture => "CalamityMod/ExtraTextures/PhotovisceratorLight";
+        public override string Texture => "CalamityMod/ExtraTextures/SmallGreyscaleCircle";
 
         public ElectricArc(Vector2 position, Vector2 velocity, Color color, float scale, int lifeTime)
         {

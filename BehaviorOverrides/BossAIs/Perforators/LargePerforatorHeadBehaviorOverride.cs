@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
@@ -45,12 +46,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);
             Vector2 flyDestination = target.Center;
 
-            if (npc.WithinRange(flyDestination, 270f) && npc.velocity.Length() > 6f)
+            float maxSpeed = BossRushEvent.BossRushActive ? 34f : 18f;
+            if (npc.WithinRange(flyDestination, 270f) && npc.velocity.Length() > maxSpeed / 3f)
                 npc.velocity *= 1.01f;
             else
             {
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.3f;
-                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 18f);
+                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, maxSpeed);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.027f);
             }
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;

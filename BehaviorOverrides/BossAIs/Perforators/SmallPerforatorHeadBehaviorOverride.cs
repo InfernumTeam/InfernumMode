@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
@@ -40,7 +41,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 return false;
             }
 
+            float maxRiseSpeed = 14.5f;
+            float maxFlySpeed = 20f;
             float wrappedAttackTimer = attackTimer % 330f;
+            if (BossRushEvent.BossRushActive)
+            {
+                maxRiseSpeed += 5.4f;
+                maxFlySpeed += 9.6f;
+            }
+
             npc.target = Main.npc[CalamityGlobalNPC.perfHive].target;
             Player target = Main.player[npc.target];
 
@@ -57,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
                 Vector2 flyDestination = target.Center + Vector2.UnitY * 375f;
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.8f;
-                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 20f);
+                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, maxFlySpeed);
 
                 if (MathHelper.Distance(npc.Center.X, target.Center.X) > 400f)
                 {
@@ -75,10 +84,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Rise upward.
-            if (wrappedAttackTimer >= 180f && wrappedAttackTimer < 225f)
+            if (wrappedAttackTimer is >= 180f and < 225f)
             {
                 npc.velocity.X *= 0.96f;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -14.5f, 15f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -maxRiseSpeed, 15f);
 
                 // Release ichor into the air once above the target and in air.
                 if (hasReleasedFallingIchor == 0f && npc.Top.Y < target.Bottom.Y && !Collision.SolidCollision(npc.position, npc.width, npc.height))
@@ -102,9 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Fall.
             if (wrappedAttackTimer >= 225f)
-            {
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.16f, -8.5f, 10f);
-            }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             attackTimer++;

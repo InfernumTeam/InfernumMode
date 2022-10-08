@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.UI;
+using CalamityMod.UI.DraedonSummoning;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
@@ -101,20 +102,20 @@ namespace InfernumMode.ILEditingStuff
             {
                 case 1:
                     iconScale = ExoMechSelectionUI.DestroyerIconScale;
-                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_THanos").Value;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/UI/DraedonSummoning/HeadIcon_THanos").Value;
                     description = "Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.";
                     hoverSound = ExoMechSelectionUI.ThanatosHoverSound;
                     break;
                 case 2:
                     iconScale = ExoMechSelectionUI.PrimeIconScale;
-                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_Ares").Value;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/UI/DraedonSummoning/HeadIcon_Ares").Value;
                     description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
                     hoverSound = ExoMechSelectionUI.AresHoverSound;
                     break;
                 case 3:
                 default:
                     iconScale = ExoMechSelectionUI.TwinsIconScale;
-                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo").Value;
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/UI/DraedonSummoning/HeadIcon_ArtemisApollo").Value;
                     description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
                     hoverSound = ExoMechSelectionUI.TwinsHoverSound;
                     break;

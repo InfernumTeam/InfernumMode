@@ -56,7 +56,7 @@ namespace InfernumMode.Particles
 
         public override void DrawParticles()
         {
-            Texture2D fusableParticleBase = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/FusableParticleBase").Value;
+            Texture2D fusableParticleBase = ModContent.Request<Texture2D>("CalamityMod/Particles/Metaballs/FusableParticleBase").Value;
             foreach (FusableParticle particle in Particles)
             {
                 Vector2 drawPosition = particle.Center - Main.screenPosition;

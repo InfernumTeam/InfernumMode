@@ -648,7 +648,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Idly create explosions around the target.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % burstReleaseRate == burstReleaseRate - 1f && attackTimer > shootDelay + telegraphTime + 60f)
+            float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
+            bool aboutToTurn = npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts && MathHelper.Distance(adjustedTimer, spinTime * 0.5f) < 54f;
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % burstReleaseRate == burstReleaseRate - 1f && attackTimer > shootDelay + telegraphTime + 60f && !aboutToTurn)
             {
                 Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
                 Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 650f) * new Vector2(1f, 0.6f);
@@ -656,7 +658,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Make the laser spin.
-            float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
             float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
@@ -669,7 +670,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     if (Main.netMode != NetmodeID.Server)
                         ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
                 }
-
+                
                 if (adjustedTimer < spinTime * 0.5f)
                     spinSpeed *= Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
                 else

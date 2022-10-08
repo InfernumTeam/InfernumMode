@@ -352,15 +352,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
             int finalMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, finalMechType, 1);
-            NPC afinalMech = Main.npc[finalMechIndex];
+            NPC finalMech = Main.npc[finalMechIndex];
             npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMechIndex;
             Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMechIndex;
 
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-            afinalMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-            afinalMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+            finalMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+            finalMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
-            afinalMech.netUpdate = true;
+            finalMech.netUpdate = true;
         }
 
         public static int TotalMechs

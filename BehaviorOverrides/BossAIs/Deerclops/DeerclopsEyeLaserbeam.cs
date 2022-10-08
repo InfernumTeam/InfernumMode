@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
             // Select textures to pass to the shader, along with the electricity color.
             GameShaders.Misc["Infernum:ArtemisLaser"].UseColor(Color.White);
-            GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 64);

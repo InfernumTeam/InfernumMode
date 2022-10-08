@@ -33,7 +33,7 @@ namespace InfernumMode.BossIntroScreens
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(1f, 0.34f, 0.09f));
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/EternityStreak").Value;
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AresBody>());

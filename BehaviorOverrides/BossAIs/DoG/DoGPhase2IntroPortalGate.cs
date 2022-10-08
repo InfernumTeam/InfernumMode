@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Projectile.timeLeft <= 45f)
                 fade = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
 
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);

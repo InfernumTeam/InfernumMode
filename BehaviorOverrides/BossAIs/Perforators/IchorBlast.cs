@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -29,7 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            if (Math.Abs(Projectile.velocity.X) < 18.5f)
+
+            float maxFlySpeed = BossRushEvent.BossRushActive ? 29f : 18.5f;
+            if (Math.Abs(Projectile.velocity.X) < maxFlySpeed)
                 Projectile.velocity.X *= 1.02f;
 
             // Release blood idly.

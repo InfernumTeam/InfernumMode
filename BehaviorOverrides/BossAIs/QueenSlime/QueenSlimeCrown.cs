@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
-	public class QueenSlimeCrown : ModProjectile
+    public class QueenSlimeCrown : ModProjectile
     {
         public int DefaultDamage;
 
@@ -121,6 +122,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 float chargeSpeed = MathHelper.Lerp(8f, 28f, chargeSpeedInterpolant);
                 if (QueenSlimeBehaviorOverride.InPhase2(queenSlime))
                     chargeSpeed *= 1.3f;
+                if (BossRushEvent.BossRushActive)
+                    chargeSpeed *= 1.8f;
 
                 if (chargeSpeedInterpolant < 1f)
                     Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -167,6 +170,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     {
                         Vector2 shootVelocity = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * 10f;
                         shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 4f));
+
+                        if (BossRushEvent.BossRushActive)
+                            shootVelocity *= 1.7f;
+
                         Utilities.NewProjectileBetter(boltSpawnPosition, shootVelocity, ModContent.ProjectileType<CrownBeam>(), 125, 0f);
                     }
                 }

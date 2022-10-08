@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             // Draw the vortex.
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             Main.spriteBatch.EnterShaderRegion();

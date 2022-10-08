@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Time >= Lifetime - FadeoutTime)
                 fade = Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
 
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Particles;
@@ -262,6 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 45;
             int chargeCount = 3;
             float chargeSpeed = 20f;
+            float maxHorizontalSpeed = 16f;
 
             if (inPhase2)
             {
@@ -280,6 +282,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 chargeDelay -= 5;
                 fallingIchorCount += 2;
                 burstIchorCount += 2;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeDelay -= 23;
+                chargeTime -= 17;
+                chargeSpeed *= 1.7f;
+                maxHorizontalSpeed += 13f;
+                fallingIchorCount += 11;
             }
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -344,7 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < fallingIchorCount; i++)
                         {
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
-                            float horizontalSpeed = MathHelper.Lerp(-16f, 16f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
+                            float horizontalSpeed = MathHelper.Lerp(-maxHorizontalSpeed, maxHorizontalSpeed, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
                             float verticalSpeed = Main.rand.NextFloat(-8f, -7f);
                             Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 75, 0f);
@@ -389,8 +399,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 60;
             int crimeraSpawnCount = 1;
             int crimeraLimit = 3;
-            int crimeraSpawnRate = chargeTime / crimeraSpawnCount;
             float hoverOffset = 500f;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                SelectNextAttack(npc);
+                return;
+            }
+
+            int crimeraSpawnRate = chargeTime / crimeraSpawnCount;
             float chargeSpeed = hoverOffset / chargeTime * 2f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 
@@ -464,6 +481,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             if (inPhase2)
                 shootRate -= 4;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                shootRate -= 8;
+                blastCount -= 2;
+            }
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float reboundCoundown = ref npc.Infernum().ExtraAI[1];
@@ -558,9 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             float blobSpeedFactor = -1f;
 
             if (inPhase2)
-            {
                 blobSpeedFactor *= -0.7f;
-            }
 
             if (inPhase3)
             {
@@ -578,6 +599,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 chargeSpeed += 1.5f;
                 blobSpeedFactor *= 1.1f;
                 chargeBlobCount += 3;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                blobReleaseRate--;
+                spinTime -= 25;
+                chargeBlobCount += 5;
+                spinRadius += 66f;
+                chargeSpeed *= 1.7f;
+                blobSpeedFactor *= 1.3f;
             }
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -779,6 +810,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 wallSpeed -= 0.95f;
                 aimAtTargetInterpolant += 0.125f;
             }
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                offsetPerCrimera -= 20f;
+                wallSpeed += 3f;
+            }
 
             ref float horizontalWallOffset = ref npc.Infernum().ExtraAI[0];
 
@@ -914,6 +951,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int ichorReleaseRate = 5;
             float hoverOffset = 600f;
             float chargeSpeed = hoverOffset / chargeTime * 2.75f;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 16;
+                chargeSpeed *= 1.36f;
+            }
 
             if (inPhase4)
             {
@@ -1118,6 +1161,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int attackTransitionDelay = 120;
             float ichorWallSpacing = 40f;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                ichorWallShotCount += 9;
+                attackDelay -= 30;
+                attackTime -= 105;
+            }
+
             Vector2 leftMouthPosition = npc.Center + new Vector2(-68f, 6f).RotatedBy(-npc.rotation);
             Vector2 rightMouthPosition = npc.Center + new Vector2(48f, -36f).RotatedBy(npc.rotation);
             Vector2[] mouthPositions = new[]

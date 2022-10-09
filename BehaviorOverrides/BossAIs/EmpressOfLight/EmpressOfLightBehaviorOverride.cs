@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         #region Constants and Attack Patterns
 
-        public static bool ShouldBeEnraged => Main.dayTime && !BossRushEvent.BossRushActive;
+        public static bool ShouldBeEnraged => Main.dayTime || BossRushEvent.BossRushActive;
 
         public const int SecondPhaseFadeoutTime = 90;
 

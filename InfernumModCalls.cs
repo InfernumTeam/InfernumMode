@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Systems;
@@ -34,6 +35,9 @@ namespace InfernumMode
 
         public static bool CanPlayMusicForNPC(int npcID)
         {
+            if (BossRushEvent.BossRushActive)
+                return false;
+
             if (npcID == NPCID.EyeofCthulhu)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.SkeletronHead)

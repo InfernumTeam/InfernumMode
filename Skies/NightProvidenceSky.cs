@@ -1,4 +1,5 @@
 ﻿using CalamityMod.NPCs.Providence;
+using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -11,7 +12,7 @@ namespace InfernumMode.Skies
     {
         public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
         
-        public override bool IsSceneEffectActive(Player player) => !Main.gameMenu && NPC.AnyNPCs(ModContent.NPCType<Providence>()) && InfernumMode.CanUseCustomAIs && !Main.dayTime;
+        public override bool IsSceneEffectActive(Player player) => !Main.gameMenu && NPC.AnyNPCs(ModContent.NPCType<Providence>()) && InfernumMode.CanUseCustomAIs && ProvidenceBehaviorOverride.IsEnraged;
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
@@ -25,7 +26,7 @@ namespace InfernumMode.Skies
 
         public override void Reset() { }
 
-        public override bool IsActive() => !Main.gameMenu && NPC.AnyNPCs(ModContent.NPCType<Providence>()) && InfernumMode.CanUseCustomAIs && !Main.dayTime;
+        public override bool IsActive() => !Main.gameMenu && NPC.AnyNPCs(ModContent.NPCType<Providence>()) && InfernumMode.CanUseCustomAIs && ProvidenceBehaviorOverride.IsEnraged;
 
         public override void Activate(Vector2 position, params object[] args) { }
 

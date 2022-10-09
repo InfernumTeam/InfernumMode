@@ -70,7 +70,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
-            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>() && !Main.dayTime)
+            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>() && ProvidenceBehaviorOverride.IsEnraged)
             {
                 Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
                 float clampedTime = Main.GlobalTimeWrappedHourly % 5f / 5f;

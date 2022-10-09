@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            if (!Main.dayTime)
+            if (ProvidenceBehaviorOverride.IsEnraged)
                 texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/HolyBombNight").Value;
 
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true);
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Texture2D explosionTelegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HollowCircleSoftEdge").Value;
                 Vector2 scale = Vector2.One * ExplosionRadius / explosionTelegraphTexture.Size();
                 Color explosionTelegraphColor = Color.Lerp(Color.Yellow, Color.Red, colorPulse) * circleFadeinInterpolant;
-                if (!Main.dayTime)
+                if (ProvidenceBehaviorOverride.IsEnraged)
                     explosionTelegraphColor = Color.Lerp(Color.Cyan, Color.Lime, colorPulse * 0.67f) * circleFadeinInterpolant;
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int explosionDamage = Main.dayTime ? 350 : 600;
+                int explosionDamage = !ProvidenceBehaviorOverride.IsEnraged ? 350 : 600;
                 int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), explosionDamage, 0f);
                 if (Main.projectile.IndexInRange(explosion))
                     Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = ExplosionRadius * 0.7f;

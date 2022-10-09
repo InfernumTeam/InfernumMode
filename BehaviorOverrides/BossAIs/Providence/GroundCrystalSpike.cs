@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override Color? GetAlpha(Color lightColor)
         {
-            Color c = Main.dayTime ? Color.Lerp(Color.Orange, Color.Yellow, 0.8f) : Color.Lerp(Color.Cyan, Color.Lime, 0.15f);
+            Color c = !ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.Orange, Color.Yellow, 0.8f) : Color.Lerp(Color.Cyan, Color.Lime, 0.15f);
             c = Color.Lerp(c, Color.White, 0.4f);
 
             c.A = 0;

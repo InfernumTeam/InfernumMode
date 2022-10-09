@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
-            if (!Main.dayTime)
+            if (ProvidenceBehaviorOverride.IsEnraged)
                 color = Color.Lerp(Color.Cyan, Color.Lime, (float)Math.Pow(completionRatio, 2D) * 0.5f);
 
             color *= Projectile.Opacity;
@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.dayTime)
+            if (!ProvidenceBehaviorOverride.IsEnraged)
                 target.AddBuff(ModContent.BuffType<HolyFlames>(), 360);
             else
                 target.AddBuff(ModContent.BuffType<Nightwither>(), 180);

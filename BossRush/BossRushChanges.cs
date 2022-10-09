@@ -30,6 +30,7 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.TownNPCs;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
@@ -47,6 +48,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -55,6 +57,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 using static CalamityMod.Events.BossRushEvent;
 
 namespace InfernumMode.BossRush
@@ -104,10 +107,10 @@ namespace InfernumMode.BossRush
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, ModContent.NPCType<DesertScourgeHead>());
                 }, permittedNPCs: new int[] { ModContent.NPCType<DesertScourgeBody>(), ModContent.NPCType<DesertScourgeTail>() }),
 
-                // Tier 2.
                 new Boss(ModContent.NPCType<ProfanedGuardianCommander>(), TimeChangeContext.Day,
                     permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianDefender>(), ModContent.NPCType<ProfanedGuardianHealer>(), ModContent.NPCType<EtherealHand>() }),
-
+                
+                // Tier 2.
                 new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
 
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(), }),
@@ -130,7 +133,6 @@ namespace InfernumMode.BossRush
                 new Boss(ModContent.NPCType<HiveMind>(), spawnContext: type =>
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText2", XerocTextColor);
                 }, permittedNPCs: new int[] { ModContent.NPCType<DankCreeper>(), ModContent.NPCType<DarkHeart>(), ModContent.NPCType<HiveBlob>(), ModContent.NPCType<HiveBlob2>() }),
 
                 new Boss(NPCID.DukeFishron, spawnContext: type =>
@@ -204,7 +206,11 @@ namespace InfernumMode.BossRush
                 }, permittedNPCs: new int[] { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead, NPCID.GolemHeadFree }),
                 
                 // Tier 4.
-                new Boss(NPCID.HallowBoss, TimeChangeContext.Night),
+                new Boss(NPCID.HallowBoss, spawnContext: type =>
+                {
+                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText2", XerocTextColor);
+                }, toChangeTimeTo: TimeChangeContext.Night),
 
                 new Boss(NPCID.Spazmatism, TimeChangeContext.Night, type =>
                 {
@@ -279,18 +285,27 @@ namespace InfernumMode.BossRush
                 [ModContent.NPCType<ProfanedGuardianCommander>()] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierOneEndText", XerocTextColor);
+                    CreateTierAnimation(2);
+                    BringPlayersBackToSpawn();
                 },
-                [NPCID.SkeletronHead] = npc =>
+                [ModContent.NPCType<SlimeGodCore>()] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierTwoEndText", XerocTextColor);
+                    CreateTierAnimation(3);
                 },
                 [NPCID.Golem] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText", XerocTextColor);
+                    CreateTierAnimation(4);
                 },
                 [ModContent.NPCType<CalamitasClone>()] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierFourEndText", XerocTextColor);
+                    CreateTierAnimation(5);
+                },
+                [ModContent.NPCType<Providence>()] = npc =>
+                {
+                    BringPlayersBackToSpawn();
                 },
                 [ModContent.NPCType<SupremeCalamitas>()] = npc =>
                 {
@@ -301,6 +316,60 @@ namespace InfernumMode.BossRush
                         Projectile.NewProjectile(new EntitySource_WorldEvent(), npc.Center, Vector2.Zero, ModContent.ProjectileType<BossRushEndEffectThing>(), 0, 0f, Main.myPlayer);
                 }
             };
+
+            BossIDsAfterDeath[ModContent.NPCType<Apollo>()] = new int[]
+            {
+                ModContent.NPCType<Apollo>(),
+                ModContent.NPCType<Artemis>(),
+                ModContent.NPCType<AresBody>(),
+                ModContent.NPCType<AresLaserCannon>(),
+                ModContent.NPCType<AresPlasmaFlamethrower>(),
+                ModContent.NPCType<AresTeslaCannon>(),
+                ModContent.NPCType<AresGaussNuke>(),
+                ModContent.NPCType<AresPulseCannon>(),
+                ModContent.NPCType<ThanatosHead>(),
+                ModContent.NPCType<ThanatosBody1>(),
+                ModContent.NPCType<ThanatosBody2>(),
+                ModContent.NPCType<ThanatosTail>(),
+            };
+        }
+
+        internal static void BringPlayersBackToSpawn()
+        {
+            // Post-Wall of Flesh teleport back to spawn.
+            for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
+            {
+                bool appropriatePlayer = Main.myPlayer == playerIndex;
+                if (Main.player[playerIndex].active && appropriatePlayer)
+                {
+                    Main.player[playerIndex].Spawn(PlayerSpawnContext.RecallFromItem);
+                    SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, Main.player[playerIndex].Center);
+                }
+            }
+        }
+
+        public static void HandleTeleports()
+        {
+            Vector2 teleportPosition = Vector2.Zero;
+
+            // Teleport the player to the garden for the guardians fight in boss rush.
+            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !Main.LocalPlayer.ZoneUnderworldHeight)
+            {
+                if (CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>())
+                    teleportPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * 3.2f - 16f, 800f);
+                if (CurrentlyFoughtBoss == ModContent.NPCType<Providence>())
+                    teleportPosition = WorldSaveSystem.ProvidenceArena.TopRight() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * -3.2f - 16f, 800f);
+            }
+
+            // Teleport the player.
+            if (teleportPosition != Vector2.Zero)
+            {
+                if (WorldUtils.Find(teleportPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
+                    teleportPosition = p.ToWorldCoordinates(8f, -32f);
+
+                Main.LocalPlayer.Teleport(teleportPosition);
+                SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, Main.LocalPlayer.Center);
+            }
         }
     }
 }

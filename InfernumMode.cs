@@ -33,7 +33,7 @@ namespace InfernumMode
 
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
 
-        internal static bool BossRushApplies => false;
+        internal static bool BossRushApplies => true;
 
         internal static readonly Color HiveMindSkyColor = new(53, 42, 82);
 

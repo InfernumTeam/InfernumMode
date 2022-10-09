@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public Color SunColorFunction(float completionRatio)
         {
-            Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
+            Color sunColor = !ProvidenceBehaviorOverride.IsEnraged ? Color.Yellow : Color.Cyan;
             return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 

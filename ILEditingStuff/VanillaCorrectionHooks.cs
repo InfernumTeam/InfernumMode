@@ -1,7 +1,12 @@
 using CalamityMod;
 using CalamityMod.Balancing;
+using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
+using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Tiles.Relics;
@@ -15,6 +20,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Balancing.BalancingChangesManager;
 
@@ -112,6 +118,61 @@ namespace InfernumMode.ILEditingStuff
             YharonOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
             SCalOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
         }
+    }
+
+    public class ChangeBossRushTiersHooks : IHookEdit
+    {
+        internal void AdjustBossRushTiers(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.EmitDelegate(() =>
+            {
+                int tier2Boss = NPCID.TheDestroyer;
+                int tier3Boss = NPCID.CultistBoss;
+                if (InfernumMode.CanUseCustomAIs)
+                {
+                    tier2Boss = ModContent.NPCType<ProfanedGuardianCommander>();
+                    tier3Boss = ModContent.NPCType<SlimeGodCore>();
+                }
+
+                if (BossRushStage > Bosses.FindIndex(boss => boss.EntityID == tier3Boss))
+                    return 3;
+                if (BossRushStage > Bosses.FindIndex(boss => boss.EntityID == tier2Boss))
+                    return 2;
+                return 1;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load() => BossRushTier += AdjustBossRushTiers;
+
+        public void Unload() => BossRushTier -= AdjustBossRushTiers;
+    }
+
+    public class DisableExoMechsSkyInBRHook : IHookEdit
+    {
+        internal void DisableSky(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.EmitDelegate(() =>
+            {
+                int draedon = CalamityGlobalNPC.draedon;
+                if (draedon == -1 || !Main.npc[draedon].active)
+                    return Draedon.ExoMechIsPresent && !BossRushActive;
+
+                if ((Main.npc[draedon]?.ModNPC<Draedon>()?.DefeatTimer ?? 0) <= 0 && !Draedon.ExoMechIsPresent)
+                    return false;
+
+                return !BossRushActive;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load() => ExoMechsSkyIsActive += DisableSky;
+
+        public void Unload() => ExoMechsSkyIsActive -= DisableSky;
     }
 
     public class GetRidOfProvidenceLootBoxHook : IHookEdit

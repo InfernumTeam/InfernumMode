@@ -98,9 +98,6 @@ namespace InfernumMode.Projectiles
         {
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 16f;
 
-            // Make the crystal shatter.
-            SoundEngine.PlaySound(Providence.DeathSound, Projectile.Center);
-
             if (Main.netMode != NetmodeID.Server)
             {
                 for (int i = 1; i <= 4; i++)

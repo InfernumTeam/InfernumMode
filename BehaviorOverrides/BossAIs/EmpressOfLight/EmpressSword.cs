@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (BossRushEvent.BossRushActive)
             {
-                lungeSpeed += 8f;
+                lungeSpeed += 10f;
                 lungeAcceleration *= 1.25f;
             }
 

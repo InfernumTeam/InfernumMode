@@ -308,10 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 chargeDistance += 900f;
             }
             if (BossRushEvent.BossRushActive)
-            {
-                chargeTime -= 6;
                 scaleFactorDelta += 0.6f;
-            }
 
             if (enraged)
                 scaleFactorDelta = 1.45f;

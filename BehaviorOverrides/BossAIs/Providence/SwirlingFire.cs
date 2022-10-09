@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     for (int i = 1; i <= 1; i += 2)
                     {
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), ProvidenceBehaviorOverride.IsEnraged ? 245 : 6);
                         fire.velocity = Main.rand.NextVector2Circular(3f, 3f);
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     for (int i = 1; i <= 1; i += 2)
                     {
                         Vector2 fireVelocity = (Time / 6f).ToRotationVector2().RotatedBy(i * MathHelper.PiOver2) * Main.rand.NextFloat(1.7f, 2.2f);
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), ProvidenceBehaviorOverride.IsEnraged ? 245 : 6);
                         fire.velocity = fireVelocity;
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            if (!Main.dayTime)
+            if (ProvidenceBehaviorOverride.IsEnraged)
                 texture = ModContent.Request<Texture2D>($"{Texture}Night").Value;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

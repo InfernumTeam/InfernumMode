@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 135;
-            int totalOrbsPerBurst = 4;
+            int totalOrbsPerBurst = 5;
             float aimPredictiveness = 27f;
             float orbShootSpeed = 12f;
             if (ExoMechManagement.CurrentAresPhase >= 5)
@@ -63,9 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Shoot slower if pointing downward.
             orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
-
-            if (ExoMechManagement.CurrentAresPhase >= 2)
-                orbShootSpeed *= 0.75f;
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)

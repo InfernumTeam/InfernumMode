@@ -70,8 +70,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 int leviathan = NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
                 if (Main.npc.IndexInRange(leviathan))
                     Main.npc[leviathan].velocity = Vector2.UnitY * -7f;
-
-                HatGirl.SayThingWhileOwnerIsAlive(Main.player[Player.FindClosest(Projectile.Center, 1, 1)], "They're working together now! Anahita will take the advantage to hurl homing icicles at you!");
             }
 
             Time++;

@@ -50,10 +50,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-            int shootTime = 300;
-            int totalLasersPerBurst = 8;
+            int shootTime = 480;
+            int totalLasersPerBurst = 12;
             float aimPredictiveness = 25f;
-            float laserShootSpeed = 9.6f;
+            float laserShootSpeed = 10.6f;
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
             ref float laserCounter = ref npc.ai[2];
@@ -61,13 +61,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
             ref SlotId telegraphSound = ref npc.ModNPC<AresLaserCannon>().DeathraySoundSlot;
             int laserCount = laserCounter % 3f == 2f ? 3 : 1;
-
-            if (ExoMechManagement.CurrentAresPhase >= 2)
-            {
-                totalLasersPerBurst += 4;
-                shootTime += 210;
-                laserShootSpeed *= 1.1f;
-            }
 
             if (ExoMechManagement.CurrentAresPhase >= 3)
             {

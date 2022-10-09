@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
+using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
@@ -434,6 +435,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Prevent stupid fucking natural despawns.
             npc.timeLeft = 7200;
 
+            // Set music.
+            CalamityGlobalNPC.yharon = npc.whoAmI;
+            CalamityGlobalNPC.yharonP2 = -1;
+
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -477,6 +482,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/YharonP2");
                 else
                     npc.ModNPC.Music = MusicID.LunarBoss;
+                CalamityGlobalNPC.yharon = -1;
+                CalamityGlobalNPC.yharonP2 = npc.whoAmI;
 
                 // Activate the invincibility countdown.
                 invincibilityTime = Phase2InvincibilityTime;

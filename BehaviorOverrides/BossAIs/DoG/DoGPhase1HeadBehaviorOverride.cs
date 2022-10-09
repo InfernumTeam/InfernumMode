@@ -234,6 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Defer all further execution to the second phase AI manager if in the second phase.
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
+                CalamityGlobalNPC.DoGP2 = npc.whoAmI;
                 npc.Calamity().CanHaveBossHealthBar = true;
                 npc.ModNPC<DoGHead>().Phase2Started = true;
                 npc.Size = Vector2.One * 176f;
@@ -248,7 +249,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 // Set music.
                 npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
-                
+                CalamityGlobalNPC.DoGP2 = npc.whoAmI;
+
                 HandlePhase2TransitionEffect(npc, ref portalIndex);
                 getInTheFuckingPortalTimer++;
                 if (getInTheFuckingPortalTimer >= 540f)

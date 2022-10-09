@@ -287,6 +287,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
             }
 
+            // Handle music.
+            HandleMusicVariables(npc);
+
             // Reset things every frame.
             npc.localAI[3] = 0f;
             npc.damage = 0;
@@ -442,6 +445,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             attackTimer++;
 
             return false;
+        }
+
+        public static void HandleMusicVariables(NPC npc)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            CalamityGlobalNPC.SCalGrief = -1;
+            CalamityGlobalNPC.SCalLament = -1;
+            CalamityGlobalNPC.SCalEpiphany = -1;
+            CalamityGlobalNPC.SCalAcceptance = -1;
+
+            if (lifeRatio <= Phase4LifeRatio)
+                CalamityGlobalNPC.SCalEpiphany = npc.whoAmI;
+            else if (lifeRatio <= Phase3LifeRatio)
+                CalamityGlobalNPC.SCalLament = npc.whoAmI;
+            else
+                CalamityGlobalNPC.SCalGrief = npc.whoAmI;
         }
 
         public static void DoBehavior_HorizontalDarkSoulRelease(NPC npc, Player target, int currentPhase, Vector2 handPosition, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
@@ -1499,7 +1519,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SummonBrothers(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             // Switch from the Grief section of Stained, Brutal Calamity to the Lament section.
-            npc.ModNPC.Music = Utilities.GetMusicFromMusicMod("SupremeCalamitas2") ?? MusicID.Boss3;
+            npc.ModNPC.Music = MusicID.Boss3;
 
             int screenShakeTime = 135;
 
@@ -1796,8 +1816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Summon seekers when entering the fourth phase.
                 if (currentPhase == 3)
                 {
-                    // Switch from the Lament section of Stained, Brutal Calamity to the Epiphany section.
-                    npc.ModNPC.Music = Utilities.GetMusicFromMusicMod("SupremeCalamitas3") ?? MusicID.LunarBoss;
+                    npc.ModNPC.Music = MusicID.LunarBoss;
                     npc.ai[0] = (int)SCalAttackType.SummonSeekers;
                 }
 
@@ -2046,7 +2065,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackState == 3f)
             {
                 // Switch from the Epiphany section of Stained, Brutal Calamity to the Acceptance section.
-                npc.ModNPC.Music = Utilities.GetMusicFromMusicMod("SupremeCalamitas4") ?? MusicID.LunarBoss;
+                npc.ModNPC.Music = MusicID.Eerie;
+                CalamityGlobalNPC.SCalAcceptance = npc.whoAmI;
 
                 frameType = (int)SCalFrameType.UpwardDraft;
 

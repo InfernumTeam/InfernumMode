@@ -9,7 +9,6 @@ using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
-using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -427,7 +426,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Determine whether the attack should be repeated.
                             stompCounter++;
-                            int stompCount = onlyDoOneJump == 1f ? 1 : 4;
+                            int stompCount = onlyDoOneJump == 1f ? 1 : 3;
 
                             attackTimer = 0f;
                             attackState = stompCounter >= stompCount ? 2f : 0f;
@@ -460,7 +459,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Sit in place and periodically release rockets.
             // They shoot more quickly the farther away the target is from the boss.
-            int rocketReleaseRate = (int)MathHelper.Lerp(10f, 5f, 1f - lifeRatio);
+            int rocketReleaseRate = (int)MathHelper.Lerp(12f, 8f, 1f - lifeRatio);
             ref float rocketShootTimer = ref npc.Infernum().ExtraAI[0];
 
             if (BossRushEvent.BossRushActive)
@@ -474,17 +473,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBlastSound, npc.Center);
 
+                bool targetAndCloseAndShouldNotFire = attackTimer < 130f && target.WithinRange(npc.Center, 325f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int missileDamage = 165;
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(1.16f) * Main.rand.NextFloat(18f, 20.5f);
+                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(0.72f) * Main.rand.NextFloat(8f, 10f);
                     if (enraged)
                     {
                         missileDamage = (int)(missileDamage * EnragedDamageFactor);
                         rocketShootVelocity *= 1.45f;
                     }
 
-                    Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                    if (!targetAndCloseAndShouldNotFire)
+                        Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<MissileTelegraphLine>(), 0, 0f);
 
                     rocketShootTimer = 0f;
                     npc.netUpdate = true;

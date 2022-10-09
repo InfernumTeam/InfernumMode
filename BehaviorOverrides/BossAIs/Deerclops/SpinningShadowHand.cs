@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -40,6 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             // Fade in.
             Projectile.Opacity = Utils.GetLerpValue(0f, 16f, Time, true);
 
+            float flySpeedFactor = BossRushEvent.BossRushActive ? 2.1f : 1f;
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Time <= SpinTime)
             {
@@ -53,12 +55,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 if (Time == SpinTime)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
-                    Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * 8f;
+                    Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * flySpeedFactor * 8f;
                     Projectile.rotation = Projectile.velocity.ToRotation();
                     Projectile.netUpdate = true;
                 }
             }
-            else if (Projectile.velocity.Length() < 15.5f)
+            else if (Projectile.velocity.Length() < flySpeedFactor * 15.5f)
                 Projectile.velocity *= 1.0175f;
 
             Time++;

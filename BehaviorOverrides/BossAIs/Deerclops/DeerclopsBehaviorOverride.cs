@@ -1,4 +1,6 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.OverridingSystem;
@@ -81,6 +83,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.dontTakeDamage = false;
             npc.chaseable = true;
             npc.Calamity().DR = 0.15f;
+
+            // Constantly give the target Weak Pertrification in boss rush.
+            if (Main.netMode != NetmodeID.Server && BossRushEvent.BossRushActive)
+            {
+                if (!target.dead && target.active)
+                    target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
+            }
 
             // Transition to the second phase.
             if ((currentPhase == 0f && npc.life < npc.lifeMax * Phase2LifeRatio) ||
@@ -257,6 +266,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 walkSpeed += 2f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                maxWalkTime -= 42;
+                walkSpeed *= 2f;
+            }
+
             // Slow down and make the attack go by quicker if really close to the target.
             if (haltMovement)
                 attackTimer += 5f;
@@ -282,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             float maxSpikeScale = 1.84f;
             if (wideIcicles)
             {
-                offsetPerSpike = 56f;
+                offsetPerSpike += 20f;
                 minSpikeScale = 0.5f;
                 maxSpikeScale = minSpikeScale + 0.01f;
             }
@@ -292,6 +307,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 offsetPerSpike *= 0.6f;
                 spikeShootTime += 8;
                 handCreationRate = 24;
+            }
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                spikeShootTime += 8;
+                handCreationRate /= 2;
+                minSpikeScale *= 3f;
+                maxSpikeScale *= 3f;
             }
 
             int spikeCount = spikeShootTime / spikeShootRate;
@@ -362,6 +385,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             float minSpikeScale = 0.8f;
             float maxSpikeScale = 1f;
             bool hitGround = npc.collideY || npc.velocity.Y == 0f;
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                offsetPerSpike += 36f;
+                minSpikeScale *= 3f;
+                maxSpikeScale *= 3f;
+            }
+
             ref float jumpState = ref npc.Infernum().ExtraAI[0];
 
             // Sit in place briefly before jumping.
@@ -434,6 +465,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 debrisCount = 0;
                 shadowHandCount = 7;
                 attackTransitionDelay -= 30;
+            }
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                debrisCount *= 2;
+                shadowHandCount *= 2;
             }
 
             ref float readyToShoot = ref npc.Infernum().ExtraAI[0];
@@ -547,6 +584,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             float maxLaserAngle = MathHelper.PiOver2 * 1.34f;
             if (inPhase3)
                 maxLaserAngle *= 1.3f;
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                eyeChargeTelegraphTime -= 10;
+                maxLaserAngle *= 1.2f;
+            }
 
             float laserSweepSpeed = (maxLaserAngle - Math.Abs(laserOffsetAngle)) * -npc.spriteDirection / DeerclopsEyeLaserbeam.LaserLifetime;
 
@@ -596,6 +639,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int totalHandsToSummon = 5;
             float handSpawnOffset = 450f;
             bool haltMovement = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                handSummonRate -= 20;
+                totalHandsToSummon += 9;
+            }
 
             // Use walking frames.
             frameType = (int)DeerclopsFrameType.Walking;
@@ -635,6 +684,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int attackTime = 660;
             float maxNaturalRadiusDecreaseInterpolant = 0.25f;
             float maxRadiusDecreaseInterpolant = 0.8f;
+            
+            if (BossRushEvent.BossRushActive)
+            {
+                handSummonRate -= 32;
+                attackTime -= 150;
+                maxHandCount += 3;
+            }
+
             ref float smoothDistance = ref npc.Infernum().ExtraAI[0];
 
             npc.velocity.X *= 0.9f;

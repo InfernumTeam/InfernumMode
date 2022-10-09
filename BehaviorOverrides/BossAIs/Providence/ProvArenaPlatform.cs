@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System;
@@ -11,6 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
     {
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault(string.Empty);
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.TrailCacheLength[NPC.type] = 7;

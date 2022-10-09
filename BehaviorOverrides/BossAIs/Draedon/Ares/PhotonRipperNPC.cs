@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("XF-09 Ares Photon Ripper");
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = NPC.oldPos.Length;

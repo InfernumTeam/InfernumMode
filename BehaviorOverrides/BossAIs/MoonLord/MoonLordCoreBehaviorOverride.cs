@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
@@ -270,7 +271,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public static void HandleBodyPartDeathTriggers(NPC npc, double realDamage)
         {
-            if (npc.life - realDamage > 1000)
+            int minLife = BossRushEvent.BossRushActive ? 10000 : 1000;
+            if (npc.life - realDamage > minLife)
                 return;
 
             npc.life = 0;

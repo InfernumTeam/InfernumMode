@@ -37,6 +37,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
@@ -145,7 +146,9 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<Cryogen>()),
 
-                new Boss(NPCID.BrainofCthulhu, permittedNPCs: new int[] { NPCID.Creeper , ModContent.NPCType<BrainIllusion>() }),
+                new Boss(NPCID.BrainofCthulhu, permittedNPCs: new int[] { NPCID.Creeper, ModContent.NPCType<BrainIllusion>() }),
+
+                new Boss(NPCID.Deerclops, permittedNPCs: new int[] { ModContent.NPCType<LightSnuffingHand>() }),
 
                 new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360, permittedNPCs: new int[] { ModContent.NPCType<UnworldlyEntity>() }),
 
@@ -200,15 +203,17 @@ namespace InfernumMode.BossRush
 
                 new Boss(NPCID.Golem, TimeChangeContext.Day, type =>
                 {
-                    int shittyStatueBoss = NPC.NewNPC(new EntitySource_WorldEvent(), (int)(Main.player[ClosestPlayerToWorldCenter].position.X + Main.rand.Next(-100, 101)), (int)(Main.player[ClosestPlayerToWorldCenter].position.Y - 400f), type, 1);
-                    Main.npc[shittyStatueBoss].timeLeft *= 20;
-                    CalamityUtils.BossAwakenMessage(shittyStatueBoss);
+                    int sans = NPC.NewNPC(new EntitySource_WorldEvent(), (int)(Main.player[ClosestPlayerToWorldCenter].position.X + Main.rand.Next(-100, 101)), (int)(Main.player[ClosestPlayerToWorldCenter].position.Y - 400f), type, 1);
+                    Main.npc[sans].timeLeft *= 20;
+                    CalamityUtils.BossAwakenMessage(sans);
                 }, permittedNPCs: new int[] { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead, NPCID.GolemHeadFree }),
                 
                 // Tier 4.
                 new Boss(NPCID.HallowBoss, spawnContext: type =>
                 {
-                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
+                    int drawcodeGoddess = NPC.NewNPC(new EntitySource_WorldEvent(), (int)Main.player[ClosestPlayerToWorldCenter].Center.X, (int)(Main.player[ClosestPlayerToWorldCenter].Center.Y - 400f), type, 1);
+                    Main.npc[drawcodeGoddess].timeLeft *= 20;
+                    CalamityUtils.BossAwakenMessage(drawcodeGoddess);
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText2", XerocTextColor);
                 }, toChangeTimeTo: TimeChangeContext.Night),
 
@@ -274,7 +279,7 @@ namespace InfernumMode.BossRush
                 {
                     SoundEngine.PlaySound(SupremeCalamitas.SpawnSound, Main.player[ClosestPlayerToWorldCenter].Center);
                     CalamityUtils.SpawnBossBetter(Main.player[ClosestPlayerToWorldCenter].Top - new Vector2(42f, 84f), type);
-                }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SepulcherArm>(), ModContent.NPCType<SepulcherHead>(), ModContent.NPCType<SepulcherBody>(),
+                }, dimnessFactor: 0.9f, permittedNPCs: new int[] { ModContent.NPCType<SepulcherArm>(), ModContent.NPCType<SepulcherHead>(), ModContent.NPCType<SepulcherBody>(),
                     ModContent.NPCType<SepulcherBodyEnergyBall>(), ModContent.NPCType<SepulcherTail>(),
                     ModContent.NPCType<SoulSeekerSupreme>(), ModContent.NPCType<BrimstoneHeart>(), ModContent.NPCType<SupremeCataclysm>(),
                     ModContent.NPCType<SupremeCatastrophe>(), ModContent.NPCType<ShadowDemon>() }),
@@ -282,6 +287,10 @@ namespace InfernumMode.BossRush
 
             BossDeathEffects = new Dictionary<int, Action<NPC>>()
             {
+                [NPCID.WallofFlesh] = npc =>
+                {
+                    BringPlayersBackToSpawn();
+                },
                 [ModContent.NPCType<ProfanedGuardianCommander>()] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierOneEndText", XerocTextColor);
@@ -355,6 +364,8 @@ namespace InfernumMode.BossRush
             // Teleport the player to the garden for the guardians fight in boss rush.
             if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !Main.LocalPlayer.ZoneUnderworldHeight)
             {
+                if (CurrentlyFoughtBoss == NPCID.WallofFlesh)
+                    teleportPosition = new(Main.maxTilesX - 1f, 3200f);
                 if (CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>())
                     teleportPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * 3.2f - 16f, 800f);
                 if (CurrentlyFoughtBoss == ModContent.NPCType<Providence>())

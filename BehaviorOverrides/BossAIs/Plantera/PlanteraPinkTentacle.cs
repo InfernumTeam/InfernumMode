@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -14,6 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public ref float Time => ref NPC.ai[0];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Plantera's Tentacle");
             Main.npcFrameCount[NPC.type] = 4;
 

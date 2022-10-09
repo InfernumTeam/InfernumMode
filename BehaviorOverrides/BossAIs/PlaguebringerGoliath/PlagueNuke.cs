@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public const int ExplodeDelay = 150;
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Plague Nuke");
             Main.npcFrameCount[NPC.type] = 12;
         }

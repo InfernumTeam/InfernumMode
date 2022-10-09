@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System.IO;
@@ -13,6 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Unstable Slime Spawn");
             Main.npcFrameCount[NPC.type] = 4;
         }

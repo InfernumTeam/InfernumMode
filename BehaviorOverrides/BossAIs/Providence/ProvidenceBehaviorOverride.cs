@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.height = 450;
             npc.defense = 50;
             npc.dontTakeDamage = false;
-            npc.Calamity().DR = 0.35f;
+            npc.Calamity().DR = BossRushEvent.BossRushActive ? 0.65f : 0.35f;
             npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = CocoonDefense;

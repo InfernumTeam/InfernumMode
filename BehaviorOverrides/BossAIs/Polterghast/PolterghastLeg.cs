@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
@@ -38,7 +39,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ghostly Leg");
+        public override void SetStaticDefaults()
+        {
+            this.HideFromBestiary();
+            DisplayName.SetDefault("Ghostly Leg");
+        }
 
         public override void SetDefaults()
         {

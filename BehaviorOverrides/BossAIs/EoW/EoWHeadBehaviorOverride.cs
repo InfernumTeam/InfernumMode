@@ -138,9 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 if (npc.Infernum().ExtraAI[10] == 0f)
                 {
                     npc.Infernum().ExtraAI[10] = 1f;
-                    if (BossRushEvent.BossRushActive)
-                        BossRushEvent.OnBossKill(npc, InfernumMode.Instance);
-                    else
+                    if (!BossRushEvent.BossRushActive)
                         npc.NPCLoot();
                 }
             }

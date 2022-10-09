@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Miscellaneous;
@@ -70,6 +71,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             bool shouldNotChangeScale = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            // Constantly give the target Weak Pertrification in boss rush.
+            if (Main.netMode != NetmodeID.Server && BossRushEvent.BossRushActive)
+            {
+                if (!target.dead && target.active)
+                    target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
+            }
 
             if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
             {

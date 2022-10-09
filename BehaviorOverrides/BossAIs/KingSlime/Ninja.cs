@@ -34,6 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         public static ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Ninja");
             Main.npcFrameCount[NPC.type] = 9;
             NPCID.Sets.TrailingMode[NPC.type] = 3;

@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 
             if (BossRushEvent.BossRushActive)
-                horizontalSpeed *= 2.4f;
+                horizontalSpeed *= 1.7f;
 
             npc.position.Y = verticalDestination;
 

@@ -22,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public const int TimeOffsetPerIncrement = 45;
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Small Drone");
             Main.npcFrameCount[NPC.type] = 5;
         }

@@ -15,7 +15,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         public const int MaxLength = 12;
         public const int TotalLife = 2670;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Aquatic Seeker");
+        public override void SetStaticDefaults()
+        {
+            this.HideFromBestiary();
+            DisplayName.SetDefault("Aquatic Seeker");
+        }
 
         public override void SetDefaults()
         {

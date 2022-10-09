@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -7,7 +8,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
     public class AquaticSeekerBody2 : ModNPC
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Aquatic Seeker");
+        public override void SetStaticDefaults()
+        {
+            this.HideFromBestiary();
+            DisplayName.SetDefault("Aquatic Seeker");
+        }
 
         public override void SetDefaults()
         {

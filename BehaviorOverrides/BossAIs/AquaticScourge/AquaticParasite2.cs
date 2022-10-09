@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
@@ -15,7 +16,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
     {
         public Player Target => Main.player[NPC.target];
         public ref float Time => ref NPC.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Aquatic Parasite");
+        public override void SetStaticDefaults()
+        {
+            this.HideFromBestiary();
+            DisplayName.SetDefault("Aquatic Parasite");
+        }
 
         public override void SetDefaults()
         {

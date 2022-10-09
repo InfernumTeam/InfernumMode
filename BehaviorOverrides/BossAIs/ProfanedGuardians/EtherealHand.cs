@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
@@ -34,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Ethereal Hand");
             NPCID.Sets.TrailingMode[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = 15;

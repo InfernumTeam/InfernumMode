@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -28,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             NPC.npcSlots = 0f;
             NPC.width = NPC.height = 40;
             NPC.defense = 0;
-            NPC.lifeMax = 196;
+            NPC.lifeMax = BossRushEvent.BossRushActive ? 62000 : 196;
             NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -60,6 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             float flySpeed = 7.4f;
             Player target = Main.player[Player.FindClosest(NPC.Center, 1, 1)];
             bool chasePlayer = NPC.WithinRange(target.Center, 210f) && Main.npc[deerclopsIndex].WithinRange(target.Center, 400f);
+            if (BossRushEvent.BossRushActive)
+                flySpeed *= 1.75f;
 
             // Fade in.
             NPC.Opacity = Utils.GetLerpValue(0f, 16f, Timer, true) * Utils.GetLerpValue(-36f, 120f, NPC.life, true);

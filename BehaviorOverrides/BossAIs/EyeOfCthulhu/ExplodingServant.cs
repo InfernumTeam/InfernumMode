@@ -13,6 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public ref float Timer => ref NPC.ai[0];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Servant of Cthulhu");
             Main.npcFrameCount[NPC.type] = 2;
         }

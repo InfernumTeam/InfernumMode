@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -14,6 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public ref float GeneralTimer => ref NPC.ai[0];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Big Builder Drone");
             Main.npcFrameCount[NPC.type] = 5;
         }

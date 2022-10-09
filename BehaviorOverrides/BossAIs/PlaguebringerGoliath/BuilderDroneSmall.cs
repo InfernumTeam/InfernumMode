@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
@@ -17,6 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override string Texture => "InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/SmallDrone";
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Small Builder Drone");
             Main.npcFrameCount[NPC.type] = 5;
         }

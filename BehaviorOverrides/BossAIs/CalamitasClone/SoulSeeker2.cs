@@ -19,6 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Soul Seeker");
             Main.npcFrameCount[NPC.type] = 5;
         }

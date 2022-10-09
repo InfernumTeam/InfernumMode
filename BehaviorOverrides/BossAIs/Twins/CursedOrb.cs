@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         internal TwinsAttackSynchronizer.SpazmatismAttackState OwnerAttackState => (TwinsAttackSynchronizer.SpazmatismAttackState)(int)Owner.Infernum().ExtraAI[11];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Cursed Flame Orb");
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.TrailCacheLength[NPC.type] = 7;

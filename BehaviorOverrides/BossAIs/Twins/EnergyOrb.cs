@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         internal TwinsAttackSynchronizer.RetinazerAttackState OwnerAttackState => (TwinsAttackSynchronizer.RetinazerAttackState)(int)Owner.Infernum().ExtraAI[11];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Energy Orb");
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.TrailCacheLength[NPC.type] = 7;

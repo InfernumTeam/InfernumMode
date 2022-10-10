@@ -163,10 +163,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(BuffID.Electrified, 180);
-        }
     }
 }

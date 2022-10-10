@@ -155,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (!NPC.AnyNPCs(ModContent.NPCType<KingSlimeJewel>()) && jewelSummonTimer >= 1f)
             {
                 jewelSummonTimer++;
-                if (jewelSummonTimer >= 720f)
+                if (jewelSummonTimer >= 2100f)
                 {
                     jewelSummonTimer = 0f;
                     npc.netUpdate = true;

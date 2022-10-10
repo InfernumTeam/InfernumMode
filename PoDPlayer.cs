@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.World;
@@ -253,6 +254,14 @@ namespace InfernumMode
         {
             if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].Calamity().CurrentlyEnraged)
                 damage = (int)MathHelper.Max(5500f / (1f - Player.endurance + 1e-6f), damage);
+
+            if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+            {
+                if (damage < 75)
+                    damage *= 2;
+                if (damage < 220)
+                    damage = Main.rand.Next(221, 250);
+            }
             return true;
         }
         #endregion Pre Hurt

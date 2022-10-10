@@ -119,8 +119,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Electrified, 120);
-
         public override bool CheckActive() => false;
     }
 }

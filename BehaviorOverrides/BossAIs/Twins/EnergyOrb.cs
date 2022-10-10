@@ -160,11 +160,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(BuffID.Electrified, 90);
-        }
-
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             if (projectile.timeLeft > 10 && projectile.damage > 0)

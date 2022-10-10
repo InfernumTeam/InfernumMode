@@ -60,10 +60,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             RotationalSpeed = MathHelper.Pi / Lifetime * -OrangeLaserbeam.FullCircleRotationFactor;
         }
 
-        
-
         public override bool? CanDamage() => Time > 35f ? null : false;
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 300);
     }
 }

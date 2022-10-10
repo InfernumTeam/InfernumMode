@@ -218,10 +218,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public override bool CheckActive() => false;
-        
-        public override void OnHitPlayer(Player player, int damage, bool crit)
-        {
-            player.AddBuff(ModContent.BuffType<HolyFlames>(), 120, true);
-        }
     }
 }

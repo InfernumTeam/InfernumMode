@@ -42,14 +42,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.Opacity != 1f)
-                return;
-
-            target.AddBuff(BuffID.CursedInferno, 120);
-        }
-
         public override Color? GetAlpha(Color lightColor)
         {
             return new Color(255, 255, 255, 48) * Projectile.Opacity;

@@ -41,14 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Time++;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!ProvidenceBehaviorOverride.IsEnraged)
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 240);
-            else
-                target.AddBuff(ModContent.BuffType<Nightwither>(), 120);
-        }
-
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(targetHitbox.Center.ToVector2(), projHitbox, Radius * 0.725f);
 
         public float SunWidthFunction(float completionRatio) => Radius * (float)Math.Sin(MathHelper.Pi * completionRatio);

@@ -59,9 +59,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.Center = Main.npc[OwnerIndex].Center + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 16f, -7f).RotatedBy(Main.npc[OwnerIndex].rotation) + Projectile.velocity * 2f;
             Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }
-
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 240);
     }
 }

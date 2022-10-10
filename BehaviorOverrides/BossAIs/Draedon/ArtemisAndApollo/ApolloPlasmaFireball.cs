@@ -107,15 +107,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.Opacity != 1f)
-                return;
-
-            target.AddBuff(BuffID.OnFire, 360);
-            target.AddBuff(BuffID.CursedInferno, 180);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             lightColor.R = (byte)(255 * Projectile.Opacity);

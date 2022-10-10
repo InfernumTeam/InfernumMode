@@ -62,11 +62,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            target.AddBuff(BuffID.CursedInferno, 120);
-            
-        }
     }
 }

@@ -25,10 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y - 0.25f, -20f, 20f);
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<BurningBlood>(), 240);
-
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }
 }

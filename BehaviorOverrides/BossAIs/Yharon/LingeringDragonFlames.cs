@@ -66,10 +66,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Color c = Color.Lerp(Color.Orange, Color.Red, Projectile.identity % 10f / 16f);
             return c * 1.15f;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
-        }
     }
 }

@@ -58,11 +58,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             Time++;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<WhisperingDeath>(), 300);
-        }
-
         public override Color? GetAlpha(Color lightColor)
         {
             return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.GetLerpValue(8f, 24f, Time, true)) * Projectile.Opacity;

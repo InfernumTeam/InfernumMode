@@ -111,8 +111,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<Nightwither>(), 300);
-
         public override bool ShouldUpdatePosition() => false;
     }
 }

@@ -116,8 +116,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 360);
-
         public override bool ShouldUpdatePosition() => false;
     }
 }

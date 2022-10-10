@@ -50,10 +50,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
             }
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
-        }
     }
 }

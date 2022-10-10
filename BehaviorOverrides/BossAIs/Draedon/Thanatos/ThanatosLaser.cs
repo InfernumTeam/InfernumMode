@@ -171,12 +171,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override bool CanHitPlayer(Player target) => TelegraphDelay > TelegraphTotalTime;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (TelegraphDelay > TelegraphTotalTime)
-                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 180);
-        }
-
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             return CalamityUtils.CircularHitboxCollision(projHitbox.Center(), Projectile.Size.Length() * 0.5f, targetHitbox);

@@ -68,7 +68,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Ichor, 240);
     }
 }

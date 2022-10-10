@@ -55,11 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-        }
-
         public override void Kill(int timeLeft)
         {
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

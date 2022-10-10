@@ -532,7 +532,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             if (BossRushEvent.BossRushActive)
             {
-                chargeTime -= 3;
+                if (!inPhase3)
+                    chargeTime -= 3;
                 chargeSpeed += 6f;
             }
 

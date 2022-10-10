@@ -30,10 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             blood.noGravity = true;
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
-
         public override Color? GetAlpha(Color lightColor) => new Color(246, 195, 80, Projectile.alpha);
     }
 }

@@ -53,14 +53,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!ProvidenceBehaviorOverride.IsEnraged)
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
-            else
-                target.AddBuff(ModContent.BuffType<Nightwither>(), 60);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 45f, Time, true);

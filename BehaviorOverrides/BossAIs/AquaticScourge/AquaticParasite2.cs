@@ -115,12 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             int frame = (int)NPC.frameCounter;
             NPC.frame.Y = frame * frameHeight;
         }
-
-        public override void OnHitPlayer(Player player, int damage, bool crit)
-        {
-            player.AddBuff(ModContent.BuffType<Irradiated>(), 120, true);
-        }
-
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)

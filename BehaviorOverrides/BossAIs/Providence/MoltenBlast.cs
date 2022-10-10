@@ -101,16 +101,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 18f, targetHitbox);
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            int buffType = !ProvidenceBehaviorOverride.IsEnraged ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>();
-            target.AddBuff(buffType, 240);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

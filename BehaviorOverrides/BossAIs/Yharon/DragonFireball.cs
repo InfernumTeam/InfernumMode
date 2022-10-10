@@ -96,10 +96,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 			Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 3 % Main.projFrames[Projectile.type];
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
-        }
     }
 }

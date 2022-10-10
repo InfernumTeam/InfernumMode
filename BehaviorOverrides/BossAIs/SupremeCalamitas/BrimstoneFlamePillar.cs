@@ -123,8 +123,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 300);
-
         public override bool ShouldUpdatePosition() => false;
     }
 }

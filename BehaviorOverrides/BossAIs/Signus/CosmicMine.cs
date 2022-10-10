@@ -51,11 +51,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<WhisperingDeath>(), 300);
-        }
-
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);

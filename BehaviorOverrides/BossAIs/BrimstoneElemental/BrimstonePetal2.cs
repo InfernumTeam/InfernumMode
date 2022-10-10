@@ -57,10 +57,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-        }
     }
 }

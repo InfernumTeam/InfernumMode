@@ -113,8 +113,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 300);
-
         public override bool ShouldUpdatePosition() => false;
     }
 }

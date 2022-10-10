@@ -74,18 +74,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity >= 1f;
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.Opacity != 1f)
-                return;
-
-            target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 120, true);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

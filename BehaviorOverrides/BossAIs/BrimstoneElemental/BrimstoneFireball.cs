@@ -68,12 +68,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 60);
-        }
-
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);

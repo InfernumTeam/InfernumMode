@@ -28,8 +28,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             Lighting.AddLight(Projectile.Center, Color.PaleVioletRed.ToVector3() * 0.5f);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Bleeding, 180);
-
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.NPCDeath11, Projectile.Center);

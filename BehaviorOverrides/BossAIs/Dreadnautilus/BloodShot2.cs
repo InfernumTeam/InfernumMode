@@ -56,10 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             Time++;
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Bleeding, 180);
-
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public override void Kill(int timeLeft)

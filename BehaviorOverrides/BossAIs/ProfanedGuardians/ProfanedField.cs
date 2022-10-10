@@ -92,7 +92,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public override bool? CanDamage() => Radius >= MaxRadius * 0.5f;
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
     }
 }

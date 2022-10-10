@@ -59,9 +59,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Projectile.Center = Main.npc[OwnerIndex].Bottom + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 15f, -57f).RotatedBy(Main.npc[OwnerIndex].rotation) + Projectile.velocity * 2f;
             Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }
-
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 240);
     }
 }

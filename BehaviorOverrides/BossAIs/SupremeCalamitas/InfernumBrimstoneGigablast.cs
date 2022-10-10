@@ -71,14 +71,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.Opacity != 1f)
-                return;
-
-            target.AddBuff(ModContent.BuffType<VulnerabilityHex>(), 180, true);
-        }
-
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SCalBrimstoneGigablast.ImpactSound, Projectile.Center);

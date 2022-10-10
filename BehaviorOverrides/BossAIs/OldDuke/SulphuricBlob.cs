@@ -53,10 +53,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 240);
-
         public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 127);
     }
 }

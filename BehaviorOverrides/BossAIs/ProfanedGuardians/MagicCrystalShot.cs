@@ -108,7 +108,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
             if (Projectile.timeLeft > 15)
                 Projectile.timeLeft = 15;
         }

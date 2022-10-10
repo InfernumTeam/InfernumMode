@@ -58,7 +58,5 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
             Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 180);
     }
 }

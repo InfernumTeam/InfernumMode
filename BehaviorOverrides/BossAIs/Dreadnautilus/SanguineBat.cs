@@ -65,8 +65,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 Projectile.Kill();
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Bleeding, 180);
-
         public override void Kill(int timeLeft)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(Target.Center, 150f) && Projectile.identity % 3 == 0)

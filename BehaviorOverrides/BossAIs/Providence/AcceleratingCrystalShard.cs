@@ -57,14 +57,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!ProvidenceBehaviorOverride.IsEnraged)
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
-            else
-                target.AddBuff(ModContent.BuffType<Nightwither>(), 60);
-        }
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
     }
 }

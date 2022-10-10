@@ -51,8 +51,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 Projectile.Kill();
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 120);
-
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;

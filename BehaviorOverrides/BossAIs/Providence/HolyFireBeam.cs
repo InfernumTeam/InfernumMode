@@ -89,14 +89,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!ProvidenceBehaviorOverride.IsEnraged)
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 360);
-            else
-                target.AddBuff(ModContent.BuffType<Nightwither>(), 180);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)

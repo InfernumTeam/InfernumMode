@@ -1245,6 +1245,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
             ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
 
+            if (BossRushEvent.BossRushActive && attackTimer < spreadPhaseTime)
+            {
+                attackTimer = spreadPhaseTime;
+                npc.netUpdate = true;
+            }
+
             // Disable damage, allowing the player to focus solely on dodging.
             npc.dontTakeDamage = true;
 

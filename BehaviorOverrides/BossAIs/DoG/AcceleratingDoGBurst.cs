@@ -53,13 +53,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<GodSlayerInferno>(), 90);
-            target.AddBuff(BuffID.Frostburn, 90, true);
-            target.AddBuff(BuffID.Darkness, 90, true);
-        }
-        
         public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
     }
 }

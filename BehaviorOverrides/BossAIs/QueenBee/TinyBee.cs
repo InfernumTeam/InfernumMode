@@ -43,8 +43,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             Time++;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 90);
-
         public override void Kill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.Center);

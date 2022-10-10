@@ -493,43 +493,6 @@ namespace InfernumMode.GlobalInstances
             return base.CheckActive(npc);
         }
 
-        public override void OnHitPlayer(NPC npc, Player target, int damage, bool crit)
-        {
-            if (!WorldSaveSystem.InfernumMode)
-                return;
-
-            if (npc.type == ModContent.NPCType<Crabulon>() && OverridingListManager.Registered(npc.type))
-            {
-                target.AddBuff(BuffID.Poisoned, 180);
-                target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
-            }
-
-            if (npc.type == NPCID.QueenBee && OverridingListManager.Registered(npc.type))
-                target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
-
-            if (npc.type == ModContent.NPCType<SlimeGodCore>() && OverridingListManager.Registered(npc.type))
-            {
-                target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
-                target.AddBuff(ModContent.BuffType<Shadowflame>(), 90);
-                target.AddBuff(BuffID.Slimed, 240);
-                target.AddBuff(BuffID.Slow, 240);
-            }
-            if (npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism) && OverridingListManager.Registered(npc.type))
-                target.AddBuff(ModContent.BuffType<RedSurge>(), 180);
-            if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer) && OverridingListManager.Registered(npc.type))
-                target.AddBuff(ModContent.BuffType<ShadowflameInferno>(), 180);
-
-            if ((npc.type is NPCID.PrimeSaw or NPCID.PrimeVice) && OverridingListManager.Registered(NPCID.SkeletronPrime))
-            {
-                target.AddBuff(BuffID.BrokenArmor, 180);
-                target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
-                target.AddBuff(BuffID.Bleeding, 300);
-            }
-            
-            if (npc.type == NPCID.SkeletronPrime && OverridingListManager.Registered(npc.type))
-                target.AddBuff(BuffID.Bleeding, 420);
-        }
-
         #endregion
     }
 }

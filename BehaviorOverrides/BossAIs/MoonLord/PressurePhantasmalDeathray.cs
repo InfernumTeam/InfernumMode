@@ -63,9 +63,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.Center = Main.npc[OwnerIndex].Center + pupilOffset + Projectile.velocity * 2f;
             Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }
-
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<Nightwither>(), 300);
     }
 }

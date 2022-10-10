@@ -151,11 +151,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);
-        }
-
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
     }
 }

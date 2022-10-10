@@ -59,10 +59,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Time++;
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Ichor, 45);
-
         public override void Kill(int timeLeft)
         {
             // Make a sound and release some ichor dust on death.

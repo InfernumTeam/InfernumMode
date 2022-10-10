@@ -84,13 +84,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         }
 
         public override bool? CanDamage() => Time > 10f ? null : false;
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Time <= 50f)
-                return;
-
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);
-        }
     }
 }

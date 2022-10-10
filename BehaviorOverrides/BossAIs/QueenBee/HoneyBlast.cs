@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -34,12 +35,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Poisonous)
-                target.AddBuff(BuffID.Poisoned, 240);
-        }
-
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 10; i++)
@@ -60,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 if (Projectile.velocity.Y != oldVelocity.Y)
                     Projectile.velocity.Y = -oldVelocity.Y;
 
-                if (Projectile.velocity.Y < 3f && Projectile.velocity.Y > -3f)
+                if (Math.Abs(Projectile.velocity.Y) < 3f)
                     Projectile.velocity = Vector2.Zero;
             }
             else

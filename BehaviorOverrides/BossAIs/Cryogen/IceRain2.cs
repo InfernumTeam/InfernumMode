@@ -80,7 +80,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 snow.scale = 0.7f;
             }
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Frostburn, 60, true);
     }
 }

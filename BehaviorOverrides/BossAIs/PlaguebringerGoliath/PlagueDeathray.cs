@@ -78,13 +78,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return fuck;
         }
 
-        
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Plague>(), 300);
-        }
-
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
             drawCacheProjsBehindNPCs.Add(index);

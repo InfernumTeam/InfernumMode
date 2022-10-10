@@ -131,10 +131,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
             return true;
         }
-
-        public override void OnHitPlayer(Player player, int damage, bool crit)
-        {
-            player.AddBuff(ModContent.BuffType<Irradiated>(), 120, true);
-        }
     }
 }

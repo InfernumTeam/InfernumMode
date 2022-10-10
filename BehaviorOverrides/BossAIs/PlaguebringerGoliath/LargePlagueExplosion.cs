@@ -35,10 +35,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Projectile.frame >= Main.projFrames[Projectile.type])
                 Projectile.Kill();
         }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Plague>(), 180);
-        }
     }
 }

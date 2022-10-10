@@ -240,17 +240,6 @@ namespace InfernumMode.GlobalInstances
             return base.OnTileCollide(projectile, oldVelocity);
         }
 
-        public override void ModifyHitPlayer(Projectile projectile, Player target, ref int damage, ref bool crit)
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-
-            if (projectile.type == ModContent.ProjectileType<CrimsonSpike>())
-                target.AddBuff(ModContent.BuffType<BurningBlood>(), 180);
-            if (projectile.type == ModContent.ProjectileType<IchorShot>())
-                target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
-        }
-
         public override bool CanHitPlayer(Projectile projectile, Player target)
         {
             if (InfernumMode.CanUseCustomAIs)

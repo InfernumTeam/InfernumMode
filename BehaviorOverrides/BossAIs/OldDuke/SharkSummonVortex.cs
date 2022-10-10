@@ -88,9 +88,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             return minDist <= 210f * Projectile.scale;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<Irradiated>(), 600);
-
-        
     }
 }

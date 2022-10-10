@@ -50,11 +50,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             if (Time < 30f)

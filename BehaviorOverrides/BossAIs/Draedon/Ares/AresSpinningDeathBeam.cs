@@ -203,17 +203,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(BuffID.OnFire, 360);
-            target.AddBuff(BuffID.Frostburn, 360);
-        }
-
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

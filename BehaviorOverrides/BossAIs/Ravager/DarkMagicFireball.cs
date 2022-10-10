@@ -61,7 +61,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
             Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
     }
 }

@@ -41,14 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!ProvidenceBehaviorOverride.IsEnraged)
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
-            else
-                target.AddBuff(ModContent.BuffType<Nightwither>(), 60);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);

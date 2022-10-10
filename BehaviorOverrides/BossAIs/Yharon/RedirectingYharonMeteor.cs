@@ -103,16 +103,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
             Projectile.Damage();
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.velocity.Y >= -16f)
-                target.AddBuff(ModContent.BuffType<Dragonfire>(), 180);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

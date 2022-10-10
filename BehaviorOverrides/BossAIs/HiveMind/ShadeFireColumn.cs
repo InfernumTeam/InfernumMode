@@ -82,13 +82,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Time++;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            target.AddBuff(BuffID.CursedInferno, 240);
-            target.AddBuff(ModContent.BuffType<Shadowflame>(), 140);
-            
-        }
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 67f;
     }
 }

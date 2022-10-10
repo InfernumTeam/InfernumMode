@@ -99,11 +99,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1, texture);
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Time <= 1800f && Time > 120f)
-                target.AddBuff(BuffID.Poisoned, 240);
-        }
     }
 }

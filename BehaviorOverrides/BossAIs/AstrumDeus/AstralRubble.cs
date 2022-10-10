@@ -49,8 +49,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
-        
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 120);
 
         // Explode into a bunch of astral cinders on death. This is purely visual and does not do damage.
         public override void Kill(int timeLeft)

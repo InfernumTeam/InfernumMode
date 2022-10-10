@@ -93,7 +93,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
             return false;
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 180);
     }
 }

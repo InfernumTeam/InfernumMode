@@ -155,12 +155,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(BuffID.OnFire, 360);
-            target.AddBuff(BuffID.CursedInferno, 180);
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.Lime, 0.75f);

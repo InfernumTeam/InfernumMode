@@ -32,12 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 Projectile.velocity *= 1.01f;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            target.AddBuff(BuffID.CursedInferno, 60);
-            
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 3);

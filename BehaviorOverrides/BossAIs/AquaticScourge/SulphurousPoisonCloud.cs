@@ -52,7 +52,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.timeLeft >= 180;
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Venom, 300);
     }
 }

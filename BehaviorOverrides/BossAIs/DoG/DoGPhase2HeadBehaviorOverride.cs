@@ -1037,10 +1037,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void PerformPerpendicularPortalAttack(NPC npc, Player target, ref float portalIndex, ref float segmentFadeType, ref float perpendicularPortalAttackTimer, ref float perpendicularPortalAngle, ref float damageImmunityCountdown)
         {
-            int portalTelegraphTime = 34;
+            int portalTelegraphTime = 55;
             int waitBeforeSnappingAgain = 16;
             float chargeSpeed = 67f;
-
+            
             switch (SurprisePortalAttackState)
             {
                 // Do nothing and drift into the portal.
@@ -1210,7 +1210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
 
                         npc.Center = Main.projectile[(int)specialAttackPortalIndex].Center;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 45f;
+                        npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)specialAttackPortalIndex].ModProjectile<DoGChargeGate>().Destination) * 45f;
                         for (int i = 0; i < Main.maxNPCs; i++)
                         {
                             if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))

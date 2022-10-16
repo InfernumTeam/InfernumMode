@@ -1,5 +1,4 @@
 using CalamityMod;
-using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

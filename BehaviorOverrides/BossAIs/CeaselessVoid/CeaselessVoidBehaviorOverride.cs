@@ -7,7 +7,6 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
-using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

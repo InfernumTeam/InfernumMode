@@ -1,10 +1,10 @@
-using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod;
 using CalamityMod.Dusts;
-using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,11 +12,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
     public class AstralMissile : ModProjectile
     {
+        public PrimitiveTrail FlameTrailDrawer = null;
+
         public ref float Time => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astral Missile");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
@@ -27,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = 1;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 240;
         }
 
         public override void AI()
@@ -39,19 +42,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
             // Fly towards the closest player.
-            if (Time < 45f && !Projectile.WithinRange(closestPlayer.Center, 75f))
-            {
-                float maxSpeed = BossRushEvent.BossRushActive ? 30f : 19f;
-                Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(closestPlayer.Center), 0.02f);
-                if (Projectile.velocity.Length() < maxSpeed)
-                    Projectile.velocity *= 1.016f;
-            }
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(closestPlayer.Center) * Projectile.velocity.Length(), 0.06f);
 
             if (Projectile.WithinRange(closestPlayer.Center, 30f))
                 Projectile.Kill();
 
-            if (Time >= 45f && Projectile.velocity.Length() < 35f)
-                Projectile.velocity *= 1.03f;
+            if (Time >= 45f && Projectile.velocity.Length() < 26f)
+                Projectile.velocity *= 1.018f;
 
             Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
             Dust.NewDustDirect(backOfMissile, 5, 5, ModContent.DustType<AstralOrange>());
@@ -59,11 +56,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Time++;
         }
 
+        public static float FlameTrailWidthFunction(float completionRatio) => MathHelper.SmoothStep(21f, 8f, completionRatio);
+
+        public static Color FlameTrailColorFunction(float completionRatio)
+        {
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true);
+            Color startingColor = Color.Lerp(Color.Cyan, Color.White, 0.4f);
+            Color middleColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
+            Color endColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
+            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            // Initialize the flame trail drawer.
+            FlameTrailDrawer ??= new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+
+            Vector2 trailOffset = Projectile.Size * 0.5f;
+            trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;
+            FlameTrailDrawer.Draw(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
+
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask").Value;
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
-            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, glowmask);
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            // Draw the base sprite and glowmask.
+            Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
+            Main.EntitySpriteDraw(glowmask, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
             return false;
         }
 

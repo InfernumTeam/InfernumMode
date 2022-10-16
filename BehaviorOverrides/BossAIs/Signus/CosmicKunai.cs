@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

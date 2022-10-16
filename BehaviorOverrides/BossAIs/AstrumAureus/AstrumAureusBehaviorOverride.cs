@@ -281,11 +281,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     float openAreaAngle = Main.rand.NextFloatDirection() * laserSpread * 0.6f;
                     for (int i = 0; i < laserCount; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-laserSpread, laserSpread, i / (float)(laserCount - 1f)) + Main.rand.NextFloatDirection() * 0.02f;
-                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.0567f)
+                        float shootOffsetAngle = MathHelper.Lerp(-laserSpread, laserSpread, i / (float)(laserCount - 1f));
+                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.09f)
                             continue;
 
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(16f, 20f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * 17f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), laserDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 1;
@@ -417,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             {
                                 for (int i = 0; i < 8; i++)
                                 {
-                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(12f, 18f);
+                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(14f, 16f);
                                     Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, missileVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
                                 }
                             }
@@ -477,7 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int missileDamage = 165;
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(0.72f) * Main.rand.NextFloat(8f, 10f);
+                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(0.72f) * Main.rand.NextFloat(13f, 14f);
                     if (enraged)
                     {
                         missileDamage = (int)(missileDamage * EnragedDamageFactor);
@@ -840,6 +840,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public static void SelectNextAttack(NPC npc)
         {
+            // Clear leftover rockets.
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AstralMissile>());
+
             Player target = Main.player[npc.target];
 
             // Increment the attack counter.

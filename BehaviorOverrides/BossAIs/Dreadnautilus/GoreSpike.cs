@@ -1,11 +1,10 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 {
-	public class GoreSpike : ModProjectile
+    public class GoreSpike : ModProjectile
     {
         public Player Target => Main.player[Projectile.owner];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Spike");

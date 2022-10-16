@@ -1,4 +1,3 @@
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System.IO;

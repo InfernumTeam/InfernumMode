@@ -10,7 +10,6 @@ using Terraria.ModLoader;
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 using Terraria.WorldBuilding;
 using InfernumMode.Sounds;
-using InfernumMode.Projectiles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {

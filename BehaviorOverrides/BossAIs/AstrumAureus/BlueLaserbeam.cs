@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;

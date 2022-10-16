@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Balancing;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;

@@ -257,10 +257,10 @@ namespace InfernumMode
 
             if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
             {
-                while (damage is >= 1 and < 200)
+                while (damage is >= 1 and < 150)
                     damage *= 2;
-                if (damage < 400)
-                    damage = Main.rand.Next(400, 435);
+                if (damage < 360)
+                    damage = Main.rand.Next(360, 375);
             }
             return true;
         }

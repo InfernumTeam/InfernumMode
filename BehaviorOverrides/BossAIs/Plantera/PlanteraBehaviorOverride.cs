@@ -668,6 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         {
             npc.velocity *= 0.95f;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.dontTakeDamage = true;
             bulbHueInterpolant = Utils.GetLerpValue(105f, 30f, transitionCountdown, true);
 
             // Focus on the boss as it transforms.

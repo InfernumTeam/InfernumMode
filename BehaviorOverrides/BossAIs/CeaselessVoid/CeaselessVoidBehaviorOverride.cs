@@ -544,7 +544,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int shootTime = 780;
             float burstBaseSpeed = 8.4f;
             if (BossRushEvent.BossRushActive)
-                burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;
+                burstBaseSpeed *= 1.2f + npc.Distance(target.Center) * 0.00124f;
 
             // Slow down and use more DR.
             npc.velocity *= 0.965f;

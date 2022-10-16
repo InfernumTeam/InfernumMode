@@ -532,6 +532,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             Vector2 aimDestination = target.Center + target.velocity * new Vector2(1.25f, 0.2f) * predictivenessFactor;
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
+
+            // Make the twins predict better if the target is doing the waddle strat.
+            if (Math.Abs(target.velocity.X) < 5.6f)
+                aimDirection = CalamityUtils.CalculatePredictiveAimToTarget(npc.Center, target, projectileShootSpeed * 2f).SafeNormalize(Vector2.UnitY);
+
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float shootCounter = ref npc.Infernum().ExtraAI[1];
             ref float generalAttackTimer = ref npc.Infernum().ExtraAI[2];

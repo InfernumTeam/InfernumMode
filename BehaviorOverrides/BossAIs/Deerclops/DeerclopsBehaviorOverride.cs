@@ -581,7 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             int eyeChargeTelegraphTime = 48;
             float laserOffsetAngle = npc.spriteDirection * -0.32f;
             Vector2 initialDirection = Vector2.UnitY.RotatedBy(laserOffsetAngle);
-            float maxLaserAngle = MathHelper.PiOver2 * 1.34f;
+            float maxLaserAngle = MathHelper.PiOver2 * 1.33333f;
             if (inPhase3)
                 maxLaserAngle *= 1.3f;
             

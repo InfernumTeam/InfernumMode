@@ -142,6 +142,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 else
                 {
                     // Decrement the attack timer as needed.
+                    if (BossRushEvent.BossRushActive)
+                        attackDelay = 0f;
+
                     if (attackDelay > 0f)
                     {
                         attackTimer = 0f;

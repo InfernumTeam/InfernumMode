@@ -264,6 +264,56 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => IL.Terraria.GameContent.Events.ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
     }
 
+    public class EyeOfCthulhuSpawnHPMinChangeHook : IHookEdit
+    {
+        internal static void ChangeEoCHPRequirements(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(i => i.MatchLdcI4(200));
+            cursor.Emit(OpCodes.Pop);
+            cursor.Emit(OpCodes.Ldc_I4, 400);
+        }
+
+        public void Load() => IL.Terraria.Main.UpdateTime_StartNight += ChangeEoCHPRequirements;
+
+        public void Unload() => IL.Terraria.Main.UpdateTime_StartNight -= ChangeEoCHPRequirements;
+    }
+
+    public class KingSlimeSpawnHPMinChangeHook : IHookEdit
+    {
+        private static bool spawningKingSlimeNaturally;
+
+        internal static void ChangeKSHPRequirements(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(i => i.MatchCall<NPC>("SpawnOnPlayer"));
+            cursor.EmitDelegate<Action>(() => spawningKingSlimeNaturally = true);
+        }
+
+        private void OptionallyDisableKSSpawn(On.Terraria.NPC.orig_SpawnOnPlayer orig, int plr, int Type)
+        {
+            if (spawningKingSlimeNaturally)
+            {
+                spawningKingSlimeNaturally = false;
+                if (Main.player[plr].statLifeMax < 400)
+                    return;
+            }
+            orig(plr, Type);
+        }
+
+        public void Load()
+        {
+            IL.Terraria.NPC.SpawnNPC += ChangeKSHPRequirements;
+            On.Terraria.NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
+        }
+
+        public void Unload()
+        {
+            IL.Terraria.NPC.SpawnNPC -= ChangeKSHPRequirements;
+            On.Terraria.NPC.SpawnOnPlayer -= OptionallyDisableKSSpawn;
+        }
+    }
+
     public class UseCustomShineParticlesForInfernumParticlesHook : IHookEdit
     {
         internal static void EmitFireParticles(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)

@@ -16,6 +16,12 @@ namespace InfernumMode
         [Tooltip("Enables boss introduction animations. They only activate when Infernum Mode is active.")]
         public bool BossIntroductionAnimationsAreAllowed { get; set; }
 
+        [Label("Blasted Tophat Tips in Chat")]
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(true)]
+        [Tooltip("Determines whether the pet from the Blasted Tophat should display its tips in chat or not.")]
+        public bool DisplayTipsInChat { get; set; }
+
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
 }

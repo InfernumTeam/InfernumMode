@@ -443,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 angularOffsetRandomness = 0.97f;
             }
 
-            Vector2 destination = target.Center - Vector2.UnitY * 325f;
+            Vector2 destination = target.Center - Vector2.UnitY * 320f;
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
             // EoL-esque bullshit hits.

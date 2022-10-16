@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.alpha = 128;
 
             // Cast profaned fields from time to time.
-            if (attackTimer % fieldSpawnRate == fieldSpawnRate - 1f && !npc.WithinRange(Main.player[npc.target].Center, 250f))
+            if (attackTimer % fieldSpawnRate == fieldSpawnRate - 1f && !npc.WithinRange(Main.player[npc.target].Center, 400f))
             {
                 SoundEngine.PlaySound(ProvidenceNPC.SpawnSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

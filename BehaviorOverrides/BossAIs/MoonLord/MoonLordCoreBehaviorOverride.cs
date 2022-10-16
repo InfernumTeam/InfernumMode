@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
@@ -133,6 +134,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
+            // Fuck.
+            if (target.HasBuff(ModContent.BuffType<Nightwither>()))
+                target.ClearBuff(ModContent.BuffType<Nightwither>());
 
             // Play an introductio
             if (introSoundTimer < IntroSoundLength)

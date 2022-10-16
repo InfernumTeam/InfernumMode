@@ -111,15 +111,21 @@ namespace InfernumMode.Projectiles
                 if (!string.IsNullOrEmpty(tipText))
                 {
                     Color messageColor = Color.DeepPink;
-                    int textIndex = CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
-                    if (textIndex >= 100)
-                        textIndex = 99;
 
-                    Main.combatText[textIndex].position = Projectile.Center;
-                    Main.combatText[textIndex].crit = true;
-                    Main.combatText[textIndex].text = tipText;
-                    Main.combatText[textIndex].color = messageColor;
-                    Main.combatText[textIndex].lifeTime *= 3;
+                    if (InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
+                        Main.NewText(tipText, messageColor);
+                    else
+                    {
+                        int textIndex = CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
+                        if (textIndex >= 100)
+                            textIndex = 99;
+
+                        Main.combatText[textIndex].position = Projectile.Center;
+                        Main.combatText[textIndex].crit = true;
+                        Main.combatText[textIndex].text = tipText;
+                        Main.combatText[textIndex].color = messageColor;
+                        Main.combatText[textIndex].lifeTime *= 3;
+                    }
 
                     Owner.Infernum().HatGirlShouldGiveAdvice = false;
                     TalkAnimationCounter = 1f;

@@ -175,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)spearBurstCount);
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 225, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
                         }
 
                         attackTimer = 0f;
@@ -211,7 +211,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     for (int i = 0; i < 12; i++)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 11f) * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 230, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
                     }
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == phase2TransitionTime - 45)
@@ -254,7 +254,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Move back and re-appear.
             if (attackTimer is > 30f and < 75f)
             {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75, attackTimer, true));
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75f, attackTimer, true));
                 npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
             }
 
@@ -262,15 +262,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (attackTimer == 75f)
             {
                 arcDirection = (Math.Cos(npc.AngleTo(target.Center)) > 0).ToDirectionInt();
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 24f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 18.75f;
                 if (BossRushEvent.BossRushActive)
                     npc.velocity *= 1.5f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.Zero) * 40f;
-                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 40f, ModContent.ProjectileType<ProfanedSpear>(), 210, 0f);
-                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 47f, ModContent.ProjectileType<ProfanedSpear>(), 200, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 40f, ModContent.ProjectileType<ProfanedSpearInfernum>(), 210, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 47f, ModContent.ProjectileType<ProfanedSpearInfernum>(), 200, 0f);
                     int telegraph = Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
                     if (Main.projectile.IndexInRange(telegraph))
                         Main.projectile[telegraph].ai[1] = 30f;
@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     for (int i = 0; i < 18; i++)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 18f) * 19f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 220, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 220, 0f);
                     }
                 }
             }
@@ -441,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)(frontSpearCount - 1f));
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 225, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
                     }
 
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -463,7 +463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     for (int i = 0; i < spearBurstCount; i++)
                     {
                         Vector2 shootVelocity = (MathHelper.TwoPi * i / spearBurstCount).ToRotationVector2() * Main.rand.NextFloat(0.6f, 1f) * spearBurstSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 225, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
                     }
                     npc.netUpdate = true;
                 }
@@ -528,7 +528,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 9f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 230, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
                 }
             }
 

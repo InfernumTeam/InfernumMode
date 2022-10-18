@@ -388,11 +388,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * slamSpeed, 0.125f);
 
                         bool hitGround = false;
-                        while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 20))
+
+                        if (npc.Bottom.Y >= target.Top.Y)
                         {
-                            hitGround = true;
-                            npc.velocity = Vector2.Zero;
-                            npc.position.Y -= 2f;
+                            while (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 30f, npc.width, 42, true))
+                            {
+                                hitGround = true;
+                                npc.velocity = Vector2.Zero;
+                                npc.position.Y -= 2f;
+                            }
+                            if (hitGround)
+                                npc.position.Y += 12f;
                         }
 
                         if (hitGround)
@@ -430,6 +436,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             attackTimer = 0f;
                             attackState = stompCounter >= stompCount ? 2f : 0f;
+                            npc.frame.Y = 0;
                             npc.netUpdate = true;
                         }
                     }

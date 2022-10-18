@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.chaseable = true;
             npc.friendly = false;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
-            npc.defDamage = 100;
+            npc.defDamage = 200;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.defense = 20;
 

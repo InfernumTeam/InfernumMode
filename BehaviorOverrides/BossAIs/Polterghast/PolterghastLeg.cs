@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
@@ -13,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-    public class PolterghastLeg : ModNPC
+    public class PolterghastLeg : ModNPC, IAdditiveDrawer
     {
         public Vector2 IdealPosition;
 
@@ -43,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             this.HideFromBestiary();
             DisplayName.SetDefault("Ghostly Leg");
+            NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
         }
 
         public override void SetDefaults()
@@ -215,26 +217,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
-            NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
             if (LimbDrawer is null)
                 LimbDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:PolterghastEctoplasm"]);
 
             if (Polterghast.ai[2] >= 54f)
-                return false;
+                return;
+
+            if (Limbs is null)
+                return;
 
             GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
-            if (Limbs is null)
-                return false;
-
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 NPC.localAI[2] = 0f;
                 if (Limbs.Limbs[i] is null)
-                    return false;
+                    return;
 
                 Vector2 offsetToNext = Vector2.Zero;
                 if (i < Limbs.Limbs.Length - 1)
@@ -262,12 +262,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     for (int k = 0; k < 10; k++)
                         drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 9f));
 
-                    LimbDrawer.Draw(drawPositions, -Main.screenPosition, 30);
+                    LimbDrawer.Draw(drawPositions, -Main.screenPosition, 21);
                 }
             }
-            Main.spriteBatch.ResetBlendState();
-            return false;
         }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => false;
 
         public override bool CheckActive() => false;
     }

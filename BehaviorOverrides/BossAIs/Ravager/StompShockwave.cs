@@ -23,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.timeLeft = 240;
             Projectile.scale = 0.15f;
             Projectile.extraUpdates = 3;
+            Projectile.penetrate = -1;
             Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
         }

@@ -47,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (Projectile.WithinRange(closestPlayer.Center, 30f))
                 Projectile.Kill();
 
-            if (Time >= 45f && Projectile.velocity.Length() < 26f)
-                Projectile.velocity *= 1.018f;
+            if (Time >= 45f && Projectile.velocity.Length() < 28.5f)
+                Projectile.velocity *= 1.019f;
 
             Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
             Dust.NewDustDirect(backOfMissile, 5, 5, ModContent.DustType<AstralOrange>());

@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-	public class EmpressSword : ModProjectile
+    public class EmpressSword : ModProjectile
     {
         public int SwordCount;
         public int TotalSwordsThatShouldAttack;
@@ -135,13 +135,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (!ShouldAttack)
             {
-                HoveAboveOwner();
+                HoverAboveOwner();
                 return;
             }
             AttackTarget();
         }
 
-        public void HoveAboveOwner()
+        public void HoverAboveOwner()
         {
             float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
             float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));

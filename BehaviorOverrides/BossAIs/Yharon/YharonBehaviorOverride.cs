@@ -486,8 +486,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/YharonP2");
                 else
                     npc.ModNPC.Music = MusicID.LunarBoss;
-                CalamityGlobalNPC.yharon = -1;
-                CalamityGlobalNPC.yharonP2 = npc.whoAmI;
 
                 // Activate the invincibility countdown.
                 invincibilityTime = Phase2InvincibilityTime;
@@ -499,6 +497,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // InSecondPhase property check. Once the table check fails Yharon's AI will throw an exception and the game will delete him from existence.
             // Not an ideal situation.
             GlobalNPCOverrides.Yharon = npc.whoAmI;
+
+            if (InSecondPhase)
+            {
+                CalamityGlobalNPC.yharon = -1;
+                CalamityGlobalNPC.yharonP2 = npc.whoAmI;
+            }
 
             // Perform the aforementioned attack pattern lookup.
             YharonAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;

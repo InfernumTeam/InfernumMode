@@ -515,7 +515,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public static void DoBehavior_HorizontalCharge(NPC npc, Player target, bool phase3, ref float attackTimer)
         {
-            int chargeCount = 3;
+            int chargeCount = 4;
             int redirectTime = 40;
             int chargeTime = 40;
             int attackTransitionDelay = 8;
@@ -625,13 +625,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             int totalBatsToSummon = 15;
             int batAttackTime = SanguineBat.Lifetime;
             int attackTransitionDelay = 90;
-            int bloodBurstReleaseRate = 75;
+            int bloodBurstReleaseRate = 44;
             int bloodPerBurst = 4;
 
             if (phase3)
             {
                 totalBatsToSummon += 3;
-                bloodPerBurst += 3;
+                bloodBurstReleaseRate -= 20;
             }
 
             int batSummonRate = summonTime / totalBatsToSummon;
@@ -689,19 +689,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     npc.SimpleFlyMovement(desiredVelocity, 0.225f);
                 }
 
-                // Release bursts of blood periodically.
+                // Release shots of blood periodically.
                 if (attackTimer % bloodBurstReleaseRate == bloodBurstReleaseRate - 1f)
                 {
                     SoundEngine.PlaySound(SoundID.Item171, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / bloodPerBurst;
-                        for (int i = 0; i < bloodPerBurst; i++)
-                        {
-                            Vector2 bloodShootVelocity = (MathHelper.TwoPi * i / bloodPerBurst + offsetAngle).ToRotationVector2() * 8f;
-                            Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodShot2>(), 125, 0f);
-                        }
-
+                        Vector2 bloodShootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 12f;
+                        Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), 125, 0f);
                         npc.netUpdate = true;
                     }
                 }

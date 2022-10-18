@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -126,8 +127,9 @@ namespace InfernumMode.BaseEntities
         {
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
-
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
+            
+            var whatTheHell = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).Where((x, i) => i % 3 == 0);
+            LightningDrawer.Draw(whatTheHell, Projectile.Size * 0.5f - Main.screenPosition, 3);
             return false;
         }
     }

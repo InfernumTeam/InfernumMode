@@ -868,8 +868,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int shootDelay = 90;
             int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
-            int crystalBurstShootRate = (int)MathHelper.Lerp(32f, 20f, 1f - lifeRatio);
-            int totalCrystalsPerBurst = 28;
+            int crystalBurstShootRate = (int)MathHelper.Lerp(36f, 28f, 1f - lifeRatio);
+            int totalCrystalsPerBurst = 24;
             int transitionDelay = 120;
 
             if (inPhase2)

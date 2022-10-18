@@ -276,6 +276,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             int blobShootTime = blobShootRate * 3 - 8;
             float globSpeed = 6f;
 
+            // Disable contact damage to prevent telefrags.
+            npc.damage = 0;
+
             // Do teleport animation effects.
             if (attackTimer < teleportTime)
             {
@@ -285,7 +288,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                 if (npc.scale <= 0f)
                     npc.scale = 0.0001f;
-                npc.damage = 0;
                 npc.dontTakeDamage = true;
 
                 // Fuck.
@@ -364,8 +366,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
 
-                    // Shoot accelerating blobs if close enough to the target.
-                    if (npc.WithinRange(target.Center, 600f))
+                    // Shoot accelerating blobs if far away enough to the target.
+                    if (!npc.WithinRange(target.Center, 336f))
                     {
                         int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         for (int i = 0; i < acceleratingGlobPerShot; i++)

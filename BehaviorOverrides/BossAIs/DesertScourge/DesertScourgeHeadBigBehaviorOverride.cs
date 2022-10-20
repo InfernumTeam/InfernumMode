@@ -297,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 2; i++)
                     Utilities.NewProjectileBetter(spawnPosition + Main.rand.NextVector2Circular(120f, 120f), sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
             }
 

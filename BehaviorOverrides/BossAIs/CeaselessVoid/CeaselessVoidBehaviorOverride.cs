@@ -347,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                             if (Main.projectile.IndexInRange((int)tearProjectileIndex))
                                 Main.projectile[(int)tearProjectileIndex].localAI[0] = scaleFactorDelta;
                         }
-                    }
+                    }                    
                     break;
 
                 // Do the charge.

@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             InitialSummonDelay,
             BloodSpitToothBalls,
             EyeGleamEyeFishSummon,
-            RandomBloodBurstSpread,
+            UpwardPerpendicularBoltCharge,
             EquallySpreadBloodBolts,
             HorizontalCharge,
             SanguineBatSwarm,
@@ -93,8 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 case DreadnautilusAttackState.EyeGleamEyeFishSummon:
                     DoBehavior_EyeGleamEyeFishSummon(npc, target, phase2, phase3, ref attackTimer, ref eyeGleamInterpolant);
                     break;
-                case DreadnautilusAttackState.RandomBloodBurstSpread:
-                    DoBehavior_RandomBloodBurstSpread(npc, target, phase2, phase3, ref attackTimer);
+                case DreadnautilusAttackState.UpwardPerpendicularBoltCharge:
+                    DoBehavior_UpwardPerpendicularBoltCharge(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case DreadnautilusAttackState.EquallySpreadBloodBolts:
                     DoBehavior_EquallySpreadBloodBolts(npc, target, phase2, phase3, ref attackTimer);
@@ -352,90 +352,121 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             }
         }
 
-        public static void DoBehavior_RandomBloodBurstSpread(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
+        public static void DoBehavior_UpwardPerpendicularBoltCharge(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
-            int shootCount = 4;
-            float attackDelay = 90f;
-            float shootTime = 90f;
-
+            int minHoverTime = 60;
+            int maxHoverTime = 180;
+            int upwardChargeTime = 66;
+            int perpendicularBoltReleaseRate = 9;
+            float upwardChargeSpeed = 28f;
+            float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, 600f);
+            
             if (phase2)
-                shootCount++;
-
-            float wrappedAttackTimer = (attackTimer - attackDelay) % (shootTime / shootCount);
-
-            // Look at the target.
-            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
-            if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
-
-            if (npc.spriteDirection != npc.direction)
             {
-                npc.spriteDirection = npc.direction;
-                npc.rotation = -npc.rotation;
-                idealRotation = -idealRotation;
+                upwardChargeTime -= 9;
+                upwardChargeSpeed += 4f;
+                perpendicularBoltReleaseRate--;
             }
-            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.2f);
-
-            if (attackTimer < attackDelay)
+            if (phase3)
             {
-                npc.velocity *= 0.95f;
-                npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
-                if (!Main.rand.NextBool(4))
+                upwardChargeSpinArc *= 1.36f;
+                perpendicularBoltReleaseRate -= 3;
+            }
+
+            ref float chargeAngularVelocity = ref npc.Infernum().ExtraAI[0];
+
+            // Hover to the bottom left/right of the target.
+            if (attackTimer < maxHoverTime)
+            {
+                // If far from the destination, look at the target. Otherwise, look downward.
+                npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+                float idealRotation = npc.WithinRange(hoverDestination, 100f) ? -MathHelper.PiOver2 : npc.AngleTo(target.Center);
+                idealRotation -= MathHelper.Pi * npc.spriteDirection * 0.15f;
+                if (npc.spriteDirection == -1)
+                    idealRotation += MathHelper.Pi;
+
+                // Perform hover movement.
+                if (!npc.WithinRange(hoverDestination, 85f))
                 {
-                    Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 60f - new Vector2(60f), 120, 120, 16, 0f, 0f, 150, Color.Transparent, 0.6f);
-                    blood.fadeIn = 1f;
-                    blood.velocity = blood.position.DirectionTo(mouthPosition + Main.rand.NextVector2Circular(15f, 15f)) * (blood.velocity.Length() + 3f);
-                    blood.noGravity = true;
-                    blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 100f - new Vector2(80f), 160, 160, 16, 0f, 0f, 100, Color.Transparent, 0.9f);
-                    blood.fadeIn = 1.5f;
-                    blood.velocity = blood.position.DirectionTo(mouthPosition + Main.rand.NextVector2Circular(15f, 15f)) * (blood.velocity.Length() + 5f);
-                    blood.noGravity = true;
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 5f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.4f);
                 }
-            }
-            else if (attackTimer < attackDelay + shootTime)
-            {
-                npc.velocity *= 0.9f;
-                npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
-                if (wrappedAttackTimer < shootTime / shootCount * 0.8f)
+                else
                 {
-                    for (int k = 0; k < 5; k++)
+                    npc.velocity *= 0.84f;
+
+                    // Immediately transition to the charge state if the minimum hover time has elapsed and sufficiently within range for the upward charge.
+                    if (attackTimer >= minHoverTime)
                     {
-                        Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 50f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
-                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
-                        blood.position -= mouthDirection * 60f;
-                        blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 90f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
-                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
-                        blood.position -= mouthDirection * 100f;
+                        attackTimer = maxHoverTime;
+
+                        npc.rotation = -MathHelper.PiOver2 - MathHelper.Pi * npc.spriteDirection * 0.15f;
+                        if (npc.spriteDirection == -1)
+                            npc.rotation += MathHelper.Pi;
+
+                        idealRotation = npc.rotation;
+                        npc.netUpdate = true;
                     }
                 }
 
-                // Create blood projectiles.
-                if ((int)wrappedAttackTimer == 0)
+                if (npc.spriteDirection != npc.direction)
                 {
-                    npc.velocity -= mouthDirection * 8f;
-                    for (int l = 0; l < 20; l++)
+                    npc.spriteDirection = npc.direction;
+                    npc.rotation = -npc.rotation;
+                    idealRotation = -idealRotation;
+                }
+                npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.12f);
+
+                if (attackTimer < maxHoverTime)
+                    return;
+            }
+
+            // Charge upward. Also release a spread of bolts in the third phase.
+            npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
+            if (attackTimer == maxHoverTime)
+            {
+                SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                
+                npc.velocity = Vector2.UnitY * -upwardChargeSpeed;
+                chargeAngularVelocity = (target.Center.X > npc.Center.X).ToDirectionInt() * upwardChargeSpinArc / upwardChargeTime;
+                npc.netUpdate = true;
+
+                if (phase3 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 13; i++)
                     {
-                        Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 60f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
-                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
-                        blood.position -= mouthDirection * 60f;
-                        blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 100f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
-                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
-                        blood.position -= mouthDirection * 100f;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int bloodCount = Main.rand.Next(6, 13);
-                        for (int i = 0; i < bloodCount; i++)
-                        {
-                            Vector2 bloodVelocity = mouthDirection * 10f + Main.rand.NextVector2Square(-4f, 4f);
-                            Utilities.NewProjectileBetter(mouthPosition - mouthDirection * 5f, bloodVelocity, ModContent.ProjectileType<BloodShot2>(), 120, 0f, Main.myPlayer);
-                        }
+                        Vector2 bloodBoltVelocity = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * 3f;
+                        Utilities.NewProjectileBetter(mouthPosition + bloodBoltVelocity * 10f, bloodBoltVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
                     }
                 }
             }
 
-            if (attackTimer >= attackDelay + shootTime)
+            // Releaser perpendicular bolts.
+            if (attackTimer % perpendicularBoltReleaseRate == perpendicularBoltReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item171, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 perpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 1.3f;
+                    Utilities.NewProjectileBetter(mouthPosition + perpendicularVelocity * 24f, perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+                    Utilities.NewProjectileBetter(mouthPosition - perpendicularVelocity * 24f, -perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+                }
+            }
+
+            // Arc while rising upward.
+            npc.velocity = npc.velocity.RotatedBy(chargeAngularVelocity);
+            npc.rotation += chargeAngularVelocity;
+
+            // Emit a bunch of blood dust from the mouth.
+            Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 50f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
+            blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
+            blood.position -= mouthDirection * 60f;
+            blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 90f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
+            blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
+            blood.position -= mouthDirection * 100f;
+
+            if (attackTimer > maxHoverTime + upwardChargeTime)
                 SelectNextAttack(npc);
         }
 
@@ -480,10 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 530f, -50f);
                 if (!npc.WithinRange(hoverDestination, 50f))
-                {
-                    Vector2 desiredVelocity = npc.SafeDirectionTo(hoverDestination) * 15f;
-                    npc.SimpleFlyMovement(desiredVelocity, 0.4f);
-                }
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.4f);
             }
 
             // Slow down for a moment.
@@ -625,13 +653,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             int totalBatsToSummon = 15;
             int batAttackTime = SanguineBat.Lifetime;
             int attackTransitionDelay = 90;
-            int bloodBurstReleaseRate = 44;
-            int bloodPerBurst = 4;
+            int bloodBurstReleaseRate = 24;
+            int bloodBurstCycleTime = 90;
+            ref float bloodBurstShootCounter = ref npc.Infernum().ExtraAI[0];
 
             if (phase3)
             {
                 totalBatsToSummon += 3;
-                bloodBurstReleaseRate -= 20;
+                bloodBurstReleaseRate -= 7;
             }
 
             int batSummonRate = summonTime / totalBatsToSummon;
@@ -690,13 +719,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 }
 
                 // Release shots of blood periodically.
-                if (attackTimer % bloodBurstReleaseRate == bloodBurstReleaseRate - 1f)
+                bool inBurstCycle = attackTimer % (bloodBurstCycleTime + 60f) < bloodBurstCycleTime;
+                if (attackTimer % bloodBurstReleaseRate == bloodBurstReleaseRate - 1f && inBurstCycle)
                 {
                     SoundEngine.PlaySound(SoundID.Item171, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 bloodShootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 12f;
-                        Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), 125, 0f);
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 bloodShootVelocity = (MathHelper.TwoPi * (i + (bloodBurstShootCounter % 2f == 0f ? 0.5f : 0f)) / 8f).ToRotationVector2() * 2f;
+                            Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), 125, 0f);
+                        }
+                        bloodBurstShootCounter++;
                         npc.netUpdate = true;
                     }
                 }
@@ -797,18 +831,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     npc.ai[0] = (int)DreadnautilusAttackState.EyeGleamEyeFishSummon;
                     break;
                 case DreadnautilusAttackState.EyeGleamEyeFishSummon:
-                    npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
+                    npc.ai[0] = (int)DreadnautilusAttackState.UpwardPerpendicularBoltCharge;
                     break;
-                case DreadnautilusAttackState.RandomBloodBurstSpread:
+                case DreadnautilusAttackState.UpwardPerpendicularBoltCharge:
                     npc.ai[0] = (int)DreadnautilusAttackState.EquallySpreadBloodBolts;
                     break;
                 case DreadnautilusAttackState.EquallySpreadBloodBolts:
                     npc.ai[0] = phase2 ? (int)DreadnautilusAttackState.HorizontalCharge : (int)DreadnautilusAttackState.BloodSpitToothBalls;
                     break;
                 case DreadnautilusAttackState.HorizontalCharge:
-                    npc.ai[0] = (int)DreadnautilusAttackState.SquidGames;
-                    break;
-                case DreadnautilusAttackState.SquidGames:
                     npc.ai[0] = (int)DreadnautilusAttackState.SanguineBatSwarm;
                     break;
                 case DreadnautilusAttackState.SanguineBatSwarm:

@@ -240,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         public static void DoAttack_ScytheTeleportThrow(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int totalScythesToCreate = 25;
-            int scytheShootDelay = 10;
+            int scytheShootDelay = 31;
             float scytheSpread = MathHelper.SmoothStep(1.51f, 1.67f, 1f - lifeRatio);
             int attackCycleCount = lifeRatio < Phase3LifeRatio ? 2 : 3;
 
@@ -259,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 case 0:
                     if (attackTimer == 1f)
                     {
-                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(500f, 500f);
+                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(575f, 575f);
                         npc.netUpdate = true;
                     }
 

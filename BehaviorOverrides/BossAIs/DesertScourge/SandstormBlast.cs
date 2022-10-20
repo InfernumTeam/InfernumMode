@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     Projectile.Kill();
             }
             else
-                Projectile.velocity.Y = (float)Math.Sin(Projectile.position.X * MathHelper.TwoPi / 999f) + 1.5f;
+                Projectile.velocity.Y = (float)Math.Sin(Projectile.position.X * MathHelper.TwoPi / 1776f) + 1.5f;
 
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Color backglow = Main.dayTime ? Color.DarkBlue : Color.White;
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(backglow) with { A = 72 } * 0.85f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

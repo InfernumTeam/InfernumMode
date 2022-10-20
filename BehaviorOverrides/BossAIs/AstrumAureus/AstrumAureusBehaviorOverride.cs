@@ -462,8 +462,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public static void DoAttack_RocketBarrage(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType)
         {
-            frameType = (int)AureusFrameType.Idle;
-
             // Sit in place and periodically release rockets.
             // They shoot more quickly the farther away the target is from the boss.
             int rocketReleaseRate = (int)MathHelper.Lerp(12f, 8f, 1f - lifeRatio);
@@ -471,9 +469,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             if (BossRushEvent.BossRushActive)
                 rocketReleaseRate /= 2;
+            
+            npc.velocity.X = (npc.velocity.X * 15f + npc.SafeDirectionTo(target.Center).X * 5f) / 16f;
 
-            // Slow down.
-            npc.velocity.X *= 0.9f;
+            // Adjust frames.
+            frameType = Math.Abs(npc.velocity.X) > 0.1f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
 
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
@@ -515,7 +515,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootDelay = 225;
+            int laserShootDelay = 136;
             float laserSpeed = 10.5f;
             float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
@@ -595,7 +595,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             frameType = (int)AureusFrameType.Idle;
 
-            int totalPlanetsToSpawn = lifeRatio < Phase3LifeRatio ? 5 : 4;
+            int totalPlanetsToSpawn = lifeRatio < Phase3LifeRatio ? 10 : 9;
             ref float planetsSpawnedCounter = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -608,10 +608,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 planetsSpawnedCounter++;
 
                 float ringAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                float ringRadius = npc.Size.Length() * 0.2f + Main.rand.NextFloat(75f, 150f);
+                float ringRadius = npc.Size.Length() * 0.2f + Main.rand.NextFloat(100f, 236f);
                 float ringIrregularity = Main.rand.NextFloat(0.5f);
 
-                if (NPC.CountNPCS(ModContent.NPCType<AureusSpawn>()) < 7)
+                if (NPC.CountNPCS(ModContent.NPCType<AureusSpawn>()) < 11)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AureusSpawn>(), npc.whoAmI, ringAngle, ringRadius, ringIrregularity);
                 npc.netUpdate = true;
             }
@@ -696,10 +696,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootDelay = 210;
-            float walkSpeed = MathHelper.Lerp(8.5f, 13f, 1f - lifeRatio);
+            int laserShootDelay = 170;
+            float walkSpeed = MathHelper.Lerp(9.6f, 15f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.GetLerpValue(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
+            walkSpeed *= Utils.GetLerpValue(100f, 180f, MathHelper.Distance(target.Center.X, npc.Center.X), true);
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 2.64f;
 
@@ -722,7 +723,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
 
             // Play a charge sound as a telegraph prior to firing.
-            if (attackTimer == laserShootDelay - 156f)
+            if (attackTimer == laserShootDelay - 116f)
                 SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
 
             // Adjust frames.
@@ -758,9 +759,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < 20; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 16f).ToRotationVector2() * 8f;
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 20f).ToRotationVector2() * 8f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].MaxUpdates = 1;

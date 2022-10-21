@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             this.HideFromBestiary();
             DisplayName.SetDefault("Bereft Vassal");
-            Main.npcFrameCount[NPC.type] = 19;
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 10;
         }
@@ -55,8 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             NPC.npcSlots = 5f;
             NPC.damage = 120;
-            NPC.width = 40;
-            NPC.height = 62;
+            NPC.width = 30;
+            NPC.height = 44;
             NPC.defense = 20;
             NPC.DR_NERD(0.2f);
             NPC.LifeMaxNERB(49750, 49750, 800000);
@@ -485,7 +485,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Wait until on ground for the attack to progress.
             if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
             {
-                if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 4))
+                if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
                     NPC.position.Y += 12f;
                 AttackTimer = 0f;
             }
@@ -673,7 +673,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int frame = 0;
             if (NPC.velocity.Y == 0f)
-                frame = 5;
+                frame = 0;
 
             NPC.frame.Y = frameHeight * frame;
         }

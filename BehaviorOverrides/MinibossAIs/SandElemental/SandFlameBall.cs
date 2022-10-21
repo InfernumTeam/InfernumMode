@@ -6,7 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
+namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 {
     public class SandFlameBall : ModProjectile
     {

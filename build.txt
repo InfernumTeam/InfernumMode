@@ -1,8 +1,7 @@
 author = Dominic Karma
 version = 1.8.0
 displayName = Calamity Mod Infernum Mode
-modReferences=CalamityMod
-sortAfter=CalamityMod
+modReferences=CalamityMod, SubworldLibrary
 hideCode=false
 hideResources=false
 includeSource = true

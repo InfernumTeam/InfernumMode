@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.height = 44;
             NPC.defense = 20;
             NPC.DR_NERD(0.2f);
-            NPC.LifeMaxNERB(42750, 42750, 800000);
+            NPC.LifeMaxNERB(42700, 42700, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;
@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int waveCount = 7;
             int spearSpinTime = 68;
             int waterSpinTime = WaterTorrentBeam.Lifetime;
-            float waterSpinArc = MathHelper.Pi * 0.27f;
+            float waterSpinArc = MathHelper.Pi * 0.33f;
             float recoilSpeed = 9f;
             float waveArc = MathHelper.ToRadians(70f);
             float waveSpeed = 4.6f;
@@ -477,6 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             ref float jumpCounter = ref NPC.Infernum().ExtraAI[1];
             ref float startingTargetPositionY = ref NPC.Infernum().ExtraAI[2];
             ref float hasPassedTargetYPosition = ref NPC.Infernum().ExtraAI[3];
+            ref float fallSpeed = ref NPC.Infernum().ExtraAI[4];
 
             // Disable tile collision and gravity.
             NPC.noGravity = AttackTimer >= jumpDelay;
@@ -486,7 +487,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
             {
                 if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
-                    NPC.position.Y += 12f;
+                {
+                    fallSpeed = MathHelper.Clamp(fallSpeed + 1.1f, 0f, 12f);
+                    NPC.position.Y += fallSpeed;
+                }
                 AttackTimer = 0f;
             }
 
@@ -603,8 +607,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     SpearRotation = MathHelper.Pi - MathHelper.PiOver4;
                     NPC.rotation = 0f;
                     while (Collision.SolidCollision(NPC.TopLeft - Vector2.UnitY * 2f, NPC.width, NPC.height + 4, true))
-                        NPC.position.Y -= Math.Sign(NPC.velocity.Y);
+                        NPC.position -= NPC.velocity.SafeNormalize(Vector2.UnitX * NPC.spriteDirection);
+
+                    // Create a bunch of impact sparks.
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Vector2 sparkSpawnPosition = NPC.Center + NPC.velocity.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloatDirection() * 180f;
+                        SparkParticle spark = new(sparkSpawnPosition, -NPC.velocity.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(8f, 19f), false, 45, 1.45f, Color.Yellow);
+                        GeneralParticleHandler.SpawnParticle(spark);
+                    }
+
                     NPC.velocity *= new Vector2(0.1f, 0f);
+
                     NPC.netUpdate = true;
                 }
             }
@@ -629,7 +643,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 }
             }
             else
-                SpearOpacity = 1f;
+                SpearOpacity = Utils.GetLerpValue(0f, 36f, AttackTimer, true);
         }
 
         public void DoBehavior_FallingWaterCastBarrges()
@@ -642,12 +656,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int attackTransitionDelay = 40;
             float waveArc = MathHelper.ToRadians(70f);
             float waveSpeed = 4.6f;
+            ref float fallSpeed = ref NPC.Infernum().ExtraAI[0];
 
             // Wait until on ground for the attack to progress.
             if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
             {
                 if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
-                    NPC.position.Y += 12f;
+                {
+                    fallSpeed = MathHelper.Clamp(fallSpeed + 1.1f, 0f, 12f);
+                    NPC.position.Y += fallSpeed;
+                }
                 AttackTimer = 0f;
             }
 
@@ -655,12 +673,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SpearOpacity = Utils.GetLerpValue(2f, shootDelay - 20f, AttackTimer, true);
             if (AttackTimer < shootDelay)
             {
-                SpearRotation = NPC.AngleTo(Target.Center).AngleLerp(MathHelper.PiOver2, 0.6f) - MathHelper.PiOver4;
-                if (NPC.spriteDirection == 1)
-                    SpearRotation += MathHelper.Pi;
+                SpearRotation = NPC.AngleTo(Target.Center).AngleLerp(-MathHelper.PiOver4, 0.8f);
 
                 // Create water particles at the end of the spear.
-                Vector2 spearEnd = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
+                Vector2 spearEnd = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 32f;
                 if (AttackTimer % 12f == 11f)
                 {
                     Color pulseColor = Main.rand.NextBool() ? (Main.rand.NextBool() ? Color.SkyBlue : Color.LightSkyBlue) : (Main.rand.NextBool() ? Color.LightBlue : Color.DeepSkyBlue);
@@ -691,6 +707,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Start shooting water spears.
             if (AttackTimer >= shootDelay && AttackTimer < shootDelay + shootTime)
             {
+                // Prevent slow slide drifting.
+                NPC.velocity.X *= 0.9f;
+
                 if (AttackTimer % waveReleaseRate == waveReleaseRate - 1f && !NPC.WithinRange(Target.Center, 300f))
                 {
                     // Release an even spread of waves.
@@ -821,10 +840,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 spearOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.2f).ToRotationVector2() * (1f - SpearOpacity) * 12f;
-                    Main.EntitySpriteDraw(spearTexture, spearDrawPosition + spearOffset, null, spearAfterimageColor, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale, 0, 0);
+                    Main.EntitySpriteDraw(spearTexture, spearDrawPosition + spearOffset, null, spearAfterimageColor, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale * 0.8f, 0, 0);
                 }
             }
-            Main.EntitySpriteDraw(spearTexture, spearDrawPosition, null, NPC.GetAlpha(drawColor) * SpearOpacity, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale, 0, 0);
+            Main.EntitySpriteDraw(spearTexture, spearDrawPosition, null, NPC.GetAlpha(drawColor) * SpearOpacity, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale * 0.8f, 0, 0);
 
             return false;
         }

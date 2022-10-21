@@ -8,10 +8,13 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.World;
+using InfernumMode.Subworlds;
 using InfernumMode.Tiles.Relics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using SubworldLibrary;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -102,6 +105,83 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => PlaceHellLab += SlideOverHellLab;
 
         public void Unload() => PlaceHellLab -= SlideOverHellLab;
+    }
+
+    public class DrawSunkenColosseumBackgroundHook : IHookEdit
+    {
+        internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
+        {
+            orig(self, force || SubworldSystem.IsActive<SunkenColosseum>());
+        }
+
+        internal void DrawColosseumBackground(On.Terraria.Main.orig_DrawBackground orig, Main self)
+        {
+            orig(self);
+
+            if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<SunkenColosseum>())
+                return;
+
+            Texture2D gradient = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/SunkenColosseumBGGradient").Value;
+            Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/SunkenColosseumBGObjects").Value;
+
+            // I don't know.
+            Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
+            Vector2 vector = new Vector2(gradient.Width, gradient.Height) * 0.5f;
+            float num2 = 1.08f;
+            Vector2 vector2 = new(1f / num2);
+            Rectangle rectangle = new(0, 0, gradient.Width, gradient.Height);
+            float scale = 1.2f;
+            float scaledWidth = scale * (float)rectangle.Width;
+            int num11 = (int)((float)((int)(screenOffset.X * vector2.X - vector.X - (float)(Main.screenWidth >> 1))) / scaledWidth);
+            vector = vector.Floor();
+            int num12 = (int)Math.Ceiling((double)((float)Main.screenWidth / scaledWidth));
+            int num13 = (int)(scale * ((float)(rectangle.Width - 1) / vector2.X));
+            Vector2 vector3 = (new Vector2((float)((num11 - 2) * num13), (float)Main.maxTilesY * 4f) + vector - screenOffset) * vector2 + screenOffset - Main.screenPosition - vector;
+            vector3 = vector3.Floor();
+            while (vector3.X + scaledWidth < 0f)
+            {
+                num11++;
+                vector3.X += scaledWidth;
+            }
+            vector3.Y += 250f;
+            for (int i = num11 - 2; i <= num11 + num12 + 2; i++)
+            {
+                Main.spriteBatch.Draw(gradient, vector3 - Vector2.UnitY * 400f, rectangle, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bgObjects, vector3, rectangle, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                vector3.X += scaledWidth;
+            }
+        }
+
+        internal void ChangeDrawBlackLimit(ILContext il)
+        {
+            ILCursor c = new(il);
+            if (!c.TryGotoNext(x => x.MatchStloc(13)))
+                return;
+
+            c.Emit(OpCodes.Ldloc, 3);
+            c.EmitDelegate<Func<float, float>>(lightThreshold =>
+            {
+                if (SubworldSystem.IsActive<SunkenColosseum>())
+                    return 0.125f;
+
+                return lightThreshold;
+            });
+            c.Emit(OpCodes.Stloc, 3);
+        }
+
+        public void Load()
+        {
+            On.Terraria.Main.DrawBackground += DrawColosseumBackground;
+            On.Terraria.Main.DrawBlack += ForceDrawBlack;
+            IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
+        }
+
+        public void Unload()
+        {
+            On.Terraria.Main.DrawBackground -= DrawColosseumBackground;
+            On.Terraria.Main.DrawBlack -= ForceDrawBlack;
+            IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
+        }
     }
 
     public class GetRidOfOnHitDebuffsHook : IHookEdit

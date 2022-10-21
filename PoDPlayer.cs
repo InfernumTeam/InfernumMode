@@ -12,6 +12,7 @@ using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
+using SubworldLibrary;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -56,7 +57,7 @@ namespace InfernumMode
                 arena.Width *= 16;
                 arena.Height *= 16;
 
-                return Player.Hitbox.Intersects(arena);
+                return Player.Hitbox.Intersects(arena) && !WeakReferenceSupport.InAnySubworld();
             }
         }
         public bool InProfanedArenaAntiCheeseZone
@@ -70,7 +71,7 @@ namespace InfernumMode
                 arena.Height *= 16;
                 arena.Inflate(1080, 1080);
 
-                return Player.Hitbox.Intersects(arena);
+                return Player.Hitbox.Intersects(arena) && !WeakReferenceSupport.InAnySubworld();
             }
         }
 
@@ -106,7 +107,7 @@ namespace InfernumMode
             }
         }
 
-        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>());
+        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !WeakReferenceSupport.InAnySubworld();
 
         #region Nurse Cheese Death
         public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)

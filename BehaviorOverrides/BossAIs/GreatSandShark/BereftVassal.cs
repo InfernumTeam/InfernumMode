@@ -21,7 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SandBlobSlam,
             LongHorizontalCharges,
             SpearWaterTorrent,
-            WaterWaveSlam
+            WaterWaveSlam,
+            FallingWaterCastBarrges
         }
 
         public Player Target => Main.player[NPC.target];
@@ -115,6 +116,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
                 case BereftVassalAttackType.WaterWaveSlam:
                     DoBehavior_WaterWaveSlam();
+                    break;
+                case BereftVassalAttackType.FallingWaterCastBarrges:
+                    DoBehavior_FallingWaterCastBarrges();
                     break;
             }
             
@@ -632,6 +636,105 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SpearOpacity = 1f;
         }
 
+        public void DoBehavior_FallingWaterCastBarrges()
+        {
+            int shootDelay = 45;
+            int shootRate = 11;
+            int shootTime = 85;
+            int waveCount = 5;
+            int waveReleaseRate = 30;
+            int attackTransitionDelay = 40;
+            float waveArc = MathHelper.ToRadians(70f);
+            float waveSpeed = 4.6f;
+
+            // Wait until on ground for the attack to progress.
+            if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
+            {
+                if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
+                    NPC.position.Y += 12f;
+                AttackTimer = 0f;
+            }
+
+            // Bring the spear out and aim it upward.
+            SpearOpacity = Utils.GetLerpValue(2f, shootDelay - 20f, AttackTimer, true);
+            if (AttackTimer < shootDelay)
+            {
+                SpearRotation = NPC.AngleTo(Target.Center).AngleLerp(MathHelper.PiOver2, 0.6f) - MathHelper.PiOver4;
+                if (NPC.spriteDirection == 1)
+                    SpearRotation += MathHelper.Pi;
+
+                // Create water particles at the end of the spear.
+                Vector2 spearEnd = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
+                if (AttackTimer % 12f == 11f)
+                {
+                    Color pulseColor = Main.rand.NextBool() ? (Main.rand.NextBool() ? Color.SkyBlue : Color.LightSkyBlue) : (Main.rand.NextBool() ? Color.LightBlue : Color.DeepSkyBlue);
+                    var pulse = new DirectionalPulseRing(spearEnd, Vector2.Zero, pulseColor, Vector2.One * 1.35f, SpearRotation - MathHelper.PiOver4, 0.05f, 0.42f, 30);
+                    GeneralParticleHandler.SpawnParticle(pulse);
+
+                    int numDust = 18;
+                    for (int i = 0; i < numDust; i++)
+                    {
+                        Vector2 ringVelocity = (MathHelper.TwoPi * i / numDust).ToRotationVector2().RotatedBy(SpearRotation + MathHelper.PiOver4) * 5f;
+                        Dust ringDust = Dust.NewDustPerfect(spearEnd, 211, ringVelocity, 100, default, 1.25f);
+                        ringDust.noGravity = true;
+                    }
+                }
+
+                for (int i = 0; i < 2; i++)
+                {
+                    Gore bubble = Gore.NewGorePerfect(NPC.GetSource_FromAI(), spearEnd, Main.rand.NextVector2Circular(0.8f, 0.8f), 411);
+                    bubble.timeLeft = Main.rand.Next(8, 14);
+                    bubble.scale = Main.rand.NextFloat(0.6f, 1f) * 1.2f;
+                    bubble.type = Main.rand.NextBool(3) ? 412 : 411;
+                }
+            }
+
+            // Look at the target.
+            NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
+
+            // Start shooting water spears.
+            if (AttackTimer >= shootDelay && AttackTimer < shootDelay + shootTime)
+            {
+                if (AttackTimer % waveReleaseRate == waveReleaseRate - 1f && !NPC.WithinRange(Target.Center, 300f))
+                {
+                    // Release an even spread of waves.
+                    for (int i = 0; i < waveCount; i++)
+                    {
+                        float waveShootOffsetAngle = MathHelper.Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
+                        Vector2 waveVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(waveShootOffsetAngle) * waveSpeed;
+                        Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 160, 0f);
+                    }
+                }
+
+                // Release spears into the air.
+                if (AttackTimer % shootRate == shootRate - 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.AbigailAttack, NPC.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float shootInterpolant = Utils.Remap(AttackTimer - shootDelay, 0f, shootTime - 8f, 0.04f, 0.8f);
+                        Vector2 shootPosition = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
+                        Vector2 shootDestination = Target.Center + Vector2.UnitX * (Target.Center.X > NPC.Center.X).ToDirectionInt() * 250f;
+                        shootDestination.X = MathHelper.Lerp(shootDestination.X, NPC.Center.X, shootInterpolant);
+
+                        float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
+                        float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * WaterSpear.Gravity);
+                        float spearShootSpeed = MathHelper.Clamp(idealShootSpeed, 10f, 29f);
+                        Vector2 spearShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, WaterSpear.Gravity, spearShootSpeed, out _);
+                        spearShootVelocity.Y -= 4.5f;
+
+                        int spearIndex = Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 160, 0f);
+                        if (Main.projectile.IndexInRange(spearIndex))
+                            Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                    }
+                }
+            }
+
+            if (AttackTimer >= shootDelay + shootTime + attackTransitionDelay)
+                SelectNextAttack();
+        }
+
         public void CreateMotionStreakParticles()
         {
             // Release anime-like streak particle effects at the side of the vassal to indicate motion.
@@ -658,6 +761,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     CurrentAttack = BereftVassalAttackType.WaterWaveSlam;
                     break;
                 case BereftVassalAttackType.WaterWaveSlam:
+                    CurrentAttack = BereftVassalAttackType.FallingWaterCastBarrges;
+                    break;
+                case BereftVassalAttackType.FallingWaterCastBarrges:
                     CurrentAttack = BereftVassalAttackType.SandBlobSlam;
                     break;
             }

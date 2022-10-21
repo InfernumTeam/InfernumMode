@@ -55,12 +55,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override void SetDefaults()
         {
             NPC.npcSlots = 5f;
-            NPC.damage = 120;
+            NPC.damage = 100;
             NPC.width = 30;
             NPC.height = 44;
             NPC.defense = 20;
             NPC.DR_NERD(0.2f);
-            NPC.LifeMaxNERB(49750, 49750, 800000);
+            NPC.LifeMaxNERB(42750, 42750, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;
@@ -103,6 +103,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.noTileCollide = false;
             NPC.noGravity = false;
 
+            // Go away if the target is dead.
+            if (!Target.active || Target.dead)
+                NPC.active = false;
+
             switch (CurrentAttack)
             {
                 case BereftVassalAttackType.SandBlobSlam:
@@ -124,14 +128,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             
             AttackTimer++;
         }
-
-        /*
-           1. Rises upward and slams spear into the ground, causing sand blobs to rise into the air before falling back down
-           2. Performs several fast, accelerating horizontal charges in succession at the target. After one completes, a teleport happens with the next one. In later phases, these charges leave behind unstable prism crystals that explode into a violent slash effects
-           3. Spins the spear before aiming it at the target and releasing a torrent of water in their direction from it. The water slowly rotates towards the player, somewhat like a laser
-           4. Leaps into the air before slamming downward, with the spear being slammed downward as well. Once ground is hit, a minor rubble effect happens and the spear dissipates into a water wave on the ground. This attack happens multiple times in succession.
-              The difference between this and 1 is that 1 does not jump forward
-         */
         
         public void DoBehavior_SandBlobSlam()
         {

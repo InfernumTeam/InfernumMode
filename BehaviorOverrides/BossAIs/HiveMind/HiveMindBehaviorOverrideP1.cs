@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
@@ -49,6 +50,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             ref float digTime = ref npc.localAI[3];
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             ref float phase2 = ref npc.Infernum().ExtraAI[20];
+
+            // Kill debuffs.
+            if (target.HasBuff(BuffID.CursedInferno))
+                target.ClearBuff(BuffID.CursedInferno);
+            if (target.HasBuff(ModContent.BuffType<Shadowflame>()))
+                target.ClearBuff(ModContent.BuffType<Shadowflame>());
 
             if (lifeRatio < Phase2LifeRatio)
             {

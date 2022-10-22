@@ -78,6 +78,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
                     hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
                 }
+                else
+                {
+                    // Avoid walls.
+                    while (Collision.SolidCollision(hoverDestination - Vector2.One * 75f, 150, 150))
+                        hoverDestination += (target.Center - hoverDestination).SafeNormalize(Vector2.UnitY) * 20f;
+                }
+
                 if (!Main.npc[Main.wofNPCIndex].WithinRange(target.Center, 4000f))
                     hoverDestination = Main.npc[Main.wofNPCIndex].Center;
 

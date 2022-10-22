@@ -40,7 +40,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public enum ThanatosHeadAttackType
         {
             AggressiveCharge,
-            LaserBarrage,
             ExoBomb,
             ExoLightBarrage,
             RefractionRotorRays,
@@ -131,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     previous = lol;
                 }
 
-                npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
+                npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
                 finalMechIndex = -1f;
                 complementMechIndex = -1f;
                 segmentsSpawned++;
@@ -267,9 +266,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     case ThanatosHeadAttackType.AggressiveCharge:
                         DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
-                        break;
-                    case ThanatosHeadAttackType.LaserBarrage:
-                        DoBehavior_LaserBarrage(npc, target, ref attackTimer, ref frameType);
                         break;
                     case ThanatosHeadAttackType.ExoBomb:
                         DoBehavior_ExoBomb(npc, target, ref attackTimer, ref frameType);
@@ -1040,12 +1036,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 do
                 {
-                    //npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
-                    if (Main.rand.NextBool())
-                        npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
                     if (Main.rand.NextBool())
                         npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
-                    if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 3)
+                    if (Main.rand.NextBool(3))
                         npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
                     if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 5)
                         npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;

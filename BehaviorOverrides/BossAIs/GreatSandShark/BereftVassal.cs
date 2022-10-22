@@ -11,6 +11,7 @@ using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -23,7 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             LongHorizontalCharges,
             SpearWaterTorrent,
             WaterWaveSlam,
-            FallingWaterCastBarrges
+            FallingWaterCastBarrges,
+            SummonGreatSandShark
         }
 
         public Player Target => Main.player[NPC.target];
@@ -32,6 +34,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             get => (BereftVassalAttackType)NPC.ai[0];
             set => NPC.ai[0] = (int)value;
+        }
+
+        public bool HasBegunSummoningGSS
+        {
+            get => NPC.Infernum().ExtraAI[5] == 1f;
+            set => NPC.Infernum().ExtraAI[5] = value.ToInt();
         }
 
         public ref float AttackTimer => ref NPC.ai[1];
@@ -43,6 +51,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public ref float LineTelegraphDirection => ref NPC.localAI[2];
 
         public ref float LineTelegraphIntensity => ref NPC.localAI[3];
+
+        public const float Phase2LifeRatio = 0.6f;
 
         public override void SetStaticDefaults()
         {
@@ -131,6 +141,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 case BereftVassalAttackType.FallingWaterCastBarrges:
                     DoBehavior_FallingWaterCastBarrges();
                     break;
+                case BereftVassalAttackType.SummonGreatSandShark:
+                    DoBehavior_SummonGreatSandShark();
+                    break;
+            }
+
+            if (!HasBegunSummoningGSS && NPC.life < NPC.lifeMax * Phase2LifeRatio)
+            {
+                SelectNextAttack();
+                CurrentAttack = BereftVassalAttackType.SummonGreatSandShark;
+                HasBegunSummoningGSS = true;
             }
             
             AttackTimer++;
@@ -139,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public void DoBehavior_IdleState()
         {
             int animationFocusTime = 32;
-            int spearSpinTime = 96;
+            int spearSpinTime = 67;
             int spearStrikeTime = 45;
             int animationFocusReturnTime = 14;
             int animationTime = spearSpinTime + spearStrikeTime + animationFocusReturnTime;
@@ -204,6 +224,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         NPC.netUpdate = true;
                     }
                 }
+
+                // Change music.
+                SceneEffectPriority = SceneEffectPriority.BossHigh;
+                Music = MusicID.Boss3;
+                if (ModLoader.TryGetMod("InfernumModeMusic", out Mod musicMod))
+                    Music = MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/Boss3");
             }
 
             // Disable controls and UI for the target.
@@ -550,7 +576,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Spin the water.
             if (AttackTimer >= spearSpinTime)
+            {
                 SpearRotation += waterSpinArc / spearSpinTime * aimDirection;
+                SpearOpacity = Utils.GetLerpValue(40f, 0f, AttackTimer - spearSpinTime - waterSpinTime, true);
+            }
 
             if (AttackTimer >= spearSpinTime + waterSpinTime + 50)
                 SelectNextAttack();
@@ -843,6 +872,106 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SelectNextAttack();
         }
 
+        public void DoBehavior_SummonGreatSandShark()
+        {
+            int jumpHoverTime = 35;
+            int animationFocusTime = 15;
+            int hornSoundTime = 212;
+            int gssSummonDelay = 233;
+            int animationFocusReturnTime = 12;
+            int attackTransitionDelay = 64;
+            ref float fallSpeed = ref NPC.Infernum().ExtraAI[0];
+
+            // Make the spear disappear.
+            SpearOpacity = MathHelper.Clamp(SpearOpacity - 0.1f, 0f, 1f);
+            SpearRotation = 0f;
+
+            // Get rid of old telegraphs.
+            LineTelegraphIntensity = 0f;
+
+            // Disable damage.
+            NPC.damage = 0;
+            NPC.dontTakeDamage = true;
+
+            // Disable tile collision and gravity when blowing the horn.
+            bool blowingHorn = AttackTimer >= jumpHoverTime && AttackTimer <= jumpHoverTime + hornSoundTime;
+            NPC.noTileCollide = blowingHorn;
+            NPC.noGravity = blowingHorn;
+
+            // Wait until on ground for the attack to progress.
+            if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
+            {
+                if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
+                {
+                    fallSpeed = MathHelper.Clamp(fallSpeed + 0.7f, 0f, 13.6f);
+                    NPC.position.Y += fallSpeed;
+                }
+                AttackTimer = 0f;
+            }
+
+            // Jump upward and look at the target once on the ground.
+            if (AttackTimer == 2f)
+            {
+                // Disable controls and UI for the target.
+                if (Main.myPlayer == NPC.target)
+                {
+                    Main.hideUI = true;
+                    Main.blockInput = true;
+                }
+
+                // Delete all old projectiles.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<GroundSlamWave>(), ModContent.ProjectileType<SandBlob>(), ModContent.ProjectileType<TorrentWave>(), ModContent.ProjectileType<WaterSpear>(), ModContent.ProjectileType<WaterTorrentBeam>());
+
+                NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
+                NPC.velocity = new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 20f, -20f);
+                NPC.netUpdate = true;
+            }
+
+            // Handle post-jump behaviors.
+            if (AttackTimer >= 2f && AttackTimer <= jumpHoverTime)
+            {
+                // Rapidly decelerate and spin.
+                NPC.velocity.X *= 0.9f;
+                NPC.velocity.Y += 0.7f;
+                NPC.rotation = MathHelper.TwoPi * AttackTimer / jumpHoverTime;
+            }
+
+            // Blow the horn.
+            if (AttackTimer == jumpHoverTime)
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalHornSound with { Volume = 1.6f });
+
+            // Slow down after blowing the horn.
+            if (AttackTimer >= jumpHoverTime)
+                NPC.velocity *= 0.87f;
+
+            // Play the great sand shark summon sound.
+            if (AttackTimer == jumpHoverTime + hornSoundTime)
+                SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkSpawnSound with { Volume = 1.6f });
+
+            // Summon the great sand shark.
+            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == jumpHoverTime + hornSoundTime + gssSummonDelay)
+            {
+                int shark = NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y + 500, ModContent.NPCType<GreatSandSharkNPC>(), NPC.whoAmI);
+                if (Main.npc.IndexInRange(shark))
+                    Main.npc[shark].velocity = -Vector2.UnitY * 23f;
+            }
+
+            // Give the player their controls back before the great sand shark is spawned.
+            if (Main.myPlayer == NPC.target && AttackTimer >= jumpHoverTime + hornSoundTime + gssSummonDelay - 54f)
+            {
+                Main.hideUI = false;
+                Main.blockInput = false;
+            }
+
+            // Have the camera zoom in on the vassal once the animation begins.
+            Target.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
+            Target.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(-54f, -54f - animationFocusReturnTime, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
+            Target.Infernum().ScreenFocusPosition = NPC.Center;
+
+            if (AttackTimer == jumpHoverTime + hornSoundTime + gssSummonDelay + attackTransitionDelay)
+                SelectNextAttack();
+        }
+
         public void CreateMotionStreakParticles()
         {
             // Release anime-like streak particle effects at the side of the vassal to indicate motion.
@@ -873,6 +1002,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
                 case BereftVassalAttackType.FallingWaterCastBarrges:
                 case BereftVassalAttackType.IdleState:
+                case BereftVassalAttackType.SummonGreatSandShark:
                     CurrentAttack = BereftVassalAttackType.SandBlobSlam;
                     break;
             }
@@ -938,7 +1068,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 }
             }
             Main.EntitySpriteDraw(spearTexture, spearDrawPosition, null, NPC.GetAlpha(drawColor) * SpearOpacity, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale * 0.8f, 0, 0);
-
             return false;
         }
 

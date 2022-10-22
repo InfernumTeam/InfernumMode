@@ -49,12 +49,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             ref float attackTimer = ref npc.ai[2];
             ref float lightningSkyBrightness = ref npc.ModNPC<StormWeaverHead>().lightning;
 
-            // Lol. Lmao.
-            if (target.HasBuff(BuffID.Chilled))
-                target.ClearBuff(BuffID.Chilled);
-            if (target.HasBuff(BuffID.Frozen))
-                target.ClearBuff(BuffID.Frozen);            
-
             lightningSkyBrightness = MathHelper.Clamp(lightningSkyBrightness - 0.05f, 0f, 1f);
 
             if (lifeRatio < 0.1f)
@@ -166,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 360f)
+            if (attackTimer >= 300f)
                 SelectNewAttack(npc);
         }
 

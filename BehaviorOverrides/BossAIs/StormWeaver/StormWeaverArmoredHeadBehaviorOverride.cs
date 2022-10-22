@@ -48,6 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             Player target = Main.player[npc.target];
 
             ref float phase2 = ref npc.Infernum().ExtraAI[20];
+            ref float attackState = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[2];
 
             if (!target.active || target.dead)
             {
@@ -57,6 +59,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             // Don't naturally despawn.
             npc.timeLeft = 3600;
+
+            // Lol. Lmao.
+            if (target.HasBuff(BuffID.Chilled))
+                target.ClearBuff(BuffID.Chilled);
+            if (target.HasBuff(BuffID.Frozen))
+                target.ClearBuff(BuffID.Frozen);
+            if (target.HasBuff(BuffID.Electrified))
+                target.ClearBuff(BuffID.Electrified);
 
             if (npc.life < npc.lifeMax * Phase2LifeRatio)
             {
@@ -71,6 +81,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     npc.DeathSound = SoundID.NPCDeath13;
                     npc.frame = new Rectangle(0, 0, 62, 86);
                     HatGirl.SayThingWhileOwnerIsAlive(target, "The Weaver has shed its exterior. It will now move far faster!");
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<WeaverSpark>());
+
+                    attackState = (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.NormalMove;
+                    attackTimer = 0f;
 
                     phase2 = 1f;
                     npc.netUpdate = true;
@@ -87,9 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 AquaticScourgeHeadBehaviorOverride.CreateSegments(npc, 32, ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>());
                 npc.localAI[0] = 1f;
             }
-
-            ref float attackState = ref npc.ai[1];
-            ref float attackTimer = ref npc.ai[2];
 
             switch ((StormWeaverArmoredAttackType)(int)attackState)
             {
@@ -167,7 +178,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 300f)
+            if (attackTimer >= 240f)
                 SelectNewAttack(npc);
         }
 

@@ -441,14 +441,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     while (dashDirection == 0f)
                         dashDirection = Main.rand.NextBool().ToDirectionInt();
 
-                    npc.position.Y -= RainDashOffset * MathHelper.Lerp(1f, 1.325f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
+                    npc.position.Y -= RainDashOffset * MathHelper.Lerp(1.2f, 1.5f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     npc.position.X += RainDashOffset * dashDirection;
                 }
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, true);
-                    npc.velocity = Vector2.UnitX * dashDirection * -11f;
-                    npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
+                    npc.velocity = Vector2.UnitX * dashDirection * -10.25f;
+                    npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     if (enraged)
                         npc.velocity *= 1.5f;
                     if (BossRushEvent.BossRushActive)
@@ -471,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Reset to the slowdown state in preparation for the next attack.
-            if (cloudSummonCounter >= 18f)
+            if (cloudSummonCounter >= 15f)
             {
                 npc.alpha = 255;
                 dashDirection *= -1f;

@@ -26,6 +26,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
+        public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+
         public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Sounds/Custom/HeavyExplosion");
 
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
@@ -45,6 +47,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Sounds/Custom/ProvidenceDoorShatter");
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
+
+        public static readonly SoundStyle VassalHornSound = new("InfernumMode/Sounds/Custom/VassalHornSound");
 
         public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/VassalSlash") with { Volume = 1.5f };
 

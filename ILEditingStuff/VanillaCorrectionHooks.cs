@@ -107,22 +107,22 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => PlaceHellLab -= SlideOverHellLab;
     }
 
-    public class DrawSunkenColosseumBackgroundHook : IHookEdit
+    public class DrawLostColosseumBackgroundHook : IHookEdit
     {
         internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
         {
-            orig(self, force || SubworldSystem.IsActive<SunkenColosseum>());
+            orig(self, force || SubworldSystem.IsActive<LostColosseum>());
         }
 
         internal void DrawColosseumBackground(On.Terraria.Main.orig_DrawBackground orig, Main self)
         {
             orig(self);
 
-            if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<SunkenColosseum>())
+            if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<LostColosseum>())
                 return;
 
-            Texture2D gradient = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/SunkenColosseumBGGradient").Value;
-            Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/SunkenColosseumBGObjects").Value;
+            Texture2D gradient = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGGradient").Value;
+            Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGObjects").Value;
 
             // I don't know.
             Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
@@ -161,7 +161,7 @@ namespace InfernumMode.ILEditingStuff
             c.Emit(OpCodes.Ldloc, 3);
             c.EmitDelegate<Func<float, float>>(lightThreshold =>
             {
-                if (SubworldSystem.IsActive<SunkenColosseum>())
+                if (SubworldSystem.IsActive<LostColosseum>())
                     return 0.125f;
 
                 return lightThreshold;

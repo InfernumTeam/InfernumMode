@@ -77,6 +77,17 @@ namespace InfernumMode
                 if (tooltip0 != null)
                     tooltip0.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
             }
+
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<SandstormsCore>())
+            {
+                var tooltip0 = tooltips.FirstOrDefault(x => x.Name == "Tooltip0" && x.Mod == "Terraria");
+                if (tooltip0 != null)
+                {
+                    tooltip0.Text = "This item is not usable in an Infernum Mode world";
+                    tooltip0.OverrideColor = Color.Red;
+                }
+                tooltips.RemoveAll(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
+            }
         }
 
         internal static void DoGTeleportDenialText(Player player, Item item)
@@ -105,7 +116,7 @@ namespace InfernumMode
                 return false;
             }
 
-            if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedShard>() || item.type == ModContent.ItemType<ProfanedCore>()))
+            if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedShard>() || item.type == ModContent.ItemType<ProfanedCore>() || item.type == ModContent.ItemType<SandstormsCore>()))
                 return false;
 
             bool illegalItemForProvArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb;

@@ -6,12 +6,12 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Items
 {
-    public class SunkenColosseumTeleporter : ModItem
+    public class LostColosseumTeleporter : ModItem
     {
         public override void SetStaticDefaults()
         {
             SacrificeTotal = 1;
-            DisplayName.SetDefault("Sunken Colosseum Teleporter");
+            DisplayName.SetDefault("Lost Colosseum Teleporter");
             Tooltip.SetDefault("Brings you to the GSS arena and back. This is a test item.");
         }
 
@@ -20,18 +20,18 @@ namespace InfernumMode.Items
             Item.width = 32;
             Item.height = 32;
             Item.rare = ItemRarityID.Red;
-            Item.useAnimation = 42;
-            Item.useTime = 42;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.consumable = false;
         }
 
         public override bool? UseItem(Player player)
         {
-            if (SubworldSystem.IsActive<SunkenColosseum>())
+            if (SubworldSystem.IsActive<LostColosseum>())
                 SubworldSystem.Exit();
             else
-                SubworldSystem.Enter<SunkenColosseum>();
+                SubworldSystem.Enter<LostColosseum>();
 
             return true;
         }

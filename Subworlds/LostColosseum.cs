@@ -9,11 +9,17 @@ using Terraria.WorldBuilding;
 
 namespace InfernumMode.Subworlds
 {
-    public class SunkenColosseum : Subworld
+    public class LostColosseum : Subworld
     {
-        public class SunkenColosseumGenPass : GenPass
+        public static bool HasBereftVassalAppeared
         {
-            public SunkenColosseumGenPass() : base("Terrain", 1f) { }
+            get;
+            set;
+        } = false;
+
+        public class LostColosseumGenPass : GenPass
+        {
+            public LostColosseumGenPass() : base("Terrain", 1f) { }
             
             protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
             {
@@ -37,9 +43,11 @@ namespace InfernumMode.Subworlds
 
         public override int Height => 200;
 
+        public override bool ShouldSave => true;
+
         public override List<GenPass> Tasks => new()
         {
-            new SunkenColosseumGenPass()
+            new LostColosseumGenPass()
         };
 
         public override bool GetLight(Tile tile, int x, int y, ref FastRandom rand, ref Vector3 color)

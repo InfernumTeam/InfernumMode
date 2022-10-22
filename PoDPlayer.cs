@@ -8,6 +8,7 @@ using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
+using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
@@ -366,6 +367,9 @@ namespace InfernumMode
                     NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
                 WorldSaveSystem.InfernumMode = false;
             }
+
+            if (!stupidDifficultyIsActive && SubworldSystem.IsActive<LostColosseum>())
+                WorldSaveSystem.InfernumMode = true;
 
             if (ShadowflameInferno)
             {

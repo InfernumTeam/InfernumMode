@@ -18,6 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
     {
         public enum BereftVassalAttackType
         {
+            IdleState,
             SandBlobSlam,
             LongHorizontalCharges,
             SpearWaterTorrent,
@@ -78,6 +79,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.netAlways = true;
             Music = MusicID.Boss4;
+
+            NPC.Calamity().ShouldCloseHPBar = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -102,13 +105,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.dontTakeDamage = false;
             NPC.noTileCollide = false;
             NPC.noGravity = false;
+            NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState;
 
             // Go away if the target is dead.
-            if (!Target.active || Target.dead)
+            if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
                 NPC.active = false;
 
             switch (CurrentAttack)
             {
+                case BereftVassalAttackType.IdleState:
+                    DoBehavior_IdleState();
+                    break;
                 case BereftVassalAttackType.SandBlobSlam:
                     DoBehavior_SandBlobSlam();
                     break;
@@ -128,7 +135,96 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             
             AttackTimer++;
         }
-        
+
+        public void DoBehavior_IdleState()
+        {
+            int animationFocusTime = 32;
+            int spearSpinTime = 96;
+            int spearStrikeTime = 45;
+            int animationFocusReturnTime = 14;
+            int animationTime = spearSpinTime + spearStrikeTime + animationFocusReturnTime;
+            ref float hasBegunAnimation = ref NPC.Infernum().ExtraAI[0];
+
+            // Disable damage entirely.
+            NPC.dontTakeDamage = true;
+            NPC.damage = 0;
+
+            // Look away from the target if not performing an animation.
+            if (hasBegunAnimation == 0f)
+            {
+                AttackTimer = 0f;
+                NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
+            }
+
+            // Begin the animation once the player is sufficiently close to the vassal.
+            if (NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
+            {
+                hasBegunAnimation = 1f;
+                SpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
+                NPC.netUpdate = true;
+            }
+
+            if (hasBegunAnimation == 0f)
+                return;
+
+            // Have the camera zoom in on the vassal once the animation begins.
+            Target.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
+            Target.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(0f, -animationFocusReturnTime, AttackTimer - animationFocusTime - animationTime, true);
+            Target.Infernum().ScreenFocusPosition = NPC.Center;
+
+            // Spin the spear.
+            int animationTimer = (int)(AttackTimer - animationFocusTime);
+            if (animationTimer < 0)
+                return;
+
+            if (animationTimer <= spearSpinTime)
+            {
+                if (animationTimer == 6)
+                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, NPC.Center);
+
+                SpearOpacity = Utils.GetLerpValue(0f, 16f, animationTimer, true);
+                SpearRotation += MathHelper.Pi / spearSpinTime * 10f;
+            }
+
+            // Look towards the target before leaping at them.
+            else if (animationTimer <= spearSpinTime + spearStrikeTime)
+            {
+                // Look at the target and aim the spear at them.
+                SpearRotation = SpearRotation.AngleLerp(NPC.AngleTo(Target.Center) + MathHelper.PiOver4, 0.2f);
+                NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
+
+                // Jump into the air.
+                if (animationTimer == spearSpinTime + spearStrikeTime - 10)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 160, 0f);
+                        NPC.velocity = new Vector2((Target.Center.X > NPC.Center.X).ToDirectionInt() * 19f, -23f);
+                        NPC.netUpdate = true;
+                    }
+                }
+            }
+
+            // Disable controls and UI for the target.
+            if (Main.myPlayer == NPC.target)
+            {
+                Main.hideUI = true;
+                Main.blockInput = true;
+            }
+
+            if (AttackTimer >= animationTime + animationFocusReturnTime)
+            {
+                if (Main.myPlayer == NPC.target)
+                {
+                    Main.hideUI = false;
+                    Main.blockInput = false;
+                }
+
+                SelectNextAttack();
+            }
+        }
+
         public void DoBehavior_SandBlobSlam()
         {
             int repositionInterpolationTime = 32;
@@ -177,9 +273,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 // Look at the target.
                 if (MathHelper.Distance(Target.Center.X, NPC.Center.X) > 25f)
                     NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
-
-                // Get rid of the spear temporarily.
-                SpearOpacity = 0f;
 
                 // Disable contact damag when rising upward.
                 NPC.damage = 0;
@@ -779,6 +872,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     CurrentAttack = BereftVassalAttackType.FallingWaterCastBarrges;
                     break;
                 case BereftVassalAttackType.FallingWaterCastBarrges:
+                case BereftVassalAttackType.IdleState:
                     CurrentAttack = BereftVassalAttackType.SandBlobSlam;
                     break;
             }

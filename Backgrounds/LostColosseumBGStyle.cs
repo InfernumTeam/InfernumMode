@@ -2,7 +2,7 @@
 
 namespace InfernumMode.Backgrounds
 {
-    public class SunkenColosseumBGStyle : ModUndergroundBackgroundStyle
+    public class LostColosseumBGStyle : ModUndergroundBackgroundStyle
     {
         public override void FillTextureArray(int[] textureSlots)
         {

@@ -465,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_MantisLordCharges(NPC npc, Player target, ref float attackTimer)
         {
-            int attakCycleCount = 2;
+            int attakCycleCount = 30000;
             int attackCycleTime = 266;
             int sharkChargeDelay = 23;
             int sharkChargeTime = 26;
@@ -578,10 +578,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Hover below the target if not supposed to attack.
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, sharkShouldAttack ? -20f : hoverVerticalOffset);
             if (hasReachedChargeDestination == 0f)
             {
                 npc.damage = 0;
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, sharkShouldAttack ? -70f : hoverVerticalOffset);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed;
                 npc.SimpleFlyMovement(idealVelocity, hoverRedirectAcceleration);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
@@ -591,7 +591,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 {
                     sharkAttackTimer = 0f;
                     hasReachedChargeDestination = 1f;
-                    npc.velocity *= 0.1f;
+                    npc.velocity *= 0.75f;
+                    npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.56f);
                     npc.netUpdate = true;
                 }
 
@@ -601,7 +602,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Prepare for the charge.
             if (sharkAttackTimer < sharkChargeDelay)
             {
-                npc.velocity *= 0.92f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.1f);
+                npc.velocity *= 0.86f;
                 npc.rotation = npc.velocity.X * 0.012f;
 
                 // Roar before charging.

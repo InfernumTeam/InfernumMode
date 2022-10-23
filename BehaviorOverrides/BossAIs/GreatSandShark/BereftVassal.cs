@@ -31,7 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public enum BereftVassalFrameType
         {
             Idle,
-            BlowHorn
+            BlowHorn,
+            Jump,
+            Kneel
         }
 
         public Player Target => Main.player[NPC.target];
@@ -85,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.height = 44;
             NPC.defense = 20;
             NPC.DR_NERD(0.2f);
-            NPC.LifeMaxNERB(42700, 42700, 800000);
+            NPC.LifeMaxNERB(52700, 52700, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;
@@ -141,8 +143,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Center = Vector2.Clamp(NPC.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));
 
             // Reset frames.
+            NPC.frameCounter++;
             FrameType = BereftVassalFrameType.Idle;
-            CurrentFrame = 0f;
+            CurrentFrame = (int)(NPC.frameCounter / 5f % 4f);
 
             switch (CurrentAttack)
             {
@@ -184,7 +187,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public void DoBehavior_IdleState()
         {
-            int animationFocusTime = 32;
+            int animationFocusTime = 54;
             int spearSpinTime = 67;
             int spearStrikeTime = 45;
             int animationFocusReturnTime = 14;
@@ -210,6 +213,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 NPC.netUpdate = true;
             }
 
+            // Using kneeling frames.
+            FrameType = BereftVassalFrameType.Kneel;
+            CurrentFrame = 0f;
+
             if (hasBegunAnimation == 0f)
                 return;
 
@@ -221,7 +228,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Spin the spear.
             int animationTimer = (int)(AttackTimer - animationFocusTime);
             if (animationTimer < 0)
+            {
+                CurrentFrame = Utils.Remap(AttackTimer, 0f, animationFocusTime, 0f, 4f);
                 return;
+            }
+
+            // Use idle frames when done kneeling.
+            FrameType = BereftVassalFrameType.Idle;
 
             if (animationTimer <= spearSpinTime)
             {
@@ -288,15 +301,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float sandBlobSpeed = 18f;
             ref float attackSubstate = ref NPC.Infernum().ExtraAI[0];
             ref float startingTargetPositionY = ref NPC.Infernum().ExtraAI[1];
+            ref float frameTimer = ref NPC.Infernum().ExtraAI[2];
 
             // Disable gravity and tile collision universally during this attack.
             // All of these things are applied manually.
             NPC.noTileCollide = true;
             NPC.noGravity = true;
 
+            // Use jump frames.
+            FrameType = BereftVassalFrameType.Jump;
+
             // Hover into position, above the target.
             if (attackSubstate == 0f)
             {
+                frameTimer++;
+                CurrentFrame = (int)(frameTimer / 4f * 8.5f);
+
                 // If the attack goes on for longer than expected the vassal will interpolant towards the destination faster and faster until it's eventually reached.
                 float flySpeedInterpolant = Utils.GetLerpValue(0f, repositionInterpolationTime, AttackTimer, true);
                 float positionIncrement = MathHelper.Lerp(0.32f, 6.4f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.18f;
@@ -341,6 +361,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 // Disable contact damag when hovering in place.
                 NPC.damage = 0;
 
+                // Decide frames.
+                frameTimer = 0f;
+                CurrentFrame = 8f;
+
                 // Slam downward after enough time has passed and cache the target's current Y position for later.
                 if (AttackTimer >= slamDelay)
                 {
@@ -360,6 +384,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 // Perform acceleration by rapidly interpolating towards terminal velocity.
                 NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.UnitY * slamSpeed, 0.12f);
+
+                // Decide frames.
+                CurrentFrame = 9f;
+                frameTimer = 0f;
 
                 CreateMotionStreakParticles();
 
@@ -413,7 +441,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (MathHelper.Distance(Target.Center.X, NPC.Center.X) > 25f && spearAimInterpolant >= 0.3f)
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
 
-            // TODO -- Maybe kneel for a bit before standing back up. This will require talking with Peng.
+            // Decide frames.
+            frameTimer++;
+            CurrentFrame = MathHelper.Lerp(10f, 15f, frameTimer / 24f);
 
             // Once enough time has passed, transition to the next attack.
             if (AttackTimer >= attackTransitionDelay)
@@ -1115,9 +1145,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Initialize the telegraph drawer.
             NPC.Infernum().OptionalPrimitiveDrawer ??= new(PrimitiveWidthFunction, PrimitiveTrailColor, null, true, GameShaders.Misc["CalamityMod:SideStreakTrail"]);
 
-            // Draw the downward telegraph trail as needed.
-            Vector2 drawPosition = NPC.Center - screenPos;
+            int frameCount = 4;
+            float verticalOffset = 0f;
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            switch (FrameType)
+            {
+                case BereftVassalFrameType.BlowHorn:
+                    frameCount = 7;
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalHorn").Value;
+                    break;
+                case BereftVassalFrameType.Jump:
+                    frameCount = 16;
+                    verticalOffset = -4f;
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalJump").Value;
+                    break;
+                case BereftVassalFrameType.Kneel:
+                    frameCount = 5;
+                    verticalOffset = -4f;
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalKneel").Value;
+                    break;
+            }
+
+            NPC.frame = texture.Frame(1, frameCount, 0, Utils.Clamp((int)CurrentFrame, 0, frameCount - 1));
+
+            Vector2 drawPosition = NPC.Center - screenPos + Vector2.UnitY * verticalOffset;
             Vector2 spearDrawPosition = drawPosition + Vector2.UnitY * 8f;
+
+            // Draw the downward telegraph trail as needed.
             if (LineTelegraphIntensity > 0f)
             {
                 Vector2[] telegraphPoints = new Vector2[3]
@@ -1129,18 +1183,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
                 NPC.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, Vector2.Zero, 51);
             }
-
-            int frameCount = 1;
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            switch (FrameType)
-            {
-                case BereftVassalFrameType.BlowHorn:
-                    frameCount = 7;
-                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalHorn").Value;
-                    break;
-            }
-
-            NPC.frame = texture.Frame(1, frameCount, 0, Utils.Clamp((int)CurrentFrame, 0, frameCount - 1));
 
             Texture2D spearTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalSpear").Value;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

@@ -55,7 +55,7 @@ namespace InfernumMode.Subworlds
             Vector3 lightMin = Vector3.Zero;
             bool notSolid = tile.Slope != SlopeType.Solid || tile.IsHalfBlock;
             if (!tile.HasTile || !Main.tileNoSunLight[tile.TileType] || (notSolid && Main.wallLight[tile.WallType] && tile.LiquidAmount < 200))
-                lightMin = Vector3.One * 0.8f;
+                lightMin = Vector3.One;
 
             color = Vector3.Max(color, lightMin);
             return false;

@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.boss = true;
             NPC.noGravity = false;
             NPC.noTileCollide = false;
-            NPC.HitSound = SoundID.DD2_OgreHurt with { Pitch = 0.3f };
+            NPC.HitSound = null;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.netAlways = true;
             Music = MusicID.Boss4;
@@ -120,6 +120,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Go away if the target is dead.
             if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
                 NPC.active = false;
+
+            // Stay inside of the world.
+            if (NPC.position.X < 150f)
+                NPC.position.X = 150f;
+            if (NPC.position.X > Main.maxTilesX * 16f - 150f)
+                NPC.position.X = Main.maxTilesX * 16f - 150f;
 
             switch (CurrentAttack)
             {
@@ -517,7 +523,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Jump away from the player shortly after reaching ground.
             if (AttackTimer == jumpDelay)
             {
-                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Bottom);
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, NPC.Bottom);
                 SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, NPC.Center);
 
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
@@ -623,7 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Jump away from the target shortly after reaching ground.
             if (AttackTimer == jumpDelay)
             {
-                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Bottom);
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, NPC.Bottom);
 
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 NPC.velocity = new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 20f, -20f);
@@ -670,7 +676,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Charge at the target.
             if (AttackTimer == jumpDelay + hoverTime)
             {
-                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Bottom);
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, NPC.Center);
 
                 startingTargetPositionY = Target.Center.Y;
@@ -879,7 +884,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int hornSoundTime = 212;
             int gssSummonDelay = 233;
             int animationFocusReturnTime = 12;
-            int attackTransitionDelay = 64;
+            int attackTransitionDelay = 75;
             ref float fallSpeed = ref NPC.Infernum().ExtraAI[0];
 
             // Make the spear disappear.
@@ -946,7 +951,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Play the great sand shark summon sound.
             if (AttackTimer == jumpHoverTime + hornSoundTime)
-                SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkSpawnSound with { Volume = 1.6f });
+                SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkSpawnSound with { Volume = 1.2f });
 
             // Summon the great sand shark.
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == jumpHoverTime + hornSoundTime + gssSummonDelay)
@@ -964,9 +969,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Have the camera zoom in on the vassal once the animation begins.
+            float screenShakeInterpolant = Utils.GetLerpValue(0f, 60f, AttackTimer - jumpHoverTime - hornSoundTime, true) * Utils.GetLerpValue(-2f, -22f, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
             Target.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
             Target.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(-54f, -54f - animationFocusReturnTime, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
+            Target.Infernum().CurrentScreenShakePower = screenShakeInterpolant * 6f;
             Target.Infernum().ScreenFocusPosition = NPC.Center;
+
+            // Create sand particles from below.
+            for (int i = 0; i < 6; i++)
+            {
+                if (Main.rand.NextFloat() < screenShakeInterpolant)
+                {
+                    Vector2 position = new(Main.rand.NextFloat(-150f, 350f), Main.rand.NextFloat(-50f, 0f));
+                    if (Main.rand.NextBool(3))
+                        position.X = Main.rand.Next(500) - 500;
+
+                    position.Y = Main.rand.NextFloat(0.1f, 0.9f) * Main.screenHeight;
+                    position += Main.screenPosition + Target.velocity;
+                    int tileCoordX = (int)position.X / 16;
+                    int tileCoordY = (int)position.Y / 16;
+                    if (WorldGen.InWorld(tileCoordX, tileCoordY) && Main.tile[tileCoordX, tileCoordY].WallType == WallID.None)
+                    {
+                        Dust dust = Dust.NewDustDirect(position, 10, 10, 268, 0f, 0f, 0, default, 1f);
+                        dust.velocity.Y = Main.rand.NextFloat(0.7f, 0.77f) * dust.scale;
+                        dust.velocity.X = Main.rand.NextFloat(1f, 40f);
+                        dust.velocity *= 1.08f;
+                        dust.color = Color.Orange;
+                        dust.fadeIn = 2.6f;
+                        dust.scale = Main.rand.NextFloat(1.5f, 2.18f);
+                    }
+                }
+            }
 
             if (AttackTimer == jumpHoverTime + hornSoundTime + gssSummonDelay + attackTransitionDelay)
                 SelectNextAttack();
@@ -1021,6 +1054,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 frame = 0;
 
             NPC.frame.Y = frameHeight * frame;
+        }
+
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            if (NPC.soundDelay <= 0)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalHitSound with { Volume = 1.5f }, NPC.Center);
+                NPC.soundDelay = 9;
+            }
         }
 
         public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);

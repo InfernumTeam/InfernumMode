@@ -48,7 +48,11 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
 
+        public static readonly SoundStyle VassalHitSound = new("InfernumMode/Sounds/NPCHit/VassalHit", 3);
+
         public static readonly SoundStyle VassalHornSound = new("InfernumMode/Sounds/Custom/VassalHornSound");
+
+        public static readonly SoundStyle VassalJumpSound = new("InfernumMode/Sounds/Custom/VassalJump");
 
         public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/VassalSlash") with { Volume = 1.5f };
 

@@ -26,7 +26,13 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
+        public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+
+        public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+
         public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+
+        public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSuddenRoar");
 
         public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Sounds/Custom/HeavyExplosion");
 

@@ -112,20 +112,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Reset things every frame.
             NPC.damage = NPC.defDamage;
-            NPC.dontTakeDamage = false;
+            NPC.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<GreatSandSharkNPC>());
             NPC.noTileCollide = false;
             NPC.noGravity = false;
-            NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState;
+            NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || NPC.dontTakeDamage;
 
             // Go away if the target is dead.
             if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
                 NPC.active = false;
 
             // Stay inside of the world.
-            if (NPC.position.X < 150f)
-                NPC.position.X = 150f;
-            if (NPC.position.X > Main.maxTilesX * 16f - 150f)
-                NPC.position.X = Main.maxTilesX * 16f - 150f;
+            NPC.Center = Vector2.Clamp(NPC.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));
 
             switch (CurrentAttack)
             {
@@ -158,7 +155,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 CurrentAttack = BereftVassalAttackType.SummonGreatSandShark;
                 HasBegunSummoningGSS = true;
             }
-            
+            BereftVassalComboAttackManager.DoComboAttacksIfNecessary(NPC, Target, ref AttackTimer);
+            if (NPC.ai[0] >= 100f && BereftVassalComboAttackManager.FightState != BereftVassalFightState.BereftVassalAndGSS)
+                SelectNextAttack();
+
             AttackTimer++;
         }
 
@@ -1033,9 +1033,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 case BereftVassalAttackType.WaterWaveSlam:
                     CurrentAttack = BereftVassalAttackType.FallingWaterCastBarrges;
                     break;
-                case BereftVassalAttackType.FallingWaterCastBarrges:
-                case BereftVassalAttackType.IdleState:
-                case BereftVassalAttackType.SummonGreatSandShark:
+                default:
                     CurrentAttack = BereftVassalAttackType.SandBlobSlam;
                     break;
             }
@@ -1099,17 +1097,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Texture2D spearTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalSpear").Value;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.EntitySpriteDraw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0);
-
-            if (SpearOpacity < 0.95f)
-            {
-                Color spearAfterimageColor = new Color(0.23f, 0.93f, 0.96f, 0f) * SpearOpacity * NPC.Opacity;
-                for (int i = 0; i < 12; i++)
-                {
-                    Vector2 spearOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.2f).ToRotationVector2() * (1f - SpearOpacity) * 12f;
-                    Main.EntitySpriteDraw(spearTexture, spearDrawPosition + spearOffset, null, spearAfterimageColor, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale * 0.8f, 0, 0);
-                }
-            }
-            Main.EntitySpriteDraw(spearTexture, spearDrawPosition, null, NPC.GetAlpha(drawColor) * SpearOpacity, SpearRotation, spearTexture.Size() * 0.5f, NPC.scale * 0.8f, 0, 0);
+            BereftVassalSpear.DrawSpearInstance(spearDrawPosition, Color.White * NPC.Opacity, SpearOpacity, SpearRotation, NPC.scale * 0.8f, false);
             return false;
         }
 

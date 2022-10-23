@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Fall.
             Projectile.rotation += Math.Sign(Projectile.velocity.X) * Projectile.velocity.Length() * 0.01f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.36f, -20f, 11f);
+            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.36f, -34f, 11f);
             Projectile.tileCollide = Projectile.Center.Y >= StartingYPosition + 180f;
         }
 

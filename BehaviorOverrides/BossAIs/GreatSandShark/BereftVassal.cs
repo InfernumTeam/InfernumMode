@@ -28,6 +28,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SummonGreatSandShark
         }
 
+        public enum BereftVassalFrameType
+        {
+            Idle,
+            BlowHorn
+        }
+
         public Player Target => Main.player[NPC.target];
 
         public BereftVassalAttackType CurrentAttack
@@ -42,11 +48,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             set => NPC.Infernum().ExtraAI[5] = value.ToInt();
         }
 
+        public BereftVassalFrameType FrameType
+        {
+            get => (BereftVassalFrameType)NPC.localAI[3];
+            set => NPC.localAI[3] = (int)value;
+        }
+
         public ref float AttackTimer => ref NPC.ai[1];
 
         public ref float SpearRotation => ref NPC.localAI[0];
 
         public ref float SpearOpacity => ref NPC.localAI[1];
+
+        public ref float CurrentFrame => ref NPC.localAI[2];
 
         public ref float LineTelegraphDirection => ref NPC.localAI[2];
 
@@ -111,11 +125,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.TargetClosestIfTargetIsInvalid();
 
             // Reset things every frame.
+            bool sandSharkExists = NPC.AnyNPCs(ModContent.NPCType<GreatSandSharkNPC>());
             NPC.damage = NPC.defDamage;
-            NPC.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<GreatSandSharkNPC>());
+            NPC.dontTakeDamage = false;
             NPC.noTileCollide = false;
             NPC.noGravity = false;
-            NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || NPC.dontTakeDamage;
+            NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
+            NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
             // Go away if the target is dead.
             if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
@@ -123,6 +139,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Stay inside of the world.
             NPC.Center = Vector2.Clamp(NPC.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));
+
+            // Reset frames.
+            FrameType = BereftVassalFrameType.Idle;
+            CurrentFrame = 0f;
 
             switch (CurrentAttack)
             {
@@ -410,6 +430,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float teleportHoverOffset = 440f;
             float teleportChargeSpeed = 50f;
             float sandBlobSpeed = 14f;
+
+            // Slow down if doing a combo attack.
+            if (BereftVassalComboAttackManager.FightState == BereftVassalFightState.BereftVassalAndGSS)
+            {
+                chargeAnticipationTime += 9;
+                chargeTime += 6;
+            }
+
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
             int chargeDirection = (chargeCounter % 2f == 0f).ToDirectionInt();
 
@@ -418,16 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (AttackTimer == 1f)
             {
                 Vector2 teleportPosition = Target.Center - Vector2.UnitX * chargeDirection * teleportHoverOffset;
-                if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.WithinRange(teleportPosition, 900f))
-                    Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
-                
-                NPC.Center = teleportPosition;
-                NPC.velocity = Vector2.Zero;
-                NPC.Opacity = 0f;
-                NPC.netUpdate = true;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
+                TeleportToPosition(teleportPosition);
 
                 if (chargeCounter >= chargeCount)
                 {
@@ -941,9 +960,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 NPC.rotation = MathHelper.TwoPi * AttackTimer / jumpHoverTime;
             }
 
+            // Calculate frames.
+            if (AttackTimer >= jumpHoverTime - 30f)
+            {
+                CurrentFrame = (int)(Utils.GetLerpValue(jumpHoverTime - 30f, jumpHoverTime, AttackTimer, true) * Utils.GetLerpValue(-54f, -84f, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true) * 7f);
+                if (CurrentFrame >= 1f)
+                    FrameType = BereftVassalFrameType.BlowHorn;
+            }
+
             // Blow the horn.
             if (AttackTimer == jumpHoverTime)
+            {
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalHornSound with { Volume = 1.6f });
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(NPC.Center + Vector2.UnitX * NPC.spriteDirection * 20f, Vector2.Zero, ModContent.ProjectileType<BereftVassalBigBoom>(), 0, 0f);
+            }
 
             // Slow down after blowing the horn.
             if (AttackTimer >= jumpHoverTime)
@@ -956,7 +987,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Summon the great sand shark.
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == jumpHoverTime + hornSoundTime + gssSummonDelay)
             {
-                int shark = NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y + 500, ModContent.NPCType<GreatSandSharkNPC>(), NPC.whoAmI);
+                int shark = NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y + 300, ModContent.NPCType<GreatSandSharkNPC>(), NPC.whoAmI);
                 if (Main.npc.IndexInRange(shark))
                     Main.npc[shark].velocity = -Vector2.UnitY * 23f;
             }
@@ -1005,18 +1036,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SelectNextAttack();
         }
 
-        public void CreateMotionStreakParticles()
-        {
-            // Release anime-like streak particle effects at the side of the vassal to indicate motion.
-            if (Main.rand.NextBool(2))
-            {
-                Vector2 energySpawnPosition = NPC.Center + Main.rand.NextVector2Circular(30f, 20f) + NPC.velocity * 2f;
-                Vector2 energyVelocity = -NPC.velocity.SafeNormalize(Vector2.UnitX * NPC.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
-                Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
-                GeneralParticleHandler.SpawnParticle(energyLeak);
-            }
-        }
-
         public void SelectNextAttack()
         {
             switch (CurrentAttack)
@@ -1045,13 +1064,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.netUpdate = true;
         }
 
-        public override void FindFrame(int frameHeight)
+        public void CreateMotionStreakParticles()
         {
-            int frame = 0;
-            if (NPC.velocity.Y == 0f)
-                frame = 0;
+            // Release anime-like streak particle effects at the side of the vassal to indicate motion.
+            if (Main.rand.NextBool(2))
+            {
+                Vector2 energySpawnPosition = NPC.Center + Main.rand.NextVector2Circular(30f, 20f) + NPC.velocity * 2f;
+                Vector2 energyVelocity = -NPC.velocity.SafeNormalize(Vector2.UnitX * NPC.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
+                Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
+                GeneralParticleHandler.SpawnParticle(energyLeak);
+            }
+        }
 
-            NPC.frame.Y = frameHeight * frame;
+        public void TeleportToPosition(Vector2 position)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.WithinRange(position, 900f))
+                Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
+
+            SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, NPC.Center);
+            NPC.Center = position;
+            NPC.velocity = Vector2.Zero;
+            NPC.Opacity = 0f;
+            NPC.netUpdate = true;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
         }
 
         public override void HitEffect(int hitDirection, double damage)
@@ -1093,7 +1130,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 NPC.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, Vector2.Zero, 51);
             }
 
+            int frameCount = 1;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            switch (FrameType)
+            {
+                case BereftVassalFrameType.BlowHorn:
+                    frameCount = 7;
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalHorn").Value;
+                    break;
+            }
+
+            NPC.frame = texture.Frame(1, frameCount, 0, Utils.Clamp((int)CurrentFrame, 0, frameCount - 1));
+
             Texture2D spearTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassalSpear").Value;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.EntitySpriteDraw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0);

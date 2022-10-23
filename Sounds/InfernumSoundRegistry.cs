@@ -26,9 +26,9 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
-        public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+        public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkChargeRoar");
 
-        public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+        public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkMiscRoar");
 
         public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
 
@@ -61,6 +61,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle VassalJumpSound = new("InfernumMode/Sounds/Custom/VassalJump");
 
         public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/VassalSlash") with { Volume = 1.5f };
+
+        public static readonly SoundStyle VassalTeleportSound = new("InfernumMode/Sounds/Custom/VassalTeleport");
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
 

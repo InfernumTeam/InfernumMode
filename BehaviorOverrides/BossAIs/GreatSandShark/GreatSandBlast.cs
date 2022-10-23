@@ -5,9 +5,9 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
+namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
-    public class SandstormBlast2 : ModProjectile
+    public class GreatSandBlast : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -30,6 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
+            if (Projectile.timeLeft < 240)
+                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.2f, -8f, 10f);
         }
 
         public override bool PreDraw(ref Color lightColor)

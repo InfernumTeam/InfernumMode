@@ -26,6 +26,15 @@ namespace InfernumMode.Miscellaneous
             }
         }
 
+        public class IsAir : GenCondition
+        {
+            protected override bool CheckValidity(int x, int y)
+            {
+                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                return !tile.HasTile;
+            }
+        }
+
         public class IsWater : GenCondition
         {
             protected override bool CheckValidity(int x, int y)

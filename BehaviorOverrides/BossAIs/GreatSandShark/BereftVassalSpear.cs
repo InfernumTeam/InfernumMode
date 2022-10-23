@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (Projectile.timeLeft >= 26f)
                     Main.LocalPlayer.Calamity().GeneralScreenShakePower = 6f;
 
-                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, Projectile.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound with { Volume = 0.3f }, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 lightningSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * 15f, -1000f);

@@ -52,6 +52,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Sounds/Custom/ProvidenceDoorShatter");
 
+        public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Sounds/Custom/SCalBrothersSpawn");
+
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
 
         public static readonly SoundStyle VassalHitSound = new("InfernumMode/Sounds/NPCHit/VassalHit", 3);
@@ -63,6 +65,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/VassalSlash") with { Volume = 1.5f };
 
         public static readonly SoundStyle VassalTeleportSound = new("InfernumMode/Sounds/Custom/VassalTeleport");
+
+        public static readonly SoundStyle VassalWaterBeamSound = new("InfernumMode/Sounds/Custom/VassalWaterBeam");
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
 

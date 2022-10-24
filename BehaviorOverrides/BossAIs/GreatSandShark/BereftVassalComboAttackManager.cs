@@ -465,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_MantisLordCharges(NPC npc, Player target, ref float attackTimer)
         {
-            int attakCycleCount = 30000;
+            int attakCycleCount = 3;
             int attackCycleTime = 266;
             int sharkChargeDelay = 23;
             int sharkChargeTime = 26;
@@ -653,7 +653,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            switch ((int)(npc.Infernum().ExtraAI[6] % 4))
+            switch ((int)(npc.Infernum().ExtraAI[8] % 4))
             {
                 case 0:
                     npc.ai[0] = (int)BereftVassalComboAttackType.ParabolicLeaps;
@@ -668,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     npc.ai[0] = (int)BereftVassalComboAttackType.MantisLordCharges;
                     break;
             }
-            npc.Infernum().ExtraAI[6]++;
+            npc.Infernum().ExtraAI[8]++;
             npc.netUpdate = true;
         }
     }

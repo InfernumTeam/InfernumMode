@@ -331,8 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         int[] projectilesToDelete = new int[]
                         {
                             ProjectileID.CultistBossLightningOrbArc,
-                            ModContent.ProjectileType<AcceleratingDoGBurst>(),
-                            ModContent.ProjectileType<EssenceSliceTelegraphLine>()
+                            ModContent.ProjectileType<AcceleratingDoGBurst>()
                         };
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {
@@ -466,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Storm Weaver Effect (Lightning Storm).
             int attackTime = 450;
             bool nearEndOfAttack = sentinelAttackTimer % attackTime >= attackTime - 105f;
-            if (sentinelAttackTimer > 0f && sentinelAttackTimer <= attackTime && npc.Opacity >= 0.5f)
+            if (sentinelAttackTimer > 0f && sentinelAttackTimer <= attackTime * 2f && npc.Opacity >= 0.5f)
             {
                 if (attackTimer % 120f == 0f && !nearEndOfAttack)
                 {
@@ -485,26 +484,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
 
                 sentinelAttackTimer = attackTime;
-            }
-
-            // Signus Effect (Essence Cleave).
-            if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.Opacity >= 0.5f)
-            {
-                float wrappedAttackTimer = attackTimer % attackTime;
-                if (wrappedAttackTimer % 45f == 0f)
-                {
-                    int cleaveCount = 14;
-                    float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < cleaveCount; i++)
-                    {
-                        int cleave = Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceSliceTelegraphLine>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(cleave))
-                            Main.projectile[cleave].ai[0] = MathHelper.TwoPi * i / cleaveCount + offsetAngle;
-                    }
-                }
-
-                if (wrappedAttackTimer % 45f == 20f)
-                    SoundEngine.PlaySound(SoundID.Item122, target.Center);
             }
         }
 

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -29,7 +31,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SandnadoPressureCharges,
             HypersonicWaterSlashes,
             SummonGreatSandShark,
-            TransitionToFinalPhase
+            TransitionToFinalPhase,
+            RetreatAnimation
         }
 
         public enum BereftVassalFrameType
@@ -107,8 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Bereft Vassal");
+            NPCID.Sets.BossBestiaryPriority.Add(Type);
             Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 10;
@@ -137,10 +140,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.noTileCollide = false;
             NPC.HitSound = null;
             NPC.DeathSound = SoundID.NPCDeath14;
+            NPC.value = Item.buyPrice(0, 30, 0, 0);
             NPC.netAlways = true;
             Music = MusicID.Boss4;
 
             NPC.Calamity().ShouldCloseHPBar = true;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Desert,
+                new FlavorTextBestiaryInfoElement("A vigilant guardian, once wandering without a purpose. Having learned that his king lives on, it'd seem that he has started to regain his will to live. He looks forward to fighting you again.")
+            });
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -224,6 +237,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
                 case BereftVassalAttackType.TransitionToFinalPhase:
                     DoBehavior_TransitionToFinalPhase();
+                    break;
+                case BereftVassalAttackType.RetreatAnimation:
+                    DoBehavior_RetreatAnimation();
                     break;
             }
 
@@ -358,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int chargeCount = 1;
             int repositionInterpolationTime = 32;
-            int sandBlobCount = 13;
+            int sandBlobCount = 18;
             int slamDelay = 36;
             int attackTransitionDelay = 96;
             float slamSpeed = 28f;
@@ -370,7 +386,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 chargeCount += 2;
                 repositionInterpolationTime -= 11;
-                sandBlobCount += 3;
+                sandBlobCount += 5;
                 slamDelay -= 14;
                 attackTransitionDelay -= 54;
                 slamSpeed += 4f;
@@ -708,7 +724,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Release the water beam, some waves, and recoil backward somewhat.
             if (AttackTimer == spearSpinTime)
             {
-                SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite with { Volume = 1.5f, Pitch = -0.3f }, NPC.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalWaterBeamSound with { Volume = 1.5f }, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     // Apply recoil effects.
@@ -1428,7 +1444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Blow the horn.
             if (AttackTimer == jumpHoverTime)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.VassalHornSound with { Volume = 1.6f });
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalHornSound with { Volume = 2f });
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(NPC.Center + Vector2.UnitX * NPC.spriteDirection * 20f, Vector2.Zero, ModContent.ProjectileType<BereftVassalBigBoom>(), 0, 0f);
             }
@@ -1536,6 +1552,102 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
         }
 
+        public void DoBehavior_RetreatAnimation()
+        {
+            int groundSitTime = 160;
+            int riseUpTime = 32;
+            int waitTime = 45;
+            ref float timeSinceHitGround = ref NPC.Infernum().ExtraAI[0];
+
+            // Disable damage.
+            NPC.dontTakeDamage = true;
+            NPC.damage = 0;
+
+            // Close the boss bar.
+            NPC.Calamity().ShouldCloseHPBar = true;
+
+            // Put away the sharp objects.
+            SpearOpacity = 0f;
+            SpearRotation = 0f;
+
+            // No music.
+            Music = 0;
+
+            // Reset opacity and rotation.
+            if (timeSinceHitGround <= 0f)
+            {
+                NPC.Opacity = 1f;
+                NPC.rotation = 0f;
+            }
+
+            // Teleport above ground on the first frame.
+            if (AttackTimer == 1f)
+            {
+                NPC.velocity = Vector2.UnitY * 5f;
+
+                Vector2 baseTeleportPosition = new(Target.Center.X + Target.direction * Main.rand.NextFloat(50f, 150f), 300f);
+                if (MathHelper.Distance(Target.Center.X, NPC.Center.X) < 500f)
+                    baseTeleportPosition.X = NPC.Center.X;
+                if (NPC.collideY)
+                    baseTeleportPosition.Y = NPC.Center.Y;
+
+                Vector2 teleportPosition = Utilities.GetGroundPositionFrom(baseTeleportPosition) - Vector2.UnitY * (NPC.collideY ? 32f : 250f);
+                TeleportToPosition(teleportPosition, false);
+                
+                NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
+            }
+
+            // Create ground hit effects.
+            if (AttackTimer >= 2f && NPC.collideY && timeSinceHitGround == 0f)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
+                    timeSinceHitGround = 1f;
+                    NPC.netUpdate = true;
+                }
+            }
+
+            // Use kneeling frames after hitting frames.
+            if (timeSinceHitGround >= 1f)
+            {
+                if (timeSinceHitGround < groundSitTime + riseUpTime + waitTime)
+                {
+                    FrameType = BereftVassalFrameType.Kneel;
+                    CurrentFrame = Utils.GetLerpValue(groundSitTime, groundSitTime + riseUpTime, timeSinceHitGround, true) * 4.5f;
+                }
+
+                // Fly away and drop loot.
+                else
+                {
+                    NPC.noGravity = true;
+                    NPC.noTileCollide = true;
+
+                    // Jump into the air and accidentally drop some loot.
+                    if (timeSinceHitGround == groundSitTime + riseUpTime + waitTime + 1f)
+                    {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, NPC.Center);
+
+                        NPC.boss = false;
+                        NPC.NPCLoot();
+                        NPC.velocity = new(NPC.spriteDirection * 5f, -7f);
+                        NPC.netUpdate = true;
+                    }
+
+                    // Fade away.
+                    NPC.Opacity -= 0.03f;
+                    if (NPC.Opacity <= 0f)
+                    {
+                        Main.BestiaryTracker.Kills.RegisterKill(NPC);
+                        NPC.active = false;
+                    }
+                }
+
+                timeSinceHitGround++;
+            }
+        }
+
         public void SelectNextAttack()
         {
             var attackCycle = NPC.life < NPC.lifeMax * Phase2LifeRatio ? Phase2AttackCycle : Phase1AttackCycle;
@@ -1585,6 +1697,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalHitSound with { Volume = 1.5f }, NPC.Center);
                 NPC.soundDelay = 9;
             }
+        }
+
+        public override bool CheckDead()
+        {
+            if (CurrentAttack != BereftVassalAttackType.RetreatAnimation)
+            {
+                // Delete all old projectiles.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<GroundSlamWave>(), ModContent.ProjectileType<PressureSandnado>(), ModContent.ProjectileType<SandBlob>(),
+                    ModContent.ProjectileType<TorrentWave>(), ModContent.ProjectileType<WaterSlice>(), ModContent.ProjectileType<WaterSpear>(), ModContent.ProjectileType<WaterTorrentBeam>());
+
+                SelectNextAttack();
+                CurrentAttack = BereftVassalAttackType.RetreatAnimation;
+                NPC.life = 1;
+                NPC.dontTakeDamage = true;
+                NPC.active = true;
+                NPC.netUpdate = true;
+            }
+            return false;
+        }
+
+        public override void BossLoot(ref string name, ref int potionType) => potionType = ItemID.GreaterHealingPotion;
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            // Weapons
+            int[] weapons = new int[]
+            {
+                ModContent.ItemType<Myrindael>(),
+            };
+            npcLoot.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
         }
 
         public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);

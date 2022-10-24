@@ -1,22 +1,26 @@
-using CalamityMod;
+﻿using CalamityMod;
+using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
+namespace InfernumMode.Projectiles.Melee
 {
-    public class PsionicLightningBolt : ModProjectile
+    public class MyrindaelLightning : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail LightningDrawer;
 
-        public const int Lifetime = 36;
+        public bool HasPlayedSound;
+
+        public const int Lifetime = 45;
         public ref float InitialVelocityAngle => ref Projectile.ai[0];
 
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash
@@ -29,21 +33,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Psionic Lightning Bolt");
+            DisplayName.SetDefault("Myrndael Lightning Bolt");
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 10000;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 50;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 14;
-            Projectile.height = 14;
+            Projectile.width = 18;
+            Projectile.height = 18;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.hostile = true;
-            Projectile.extraUpdates = 4;
+            Projectile.friendly = true;
+            Projectile.MaxUpdates = 6;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 12;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
         }
 
@@ -66,9 +74,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Projectile.frameCounter++;
             Projectile.oldPos[1] = Projectile.oldPos[0];
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (Lifetime * Projectile.MaxUpdates)) * 2f;
-            if (Projectile.scale > 1f)
-                Projectile.scale = 1f;
+            // Adjust opacity and scale.
+            float adjustedTimeLife = Projectile.timeLeft / Projectile.MaxUpdates;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 9f, adjustedTimeLife, true) * Utils.GetLerpValue(Lifetime, Lifetime - 3f, adjustedTimeLife, true);
+            Projectile.scale = Projectile.Opacity;
+            
+            // Play a strike sound on the first frame.
+            if (!HasPlayedSound)
+            {
+                SoundEngine.PlaySound(HeavenlyGale.LightningStrikeSound with { Volume = 0.3f }, Main.player[Projectile.owner].Center);
+                HasPlayedSound = true;
+            }
 
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
             if (Projectile.frameCounter >= Projectile.extraUpdates * 2)
@@ -100,9 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     // discourages super frequenent randomness as the accumulated X speed changes get larger,
                     // or if the original speed is quite large.
                     if (Math.Abs(potentialBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed + AccumulatedXMovementSpeeds) > Projectile.MaxUpdates * LightningTurnRandomnessFactor)
-                    {
                         canChangeLightningDirection = false;
-                    }
 
                     // If the above checks were all passed, redefine the base direction of the lightning.
                     if (canChangeLightningDirection)
@@ -121,11 +135,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * 10f;
+        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.Blue, Projectile.identity % 5f / 10f);
+            float colorInterpolant = (float)Math.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
+            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
             return color;
         }
 
@@ -148,12 +163,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, GameShaders.Misc["Infernum:AresLightningArc"]);
+                LightningDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]);
 
-            GameShaders.Misc["Infernum:AresLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["Infernum:AresLightningArc"].Apply();
+            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
+            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
 
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 11);
+            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 18);
             return false;
         }
     }

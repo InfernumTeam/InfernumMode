@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
-    public class NuclearExplosion : ModProjectile
+    public class NuclearExplosion : ModProjectile, IAdditiveDrawer
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
@@ -47,19 +48,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+        public override bool PreDraw(ref Color lightColor) => false;
 
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.OrangeRed * Projectile.Opacity * 0.65f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 2; i++)
                 Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
-
-            Main.spriteBatch.ResetBlendState();
-            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

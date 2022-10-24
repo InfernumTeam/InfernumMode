@@ -1544,6 +1544,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             target.Calamity().GeneralScreenShakePower = screenShakeFactor;
 
+            // Play a summoning sound
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound with { Volume = 1.5f });
+
             // Create the portals.
             if (attackTimer == screenShakeTime - 50f)
             {

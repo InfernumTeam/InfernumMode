@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         
         public override Color? GetAlpha(Color lightColor) => new Color(48, 244, 244, Projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor) => Projectile.DrawBeam(LaserLength, 2f, lightColor, curve: true);
+        public override bool PreDraw(ref Color lightColor) => Projectile.DrawBeam(LaserLength, 6f, lightColor, curve: true);
 
         public override void Kill(int timeLeft)
         {

@@ -119,15 +119,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 64);
+            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 24);
             return false;
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

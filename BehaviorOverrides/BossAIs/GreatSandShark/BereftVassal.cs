@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Sounds;
@@ -173,6 +174,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Go away if the target is dead.
             if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
                 NPC.active = false;
+
+            // Constantly give the target Weak Pertrification.
+            if (Main.netMode != NetmodeID.Server && CurrentAttack != BereftVassalAttackType.IdleState)
+            {
+                if (!Target.dead && Target.active)
+                    Target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
+            }
 
             // Stay inside of the world.
             NPC.Center = Vector2.Clamp(NPC.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));

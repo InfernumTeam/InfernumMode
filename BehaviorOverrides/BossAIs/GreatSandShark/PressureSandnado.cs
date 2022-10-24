@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             Vector2 dustSpawnTopLeft = Projectile.Bottom + new Vector2(-25f, -25f);
-            for (int k = 0; k < 4; k++)
+            for (int k = 0; k < 5; k++)
             {
                 Dust sand = Dust.NewDustDirect(dustSpawnTopLeft, 50, 25, 32, Projectile.velocity.X, -2f, 100, default, 1f);
                 sand.fadeIn = 1.1f;

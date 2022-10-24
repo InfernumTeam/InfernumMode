@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             WaterWaveSlam,
             FallingWaterCastBarrges,
             SandnadoPressureCharges,
+            HypersonicWaterSlashes,
             SummonGreatSandShark,
             TransitionToFinalPhase
         }
@@ -79,11 +80,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public static BereftVassalAttackType[] Phase1AttackCycle => new BereftVassalAttackType[]
         {
             BereftVassalAttackType.SandBlobSlam,
-            BereftVassalAttackType.SandnadoPressureCharges,
             BereftVassalAttackType.SpearWaterTorrent,
             BereftVassalAttackType.WaterWaveSlam,
             BereftVassalAttackType.SandBlobSlam,
-            BereftVassalAttackType.SandnadoPressureCharges,
             BereftVassalAttackType.FallingWaterCastBarrges,
             BereftVassalAttackType.WaterWaveSlam,
         };
@@ -92,8 +91,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             BereftVassalAttackType.SandBlobSlam,
             BereftVassalAttackType.SandnadoPressureCharges,
+            BereftVassalAttackType.HypersonicWaterSlashes,
             BereftVassalAttackType.LongHorizontalCharges,
             BereftVassalAttackType.SpearWaterTorrent,
+            BereftVassalAttackType.HypersonicWaterSlashes,
             BereftVassalAttackType.WaterWaveSlam,
             BereftVassalAttackType.SandnadoPressureCharges,
             BereftVassalAttackType.SandBlobSlam,
@@ -206,6 +207,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
                 case BereftVassalAttackType.SandnadoPressureCharges:
                     DoBehavior_SandnadoPressureCharges();
+                    break;
+                case BereftVassalAttackType.HypersonicWaterSlashes:
+                    DoBehavior_HypersonicWaterSlashes();
                     break;
                 case BereftVassalAttackType.SummonGreatSandShark:
                     DoBehavior_SummonGreatSandShark();
@@ -320,6 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 Music = MusicID.Boss3;
                 if (ModLoader.TryGetMod("InfernumModeMusic", out Mod musicMod))
                     Music = MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/Boss3");
+                Music = MusicID.UndergroundDesert;
             }
 
             // Disable controls and UI for the target.
@@ -349,13 +354,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int slamDelay = 36;
             int attackTransitionDelay = 96;
             float slamSpeed = 28f;
-            float sandBlobAngularArea = 1.27f;
-            float sandBlobSpeed = 18f;
+            float sandBlobAngularArea = 0.67f;
+            float sandBlobSpeed = 22f;
             float maxFlySpeed = 22f;
 
             if (Enraged)
             {
-                chargeCount += 3;
+                chargeCount += 2;
                 repositionInterpolationTime -= 11;
                 sandBlobCount += 3;
                 slamDelay -= 14;
@@ -762,6 +767,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.noGravity = AttackTimer >= jumpDelay;
             NPC.noTileCollide = AttackTimer >= jumpDelay;
 
+            // Why.
+            NPC.Opacity = 1f;
+
             // Wait until on ground for the attack to progress.
             if (AttackTimer <= 1f && NPC.velocity.Y != 0f)
             {
@@ -1092,6 +1100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 {
                     float horizontalOffset = Main.rand.NextBool().ToDirectionInt() * 450f;
                     teleportDestination = Target.Center + Vector2.UnitX * horizontalOffset;
+                    teleportDestination.Y -= 20f;
                     if (Collision.SolidCollision(teleportDestination - NPC.Size * 0.5f, NPC.width, NPC.height) || Main.rand.NextBool())
                         teleportDestination.X -= horizontalOffset * 2f;
                 }
@@ -1140,6 +1149,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             else if (NPC.velocity.Length() > 8f)
                 CreateMotionStreakParticles();
 
+            // Release spears upwards before firing.
+            if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer == chargeDelay)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    Vector2 spearShootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 6f)) * 13f;
+                    int spearIndex = Utilities.NewProjectileBetter(NPC.Top, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 160, 0f);
+                    if (Main.projectile.IndexInRange(spearIndex))
+                        Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                }
+            }
+
             if (chargeTimer >= chargeDelay)
             {
                 if (NPC.velocity.Y == 0f && hasHitGround == 0f && chargeTimer >= chargeDelay + 5f && !chargingVertically)
@@ -1164,7 +1185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Leap into the air after the charge is over.
-            if (NPC.velocity.Y == 0f && chargeTimer == chargeDelay + chargeTime)
+            if (NPC.velocity.Y > -15f && chargeTimer == chargeDelay + chargeTime)
             {
                 NPC.velocity.Y = -15f;
                 NPC.netUpdate = true;
@@ -1172,6 +1193,156 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             if (chargeTimer >= chargeDelay + chargeTime)
                 NPC.noGravity = true;
+        }
+
+        public void DoBehavior_HypersonicWaterSlashes()
+        {
+            int fadeOutTime = 30;
+            int chargeTelegraphTime = 21;
+            int chargeTime = 30;
+            int chargeFadeoutTime = 9;
+            int chargeCount = 7;
+            float hoverOffset = 400f;
+            float fadeOutRiseSpeed = 0.38f;
+            float hoverSpeed = 28f;
+            float chargeSpeed = 34f;
+            float movementAngularVelocity = MathHelper.TwoPi / 76f;
+            ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
+            ref float hasPerformedRiseAnimation = ref NPC.Infernum().ExtraAI[1];
+            ref float hoverOffsetDirection = ref NPC.Infernum().ExtraAI[2];
+            ref float tearProjectileIndex = ref NPC.Infernum().ExtraAI[3];
+
+            // Disable tile collision and gravity.
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+
+            if (AttackTimer <= fadeOutTime && hasPerformedRiseAnimation == 0f)
+            {
+                // Disable damage when fading out.
+                NPC.dontTakeDamage = true;
+                NPC.damage = 0;
+
+                // Initialize the tear index.
+                tearProjectileIndex = -1f;
+
+                // Fade out.
+                NPC.Opacity = Utils.GetLerpValue(25f, 0f, AttackTimer, true);
+
+                // Rise upwards and fade out.
+                if (NPC.velocity.Y > 0f)
+                    NPC.velocity.Y = 0f;
+
+                // Determine jump frames.
+                FrameType = BereftVassalFrameType.Jump;
+                CurrentFrame = (int)(AttackTimer / fadeOutTime * 8.5f);
+
+                NPC.velocity.Y -= fadeOutRiseSpeed;
+
+                // Teleport above the target.
+                if (AttackTimer >= fadeOutTime)
+                {
+                    hasPerformedRiseAnimation = 1f;
+                    hoverOffsetDirection = Target.AngleTo(Target.Center);
+                    TeleportToPosition(Target.Center - Vector2.UnitY * hoverOffset);
+                    AttackTimer = 0f;
+                    NPC.netUpdate = true;
+                }
+                return;
+            }
+
+            if (chargeCounter == 0f)
+                chargeTelegraphTime += 36;
+
+            // Hover near the target before charging.
+            if (AttackTimer <= chargeTelegraphTime)
+            {
+                // Make the spear fade in.
+                SpearOpacity = AttackTimer / chargeTelegraphTime;
+                SpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
+
+                // Look at the target.
+                NPC.rotation = NPC.AngleTo(Target.Center);
+                if (NPC.spriteDirection == -1)
+                    NPC.rotation += MathHelper.Pi;
+
+                // Disable damage.
+                NPC.damage = 0;
+
+                // Be opaque.
+                NPC.Opacity = 1f;
+
+                // Hover to the sides of the target.
+                Vector2 hoverDestination = Target.Center - hoverOffsetDirection.ToRotationVector2() * hoverOffset;
+                Vector2 idealVelocity = NPC.SafeDirectionTo(hoverDestination) * hoverSpeed;
+                NPC.SimpleFlyMovement(idealVelocity, hoverSpeed * 0.04f);
+                NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.1f);
+
+                // Charge at the target.
+                if (AttackTimer == chargeTelegraphTime)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, NPC.Center);
+                    NPC.velocity = NPC.SafeDirectionTo(Target.Center) * chargeSpeed;
+                    NPC.netUpdate = true;
+
+                    // Create the water tear.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        tearProjectileIndex = Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterSlice>(), 200, 0f);
+                }
+
+                return;
+            }
+
+            // Arc after charging for long enough. This always attempts to arc away from the player.
+            if (AttackTimer >= chargeTelegraphTime + chargeTime / 2)
+            {
+                Vector2 left = NPC.velocity.RotatedBy(-movementAngularVelocity);
+                Vector2 right = NPC.velocity.RotatedBy(movementAngularVelocity);
+                Vector2 directionToTarget = NPC.SafeDirectionTo(Target.Center);
+                if (left.AngleBetween(directionToTarget) > right.AngleBetween(directionToTarget))
+                    NPC.velocity = left;
+                else
+                    NPC.velocity = right;
+            }
+
+            // Fade away and make the tear detach.
+            if (AttackTimer >= chargeTelegraphTime + chargeTime)
+            {
+                tearProjectileIndex = -1f;
+                NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 1f / chargeFadeoutTime, 0f, 1f);
+                NPC.damage = 0;
+                NPC.dontTakeDamage = true;
+            }
+            else
+                CreateMotionStreakParticles();
+
+            // Prepare for the next teleport.
+            if (AttackTimer >= chargeTelegraphTime + chargeTime + chargeFadeoutTime)
+            {
+                NPC.Opacity = 1f;
+                NPC.rotation = 0f;
+
+                hoverOffsetDirection = Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).ToRotation() + MathHelper.Pi;
+                Vector2 teleportDestination = Target.Center - hoverOffsetDirection.ToRotationVector2() * hoverOffset;
+
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                {
+                    // Neutralize all water slices and make them fade away.
+                    foreach (Projectile slice in Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterSlice>()))
+                    {
+                        slice.damage = 0;
+                        slice.timeLeft = slice.MaxUpdates * 23;
+                        slice.netUpdate = true;
+                    }
+
+                    teleportDestination = Target.Center - Vector2.UnitY * 350f;
+                    SelectNextAttack();
+                }
+
+                TeleportToPosition(teleportDestination, false);
+                AttackTimer = 0f;
+                NPC.netUpdate = true;
+            }
         }
 
         public void DoBehavior_SummonGreatSandShark()
@@ -1351,7 +1522,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             if (AttackTimer >= mournTime + mournTransitionTime + angerTime)
+            {
+                NPC.Infernum().ExtraAI[6] = 0f;
                 SelectNextAttack();
+            }
         }
 
         public void SelectNextAttack()
@@ -1364,6 +1538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             NPC.Infernum().ExtraAI[6]++;
             NPC.Opacity = 1f;
+            NPC.rotation = 0f;
             AttackTimer = 0f;
             NPC.netUpdate = true;
         }

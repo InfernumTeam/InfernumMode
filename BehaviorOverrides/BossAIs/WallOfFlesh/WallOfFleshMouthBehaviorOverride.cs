@@ -248,16 +248,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Main.npc[hungry].ai[0] = i * 0.2f - 0.05f;
             }
 
-            List<float> offsetFactors = new();
             for (int i = 0; i < 4; i++)
             {
-                float potentialOffsetFactor = Main.rand.NextFloat();
-                while (offsetFactors.Any(factor => MathHelper.Distance(factor, potentialOffsetFactor) < 0.25f))
-                {
-                    i--;
-                    continue;
-                }
-
+                float potentialOffsetFactor = i / 3f;
                 NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
             }
         }

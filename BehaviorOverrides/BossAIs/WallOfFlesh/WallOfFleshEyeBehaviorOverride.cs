@@ -78,12 +78,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
                     hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
                 }
-                else
-                {
-                    // Avoid walls.
-                    while (Collision.SolidCollision(hoverDestination - Vector2.One * 75f, 150, 150))
-                        hoverDestination += (target.Center - hoverDestination).SafeNormalize(Vector2.UnitY) * 20f;
-                }
 
                 if (!Main.npc[Main.wofNPCIndex].WithinRange(target.Center, 4000f))
                     hoverDestination = Main.npc[Main.wofNPCIndex].Center;
@@ -124,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.ScutlixLaser, 105, 0f);
+                            int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.EyeLaser, 105, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].hostile = true;
@@ -141,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float laserShootSpeed = 8.5f;
-                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wofNPCIndex].velocity.X) * laserShootSpeed, ProjectileID.DeathLaser, 105, 0f);
+                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wofNPCIndex].velocity.X) * laserShootSpeed, ProjectileID.EyeLaser, 105, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].hostile = true;
@@ -158,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             destinationOffset += MathHelper.Lerp(0f, 215f, (float)Math.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + attackTimer / 16f) * 0.5f + 0.5f);
             destinationOffset += npc.Distance(target.Center) * 0.1f;
 
-            float destinationAngularOffset = MathHelper.Lerp(-1.5f, 1.5f, npc.ai[0]);
+            float destinationAngularOffset = MathHelper.Lerp(-1.04f, 1.04f, npc.ai[0]);
             destinationAngularOffset += (float)Math.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
 
             // Move in sharp, sudden movements while releasing things at the target.

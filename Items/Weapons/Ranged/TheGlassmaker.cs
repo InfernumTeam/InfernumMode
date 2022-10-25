@@ -26,7 +26,7 @@ namespace InfernumMode.Items.Weapons.Ranged
             Item.useTime = 10;
             Item.useAnimation = 10;
             Item.useAmmo = AmmoID.Gel;
-            Item.shootSpeed = 3.6f;
+            Item.shootSpeed = 5.6f;
             Item.shoot = ModContent.ProjectileType<GlassmakerFire>();
 
             Item.width = 52;

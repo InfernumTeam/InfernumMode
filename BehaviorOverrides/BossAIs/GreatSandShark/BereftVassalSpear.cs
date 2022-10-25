@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -79,7 +80,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.velocity *= 0.7f;
+
+            if (oldVelocity.Y < 5f && Projectile.localAI[0] == 0f)
+                Projectile.rotation = new Vector2(oldVelocity.X, 5f).ToRotation();
             Projectile.localAI[0] = 1f;
+
             return false;
         }
 

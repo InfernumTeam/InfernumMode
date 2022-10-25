@@ -32,10 +32,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             get
             {
+                int vassalIndex = NPC.FindFirstNPC(ModContent.NPCType<BereftVassal>());
                 int gssIndex = NPC.FindFirstNPC(ModContent.NPCType<GreatSandSharkNPC>());
                 NPC gss = gssIndex >= 0 ? Main.npc[gssIndex] : null;
+                NPC vassal = vassalIndex >= 0 ? Main.npc[vassalIndex] : null;
 
-                if (gss is null && Vassal.ModNPC<BereftVassal>().HasBegunSummoningGSS)
+                if (gss is null && vassal is not null && vassal.ModNPC<BereftVassal>().HasBegunSummoningGSS)
                     return BereftVassalFightState.EnragedBereftVassal;
 
                 if (gss is not null)
@@ -61,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoComboAttacksIfNecessary(NPC npc, Player target, ref float attackTimer)
         {
-            if (FightState != BereftVassalFightState.BereftVassalAndGSS)
+            if (FightState != BereftVassalFightState.BereftVassalAndGSS || NPC.FindFirstNPC(ModContent.NPCType<BereftVassal>()) < 0)
                 return;
 
             // Ensure that a combo attack is always used.

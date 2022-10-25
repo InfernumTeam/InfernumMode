@@ -365,7 +365,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     fadeToRed = MathHelper.Lerp(fadeToRed, attackTimer >= 205f + chargeDelay ? 0f : 1f, 0.15f);
 
                     // Release lightning clouds from time to time while charging.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                    bool nearTarget = MathHelper.Distance(target.Center.X, npc.Center.X) < 600f;
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f && nearTarget)
                         Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
                 if (attackTimer >= 230f + chargeDelay)
@@ -540,7 +541,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
                 int cloudSpawnRate = (int)MathHelper.Lerp(8f, 4f, 1f - npc.life / (float)npc.lifeMax);
                 float cloudOffsetAngle = npc.velocity.X * 0.01f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
+                bool nearTarget = MathHelper.Distance(target.Center.X, npc.Center.X) < 600f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge && nearTarget)
                 {
                     Vector2 cloudSpawnPosition = npc.Center - npc.velocity * 2f;
                     int cloud = Projectile.NewProjectile(npc.GetSource_FromAI(), cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
@@ -967,7 +969,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = npc.rotation.AngleTowards(0f, 0.125f);
             npc.noTileCollide = true;
 
-            int featherReleaseRate = phase3 ? 4 : 7;
+            int featherReleaseRate = phase3 ? 8 : 15;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
 
             // Fly near the target.
@@ -1106,7 +1108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             int chargeDelay = 20;
             int lightningSpawnerReleaseRate = 13;
-            int featherReleaseRate = 3;
+            int featherReleaseRate = 6;
             int chargeTime = 48;
             float chargeSpeed = 39.5f;
             float horizontalOffset = 600f;

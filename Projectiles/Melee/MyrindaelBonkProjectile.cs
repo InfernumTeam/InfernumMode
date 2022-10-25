@@ -49,8 +49,8 @@ namespace InfernumMode.Projectiles.Melee
 
         public override void AI()
         {
-            // Die if no longer holding right click.
-            if (!Owner.channel || Owner.dead || !Owner.accCalendar || Owner.noItems)
+            // Die if no longer holding the click button or otherwise cannot use the item.
+            if (!Owner.channel || Owner.dead || !Owner.active || Owner.noItems)
             {
                 Projectile.Kill();
                 if (Owner.velocity.Length() > 16f)

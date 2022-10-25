@@ -2,7 +2,9 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
+using InfernumMode.Items.Weapons.Ranged;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -111,10 +113,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bereft Vassal");
-            NPCID.Sets.BossBestiaryPriority.Add(Type);
-            Main.npcFrameCount[NPC.type] = 1;
+            Main.npcFrameCount[Type] = 4;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 10;
+            NPCID.Sets.BossBestiaryPriority.Add(Type);
         }
 
         public override void SetDefaults()
@@ -140,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.noTileCollide = false;
             NPC.HitSound = null;
             NPC.DeathSound = SoundID.NPCDeath14;
-            NPC.value = Item.buyPrice(0, 30, 0, 0);
+            NPC.value = Item.buyPrice(0, 30, 0, 0) / 5;
             NPC.netAlways = true;
             Music = MusicID.Boss4;
 
@@ -248,7 +250,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SmokeDrawer.BaseMoveRotation = MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.05f;
             SmokeDrawer.Update();
 
-            if (!HasBegunSummoningGSS && NPC.life < NPC.lifeMax * Phase2LifeRatio)
+            if (!HasBegunSummoningGSS && NPC.life < NPC.lifeMax * Phase2LifeRatio && CurrentAttack != BereftVassalAttackType.RetreatAnimation)
             {
                 SelectNextAttack();
                 CurrentAttack = BereftVassalAttackType.SummonGreatSandShark;
@@ -1724,7 +1726,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Weapons
             int[] weapons = new int[]
             {
+                ModContent.ItemType<TheGlassmaker>(),
                 ModContent.ItemType<Myrindael>(),
+                ModContent.ItemType<AridBattlecry>(),
             };
             npcLoot.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
         }

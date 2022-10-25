@@ -41,11 +41,12 @@ namespace InfernumMode.Projectiles.Ranged
             float lifetimeInterpolant = Timer / Lifetime;
             float particleScale = MathHelper.Lerp(0.03f, 1.2f, (float)Math.Pow(lifetimeInterpolant, 0.53));
             float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true);
+            float fadeToBlack = Utils.GetLerpValue(0.5f, 0.84f, lifetimeInterpolant, true);
             Color fireColor = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.2f, 0.8f));
-            fireColor = Color.Lerp(fireColor, Color.DarkGray, Utils.GetLerpValue(0.5f, 0.84f, lifetimeInterpolant, true));
+            fireColor = Color.Lerp(fireColor, Color.DarkGray, fadeToBlack);
             fireColor = Color.Lerp(fireColor, Color.DeepSkyBlue, Utils.GetLerpValue(0.29f, 0f, lifetimeInterpolant, true));
 
-            var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, lifetimeInterpolant < 0.53f);
+            var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, Main.rand.NextFloat() > Math.Pow(fadeToBlack, 0.2));
             GeneralParticleHandler.SpawnParticle(particle);
 
             // Randomly emit glass particles.

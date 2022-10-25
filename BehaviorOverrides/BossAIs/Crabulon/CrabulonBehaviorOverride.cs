@@ -420,6 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+            npc.netSpam = 0;
             npc.netUpdate = true;
         }
         #endregion AI Utility Methods

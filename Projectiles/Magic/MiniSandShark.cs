@@ -73,8 +73,13 @@ namespace InfernumMode.Projectiles.Magic
 
             SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
 
-            for (int i = GoreID.Sandshark1; i <= GoreID.Sandshark4; i += 2)
-                Gore.NewGorePerfect(Projectile.GetSource_Death(), Projectile.Center + Main.rand.NextVector2Circular(8f, 8f), Projectile.velocity.RotatedByRandom(0.4f) * 0.4f, i, 0.7f);
+            // Create a bunch of sand.
+            for (int i = 0; i < 30; i++)
+            {
+                Dust sand = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 32);
+                sand.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.61f) * Main.rand.NextFloat(3f, 8f);
+                sand.noGravity = Main.rand.NextBool();
+            }
         }
     }
 }

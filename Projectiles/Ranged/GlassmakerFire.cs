@@ -22,14 +22,16 @@ namespace InfernumMode.Projectiles.Ranged
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 16;
+            Projectile.width = Projectile.height = 50;
             Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = 3;
             Projectile.MaxUpdates = 3;
             Projectile.timeLeft = Lifetime;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 16;
+            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 11;
         }
 
         public override void AI()

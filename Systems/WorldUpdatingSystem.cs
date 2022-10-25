@@ -21,7 +21,10 @@ namespace InfernumMode.Systems
                 CalamityGlobalNPC.draedon = -1;
 
             if (!SubworldSystem.IsActive<LostColosseum>())
+            {
                 LostColosseum.HasBereftVassalAppeared = false;
+                LostColosseum.HasBereftVassalBeenDefeated = false;
+            }
 
             if (!LostColosseum.HasBereftVassalAppeared && SubworldSystem.IsActive<LostColosseum>())
             {

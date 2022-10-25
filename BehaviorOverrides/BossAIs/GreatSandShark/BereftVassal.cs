@@ -6,6 +6,7 @@ using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
 using InfernumMode.Sounds;
+using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -423,6 +424,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 // Apply manual movement calculations before determining the ideal velocity, to ensure that there is not a one-frame buffer between what the velocity thinks the current position is
                 // versus what it actually is.
                 NPC.Center = NPC.Center.MoveTowards(hoverDestination, positionIncrement);
+                if (!NPC.WithinRange(hoverDestination, 1000f))
+                    NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.04f);
 
                 // Perform movement calculations.
                 Vector2 idealVelocity = NPC.SafeDirectionTo(hoverDestination) * flySpeed;
@@ -662,7 +665,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int waveCount = 7;
             int spearSpinTime = 68;
             int waterSpinTime = WaterTorrentBeam.Lifetime;
-            float waterSpinArc = MathHelper.Pi * 0.33f;
+            float waterSpinArc = MathHelper.Pi * 0.28f;
             float recoilSpeed = 9f;
             float waveArc = MathHelper.ToRadians(70f);
             float waveSpeed = 4.6f;
@@ -671,7 +674,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 waveCount += 2;
                 spearSpinTime -= 14;
-                waterSpinArc *= 1.3f;
+                waterSpinArc *= 1.2f;
             }
 
             ref float aimDirection = ref NPC.Infernum().ExtraAI[0];
@@ -1283,13 +1286,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (AttackTimer <= chargeTelegraphTime)
             {
                 // Make the spear fade in.
+                NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 SpearOpacity = AttackTimer / chargeTelegraphTime;
                 SpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
 
                 // Look at the target.
-                NPC.rotation = NPC.AngleTo(Target.Center);
-                if (NPC.spriteDirection == -1)
-                    NPC.rotation += MathHelper.Pi;
+                NPC.rotation = -NPC.AngleTo(Target.Center) * 0.18f;
 
                 // Disable damage.
                 NPC.damage = 0;
@@ -1328,6 +1330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     NPC.velocity = left;
                 else
                     NPC.velocity = right;
+                NPC.rotation = -NPC.velocity.ToRotation() * 0.18f;
             }
 
             // Fade away and make the tear detach.
@@ -1633,14 +1636,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
                         NPC.boss = false;
                         NPC.NPCLoot();
-                        NPC.velocity = new(NPC.spriteDirection * 5f, -7f);
+                        NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
+                        NPC.velocity = new(NPC.spriteDirection * -15f, -17f);
+                        NPC.rotation = NPC.velocity.ToRotation() * NPC.spriteDirection * 0.2f;
+
                         NPC.netUpdate = true;
                     }
 
                     // Fade away.
-                    NPC.Opacity -= 0.03f;
+                    NPC.Opacity -= 0.08f;
                     if (NPC.Opacity <= 0f)
                     {
+                        LostColosseum.HasBereftVassalBeenDefeated = true;
                         Main.BestiaryTracker.Kills.RegisterKill(NPC);
                         NPC.active = false;
                     }

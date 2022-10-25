@@ -17,6 +17,12 @@ namespace InfernumMode.Subworlds
             set;
         } = false;
 
+        public static bool HasBereftVassalBeenDefeated
+        {
+            get;
+            set;
+        } = false;
+
         public class LostColosseumGenPass : GenPass
         {
             public LostColosseumGenPass() : base("Terrain", 1f) { }

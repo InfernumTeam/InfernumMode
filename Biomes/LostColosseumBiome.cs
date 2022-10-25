@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Subworlds;
 using SubworldLibrary;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Biomes
@@ -19,7 +20,7 @@ namespace InfernumMode.Biomes
 
         public override string MapBackground => "InfernumMode/Backgrounds/LostColosseumBG";
 
-        public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/LostColosseum");
+        public override int Music => LostColosseum.HasBereftVassalBeenDefeated ? MusicID.Desert : MusicLoader.GetMusicSlot(Mod, "Sounds/Music/LostColosseum");
 
         public override void SetStaticDefaults()
         {

@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Particles;
+using InfernumMode.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -57,6 +58,20 @@ namespace InfernumMode.Projectiles.Ranged
                 Dust glass = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), 13);
                 glass.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.6f) * 4f + Main.rand.NextVector2Circular(2f, 2f);
                 glass.noGravity = true;
+            }
+
+            if (TheGlassmaker.TransformsSandIntoGlass)
+            {
+                for (int dx = -2; dx < 2; dx++)
+                {
+                    for (int dy = -2; dy < 2; dy++)
+                    {
+                        Point p = new((int)Projectile.Center.X / 16 + dx, (int)Projectile.Center.Y / 16 + dy);
+                        int tileType = Main.tile[p].TileType;
+                        if (TileID.Sets.isDesertBiomeSand[tileType] || tileType == TileID.Pearlsand)
+                            Main.tile[p].TileType = TileID.Glass;
+                    }
+                }
             }
 
             Timer++;

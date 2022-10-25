@@ -10,6 +10,8 @@ namespace InfernumMode.Items.Weapons.Ranged
 {
     public class TheGlassmaker : ModItem
     {
+        internal static bool TransformsSandIntoGlass = false;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("The Glassmaker");

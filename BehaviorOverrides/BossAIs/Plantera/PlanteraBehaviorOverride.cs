@@ -447,7 +447,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         freeAreaAngle += MathHelper.TwoPi;
                     tries++;
                 }
-                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle.ToRotationVector2() * 200f, 1, 1) && tries < 100);
+                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle.ToRotationVector2() * 500f, 1, 1) && tries < 100);
+                
                 do
                 {
                     if (freeAreaAngle2 == 0f)
@@ -459,7 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         freeAreaAngle2 += MathHelper.TwoPi;
                     tries++;
                 }
-                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 200f, 1, 1) && tries < 100);
+                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 500f, 1, 1) && tries < 100);
 
                 npc.netUpdate = true;
             }

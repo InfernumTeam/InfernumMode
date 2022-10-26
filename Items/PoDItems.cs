@@ -1,7 +1,14 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.TreasureBags.MiscGrabBags;
+using CalamityMod.Items.Weapons.Magic;
+using CalamityMod.Items.Weapons.Melee;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -26,6 +33,13 @@ namespace InfernumMode
                 item.consumable = false;
                 item.maxStack = 1;
             }
+
+            bool isGSSItem = item.type == ModContent.ItemType<GrandScale>() || item.type == ModContent.ItemType<DuststormInABottle>() || item.type == ModContent.ItemType<SandSharknadoStaff>() ||
+                item.type == ModContent.ItemType<Sandslasher>() || item.type == ModContent.ItemType<SandstormGun>() || item.type == ModContent.ItemType<ShiftingSands>() || item.type == ModContent.ItemType<Tumbleweed>() ||
+                item.type == ModContent.ItemType<SandSharkToothNecklace>();
+
+            if (isGSSItem)
+                item.rare = ItemRarityID.Cyan;
 
             if (ItemDamageValues.DamageValues.TryGetValue(item.type, out int newDamage))
                 item.damage = newDamage;

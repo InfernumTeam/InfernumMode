@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
@@ -24,11 +25,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 return false;
             }
 
+            NPCID.Sets.BossBestiaryPriority.Add(npc.type);
+
             // Stay inside of the world.
             npc.Center = Vector2.Clamp(npc.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));
 
             // Fix vanilla FindFrame jank.
             npc.localAI[3] = 1f;
+
+            // Stop being so FAT you SILLY shark!!!
+            npc.height = 100;
+            npc.width = 280;
 
             // Reset damage and other things.
             npc.damage = npc.defDamage;

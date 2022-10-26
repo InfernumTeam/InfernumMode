@@ -28,6 +28,14 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<Lazhar>()] = 42,
             [ModContent.ItemType<Omniblade>()] = 54,
             [ModContent.ItemType<BrinyBaron>()] = 65,
+
+            [ModContent.ItemType<DuststormInABottle>()] = 72,
+            [ModContent.ItemType<SandstormGun>()] = 145,
+            [ModContent.ItemType<SandSharknadoStaff>()] = 59,
+            [ModContent.ItemType<Sandslasher>()] = 196,
+            [ModContent.ItemType<ShiftingSands>()] = 104,
+            [ModContent.ItemType<Tumbleweed>()] = 203,
+
             [ModContent.ItemType<WavePounder>()] = 47,
             [ModContent.ItemType<TerrorBlade>()] = 495,
             [ModContent.ItemType<SoulEdge>()] = 140,

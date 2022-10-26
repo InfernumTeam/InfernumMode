@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Sounds;
+using InfernumMode.BehaviorOverrides.BossAIs.StormWeaver;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -66,6 +67,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
                         Main.projectile[lightning].ai[1] = Main.rand.Next(100);
                     }
+                }
+            }
+
+            // Explode if touching a dust devil.
+            int dustDevilID = ModContent.ProjectileType<DustDevil>();
+            foreach (Projectile dustDevil in Utilities.AllProjectilesByID(dustDevilID))
+            {
+                if (Projectile.Hitbox.Intersects(dustDevil.Hitbox))
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
+
+                    // Release sand and electricity dust.
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Dust electricity = Dust.NewDustPerfect(Projectile.Center, 226);
+                        electricity.velocity = Main.rand.NextVector2Circular(7.2f, 7.2f);
+                        electricity.scale = Main.rand.NextFloat(0.9f, 1.5f);
+                        electricity.noGravity = true;
+
+                        Dust sand = Dust.NewDustPerfect(dustDevil.Center, 32);
+                        sand.velocity = Main.rand.NextVector2Circular(14f, 14f) - Vector2.UnitY * 6f;
+                        sand.scale = Main.rand.NextFloat(0.9f, 1.5f);
+                        sand.noGravity = true;
+                    }
+
+                    // Release a burst of sparks.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 sparkVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 8f;
+                            Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 190, 0f);
+                        }
+                    }
+
+                    Projectile.Kill();
+                    dustDevil.Kill();
                 }
             }
 

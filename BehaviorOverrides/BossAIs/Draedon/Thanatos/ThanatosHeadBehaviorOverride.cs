@@ -509,7 +509,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 spinSpeed += 5f;
             }
 
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 800f, -340f);
+            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, -270f);
             Vector2 hoverDestination = target.Center + hoverOffset;
             ref float spinTime = ref npc.Infernum().ExtraAI[0];
 

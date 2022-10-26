@@ -295,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                             int scythe = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EldritchScythe>(), 250, 0f);
                             if (Main.projectile.IndexInRange(scythe))
                             {
-                                Main.projectile[scythe].ai[0] = (int)MathHelper.Lerp(50f, 10f, i / (float)(totalScythesToCreate - 1f));
+                                Main.projectile[scythe].ai[0] = (int)MathHelper.Lerp(70f, 25f, i / (float)(totalScythesToCreate - 1f));
                                 Main.projectile[scythe].ai[1] = baseShootAngle + MathHelper.Lerp(-scytheSpread, scytheSpread, i / (float)(totalScythesToCreate - 1f));
                             }
                         }
@@ -305,7 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         npc.netUpdate = true;
                     }
 
-                    if (attackTimer > scytheShootDelay + 70f)
+                    if (attackTimer > scytheShootDelay + 90f)
                     {
                         attackTimer = 0f;
                         attackSubstate = 0f;

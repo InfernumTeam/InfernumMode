@@ -184,6 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.dontTakeDamage = false;
             NPC.noTileCollide = false;
             NPC.noGravity = false;
+            NPC.chaseable = !sandSharkExists;
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 

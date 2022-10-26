@@ -49,6 +49,9 @@ namespace InfernumMode.Projectiles.Ranged
             fireColor = Color.Lerp(fireColor, Color.DarkGray, fadeToBlack);
             fireColor = Color.Lerp(fireColor, Color.DeepSkyBlue, Utils.GetLerpValue(0.29f, 0f, lifetimeInterpolant, true));
 
+            // Emit light.
+            Lighting.AddLight(Projectile.Center, fireColor.ToVector3() * opacity);
+
             var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, Main.rand.NextFloat() > Math.Pow(fadeToBlack, 0.2));
             GeneralParticleHandler.SpawnParticle(particle);
 

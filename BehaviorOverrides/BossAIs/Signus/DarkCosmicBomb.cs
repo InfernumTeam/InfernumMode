@@ -62,7 +62,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Color explosionTelegraphColor = Color.Lerp(Color.Purple, Color.Black, colorPulse) * circleFadeinInterpolant;
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
-                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+
+                for (float dx = -6f; dx <= 6; dx += 3f)
+                {
+                    Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition + Vector2.UnitX * dx, null, explosionTelegraphColor * 0.36f, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                    Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition + Vector2.UnitY * dx, null, explosionTelegraphColor * 0.36f, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                }
                 Main.spriteBatch.ResetBlendState();
             }
 

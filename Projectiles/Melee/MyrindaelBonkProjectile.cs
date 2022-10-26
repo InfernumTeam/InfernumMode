@@ -105,7 +105,7 @@ namespace InfernumMode.Projectiles.Melee
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -1100f);
-                    int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(8.5f, 11f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
+                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(8.5f, 11f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
                     if (Main.projectile.IndexInRange(lightning))
                     {
                         Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
@@ -114,6 +114,7 @@ namespace InfernumMode.Projectiles.Melee
                 }
             }
 
+            Owner.GiveIFrames(10);
             Owner.velocity = Owner.velocity.SafeNormalize(Vector2.Zero) * -10f;
             Projectile.Kill();
         }
@@ -133,7 +134,7 @@ namespace InfernumMode.Projectiles.Melee
         {
             Main.spriteBatch.EnterShaderRegion();
 
-            Color mainColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
             Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
 
             mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));

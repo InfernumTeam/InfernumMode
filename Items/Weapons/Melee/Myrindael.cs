@@ -27,7 +27,7 @@ namespace InfernumMode.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            Item.damage = 80;
+            Item.damage = 60;
             Item.knockBack = 4.5f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = Item.useTime = 54;

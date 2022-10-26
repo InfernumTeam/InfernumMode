@@ -26,7 +26,7 @@ namespace InfernumMode
         public bool TryToApplyToNPC()
         {
             if (NPCIndex < 0)
-                return false;
+                return true;
 
             // If the NPC is not active, it is possible that the packet which initialized the NPC has not been sent yet.
             // If so, wait until that happens.
@@ -58,7 +58,7 @@ namespace InfernumMode
             BitsByte containmentFlagWrapper = new();
             containmentFlagWrapper[0] = WorldSaveSystem.InfernumMode;
 
-            packet.Write((byte)InfernumPacketType.SyncInfernumActive);
+            packet.Write((short)InfernumPacketType.SyncInfernumActive);
             packet.Write(sender);
             packet.Write(containmentFlagWrapper);
             packet.Send(-1, sender);

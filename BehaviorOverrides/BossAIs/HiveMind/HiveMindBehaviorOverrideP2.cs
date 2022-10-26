@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         }
 
         internal const float HiveMindFadeoutTime = 25f;
-        public const float SpinRadius = 300f;
+        public const float SpinRadius = 360f;
         public const float NPCSpawnArcSpinTime = 25f;
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
         public const float LungeSpinTotalRotations = 2f;
@@ -391,9 +391,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 10f == 9f && attackTimer < MaxSlowdownTime)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < MaxSlowdownTime)
                 {
-                    Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 5.4f;
+                    Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 4f;
                     int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);
                     Main.projectile[fuck].tileCollide = false;
                 }

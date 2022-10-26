@@ -36,10 +36,15 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             ref float hitCount = ref npc.ai[0];
             bool hardmode = Main.hardMode;
 
+            npc.netAlways = true;
+
             if (hitCount < HitsRequiredToAnger)
             {
                 if (npc.justHit)
+                {
                     hitCount++;
+                    npc.netUpdate = true;
+                }
 
                 npc.chaseable = false;
                 npc.defense = 9999;
@@ -74,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 npc.netUpdate = true;
             }
 
-            npc.TargetClosest(true);
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Disappear if the target is no longer present
@@ -83,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 npc.active = false;
                 return false;
             }
-
+            
             // Provide the Boss Effects buff to the target once angry.
             target.AddBuff(ModContent.BuffType<BossEffects>(), 2);
 
@@ -168,6 +173,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     ref float attackSubstate = ref npc.Infernum().ExtraAI[3];
                     ref float slamCount = ref npc.Infernum().ExtraAI[4];
                     npc.damage = hardmode ? 200 : 125;
+                    npc.velocity.X = 0f;
                     if (attackTimer == 1f)
                     {
                         attackSubstate = 1f;
@@ -178,6 +184,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     {
                         npc.alpha += 20;
 
+                        npc.velocity.Y = 0f;
                         npc.noGravity = true;
                         npc.noTileCollide = true;
 
@@ -258,6 +265,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
         public static void GoToNextAttack(NPC npc)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             GiantClamAttackState CurrentAttack = (GiantClamAttackState)(int)npc.Infernum().ExtraAI[0];
             GiantClamAttackState NextAttack = CurrentAttack;
 

@@ -21,12 +21,12 @@ namespace InfernumMode.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 49;
+            Item.damage = 79;
             Item.knockBack = 1f;
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
-            Item.useTime = 10;
-            Item.useAnimation = 10;
+            Item.useTime = 4;
+            Item.useAnimation = 4;
             Item.useAmmo = AmmoID.Gel;
             Item.shootSpeed = 5.6f;
             Item.shoot = ModContent.ProjectileType<GlassmakerFire>();

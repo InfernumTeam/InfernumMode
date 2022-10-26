@@ -29,10 +29,10 @@ namespace InfernumMode.Projectiles.Ranged
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = 3;
-            Projectile.MaxUpdates = 3;
+            Projectile.MaxUpdates = 7;
             Projectile.timeLeft = Lifetime;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 11;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 8;
         }
 
         public override void AI()
@@ -52,7 +52,7 @@ namespace InfernumMode.Projectiles.Ranged
             // Emit light.
             Lighting.AddLight(Projectile.Center, fireColor.ToVector3() * opacity);
 
-            var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, Main.rand.NextFloat() > Math.Pow(fadeToBlack, 0.2));
+            var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, Main.rand.NextFloat() > Math.Pow(fadeToBlack, 0.2), 0f, true);
             GeneralParticleHandler.SpawnParticle(particle);
 
             // Randomly emit glass particles.

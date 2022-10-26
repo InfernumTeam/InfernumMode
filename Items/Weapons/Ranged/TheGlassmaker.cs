@@ -31,8 +31,8 @@ namespace InfernumMode.Items.Weapons.Ranged
             Item.shootSpeed = 5.6f;
             Item.shoot = ModContent.ProjectileType<GlassmakerFire>();
 
-            Item.width = 52;
-            Item.height = 20;
+            Item.width = 64;
+            Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.UseSound = SoundID.Item34;

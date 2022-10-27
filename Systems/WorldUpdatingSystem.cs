@@ -1,5 +1,6 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BossRush;
 using InfernumMode.Subworlds;
@@ -23,7 +24,21 @@ namespace InfernumMode.Systems
             if (!SubworldSystem.IsActive<LostColosseum>())
             {
                 LostColosseum.HasBereftVassalAppeared = false;
-                LostColosseum.HasBereftVassalBeenDefeated = false;
+
+                if (LostColosseum.HasBereftVassalBeenDefeated)
+                {
+                    LostColosseum.HasBereftVassalBeenDefeated = false;
+
+                    // Register the great sand shark and bereft vassal as dead in the bestiary if they were successfully defeated in the subworld.
+                    NPC fakeNPC = new();
+                    fakeNPC.SetDefaults(ModContent.NPCType<BereftVassal>());
+                    for (int i = 0; i < 100; i++)
+                        Main.BestiaryTracker.Kills.RegisterKill(fakeNPC);
+
+                    fakeNPC.SetDefaults(ModContent.NPCType<GreatSandShark>());
+                    for (int i = 0; i < 100; i++)
+                        Main.BestiaryTracker.Kills.RegisterKill(fakeNPC);
+                }
             }
 
             if (!LostColosseum.HasBereftVassalAppeared && SubworldSystem.IsActive<LostColosseum>())

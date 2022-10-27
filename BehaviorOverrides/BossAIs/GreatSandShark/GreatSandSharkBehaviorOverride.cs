@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
@@ -24,8 +23,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.active = false;
                 return false;
             }
-
-            NPCID.Sets.BossBestiaryPriority.Add(npc.type);
 
             // Do not despawn.
             npc.timeLeft = 7200;

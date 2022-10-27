@@ -10,6 +10,7 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -103,6 +104,11 @@ namespace InfernumMode.GlobalInstances
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }
+        }
+
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
         }
 
         public static void AdjustMaxHP(ref int maxHP)

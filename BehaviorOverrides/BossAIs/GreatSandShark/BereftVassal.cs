@@ -1783,6 +1783,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int frameCount = 4;
             float verticalOffset = 2f;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+
+            // Define things for the bestiary.
+            if (NPC.IsABestiaryIconDummy)
+            {
+                NPC.spriteDirection = 1;
+                CurrentFrame = (int)(Main.GlobalTimeWrappedHourly * 9.1f) % frameCount;
+            }
+
             switch (FrameType)
             {
                 case BereftVassalFrameType.BlowHorn:
@@ -1835,7 +1843,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             BereftVassalSpear.DrawSpearInstance(spearDrawPosition, Color.White * NPC.Opacity, SpearOpacity, SpearRotation, NPC.scale * 0.8f, false);
 
             // Draw the electric shield if it's present.
-            if (ElectricShieldOpacity > 0f)
+            if (ElectricShieldOpacity > 0f && !NPC.IsABestiaryIconDummy)
                 DrawElectricShield();
             return false;
         }

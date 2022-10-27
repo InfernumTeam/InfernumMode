@@ -191,7 +191,7 @@ namespace InfernumMode.GlobalInstances
         #region Frame Manipulation
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
+            if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                 OverridingListManager.InfernumFrameOverrideList[npc.type].DynamicInvoke(npc, frameHeight);
         }
         #endregion

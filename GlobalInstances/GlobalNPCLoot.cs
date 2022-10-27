@@ -31,6 +31,7 @@ using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Items.Relics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -166,6 +167,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<AstrumDeusHead>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<AstrumDeusRelic>());
+
+            if (npc.type == ModContent.NPCType<BereftVassal>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BereftVassalRelic>());
 
             if (npc.type == NPCID.MoonLordCore)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<MoonLordRelic>());

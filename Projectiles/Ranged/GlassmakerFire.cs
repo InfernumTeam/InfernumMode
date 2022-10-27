@@ -45,8 +45,14 @@ namespace InfernumMode.Projectiles.Ranged
             float particleScale = MathHelper.Lerp(0.03f, 1.2f, (float)Math.Pow(lifetimeInterpolant, 0.53));
             float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true);
             float fadeToBlack = Utils.GetLerpValue(0.5f, 0.84f, lifetimeInterpolant, true);
+
+            // Start with a random color between yellow and red. The variance from this leads to a pseudo-gradient look.
             Color fireColor = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.2f, 0.8f));
+
+            // Have the fire color dissipate into smoke as it reaches death.
             fireColor = Color.Lerp(fireColor, Color.DarkGray, fadeToBlack);
+
+            // Use a blue flame at the start of the flame's life, indicating extraordinary quantities of heat.
             fireColor = Color.Lerp(fireColor, Color.DeepSkyBlue, Utils.GetLerpValue(0.29f, 0f, lifetimeInterpolant, true));
 
             // Emit light.

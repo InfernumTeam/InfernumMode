@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_ParabolicLeaps(NPC npc, Player target, ref float attackTimer)
         {
-            int leapTime = 96;
+            int leapTime = 84;
             int sandVomitCount = 9;
             int leapCount = 3;
             int waterSpearReleaseRate = 5;
@@ -142,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 // Transition to the next attack once enough time has passed and within blocks.
-                if (hasLeapedYet == 1f && attackTimer >= leapTime && npc.Center.Y >= Main.maxTilesY * 16f - 1000f)
+                if (hasLeapedYet == 1f && attackTimer >= leapTime && npc.Center.Y >= target.Center.Y + 600f)
                 {
                     GreatSandShark.velocity *= 0.3f;
                     leapCounter++;
@@ -416,7 +416,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 // Fall back down once high enough.
-                if (npc.Center.Y < 240f)
+                if (npc.Center.Y < target.Center.Y - 900f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkMiscRoarSound, npc.Center);
                     hasGoneFarUpEnough = 1f;
@@ -511,7 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         spearRotation = MathHelper.Pi - MathHelper.PiOver4;
                         spearOpacity = chargeTimer / vassalChargeDelay;
                         groundHitTimer = 0f;
-                        npc.rotation = MathHelper.Pi;
+                        npc.rotation = 0f;
                         npc.damage = 0;
                         npc.Opacity = 1f;
                         npc.velocity = Vector2.Zero;
@@ -737,9 +737,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public static void RideGreatSandShark(NPC npc)
         {
             Vector2 gssDirection = GreatSandShark.rotation.ToRotationVector2() * -GreatSandShark.spriteDirection;
+            Vector2 gssTop = GreatSandShark.Center + gssDirection * 76f + gssDirection.RotatedBy(MathHelper.PiOver2) * GreatSandShark.spriteDirection * 42f;
 
             npc.spriteDirection = GreatSandShark.spriteDirection;
-            npc.Center = GreatSandShark.Center + gssDirection * 76f + gssDirection.RotatedBy(MathHelper.PiOver2) * GreatSandShark.spriteDirection * 42f;
+
+            if (!npc.WithinRange(gssTop, 400f))
+            {
+                npc.ModNPC<BereftVassal>().TeleportToPosition(gssTop, false);
+                npc.Opacity = 1f;
+            }
+            npc.Center = gssTop;
             npc.velocity = Vector2.Zero;
             npc.rotation = GreatSandShark.rotation;
             npc.noGravity = true;

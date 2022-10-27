@@ -786,7 +786,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int chargeTime = 40;
             int smallWaveCount = 13;
             int waveBurstCount = 2;
-            float jumpSpeed = NPC.Distance(Target.Center) * 0.025f + 35f;
+            float jumpSpeed = NPC.Distance(Target.Center) * 0.017f + 35f;
             float waveSpeed = 15f;
             float waveShootSpeed = 4.5f;
 
@@ -1713,6 +1713,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
 
             SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, NPC.Center);
+
+            ElectricShieldOpacity = 0f;
             NPC.Center = position;
             NPC.velocity = Vector2.Zero;
             NPC.Opacity = 0f;

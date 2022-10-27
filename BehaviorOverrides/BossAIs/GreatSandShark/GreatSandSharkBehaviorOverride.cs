@@ -27,6 +27,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             NPCID.Sets.BossBestiaryPriority.Add(npc.type);
 
+            // Do not despawn.
+            npc.timeLeft = 7200;
+
             // Stay inside of the world.
             npc.Center = Vector2.Clamp(npc.Center, Vector2.One * 150f, Vector2.One * new Vector2(Main.maxTilesX * 16f - 150f, Main.maxTilesY * 16f - 150f));
 

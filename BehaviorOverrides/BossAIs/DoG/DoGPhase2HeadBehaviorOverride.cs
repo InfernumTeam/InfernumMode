@@ -223,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Don't take damage when fading out or in the middle of a damage cooldown.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
-            npc.damage = npc.dontTakeDamage ? 0 : 1100;
+            npc.damage = npc.dontTakeDamage ? 0 : 885;
             npc.Calamity().DR = 0.2f;
             if (damageImmunityCountdown > 0f)
             {

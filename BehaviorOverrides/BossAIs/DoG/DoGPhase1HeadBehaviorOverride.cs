@@ -285,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.netUpdate = true;
             }
 
-            npc.damage = npc.dontTakeDamage ? 0 : 885;
+            npc.damage = npc.dontTakeDamage ? 0 : 800;
 
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)

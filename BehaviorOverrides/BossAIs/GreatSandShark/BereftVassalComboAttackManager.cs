@@ -246,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 spearShootTimer++;
                 if (spearShootTimer >= spearReleaseRate && chargeCounter < chargeCount - 1f && !npc.WithinRange(target.Center, 336f) && !Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
                 {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelThrowSound, npc.Center);
 
                     // Make the spear disappear the frame after it's fired.
                     spearFadeBuffer = 19f;
@@ -715,7 +715,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 // Sometimes shoot spears at a random dust devil near the target.
                 if (attackTimer % myrindaelShootRate == myrindaelShootRate - 1f && dustDevils.Length >= 1)
                 {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelThrowSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 dustDevilVelocity = spearDirection * spearShootSpeed;

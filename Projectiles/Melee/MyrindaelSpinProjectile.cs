@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Sounds;
@@ -64,8 +63,6 @@ namespace InfernumMode.Projectiles.Melee
             Time++;
             if (Time == 1f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, Projectile.Center);
-
                 InitialDirection = Projectile.velocity.ToRotation();
                 SpinDirection = Owner.direction;
                 Projectile.netUpdate = true;
@@ -78,14 +75,35 @@ namespace InfernumMode.Projectiles.Melee
                 Projectile.velocity = Vector2.Zero;
                 Projectile.rotation = (float)Math.Pow(SpinCompletion, 1.62) * MathHelper.Pi * SpinDirection * 6f + InitialDirection - MathHelper.PiOver4 + MathHelper.Pi;
 
+                // Spin the player's front arm.
                 Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.Pi + MathHelper.PiOver4);
+
+                AdjustPlayerValues();
                 return;
             }
 
-            if (Main.myPlayer == Projectile.owner && Time == Myrindael.SpinTime)
+            if (Time == Myrindael.SpinTime)
             {
-                Projectile.velocity = Projectile.SafeDirectionTo(Main.MouseWorld) * 15f;
-                Projectile.netUpdate = true;
+                // Reset the trail points.
+                for (int i = 0; i < Projectile.oldPos.Length; i++)
+                    Projectile.oldPos[i] = Vector2.Zero;
+
+                // Play a throw sound.
+                SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelThrowSound, Projectile.Center);
+
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.velocity = Projectile.SafeDirectionTo(Main.MouseWorld) * 24f;
+                    Projectile.netUpdate = true;
+                }
+
+                // Create a bunch of electricity.
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust electricity = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10f, 10f), 226);
+                    electricity.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.34f) * Main.rand.NextFloat(3f, 14f);
+                    electricity.noGravity = true;
+                }
             }
 
             // Fade out.
@@ -99,13 +117,21 @@ namespace InfernumMode.Projectiles.Melee
             if (potentialTarget is not null && Projectile.timeLeft > 25)
             {
                 float newSpeed = MathHelper.Clamp(Projectile.velocity.Length() * 1.032f, 6f, 42f);
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(potentialTarget.Center) * newSpeed, 0.18f);
+
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(potentialTarget.Center) * newSpeed, 0.24f).RotateTowards(Projectile.AngleTo(potentialTarget.Center), 0.1f);
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
             }
             if (Projectile.timeLeft <= 25)
                 Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi / 120f) * 0.9f;
 
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+        }
+
+        public void AdjustPlayerValues()
+        {
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemTime = 2;
+            Owner.itemAnimation = 2;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -136,7 +162,7 @@ namespace InfernumMode.Projectiles.Melee
             if (Main.myPlayer != Projectile.owner || potentialTarget is null)
                 return;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Vector2 sparkVelocity = Projectile.SafeDirectionTo(potentialTarget.Center).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / 2f)) * 9f;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkVelocity, ModContent.ProjectileType<MyrindaelSpark>(), Projectile.damage / 3, Projectile.knockBack, Projectile.owner);
@@ -147,11 +173,14 @@ namespace InfernumMode.Projectiles.Melee
 
         public float PierceWidthFunction(float completionRatio)
         {
-            float width = Utils.GetLerpValue(0f, 0.1f, completionRatio, true) * Projectile.scale * Projectile.Opacity * 20f;
+            float width = Projectile.scale * Projectile.Opacity * 30f;
+            if (SpinCompletion < 1f)
+                width *= 1.35f;
+
             return width;
         }
 
-        public Color PierceColorFunction(float completionRatio) => Color.Lime * Projectile.Opacity;
+        public Color PierceColorFunction(float completionRatio) => Color.Lime * Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Projectile.Opacity;
 
         public void DrawTrail()
         {
@@ -166,7 +195,7 @@ namespace InfernumMode.Projectiles.Melee
             // Initialize the trail drawer.
             PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, GameShaders.Misc["CalamityMod:ExobladePierce"]);
 
-            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
@@ -180,29 +209,19 @@ namespace InfernumMode.Projectiles.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             // Draw the trail.
-            if (Time >= Myrindael.SpinTime)
-                DrawTrail();
-
-            // Draw the spin smear texture.
-            else
+            if (SpinCompletion < 1f)
             {
-                Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
-
-                // Draw the spin smear texture.
-                if (SpinCompletion is >= 0f and < 1f)
+                for (int i = 0; i < (int)Math.Min(Time, 12f); i++)
                 {
-                    Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/SemiCircularSmear").Value;
+                    float localRotation = Projectile.oldRot[i];
+                    if (i == 0)
+                        localRotation = Projectile.rotation + MathHelper.Pi * SpinDirection * 0.075f;
 
-                    Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
-
-                    float rotation = Projectile.rotation - MathHelper.Pi / 5f + MathHelper.Pi;
-                    Color smearColor = Color.Turquoise * CalamityUtils.Convert01To010(SpinCompletion) * 1.3f;
-                    Vector2 smearOrigin = smear.Size() * 0.5f;
-
-                    Main.EntitySpriteDraw(smear, Owner.Center - Main.screenPosition, null, smearColor, rotation, smearOrigin, Projectile.scale * 1.2f, 0, 0);
-                    Main.spriteBatch.ExitShaderRegion();
+                    Projectile.oldPos[i] = Projectile.position + (localRotation - MathHelper.PiOver4).ToRotationVector2() * 70f - (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
                 }
             }
+            else
+                DrawTrail();
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = new(0, texture.Height);
@@ -217,6 +236,8 @@ namespace InfernumMode.Projectiles.Melee
             }
 
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
+            if (SpinCompletion < 1f)
+                DrawTrail();
             return false;
         }
     }

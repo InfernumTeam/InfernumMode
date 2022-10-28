@@ -146,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.noTileCollide = false;
             NPC.HitSound = null;
             NPC.DeathSound = SoundID.NPCDeath14;
-            NPC.value = Item.buyPrice(0, 30, 0, 0) / 5;
+            NPC.value = Item.buyPrice(6, 25, 0, 0) / 5;
             NPC.netAlways = true;
 
             NPC.Calamity().ShouldCloseHPBar = true;
@@ -189,6 +189,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.chaseable = !sandSharkExists;
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
+
+            Target.immuneAlpha = 255;
 
             ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 

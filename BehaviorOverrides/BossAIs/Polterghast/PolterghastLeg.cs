@@ -210,7 +210,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
-                float _ = 0f;
                 if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint))
                     return true;
             }

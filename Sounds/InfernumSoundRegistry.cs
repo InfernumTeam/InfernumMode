@@ -4,6 +4,7 @@ namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
+        #region Bosses
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/AresLaugh");
 
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/AresTeslaShot");
@@ -71,5 +72,12 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
 
         public const int AresTelegraphSoundLength = 183;
+        #endregion Bosses
+
+        #region Items
+
+        public static readonly SoundStyle GlassmakerFireSound = new("InfernumMode/Sounds/Item/GlassmakerFire");
+
+        #endregion Items
     }
 }

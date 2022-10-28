@@ -49,13 +49,11 @@ namespace InfernumMode.Projectiles.Melee
 
         public override void AI()
         {
-            // Die if no longer holding the click button or otherwise cannot use the item.
-            if (!Owner.channel || Owner.dead || !Owner.active || Owner.noItems)
+            // Die if no longer holding the right click button or otherwise cannot use the item.
+            if (!Owner.Calamity().mouseRight || Owner.dead || !Owner.active || Owner.noItems)
             {
                 Projectile.Kill();
-                if (Owner.velocity.Length() > 16f)
-                    Owner.velocity *= 0.4f;
-
+                Owner.velocity = (Owner.velocity * 0.3f).ClampMagnitude(0f, 11f);
                 return;
             }
 
@@ -75,7 +73,7 @@ namespace InfernumMode.Projectiles.Melee
             Owner.fallStart = (int)(Owner.position.Y / 16f);
 
             float velocityPower = Utils.Remap(CalamityUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
-            Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.15f + 0.85f * velocityPower);
+            Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.09f + 0.91f * velocityPower);
             Owner.velocity = newVelocity;
             Owner.Calamity().LungingDown = Projectile.timeLeft >= 5;
 
@@ -104,8 +102,8 @@ namespace InfernumMode.Projectiles.Melee
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -1100f);
-                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(15f, 25f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
+                    Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -800f);
+                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
                     if (Main.projectile.IndexInRange(lightning))
                     {
                         Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
@@ -114,8 +112,8 @@ namespace InfernumMode.Projectiles.Melee
                 }
             }
 
-            Owner.GiveIFrames(10);
-            Owner.velocity = Owner.velocity.SafeNormalize(Vector2.Zero) * -10f;
+            Owner.GiveIFrames(20);
+            Owner.velocity = Owner.SafeDirectionTo(target.Center) * -18f;
             Projectile.Kill();
         }
 

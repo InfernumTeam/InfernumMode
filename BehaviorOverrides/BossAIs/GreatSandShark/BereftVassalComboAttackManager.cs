@@ -586,6 +586,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Hover below the target if not supposed to attack.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, sharkShouldAttack ? -20f : hoverVerticalOffset);
+            if (!sharkShouldAttack)
+            {
+                while (!CalamityUtils.ParanoidTileRetrieval((int)hoverDestination.X / 16, (int)hoverDestination.Y / 16).HasTile)
+                    hoverDestination.Y += 64f;
+            }
+
             if (hasReachedChargeDestination == 0f)
             {
                 npc.damage = 0;

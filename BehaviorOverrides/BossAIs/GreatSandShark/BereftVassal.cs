@@ -148,7 +148,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = Item.buyPrice(0, 30, 0, 0) / 5;
             NPC.netAlways = true;
-            Music = MusicID.Boss4;
 
             NPC.Calamity().ShouldCloseHPBar = true;
         }
@@ -363,8 +362,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SceneEffectPriority = SceneEffectPriority.BossHigh;
                 Music = MusicID.Boss3;
                 if (ModLoader.TryGetMod("InfernumModeMusic", out Mod musicMod))
-                    Music = MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/Boss3");
-                Music = MusicID.UndergroundDesert;
+                    Music = MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/BereftVassal");
             }
 
             // Disable controls and UI for the target.

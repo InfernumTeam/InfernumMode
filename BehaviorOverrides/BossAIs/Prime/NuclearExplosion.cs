@@ -11,6 +11,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public class NuclearExplosion : ModProjectile, IAdditiveDrawer
     {
+        public const int Lifetime = 180;
+
+        public const float BaseScale = 0.15f;
+
+        public const float ScaleExpandRate = 0.06f;
+
+        public const float RadiusScaleFactor = 135f;
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()
@@ -19,17 +27,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = Lifetime;
             Projectile.extraUpdates = 1;
             Projectile.penetrate = -1;
-            Projectile.scale = 0.15f;
+            Projectile.scale = BaseScale;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()
         {
-            Projectile.scale += 0.06f;
-            Projectile.Opacity = Utils.GetLerpValue(300f, 265f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 50f, Projectile.timeLeft, true);
+            Projectile.scale += ScaleExpandRate;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 50f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (Projectile.velocity.Length() < 18f)
@@ -62,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
+            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * RadiusScaleFactor);
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.45f;

@@ -20,7 +20,7 @@ namespace InfernumMode.Projectiles.Melee
 
         public bool HasPlayedSound;
 
-        public const int Lifetime = 45;
+        public const int Lifetime = 30;
         public ref float InitialVelocityAngle => ref Projectile.ai[0];
 
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash
@@ -48,10 +48,10 @@ namespace InfernumMode.Projectiles.Melee
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.friendly = true;
-            Projectile.MaxUpdates = 6;
+            Projectile.MaxUpdates = 7;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 12;
+            Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 10;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
         }
 

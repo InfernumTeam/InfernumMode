@@ -35,7 +35,7 @@ namespace InfernumMode.Projectiles.Magic
             if (Projectile.ai[1] == 0f)
             {
                 Projectile.ai[1] = 1f;
-                SoundEngine.PlaySound(SoundID.NPCDeath19, Projectile.position);
+                SoundEngine.PlaySound(SoundID.NPCHit13, Projectile.position);
             }
 
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
@@ -55,8 +55,18 @@ namespace InfernumMode.Projectiles.Magic
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            // Create two lingering sand skulls.
+            if (Main.myPlayer != Projectile.owner)
+                return;
+
+            if (Main.rand.NextBool())
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<LingeringSandSkull>(), Projectile.damage / 3, 0f, Projectile.owner);
+        }
+
+        public override void Kill(int timeLeft)
+        {            
             if (Projectile.penetrate >= 1)
                 return;
 

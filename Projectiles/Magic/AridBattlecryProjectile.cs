@@ -11,7 +11,7 @@ namespace InfernumMode.Projectiles.Magic
 {
     public class AridBattlecryProjectile : ModProjectile
     {
-        // This stores the sound slot of the telegraph sound it makes, so it may be properly updated in terms of position.
+        // This stores the sound slot of the horn sound it makes, so it may be properly updated in terms of position.
         public SlotId HornSoundSlot;
 
         public Player Owner => Main.player[Projectile.owner];
@@ -47,7 +47,7 @@ namespace InfernumMode.Projectiles.Magic
             // Release sharks from below.
             // CheckMana returns true if the mana cost can be paid. If mana isn't consumed this frame, the CheckMana short-circuits out of being evaluated.
             if (Main.myPlayer == Projectile.owner && Time % AridBattlecry.SharkSummonRate == AridBattlecry.SharkSummonRate - 1f && Owner.CheckMana(Owner.ActiveItem(), -1, true))
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Main.MouseWorld + Vector2.UnitY * 600f, -Vector2.UnitY * 7f, ModContent.ProjectileType<MiniSandShark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Main.MouseWorld + new Vector2(Main.rand.NextFloatDirection() * 50f, 600f), -Vector2.UnitY * 7f, ModContent.ProjectileType<MiniSandShark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 
             // Play the horn sound on the first frame.
             if (Time == 1f)

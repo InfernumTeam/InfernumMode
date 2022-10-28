@@ -149,6 +149,9 @@ namespace InfernumMode
             Madness = false;
             MadnessTime = 0;
 
+            // THIS IS A TEST EFFECT. REMOVE IT LATER.
+            LostColosseum.HasBereftVassalAppeared = false;
+
             if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }

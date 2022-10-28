@@ -27,6 +27,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -34,6 +35,7 @@ using SubworldLibrary;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
@@ -264,6 +266,19 @@ namespace InfernumMode.GlobalInstances
                 return npc.alpha == 0;
             }
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
+        }
+
+        public override void HitEffect(NPC npc, int hitDirection, double damage)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            // Play GSS' custom hit sound.
+            if (npc.type == ModContent.NPCType<GreatSandShark>() && npc.soundDelay <= 0)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
+                npc.soundDelay = 11;
+            }
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

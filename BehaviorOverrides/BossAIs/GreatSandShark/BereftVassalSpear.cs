@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.StormWeaver;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -119,9 +120,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             Projectile.velocity *= 0.7f;
 
-            if (oldVelocity.Y < 5f && Projectile.localAI[0] == 0f)
-                Projectile.rotation = new Vector2(oldVelocity.X, 5f).ToRotation();
-            Projectile.localAI[0] = 1f;
+            if (Projectile.localAI[0] == 0f)
+            {
+                if (oldVelocity.Y < 5f)
+                    Projectile.rotation = new Vector2(oldVelocity.X, 5f).ToRotation();
+                SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelHitSound, Projectile.Center);
+                Projectile.localAI[0] = 1f;
+            }
 
             return false;
         }

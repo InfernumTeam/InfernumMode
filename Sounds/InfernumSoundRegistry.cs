@@ -31,6 +31,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkMiscRoar");
 
+        public static readonly SoundStyle GreatSandSharkHitSound = new("InfernumMode/Sounds/NPCHit/GreatSandSharkHit", 3);
+
         public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
 
         public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSuddenRoar");
@@ -40,6 +42,10 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
         
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");
+
+        public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelHit") with { Volume = 1.8f };
+
+        public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelSpin") with { Volume = 1.7f };
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelThrow") with { Volume = 1.8f };
 
@@ -78,7 +84,11 @@ namespace InfernumMode.Sounds
 
         #region Items
 
+        public static readonly SoundStyle GlassmakerFireStartSound = new("InfernumMode/Sounds/Item/GlassmakerIntro");
+
         public static readonly SoundStyle GlassmakerFireSound = new("InfernumMode/Sounds/Item/GlassmakerFire");
+
+        public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Sounds/Item/GlassmakerOutro");
 
         #endregion Items
     }

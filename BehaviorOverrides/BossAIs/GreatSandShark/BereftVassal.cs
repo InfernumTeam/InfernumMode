@@ -190,8 +190,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
-            Target.immuneAlpha = 255;
-
             ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 
             // Go away if the target is dead.
@@ -335,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (animationTimer <= spearSpinTime)
             {
                 if (animationTimer == 6)
-                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, NPC.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelSpinSound, NPC.Center);
 
                 SpearOpacity = Utils.GetLerpValue(0f, 16f, animationTimer, true);
                 SpearRotation += MathHelper.Pi / spearSpinTime * 10f;
@@ -710,7 +708,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (AttackTimer == jumpDelay)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, NPC.Bottom);
-                SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, NPC.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelSpinSound, NPC.Center);
 
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 NPC.velocity = new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 19f, -23f);

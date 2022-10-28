@@ -10,6 +10,8 @@ namespace InfernumMode.Projectiles.Ranged
 {
     public class GlassmakerHoldout : ModProjectile
     {
+        public SlotId FlameIntroSoundSlot;
+
         // This stores the sound slot of the flame sound it makes, so it may be properly updated in terms of position.
         public SlotId FlameSoundSlot;
 
@@ -63,12 +65,21 @@ namespace InfernumMode.Projectiles.Ranged
                 if (Main.rand.NextBool(3))
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), fireSpawnPosition, fireShootVelocity.RotatedByRandom(0.43f) * 2.4f, ModContent.ProjectileType<GlassPiece>(), fireDamage, knockback, Projectile.owner);
             }
-            
-            // Update the sound telegraph's position.
-            if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out var t) && t.IsPlaying)
-                t.Position = Projectile.Center;
+
+            if (Time == 0f)
+                FlameIntroSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireStartSound, Projectile.Center);
+
+            bool startSoundBeingPlayed = SoundEngine.TryGetActiveSound(FlameIntroSoundSlot, out var startSound) && startSound.IsPlaying;
+            if (startSoundBeingPlayed)
+                startSound.Position = Projectile.Center;
             else
-                FlameSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireSound with { Volume = 1.4f }, Projectile.Center);
+            {
+                // Update the sound telegraph's position.
+                if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out var t) && t.IsPlaying)
+                    t.Position = Projectile.Center;
+                else
+                    FlameSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireSound with { Volume = 1.4f }, Projectile.Center);
+            }
             
             Time++;
         }
@@ -104,9 +115,13 @@ namespace InfernumMode.Projectiles.Ranged
 
         public override void Kill(int timeLeft)
         {
-            // Stop the horn sound abruptly if the horn is destroyed.
-            if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out var t) && t.IsPlaying)
+            // Stop the flame sounds abruptly if the flamethrower is destroyed.
+            if (SoundEngine.TryGetActiveSound(FlameIntroSoundSlot, out var t) && t.IsPlaying)
                 t.Stop();
+            if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out t) && t.IsPlaying)
+                t.Stop();
+
+            SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireEndSound, Projectile.Center);
         }
 
         public override bool? CanDamage() => false;

@@ -41,7 +41,7 @@ namespace InfernumMode.Systems
                 }
             }
 
-            if (!LostColosseum.HasBereftVassalAppeared && SubworldSystem.IsActive<LostColosseum>())
+            if (!LostColosseum.HasBereftVassalAppeared && SubworldSystem.IsActive<LostColosseum>() && !Main.LocalPlayer.dead)
             {
                 int x = Main.maxTilesX * 8 + 1200;
                 int y = Main.maxTilesY * 8;

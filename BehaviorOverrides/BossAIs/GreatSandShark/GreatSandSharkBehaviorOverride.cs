@@ -34,8 +34,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.localAI[3] = 1f;
 
             // Stop being so FAT you SILLY shark!!!
-            npc.height = 100;
+            npc.height = 104;
             npc.width = 280;
+
+            // Get rid of the traditional hit sound.
+            npc.HitSound = null;
 
             // Reset damage and other things.
             npc.damage = npc.defDamage;

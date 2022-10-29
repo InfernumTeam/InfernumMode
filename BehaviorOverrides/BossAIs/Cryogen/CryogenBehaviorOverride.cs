@@ -85,13 +85,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             ref float enrageTimer = ref npc.ai[3];
 
             if (!BossRushEvent.BossRushActive)
-                enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 480);
+                enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 660);
 
             // Make a blizzard happen.
             CalamityUtils.StartRain();
 
             // Become invincible if the target has been outside of the snow biome for too long.
-            npc.dontTakeDamage = enrageTimer >= 300f;
+            npc.dontTakeDamage = enrageTimer >= 600f;
             npc.Calamity().CurrentlyEnraged = !target.ZoneSnow && !BossRushEvent.BossRushActive;
 
             // Handle subphase transitions.

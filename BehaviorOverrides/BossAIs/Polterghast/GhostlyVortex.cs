@@ -14,12 +14,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             DisplayName.SetDefault("Phantoplasm Vortex");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 38;
+            Projectile.width = Projectile.height = 28;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;

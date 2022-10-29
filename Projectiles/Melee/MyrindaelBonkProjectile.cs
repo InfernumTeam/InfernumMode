@@ -103,8 +103,8 @@ namespace InfernumMode.Projectiles.Melee
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -800f);
-                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
+                    Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -700f);
+                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(50f, 70f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner);
                     if (Main.projectile.IndexInRange(lightning))
                     {
                         Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();

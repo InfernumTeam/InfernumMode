@@ -47,7 +47,11 @@ namespace InfernumMode.Projectiles.Magic
             // Release sharks from below.
             // CheckMana returns true if the mana cost can be paid. If mana isn't consumed this frame, the CheckMana short-circuits out of being evaluated.
             if (Main.myPlayer == Projectile.owner && Time % AridBattlecry.SharkSummonRate == AridBattlecry.SharkSummonRate - 1f && Owner.CheckMana(Owner.ActiveItem(), -1, true))
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Main.MouseWorld + new Vector2(Main.rand.NextFloatDirection() * 50f, 600f), -Vector2.UnitY * 7f, ModContent.ProjectileType<MiniSandShark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            {
+                Vector2 sharkSpawnPosition = Main.MouseWorld + new Vector2(Main.rand.NextFloatDirection() * 96f, 600f);
+                Vector2 sharkSpawnVelocity = (Main.MouseWorld - sharkSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), sharkSpawnPosition, sharkSpawnVelocity, ModContent.ProjectileType<MiniSandShark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            }
 
             // Play the horn sound on the first frame.
             if (Time == 1f)

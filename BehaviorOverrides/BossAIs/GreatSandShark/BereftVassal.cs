@@ -116,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bereft Vassal");
+            DisplayName.SetDefault("Argus, the Bereft Vassal");
             Main.npcFrameCount[Type] = 4;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 10;

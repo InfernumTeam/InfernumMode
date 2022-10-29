@@ -67,7 +67,7 @@ namespace InfernumMode.Projectiles.Ranged
             }
 
             if (Time == 0f)
-                FlameIntroSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireStartSound, Projectile.Center);
+                FlameIntroSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireStartSound with { Volume = 0.85f }, Projectile.Center);
 
             bool startSoundBeingPlayed = SoundEngine.TryGetActiveSound(FlameIntroSoundSlot, out var startSound) && startSound.IsPlaying;
             if (startSoundBeingPlayed)
@@ -78,7 +78,7 @@ namespace InfernumMode.Projectiles.Ranged
                 if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out var t) && t.IsPlaying)
                     t.Position = Projectile.Center;
                 else
-                    FlameSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireSound with { Volume = 1.4f }, Projectile.Center);
+                    FlameSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireSound with { Volume = 1.2f }, Projectile.Center);
             }
             
             Time++;
@@ -121,7 +121,7 @@ namespace InfernumMode.Projectiles.Ranged
             if (SoundEngine.TryGetActiveSound(FlameSoundSlot, out t) && t.IsPlaying)
                 t.Stop();
 
-            SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireEndSound, Projectile.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireEndSound with { Volume = 0.85f }, Projectile.Center);
         }
 
         public override bool? CanDamage() => false;

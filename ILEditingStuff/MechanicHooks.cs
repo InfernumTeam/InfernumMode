@@ -2,10 +2,12 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.UI.DraedonSummoning;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
+using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -224,6 +226,21 @@ namespace InfernumMode.ILEditingStuff
 
         public void Load() => UpdateRippers += NerfAdrenalineRates;
         public void Unload() => UpdateRippers -= NerfAdrenalineRates;
+    }
+
+    public class RenameGreatSandSharkHook : IHookEdit
+    {
+        internal string RenameGSS(On.Terraria.Lang.orig_GetNPCNameValue orig, int netID)
+        {
+            if (netID == ModContent.NPCType<GreatSandShark>() && InfernumMode.CanUseCustomAIs)
+                return GreatSandSharkBehaviorOverride.NewName;
+
+            return orig(netID);
+        }
+
+        public void Load() => On.Terraria.Lang.GetNPCNameValue += RenameGSS;
+
+        public void Unload() => On.Terraria.Lang.GetNPCNameValue -= RenameGSS;
     }
 
     public class MakeHooksInteractWithPlatforms : IHookEdit

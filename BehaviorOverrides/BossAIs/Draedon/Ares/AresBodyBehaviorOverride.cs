@@ -53,6 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechManagement.Phase4LifeRatio
         };
 
+        public const int BackArmSwapDelay = 1800;
+
         public const float Phase1ArmChargeupTime = 240f;
 
         public static int ProjectileDamageBoost
@@ -115,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphInterpolantIndex] = 0f;
 
             // Make the laser and pulse arms swap sometimes.
-            if (backarmSwapTimer > 1080f)
+            if (backarmSwapTimer > BackArmSwapDelay)
             {
                 backarmSwapTimer = 0f;
                 laserPulseArmAreSwapped = laserPulseArmAreSwapped == 0f ? 1f : 0f;
@@ -760,7 +762,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return true;
 
             // The pulse and laser arm are disabled for 1 second before and after they swap.
-            bool rightAboutToSwap = aresBody.Infernum().ExtraAI[14] > 930f;
+            bool rightAboutToSwap = aresBody.Infernum().ExtraAI[14] > BackArmSwapDelay - 150f;
             bool justSwapped = aresBody.Infernum().ExtraAI[14] < 90f;
             if ((rightAboutToSwap || justSwapped) && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
                 return true;

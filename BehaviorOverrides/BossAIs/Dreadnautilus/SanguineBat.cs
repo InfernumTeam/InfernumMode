@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
         public ref float Time => ref Projectile.ai[0];
         public ref float LocalLifetime => ref Projectile.ai[1];
 
-        public const int Lifetime = 325;
+        public const int Lifetime = 420;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanguine Bat");
@@ -38,9 +38,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             if (!Projectile.WithinRange(Target.Center, 50f))
             {
-                float flySpeed = Utils.GetLerpValue(LocalLifetime, LocalLifetime - 70f, Time, true) * Utils.GetLerpValue(0f, 120f, Time, true) * 14.25f;
+                float flySpeed = Utils.GetLerpValue(LocalLifetime, LocalLifetime - 70f, Time, true) * Utils.GetLerpValue(0f, 120f, Time, true) * 17f;
                 Vector2 destinationOffset = (MathHelper.TwoPi * Projectile.identity / 13f).ToRotationVector2() * 18f;
-                Projectile.velocity = (Projectile.velocity * 31f + Projectile.SafeDirectionTo(Target.Center + destinationOffset) * flySpeed) / 32f;
+                Projectile.velocity = (Projectile.velocity * 35f + Projectile.SafeDirectionTo(Target.Center + destinationOffset) * flySpeed) / 36f;
             }
             else if (Time >= LocalLifetime - 75f)
                 Projectile.velocity *= 0.96f;

@@ -26,6 +26,8 @@ namespace InfernumMode
 
         internal static Mod CalamityMod = null;
 
+        internal static Mod FargosMutantMod = null;
+
         internal static Mod FargowiltasSouls = null;
 
         internal static Mod PhaseIndicator = null;
@@ -68,6 +70,7 @@ namespace InfernumMode
         {
             Instance = this;
             CalamityMod = ModLoader.GetMod("CalamityMod");
+            ModLoader.TryGetMod("Fargowiltas", out FargosMutantMod);
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
 

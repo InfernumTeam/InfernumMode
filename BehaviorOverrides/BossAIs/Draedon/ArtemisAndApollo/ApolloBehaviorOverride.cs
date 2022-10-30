@@ -25,6 +25,7 @@ using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using System.Linq;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -1214,6 +1215,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             if (apolloShootCounter % 5f == 4f)
                             {
                                 hoverSideFlip *= -1f;
+                                foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<ArtemisGatlingLaser>()).Where(p => p.ai[0] <= ArtemisGatlingLaser.TelegraphTotalTime))
+                                    laser.Kill();
+
                                 Main.npc[CalamityGlobalNPC.draedonExoMechTwinRed].Infernum().ExtraAI[3] = hoverSideFlip;
                                 npc.netUpdate = true;
                             }

@@ -29,7 +29,7 @@ namespace InfernumMode.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)))
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)))
                 return false;
 
             return base.CanExplode(i, j, type);
@@ -40,7 +40,7 @@ namespace InfernumMode.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i * 16, j * 16, 16, 16)))
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)))
                 return false;
 
             return base.CanKillTile(i, j, type, ref blockDamaged);

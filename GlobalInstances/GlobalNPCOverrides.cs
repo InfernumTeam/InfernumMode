@@ -215,6 +215,10 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
                 return false;
 
+            // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.
+            if (InfernumMode.CanUseCustomAIs && npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
+                DropHelper.BlockDrops(ItemID.ChumBucket, ItemID.VampireFrogStaff, ItemID.BloodFishingRod, ItemID.BloodRainBow, ItemID.MoneyTrough, ItemID.BloodMoonStarter);
+
             return base.PreKill(npc);
         }
 

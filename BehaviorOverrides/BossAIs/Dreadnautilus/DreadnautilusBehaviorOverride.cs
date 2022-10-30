@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -49,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.npcSlots = 15f;
-            npc.damage = 130;
+            npc.damage = 100;
             npc.width = 100;
             npc.height = 100;
             npc.defense = 20;
@@ -81,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             ref float attackTimer = ref npc.ai[1];
             ref float eyeGleamInterpolant = ref npc.ai[2];
+
+            if (target.HasBuff(ModContent.BuffType<BurningBlood>()))
+                target.ClearBuff(ModContent.BuffType<BurningBlood>());
 
             switch ((DreadnautilusAttackState)npc.ai[0])
             {
@@ -148,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public static void DoBehavior_BloodSpitToothBalls(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
-            int shootCycleTime = 80;
+            int shootCycleTime = 62;
             int shootPrepareTime = 30;
             int shotCount = 3;
 
@@ -196,7 +200,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 shootPosition, out Vector2 shootDirection);
-                        for (int i = 0; i < 2; i++)
+                        for (int i = 0; i < 4; i++)
                         {
                             Vector2 shootVelocity = shootDirection.RotatedByRandom(0.33f) * Main.rand.NextFloat(11.5f, 15f);
                             Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<GoreSpitBall>(), 120, 0f, npc.target);
@@ -354,13 +358,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public static void DoBehavior_UpwardPerpendicularBoltCharge(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
-            int minHoverTime = 60;
-            int maxHoverTime = 180;
+            int minHoverTime = 45;
+            int maxHoverTime = 140;
             int upwardChargeTime = 66;
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
             float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, 600f);
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -500f);
             
             if (phase2)
             {
@@ -375,6 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             }
 
             ref float chargeAngularVelocity = ref npc.Infernum().ExtraAI[0];
+            ref float reachedDestination = ref npc.Infernum().ExtraAI[1];
 
             // Hover to the bottom left/right of the target.
             if (attackTimer < maxHoverTime)
@@ -387,14 +392,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     idealRotation += MathHelper.Pi;
 
                 // Perform hover movement.
-                if (!npc.WithinRange(hoverDestination, 85f))
+                if (!npc.WithinRange(hoverDestination, 85f) && reachedDestination == 0f)
                 {
                     npc.Center = npc.Center.MoveTowards(hoverDestination, 5f);
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.4f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 0.54f);
                 }
                 else
                 {
                     npc.velocity *= 0.84f;
+                    npc.position.Y += 32f;
+                    reachedDestination = 1f;
 
                     // Immediately transition to the charge state if the minimum hover time has elapsed and sufficiently within range for the upward charge.
                     if (attackTimer >= minHoverTime)
@@ -682,7 +689,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Slow down at first.
             if (attackTimer < slowdownTime)
+            {
                 npc.velocity = (npc.velocity * 0.97f).MoveTowards(Vector2.Zero, 0.25f);
+
+                if (attackTimer == 1f)
+                {
+                    npc.Center = target.Center - Vector2.UnitY * 875f;
+                    npc.netUpdate = true;
+                }
+            }
 
             // Summon bats in the sky.
             else if (attackTimer < slowdownTime + summonTime)

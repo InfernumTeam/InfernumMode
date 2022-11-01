@@ -69,8 +69,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-        
-
         public float WidthFunction(float completionRatio)
         {
             return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);

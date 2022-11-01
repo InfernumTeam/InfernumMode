@@ -1,18 +1,21 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresSpinningDeathBeam : BaseLaserbeamProjectile
+    public class AresSpinningDeathBeam : BaseLaserbeamProjectile, IAdditiveDrawer
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -22,7 +25,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             set => Projectile.ai[1] = value;
         }
 
+        public PrimitiveTrailCopy BeamDrawer = null;
+
         public float InitialSpinDirection = -100f;
+
         public float LifetimeThing;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => AresDeathBeamTelegraph.TelegraphWidth;
@@ -41,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 30;
+            Projectile.width = 100;
+            Projectile.height = 100;
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
@@ -75,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Projectile.velocity = (InitialSpinDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[0]).ToRotationVector2();
                 Vector2 fireFrom = new(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
-                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(35f, 127f, Projectile.scale * Projectile.scale);
+                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(2f, 16f, Projectile.scale * Projectile.scale);
                 Projectile.Center = fireFrom;
             }
 
@@ -87,19 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
-        public override float DetermineLaserLength()
-        {
-            float[] sampledLengths = new float[10];
-            Collision.LaserScan(Projectile.Center, Projectile.velocity, Projectile.width * Projectile.scale, MaxLaserLength, sampledLengths);
-
-            float newLaserLength = sampledLengths.Average();
-
-            // Fire laser through walls at max length if target is behind tiles.
-            if (!Collision.CanHitLine(Main.npc[OwnerIndex].Center, 1, 1, Main.player[Main.npc[OwnerIndex].target].Center, 1, 1))
-                newLaserLength = MaxLaserLength;
-
-            return newLaserLength;
-        }
+        public override float DetermineLaserLength() => MaxLaserLength;
 
         public override void PostAI()
         {
@@ -131,75 +125,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public float WidthFunction(float completionRatio)
         {
-            // This should never happen, but just in case-
-            if (Projectile.velocity == Vector2.Zero)
-                return false;
+            return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
+        }
 
-            Color beamColor = LaserOverlayColor;
-            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
-            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
-            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+        public Color ColorFunction(float completionRatio)
+        {
+            Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f) % 1f, 1f, 0.6f);
+            color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
+            color.A = 50;
+            return color * 1.32f;
+        }
 
-            // Start texture drawing.
-            Main.spriteBatch.Draw(LaserBeginTexture,
-                             Projectile.Center - Main.screenPosition,
-                             startFrameArea,
-                             beamColor,
-                             Projectile.rotation,
-                             LaserBeginTexture.Size() / 2f,
-                             Projectile.scale,
-                             SpriteEffects.None,
-                             0f);
+        public override bool PreDraw(ref Color lightColor) => false;
+        
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
 
-            // Prepare things for body drawing.
-            float laserBodyLength = LaserLength + middleFrameArea.Height;
-            Vector2 centerOnLaser = Projectile.Center;
+            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(0.4f);
+            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
 
-            // Body drawing.
-            Rectangle screenArea = new((int)(Main.screenPosition.X - 100f), (int)(Main.screenPosition.Y - 100f), Main.screenWidth + 200, Main.screenHeight + 200);
-            if (laserBodyLength > 0f)
+            List<Vector2> points = new();
+            for (int i = 0; i <= 8; i++)
+                points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
+
+            if (Time >= 2f)
             {
-                float laserOffset = middleFrameArea.Height * Projectile.scale;
-                float incrementalBodyLength = 0f;
-                while (incrementalBodyLength + 1f < laserBodyLength)
+                for (float offset = 0f; offset < 6f; offset += 1.2f)
                 {
-                    if (!screenArea.Intersects(new Rectangle((int)centerOnLaser.X, (int)centerOnLaser.Y, 1, 1)))
-                    {
-                        centerOnLaser += Projectile.velocity * laserOffset;
-                        incrementalBodyLength += laserOffset;
-                        continue;
-                    }
-
-                    Main.spriteBatch.Draw(LaserMiddleTexture,
-                                     centerOnLaser - Main.screenPosition,
-                                     middleFrameArea,
-                                     beamColor,
-                                     Projectile.rotation,
-                                     LaserMiddleTexture.Size() * 0.5f,
-                                     Projectile.scale,
-                                     SpriteEffects.None,
-                                     0f);
-                    incrementalBodyLength += laserOffset;
-                    centerOnLaser += Projectile.velocity * laserOffset;
-                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[Projectile.type];
-                    if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
-                        middleFrameArea.Y = 0;
+                    BeamDrawer.Draw(points, -Main.screenPosition, 28);
+                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                    BeamDrawer.Draw(points, - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
                 }
             }
-
-            Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-            Main.spriteBatch.Draw(LaserEndTexture,
-                             laserEndCenter,
-                             endFrameArea,
-                             beamColor,
-                             Projectile.rotation,
-                             LaserEndTexture.Size() * 0.5f,
-                             Projectile.scale,
-                             SpriteEffects.None,
-                             0f);
-            return false;
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

@@ -552,22 +552,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         }
         #endregion
         #region Drawing
-        public static void CreateSandParticles(NPC npc, Color color, Vector2 velocity = default, Vector2 spawnPosition = default, int lifeTime = 60, float scale = 0)
+        public static void CreateSandParticles(NPC npc, Color color, Vector2? velocity = default, Vector2? spawnPosition = null, int lifeTime = 60, float? scale = null)
         {
-
-            if (spawnPosition == default)
-                spawnPosition = npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
-
             // Allow use of custom velocity for specific movement.
-            if (velocity == default)
-                velocity = -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
+            spawnPosition ??= npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
+            velocity ??= -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
+            scale ??= Main.rand.NextFloat(0.85f, 1.1f);
 
-            if (scale == 0)
-                scale = Main.rand.NextFloat(0.85f, 1.1f);
-
-            Particle sand = new DesertScourgeSandstormParticle(spawnPosition, velocity, color, scale, lifeTime);
+            Particle sand = new DesertScourgeSandstormParticle(spawnPosition.Value, velocity.Value, color, scale.Value, lifeTime);
             GeneralParticleHandler.SpawnParticle(sand);
-            
         }
         #endregion
         #region Tips

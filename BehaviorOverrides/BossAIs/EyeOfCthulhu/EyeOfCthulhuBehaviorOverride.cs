@@ -35,7 +35,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #endregion
 
         #region AI
-        public static bool DrawAfterimages;
         public const int GleamTime = 45;
         public const float Phase2LifeRatio = 0.8f;
         public const float Phase3LifeRatio = 0.35f;
@@ -127,18 +126,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             ref float phase2ResetTimer = ref npc.Infernum().ExtraAI[6];
             ref float gleamTimer = ref npc.localAI[0];
 
-            DrawAfterimages = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool enraged = Main.dayTime && !BossRushEvent.BossRushActive;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
             bool phase4 = lifeRatio < Phase4LifeRatio;
+
+            // Reset damage and defense.
             npc.damage = npc.defDamage + 12;
             if (phase2)
             {
                 npc.defense = 4;
                 npc.damage += 28;
             }
+
+            // Reset the afterimage draw state.
+            bool drawAfterimages = false;
 
             // Handle the Phase 2 transition.
             if (phase2 && phase2ResetTimer < 180f)
@@ -173,19 +176,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     DoBehavior_ChargingServants(npc, target, enraged, phase2, phase4, lifeRatio, ref attackTimer);
                     break;
                 case EoCAttackType.HorizontalBloodCharge:
-                    DoBehavior_HorizontalBloodCharge(npc, target, enraged, phase2, phase4, ref attackTimer);
+                    DoBehavior_HorizontalBloodCharge(npc, target, enraged, phase2, phase4, ref attackTimer, ref drawAfterimages);
                     break;
                 case EoCAttackType.TeethSpit:
                     DoBehavior_TeethSpit(npc, target, enraged, phase3, phase4, ref attackTimer);
                     break;
                 case EoCAttackType.SpinDash:
-                    DoBehavior_SpinDash(npc, target, enraged, phase4, ref attackTimer);
+                    DoBehavior_SpinDash(npc, target, enraged, phase4, ref attackTimer, ref drawAfterimages);
                     break;
                 case EoCAttackType.BloodShots:
                     DoBehavior_BloodShots(npc, target, enraged, phase4, ref attackTimer);
                     break;
             }
 
+            npc.Infernum().ExtraAI[5] = drawAfterimages.ToInt();
             attackTimer++;
             return false;
         }
@@ -314,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_HorizontalBloodCharge(NPC npc, Player target, bool enraged, bool phase2, bool phase4, ref float attackTimer)
+        public static void DoBehavior_HorizontalBloodCharge(NPC npc, Player target, bool enraged, bool phase2, bool phase4, ref float attackTimer, ref bool drawAfterimages)
         {
             int bloodBallReleaseRate = 15;
             int chargeTime = 75;
@@ -366,7 +370,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // And shoot blood spit/balls.
             if (attackSubstate == 1f)
             {
-                DrawAfterimages = true;
+                // Use afterimages when firing.
+                drawAfterimages = true;
+
                 bool closeToPlayer = Math.Abs(npc.Center.X - target.Center.X) <= 300f + target.velocity.X * 6f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bloodBallReleaseRate == bloodBallReleaseRate - 1 && !closeToPlayer)
                 {
@@ -469,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_SpinDash(NPC npc, Player target, bool enraged, bool phase4, ref float attackTimer)
+        public static void DoBehavior_SpinDash(NPC npc, Player target, bool enraged, bool phase4, ref float attackTimer, ref bool drawAfterimages)
         {
             int spinCycles = 1;
             int spinTime = 75;
@@ -544,11 +550,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Spin.
             if (attackSubstate == 1f)
             {
-                DrawAfterimages = true;
+                // Use afterimages when spinning.
+                drawAfterimages = true;
+
+                // Create blood particles in the third phase onward.
                 if (phase3)
-                {
-                    CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity* 0.65f);
-                }
+                    CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity * 0.65f);
+
                 spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.GetLerpValue(spinTime + 4f, spinTime - 15f, attackTimer, true);
                 npc.Center = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.rotation = spinAngle;
@@ -558,8 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.velocity = (spinAngle + MathHelper.PiOver2).ToRotationVector2() * 9.5f;
                     attackSubstate = 2f;
                     npc.netUpdate = true;
-                }
-                
+                }                
             }
 
             // Slow down and aim.
@@ -583,12 +590,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Accelerate while charging.
             if (attackSubstate == 3f)
             {
-                DrawAfterimages = true;
+                // Accelerate.
                 npc.velocity *= chargeAcceleration;
+
+                // Draw afterimages when accelerating.
+                drawAfterimages = true;
+
+                // Create blood particles in the third phase onward.
                 if (phase3)
-                {
-                    CreateBloodParticles(npc, Color.Red*0.8f,-npc.velocity*0.85f);
-                }
+                    CreateBloodParticles(npc, Color.Red*0.8f,-npc.velocity * 0.85f);
+
                 if (attackTimer >= chargeTime)
                 {
                     npc.velocity *= 0.25f;
@@ -603,11 +614,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 if (chainChargeCounter > chargeChainCount)
                     SelectNextAttack(npc);
-                DrawAfterimages = true;
+
+                // Draw afterimages when performing chain dashes.
+                drawAfterimages = true;
+
+                // Create blood particles in the third phase onward. This happens on a timer to prevent particle clutter.
                 if (phase3 && attackTimer % 3 == 0)
-                {
                     CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity);
-                }
+
                 if (npc.velocity.Length() < 8f)
                 {
                     float idealAngle = npc.AngleTo(target.Center);

@@ -194,10 +194,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<AresTeslaSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
             }
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
     }
 }

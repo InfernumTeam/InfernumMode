@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetDefaults()
         {
             Projectile.width = 100;
-            Projectile.height = 100;
+            Projectile.height = 56;
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f) % 1f, 1f, 0.6f);
+            Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f + Projectile.identity * 0.27f) % 1f, 1f, 0.6f);
             color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
             color.A = 50;
             return color * 1.32f;
@@ -144,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
 
-            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(0.4f);
+            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
 
             List<Vector2> points = new();
@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (Time >= 2f)
             {
-                for (float offset = 0f; offset < 6f; offset += 1.2f)
+                for (float offset = 0f; offset < 6f; offset += 0.75f)
                 {
                     BeamDrawer.Draw(points, -Main.screenPosition, 28);
                     BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);

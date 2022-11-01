@@ -1,8 +1,11 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Particles;
+using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
@@ -38,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Phase2LifeRatio,
             Phase3LifeRatio
         };
-
+        #region AI
         public override bool PreAI(NPC npc)
         {
             npc.damage = 100;
-
+            
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
@@ -149,6 +152,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                             Main.projectile[sand].MaxUpdates = 1;
                             Main.projectile[sand].tileCollide = false;
                         }
+                        for (int j = 0; j < 5; j++)
+                            CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item21, spawnPosition);
                     }
                 }
             }
@@ -225,6 +231,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     // And set the horizontal charge speed.
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, chargeSpeed * chargeDirection, 0.08f);
 
+                    // Roar if first frame
+                    if (attackTimer == 1)
+                        SoundEngine.PlaySound(DesertScourgeHead.RoarSound, npc.Center);
+
                     // Release sand upward.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
@@ -242,6 +252,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                             Main.projectile[sand].MaxUpdates = 1;
                             Main.projectile[sand].tileCollide = false;
                         }
+                        for(int i = 0; i < 5; i++)
+                            CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item21, npc.Center);
                     }
 
                     if (attackTimer > 360f || MathHelper.Distance(target.Center.X, npc.Center.X) > 1950f)
@@ -268,6 +281,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             float maxChargeSpeed = idealFlySpeed * 1.54f;
             float flyAcceleration = idealFlySpeed / 710f;
 
+            // Play the wind sound on first frame
+
+            if (attackTimer == 1)
+                SoundEngine.PlaySound(InfernumSoundRegistry.DesertScourgeSandstormWindSound with { Volume = 0.85f}, target.Center);
+
             // Accelerate if close to the target.
             if (npc.WithinRange(target.Center, 250f))
             {
@@ -291,15 +309,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Create the sandstorm.
+            Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
+            Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandParticleReleaseRate == sandParticleReleaseRate - 1f)
             {
-                Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
-                Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
+                
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
 
                 for (int i = 0; i < 2; i++)
                     Utilities.NewProjectileBetter(spawnPosition + Main.rand.NextVector2Circular(120f, 120f), sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
             }
+            Vector2 sandPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
+            Vector2 sandVelocity = new Vector2(target.Center.X - sandPosition.X, 0).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
+            for (int j = 0; j < 4; j++)
+                CreateSandParticles(npc, Color.White * 0.75f, sandVelocity * 40, sandPosition, 60, Main.rand.NextFloat(1.2f, 1.4f));
 
             if (attackTimer > 480f)
                 SelectNextAttack(npc);
@@ -364,7 +387,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     {
                         attackTimer = 240f;
                         npc.velocity.Y *= 0.5f;
-
+                        // Play impact sound.
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, npc.Center);
                         // Create the sand burst.
                         for (int i = 0; i < sandBurstCount; i++)
                         {
@@ -375,6 +399,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                                 Main.projectile[sand].MaxUpdates = 1;
                                 Main.projectile[sand].tileCollide = false;
                             }
+                            for(int j = 0; j < 2; j++)
+                                CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
                         }
 
                         // Create the tornadoes.
@@ -436,6 +462,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             // Summon vultures.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == vultureSummonDelay)
             {
+                SoundEngine.PlaySound(InfernumSoundRegistry.DesertScourgeShortRoar, npc.Center);
                 for (int i = 0; i < 3; i++)
                 {
                     // Prevent NPC spam if there's more than 8 vultures present.
@@ -523,7 +550,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 previousIndex = nextIndex;
             }
         }
+        #endregion
+        #region Drawing
+        public static void CreateSandParticles(NPC npc, Color color, Vector2 velocity = default, Vector2 spawnPosition = default, int lifeTime = 60, float scale = 0)
+        {
 
+            if (spawnPosition == default)
+                spawnPosition = npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
+
+            // Allow use of custom velocity for specific movement.
+            if (velocity == default)
+                velocity = -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
+
+            if (scale == 0)
+                scale = Main.rand.NextFloat(0.85f, 1.1f);
+
+            Particle sand = new DesertScourgeSandstormParticle(spawnPosition, velocity, color, scale, lifeTime);
+            GeneralParticleHandler.SpawnParticle(sand);
+            
+        }
+        #endregion
+        #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "The Scourge usually roars when it's about to whip up a sandstorm, get to high grounds!";
@@ -541,5 +588,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 return string.Empty;
             };
         }
+        #endregion
     }
 }

@@ -1,5 +1,8 @@
+using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Particles;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #endregion
 
         #region AI
-
+        public static bool DrawAfterimages;
         public const int GleamTime = 45;
         public const float Phase2LifeRatio = 0.8f;
         public const float Phase3LifeRatio = 0.35f;
@@ -98,7 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];
-
             if (target.dead || !target.active)
             {
                 npc.TargetClosest();
@@ -120,10 +122,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
+
             ref float attackTimer = ref npc.ai[2];
             ref float phase2ResetTimer = ref npc.Infernum().ExtraAI[6];
             ref float gleamTimer = ref npc.localAI[0];
 
+            DrawAfterimages = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool enraged = Main.dayTime && !BossRushEvent.BossRushActive;
             bool phase2 = lifeRatio < Phase2LifeRatio;
@@ -354,7 +358,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                     npc.netUpdate = true;
                     attackTimer = 0f;
-
                     // High pitched boss roar.
                     SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 }
@@ -363,13 +366,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // And shoot blood spit/balls.
             if (attackSubstate == 1f)
             {
+                DrawAfterimages = true;
                 bool closeToPlayer = Math.Abs(npc.Center.X - target.Center.X) <= 300f + target.velocity.X * 6f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bloodBallReleaseRate == bloodBallReleaseRate - 1 && !closeToPlayer)
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 72f;
                     Vector2 shootVelocity = npc.velocity;
                     shootVelocity.X *= Main.rand.NextFloat(0.35f, 0.65f);
-
+                    for(int j = 0; j < 3; j++)
+                        CreateBloodParticles(npc, Color.Red * 0.8f);
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 60, 0f);
                 }
 
@@ -448,6 +453,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * teethSpeed;
                             if (BossRushEvent.BossRushActive)
                                 toothShootVelocity *= 1.6f;
+                            for (int j = 0; j < 3; j++)
+                                CreateBloodParticles(npc, Color.Red * 0.8f, toothShootVelocity, spawnPosition);
                             Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
                         }
                     }
@@ -472,6 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             float chargeSpeed = 18f;
             float chargeAcceleration = 1.006f;
             float spinRadius = 345f;
+            bool phase3 = npc.life / (float)npc.lifeMax <= Phase3LifeRatio;
 
             if (phase4)
             {
@@ -536,6 +544,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Spin.
             if (attackSubstate == 1f)
             {
+                DrawAfterimages = true;
+                if (phase3)
+                {
+                    CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity* 0.65f);
+                }
                 spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.GetLerpValue(spinTime + 4f, spinTime - 15f, attackTimer, true);
                 npc.Center = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.rotation = spinAngle;
@@ -546,6 +559,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     attackSubstate = 2f;
                     npc.netUpdate = true;
                 }
+                
             }
 
             // Slow down and aim.
@@ -569,7 +583,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Accelerate while charging.
             if (attackSubstate == 3f)
             {
+                DrawAfterimages = true;
                 npc.velocity *= chargeAcceleration;
+                if (phase3)
+                {
+                    CreateBloodParticles(npc, Color.Red*0.8f,-npc.velocity*0.85f);
+                }
                 if (attackTimer >= chargeTime)
                 {
                     npc.velocity *= 0.25f;
@@ -584,7 +603,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 if (chainChargeCounter > chargeChainCount)
                     SelectNextAttack(npc);
-
+                DrawAfterimages = true;
+                if (phase3 && attackTimer % 3 == 0)
+                {
+                    CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity);
+                }
                 if (npc.velocity.Length() < 8f)
                 {
                     float idealAngle = npc.AngleTo(target.Center);
@@ -619,6 +642,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             int shootDelay = 75;
             int shootTime = 90;
             int totalShots = 4;
+            bool phase3 = npc.life / (float)npc.lifeMax <= Phase3LifeRatio;
 
             if (phase4)
             {
@@ -673,6 +697,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         {
                             Vector2 velocity = shootDirection * 10f + Main.rand.NextVector2Square(-5f, 5f);
                             Utilities.NewProjectileBetter(shootCenter - shootDirection * 5f, velocity, ModContent.ProjectileType<BloodShot>(), 80, 0f);
+                            int bloodParticleCount = phase3 ? 7 : 4;
+                            for (int j = 0; j < bloodParticleCount; j++)
+                                CreateBloodParticles(npc, Color.Red*0.70f, velocity*2f, shootCenter - shootDirection * 5);
                         }
                     }
                 }
@@ -709,7 +736,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #endregion
 
         #region Drawing
-
+        public static void CreateBloodParticles(NPC npc, Color color, Vector2 velocity = default, Vector2 spawnPosition = default)
+        {
+            // Spawn blood particles to add atmosphere
+            if (Main.rand.NextBool(2))
+            {
+                if(spawnPosition == default)
+                    spawnPosition = npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
+                // Allow use of custom velocity for specific movement.
+                if(velocity == default)
+                    velocity = -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
+                Particle blood = new EoCBloodParticle(spawnPosition, velocity, 30, Main.rand.NextFloat(0.45f, 0.6f), color, npc.ai[1] == (float)EoCAttackType.BloodShots ? 3 : 22);
+                GeneralParticleHandler.SpawnParticle(blood);
+            }
+        }
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -719,6 +759,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Texture2D eyeTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 eyeOrigin = eyeTexture.Size() / new Vector2(1f, Main.npcFrameCount[npc.type]) * 0.5f;
+
+            // Afterimages
+            int afterimageCount = 7;
+            Color color = lightColor;
+            Color afterimageEndColor = Color.White;
+            if(CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(color, afterimageEndColor, 0)) * ((afterimageCount - i) / 15f);
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
+                    Main.spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, eyeOrigin, npc.scale, spriteEffects, 0f);
+                }
+            }
             Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, eyeOrigin, npc.scale, spriteEffects, 0f);
 
             float gleamTimer = npc.localAI[0];

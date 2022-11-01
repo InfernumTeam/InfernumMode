@@ -185,13 +185,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 2.2f);
 
             Color colorOuter = Color.Lerp(Color.Lime, Color.Green, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
-            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.5f);
+            Color colorInner = Color.Lerp(colorOuter, Color.White with { A = 0 }, 0.67f);
 
             colorOuter *= 0.7f;
-            colorInner *= 0.7f;
+            colorInner *= 0.85f;
 
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0f);
             return false;
         }
     }

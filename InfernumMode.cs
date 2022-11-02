@@ -211,6 +211,9 @@ namespace InfernumMode
                 Ref<Effect> scalScreenShader = new(Assets.Request<Effect>("Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
                 Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(scalScreenShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
+                
+                Ref<Effect> screenShakeShader = new(Assets.Request<Effect>("Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
+                Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
 
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
             }

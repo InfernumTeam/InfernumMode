@@ -17,7 +17,6 @@ using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using AresTeslaOrbInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresTeslaOrb;
 using ArtemisLaserInfernum= InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
-using ThanatosLaserInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosLaser;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
@@ -297,8 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<RefractionRotor>(),
                 ModContent.ProjectileType<SmallPlasmaSpark>(),
                 ModContent.ProjectileType<SuperheatedExofireGas>(),
-                ModContent.ProjectileType<ThanatosAresComboLaser>(),
-                ModContent.ProjectileType<ThanatosLaserInfernum>()
+                ModContent.ProjectileType<ThanatosAresComboLaser>()
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

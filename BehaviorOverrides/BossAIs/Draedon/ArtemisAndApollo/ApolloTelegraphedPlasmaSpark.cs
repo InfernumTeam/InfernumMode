@@ -146,12 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         }
 
         public override bool CanHitPlayer(Player target) => TelegraphDelay > TelegraphTotalTime;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
-        }
-
+        
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             return Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());

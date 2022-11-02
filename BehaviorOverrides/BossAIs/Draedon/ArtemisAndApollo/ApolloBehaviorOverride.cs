@@ -26,6 +26,7 @@ using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedo
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using System.Linq;
+using InfernumMode.Projectiles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -461,6 +462,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         smokeVelocity *= 2f;
                         GeneralParticleHandler.SpawnParticle(new HeavySmokeParticle(npc.Center, smokeVelocity, smokeColor, 56, 3f, 1f));
                     }
+                    ScreenShakeProj.CreateShockwave(npc.Center - npc.velocity * 4f, Color.Transparent, 0.01f);
 
                     npc.life = 0;
                     npc.HitEffect();
@@ -699,6 +701,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 else if (wrappedAttackTimer == flamethrowerHoverTime + 15f)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
+                    ScreenShakeProj.CreateShockwave(npc.Center - npc.velocity * 4f, Color.Transparent, 0.01f);
 
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -908,6 +911,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
                         SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, npc.Center);
+                        ScreenShakeProj.CreateShockwave(npc.Center, Color.Transparent, 0.01f);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 

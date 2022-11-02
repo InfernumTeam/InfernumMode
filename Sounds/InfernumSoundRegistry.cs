@@ -1,3 +1,4 @@
+using System.Threading;
 using Terraria.Audio;
 
 namespace InfernumMode.Sounds
@@ -66,6 +67,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Sounds/Custom/ProvidenceDoorShatter");
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Sounds/Custom/SCalBrothersSpawn");
+
+        public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
 

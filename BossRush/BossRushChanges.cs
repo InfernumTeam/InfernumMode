@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -303,6 +304,10 @@ namespace InfernumMode.BossRush
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierTwoEndText", XerocTextColor);
                     CreateTierAnimation(3);
                 },
+                [NPCID.SkeletronHead] = npc =>
+                {
+                    BringPlayersBackToSpawn();
+                },
                 [NPCID.Golem] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText", XerocTextColor);
@@ -360,13 +365,14 @@ namespace InfernumMode.BossRush
 
         public static void HandleTeleports()
         {
-            Vector2 teleportPosition = Vector2.Zero;
+            Player player = Main.LocalPlayer;
+            Vector2? teleportPosition = null;
 
             // Teleport the player to the garden for the guardians fight in boss rush.
             if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !Main.LocalPlayer.ZoneUnderworldHeight)
             {
                 if (CurrentlyFoughtBoss == NPCID.WallofFlesh)
-                    teleportPosition = new(Main.maxTilesX - 1f, 3200f);
+                    teleportPosition = CalamityPlayer.GetUnderworldPosition(player);   
                 if (CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>())
                     teleportPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * 3.2f - 16f, 800f);
                 if (CurrentlyFoughtBoss == ModContent.NPCType<Providence>())
@@ -374,13 +380,13 @@ namespace InfernumMode.BossRush
             }
 
             // Teleport the player.
-            if (teleportPosition != Vector2.Zero)
+            if (teleportPosition.HasValue)
             {
-                if (WorldUtils.Find(teleportPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
+                if (WorldUtils.Find(teleportPosition.Value.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
                     teleportPosition = p.ToWorldCoordinates(8f, -32f);
 
-                Main.LocalPlayer.Teleport(teleportPosition);
-                SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, Main.LocalPlayer.Center);
+                CalamityPlayer.ModTeleport(player, teleportPosition.Value, playSound: false, 7);
+                SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, player.Center);
             }
         }
     }

@@ -338,8 +338,19 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
                 return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);
 
+
             if (npc.type == NPCID.HallowBoss && OverridingListManager.Registered(NPCID.HallowBoss))
                 return EmpressOfLightBehaviorOverride.HandleDeathEffects(npc);
+
+            if (npc.type == ModContent.NPCType<PerforatorHive>() && OverridingListManager.Registered(npc.type))
+            {
+                npc.Infernum().ExtraAI[3] = 1;
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+                npc.active = true;
+                npc.netUpdate = true;
+                return false;
+            }
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() && OverridingListManager.Registered(npc.type))
             {

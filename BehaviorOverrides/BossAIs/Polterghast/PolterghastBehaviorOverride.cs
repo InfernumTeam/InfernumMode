@@ -12,6 +12,7 @@ using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public const float Phase2LifeRatio = 0.65f;
 
         public const float Phase3LifeRatio = 0.35f;
+
+        // These store the roar sound slot to allow for updating its position.
+        public SlotId RoarSlot;
+
+        public SlotId ShortRoarSlot;
 
         #region Enumerations
         public enum PolterghastAttackType
@@ -187,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Perform the death animation as necessary.
             if (dyingTimer > 0f)
             {
-                DoBehavior_DeathAnimation(npc, target, ref dyingTimer, ref totalReleasedSouls, ref initialDeathPositionX, ref initialDeathPositionY);
+                DoBehavior_DeathAnimation(npc, target, ref dyingTimer, ref totalReleasedSouls, ref initialDeathPositionX, ref initialDeathPositionY, ref ShortRoarSlot);
                 return false;
             }
 
@@ -205,28 +211,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (veryFirstAttack == 0f)
                 npc.Opacity = 0f;
 
+            // Make roars update their position.
+            if (SoundEngine.TryGetActiveSound(RoarSlot, out var r) && r.IsPlaying)
+                r.Position = npc.Center;
+            if (SoundEngine.TryGetActiveSound(ShortRoarSlot, out var sr) && sr.IsPlaying)
+                sr.Position = npc.Center;
+
             switch (attackState)
             {
                 case PolterghastAttackType.LegSwipes:
                     DoBehavior_LegSwipes(npc, target, ref legToManuallyControlIndex, ref attackTimer);
                     break;
                 case PolterghastAttackType.WispCircleCharges:
-                    DoBehavior_WispCircleCharges(npc, target, ref attackTimer);
+                    DoBehavior_WispCircleCharges(npc, target, ref attackTimer, ref ShortRoarSlot);
                     break;
                 case PolterghastAttackType.AsgoreRingSoulAttack:
-                    DoBehavior_AsgoreRingSoulAttack(npc, target, ref totalReleasedSouls, ref attackTimer);
+                    DoBehavior_AsgoreRingSoulAttack(npc, target, ref totalReleasedSouls, ref attackTimer, ref ShortRoarSlot);
                     break;
                 case PolterghastAttackType.EctoplasmUppercutCharges:
-                    DoBehavior_EctoplasmUppercutCharges(npc, target, ref attackTimer, ref telegraphDirection, ref telegraphOpacity, ref veryFirstAttack);
+                    DoBehavior_EctoplasmUppercutCharges(npc, target, ref attackTimer, ref telegraphDirection, ref telegraphOpacity, ref veryFirstAttack, ref RoarSlot);
                     break;
                 case PolterghastAttackType.ArcingSouls:
-                    DoBehavior_ArcingSouls(npc, target, ref attackTimer);
+                    DoBehavior_ArcingSouls(npc, target, ref attackTimer, ref ShortRoarSlot);
                     break;
                 case PolterghastAttackType.SpiritPetal:
                     DoBehavior_SpiritPetal(npc, target, ref attackTimer, ref totalReleasedSouls, enraged);
                     break;
                 case PolterghastAttackType.VortexCharge:
-                    DoBehavior_DoVortexCharge(npc, target, ref attackTimer, enraged);
+                    DoBehavior_DoVortexCharge(npc, target, ref attackTimer, enraged, ref RoarSlot);
                     break;
                 case PolterghastAttackType.CloneSplit:
                     DoBehavior_CloneSplit(npc, target, ref attackTimer, enraged);
@@ -256,7 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.timeLeft = 200;
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float dyingTimer, ref float totalReleasedSouls, ref float initialDeathPositionX, ref float initialDeathPositionY)
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float dyingTimer, ref float totalReleasedSouls, ref float initialDeathPositionX, ref float initialDeathPositionY, ref SlotId ShortRoarSlot)
         {
             int slowdownTime = 210;
             int screenFocusDelay = 60;
@@ -272,11 +284,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Clear away any clones and legs.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int cloneType = NPC.CountNPCS(ModContent.NPCType<PolterPhantom>());
                 int legType = ModContent.NPCType<PolterghastLeg>();
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if ((Main.npc[i].type == cloneType || Main.npc[i].type == legType) && Main.npc[i].active)
+                    if ((Main.npc[i].type == ModContent.NPCType<PolterPhantom>() || Main.npc[i].type == legType) && Main.npc[i].active)
                     {
                         Main.npc[i].life = 0;
                         Main.npc[i].active = false;
@@ -367,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         }
                     }
 
-                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, npc.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
                     SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                     SelectNextAttack(npc);
                 }
@@ -548,7 +559,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
         }
 
-        public static void DoBehavior_WispCircleCharges(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_WispCircleCharges(NPC npc, Player target, ref float attackTimer, ref SlotId ShortRoarSlot)
         {
             int hoverTime = 150;
             int chargeCount = 6;
@@ -621,7 +632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
                 if (wrappedAttackTimer == slowdownTime)
                 {
-                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, npc.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f}, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.netUpdate = true;
                 }
@@ -638,7 +649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
         }
 
-        public static void DoBehavior_AsgoreRingSoulAttack(NPC npc, Player target, ref float totalReleasedSouls, ref float attackTimer)
+        public static void DoBehavior_AsgoreRingSoulAttack(NPC npc, Player target, ref float totalReleasedSouls, ref float attackTimer, ref SlotId ShortRoarSlot)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int ringCount = 7;
@@ -683,7 +694,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar and explode into many souls before creating rings.
             if (attackTimer == ringCreationDelay)
             {
-                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f}, npc.Center);
                 for (int i = 0; i < actualSoulsPerRing * ringCount; i++)
                 {
                     Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(26f, 40.5f);
@@ -748,7 +759,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             npc.Calamity().DR = 0.67f;
         }
 
-        public static void DoBehavior_EctoplasmUppercutCharges(NPC npc, Player target, ref float attackTimer, ref float telegraphDirection, ref float telegraphOpacity, ref float veryFirstAttack)
+        public static void DoBehavior_EctoplasmUppercutCharges(NPC npc, Player target, ref float attackTimer, ref float telegraphDirection, ref float telegraphOpacity, ref float veryFirstAttack, ref SlotId RoarSlot)
         {
             int descendTime = 75;
             int telegraphTime = 27;
@@ -831,7 +842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 // Roar and initiate the charge.
                 if (attackTimer == descendTime + telegraphTime + 1f)
                 {
-                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                    RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDash with { Volume = 2f }, npc.Center);
                     npc.velocity = telegraphDirection.ToRotationVector2() * chargeSpeed;
                     npc.netUpdate = true;
                 }
@@ -878,7 +889,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_ArcingSouls(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_ArcingSouls(NPC npc, Player target, ref float attackTimer, ref SlotId ShortRoarSlot)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int shootDelay = 35;
@@ -906,7 +917,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 if (attackTimer % shootRate == shootRate - 1f && attackTimer < shootTime)
                 {
-                    SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int direction = -1; direction <= 1; direction += 2)
@@ -1018,7 +1029,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_DoVortexCharge(NPC npc, Player target, ref float attackTimer, bool enraged)
+        public static void DoBehavior_DoVortexCharge(NPC npc, Player target, ref float attackTimer, bool enraged, ref SlotId RoarSlot)
         {
             int chargeCount = 1;
             int aimTime = 20;
@@ -1060,7 +1071,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                SoundEngine.PlaySound(OmegaBlueHelmet.ActivationSound with { Pitch = -0.525f, Volume = 1.5f }, target.Center);
+                RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDash with { Volume = 2f }, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;

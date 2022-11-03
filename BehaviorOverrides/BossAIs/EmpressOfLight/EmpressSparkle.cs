@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             if (Time == 1f)
             {
-                Projectile.scale = Main.rand.NextFloat(0.45f, 0.6f);
+                Projectile.scale = Main.rand.NextFloat(1.3f, 1.8f);
                 Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;

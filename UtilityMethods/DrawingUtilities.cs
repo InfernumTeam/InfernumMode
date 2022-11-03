@@ -1,4 +1,6 @@
 using CalamityMod;
+using InfernumMode.Projectiles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -6,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
@@ -39,8 +42,8 @@ namespace InfernumMode
         /// <param name="spriteBatch">The sprite batch.</param>
         public static void ExitShaderRegion(this SpriteBatch spriteBatch)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -50,8 +53,8 @@ namespace InfernumMode
         /// <param name="blendState">The blend state to use.</param>
         public static void SetBlendState(this SpriteBatch spriteBatch, BlendState blendState)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, blendState, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, blendState, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace InfernumMode
         /// </summary>
         /// <param name="spriteBatch">The sprite batch.</param>
         /// <param name="blendState">The blend state to use.</param>
-        public static void ResetBlendState(this SpriteBatch spriteBatch) => Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);
+        public static void ResetBlendState(this SpriteBatch spriteBatch) => spriteBatch.SetBlendState(BlendState.AlphaBlend);
 
         /// <summary>
         /// Draws a line significantly more efficiently than <see cref="Utils.DrawLine(SpriteBatch, Vector2, Vector2, Color, Color, float)"/> using just one scaled line texture. Positions are automatically converted to screen coordinates.
@@ -82,7 +85,7 @@ namespace InfernumMode
             float rotation = (end - start).ToRotation();
             Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 
-            Main.spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
         /// <summary>
@@ -249,6 +252,26 @@ namespace InfernumMode
                 triangleIndices.Add((short)(i * 4));
                 triangleIndices.Add((short)(i * 4 + 2));
                 triangleIndices.Add((short)(i * 4 + 3));
+            }
+        }
+
+        public static void CreateShockwave(Vector2 shockwavePosition, int rippleCount = 2, int rippleSize = 8, float rippleSpeed = 75f, bool playSound = true)
+        {
+            DeleteAllProjectiles(false, ModContent.ProjectileType<ScreenShakeProj>());
+
+            if (playSound)
+                SoundEngine.PlaySound(InfernumSoundRegistry.SonicBoomSound, Vector2.Lerp(shockwavePosition, Main.LocalPlayer.Center, 0.84f));
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int shockwaveID = NewProjectileBetter(shockwavePosition, Vector2.Zero, ModContent.ProjectileType<ScreenShakeProj>(), 0, 0f);
+                if (Main.projectile.IndexInRange(shockwaveID))
+                {
+                    var shockwave = Main.projectile[shockwaveID].ModProjectile<ScreenShakeProj>();
+                    shockwave.RippleCount = rippleCount;
+                    shockwave.RippleSize = rippleSize;
+                    shockwave.RippleSpeed = rippleSpeed;
+                }
             }
         }
 

@@ -13,6 +13,9 @@ using Terraria.Graphics.Effects;
 using CalamityMod.Events;
 using Terraria.Audio;
 using System.Linq;
+using System.Collections.Generic;
+using CalamityMod.Particles;
+using Terraria.GameContent.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -32,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             ShimmeringDiamondLanceBarrage,
             InfiniteBrilliance,
             ContinuousLanceBarrages,
+            DeathAnimation
         }
 
         public override int NPCOverrideType => NPCID.HallowBoss;
@@ -45,6 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public const int SecondPhaseFadeoutTime = 90;
 
         public const int SecondPhaseFadeBackInTime = 90;
+
+        public const int ScreenShaderIntensityIndex = 7;
 
         public const float Phase2LifeRatio = 0.8f;
 
@@ -151,12 +157,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float leftArmFrame = ref npc.localAI[1];
             ref float rightArmFrame = ref npc.localAI[1];
             ref float screenShaderStrength = ref npc.localAI[3];
+            ref float deathAnimationScreenShaderStrength = ref npc.Infernum().ExtraAI[ScreenShaderIntensityIndex];
 
+            // Reset things every frame.
             npc.damage = 0;
             npc.spriteDirection = 1;
+            npc.dontTakeDamage = false;
             leftArmFrame = 0f;
             rightArmFrame = 0f;
-            npc.dontTakeDamage = false;
+            deathAnimationScreenShaderStrength = 0f;
 
             // Disappear if the target is dead.
             if (!target.active || target.dead)
@@ -269,6 +278,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 case EmpressOfLightAttackType.ContinuousLanceBarrages:
                     DoBehavior_ContinuousLanceBarrages(npc, target, ref attackTimer);
                     break;
+                case EmpressOfLightAttackType.DeathAnimation:
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref deathAnimationScreenShaderStrength);
+                    break;
             }
 
             // Manage the screen shader.
@@ -281,6 +293,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/noise");
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/Perlin", 2);
+                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseColor(Color.Pink);
+                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseOpacity(deathAnimationScreenShaderStrength);
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseIntensity(screenShaderStrength);
             }
 
@@ -1378,6 +1392,76 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float deathAnimationScreenShaderStrength)
+        {
+            int fadeInTime = 40;
+            int fadeOutTime = 96;
+            int deathAnimationTime = 480;
+            ref float outwardExpandFactor = ref npc.Infernum().ExtraAI[1];
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Teleport above the player and create a shockwave on the first frame.
+            if (attackTimer == 1f)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 350f;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+
+                SoundEngine.PlaySound(SoundID.Item161, target.Center);
+                Utilities.CreateShockwave(npc.Center, 40, 4, 40f);
+            }
+
+            // Fade in after teleporting.
+            if (attackTimer >= 1f)
+            {
+                deathAnimationScreenShaderStrength = Utils.GetLerpValue(1f, fadeInTime, attackTimer, true);
+                outwardExpandFactor = Utils.GetLerpValue(-fadeOutTime, 0f, attackTimer - deathAnimationTime, true);
+                npc.Opacity = (float)Math.Pow(deathAnimationScreenShaderStrength, 3D) * (1f - outwardExpandFactor);
+
+                MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
+            }
+
+            // Create sparkles everywhere.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 sparkleSpawnPosition = target.Center + Main.rand.NextVector2Square(-900f, 900f);
+                Utilities.NewProjectileBetter(sparkleSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EmpressSparkle>(), 0, 0f);
+            }
+
+            // Play magic sounds.
+            if (attackTimer % 24f == 23f && attackTimer >= fadeInTime * 2f)
+                SoundEngine.PlaySound(SoundID.Item28, target.Center + Main.rand.NextVector2CircularEdge(400f, 400f));
+
+            // Cast shimmers.
+            for (int i = 0; i < 6; i++)
+            {
+                float dustPersistence = MathHelper.Lerp(1.3f, 0.7f, npc.Opacity);
+                Color newColor = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                Dust rainbowMagic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 267, 0f, 0f, 0, newColor, 1f);
+                rainbowMagic.position = npc.Center + Main.rand.NextVector2Circular(npc.width * 12f, npc.height * 12f) + new Vector2(0f, -150f);
+                rainbowMagic.velocity *= Main.rand.NextFloat(0.8f);
+                rainbowMagic.noGravity = true;
+                rainbowMagic.fadeIn = 0.7f + Main.rand.NextFloat(dustPersistence * 0.7f);
+                rainbowMagic.velocity += Vector2.UnitY * 3f;
+                rainbowMagic.scale = 0.6f;
+
+                rainbowMagic = Dust.CloneDust(rainbowMagic);
+                rainbowMagic.scale /= 2f;
+                rainbowMagic.fadeIn *= 0.85f;
+            }
+
+            // Drop loot once the animation is over.
+            if (attackTimer >= deathAnimationTime)
+            {
+                npc.active = false;
+                npc.NPCLoot();
+            }
+        }
+
         public static void ClearAwayEntities()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1549,9 +1633,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 baseDuplicateCount = 4;
             }
 
-            if (attackType is EmpressOfLightAttackType.RainbowWispForm or EmpressOfLightAttackType.InfiniteBrilliance)
+            if (attackType is EmpressOfLightAttackType.RainbowWispForm or EmpressOfLightAttackType.InfiniteBrilliance or EmpressOfLightAttackType.DeathAnimation)
             {
-                float brightness = npc.Infernum().ExtraAI[0];
+                float brightness = npc.Infernum().ExtraAI[0] * (npc.Infernum().ExtraAI[ScreenShaderIntensityIndex] + 1f);
                 if (attackType == EmpressOfLightAttackType.InfiniteBrilliance && brightness <= 0f && npc.ai[1] >= 1f)
                     brightness = 1f;
 
@@ -1563,7 +1647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 baseColor = Color.Lerp(baseColor, new Color(1f, 1f, 1f, 0f), baseColorOpacity);
                 baseDuplicateCount = 2;
                 laggingAfterimageCount = 4;
-                if (attackType == EmpressOfLightAttackType.InfiniteBrilliance)
+                if (attackType is EmpressOfLightAttackType.InfiniteBrilliance)
                 {
                     baseDuplicateCount = 6;
                     laggingAfterimageCount = 0;
@@ -1600,7 +1684,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     }
 
                     // Handle the wisp form afterimages.
-                    if (attackType == EmpressOfLightAttackType.RainbowWispForm)
+                    if (attackType is EmpressOfLightAttackType.RainbowWispForm or EmpressOfLightAttackType.DeathAnimation)
                     {
                         float hue = (i + 5f) / 10f % 1f;
                         float drawOffsetFactor = 80f;
@@ -1609,6 +1693,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                             Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly * 1.3f - 0.7f + i * 0.32f) * 0.7f * MathHelper.TwoPi) *
                             Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly * 1.3f + 0.3f + i * 0.6f) * 0.1f * MathHelper.TwoPi));
                         drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 30f;
+                        drawOffsetFactor *= npc.Infernum().ExtraAI[ScreenShaderIntensityIndex] * 8f + 1f;
+
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor * afterimageOffsetFactor;
                         drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * attackTimer / 180f);
 
@@ -1654,6 +1740,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     }
 
                     // Draw wings.
+                    duplicateColor *= npc.Opacity;
                     spriteBatch.Draw(wingOutlineTexture, drawPosition, wingFrame, duplicateColor, npc.rotation, wingFrame.Size() / 2f, npc.scale * 2f, direction, 0f);
                     spriteBatch.Draw(wingTexture, drawPosition, wingFrame, duplicateColor, npc.rotation, wingFrame.Size() / 2f, npc.scale * 2f, direction, 0f);
 
@@ -1679,6 +1766,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             baseColor *= baseColorOpacity;
             void DrawInstance(Vector2 drawPosition, Color color, Color? tentacleDressColorOverride = null)
             {
+                color *= npc.Opacity;
+
                 // Draw wings. This involves usage of a shader to give the wing texture.
                 spriteBatch.Draw(wingOutlineTexture, drawPosition, wingFrame, color, npc.rotation, wingFrame.Size() / 2f, npc.scale * 2f, direction, 0f);
 
@@ -1738,17 +1827,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackType == EmpressOfLightAttackType.RainbowWispForm && npc.Infernum().ExtraAI[0] > 0f)
+            if ((attackType == EmpressOfLightAttackType.RainbowWispForm && npc.Infernum().ExtraAI[0] > 0f) || attackType == EmpressOfLightAttackType.DeathAnimation)
             {
+                int instanceCount = 10;
                 float wispInterpolant = npc.Infernum().ExtraAI[0];
-                for (int i = 0; i < 10; i++)
+                float wispOffset = 20f;
+                List<float> wispOffsetFactors = new() { 1f };
+                if (attackType == EmpressOfLightAttackType.DeathAnimation)
                 {
-                    Color wispColor = Main.hslToRgb((Main.GlobalTimeWrappedHourly * 0.6f + 0.2f + i / 10f) % 1f, 1f, 0.5f) * baseColorOpacity * 0.2f;
-                    wispColor = Color.Lerp(baseColor, wispColor, wispInterpolant);
-                    wispColor.A /= 6;
+                    wispInterpolant = npc.Infernum().ExtraAI[ScreenShaderIntensityIndex];
+                    wispOffset += wispInterpolant * 350f + npc.Infernum().ExtraAI[1] * 900f;
 
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * wispInterpolant * 20f;
-                    DrawInstance(baseDrawPosition + drawOffset, wispColor, wispColor);
+                    int offsetCount = 30;
+                    for (int i = 0; i < offsetCount; i++)
+                        wispOffsetFactors.Insert(0, i / (float)(offsetCount - 1f));
+                }
+
+                foreach (float offsetFactor in wispOffsetFactors)
+                {
+                    for (int i = 0; i < instanceCount; i++)
+                    {
+                        float spinFactor = 1f;
+                        Color wispColor = Main.hslToRgb((Main.GlobalTimeWrappedHourly * offsetFactor * 0.6f + 0.2f + i / (float)instanceCount) % 1f, 1f, 0.5f) * baseColorOpacity * 0.2f;
+                        wispColor = Color.Lerp(baseColor, wispColor, wispInterpolant);
+                        if (wispOffsetFactors.Count >= 2)
+                        {
+                            // Uses a factor of the golden ratio to ensure that angles are less likely to unwind into unnatural streaks.
+                            spinFactor = (1f - offsetFactor + 0.25f) * 0.6180339f * 1.5f;
+                            wispColor *= 1f - offsetFactor;
+                        }
+
+                        wispColor.A /= 6;
+
+                        Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * spinFactor * 3f).ToRotationVector2() * wispInterpolant * wispOffset * offsetFactor;
+                        DrawInstance(baseDrawPosition + drawOffset, wispColor, wispColor);
+                    }
                 }
 
                 Color baseInstanceColor = baseColor;
@@ -1889,6 +2002,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float currentPhase = npc.ai[2];
             EmpressOfLightAttackType attackType = (EmpressOfLightAttackType)npc.ai[0];
             return currentPhase >= 1f && (attackType != EmpressOfLightAttackType.EnterSecondPhase || attackTimer >= SecondPhaseFadeoutTime);
+        }
+
+        public static bool HandleDeathEffects(NPC npc)
+        {
+            // Just die as usual if the Empress of Light is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            if (npc.ai[0] == (int)EmpressOfLightAttackType.DeathAnimation)
+                return true;
+
+            ClearAwayEntities();
+            SelectNextAttack(npc);
+            npc.ai[0] = (int)EmpressOfLightAttackType.DeathAnimation;
+            npc.life = npc.lifeMax;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
         }
 
         public static bool InPhase3(NPC npc) => npc.ai[2] >= 2f;

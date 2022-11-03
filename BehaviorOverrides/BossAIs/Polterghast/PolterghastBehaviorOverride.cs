@@ -556,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int chargeTime = 45;
             int ectoplasmPerRing = 8;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float offsetPerRing = 245f;
+            float offsetPerRing = 296f;
             float maxRingOffset = 4000f;
             float chargeSpeed = 36f;
             float spinAngularVelocity = MathHelper.ToRadians(0.75f);

@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -25,8 +26,6 @@ using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using System.Linq;
-using InfernumMode.Projectiles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -256,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, enrageTimer, ref frame, ref attackTimer);
                         break;
                     case TwinsAttackType.SlowLaserRayAndPlasmaBlasts:
-                        DoBehavior_SlowLaserRayAndPlasmaBlasts(npc, target, hoverSide, ref enrageTimer, ref frame, ref attackTimer);
+                        DoBehavior_SlowLaserRayAndPlasmaBlasts(npc, target, ref enrageTimer, ref frame, ref attackTimer);
                         break;
                 }
             }
@@ -462,7 +461,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         smokeVelocity *= 2f;
                         GeneralParticleHandler.SpawnParticle(new HeavySmokeParticle(npc.Center, smokeVelocity, smokeColor, 56, 3f, 1f));
                     }
-                    ScreenShakeProj.CreateShockwave(npc.Center - npc.velocity * 4f, Color.Transparent, 0.01f);
+                    Utilities.CreateShockwave(npc.Center);
 
                     npc.life = 0;
                     npc.HitEffect();
@@ -701,7 +700,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 else if (wrappedAttackTimer == flamethrowerHoverTime + 15f)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
-                    ScreenShakeProj.CreateShockwave(npc.Center - npc.velocity * 4f, Color.Transparent, 0.01f);
+                    Utilities.CreateShockwave(npc.Center - npc.velocity * 4f);
 
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -911,7 +910,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
                         SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, npc.Center);
-                        ScreenShakeProj.CreateShockwave(npc.Center, Color.Transparent, 0.01f);
+                        Utilities.CreateShockwave(npc.Center);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 
@@ -976,7 +975,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 return;
             }
 
-            int shootDelay = 64;
+            int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4;
             float spinRadius = 640f;
             float spinArc = MathHelper.Pi * 1.1f;
 
@@ -1040,9 +1039,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, -hoverOffsetDirection.ToRotationVector2(), ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), 0, 0f);
-                            if (Main.projectile.IndexInRange(telegraph))
-                                Main.projectile[telegraph].ai[1] = npc.whoAmI;
+                            for (int i = 0; i < 2; i++)
+                            {
+                                int telegraph = Utilities.NewProjectileBetter(npc.Center, -hoverOffsetDirection.ToRotationVector2(), ModContent.ProjectileType<ArtemisLaserbeamTelegraph>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(telegraph))
+                                {
+                                    Main.projectile[telegraph].ai[0] = npc.whoAmI;
+                                    Main.projectile[telegraph].ai[1] = MathHelper.Lerp(-0.62f, 0.62f, i);
+                                }
+                            }
                         }
                     }
 
@@ -1051,10 +1056,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     {
                         attackTimer = 0f;
                         attackSubstate = 2f;
-                        spinDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        spinDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2) > 0f).ToDirectionInt();
                         npc.netUpdate = true;
 
                         SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
+
+                        // Create an incredibly violent screen shake effect.
+                        Utilities.CreateShockwave(npc.Center, 10, 15, 125f);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -1237,7 +1245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 frame += 60f;
         }
 
-        public static void DoBehavior_SlowLaserRayAndPlasmaBlasts(NPC npc, Player target, float hoverSide, ref float enrageTimer, ref float frame, ref float attackTimer)
+        public static void DoBehavior_SlowLaserRayAndPlasmaBlasts(NPC npc, Player target, ref float enrageTimer, ref float frame, ref float attackTimer)
         {
             int apolloShootRate = 70;
             int laserbeamTelegraphTime = 60;
@@ -1280,8 +1288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float spinDirection = ref artemis.Infernum().ExtraAI[2];
             ref float spinningPointX = ref artemis.Infernum().ExtraAI[3];
             ref float spinningPointY = ref artemis.Infernum().ExtraAI[4];
-            hoverSide = 1f;
-            Vector2 artemisHoverDestination = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY * spinRadius * hoverSide;
+            Vector2 artemisHoverDestination = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY * spinRadius;
 
             // Have Artemis cast a telegraph that indicates where the laserbeam will appear.
             if (npc.type == ModContent.NPCType<Artemis>())
@@ -1345,7 +1352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     frame += 10f;
                     float spinAngle = (attackTimer - laserbeamTelegraphTime) / laserbeamSweepTime * spinArc * -spinDirection;
                     npc.velocity = Vector2.Zero;
-                    npc.Center = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY.RotatedBy(spinAngle) * spinRadius * hoverSide;
+                    npc.Center = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY.RotatedBy(spinAngle) * spinRadius;
                     npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
                 }
                 else if (artemisHasRepositioned == 1f)
@@ -1359,7 +1366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         npc.netUpdate = true;
                     }
                     npc.Center = artemisHoverDestination;
-                    npc.rotation = hoverSide == 1f ? 0f : MathHelper.Pi;
+                    npc.rotation = 0f;
                     npc.velocity = Vector2.Zero;
                 }
             }
@@ -1388,7 +1395,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * plasmaBlastShootSpeed;
                         Utilities.NewProjectileBetter(plasmaShootCenter, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
 
-                        apolloAngularHoverOffset += MathHelper.TwoPi * hoverSide / 7f;
+                        apolloAngularHoverOffset += MathHelper.TwoPi / 7f;
                         npc.netUpdate = true;
                     }
                 }

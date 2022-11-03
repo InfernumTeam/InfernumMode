@@ -30,7 +30,16 @@ float4 Filter(float2 coords : TEXCOORD0) : COLOR0
     float distanceFromCenter = saturate(distance(coords, 0.5) * 1.414);
     float vignetteStart = lerp(1, 0.85, uIntensity);
     float vignetteOpacity = GetLerpValue(vignetteStart, distanceFromCenter, 1);
-    return color * lerp(0.7, 1, vignetteOpacity);
+    
+    float4 vignetteColor = color * lerp(0.7, 1, vignetteOpacity);
+    float luminosity = (vignetteColor.r + vignetteColor.g + vignetteColor.b) / 3;
+    float4 blendColor;
+    if (length(uColor) < 0.5)
+        blendColor = float4((uColor * vignetteColor.rgb * 2.0) * (1.0 - uColor.rgb * 2.0), 1);
+    else
+        blendColor = float4(vignetteColor.rgb * (1.0 - uColor.rgb) + sqrt(vignetteColor.rgb) * (uColor.rgb * 2.0 - 1.0), 1);
+    
+    return lerp(vignetteColor, blendColor, uOpacity * 0.6) * (1.0 + luminosity * uOpacity * 1.7);
 }
 
 technique Technique1

@@ -49,6 +49,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
         public const float Phase3LifeRatio = 0.3f;
 
+        public const float DespawnDistance = 4700f;
+
+        public const float MaxScale = 3f;
+
+        public const float MinScale = 1.85f;
+
+        public static readonly Vector2 HitboxScaleFactor = new(108f, 88f);
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -69,7 +77,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             ref float jewelSummonTimer = ref npc.localAI[1];
             ref float teleportDirection = ref npc.Infernum().ExtraAI[5];
 
-            bool shouldNotChangeScale = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Constantly give the target Weak Pertrification in boss rush.
@@ -79,41 +86,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
             }
 
-            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
+            // Despawn if the target is gone or too far away.
+            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, DespawnDistance))
             {
                 npc.TargetClosest();
                 if (!Main.player[npc.target].active || Main.player[npc.target].dead)
                 {
-                    npc.velocity.X *= 0.8f;
-                    if (Math.Abs(npc.velocity.X) < 0.1f)
-                        npc.velocity.X = 0f;
-
-                    npc.dontTakeDamage = true;
-                    npc.damage = 0;
-
-                    // Release slime dust to accompany the teleport.
-                    for (int i = 0; i < 30; i++)
-                    {
-                        Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
-                        slime.noGravity = true;
-                        slime.velocity *= 0.5f;
-                    }
-
-                    npc.scale *= 0.97f;
-                    if (npc.timeLeft > 30)
-                        npc.timeLeft = 30;
-                    npc.position.X += npc.width / 2;
-                    npc.position.Y += npc.height / 2;
-                    npc.width = (int)(108f * npc.scale);
-                    npc.height = (int)(88f * npc.scale);
-                    npc.position.X -= npc.width / 2;
-                    npc.position.Y -= npc.height / 2;
-
-                    if (npc.scale < 0.7f || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
-                    {
-                        npc.active = false;
-                        npc.netUpdate = true;
-                    }
+                    DoBehavior_Despawn(npc);
                     return false;
                 }
             }
@@ -121,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 npc.timeLeft = 3600;
 
             float oldScale = npc.scale;
-            float idealScale = MathHelper.Lerp(1.85f, 3f, lifeRatio);
+            float idealScale = MathHelper.Lerp(MaxScale, MinScale, 1f - lifeRatio);
             npc.scale = idealScale;
 
             if (npc.localAI[2] == 0f)
@@ -141,6 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 }
             }
 
+            // Summon the jewel for the first time when King Slime enters the first phase. This waits until King Slime isn't teleporting to happen.
             if (npc.life < npc.lifeMax * Phase2LifeRatio && jewelSummonTimer == 0f && npc.scale >= 0.8f)
             {
                 Vector2 jewelSpawnPosition = target.Center - Vector2.UnitY * 350f;
@@ -150,8 +130,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
                 jewelSummonTimer = 1f;
+                npc.netUpdate = true;
             }
 
+            // Resummon the jewel if it's gone and enough time has passed.
             if (!NPC.AnyNPCs(ModContent.NPCType<KingSlimeJewel>()) && jewelSummonTimer >= 1f)
             {
                 jewelSummonTimer++;
@@ -183,12 +165,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     break;
             }
 
-            if (!shouldNotChangeScale && oldScale != npc.scale)
+            // Update the hitbox based on the current scale if it changed.
+            if (oldScale != npc.scale)
             {
-                npc.position = npc.Bottom;
-                npc.width = (int)(108f * npc.scale);
-                npc.height = (int)(88f * npc.scale);
-                npc.Bottom = npc.position;
+                npc.position = npc.Center;
+                npc.Size = HitboxScaleFactor * npc.scale;
+                npc.Center = npc.position;
             }
 
             if (npc.Opacity > 0.7f)
@@ -198,6 +180,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_Despawn(NPC npc)
+        {
+            // Rapidly cease any horizontal movement, to prevent weird sliding behaviors
+            npc.velocity.X *= 0.8f;
+            if (Math.Abs(npc.velocity.X) < 0.1f)
+                npc.velocity.X = 0f;
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
+            // Release slime dust to accompany the despawn behavior.
+            for (int i = 0; i < 30; i++)
+            {
+                Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                slime.noGravity = true;
+                slime.velocity *= 0.5f;
+            }
+
+            // Shrink over time.
+            npc.scale *= 0.97f;
+            if (npc.timeLeft > 30)
+                npc.timeLeft = 30;
+
+            // Update the hitbox based on the current scale.
+            npc.position = npc.Center;
+            npc.Size = HitboxScaleFactor * npc.scale;
+            npc.Center = npc.position;
+
+            // Despawn if sufficiently small. This is bypassed if the target is sufficiently far away, in which case the despawn happens immediately.
+            if (npc.scale < 0.7f || !npc.WithinRange(Main.player[npc.target].Center, DespawnDistance))
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_SmallJump(NPC npc, ref Player target, ref float attackTimer)
@@ -265,6 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (attackTimer < digTime)
             {
+                // Rapidly cease any horizontal movement, to prevent weird sliding behaviors
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
@@ -283,8 +303,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 }
             }
 
+            // Perform the teleport. 
             if (attackTimer == digTime)
             {
+                // Initialize the teleport direction as on the right if it has not been defined yet.
                 if (teleportDirection == 0f)
                     teleportDirection = 1f;
 
@@ -302,6 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     new CustomTileConditions.ActiveAndNotActuated()
                 }), out Point newBottom);
 
+                // Decide the teleport position and prepare the teleport direction for next time by making it go to the other side.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Bottom = newBottom.ToWorldCoordinates(8, -16);

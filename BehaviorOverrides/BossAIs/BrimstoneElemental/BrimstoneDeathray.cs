@@ -69,6 +69,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
             Projectile.Center = OwnerEyePosition;
             Projectile.Center -= Projectile.velocity * 30;
+
+            if (Projectile.timeLeft == 10)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    return;
+
+                int petalDamage = 130;
+                for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
+                {
+                    Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        Vector2 petalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * i) * 8f;
+                        if (BossRushEvent.BossRushActive)
+                            petalVelocity *= 1.85f;
+                        Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), petalDamage, 0f);
+                    }
+                }
+            }
         }
 
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width*0.5f;
@@ -101,21 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void Kill(int timeLeft)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            int petalDamage = 130;
-            for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
-            {
-                Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;
-                for (int i = -1; i <= 1; i++)
-                {
-                    Vector2 petalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * i) * 8f;
-                    if (BossRushEvent.BossRushActive)
-                        petalVelocity *= 1.85f;
-                    Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), petalDamage, 0f);
-                }
-            }
+            
         }
 
         public override bool? CanDamage() => Time > 10f ? null : false;

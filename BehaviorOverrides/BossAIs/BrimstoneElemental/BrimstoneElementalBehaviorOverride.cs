@@ -740,10 +740,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             float lifeRatio = npc.life / (float)npc.lifeMax;
             List<BrimmyAttackType> possibleAttacks = new()
             {
-                //BrimmyAttackType.FlameChargeSkullBlasts,
-                //BrimmyAttackType.BrimstoneRoseBurst,
-                //BrimmyAttackType.BrimstoneRoseBurst,
-                //BrimmyAttackType.FlameTeleportBombardment,
+                BrimmyAttackType.FlameChargeSkullBlasts,
+                BrimmyAttackType.BrimstoneRoseBurst,
+                BrimmyAttackType.BrimstoneRoseBurst,
+                BrimmyAttackType.FlameTeleportBombardment,
                 BrimmyAttackType.GrimmBulletHellCopyLmao
             };
             possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < Phase2LifeRatio);

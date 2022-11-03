@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 if (Projectile.timeLeft > 1080f)
-                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * 20f, 0.05f);
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * 18f, 0.032f);
             }
             else
                 Projectile.velocity *= 0.985f;

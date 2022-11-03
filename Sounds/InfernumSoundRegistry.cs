@@ -56,6 +56,10 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
+        public static readonly SoundStyle PolterghastDash = new("InfernumMode/Sounds/Custom/PolterDash");
+
+        public static readonly SoundStyle PolterghastShortDash = new("InfernumMode/Sounds/Custom/PolterDashShort");
+
         public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/PolterghastDeath");
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");

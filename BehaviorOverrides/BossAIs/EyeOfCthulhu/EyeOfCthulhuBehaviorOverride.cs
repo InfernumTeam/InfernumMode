@@ -188,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     DoBehavior_BloodShots(npc, target, enraged, phase4, ref attackTimer);
                     break;
             }
-
+            // Store whether to use afterimages, accessed in PreDraw().
             npc.Infernum().ExtraAI[5] = drawAfterimages.ToInt();
             attackTimer++;
             return false;
@@ -775,10 +775,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Vector2 eyeOrigin = eyeTexture.Size() / new Vector2(1f, Main.npcFrameCount[npc.type]) * 0.5f;
 
             // Afterimages
+            // This is changed by attacks when needed.
+            bool drawAfterimages = npc.Infernum().ExtraAI[5] == 1;
             int afterimageCount = 7;
             Color color = lightColor;
             Color afterimageEndColor = Color.White;
-            if(CalamityConfig.Instance.Afterimages)
+            if(CalamityConfig.Instance.Afterimages && drawAfterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {

@@ -11,6 +11,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -335,6 +336,16 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
                 return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);
+
+            if(npc.type == ModContent.NPCType<PerforatorHive>() && OverridingListManager.Registered(npc.type))
+            {
+                npc.Infernum().ExtraAI[3] = 1;
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+                npc.active = true;
+                npc.netUpdate = true;
+                return false;
+            }
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() && OverridingListManager.Registered(npc.type))
             {

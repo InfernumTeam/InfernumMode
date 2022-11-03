@@ -6,6 +6,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Particles;
 using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -70,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float finalPhaseTransitionTimer = ref npc.ai[3];
             ref float backafterimageGlowInterpolant = ref npc.localAI[0];
             ref float backgroundStrength = ref npc.localAI[1];
-
+            ref float deathTimer = ref npc.Infernum().ExtraAI[3];
             // Reset certain things.
             npc.Calamity().DR = 0.2f;
             backafterimageGlowInterpolant = MathHelper.Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
@@ -83,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 DoDespawnEffects(npc);
                 return false;
-            }
+            }          
 
             bool inPhase2 = lifeRatio <= Phase2LifeRatio;
             bool inPhase3 = lifeRatio <= Phase3LifeRatio;
@@ -122,7 +124,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
 
                 finalPhaseTransitionTimer++;
+
                 backgroundStrength = Utils.GetLerpValue(45f, 150f, finalPhaseTransitionTimer, true);
+            }
+
+            if (deathTimer > 0)
+            {
+                npc.Calamity().ShouldCloseHPBar = true;
+                DoBehavior_DeathAnimation(npc, target, ref deathTimer);
+                deathTimer++;
+                return false;
             }
 
             switch ((PerforatorHiveAttackState)attackState)
@@ -161,6 +172,93 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player player, ref float deathTimer)
+        {
+            int animationLength = 130;
+
+            npc.dontTakeDamage = true;
+            float interpolant = deathTimer / animationLength;
+            // Rapidly come to a halt.
+            if (npc.velocity != Vector2.Zero)
+            {
+                npc.velocity *= 0.85f;
+            }
+
+            // Screenshake.
+            if (CalamityConfig.Instance.Screenshake)
+            {
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(0,8,interpolant);
+            }
+
+            // After a second, start releasing blood everywhere.
+            if (deathTimer >= 60)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 bloodSpawnPosition = npc.Center;
+                    Vector2 bloodVelocity = Main.rand.NextVector2CircularEdge(40, 40);
+
+                    Particle bloodParticle = new EoCBloodParticle(bloodSpawnPosition, bloodVelocity * 0.5f, 20, Main.rand.NextFloat(0.9f, 1.2f), (Main.rand.NextBool() ? Color.Crimson : Color.Gold) * 0.75f);
+                    GeneralParticleHandler.SpawnParticle(bloodParticle);
+                }
+            }
+            // Spawn a wave.
+            if(deathTimer == 120)
+            {
+                SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
+            }
+
+            // Die and drop loot.
+            if (deathTimer >= animationLength)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath19 with { Volume = 1.2f}, npc.Center);
+                npc.NPCLoot();
+                npc.active = false;
+
+                // Spawn visual stuff
+                // Spawn a few larger blood splatters
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 bloodVelocity = Main.rand.NextVector2CircularEdge(40, 40);
+                    Particle bloodSplatter = new BloodParticle2(npc.Center, bloodVelocity*0.05f, 30, Main.rand.NextFloat(0.85f, 1f), Color.Crimson);
+                    GeneralParticleHandler.SpawnParticle(bloodSplatter);
+                }
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 velocity = -Vector2.UnitY.RotatedByRandom(1.3f) * Main.rand.NextFloat(2f, 3.5f);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, velocity*0.5f, ModContent.ProjectileType<IchorBlast>(), 0, 0, player.whoAmI);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, -velocity, ModContent.ProjectileType<IchorBlob>(), 0, 0, player.whoAmI);
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Vector2 bloodVelocity = Main.rand.NextVector2CircularEdge(40, 40);
+
+                        Particle bloodParticle = new EoCBloodParticle(npc.Center, bloodVelocity * 0.5f, 120, Main.rand.NextFloat(0.9f, 1.2f), (Main.rand.NextBool() ? Color.Crimson : Color.Gold) * 0.75f);
+                        GeneralParticleHandler.SpawnParticle(bloodParticle);
+                    }
+                }
+
+                // Spawn some enemies to make it appear they burst out of the hive.
+                int crimeraCount = Main.rand.Next(2,5);
+                int leechCount = Main.rand.Next(2, 5);
+
+                for (int i = 0; i < crimeraCount; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(120, 120);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + offset.X), (int)(npc.Center.Y + offset.Y), NPCID.Crimera);
+                }
+                for (int i = 0; i < leechCount; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(120, 120);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X + offset.X), (int)(npc.Center.Y + offset.Y), NPCID.GiantWormHead);
+                }
+
+            }
         }
 
         public static void HandleWormPhaseTriggers(NPC npc, bool inPhase2, bool inPhase3, bool inPhase4, ref float attackState, ref float wormSummonState)
@@ -366,6 +464,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             float offsetAngle = MathHelper.Lerp(-0.55f, 0.55f, projectileOffsetInterpolant);
                             Vector2 ichorVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6.5f;
                             Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), 75, 0f);
+                            CreateBloodParticles(npc.Center + ichorVelocity *3f, ichorVelocity, Main.rand.NextBool() ? Color.Red : Color.Gold, 60);
                         }
 
                         attackTimer = 0f;
@@ -558,6 +657,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             Vector2 shootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 3.5f;
                             shootVelocity = shootVelocity.RotatedBy(offsetAngle);
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<IchorBlast>(), 75, 0f);
+                            for (int j = 0; j < 3; j++)
+                                CreateBloodParticles(npc.Center + shootVelocity * 3f, shootVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red,60);
                         }
                         npc.netUpdate = true;
                     }
@@ -665,6 +766,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f);
                             if (Main.projectile.IndexInRange(blob))
                                 Main.projectile[blob].ai[1] = target.Center.Y;
+                            for(int i = 0; i < 10; i++)
+                                CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
                         }
                     }
                 }
@@ -685,6 +788,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f);
                             if (Main.projectile.IndexInRange(blob))
                                 Main.projectile[blob].ai[1] = target.Center.Y;
+                            for(int j = 0; j < chargeBlobCount*2; j++)
+                            CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
+
                         }
                     }
 
@@ -1159,6 +1265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int ichorWallShotCount = 5;
             int attackTime = 420;
             int attackTransitionDelay = 120;
+            int bloodReleaseRate = 10;
             float ichorWallSpacing = 40f;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
 
@@ -1241,7 +1348,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             Vector2 ichorVelocity = npc.SafeDirectionTo(mouthPosition) * 12f;
                             Utilities.NewProjectileBetter(mouthPosition, ichorVelocity, ModContent.ProjectileType<FallingIchorBlast>(), 85, 0f);
                         }
+                        
                     }
+                }
+                if(attackTimer % bloodReleaseRate == bloodReleaseRate - 1f)
+                {
+                    // Spawn blood particles below the hive.
+                    Vector2 bloodPosition = npc.Center + new Vector2(0, 70) + new Vector2(Main.rand.NextFloat(-10, 10));
+                    Vector2 bloodVelocity = npc.SafeDirectionTo(bloodPosition) * 2;
+                    CreateBloodParticles(bloodPosition, bloodVelocity.RotatedBy(MathHelper.ToRadians(Main.rand.NextFloat(-20, 20))), Main.rand.NextBool(3) ? Color.Gold : Color.Crimson, 30);
                 }
             }
 
@@ -1299,6 +1414,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         #endregion AI
 
         #region Drawcode
+
+        public static void CreateBloodParticles(Vector2 spawnPosition, Vector2 velocity, Color color, int lifetime)
+        {
+            // Spawn blood particles to add atmosphere
+            Particle blood = new EoCBloodParticle(spawnPosition, velocity*2, lifetime, Main.rand.NextFloat(0.7f, 1f), color, 3);
+            GeneralParticleHandler.SpawnParticle(blood);
+        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {

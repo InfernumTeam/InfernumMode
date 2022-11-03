@@ -826,10 +826,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 float circleAngle = 0f;
                 Texture2D vineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine", AssetRequestMode.ImmediateLoad).Value;
-                Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose", AssetRequestMode.ImmediateLoad).Value;
+                Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRoseBorder", AssetRequestMode.ImmediateLoad).Value;
                 Vector2 vineOrigin = vineTexture.Size() * 0.5f;
                 Vector2 roseOrigin = roseTexture.Size() * 0.5f;
-
                 while (circleAngle < MathHelper.TwoPi)
                 {
                     float vineRotation = circleAngle;
@@ -844,12 +843,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     if (roseRNG.NextBool(4))
                     {
                         float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
-                        float roseScale = roseRNG.NextFloat(0.5f, 0.8f);
+                        float roseScale = roseRNG.NextFloat(0.7f, 1f);
                         Vector2 rosePosition = drawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
                         Main.spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
                     }
                 }
             }
+
             return true;
         }
         #endregion

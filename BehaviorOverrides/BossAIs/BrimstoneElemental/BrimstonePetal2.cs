@@ -10,11 +10,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     public class BrimstonePetal2 : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public override string Texture => "InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstonePetal";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Petal");
+            Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+
         }
 
         public override void SetDefaults()
@@ -35,12 +40,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
 
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 8)
+            {
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+                Projectile.frameCounter = 0;
+            }
+
             Time++;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Projectile.type], frameY: Projectile.frame);
 
             for (int i = 0; i < 6; i++)
             {
@@ -48,10 +61,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 magicAfterimageColor.A = 0;
 
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * Projectile.Opacity * 4f;
-                Main.spriteBatch.Draw(texture, drawPosition, null, magicAfterimageColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, sourceRectangle, magicAfterimageColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

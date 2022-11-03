@@ -17,6 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Rose");
+            Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
@@ -42,6 +43,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
+
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 8)
+            {
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+                Projectile.frameCounter = 0;
+            }
 
             Time++;
         }

@@ -110,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
             NPC initialMech = ExoMechManagement.FindInitialMech();
-            NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
+            NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)complementMechIndex]) ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
             // Continuously reset the telegraph line things.
@@ -300,7 +300,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
+
             npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.0065f, 0.2f);
+            if (npc.velocity.HasNaNs())
+            {
+                npc.velocity = Vector2.Zero;
+                npc.rotation = 0f;
+            }
 
             attackTimer++;
             return false;

@@ -23,6 +23,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
+using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
@@ -337,15 +338,8 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
                 return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);
 
-            if(npc.type == ModContent.NPCType<PerforatorHive>() && OverridingListManager.Registered(npc.type))
-            {
-                npc.Infernum().ExtraAI[3] = 1;
-                npc.life = 1;
-                npc.dontTakeDamage = true;
-                npc.active = true;
-                npc.netUpdate = true;
-                return false;
-            }
+            if (npc.type == NPCID.HallowBoss && OverridingListManager.Registered(NPCID.HallowBoss))
+                return EmpressOfLightBehaviorOverride.HandleDeathEffects(npc);
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() && OverridingListManager.Registered(npc.type))
             {

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Cryogen;
@@ -19,6 +20,7 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
+using InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
@@ -354,6 +356,8 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
                 return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);
 
+            if (npc.type == ModContent.NPCType<BrimstoneElemental>() && OverridingListManager.Registered(npc.type))
+                return BrimstoneElementalBehaviorOverride.HandleDeathEffects(npc);
 
             if (npc.type == NPCID.HallowBoss && OverridingListManager.Registered(NPCID.HallowBoss))
                 return EmpressOfLightBehaviorOverride.HandleDeathEffects(npc);

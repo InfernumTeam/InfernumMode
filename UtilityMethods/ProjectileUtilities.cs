@@ -48,7 +48,10 @@ namespace InfernumMode
                     continue;
 
                 if (setToInactive)
+                {
                     Main.projectile[i].active = false;
+                    Main.projectile[i].netUpdate = true;
+                }
                 else
                     Main.projectile[i].Kill();
             }

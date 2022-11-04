@@ -11,6 +11,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Sounds/Custom/AresPulseCannonCharge");
 
+        public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Sounds/Custom/BrimstoneElementalShellGroundHit");
+
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
         public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Sounds/Custom/DeerclopsRubbleAttackDistorted");

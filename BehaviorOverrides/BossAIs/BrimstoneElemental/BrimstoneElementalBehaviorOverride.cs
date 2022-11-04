@@ -13,6 +13,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -787,6 +788,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         float fireScale = Main.rand.NextFloat(0.6f, 0.95f) * (flameScaleFactor + 1f);
                         Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.56f, 0.9f));
+                        fireColor = Color.Lerp(fireColor, Color.HotPink, (float)Math.Pow(Main.rand.NextFloat(0.5f), 2D));
+
                         Vector2 fireVelocity = -Vector2.UnitY.RotatedByRandom(0.93f) * Main.rand.NextFloat(0.6f, 5.4f);
                         Vector2 fireSpawnPosition = npc.Center + (MathHelper.TwoPi * i / flameCount + flameOffsetAngle).ToRotationVector2() * flameOffsetRadius + Main.rand.NextVector2Circular(7f, 7f);
                         HeavySmokeParticle fire = new(fireSpawnPosition, fireVelocity, fireColor, 20, fireScale, 1f, 0.01f, true);

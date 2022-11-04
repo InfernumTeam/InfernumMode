@@ -7,6 +7,7 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
@@ -846,7 +847,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a telegraph before the attack begins as a warning.
             if (attackTimer == 1f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with { Volume = 3f });
 
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
@@ -860,6 +861,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Periodically release lasers from the sides.
             if (Main.netMode != NetmodeID.MultiplayerClient && coolingOff == 0f && attackTimer % 60f == 59f)
             {
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 for (int i = 0; i < 3; i++)
                 {
                     int type = ModContent.ProjectileType<DetatchedThanatosLaser>();

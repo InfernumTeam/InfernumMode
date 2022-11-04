@@ -57,7 +57,7 @@ namespace InfernumMode.Systems
             ActivationTextKey = "Mods.InfernumMode.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.InfernumText2";
 
-            ActivationSound = InfernumSoundRegistry.AresLaughSound;
+            ActivationSound = InfernumSoundRegistry.ModeToggleLaugh;
 
             ChatTextColor = Color.DarkRed;
 

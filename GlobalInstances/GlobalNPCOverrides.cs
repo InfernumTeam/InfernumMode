@@ -29,6 +29,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
@@ -431,6 +432,10 @@ namespace InfernumMode.GlobalInstances
                     npc.dontTakeDamage = true;
                     return false;
                 }
+
+                // Enter the death animation state if the other twin has a shield or if alone.
+                if (NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 || otherTwinHasCreatedShield)
+                    return TwinsAttackSynchronizer.PrepareForDeathAnimation(npc);
             }
 
             if (npc.type == NPCID.CultistBoss && OverridingListManager.Registered(npc.type))

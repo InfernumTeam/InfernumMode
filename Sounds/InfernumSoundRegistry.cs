@@ -1,4 +1,3 @@
-using System.Threading;
 using Terraria.Audio;
 
 namespace InfernumMode.Sounds
@@ -47,6 +46,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
         
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");
+
+        public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Sounds/Custom/ModeToggleLaugh");
 
         public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelHit") with { Volume = 1.8f };
 

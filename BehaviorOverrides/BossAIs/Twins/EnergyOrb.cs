@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 40;
-            NPC.damage = 120;
+            NPC.damage = 136 / 2;
             NPC.lifeMax = 1500000;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;

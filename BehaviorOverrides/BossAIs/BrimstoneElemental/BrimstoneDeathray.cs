@@ -1,12 +1,10 @@
 using CalamityMod;
-using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
@@ -90,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width*0.5f;
+        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * 0.5f;
 
         public static Color LaserColorFunction(float completionRatio)
         {
@@ -116,11 +114,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
             return false;
-        }
-
-        public override void Kill(int timeLeft)
-        {
-            
         }
 
         public override bool? CanDamage() => Time > 10f ? null : false;

@@ -314,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoLaughEffect(NPC npc, Player target)
         {
-            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f }, target.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 5f });
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
         }
@@ -446,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 6)
                 attackTime = 900;
 
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 410f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
             if (attackTimer > attackTime)

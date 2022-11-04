@@ -361,9 +361,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 }
 
                 if (npc.type == NPCID.Spazmatism)
-                    DoAI_SpazmatismAlone(npc, ref chargingFlag);
+                    DoBehavior_SpazmatismAlone(npc, ref chargingFlag);
                 else
-                    DoAI_RetinazerAlone(npc, ref chargingFlag);
+                    DoBehavior_RetinazerAlone(npc, ref chargingFlag);
 
                 // Progress with the charge animation.
                 chargeFlameTimer = MathHelper.Clamp(chargeFlameTimer + (chargingFlag == 1f ? 1f : -3f), 0f, 15f);
@@ -862,13 +862,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             DanceOfLightnings
         }
 
-        public static void DoAI_RetinazerAlone(NPC npc, ref float chargingFlag)
+        public static void DoBehavior_RetinazerAlone(NPC npc, ref float chargingFlag)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackTimer = ref npc.Infernum().ExtraAI[10];
             ref float attackState = ref npc.Infernum().ExtraAI[11];
             ref float lightningAttackTimer = ref npc.Infernum().ExtraAI[12];
             ref float burstCounter = ref npc.Infernum().ExtraAI[13];
+            ref float telegraphDirection = ref npc.Infernum().ExtraAI[14];
+            ref float telegraphOpacity = ref npc.Infernum().ExtraAI[15];
+            ref float laserbeamShootCounter = ref npc.Infernum().ExtraAI[16];
 
             int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.GetLerpValue(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && lightningAttackTimer >= lightningShootRate)
@@ -931,9 +934,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     break;
                 case RetinazerAttackState.LaserBarrage:
-                    destination = Target.Center - Vector2.UnitY * 400f;
-                    destination.X -= Math.Sign(Target.Center.X - npc.Center.X) * 1100f;
+                    int telegraphAimTime = 54;
+                    int laserShootRate = 24;
+                    int laserbeamShootCount = 3;
+                    destination = Target.Center - Vector2.UnitY * 360f;
+                    destination.X -= Math.Sign(Target.Center.X - npc.Center.X) * 600f;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 28f, 1.1f);
+
+                    // Aim for longer on the first shot.
+                    if (laserbeamShootCounter <= 0f)
+                        telegraphAimTime += 56;
 
                     if (npc.WithinRange(destination, 38f))
                     {
@@ -942,27 +952,58 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
 
                     int barrageBurstTime = 120;
-                    if (attackTimer < AimedDeathray.TelegraphTime + 30f)
+                    if (attackTimer < telegraphAimTime)
                         npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(Target.Center + Target.velocity * 27f) - MathHelper.PiOver2, 0.1f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < barrageBurstTime && attackTimer % 15f == 14f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < barrageBurstTime && attackTimer % laserShootRate == laserShootRate - 1f)
                     {
-                        Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 10f;
+                        Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedByRandom(0.12f) * 7f;
                         if (BossRushEvent.BossRushActive)
                             laserVelocity *= 2.1f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 3.6f, laserVelocity, ProjectileID.DeathLaser, 140, 0f);
                         Main.projectile[laser].tileCollide = false;
                     }
-                    if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
+
+                    // Aim telegraphs.
+                    if (attackTimer >= 30f && attackTimer < telegraphAimTime)
                     {
-                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 140, 0f);
-                        Main.projectile[deathRay].ai[1] = npc.whoAmI;
+                        // Initialize the telegraph direction.
+                        if (attackTimer == 30f)
+                        {
+                            telegraphDirection = npc.AngleTo(Target.Center);
+                            telegraphOpacity = 0.01f;
+                            npc.netUpdate = true;
+                        }
+
+                        telegraphOpacity = MathHelper.Clamp(telegraphOpacity + 0.04f, 0f, 1f);
+                        telegraphDirection = npc.rotation + MathHelper.PiOver2;
                     }
 
-                    if (attackTimer >= AimedDeathray.TelegraphTime + AimedDeathray.LaserDamageTime + 45f)
+                    // Create a powerful boom effect and release the aimed deathray.
+                    if (attackTimer == telegraphAimTime)
+                    {
+                        Utilities.CreateShockwave(npc.Center, 2, 5, 142f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 175, 0f);
+                            if (Main.projectile.IndexInRange(deathRay))
+                                Main.projectile[deathRay].ai[1] = npc.whoAmI;
+                            telegraphOpacity = 0f;
+                            npc.netUpdate = true;
+                        }
+                    }
+
+                    if (attackTimer >= telegraphAimTime + AimedDeathray.LifetimeConst + 48f)
                     {
                         attackTimer = 0f;
-                        attackState = (int)RetinazerAttackState.DanceOfLightnings;
+
+                        if (laserbeamShootCounter < laserbeamShootCount - 1f)
+                            laserbeamShootCounter++;
+                        else
+                        {
+                            attackState = (int)RetinazerAttackState.DanceOfLightnings;
+                            laserbeamShootCounter = 0f;
+                        }
                         npc.netUpdate = true;
                     }
                     break;
@@ -971,7 +1012,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     int slowdownTime = 180;
                     int fadeInTime = 30;
                     int laserReleaseRate = 20;
-                    int chargeTime = 180;
+                    int chargeTime = 120;
                     float chargeSpeed = 19f;
                     if (attackTimer <= fadeOutTime)
                     {
@@ -1045,7 +1086,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             CursedFlameCarpetBomb
         }
 
-        public static void DoAI_SpazmatismAlone(NPC npc, ref float chargingFlag)
+        public static void DoBehavior_SpazmatismAlone(NPC npc, ref float chargingFlag)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackTimer = ref npc.Infernum().ExtraAI[10];

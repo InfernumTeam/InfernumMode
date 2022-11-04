@@ -275,6 +275,29 @@ namespace InfernumMode
             }
         }
 
+        public static void CreateCinderParticles(this Player target, float lifeRatio, int cinderType, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
+        {
+            int cinderSpawnRate = (int)MathHelper.Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);
+            float cinderFlySpeed = MathHelper.Lerp(maxCinderFlySpeed, minCinderFlySpeed, lifeRatio);
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (!Main.rand.NextBool(cinderSpawnRate) || Main.gfxQuality < 0.35f)
+                    continue;
+
+                Vector2 cinderSpawnOffset = new(Main.rand.NextFloatDirection() * 1550f, 650f);
+                Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
+                if (Main.rand.NextBool())
+                {
+                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-MathHelper.PiOver2) * new Vector2(0.9f, 1f);
+                    cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
+                }
+
+                if (Main.rand.NextBool(6))
+                    cinderVelocity.X *= -1f;
+                NewProjectileBetter(target.Center + cinderSpawnOffset, cinderVelocity, cinderType, 0, 0f);
+            }
+        }
         public static string InfernalRelicText
         {
             get

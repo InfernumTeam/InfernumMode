@@ -16,13 +16,14 @@ namespace InfernumMode.BaseEntities
 
         public virtual float MaxRandomScale => 1.2f;
 
+        public virtual int NumberOfFrames => 3;
         public ref float Time => ref Projectile.ai[0];
 
         public ref float Lifetime => ref Projectile.ai[1];
 
         public override void SetDefaults()
         {
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[Projectile.type] = NumberOfFrames;
             Projectile.width = Projectile.height = 4;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
@@ -38,6 +39,7 @@ namespace InfernumMode.BaseEntities
             // Decide a variant to use on the first frame this projectile exists.
             if (Projectile.localAI[0] == 0f)
             {
+                Initialize();
                 Projectile.frame = Main.rand.Next(Main.projFrames[Projectile.type]);
                 Projectile.localAI[0] = 1f;
             }
@@ -65,5 +67,10 @@ namespace InfernumMode.BaseEntities
 
             Time++;
         }
+        /// <summary>
+        /// Initialize fields in here. 
+        /// Runs on the first frame the cinder is alive.
+        /// </summary>
+        public virtual void Initialize() { }
     }
 }

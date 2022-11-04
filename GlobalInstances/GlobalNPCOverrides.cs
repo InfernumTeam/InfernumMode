@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -19,6 +20,7 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
+using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
@@ -274,6 +276,18 @@ namespace InfernumMode.GlobalInstances
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
         }
 
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            // Create Cryogens custom on hit effects.
+            if (npc.type == ModContent.NPCType<CryogenNPC>() && OverridingListManager.Registered(npc.type))
+            {
+                CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, crit);
+            }
+        }
+
         public override void HitEffect(NPC npc, int hitDirection, double damage)
         {
             if (!InfernumMode.CanUseCustomAIs)
@@ -285,6 +299,7 @@ namespace InfernumMode.GlobalInstances
                 SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
                 npc.soundDelay = 11;
             }
+
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

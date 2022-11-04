@@ -1,5 +1,9 @@
+using CalamityMod.Particles;
+using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
@@ -22,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
+            Projectile.alpha = 255;
         }
 
         public override void AI()
@@ -32,7 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 return;
             }
 
-            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
+            if (Projectile.alpha > 0)
+                Projectile.alpha -= 12; 
 
             if (Time < 65f)
                 OffsetRotation += MathHelper.TwoPi * 2f / 55f * Utils.GetLerpValue(30f, 60f, Time, true);
@@ -43,18 +49,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             if (Time <= 80f)
                 Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * MathHelper.Lerp(110f, 72f, SpeedPower);
-
+            else if (Time % 10 == 0)
+            {
+                // Leave a trail of particles.
+                Particle iceParticle = new SnowyIceParticle(Projectile.Center, Projectile.velocity * 0.5f, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
+                GeneralParticleHandler.SpawnParticle(iceParticle);
+            }
+            
             Projectile.rotation = Time > 80f ? Projectile.velocity.ToRotation() : Owner.AngleTo(Projectile.Center);
             Projectile.rotation -= MathHelper.PiOver2;
 
             Time++;
         }
 
-        public override Color? GetAlpha(Color lightColor)
-        {
-            return Main.dayTime ? new Color(50, 50, 255, 255 - Projectile.alpha) : new Color(255, 255, 255, Projectile.alpha);
-        }
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.alpha < 20;
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            float alpha = 1 - (float)Projectile.alpha / 255;
+            // Draw backglow effects.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Color afterimageColor = new Color(46, 188, 234, 0f) * 0.1f * alpha;
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            }
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White * alpha, Projectile.rotation, texture.Size() * 0.5f, 1, 0, 0);
+            return false;
+        }
     }
 }

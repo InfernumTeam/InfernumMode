@@ -1,8 +1,12 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Particles;
+using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,7 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
+            if (Projectile.alpha > 0)
+                Projectile.alpha -= 12;
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Time < 60f)
@@ -53,15 +58,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (Time > 60f && Projectile.velocity.Length() < 18f)
                 Projectile.velocity *= BossRushEvent.BossRushActive ? 1.02f : 1.01f;
 
+            if (Time % 10 == 0)
+            {
+                // Leave a trail of particles.
+                Particle iceParticle = new SnowyIceParticle(Projectile.Center, Projectile.velocity * 0.5f, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
+                GeneralParticleHandler.SpawnParticle(iceParticle);
+            }     
+
             Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.4f);
             Time++;
         }
 
-        public override Color? GetAlpha(Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            return Main.dayTime ? new Color(50, 50, 255, 255 - Projectile.alpha) : new Color(255, 255, 255, Projectile.alpha);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            float alpha = 1 - (float)Projectile.alpha / 255;
+            // Draw backglow effects.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Color afterimageColor = new Color(46, 188, 234, 0f) * 0.2f*alpha;
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            }
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White * alpha, Projectile.rotation, texture.Size() * 0.5f, 1, 0, 0);
+            return false;
         }
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 60f;
     }
 }

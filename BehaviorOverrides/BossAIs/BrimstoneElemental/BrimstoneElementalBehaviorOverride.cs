@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Spawn cinders
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                CreateCinders(lifeRatio);
+                target.CreateCinderParticles(lifeRatio, ModContent.ProjectileType<BrimstoneCinder>());
             }
 
             switch ((BrimmyAttackType)(int)attackType)
@@ -757,30 +757,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         #endregion AI
 
         #region Drawing
-
-        public void CreateCinders(float lifeRatio)
-        {
-            int cinderSpawnRate = (int)MathHelper.Lerp(3.5f, 12f, lifeRatio);
-            float cinderFlySpeed = MathHelper.Lerp(12f, 6f, lifeRatio);
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (!Main.rand.NextBool(cinderSpawnRate) || Main.gfxQuality < 0.35f)
-                    continue;
-
-                Vector2 cinderSpawnOffset = new(Main.rand.NextFloatDirection() * 1550f, 650f);
-                Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
-                if (Main.rand.NextBool())
-                {
-                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-MathHelper.PiOver2) * new Vector2(0.9f, 1f);
-                    cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
-                }
-
-                if (Main.rand.NextBool(6))
-                    cinderVelocity.X *= -1f;
-                Utilities.NewProjectileBetter(Main.LocalPlayer.Center + cinderSpawnOffset, cinderVelocity, ModContent.ProjectileType<BrimstoneCinder>(), 0, 0f);
-            }
-        }
 
         public override void FindFrame(NPC npc, int frameHeight)
         {

@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -67,7 +69,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 60) * Projectile.Opacity;
+        //public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 60) * Projectile.Opacity;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+
+            // Draw backglow effects.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Color afterimageColor = new Color(90, 206, 244, 0f) * 0.7f;
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            }
+
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, texture.Size() * 0.5f, 1, 0, 0);
+            return false;
+        }
 
         public override void Kill(int timeLeft)
         {

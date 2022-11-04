@@ -1,7 +1,11 @@
 using CalamityMod.Events;
+using CalamityMod.Particles;
+using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -49,7 +53,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(target.Center), 0.056f);
             }
             else if (Projectile.velocity.Length() < 17f)
-                Projectile.velocity *= 1.0075f;
+                    Projectile.velocity *= 1.0075f;
+
+            if (Time % 10 == 0)
+            {
+                // Leave a trail of particles.
+                Particle iceParticle = new SnowyIceParticle(Projectile.Center, Projectile.velocity * 0.5f, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
+                GeneralParticleHandler.SpawnParticle(iceParticle);
+            }
+            
+
 
             Time++;
         }
@@ -61,8 +74,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         }
 
         public override bool PreDraw(ref Color lightColor)
-        {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+        {        
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White * Projectile.Opacity, ProjectileID.Sets.TrailingMode[Projectile.type]);
             return false;
         }
     }

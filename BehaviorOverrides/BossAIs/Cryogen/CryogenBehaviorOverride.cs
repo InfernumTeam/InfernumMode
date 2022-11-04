@@ -1,7 +1,10 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Particles;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Particles;
+using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -83,19 +86,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             ref float attackTimer = ref npc.ai[1];
             ref float attackState = ref npc.ai[2];
             ref float enrageTimer = ref npc.ai[3];
+            ref float hitEffectCooldown = ref npc.Infernum().ExtraAI[6];
+            float lifeRatio = npc.life / (float)npc.lifeMax;
 
             if (!BossRushEvent.BossRushActive)
                 enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 660);
 
+            // Decrease the hit effect cooldown
+            if (hitEffectCooldown > 0)
+                hitEffectCooldown--;
+
             // Make a blizzard happen.
             CalamityUtils.StartRain();
 
+            // Spawn Snowflakes
+            target.CreateCinderParticles(lifeRatio, ModContent.ProjectileType<SnowflakeCinder>());
+            
             // Become invincible if the target has been outside of the snow biome for too long.
             npc.dontTakeDamage = enrageTimer >= 600f;
             npc.Calamity().CurrentlyEnraged = !target.ZoneSnow && !BossRushEvent.BossRushActive;
 
             // Handle subphase transitions.
-            HandleSubphaseTransitions(npc, ref subphaseState, ref attackState, ref attackTimer);
+            HandleSubphaseTransitions(npc, lifeRatio, ref subphaseState, ref attackState, ref attackTimer);
 
             // Reset damage every frame.
             npc.damage = npc.defDamage;
@@ -122,9 +134,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             return false;
         }
 
-        public static void HandleSubphaseTransitions(NPC npc, ref float subphaseState, ref float attackState, ref float attackTimer)
+        public static void HandleSubphaseTransitions(NPC npc, float lifeRatio, ref float subphaseState, ref float attackState, ref float attackTimer)
         {
-            float lifeRatio = npc.life / (float)npc.lifeMax;
+            
             int trueSubphaseState = 0;
             if (lifeRatio < Phase2LifeRatio)
                 trueSubphaseState++;
@@ -904,6 +916,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
+        public static void OnHitIceParticles(NPC npc, Projectile projectile, bool wasACrit)
+        {
+            if (npc.Infernum().ExtraAI[6] > 0)
+                return;
+
+            int amountToSpawn = wasACrit ? 30 : 20;
+            Vector2 direction = projectile.oldVelocity.SafeNormalize(Main.rand.NextVector2Unit());
+            
+            for (int i = 0; i < amountToSpawn; i++)
+            {
+                Vector2 velocity = -direction * Main.rand.NextFloat(2,6) + npc.velocity;
+                // Add a bit of randomness, but weight towards going in a cone from the hit zone.
+                Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(MathHelper.TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
+                Particle iceParticle = new SnowyIceParticle(projectile.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
+                GeneralParticleHandler.SpawnParticle(iceParticle);
+            }
+            npc.Infernum().ExtraAI[6] = 15;
+        }
         #endregion AI
 
         #region Drawing

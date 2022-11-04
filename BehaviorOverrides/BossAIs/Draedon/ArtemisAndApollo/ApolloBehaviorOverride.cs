@@ -1566,6 +1566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             int numAfterimages = npc.ModNPC<Apollo>().ChargeComboFlash > 0f ? 0 : 5;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -1575,19 +1576,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // This is created to allow easy duplication of them when drawing the charge.
             void drawInstance(Vector2 drawOffset, Color baseColor)
             {
+                if (npc.Opacity < 0.02f)
+                    return;
+
                 if (CalamityConfig.Instance.Afterimages)
                 {
                     for (int i = 1; i < numAfterimages; i += 2)
                     {
-                        Color afterimageColor = npc.GetAlpha(Color.Lerp(baseColor, afterimageBaseColor, 0.75f)) * ((numAfterimages - i) / 15f);
+                        float afterimageOpacity = ((numAfterimages - i) / 15f);
+                        Color afterimageColor = npc.GetAlpha(Color.Lerp(baseColor, afterimageBaseColor, 0.75f)) * afterimageOpacity;
                         afterimageColor.A /= 8;
 
                         Vector2 afterimageCenter = npc.oldPos[i] + frame.Size() * 0.5f - Main.screenPosition;
                         Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(glowmask, afterimageCenter, npc.frame, afterimageBaseColor * afterimageOpacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                     }
                 }
 
                 Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(baseColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowmask, center + drawOffset, frame, npc.GetAlpha(afterimageBaseColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             }
 
             // Draw ribbons near the main thruster.
@@ -1638,20 +1645,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     drawInstance(drawOffset, baseInstanceColor);
                 }
             }
-
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + frame.Size() * 0.5f - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-                }
-            }
-
-            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-
             Main.spriteBatch.ExitShaderRegion();
 
             // Draw a flame trail on the thrusters if needed. This happens during charges.

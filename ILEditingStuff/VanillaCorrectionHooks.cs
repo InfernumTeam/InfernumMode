@@ -38,6 +38,11 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.HallowBoss1 && Type <= GoreID.HallowBoss7)
                 return Main.maxDust;
 
+            if(InfernumMode.CanUseCustomAIs)
+                for (int i = 2; i <= 4; i++)
+                    if (Type == InfernumMode.CalamityMod.Find<ModGore>("Hive" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("Hive").Type)
+                        return Main.maxDust;
+
             if (InfernumMode.CanUseCustomAIs && Type == 573)
                 Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore1").Type;
             if (InfernumMode.CanUseCustomAIs && Type == 574)

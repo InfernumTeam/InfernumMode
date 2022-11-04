@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     Main.npc[SpazmatismIndex].velocity = Vector2.Zero;
                     Main.npc[SpazmatismIndex].netUpdate = true;
                 }
-                if (RetinazerIndex != -1)
+                if (RetinazerIndex != -1 && Main.npc[RetinazerIndex].Infernum().ExtraAI[11] != (int)RetinazerAttackState.DanceOfLightnings)
                 {
                     for (int i = 0; i < NPC.maxAI; i++)
                         Main.npc[RetinazerIndex].ai[i] = 0f;

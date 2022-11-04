@@ -1563,14 +1563,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Prepare the flame trail shader with its map texture.
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            DrawExoTwin(npc, lightColor, npc.ModNPC<Apollo>().ChargeComboFlash, npc.ModNPC<Apollo>().RibbonTrail, npc.ModNPC<Apollo>().ChargeFlameTrail, npc.ModNPC<Apollo>().ChargeFlameTrailBig);
+            return false;
+        }
 
-            int numAfterimages = npc.ModNPC<Apollo>().ChargeComboFlash > 0f ? 0 : 5;
+        public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveTrail ribbonTrail, PrimitiveTrail chargeFlameTrail, PrimitiveTrail chargeFlameTrailBig)
+        {
+            int numAfterimages = flashInterpolant > 0f ? 0 : 5;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
+            if (npc.type == ModContent.NPCType<Artemis>())
+                glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Artemis/ArtemisGlow").Value;
+
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechTwinGreen) || !Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen].active)
+                return;
+
+            NPC apollo = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen];
+
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f || npc.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f ? Color.Red : Color.White;
+            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f || apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f ? Color.Red : Color.White;
 
             // Draws a single instance of a regular, non-glowmask based Apollo.
             // This is created to allow easy duplication of them when drawing the charge.
@@ -1623,22 +1636,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     currentSegmentRotation += segmentRotationOffset;
                 }
-                npc.ModNPC<Apollo>().RibbonTrail.Draw(ribbonDrawPositions, -Main.screenPosition, 66);
+                ribbonTrail.Draw(ribbonDrawPositions, -Main.screenPosition, 66);
             }
 
-            int instanceCount = (int)MathHelper.Lerp(1f, 15f, npc.ModNPC<Apollo>().ChargeComboFlash);
-            Color baseInstanceColor = Color.Lerp(lightColor, Color.White, npc.ModNPC<Apollo>().ChargeComboFlash);
-            baseInstanceColor.A = (byte)(int)(255f - npc.ModNPC<Apollo>().ChargeComboFlash * 255f);
+            int instanceCount = (int)MathHelper.Lerp(1f, 15f, flashInterpolant);
+            Color baseInstanceColor = Color.Lerp(lightColor, Color.White, flashInterpolant);
+            baseInstanceColor.A = (byte)(int)(255f - flashInterpolant * 255f);
 
             Main.spriteBatch.EnterShaderRegion();
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, npc, texture, center, frame, origin);
             drawInstance(Vector2.Zero, baseInstanceColor);
 
             if (instanceCount > 1)
             {
                 baseInstanceColor *= 0.04f;
-                float backAfterimageOffset = MathHelper.SmoothStep(0f, 2f, npc.ModNPC<Apollo>().ChargeComboFlash);
+                float backAfterimageOffset = MathHelper.SmoothStep(0f, 2f, flashInterpolant);
                 for (int i = 0; i < instanceCount; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
@@ -1648,7 +1661,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Main.spriteBatch.ExitShaderRegion();
 
             // Draw a flame trail on the thrusters if needed. This happens during charges.
-            if (npc.ModNPC<Apollo>().ChargeComboFlash > 0f)
+            if (flashInterpolant > 0f)
             {
                 for (int direction = -1; direction <= 1; direction++)
                 {
@@ -1657,7 +1670,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     float backFlameLength = direction == 0f ? 700f : 190f;
                     Vector2 drawStart = npc.Center + baseDrawOffset;
-                    Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * npc.ModNPC<Apollo>().ChargeComboFlash * backFlameLength;
+                    Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * flashInterpolant * backFlameLength;
                     Vector2[] drawPositions = new Vector2[]
                     {
                         drawStart,
@@ -1669,15 +1682,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 8f;
-                            npc.ModNPC<Apollo>().ChargeFlameTrailBig.Draw(drawPositions, drawOffset - Main.screenPosition, 70);
+                            chargeFlameTrailBig.Draw(drawPositions, drawOffset - Main.screenPosition, 70);
                         }
                     }
                     else
-                        npc.ModNPC<Apollo>().ChargeFlameTrail.Draw(drawPositions, -Main.screenPosition, 70);
+                        chargeFlameTrail.Draw(drawPositions, -Main.screenPosition, 70);
                 }
             }
-
-            return false;
         }
         #endregion Frames and Drawcode
 

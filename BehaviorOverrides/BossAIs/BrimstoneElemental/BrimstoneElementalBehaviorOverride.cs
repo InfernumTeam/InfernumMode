@@ -504,6 +504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
             int fireReleaseRate = lifeRatio < Phase2LifeRatio ? 5 : 7;
+            int bulletHellShootDelay = 145;
             int bulletHellTime = 520;
             float shootSpeedFactor = 1f;
             if (pissedOff)
@@ -531,7 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             // Have a small delay prior to the bullet hell to allow the target to prepare.
-            if (attackTimer < 185f)
+            if (attackTimer < bulletHellShootDelay)
                 return;
 
             // Release the bullet hell cinders.

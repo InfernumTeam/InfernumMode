@@ -24,6 +24,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
@@ -352,6 +353,9 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
+
+            if (npc.type == NPCID.Deerclops && OverridingListManager.Registered(NPCID.Deerclops))
+                return DeerclopsBehaviorOverride.HandleDeathEffects(npc);
 
             if (npc.type == NPCID.WallofFleshEye && OverridingListManager.Registered(NPCID.WallofFlesh))
                 return WallOfFleshEyeBehaviorOverride.HandleDeathEffects(npc);

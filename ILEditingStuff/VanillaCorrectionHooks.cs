@@ -38,6 +38,9 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.HallowBoss1 && Type <= GoreID.HallowBoss7)
                 return Main.maxDust;
 
+            if (InfernumMode.CanUseCustomAIs && Type >= GoreID.DeerclopsHead && Type <= GoreID.DeerclopsLeg)
+                return Main.maxDust;
+
             if (InfernumMode.CanUseCustomAIs)
             {
                 for (int i = 2; i <= 4; i++)

@@ -637,7 +637,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.life = 0;
                 npc.Center = target.Center;
                 npc.checkDead();
-                npc.NPCLoot();
                 npc.active = false;
             }
         }

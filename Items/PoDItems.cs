@@ -16,6 +16,7 @@ using InfernumMode.Items;
 using InfernumMode.Projectiles;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -26,6 +27,21 @@ namespace InfernumMode
 {
     public class PoDItems : GlobalItem
     {
+        public static Dictionary<int, string> EnrageTooltipReplacements => new()
+        {
+            [ModContent.ItemType<DecapoditaSprout>()] = "Enrages outside of the Mushroom biome",
+            [ItemID.WormFood] = "Enrages outside of the Corruption",
+            [ItemID.BloodySpine] = "Enrages outside of the Crimson",
+            [ModContent.ItemType<Teratoma>()] = "Enrages outside of the Corruption",
+            [ModContent.ItemType<BloodyWormFood>()] = "Enrages outside of the Crimson",
+            [ItemID.MechanicalEye] = null,
+            [ItemID.MechanicalSkull] = null,
+            [ItemID.MechanicalWorm] = null,
+            [ItemID.ClothierVoodooDoll] = null,
+            [ModContent.ItemType<ExoticPheromones>()] = null,
+            [ModContent.ItemType<NecroplasmicBeacon>()] = "Enrages outside of the Underground",
+        };
+
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.CelestialSigil)
@@ -101,6 +117,27 @@ namespace InfernumMode
                     tooltip0.OverrideColor = Color.Red;
                 }
                 tooltips.RemoveAll(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
+            }
+
+            // Remove a bunch of "Enrages in XYZ" tooltips from base Calamity because people keep getting confused by it.
+            if (InfernumMode.CanUseCustomAIs && EnrageTooltipReplacements.TryGetValue(item.type, out string tooltipReplacement))
+            {
+                var enrageTooltip = tooltips.FirstOrDefault(x => x.Text.Contains("enrage", StringComparison.OrdinalIgnoreCase));
+                if (enrageTooltip != null)
+                {
+                    int enrageTextStart = enrageTooltip.Text.IndexOf("enrage", StringComparison.OrdinalIgnoreCase);
+                    int enrageTextEnd = enrageTextStart;
+
+                    // Find where the current line terminates following the instance of the word 'enrage'.
+                    while (enrageTextEnd < enrageTooltip.Text.Length && enrageTooltip.Text[enrageTextEnd] != '\n')
+                        enrageTextEnd++;
+
+                    enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, enrageTextEnd - enrageTextStart + 1);
+
+                    // If a replacement exists, insert it into the enrage text instead.
+                    if (tooltipReplacement is not null)
+                        enrageTooltip.Text = enrageTooltip.Text.Insert(enrageTextStart, tooltipReplacement);
+                }
             }
         }
 

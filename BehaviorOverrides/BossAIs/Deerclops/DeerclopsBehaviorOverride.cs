@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public override int NPCOverrideType => NPCID.Deerclops;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -920,23 +920,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.4f, -8f, 16f);
         }
 
-        public static bool HandleDeathEffects(NPC npc)
-        {
-            // Just die as usual if the Empress of Light is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
-            if (npc.ai[0] == (int)DeerclopsAttackState.DeathAnimation)
-                return true;
-
-            // Clear projectiles.
-            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AcceleratingShadowHand>(), ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), ModContent.ProjectileType<GroundIcicleSpike>(), ProjectileID.DeerclopsRangedProjectile);
-
-            SelectNextAttack(npc);
-            npc.ai[0] = (int)DeerclopsAttackState.DeathAnimation;
-            npc.life = npc.lifeMax;
-            npc.active = true;
-            npc.netUpdate = true;
-            return false;
-        }
-
         public static int TryMakingSpike_FindBestY(Player target, ref Point sourceTileCoords, int x)
         {
             int bestY = sourceTileCoords.Y;
@@ -1206,6 +1189,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Deerclops is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill him quickly.
+            if (npc.ai[0] == (int)DeerclopsAttackState.DeathAnimation)
+                return true;
+
+            // Clear projectiles.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AcceleratingShadowHand>(), ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), ModContent.ProjectileType<GroundIcicleSpike>(), ProjectileID.DeerclopsRangedProjectile);
+
+            SelectNextAttack(npc);
+            npc.ai[0] = (int)DeerclopsAttackState.DeathAnimation;
+            npc.life = npc.lifeMax;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

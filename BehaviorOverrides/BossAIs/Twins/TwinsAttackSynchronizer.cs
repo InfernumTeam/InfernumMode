@@ -1458,5 +1458,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return false;
         }
         #endregion
+
+        #region Death Effects
+        public static bool HandleDeathEffects(NPC npc)
+        {
+            bool otherTwinHasCreatedShield = false;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (!Main.npc[i].active)
+                    continue;
+                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
+                    continue;
+                if (Main.npc[i].type == npc.type)
+                    continue;
+
+                if (Main.npc[i].Infernum().ExtraAI[3] == 1f)
+                {
+                    otherTwinHasCreatedShield = true;
+                    break;
+                }
+            }
+
+            if (npc.Infernum().ExtraAI[3] == 0f && !otherTwinHasCreatedShield)
+            {
+                npc.life = 1;
+                npc.active = true;
+                npc.netUpdate = true;
+                npc.dontTakeDamage = true;
+                return false;
+            }
+
+            // Enter the death animation state if the other twin has a shield or if alone.
+            if (NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 || otherTwinHasCreatedShield)
+                return PrepareForDeathAnimation(npc);
+            return true;
+        }
+        #endregion Death Effects
     }
 }

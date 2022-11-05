@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override int NPCOverrideType => NPCID.HallowBoss;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
 
         #region Constants and Attack Patterns
 
@@ -2004,7 +2004,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return currentPhase >= 1f && (attackType != EmpressOfLightAttackType.EnterSecondPhase || attackTimer >= SecondPhaseFadeoutTime);
         }
 
-        public static bool HandleDeathEffects(NPC npc)
+        public static bool InPhase3(NPC npc) => npc.ai[2] >= 2f;
+
+        public static bool InPhase4(NPC npc) => npc.ai[2] >= 3f;
+
+        public static Color GetDaytimeColor(float colorInterpolant)
+        {
+            Color pink = Color.HotPink;
+            Color cyan = Color.Cyan;
+            return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));
+        }
+        #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
         {
             // Just die as usual if the Empress of Light is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
             if (npc.ai[0] == (int)EmpressOfLightAttackType.DeathAnimation)
@@ -2018,17 +2031,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.netUpdate = true;
             return false;
         }
-
-        public static bool InPhase3(NPC npc) => npc.ai[2] >= 2f;
-
-        public static bool InPhase4(NPC npc) => npc.ai[2] >= 3f;
-
-        public static Color GetDaytimeColor(float colorInterpolant)
-        {
-            Color pink = Color.HotPink;
-            Color cyan = Color.Cyan;
-            return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));
-        }
-        #endregion
+        #endregion Death Effects
     }
 }

@@ -16,10 +16,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     {
         public override int NPCOverrideType => NPCID.Spazmatism;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
 
+        #region AI
         public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
+        #endregion AI
 
+        #region Frames and Drawcode
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
             return MathHelper.SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
@@ -134,10 +137,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
                 npc.frame.Y += frameHeight * 3;
         }
+        #endregion Frames and Drawcode
 
+        #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Having trouble dodging during the spin? Three can play at that game, Spin!";
         }
+        #endregion Tips
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc) => TwinsAttackSynchronizer.HandleDeathEffects(npc);
+        #endregion Death Effects
     }
 }

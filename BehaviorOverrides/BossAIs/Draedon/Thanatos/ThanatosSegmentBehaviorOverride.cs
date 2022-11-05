@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody1>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override bool PreAI(NPC npc)
         {
@@ -252,13 +252,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.ModNPC<ThanatosBody1>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
+
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
     }
 
     public class ThanatosBody2BehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody2>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override bool PreAI(NPC npc)
         {
@@ -290,13 +292,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.ModNPC<ThanatosBody2>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
+
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
     }
 
     public class ThanatosTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosTail>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override bool PreAI(NPC npc)
         {
@@ -327,5 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
+
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
     }
 }

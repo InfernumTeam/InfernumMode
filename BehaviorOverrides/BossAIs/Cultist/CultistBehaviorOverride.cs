@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => NPCID.CultistBoss;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
 
         public enum CultistFrameState
         {
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Stardust.
             new(0, 170, 221)
         };
-
+        
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -1667,6 +1667,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         }
 
         #endregion Drawing and Frames
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Clear away stray projectiles.
+            ClearAwayEntities();
+
+            npc.Infernum().ExtraAI[6] = 1f;
+            npc.active = true;
+            npc.dontTakeDamage = true;
+            npc.life = 1;
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
+
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

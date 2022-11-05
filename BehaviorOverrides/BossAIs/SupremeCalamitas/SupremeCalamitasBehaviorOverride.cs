@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -2334,6 +2334,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Main.spriteBatch.Draw(shieldSkullTexture, drawPosition, null, shieldColor, ShieldRotation, shieldSkullTexture.Size() * 0.5f, 1f, direction, 0f);
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Supreme Calamitas is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            if (npc.Infernum().ExtraAI[7] >= 1f)
+                return true;
+
+            npc.active = true;
+            npc.dontTakeDamage = true;
+            npc.life = 1;
+            npc.Infernum().ExtraAI[7] = 1f;
+            npc.netUpdate = true;
+
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

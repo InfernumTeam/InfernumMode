@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.Items.Armor.Brimflame;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -31,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region Enumerations
         public enum BrimmyAttackType
@@ -884,24 +883,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.netUpdate = true;
         }
 
-        public static bool HandleDeathEffects(NPC npc)
-        {
-            // Just die as usual if the Brimstone Elemental is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
-            if (npc.ai[0] == (int)BrimmyAttackType.DeathAnimation)
-                return true;
-
-            // Clear projectiles.
-            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneDeathray>(), ModContent.ProjectileType<BrimstoneFireball>(), ModContent.ProjectileType<BrimstonePetal>(), 
-                ModContent.ProjectileType<BrimstonePetal2>(), ModContent.ProjectileType<BrimstoneRose>(), ModContent.ProjectileType<BrimstoneSkull>(), ModContent.ProjectileType<BrimstoneTelegraphRay>(),
-                ModContent.ProjectileType<HomingBrimstoneSkull>());
-
-            SelectNextAttack(npc);
-            npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
-            npc.life = npc.lifeMax;
-            npc.active = true;
-            npc.netUpdate = true;
-            return false;
-        }
         #endregion AI
 
         #region Drawing
@@ -991,5 +972,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             return false;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Brimstone Elemental is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            if (npc.ai[0] == (int)BrimmyAttackType.DeathAnimation)
+                return true;
+
+            // Clear projectiles.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneDeathray>(), ModContent.ProjectileType<BrimstoneFireball>(), ModContent.ProjectileType<BrimstonePetal>(),
+                ModContent.ProjectileType<BrimstonePetal2>(), ModContent.ProjectileType<BrimstoneRose>(), ModContent.ProjectileType<BrimstoneSkull>(), ModContent.ProjectileType<BrimstoneTelegraphRay>(),
+                ModContent.ProjectileType<HomingBrimstoneSkull>());
+
+            SelectNextAttack(npc);
+            npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
+            npc.life = npc.lifeMax;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
     }
 }

@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override int NPCOverrideType => ModContent.NPCType<ThanatosHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public const int SegmentCount = 100;
 
@@ -66,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechManagement.Phase4LifeRatio
         };
 
+        #region AI and Behaviors
         public override bool PreAI(NPC npc)
         {
             // Define the life ratio.
@@ -1061,7 +1062,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }
+        #endregion AI and Behaviors
 
+        #region Frames and Drawcode
         public override void FindFrame(NPC npc, int frameHeight)
         {
             // Swap between venting and non-venting frames.
@@ -1113,10 +1116,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.ModNPC<ThanatosHead>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
+        #endregion Frames and Drawcode
 
-        public override IEnumerable<Func<NPC, string>> GetTips()
-        {
-            yield return n => "Oh my, so many lasers... better keep on the move!";
-        }
+        #region Death Effects
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
+        #endregion Death Effects
     }
 }

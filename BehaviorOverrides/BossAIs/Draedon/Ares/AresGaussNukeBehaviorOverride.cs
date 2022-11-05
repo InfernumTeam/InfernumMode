@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<AresBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -239,5 +239,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
+        #endregion Death Effects
     }
 }

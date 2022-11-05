@@ -47,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             if (attackTimer <= DeerclopsBehaviorOverride.ShadowHandSpinTime)
             {
                 float repositionInterolant = Utils.GetLerpValue(DeerclopsBehaviorOverride.ShadowHandSpinTime - 84f, DeerclopsBehaviorOverride.ShadowHandSpinTime - 1f, attackTimer, true);
-                float horizontalHoverOffset = MathHelper.Lerp(0f, HoverSide * deerclops.spriteDirection * 90f, repositionInterolant);
-                float verticalHoverOffset = MathHelper.Lerp(-336f, -156f, repositionInterolant);
+                float horizontalHoverOffset = MathHelper.Lerp(0f, HoverSide * -90f, repositionInterolant);
+                float verticalHoverOffset = MathHelper.Lerp(-192f, -356f, repositionInterolant);
                 hoverOffset = new Vector2(horizontalHoverOffset, verticalHoverOffset);
                 hoverOffset += (MathHelper.Pi * attackTimer / DeerclopsBehaviorOverride.ShadowHandSpinTime * 4f + HoverSide * MathHelper.PiOver2).ToRotationVector2() * new Vector2(146f, 15f);
 
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             else
             {
                 float grabInterpolant = Utils.GetLerpValue(0f, DeerclopsBehaviorOverride.ShadowHandGrabTime, attackTimer - DeerclopsBehaviorOverride.ShadowHandSpinTime - DeerclopsBehaviorOverride.ShadowHandReelbackTime, true);
-                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * deerclops.spriteDirection * 32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), (float)Math.Pow(grabInterpolant, 1.58));
+                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * -32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), (float)Math.Pow(grabInterpolant, 1.58));
 
                 // Make the thumbs do a grabbing motion, as though it's locking Deerclops' hands in place.
                 ThumbRotation = grabInterpolant * -0.4f;
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
 
             // Move to the hover destination.
-            MoveToDestination(deerclops.Center + hoverOffset);
+            MoveToDestination(deerclops.Center + hoverOffset + deerclops.position - deerclops.oldPosition);
         }
 
         public Vector2 CalculateReelbackHoverOffset(NPC deerclops, float reelBackInterpolant)
@@ -118,9 +118,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             float rotation = Projectile.rotation;
             Color backglowColor = Color.Lerp(Color.Red, Color.White, 0.5f) * Projectile.Opacity * 0.5f;
             SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Vector2 thumbDirection = (rotation * ThumbRotation).ToRotationVector2();
-            Vector2 thumbOffset = thumbDirection * Projectile.spriteDirection * 20f + thumbDirection.RotatedBy(MathHelper.PiOver2) * -10f;
-            thumbOffset *= new Vector2(Projectile.spriteDirection, 1f);
 
             for (int j = 0; j < 4; j++)
             {

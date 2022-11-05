@@ -1181,7 +1181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             // Draw the base deerclops texture with trails.
             if (trailCount > 1)
             {
-                for (int i = 1; i < trailCount; i++)
+                for (int i = 1; i < Math.Max(trailCount, npc.oldPos.Length); i++)
                 {
                     float shadowFade = 1f - i / (float)(trailCount - 1f);
                     Vector2 drawPosition = npc.oldPos[i] + new Vector2(npc.width * 0.5f, npc.height) - Main.screenPosition;

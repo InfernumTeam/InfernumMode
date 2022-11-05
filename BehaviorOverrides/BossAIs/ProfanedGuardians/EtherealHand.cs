@@ -26,8 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         public float AttackTime => AttackerGuardian.ai[1];
-        public AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
-        public bool PunchingTarget => AttackerState == AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands && AttackTime > 45f && AttackerGuardian.WithinRange(Target.Center, 250f);
+        public AttackerGuardianBehaviorOverride.AttackerGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackerGuardianAttackState)(int)AttackerGuardian.ai[0];
+        public bool PunchingTarget => AttackerState == AttackerGuardianBehaviorOverride.AttackerGuardianAttackState.ThrowingHands && AttackTime > 45f && AttackerGuardian.WithinRange(Target.Center, 250f);
         public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         public const float HandSize = 56f;
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             switch (AttackerState)
             {
-                case AttackerGuardianBehaviorOverride.AttackGuardianAttackState.MagicFingerBolts:
+                case AttackerGuardianBehaviorOverride.AttackerGuardianAttackState.MagicFingerBolts:
                     // Have the finger closest to the target use the pointer finger.
                     UsingPointerFinger = (Target.Center.X - AttackerGuardian.Center.X > 0).ToDirectionInt() == HandSide;
 
@@ -160,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             int totalPoints = 20 + (int)(distanceFromAttacker / 40f);
 
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, NPC.Center, 0.5f);
-            if (AttackerState != AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands)
+            if (AttackerState != AttackerGuardianBehaviorOverride.AttackerGuardianAttackState.ThrowingHands)
             {
                 sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(0f, 18f).Y * -10f;
                 sagLocation.Y += MathHelper.Lerp(0f, 60f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));

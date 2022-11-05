@@ -763,6 +763,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
+            // Close the boss bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
             // Use upward hand frames.
             frameType = (int)DeerclopsFrameType.FrontFacingRoar;
             if (attackTimer >= ShadowHandSpinTime)

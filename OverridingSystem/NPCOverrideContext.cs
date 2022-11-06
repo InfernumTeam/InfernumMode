@@ -8,6 +8,7 @@ namespace InfernumMode.OverridingSystem
         NPCAI = 1,
         NPCSetDefaults = 2,
         NPCPreDraw = 4,
-        NPCFindFrame = 8
+        NPCFindFrame = 8,
+        NPCCheckDead = 16
     }
 }

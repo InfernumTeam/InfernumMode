@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
-	public class EmpressOfLightSkyScene : ModSceneEffect
+    public class EmpressOfLightSkyScene : ModSceneEffect
     {
         public override bool IsSceneEffectActive(Player player)
         {
@@ -97,7 +97,7 @@ namespace InfernumMode.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             int eol = NPC.FindFirstNPC(NPCID.HallowBoss);
-            if (eol == -1 || !EmpressOfLightBehaviorOverride.InPhase2(Main.npc[eol]))
+            if (eol == -1 || !EmpressOfLightBehaviorOverride.InPhase2(Main.npc[eol]) || !InfernumMode.CanUseCustomAIs)
             {
                 Lights.Clear();
                 Fairies.Clear();

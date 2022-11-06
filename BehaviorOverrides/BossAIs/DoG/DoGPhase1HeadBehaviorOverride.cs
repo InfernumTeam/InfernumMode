@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public const float Phase2LifeRatio = 0.8f;
 
@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int AggressiveMovementTimeP1 = 600;
 
-        // Define a bunch of AI indices. This is slightly cursed.
+        // Define a bunch of AI indices. This is slightly cursed due to how much DoG's AI has.
         public const int UniversalFightTimerIndex = 0;
 
         public const int CurrentFlyAccelerationIndex = 1;
@@ -457,6 +457,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             return false;
         }
         #endregion Drawing
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // StrikeNPC stuff will handle the rest of this. This just exists to ensure that DoG doesn't die early.
+            npc.life = 1;
+            npc.dontTakeDamage = true;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

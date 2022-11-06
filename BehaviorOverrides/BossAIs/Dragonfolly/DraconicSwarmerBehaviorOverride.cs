@@ -15,29 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
     {
         public override int NPCOverrideType => ModContent.NPCType<Bumblefuck2>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
-        #region Enumerations
-        public enum DragonfollyAttackType
-        {
-            SpawnEffects,
-            FeatherSpreadRelease,
-            OrdinaryCharge,
-            FakeoutCharge,
-            ThunderCharge,
-            SummonSwarmers,
-            NormalLightningAura,
-            PlasmaBursts,
-            LightningSupercharge
-        }
-
-        public enum DragonfollyFrameDrawingType
-        {
-            FlapWings,
-            Screm
-        }
-        #endregion
-
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
+        
         #region AI
 
         public override bool PreAI(NPC npc)
@@ -89,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = (npc.rotation * 4f + npc.velocity.X * 0.04f * 1.25f) / 10f;
 
             // Repel from other swarmers.
-            if (attackState == 0f || attackState == 1f)
+            if (attackState is 0f or 1f)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -358,5 +337,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             return false;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Enter the explosion staate if killed.
+            if (npc.ai[0] != 3f && npc.ai[3] > 0f)
+            {
+                npc.life = npc.lifeMax;
+                npc.dontTakeDamage = true;
+                npc.ai[0] = 3f;
+                npc.ai[1] = 0f;
+                npc.ai[2] = 0f;
+                npc.netUpdate = true;
+            }
+            return false;
+        }
+        #endregion Death Effects
     }
 }

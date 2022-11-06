@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.OverridingSystem
 {
-    public static class OverridingListManager
+    public class OverridingListManager : ILoadable
     {
 #pragma warning disable IDE0051 // Remove unused private members
         private const string message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
@@ -16,34 +16,39 @@ namespace InfernumMode.OverridingSystem
         internal static Dictionary<int, NPCPreAIDelegate> InfernumNPCPreAIOverrideList = new();
         internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new();
         internal static Dictionary<int, NPCPreDrawDelegate> InfernumPreDrawOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumFrameOverrideList = new();
+        internal static Dictionary<int, NPCFindFrameDelegate> InfernumFrameOverrideList = new();
+        internal static Dictionary<int, NPCCheckDeadDelegate> InfernumCheckDeadOverrideList = new();
 
         internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new();
         internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new();
 
         public delegate bool NPCPreAIDelegate(NPC npc);
         public delegate bool NPCPreDrawDelegate(NPC npc, SpriteBatch spriteBatch, Color lightColor);
+        public delegate void NPCFindFrameDelegate(NPC npc, int frameHeight);
+        public delegate bool NPCCheckDeadDelegate(NPC npc);
 
         public static bool Registered(int npcID) => InfernumNPCPreAIOverrideList.ContainsKey(npcID);
 
         public static bool Registered<T>() where T : ModNPC => Registered(ModContent.NPCType<T>());
 
-        internal static void Load()
+        public void Load(Mod mod)
         {
             InfernumNPCPreAIOverrideList = new Dictionary<int, NPCPreAIDelegate>();
             InfernumSetDefaultsOverrideList = new Dictionary<int, Delegate>();
             InfernumPreDrawOverrideList = new Dictionary<int, NPCPreDrawDelegate>();
-            InfernumFrameOverrideList = new Dictionary<int, Delegate>();
+            InfernumFrameOverrideList = new Dictionary<int, NPCFindFrameDelegate>();
+            InfernumCheckDeadOverrideList = new Dictionary<int, NPCCheckDeadDelegate>();
             InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
             InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
         }
-
-        internal static void Unload()
+        
+        public void Unload()
         {
             InfernumNPCPreAIOverrideList = null;
             InfernumSetDefaultsOverrideList = null;
             InfernumPreDrawOverrideList = null;
             InfernumFrameOverrideList = null;
+            InfernumCheckDeadOverrideList = null;
             InfernumProjectilePreAIOverrideList = null;
             InfernumProjectilePreDrawOverrideList = null;
         }

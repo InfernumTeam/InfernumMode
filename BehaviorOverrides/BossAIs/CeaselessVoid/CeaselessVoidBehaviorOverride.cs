@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         public override int NPCOverrideType => ModContent.NPCType<CeaselessVoidBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region Enumerations
         public enum CeaselessVoidAttackType
@@ -171,22 +171,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             attackTimer++;
             return false;
-        }
-
-        public static void HandleDeathStuff(NPC npc)
-        {
-            if (npc.Infernum().ExtraAI[6] == 1f)
-                return;
-
-            npc.active = true;
-            npc.dontTakeDamage = true;
-            npc.Infernum().ExtraAI[6] = 1f;
-            npc.life = 1;
-            
-            SelectNewAttack(npc);
-            npc.ai[0] = (int)CeaselessVoidAttackType.BlackHoleSuck;
-
-            npc.netUpdate = true;
         }
 
         public static void DoBehavior_DarkEnergySwirl(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
@@ -715,6 +699,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
         #endregion Drawing
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Ceaseless Void is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
+            if (npc.Infernum().ExtraAI[6] >= 1f)
+                return true;
+
+            npc.active = true;
+            npc.dontTakeDamage = true;
+            npc.Infernum().ExtraAI[6] = 1f;
+            npc.life = 1;
+
+            SelectNewAttack(npc);
+            npc.ai[0] = (int)CeaselessVoidAttackType.BlackHoleSuck;
+
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

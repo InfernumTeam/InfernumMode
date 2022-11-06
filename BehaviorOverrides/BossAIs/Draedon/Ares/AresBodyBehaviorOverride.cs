@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int NPCOverrideType => ModContent.NPCType<AresBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -1036,6 +1036,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

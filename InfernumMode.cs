@@ -74,7 +74,6 @@ namespace InfernumMode
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
 
-            OverridingListManager.Load();
             BalancingChangesManager.Load();
             HookManager.Load();
 
@@ -256,7 +255,6 @@ namespace InfernumMode
         public override void Unload()
         {
             IntroScreenManager.Unload();
-            OverridingListManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();
             Instance = null;

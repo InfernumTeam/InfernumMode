@@ -369,6 +369,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
 
+        public override bool CheckDead() => ExoMechManagement.HandleDeathEffects(NPC);
+
         public override bool CheckActive() => false;
     }
 }

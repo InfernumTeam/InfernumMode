@@ -14,26 +14,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     {
         public override int NPCOverrideType => NPCID.WallofFleshEye;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public const int IsDetachedFlagIndex = 2;
 
-        public static bool HandleDeathEffects(NPC npc)
-        {
-            // Do direct damage to the wall and have the eye "pop" out, as though it's detatching.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (Main.npc.IndexInRange(Main.wofNPCIndex))
-                    Main.npc[Main.wofNPCIndex].StrikeNPC(1550, 0f, 0);
-            }
-
-            npc.life = 1;
-            npc.ai[1] = 0f;
-            npc.Infernum().ExtraAI[IsDetachedFlagIndex] = 1f;
-            npc.active = true;
-            npc.netUpdate = true;
-            return false;
-        }
+        public const int DetachDamage = 1550;
 
         #region AI
 
@@ -232,5 +217,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return true;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Do direct damage to the wall and have the eye "pop" out, as though it's detatching.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (Main.npc.IndexInRange(Main.wofNPCIndex))
+                    Main.npc[Main.wofNPCIndex].StrikeNPC(DetachDamage, 0f, 0);
+            }
+
+            npc.life = 1;
+            npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[IsDetachedFlagIndex] = 1f;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
     }
 }

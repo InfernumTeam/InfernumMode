@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.Items.Armor.Brimflame;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -13,6 +12,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region Enumerations
         public enum BrimmyAttackType
@@ -503,6 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
             int fireReleaseRate = lifeRatio < Phase2LifeRatio ? 5 : 7;
+            int bulletHellShootDelay = 145;
             int bulletHellTime = 520;
             float shootSpeedFactor = 1f;
             if (pissedOff)
@@ -530,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             // Have a small delay prior to the bullet hell to allow the target to prepare.
-            if (attackTimer < 185f)
+            if (attackTimer < bulletHellShootDelay)
                 return;
 
             // Release the bullet hell cinders.
@@ -787,6 +788,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         float fireScale = Main.rand.NextFloat(0.6f, 0.95f) * (flameScaleFactor + 1f);
                         Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.56f, 0.9f));
+                        fireColor = Color.Lerp(fireColor, Color.HotPink, (float)Math.Pow(Main.rand.NextFloat(0.5f), 2D));
+
                         Vector2 fireVelocity = -Vector2.UnitY.RotatedByRandom(0.93f) * Main.rand.NextFloat(0.6f, 5.4f);
                         Vector2 fireSpawnPosition = npc.Center + (MathHelper.TwoPi * i / flameCount + flameOffsetAngle).ToRotationVector2() * flameOffsetRadius + Main.rand.NextVector2Circular(7f, 7f);
                         HeavySmokeParticle fire = new(fireSpawnPosition, fireVelocity, fireColor, 20, fireScale, 1f, 0.01f, true);
@@ -880,24 +883,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.netUpdate = true;
         }
 
-        public static bool HandleDeathEffects(NPC npc)
-        {
-            // Just die as usual if the Brimstone Elemental is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
-            if (npc.ai[0] == (int)BrimmyAttackType.DeathAnimation)
-                return true;
-
-            // Clear projectiles.
-            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneDeathray>(), ModContent.ProjectileType<BrimstoneFireball>(), ModContent.ProjectileType<BrimstonePetal>(), 
-                ModContent.ProjectileType<BrimstonePetal2>(), ModContent.ProjectileType<BrimstoneRose>(), ModContent.ProjectileType<BrimstoneSkull>(), ModContent.ProjectileType<BrimstoneTelegraphRay>(),
-                ModContent.ProjectileType<HomingBrimstoneSkull>());
-
-            SelectNextAttack(npc);
-            npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
-            npc.life = npc.lifeMax;
-            npc.active = true;
-            npc.netUpdate = true;
-            return false;
-        }
         #endregion AI
 
         #region Drawing
@@ -987,5 +972,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             return false;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Brimstone Elemental is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            if (npc.ai[0] == (int)BrimmyAttackType.DeathAnimation)
+                return true;
+
+            // Clear projectiles.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneDeathray>(), ModContent.ProjectileType<BrimstoneFireball>(), ModContent.ProjectileType<BrimstonePetal>(),
+                ModContent.ProjectileType<BrimstonePetal2>(), ModContent.ProjectileType<BrimstoneRose>(), ModContent.ProjectileType<BrimstoneSkull>(), ModContent.ProjectileType<BrimstoneTelegraphRay>(),
+                ModContent.ProjectileType<HomingBrimstoneSkull>());
+
+            SelectNextAttack(npc);
+            npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
+            npc.life = npc.lifeMax;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
     }
 }

@@ -32,11 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterghastBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
-        public const float Phase2LifeRatio = 0.65f;
-
-        public const float Phase3LifeRatio = 0.35f;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
 
         // These store the roar sound slot to allow for updating its position.
         public SlotId RoarSlot;
@@ -110,7 +106,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType.SpiritPetal,
         };
 
+        public const int DeathTimerIndex = 6;
+
+        public const int DeathAnimationCenterXIndex = 7;
+
+        public const int DeathAnimationCenterYIndex = 8;
+
+        public const int LegToManuallyControlIndexIndex = 9;
+
+        public const int PhaseCycleIndexIndex = 10;
+
+        public const int HasTransitionedToDesperationPhaseIndex = 11;
+
+        public const int VignetteInterpolantIndex = 12;
+
+        public const int VignetteRadiusDecreaseFactorIndex = 13;
+
+        public const int PerformingVeryFirstAttackIndex = 14;
+
+        public const int CurrentPhaseIndex = 15;
+
         public const float MinGhostCircleRadius = 600f;
+
+        public const float Phase2LifeRatio = 0.65f;
+
+        public const float Phase3LifeRatio = 0.35f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -147,14 +167,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType attackState = (PolterghastAttackType)(int)npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float totalReleasedSouls = ref npc.ai[2];
-            ref float dyingTimer = ref npc.Infernum().ExtraAI[6];
-            ref float initialDeathPositionX = ref npc.Infernum().ExtraAI[7];
-            ref float initialDeathPositionY = ref npc.Infernum().ExtraAI[8];
-            ref float legToManuallyControlIndex = ref npc.Infernum().ExtraAI[9];
-            ref float vignetteInterpolant = ref npc.Infernum().ExtraAI[12];
-            ref float vignetteRadiusDecreaseFactor = ref npc.Infernum().ExtraAI[13];
-            ref float veryFirstAttack = ref npc.Infernum().ExtraAI[14];
-            ref float currentPhase = ref npc.Infernum().ExtraAI[15];
+            ref float dyingTimer = ref npc.Infernum().ExtraAI[DeathTimerIndex];
+            ref float initialDeathPositionX = ref npc.Infernum().ExtraAI[DeathAnimationCenterXIndex];
+            ref float initialDeathPositionY = ref npc.Infernum().ExtraAI[DeathAnimationCenterYIndex];
+            ref float legToManuallyControlIndex = ref npc.Infernum().ExtraAI[LegToManuallyControlIndexIndex];
+            ref float vignetteInterpolant = ref npc.Infernum().ExtraAI[VignetteInterpolantIndex];
+            ref float vignetteRadiusDecreaseFactor = ref npc.Infernum().ExtraAI[VignetteRadiusDecreaseFactorIndex];
+            ref float veryFirstAttack = ref npc.Infernum().ExtraAI[PerformingVeryFirstAttackIndex];
+            ref float currentPhase = ref npc.Infernum().ExtraAI[CurrentPhaseIndex];
             ref float telegraphOpacity = ref npc.localAI[1];
             ref float telegraphDirection = ref npc.localAI[2];
 
@@ -1390,16 +1410,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             npc.TargetClosest();
 
-            npc.Infernum().ExtraAI[10]++;
+            // Increment the phase cycle.
+            npc.Infernum().ExtraAI[PhaseCycleIndexIndex]++;
+
             if (phase3)
-                npc.ai[0] = (int)Phase3AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase3AttackCycle.Length];
+                npc.ai[0] = (int)Phase3AttackCycle[(int)npc.Infernum().ExtraAI[PhaseCycleIndexIndex] % Phase3AttackCycle.Length];
             else if (phase2)
-                npc.ai[0] = (int)Phase2AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase2AttackCycle.Length];
+                npc.ai[0] = (int)Phase2AttackCycle[(int)npc.Infernum().ExtraAI[PhaseCycleIndexIndex] % Phase2AttackCycle.Length];
             else
-                npc.ai[0] = (int)Phase1AttackCycle[(int)npc.Infernum().ExtraAI[10] % Phase1AttackCycle.Length];
+                npc.ai[0] = (int)Phase1AttackCycle[(int)npc.Infernum().ExtraAI[PhaseCycleIndexIndex] % Phase1AttackCycle.Length];
 
             // Transition to the desperation phase after dying.
-            if (npc.Infernum().ExtraAI[11] == 1f)
+            if (npc.Infernum().ExtraAI[HasTransitionedToDesperationPhaseIndex] == 1f)
                 npc.ai[0] = (int)PolterghastAttackType.DesperationAttack;
 
             npc.ai[1] = 0f;
@@ -1480,10 +1502,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
             // Draw the circle.
-            float circleRadius = MathHelper.Lerp(3000f, MinGhostCircleRadius, npc.Infernum().ExtraAI[12]) * (1f - npc.Infernum().ExtraAI[13]);
+            float circleRadius = MathHelper.Lerp(3000f, MinGhostCircleRadius, npc.Infernum().ExtraAI[VignetteInterpolantIndex]) * (1f - npc.Infernum().ExtraAI[VignetteRadiusDecreaseFactorIndex]);
             Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
 
-            if (npc.Infernum().ExtraAI[12] > 0.1f)
+            if (npc.Infernum().ExtraAI[VignetteInterpolantIndex] > 0.1f)
             {
                 Main.spriteBatch.EnterShaderRegion();
 
@@ -1524,6 +1546,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.frame.Y = frameHeight * minFrame;
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Polterghast is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
+            if (npc.Infernum().ExtraAI[DeathTimerIndex] > 0f)
+                return true;
+
+            // Jumpstart the death animation timer.
+            npc.Infernum().ExtraAI[DeathTimerIndex] = 1f;
+            npc.Infernum().ExtraAI[HasTransitionedToDesperationPhaseIndex] = 1f;
+            npc.life = 1;
+            npc.netUpdate = true;
+            npc.dontTakeDamage = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

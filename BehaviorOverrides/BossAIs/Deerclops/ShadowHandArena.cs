@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
                 float radius = RingRadius * MathHelper.Lerp(2.5f, 1f, Projectile.Opacity);
                 if (deerclopsIndex >= 0)
-                    radius *= 1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[7];
+                    radius *= 1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[DeerclopsBehaviorOverride.ShadowRadiusDecreaseInterpolantIndex];
                 return radius;
             }
         }

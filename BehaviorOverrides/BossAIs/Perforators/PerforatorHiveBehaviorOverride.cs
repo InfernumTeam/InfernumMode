@@ -38,6 +38,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             IchorFountainCharge
         }
 
+        public const int DeathTimerIndex = 3;
+
         public const float Phase2LifeRatio = 0.7f;
 
         public const float Phase3LifeRatio = 0.5f;
@@ -46,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHive>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -73,7 +75,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float finalPhaseTransitionTimer = ref npc.ai[3];
             ref float backafterimageGlowInterpolant = ref npc.localAI[0];
             ref float backgroundStrength = ref npc.localAI[1];
-            ref float deathTimer = ref npc.Infernum().ExtraAI[3];
+            ref float deathTimer = ref npc.Infernum().ExtraAI[DeathTimerIndex];
+
             // Reset certain things.
             npc.Calamity().DR = 0.2f;
             backafterimageGlowInterpolant = MathHelper.Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
@@ -1512,6 +1515,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             return false;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the Perforator Hive is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
+            if (npc.Infernum().ExtraAI[DeathTimerIndex] >= 1f)
+                return true;
+
+            // Jumpstart the death timer.
+            npc.Infernum().ExtraAI[DeathTimerIndex] = 1f;
+            npc.life = 1;
+            npc.dontTakeDamage = true;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

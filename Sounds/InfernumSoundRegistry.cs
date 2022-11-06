@@ -77,6 +77,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Sounds/Custom/SCalBrothersSpawn");
 
+        public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Sounds/Custom/SkeletronHeadBonk");
+
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");

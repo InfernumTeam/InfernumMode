@@ -835,7 +835,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Create the teleport telegraph.
-                if (attackTimer < chargeDelay - 30f && attackTimer >= chargeDelay * 0.3f)
+                if (attackTimer < chargeDelay - 30f && attackTimer >= chargeDelay * 0.3f && teleporting)
                 {
                     Vector2 teleportPosition = target.Center + offsetDirection.ToRotationVector2() * teleportOffset;
                     for (int i = 0; i < 6; i++)
@@ -992,9 +992,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 fireballShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.37f) * 16f;
-                    int fireball = Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 450, 0f);
+                    Vector2 fireballShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.37f) * 28f;
+                    int fireball = Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ModContent.ProjectileType<HomingFireball>(), 450, 0f);
                     Main.projectile[fireball].tileCollide = false;
+                    int numberOfParticles = 6;
+                    for (int i = 0; i < numberOfParticles; i++)
+                    {
+                        HeavySmokeParticle smokeParticle = new(mouthPosition, fireballShootVelocity, Color.Gray, 5, Main.rand.NextFloat(0.75f, 0.95f), 1);
+                        GeneralParticleHandler.SpawnParticle(smokeParticle);
+                    }
                 }
                 SoundEngine.PlaySound(YharonBoss.ShortRoarSound, npc.Center);
             }
@@ -1762,7 +1768,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             int[] projectilesToDelete = new int[]
             {
-                ProjectileID.CultistBossFireBall,
+                ModContent.ProjectileType<HomingFireball>(),
                 ModContent.ProjectileType<YharonFireball>(),
                 ModContent.ProjectileType<YharonFireball2>(),
                 ModContent.ProjectileType<Infernado>(),

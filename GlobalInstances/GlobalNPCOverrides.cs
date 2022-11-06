@@ -29,6 +29,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
+using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
@@ -361,6 +362,11 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.HallowBoss && OverridingListManager.Registered(NPCID.HallowBoss))
                 return EmpressOfLightBehaviorOverride.HandleDeathEffects(npc);
+
+            if(npc.type == NPCID.KingSlime && OverridingListManager.Registered(npc.type))
+            {
+                return KingSlimeBehaviorOverride.HandleDeathEffects(npc);
+            }
 
             if (npc.type == ModContent.NPCType<PerforatorHive>() && OverridingListManager.Registered(npc.type))
             {

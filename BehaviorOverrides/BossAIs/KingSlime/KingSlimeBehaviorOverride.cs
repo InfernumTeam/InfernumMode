@@ -76,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
             ref float jewelSummonTimer = ref npc.localAI[1];
             ref float teleportDirection = ref npc.Infernum().ExtraAI[5];
+            ref float deathTimer = ref npc.Infernum().ExtraAI[6];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -152,6 +153,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     npc.position.Y += 4f;
             }
 
+            if(deathTimer > 0)
+            {
+                DoBehavior_DeathAnimation(npc, target, ref deathTimer);
+                deathTimer++;
+                return false;
+            }
+
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {
                 case KingSlimeAttackType.SmallJump:
@@ -180,6 +188,133 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             attackTimer++;
             return false;
+        }
+
+        public static bool HandleDeathEffects(NPC npc)
+        {
+            npc.Infernum().ExtraAI[6] = 1;
+            npc.life = 1;
+            npc.dontTakeDamage = true;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float deathTimer)
+        {
+            int deathAnimationLength = 150;
+
+            // Constantly get the ninja.
+            NPC ninjaNPC = null;
+            for (int i = 0; i < Main.npc.Length; i++)
+            {
+                if (Main.npc[i].type == ModContent.NPCType<Ninja>())
+                {
+                    ninjaNPC = Main.npc[i];
+                    goto BreakLoop;
+                }
+            }
+            BreakLoop:
+
+            if (deathTimer == 1)
+            {
+                // Despawn the jewel
+                for(int i = 0; i < Main.npc.Length; i++)
+                {
+                    if (Main.npc[i].type == ModContent.NPCType<KingSlimeJewel>())
+                    {
+                        Main.npc[i].active = false;
+                        goto BreakNPCLoop;
+                    }
+                }
+                BreakNPCLoop:
+                // If the ninja doesnt exist, spawn it!
+                if (ninjaNPC is null)
+                {
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
+                    npc.netUpdate = true;
+                    return;
+                }
+
+                // Set the ninjas synced death timer, allowing them to sync with us when needed.
+                 ninjaNPC.Infernum().ExtraAI[7] = 1;
+            }
+
+            // Don't do or take damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Make the camera focus on King Slime.
+            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
+            {
+                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(210f, 202f, deathTimer, true);
+            }
+
+            #region sim
+            // Simulate a large jump.
+            //if(deathTimer == 30)
+            //{
+            //    // Simulate the jump, which will also set the landing position, if gotten.
+            //    bool hitTile = SimulateJump(npc, ref npc.Infernum().ExtraAI[7], ref target, false, ref npc.Infernum().ExtraAI[10]);
+            //    if (hitTile)
+            //    {
+            //        float landingPositionX = npc.Infernum().ExtraAI[8];
+            //        float landingPositionY = npc.Infernum().ExtraAI[9];
+            //        NPC ninjaNPC = null;
+            //        for (int i = 0; i < Main.npc.Length; i++)
+            //        {
+            //            if (Main.npc[i].type == ModContent.NPCType<Ninja>())
+            //            {
+            //                ninjaNPC = Main.npc[i];
+            //                goto BreakLoop;
+            //            }
+            //        }
+
+            //        BreakLoop:
+
+            //        if (ninjaNPC is not null)
+            //        {
+            //            ninjaNPC.Infernum().ExtraAI[8] = landingPositionX;
+            //            ninjaNPC.Infernum().ExtraAI[9] = landingPositionY;
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        // No valid tile was found, kill ourselves.
+            //        npc.NPCLoot();
+            //        npc.active = false;
+            //        return;
+            //    }
+            //}
+
+            //if(deathTimer>30)
+            //{
+            //    SimulateJump(npc, ref npc.Infernum().ExtraAI[7], ref target, true, ref npc.Infernum().ExtraAI[10]);
+            //}
+            #endregion
+
+            // Perform a large jump
+            DoBehavior_LargeJump(npc, ref target, ref deathTimer, true);
+
+            // Check if the ninja has initialized their local timer, which happens after they create the projectile.
+            if (ninjaNPC.Infernum().ExtraAI[10] > 0)
+            {
+
+            }
+            if (deathTimer >= deathAnimationLength)
+            {
+                // Die
+                KillKingSlime(npc);
+            }
+        }
+
+        public static void KillKingSlime(NPC npc)
+        {
+            npc.NPCLoot();
+            npc.active = false;
         }
 
         public static void DoBehavior_Despawn(NPC npc)
@@ -247,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 attackTimer--;
         }
 
-        public static void DoBehavior_LargeJump(NPC npc, ref Player target, ref float attackTimer)
+        public static void DoBehavior_LargeJump(NPC npc, ref Player target, ref float attackTimer, bool performingDeathAnimation = false)
         {
             if (npc.velocity.Y == 0f)
             {
@@ -268,7 +403,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 }
 
                 if (attackTimer > 35f && (npc.collideY || attackTimer >= 180f))
-                    SelectNextAttack(npc);
+                {
+                    if (!performingDeathAnimation)
+                    {
+                        SelectNextAttack(npc);
+                        return;
+                    }
+                    else
+                    {
+                        NPC ninjaNPC = null;
+                        for (int i = 0; i < Main.npc.Length; i++)
+                        {
+                            if (Main.npc[i].type == ModContent.NPCType<Ninja>())
+                            {
+                                ninjaNPC = Main.npc[i];
+                                goto BreakLoop;
+                            }
+                        }
+
+                        BreakLoop:
+
+                        if (ninjaNPC is not null)
+                        {
+                            ninjaNPC.Infernum().ExtraAI[8] = npc.Center.X;
+                            ninjaNPC.Infernum().ExtraAI[9] = npc.Center.Y;
+                        }
+                    }
+                }
             }
             else
                 attackTimer--;
@@ -368,6 +529,71 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             npc.netUpdate = true;
         }
 
+        public static bool SimulateJump(NPC npc, ref float simTimer, ref Player target, bool actuallyPerformJump, ref float actualTimer)
+        {
+            if (!actuallyPerformJump)
+            {
+                Vector2 simulatedVelocity = npc.velocity;
+                Vector2 simulatedPosition = npc.Center;
+                bool collided = false;
+                while (!collided && simTimer < 180)
+                {
+                    if (simulatedVelocity.Y == 0f)
+                    {
+                        simulatedVelocity.X *= 0.8f;
+                        if (Math.Abs(simulatedVelocity.X) < 0.1f)
+                            simulatedVelocity.X = 0f;
+
+                        if (simTimer == 35f)
+                        {
+                            target = Main.player[npc.target];
+                            float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.GetLerpValue(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
+
+                            simulatedVelocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
+                            if (BossRushEvent.BossRushActive)
+                                simulatedVelocity *= 1.5f;
+                            //npc.netUpdate = true;
+                        }
+
+                    }
+                    bool onSolidGround = WorldGen.SolidTile(Framing.GetTileSafely(simulatedPosition + Vector2.UnitY * 16f));
+                    // If colliding with something
+                    if (onSolidGround && simTimer > 30)
+                    {
+                        npc.Infernum().ExtraAI[8] = simulatedPosition.X;
+                        npc.Infernum().ExtraAI[9] = simulatedPosition.Y;
+                        return true;
+                    }
+                    simulatedPosition += simulatedVelocity;
+                    simulatedPosition.Y = 0.4f;
+                    simTimer++;
+                }
+                return false;
+            }
+            else
+            {
+                if (npc.velocity.Y == 0f)
+                {
+                    npc.velocity.X *= 0.8f;
+                    if (Math.Abs(npc.velocity.X) < 0.1f)
+                        npc.velocity.X = 0f;
+
+                    if (actualTimer == 35f)
+                    {
+                        target = Main.player[npc.target];
+                        float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.GetLerpValue(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                        jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
+
+                        npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
+                        if (BossRushEvent.BossRushActive)
+                            npc.velocity *= 1.5f;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+            return false;
+        }
         #endregion AI
 
         #region Draw Code

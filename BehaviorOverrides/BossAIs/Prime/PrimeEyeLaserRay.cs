@@ -3,16 +3,25 @@ using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.IO;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public class PrimeEyeLaserRay : BaseLaserbeamProjectile
     {
+        public PrimitiveTrail LaserDrawer
+        {
+            get;
+            set;
+        } = null;
+
         public ref float AngularVelocity => ref Projectile.ai[0];
         public int OwnerIndex => (int)Projectile.ai[1];
+        public Vector2 OwnerEyePosition => Main.npc[OwnerIndex].Center + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 16f, -7f).RotatedBy(Main.npc[OwnerIndex].rotation) + Projectile.velocity * 2f;
         public override float Lifetime => 120;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
@@ -55,8 +64,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 return;
             }
 
-            Projectile.Center = Main.npc[OwnerIndex].Center + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 16f, -7f).RotatedBy(Main.npc[OwnerIndex].rotation) + Projectile.velocity * 2f;
+            Projectile.Center = OwnerEyePosition;
+            Projectile.Center -= Projectile.velocity * 30;
             Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
+        }
+
+        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width;
+
+        public static Color LaserColorFunction(float completionRatio)
+        {
+            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            return Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // This should never happen, but just in case.
+            if (Projectile.velocity == Vector2.Zero)
+                return false;
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
+            Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
+            Vector2[] baseDrawPoints = new Vector2[8];
+            for (int i = 0; i < baseDrawPoints.Length; i++)
+                baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
+
+            // Select textures to pass to the shader, along with the electricity color.
+            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(Color.DeepPink);
+            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage1("Images/Extra_189");
+            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Misc/Perlin");
+
+            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
+
+            return false;
         }
     }
 }

@@ -1,16 +1,26 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
-    public class LaserRayIdle : BaseLaserbeamProjectile
+    public class LaserRayIdle : BaseLaserbeamProjectile, IAdditiveDrawer
     {
+        public PrimitiveTrailCopy BeamDrawer
+        {
+            get;
+            set;
+        } = null;
+
         public float InitialDirection = -100f;
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => 260;
@@ -26,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
+            Projectile.width = Projectile.height = 30;
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
@@ -62,6 +72,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             Projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[5]).ToRotationVector2();
             Projectile.Center = Main.npc[OwnerIndex].Center - Vector2.UnitY * 16f + Projectile.velocity * 2f;
+        }
+        public float WidthFunction(float completionRatio)
+        {
+            return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
+        }
+
+        public Color ColorFunction(float completionRatio)
+        {
+            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            Color color = Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
+            color = Color.Lerp(color, Color.DimGray, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
+            color.A = 50;
+            return color * 1.32f;
+        }
+
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
+
+            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
+            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+
+            List<Vector2> points = new();
+            for (int i = 0; i <= 8; i++)
+                points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
+
+            if (Time >= 2f)
+            {
+                for (float offset = 0f; offset < 6f; offset += 0.75f)
+                {
+                    BeamDrawer.Draw(points, -Main.screenPosition, 28);
+                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                    BeamDrawer.Draw(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                }
+            }
         }
     }
 }

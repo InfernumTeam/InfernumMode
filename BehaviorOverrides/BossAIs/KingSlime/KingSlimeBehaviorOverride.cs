@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public override int NPCOverrideType => NPCID.KingSlime;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region Enumerations
         public enum KingSlimeAttackType
@@ -187,16 +187,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             npc.gfxOffY = (int)(npc.scale * -14f);
 
             attackTimer++;
-            return false;
-        }
-
-        public static bool HandleDeathEffects(NPC npc)
-        {
-            npc.Infernum().ExtraAI[6] = 1;
-            npc.life = 1;
-            npc.dontTakeDamage = true;
-            npc.active = true;
-            npc.netUpdate = true;
             return false;
         }
 
@@ -652,6 +642,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             return false;
         }
         #endregion Drawcode
+
+        #region Death Effects
+        
+        public override bool CheckDead(NPC npc)
+        {
+            npc.Infernum().ExtraAI[6] = 1;
+            npc.life = 1;
+            npc.dontTakeDamage = true;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

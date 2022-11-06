@@ -78,6 +78,7 @@ namespace InfernumMode
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
+        public int ScreenFocusHoldInPlaceTime;
 
         internal Point? CornerOne = null;
         internal Point? CornerTwo = null;
@@ -129,7 +130,11 @@ namespace InfernumMode
             DarkFlames = false;
             Madness = false;
             HatGirl = false;
-            ScreenFocusInterpolant = 0f;
+
+            if (ScreenFocusHoldInPlaceTime > 0)
+                ScreenFocusHoldInPlaceTime--;
+            else
+                ScreenFocusInterpolant = MathHelper.Clamp(ScreenFocusInterpolant - 0.2f, 0f, 1f);
             MusicMuffleFactor = 0f;
 
             // Disable block placement and destruction in the profaned arena.

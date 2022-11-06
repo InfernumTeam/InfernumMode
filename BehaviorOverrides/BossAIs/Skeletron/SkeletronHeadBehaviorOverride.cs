@@ -1,7 +1,9 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Particles;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,12 +27,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             HandWaves,
             HandShadowflameBurst,
             HandShadowflameWaves,
-            DownwardAcceleratingSkulls
+            DownwardAcceleratingSkulls,
+            DeathAnimation
         }
 
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.475f;
@@ -96,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (animationChargeTimer <= 0f)
             {
                 // Do phase transition effects as needed.
-                if (phaseChangeCountdown > 0f)
+                if (phaseChangeCountdown > 0f && attackState != (int)SkeletronAttackType.DeathAnimation)
                 {
                     npc.velocity *= 0.96f;
                     npc.rotation *= 0.94f;
@@ -146,6 +149,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         break;
                     case SkeletronAttackType.DownwardAcceleratingSkulls:
                         DoBehavior_DownwardAcceleratingSkulls(npc, target, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.DeathAnimation:
+                        phaseChangeCountdown = 0f;
+                        phaseChangeState = 2f;
+                        DoBehavior_DeathAnimation(npc, target, ref attackTimer);
                         break;
                 }
 
@@ -495,7 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 14f;
+                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9f;
                             Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ModContent.ProjectileType<SpinningFireball>(), 95, 0f);
                         }
                     }
@@ -648,6 +656,117 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             }
         }
 
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
+        {
+            int hoverTime = 90;
+            int spinTime = 270;
+            int groundSitTime = 167;
+            float chargeSpeed = 23f;
+            ref float spinAcceleration = ref npc.Infernum().ExtraAI[5];
+            ref float groundHitTimer = ref npc.Infernum().ExtraAI[6];
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Get rid of the boss bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Hover above the target.
+            if (attackTimer < hoverTime)
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
+                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, 35f);
+                npc.rotation = npc.velocity.X * 0.008f;
+                return;
+            }
+
+            if (attackTimer < hoverTime + spinTime)
+            {
+                // Screech to a halt and begin spinning in place, while charging energy.
+                spinAcceleration = MathHelper.Lerp(spinAcceleration, MathHelper.Pi / 12f, 0.015f);
+                npc.rotation += spinAcceleration;
+                npc.velocity *= 0.9f;
+
+                // Create charge particles.
+                if (spinAcceleration > 0.066f)
+                {
+                    float lightSpawnOffset = Main.rand.NextFloat(96f, 124f);
+                    Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * lightSpawnOffset;
+                    Vector2 lightSpawnVelocity = (npc.Center - lightSpawnPosition) * 0.03f;
+
+                    if (Main.rand.NextFloat() < Utils.GetLerpValue(0.066f, 0.095f, spinAcceleration, true))
+                    {
+                        SquishyLightParticle light = new(lightSpawnPosition, lightSpawnVelocity, 1f, Color.Lerp(Color.White, Color.Purple, Main.rand.NextFloat(0.2f, 0.85f)), 42, 1f, 2.25f);
+                        GeneralParticleHandler.SpawnParticle(light);
+                    }
+                }
+
+                // Play charge sounds.
+                if (Main.rand.NextFloat() < Utils.GetLerpValue(0.066f, 0.095f, spinAcceleration, true) * 0.055f)
+                    SoundEngine.PlaySound(SoundID.Item103, target.Center);
+                return;
+            }
+
+            // Charge very quickly at the target.
+            if (attackTimer == hoverTime + spinTime)
+            {
+                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.4f }, target.Center);
+
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.netUpdate = true;
+            }
+
+            // Give the player loot by default if Skeletron for some reason didn't find any tiles to collide with.
+            if (!npc.WithinRange(target.Center, 3600f) && groundHitTimer <= 0f)
+            {
+                npc.life = 0;
+                npc.Center = target.Center;
+                npc.checkDead();
+                return;
+            }
+
+            if (groundHitTimer <= 0f)
+                npc.rotation += spinAcceleration;
+
+            // Stop in place immediately if tiles were hit.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height, true) && groundHitTimer <= 0f)
+            {
+                groundHitTimer = 1f;
+
+                Utilities.CreateShockwave(npc.Center, 2, 9, 65f, false);
+                SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound with { Volume = 3f });
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+            }
+
+            // Make the camera focus on Skeletron as he dies.
+            if (groundHitTimer >= 1f)
+            {
+                Main.LocalPlayer.Infernum().ScreenFocusHoldInPlaceTime = 30;
+                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, groundHitTimer, true);
+
+                // Jitter in pain.
+                if (groundHitTimer >= 60f)
+                    npc.Center += Main.rand.NextVector2Circular(1.25f, 1.25f);
+
+                // Break open.
+                if (groundHitTimer >= groundSitTime)
+                {
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.NPCLoot();
+                    SoundEngine.PlaySound(npc.DeathSound, npc.Center);
+                    npc.netUpdate = true;
+                    npc.active = false;
+                }
+
+                groundHitTimer++;
+            }
+        }
+
         #endregion AI
 
         #region Drawing and Frames
@@ -677,6 +796,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             return true;
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            npc.ai[0] = (int)SkeletronAttackType.DeathAnimation;
+            npc.ai[1] = 0f;
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+
+            // Get rid of the silly hands.
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].type == NPCID.SkeletronHand && Main.npc[i].active)
+                {
+                    Main.npc[i].active = false;
+                    Main.npc[i].netUpdate = true;
+                }
+            }
+
+            // Delete old projectiles.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AcceleratingSkull>(), ModContent.ProjectileType<NonHomingSkull>(), ModContent.ProjectileType<ShadowflameFireball>(), ModContent.ProjectileType<SpinningFireball>());
+
+            npc.life = npc.lifeMax;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

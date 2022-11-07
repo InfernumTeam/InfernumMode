@@ -79,6 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[ExoMechManagement.Twins_SideSwitchDelayIndex];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
+            // Use the screen saturation effect.
+            npc.Infernum().ShouldUseSaturationBlur = true;
+
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)complementMechIndex]) ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -910,7 +913,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
                         SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, npc.Center);
-                        Utilities.CreateShockwave(npc.Center);
+                        Utilities.CreateShockwave(npc.Center, 4, 15, 192f);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 
@@ -1062,7 +1065,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
 
                         // Create an incredibly violent screen shake effect.
-                        Utilities.CreateShockwave(npc.Center, 10, 15, 125f);
+                        Utilities.CreateShockwave(npc.Center, 4, 15, 192f);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

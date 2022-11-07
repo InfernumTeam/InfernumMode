@@ -318,10 +318,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                             if (Main.projectile[i].type == ModContent.ProjectileType<DeathSlash>())
                             {
                                 Main.projectile[i].active = false;
-                                goto BreakLoop;
+                                break;
                             }
                         }
-                        BreakLoop:;
                     }
                     // Freeze in place.
                     NPC.velocity = Vector2.Zero;

@@ -40,6 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public const int DeathTimerIndex = 3;
 
+        public const int DeathAnimationLength = 160;
+
         public const float Phase2LifeRatio = 0.7f;
 
         public const float Phase3LifeRatio = 0.5f;
@@ -181,14 +183,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player player, ref float deathTimer)
         {
-            int animationLength = 160;
             int flinchInterval = 30;
-            float interpolant = deathTimer / animationLength;
+            float interpolant = deathTimer / DeathAnimationLength;
             ref float basePositionX = ref npc.Infernum().ExtraAI[6];
             ref float basePositionY = ref npc.Infernum().ExtraAI[7];
-
-            npc.dontTakeDamage = true;
             int bloodReleaseRate = (int)MathHelper.Lerp(1, 4, interpolant);
+
+            // Don't deal or take any damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
             // Rapidly come to a halt.
             if (npc.velocity != Vector2.Zero)
             {
@@ -205,6 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Clear any leftover projectiles.
                 CleanUpStrayProjectiles();
             }
+
             // Screenshake.
             if (CalamityConfig.Instance.Screenshake)
             {
@@ -235,11 +240,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Snap back to the original position.
                 npc.velocity = Vector2.Zero;
                 npc.Center = new(basePositionX, basePositionY);
-                npc.velocity = Vector2.Zero;
             }
 
             // Spawn a wave.
-            if(deathTimer == animationLength - 10)
+            if(deathTimer == DeathAnimationLength - 10)
             {
                 SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -249,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             }
 
             // Die and drop loot.
-            if (deathTimer >= animationLength)
+            if (deathTimer >= DeathAnimationLength)
             {
                 SoundEngine.PlaySound(SoundID.NPCDeath19 with { Volume = 1.2f}, npc.Center);
                 npc.NPCLoot();
@@ -1491,6 +1495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 direction = SpriteEffects.FlipHorizontally;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Color glowmaskColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
             Vector2 origin = npc.frame.Size() * 0.5f;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             float backafterimageGlowInterpolant = npc.localAI[0];
@@ -1505,11 +1510,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(backAfterimageColor), npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
+            ref float deathTimer = ref npc.Infernum().ExtraAI[DeathTimerIndex];
+            // If performing the death animation, use a red tint shader. This simply tints the texture to the provided color.
+            if (deathTimer > 0)
+            {
+                // Enter the shader region.
+                Main.spriteBatch.EnterShaderRegion();
+
+                // Get the opacity interpolent.
+                float opacityInterpolent = deathTimer / DeathAnimationLength;
+                // Set the opacity of the shader.
+                GameShaders.Misc["Infernum:BasicTint"].UseOpacity(opacityInterpolent);
+                // Set the color of the shader.
+                GameShaders.Misc["Infernum:BasicTint"].UseColor(Color.Red);
+                // Apply the shader.
+                GameShaders.Misc["Infernum:BasicTint"].Apply();
+
+                // And draw the texture.
+                Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, Color.White, npc.rotation, origin, npc.scale, direction, 0f);
+                // Along with the glowmask.
+                Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, glowmaskColor, npc.rotation, origin, npc.scale, direction, 0f);
+
+                // Exit the shader region.
+                Main.spriteBatch.ExitShaderRegion();
+
+                // And return to avoid drawing the texture again.
+                return false;
+            }
 
             Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Perforator/PerforatorHiveGlow").Value;
-            Color glowmaskColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
 
             Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, glowmaskColor, npc.rotation, origin, npc.scale, direction, 0f);
             return false;

@@ -94,6 +94,9 @@ namespace InfernumMode
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
+                Ref<Effect> basicTintShader = new(Assets.Request<Effect>("Effects/BasicTint", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:BasicTint"] = new MiscShaderData(basicTintShader, "BasicTint");
+
                 Ref<Effect> madnessShader = new(Assets.Request<Effect>("Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
                 Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
 
@@ -182,6 +185,7 @@ namespace InfernumMode
                 GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
 
                 // Screen shaders.
+
                 Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
                 Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();

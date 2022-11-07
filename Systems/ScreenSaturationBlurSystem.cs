@@ -50,15 +50,15 @@ namespace InfernumMode.Systems
             private set;
         }
 
-        public const int TotalBlurIterations = 1;
+        public static int TotalBlurIterations => 1;
 
-        public const float DownscaleFactor = 16f;
+        public static float DownscaleFactor => 16f;
 
-        public const float BlurBrightnessFactor = 3f;
+        public static float BlurBrightnessFactor => 6f;
 
-        public const float BlurBrightnessExponent = 1.71f;
+        public static float BlurBrightnessExponent => 1.93f;
 
-        public const float BlurSaturationBiasInterpolant = 0.3f;
+        public static float BlurSaturationBiasInterpolant => 0.3f;
 
         public override void OnModLoad()
         {
@@ -144,7 +144,7 @@ namespace InfernumMode.Systems
 
                 var shader = Filters.Scene["InfernumMode:ScreenSaturationBlur"].GetShader().Shader;
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
-                shader.Parameters["blurMaxOffset"].SetValue(205f);
+                shader.Parameters["blurMaxOffset"].SetValue(136f);
                 shader.CurrentTechnique.Passes["DownsamplePass"].Apply();
                 
                 Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);

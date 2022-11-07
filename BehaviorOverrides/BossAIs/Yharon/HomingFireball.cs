@@ -1,13 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
+﻿using CalamityMod.Particles;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
-using System;
-using System.IO;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
@@ -18,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         private readonly int Lifetime = 180;
 
-        public float LifetimeRatio => Timer / Lifetime;
+        public float LifetimeCompletion => Timer / Lifetime;
 
         public override void SetStaticDefaults()
         {
@@ -64,22 +58,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 Projectile.velocity = new Vector2(Projectile.velocity.Length(), 0f).RotatedBy(angleRotation);
             }
-            float particleScale = 1;
-            if(LifetimeRatio < 0.05)
-            {
-                particleScale = LifetimeRatio*20;
-            }
+            float particleScale = Utils.GetLerpValue(0f, 0.05f, LifetimeCompletion, true);
 
             for(int j = 0; j < 3; j++)
             {
-                Color fireColor = Color.Lerp(Color.Orange, new Color(255,231,108), Main.rand.NextFloat(0.2f, 0.3f));
-                float rotationAmount = Main.rand.NextFloat(0.02f, 0.04f);
-                FireballParticle fire = new(Projectile.Center, Projectile.velocity, fireColor, 10, Main.rand.NextFloat(0.57f, 0.63f) * particleScale, 1f, (Main.rand.NextBool() ? -1 : 1) * rotationAmount);
+                Color fireColor = Color.Lerp(Color.Orange, new Color(255, 231, 108), Main.rand.NextFloat(0.2f, 0.3f));
+                float angularVelocity = Main.rand.NextFloat(0.035f, 0.08f);
+                FireballParticle fire = new(Projectile.Center, Projectile.velocity * 0.8f, fireColor, 10, Main.rand.NextFloat(0.52f, 0.68f) * particleScale, 1f, Main.rand.NextBool().ToDirectionInt() * angularVelocity);
                 GeneralParticleHandler.SpawnParticle(fire);
             }
-            if (LifetimeRatio is > 0.05f and < 0.9f)
+            
+            if (LifetimeCompletion is > 0.05f and < 0.9f)
             {
                 Lighting.AddLight(Projectile.Center, 1.1f, 0.9f, 0.4f);
+
                 // Create fire and smoke dust effects.
                 if (Timer % 12f == 11f)
                 {

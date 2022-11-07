@@ -44,7 +44,8 @@ namespace InfernumMode.GlobalInstances
 
         public const int TotalExtraAISlots = 100;
 
-        // I'll be fucking damned if this isn't enough
+        // I'll be fucking damned if this isn't enough.
+        public bool ShouldUseSaturationBlur = false;
         public float[] ExtraAI = new float[TotalExtraAISlots];
         public Rectangle Arena = default;
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
@@ -92,6 +93,7 @@ namespace InfernumMode.GlobalInstances
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
+            ShouldUseSaturationBlur = false;
             OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
@@ -137,6 +139,9 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreAI(NPC npc)
         {
+            // Reset the saturation blur state.
+            ShouldUseSaturationBlur = false;
+            
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
@@ -175,7 +180,11 @@ namespace InfernumMode.GlobalInstances
                             npc.Calamity().dashImmunityTime[i]--;
                     }
 
-                    return OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
+                    bool result = OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
+                    if (ShouldUseSaturationBlur)
+                        ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
+
+                    return result;
                 }
             }
             return base.PreAI(npc);

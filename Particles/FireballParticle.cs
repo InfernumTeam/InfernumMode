@@ -41,20 +41,21 @@ namespace InfernumMode.Particles
 
         public override void Update()
         {
-            if ((float)Time / (float)Lifetime < 0.1f)
+            if (Time / (float)Lifetime < 0.1f)
             {
                 Scale += 0.01f;
             }
-            if ((float)Time / (float)Lifetime > 0.9f)
+            if (Time / (float)Lifetime > 0.9f)
             {
                 Scale *= 0.975f;
             }
 
             Color = Main.hslToRgb((Main.rgbToHsl(Color).X) % 1f, Main.rgbToHsl(Color).Y, Main.rgbToHsl(Color).Z);
             Opacity *= 0.98f;
-            Rotation += Spin * ((Velocity.X > 0f) ? 1f : (-1f));
-            float lerpValue = Utils.GetLerpValue(1f, 0.85f, LifetimeCompletion, clamped: true);
-            Color *= lerpValue;
+            Rotation += Spin * (Velocity.X > 0f).ToDirectionInt();
+
+            float opacity = Utils.GetLerpValue(1f, 0.85f, LifetimeCompletion, clamped: true);
+            Color *= opacity;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)

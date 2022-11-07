@@ -214,7 +214,7 @@ namespace InfernumMode.ILEditingStuff
         }
     }
 
-    public class ChangeBossRushTiersHooks : IHookEdit
+    public class ChangeBossRushTiersHook : IHookEdit
     {
         internal void AdjustBossRushTiers(ILContext il)
         {
@@ -242,6 +242,28 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => BossRushTier += AdjustBossRushTiers;
 
         public void Unload() => BossRushTier -= AdjustBossRushTiers;
+    }
+
+    public class ChangeExoMechBackgroundColorHook : IHookEdit
+    {
+        internal void MakeExoMechBgMoreCyan(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(MoveType.Before, i => i.MatchRet());
+
+            cursor.EmitDelegate<Func<Color, Color>>(originalColor =>
+            {
+                if (!InfernumMode.CanUseCustomAIs)
+                    return originalColor;
+
+                return Color.Lerp(originalColor, Color.DarkCyan, 0.15f);
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load() => ExoMechTileTileColor += MakeExoMechBgMoreCyan;
+
+        public void Unload() => ExoMechTileTileColor -= MakeExoMechBgMoreCyan;
     }
 
     public class DisableExoMechsSkyInBRHook : IHookEdit

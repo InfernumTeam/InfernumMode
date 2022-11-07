@@ -218,6 +218,9 @@ namespace InfernumMode
                 Ref<Effect> screenShakeShader = new(Assets.Request<Effect>("Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
                 Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
 
+                Ref<Effect> screenSaturationBlurShader = new(Assets.Request<Effect>("Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
+                Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
+                
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
             }
 

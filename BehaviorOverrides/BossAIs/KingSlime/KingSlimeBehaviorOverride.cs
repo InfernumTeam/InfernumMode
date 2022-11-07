@@ -201,10 +201,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (Main.npc[i].type == ModContent.NPCType<Ninja>())
                 {
                     ninjaNPC = Main.npc[i];
-                    goto BreakLoop;
+                    break;
                 }
             }
-            BreakLoop:
 
             if (deathTimer == 1)
             {
@@ -214,10 +213,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     if (Main.npc[i].type == ModContent.NPCType<KingSlimeJewel>())
                     {
                         Main.npc[i].active = false;
-                        goto BreakNPCLoop;
+                        break;
                     }
                 }
-                BreakNPCLoop:
+
                 // If the ninja doesnt exist, spawn it!
                 if (ninjaNPC is null)
                 {
@@ -407,11 +406,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                             if (Main.npc[i].type == ModContent.NPCType<Ninja>())
                             {
                                 ninjaNPC = Main.npc[i];
-                                goto BreakLoop;
+                                break;
                             }
                         }
-
-                        BreakLoop:
 
                         if (ninjaNPC is not null)
                         {

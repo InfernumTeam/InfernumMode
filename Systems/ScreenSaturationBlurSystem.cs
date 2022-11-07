@@ -54,7 +54,7 @@ namespace InfernumMode.Systems
 
         public static float DownscaleFactor => 16f;
 
-        public static float BlurBrightnessFactor => 6f;
+        public static float BlurBrightnessFactor => 4.5f;
 
         public static float BlurBrightnessExponent => 1.93f;
 

@@ -245,7 +245,7 @@ namespace InfernumMode.GlobalInstances
                 WorldgenSystem.GenerateProfanedArena(new(), new(new()));
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
             }
-
+            
             if (npc.type == ModContent.NPCType<Providence>())
             {
                 if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)

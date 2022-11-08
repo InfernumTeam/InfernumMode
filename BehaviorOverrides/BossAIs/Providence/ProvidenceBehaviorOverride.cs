@@ -143,6 +143,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // End rain.
             CalamityMod.CalamityMod.StopRain();
 
+            // Use the screen saturation effect.
+            npc.Infernum().ShouldUseSaturationBlur = true;
+
             // Set the global NPC index to this NPC. Used as a means of lowering the need for loops.
             CalamityGlobalNPC.holyBoss = npc.whoAmI;
 
@@ -1460,6 +1463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             string baseTextureString = "CalamityMod/NPCs/Providence/";
             string baseGlowTextureString = baseTextureString + "Glowmasks/";
+            string rockTextureString = "InfernumMode/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock";
 
             string getTextureString = baseTextureString + "Providence";
             string getTextureGlowString;
@@ -1474,16 +1478,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             void drawProvidenceInstance(Vector2 baseDrawPosition, int frameOffset, Color baseDrawColor)
             {
+                rockTextureString = "InfernumMode/BehaviorOverrides/BossAIs/Providence/Sheets/";
                 if (npc.localAI[0] == (int)ProvidenceFrameDrawingType.CocoonState)
                 {
                     if (!useDefenseFrames)
                     {
+                        rockTextureString += "ProvidenceDefenseRock";
                         getTextureString = baseTextureString + "ProvidenceDefense";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceDefenseGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceDefenseGlow2";
                     }
                     else
                     {
+                        rockTextureString += "ProvidenceDefenseAltRock";
                         getTextureString = baseTextureString + "ProvidenceDefenseAlt";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceDefenseAltGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceDefenseAltGlow2";
@@ -1493,23 +1500,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     if (npc.localAI[2] == 0f)
                     {
+                        rockTextureString += "ProvidenceRock";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceGlow2";
                     }
                     else if (npc.localAI[2] == 1f)
                     {
                         getTextureString = baseTextureString + "ProvidenceAlt";
+                        rockTextureString += "ProvidenceAltRock";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceAltGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceAltGlow2";
                     }
                     else if (npc.localAI[2] == 2f)
                     {
+                        rockTextureString += "ProvidenceAttackRock";
                         getTextureString = baseTextureString + "ProvidenceAttack";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceAttackGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceAttackGlow2";
                     }
                     else
                     {
+                        rockTextureString += "ProvidenceAttackAltRock";
                         getTextureString = baseTextureString + "ProvidenceAttackAlt";
                         getTextureGlowString = baseGlowTextureString + "ProvidenceAttackAltGlow";
                         getTextureGlow2String = baseGlowTextureString + "ProvidenceAttackAltGlow2";
@@ -1532,19 +1543,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     spriteEffects = SpriteEffects.FlipHorizontally;
 
                 Vector2 drawOrigin = npc.frame.Size() * 0.5f;
-
-                float rainbowVibrance = npc.Infernum().ExtraAI[5];
-
+                
                 // Draw the crystal behind everything. It will appear if providence is herself invisible.
-                applyShaderAndDoThing(() =>
+                if (npc.localAI[3] <= 0f)
                 {
-                    if (npc.localAI[3] > 0f)
-                        return;
-
                     Vector2 crystalOrigin = fatCrystalTexture.Size() * 0.5f;
                     Vector2 crystalDrawPosition = npc.Center - Main.screenPosition;
                     Main.spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, Color.White, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
-                }, rainbowVibrance * 1.5f);
+                }
 
                 int frameHeight = generalTexture.Height / 3;
                 if (frameHeight <= 0)
@@ -1559,38 +1565,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Draw the wings.
                 DrawProvidenceWings(npc, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
 
-                // Draw the crystals. They become more and more rainbow as Providence gets closer to death.
-                // This effect fades away as she burns.
-                float crystalRainbowIntensity = Utils.GetLerpValue(LifeRainbowCrystalStartRatio, LifeRainbowCrystalEndRatio, lifeRatio, true);
-                if (rainbowVibrance > 0.02f)
-                    crystalRainbowIntensity = 0f;
-                crystalRainbowIntensity *= 1f - npc.localAI[3];
-                applyShaderAndDoThing(() =>
+                // Draw the crystals.
+                for (int i = 0; i < 9; i++)
                 {
-                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
-                }, crystalRainbowIntensity);
-            }
-
-            void applyShaderAndDoThing(Action thingToDo, float rainbowOpacity)
-            {
-                Main.spriteBatch.EnterShaderRegion();
-
-                // Apply a super special shader.
-                MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
-                gradientShader.UseImage1("Images/Misc/noise");
-                gradientShader.UseOpacity(rainbowOpacity);
-                gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
-
-                //gradientShader.Apply(null);
-
-                thingToDo();
-
-                Main.spriteBatch.ExitShaderRegion();
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 2f;
+                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition + drawOffset, frame, Color.White with { A = 0 } * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                }
             }
 
             int totalProvidencesToDraw = (int)MathHelper.Lerp(1f, 30f, burnIntensity);
-            Texture2D baseTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Providence/Providence").Value;
-            Vector2 textureOrigin = npc.frame.Size() * 0.5f;
             for (int i = 0; i < totalProvidencesToDraw; i++)
             {
                 float offsetAngle = MathHelper.TwoPi * i * 2f / totalProvidencesToDraw;
@@ -1599,10 +1582,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 drawOffsetScalar *= MathHelper.Lerp(1f, 2f, 1f - lifeRatio);
 
                 Vector2 drawOffset = offsetAngle.ToRotationVector2() * drawOffsetScalar;
+                if (totalProvidencesToDraw <= 1)
+                    drawOffset = Vector2.Zero;
 
-                Vector2 drawPosition = npc.Center - Main.screenPosition;
-                drawPosition -= new Vector2(baseTexture.Width, baseTexture.Height / Main.npcFrameCount[npc.type]) * npc.scale / 2f;
-                drawPosition += textureOrigin * npc.scale + new Vector2(0f, 4f + npc.gfxOffY) + drawOffset;
+                Vector2 drawPosition = npc.Center - Main.screenPosition + drawOffset;
 
                 Color baseColor = Color.White * (MathHelper.Lerp(0.4f, 0.8f, burnIntensity) / totalProvidencesToDraw * 7f);
                 baseColor.A = 0;
@@ -1620,20 +1603,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 float telegraphOpacity = npc.Infernum().ExtraAI[1];
                 int laserCount = (int)npc.Infernum().ExtraAI[2];
 
-                if (telegraphOpacity <= 0f)
-                    return false;
-
-                Color telegraphColor = (!IsEnraged ? Color.Yellow : Color.Cyan) * telegraphOpacity;
-                telegraphColor.A = 127;
-                for (int i = 0; i < laserCount; i++)
+                if (telegraphOpacity > 0f)
                 {
-                    float telegraphRotation = MathHelper.TwoPi * i / laserCount + telegraphOffsetAngle;
-                    Vector2 telegraphDirection = telegraphRotation.ToRotationVector2();
-                    Vector2 start = crystalCenter;
-                    Vector2 end = start + telegraphDirection * 5000f;
-                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphOpacity * 4f);
+                    Color telegraphColor = (!IsEnraged ? Color.Yellow : Color.Cyan) * telegraphOpacity;
+                    telegraphColor.A = 127;
+                    for (int i = 0; i < laserCount; i++)
+                    {
+                        float telegraphRotation = MathHelper.TwoPi * i / laserCount + telegraphOffsetAngle;
+                        Vector2 telegraphDirection = telegraphRotation.ToRotationVector2();
+                        Vector2 start = crystalCenter;
+                        Vector2 end = start + telegraphDirection * 5000f;
+                        Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphOpacity * 4f);
+                    }
                 }
             }
+
+            // Draw the rock texture above the bloom effects.
+            Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
+            float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
+            ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
 
             return false;
         }

@@ -1,11 +1,9 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System;
+using System.Collections.Generic;
 using Terraria;
-using Terraria.GameContent;
+using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -50,9 +48,17 @@ namespace InfernumMode.Systems
             private set;
         }
 
+        public static List<DrawData> ThingsToDrawOnTopOfBlur
+        {
+            get;
+            private set;
+        } = new();
+
+        public static bool DebugDrawBloomMap => false;
+
         public static int TotalBlurIterations => 1;
 
-        public static float DownscaleFactor => 16f;
+        public static float DownscaleFactor => 32f;
 
         public static float BlurBrightnessFactor => 4.5f;
 
@@ -79,14 +85,25 @@ namespace InfernumMode.Systems
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            while (ThingsToDrawOnTopOfBlur.Count > 0)
+            {
+                ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
+                ThingsToDrawOnTopOfBlur.RemoveAt(0);
+            }
+            Main.spriteBatch.End();
         }
 
         public override void OnModUnload()
         {
-            BloomTarget?.Dispose();
-            FinalScreenTarget?.Dispose();
-            DownscaledBloomTarget?.Dispose();
-            TemporaryAuxillaryTarget?.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                BloomTarget?.Dispose();
+                FinalScreenTarget?.Dispose();
+                DownscaledBloomTarget?.Dispose();
+                TemporaryAuxillaryTarget?.Dispose();
+            });
         }
         
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
@@ -117,7 +134,7 @@ namespace InfernumMode.Systems
             else
                 return;
 
-            if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f)
+            if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed)
                 return;
             
             // Get the downscaled texture.

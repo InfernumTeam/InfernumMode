@@ -95,10 +95,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             c = Color.Lerp(c, Color.White, 0.4f);
 
             c.A = 0;
-            return c * Projectile.Opacity;
+            return c * Projectile.Opacity * 0.5f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public void DrawSpear(Vector2 drawOffset)
         {
             Texture2D spikeChain = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/GroundCrystalSpikePillar").Value;
 
@@ -114,10 +114,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 for (int i = 0; i < 2; i++)
                 {
-                    Main.spriteBatch.Draw(spikeChain, spikeTip - Main.screenPosition, spikeFrame, Projectile.GetAlpha(Color.White), spikeRotation, new Vector2(spikeChain.Width / 2f, 0f), 1f, 0, 0f);
-                    Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Projectile.GetAlpha(Color.White), spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                    Main.spriteBatch.Draw(spikeChain, spikeTip + drawOffset - Main.screenPosition, spikeFrame, Projectile.GetAlpha(Color.White), spikeRotation, new Vector2(spikeChain.Width / 2f, 0f), 1f, 0, 0f);
+                    Main.spriteBatch.Draw(spikeTipTexture, spikeTip + drawOffset - Main.screenPosition, null, Projectile.GetAlpha(Color.White), spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
                 }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            for (int i = 0; i < 6; i++)
+                DrawSpear((MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f);
+            DrawSpear(Vector2.Zero);
             return false;
         }
     }

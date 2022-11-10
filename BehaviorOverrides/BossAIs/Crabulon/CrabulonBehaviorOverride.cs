@@ -456,7 +456,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                             for (int j = 0; j < (enraged ? 25 : 12); j++)
                             {
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
-                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                                int mushroom = Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                                if (Main.projectile.IndexInRange(mushroom))
+                                    Main.projectile[mushroom].ai[1] = target.Bottom.Y;
                             }
                         }
                     }

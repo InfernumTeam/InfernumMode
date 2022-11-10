@@ -1,3 +1,5 @@
+using InfernumMode.OverridingSystem;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -12,14 +14,16 @@ namespace InfernumMode.Systems
             if (msgType == MessageID.SyncNPC)
             {
                 NPC npc = Main.npc[number];
-                if (!npc.active)
+                if (!npc.active || !OverridingListManager.Registered(npc.type))
                     return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
 
                 ModPacket packet = InfernumMode.Instance.GetPacket();
+
+                int totalSlotsInUse = npc.Infernum().TotalAISlotsInUse;
                 packet.Write((short)InfernumPacketType.SendExtraNPCData);
                 packet.Write(npc.whoAmI);
                 packet.Write(npc.realLife);
-                packet.Write(npc.Infernum().TotalAISlotsInUse);
+                packet.Write(totalSlotsInUse);
                 packet.Write(npc.Infernum().Arena.X);
                 packet.Write(npc.Infernum().Arena.Y);
                 packet.Write(npc.Infernum().Arena.Width);
@@ -28,9 +32,11 @@ namespace InfernumMode.Systems
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
                         continue;
+
                     packet.Write(i);
                     packet.Write(npc.Infernum().ExtraAI[i]);
                 }
+
                 packet.Send();
             }
             return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);

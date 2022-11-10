@@ -36,7 +36,10 @@ namespace InfernumMode
             if (CachedRealLife >= 0)
                 Main.npc[NPCIndex].realLife = CachedRealLife;
             for (int i = 0; i < TotalUniqueIndicesUsed; i++)
+            {
+                Main.npc[NPCIndex].Infernum().HasAssociatedAIBeenUsed[ExtraAIIndicesUsed[i]] = true;
                 Main.npc[NPCIndex].Infernum().ExtraAI[ExtraAIIndicesUsed[i]] = ExtraAIValues[i];
+            }
             if (ArenaRectangle != default)
                 Main.npc[NPCIndex].Infernum().Arena = ArenaRectangle;
 

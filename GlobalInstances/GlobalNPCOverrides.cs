@@ -180,6 +180,9 @@ namespace InfernumMode.GlobalInstances
                             npc.Calamity().dashImmunityTime[i]--;
                     }
 
+                    // Disable netOffset effects.
+                    npc.netOffset = Vector2.Zero;
+
                     bool result = OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
                     if (ShouldUseSaturationBlur)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;

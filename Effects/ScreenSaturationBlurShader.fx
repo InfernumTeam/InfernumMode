@@ -28,6 +28,23 @@ bool onlyShowBlurMap;
 float prefilteringThreshold;
 float blurSaturationBiasInterpolant;
 
+// Table of 12 evenly spaced directions, based on <cos(a), sin(a)>
+float2 directions[] =
+{
+    float2(1, 0),
+    float2(0.86603, 0.5),
+    float2(0.5, 0.86603),
+    float2(0, 1),
+    float2(-0.5, 0.86603),
+    float2(-0.86603, 0.5),
+    float2(-1, 0),
+    float2(-0.86603, -0.5),
+    float2(-0.5, -0.86603),
+    float2(0, -1),
+    float2(0.5, -0.86603),
+    float2(0.86603, -0.5)
+};
+
 float InverseLerp(float from, float to, float x)
 {
     return saturate((x - from) / (to - from));
@@ -81,13 +98,27 @@ float4 Downsample(float2 coords : TEXCOORD0) : COLOR0
     float4 result = 0;
     
     // Samples pixels in a circular area around the pixel for blending purposes.
-    for (float a = 0; a < 16; a++)
+    for (float a = 0; a < 12; a++)
     {
-        float angle = 6.283 * a / 16;
+        float angle = 6.283 * a / 12;
         for (float i = 0; i < 12; i++)
             result += tex2D(uImage0, coords + float2(sin(angle + 1.57), sin(angle)) * maxOffset * i / 12);
     }
-    return result / (12 * 16 + 1);
+    return result / 145;
+}
+
+float4 DownsampleFast(float2 coords : TEXCOORD0) : COLOR0
+{
+    float2 maxOffset = blurMaxOffset / uImageSize1;
+    float4 result = 0;
+    
+    // Samples pixels in a circular area around the pixel for blending purposes.
+    for (float a = 0; a < 12; a++)
+    {
+        for (float i = 0; i < 12; i++)
+            result += tex2D(uImage0, coords + directions[a] * maxOffset * i / 12);
+    }
+    return result / 145;
 }
 
 float4 Prefiltering(float2 coords : TEXCOORD0) : COLOR0
@@ -110,6 +141,10 @@ technique Technique1
     pass DownsamplePass
     {
         PixelShader = compile ps_3_0 Downsample();
+    }
+    pass DownsampleFastPass
+    {
+        PixelShader = compile ps_3_0 DownsampleFast();
     }
     pass PrefilteringPass
     {

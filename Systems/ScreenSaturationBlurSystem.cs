@@ -54,7 +54,15 @@ namespace InfernumMode.Systems
             private set;
         } = new();
 
+        public static List<DrawData> ThingsToBeManuallyBlurred
+        {
+            get;
+            private set;
+        } = new();
+
         public static bool DebugDrawBloomMap => false;
+
+        public static bool UseFastBlurPass => true;
 
         public static int TotalBlurIterations => 1;
 
@@ -147,11 +155,19 @@ namespace InfernumMode.Systems
             // Upscale the texture again.
             Main.instance.GraphicsDevice.SetRenderTarget(BloomTarget);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             Main.spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, DownscaleFactor, 0, 0f);
+
+            while (ThingsToBeManuallyBlurred.Count > 0)
+            {
+                ThingsToBeManuallyBlurred[0].Draw(Main.spriteBatch);
+                ThingsToBeManuallyBlurred.RemoveAt(0);
+            }
+
             Main.spriteBatch.End();
 
             // Apply blur iterations.
+            string blurPassName = UseFastBlurPass ? "DownsampleFastPass" : "DownsamplePass";
             for (int i = 0; i < TotalBlurIterations; i++)
             {
                 Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
@@ -162,7 +178,7 @@ namespace InfernumMode.Systems
                 var shader = Filters.Scene["InfernumMode:ScreenSaturationBlur"].GetShader().Shader;
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
-                shader.CurrentTechnique.Passes["DownsamplePass"].Apply();
+                shader.CurrentTechnique.Passes[blurPassName].Apply();
                 
                 Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();

@@ -359,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
         public static void DoBehavior_UpwardPerpendicularBoltCharge(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int minHoverTime = 45;
-            int maxHoverTime = 140;
+            int maxHoverTime = 270;
             int upwardChargeTime = 66;
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
@@ -394,8 +394,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 // Perform hover movement.
                 if (!npc.WithinRange(hoverDestination, 85f) && reachedDestination == 0f)
                 {
-                    npc.Center = npc.Center.MoveTowards(hoverDestination, 5f);
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 0.54f);
+                    float flySpeed = Utils.Remap(attackTimer, minHoverTime, maxHoverTime, 19f, 50f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, flySpeed * 0.25f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, flySpeed / 38f);
                 }
                 else
                 {

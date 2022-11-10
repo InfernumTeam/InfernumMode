@@ -178,7 +178,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.SummonSuicideBomberDemons,
         };
 
-
         public static SCalAttackType[] Phase3AttackCycle => new SCalAttackType[]
         {
             SCalAttackType.ShadowDemon_ShadowGigablastsAndCharges,

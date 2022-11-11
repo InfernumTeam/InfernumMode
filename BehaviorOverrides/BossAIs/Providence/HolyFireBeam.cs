@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = Projectile.width * 0.8f;
+            float width = Projectile.width * 0.75f;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             #region Old Drawing
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["Infernum:ProviLaserShader"]);
-            Color color = Color.Gold;
+            Color color = ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.CadetBlue, Color.Cyan, Time) : Color.Lerp(Color.Gold, Color.Goldenrod, Time);
             GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(color);
             GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1", (AssetRequestMode)1));
 

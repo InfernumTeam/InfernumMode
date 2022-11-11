@@ -92,7 +92,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            #region Old Drawing
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["Infernum:ProviLaserShader"]);
             Color color = ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.CadetBlue, Color.Cyan, Time) : Color.Lerp(Color.Gold, Color.Goldenrod, Time);
@@ -116,29 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
             Main.instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             Main.GlobalTimeWrappedHourly = oldGlobalTime;
-            return false;
-            #endregion
-            Texture2D sphericalGlow = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LaserCircle", (AssetRequestMode)1).Value;
-            Texture2D mainLaserTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1", (AssetRequestMode)1).Value;
-            float rotation = MathHelper.TwoPi * Projectile.ai[1] + Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[0];
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            Color color2 = Color.Gold;
-            Main.spriteBatch.EnterShaderRegion();
-            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(color);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1", (AssetRequestMode)1));
-            GameShaders.Misc["Infernum:ProviLaserShader"].Apply();
-            Main.spriteBatch.Draw(mainLaserTexture, Projectile.Center - Main.screenPosition, new Rectangle(Projectile.timeLeft * 8, 0, mainLaserTexture.Width * 5, mainLaserTexture.Height), color, rotation, new Vector2(0f, (float)(mainLaserTexture.Width / 2)), new Vector2(LaserLength / 256f / 5f, Projectile.scale), 0, 0f);
-            Main.spriteBatch.ExitShaderRegion();
-            //Main.spriteBatch.Draw(sphericalGlow, Projectile.Center - Main.screenPosition, null, color, 0f, sphericalGlow.Size() / 2f, Projectile.scale * 2f, 0, 0f);
-            //Main.spriteBatch.Draw(sphericalGlow, Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * LaserLength - Main.screenPosition, null, color, 0f, sphericalGlow.Size() / 2f, Projectile.scale * 2f, 0, 0f);
-            //Texture2D backglowTexture = TextureAssets.Extra[89].Value;
-            //Main.spriteBatch.Draw(backglowTexture, Projectile.Center - Main.screenPosition, null, color, (float)Projectile.timeLeft * 0.08f, backglowTexture.Size() / 2f, new Vector2(0.5f, 3f) * Projectile.scale * 3f, 0, 0f);
-            //Main.spriteBatch.Draw(backglowTexture, Projectile.Center - Main.screenPosition, null, color, (float)(-Projectile.timeLeft) * 0.1f, backglowTexture.Size() / 2f, new Vector2(0.5f, 2f) * Projectile.scale * 3f, 0, 0f);
-            //Main.spriteBatch.Draw(backglowTexture, Projectile.Center - Main.screenPosition, null, color, 0f, backglowTexture.Size() / 2f, new Vector2(0.6f, 4f) * Projectile.scale * 2f, 0, 0f);
-            //Main.spriteBatch.Draw(backglowTexture, Projectile.Center - Main.screenPosition, null, color, 1.57f, backglowTexture.Size() / 2f, new Vector2(0.6f, 6f) * Projectile.scale * 2f, 0, 0f);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(0, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
     }

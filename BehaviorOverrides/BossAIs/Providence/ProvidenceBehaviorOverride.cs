@@ -993,14 +993,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_CrystalBladesWithLaser(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int laserShootDelay = 180;
-            int bladeRelaseRate = 38;
+            int bladeReleaseRate = 38;
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 12f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.78f + (1f - lifeRatio) * 0.195f);
             
             if (IsEnraged)
             {
-                bladeRelaseRate -= 10;
+                bladeReleaseRate -= 10;
                 bladeSpeed += 3f;
             }
             
@@ -1050,7 +1050,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 telegraphOpacity = 0f;
 
                 // Release crystal blades.
-                if (attackTimer % bladeRelaseRate == bladeRelaseRate - 1f)
+                if (attackTimer % bladeReleaseRate == bladeReleaseRate - 1f)
                 {
                     SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

@@ -1,7 +1,6 @@
 ﻿using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -47,7 +46,7 @@ namespace InfernumMode.Particles
 			float verticalStretch = Utils.GetLerpValue(0f, 24f, Math.Abs(Velocity.Y), clamped: true) * 0.84f;
 			float brightness = (float)Math.Pow((double)Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
 			Vector2 scale = new Vector2(1f, verticalStretch + 1f) * Scale * 0.1f;
-			Texture2D texture = ModContent.Request<Texture2D>(Texture, (AssetRequestMode)2).Value;
+			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 			spriteBatch.Draw(texture, Position - Main.screenPosition, null, Color * brightness, Rotation, texture.Size() * 0.5f, scale, 0, 0f);
 		}
 	}

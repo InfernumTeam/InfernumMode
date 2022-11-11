@@ -48,8 +48,9 @@ float4 PixelShaderFunction( VertexShaderOutput input) : COLOR0
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
     // Get the pixel from the image wanted to draw.
-    float y = coords.y + sin(coords.x * 68 + uTime * 2.5) * 0.05;
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 - uTime * 5.5), y));
+    float y = coords.y + sin(coords.x * 68 + uTime * 6.283) * 0.05;
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 - uTime * 2.6), y));
+    
     // Calcuate the grayscale version of the pixel and use it as the opacity.
     float opacity = fadeMapColor.r;
     float4 colorCorrected = lerp(float4(uColor, 1), float4(1, 1, 1, 1), fadeMapColor.r*0.55f);

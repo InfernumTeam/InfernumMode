@@ -9,7 +9,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
     public class ExolaserSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Spark");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Exolaser Spark");
+            Main.projFrames[Projectile.type] = 8;
+
+        }
 
         public override void SetDefaults()
         {
@@ -38,6 +43,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (Projectile.velocity.Length() < 5f)
                 Projectile.velocity *= 1.0225f;
+
+            // Frames
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 8)
+            {
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+                Projectile.frameCounter = 0;
+            }
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -48,15 +61,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Vector2 origin = texture.Size() * 0.5f;
+            Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Projectile.type], frameY: Projectile.frame);
 
+            Vector2 origin = sourceRectangle.Size() * 0.5f;
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.45f;
             frontAfterimageColor.A = 120;
             for (int i = 0; i < 7; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 7f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.scale * 4f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
-                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, sourceRectangle, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             for (int i = 0; i < 12; i++)
@@ -65,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Color backAfterimageColor = Projectile.GetAlpha(lightColor) * ((12f - i) / 12f);
                 backAfterimageColor.A = 0;
-                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, sourceRectangle, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

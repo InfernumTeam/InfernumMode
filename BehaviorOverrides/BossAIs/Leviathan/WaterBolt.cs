@@ -13,6 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Water Spear");
+            Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
@@ -46,12 +47,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 }
                 Projectile.localAI[1] = 1f;
             }
+            // Frames
+
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 8)
+            {
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+                Projectile.frameCounter = 0;
+            }
 
             // Determine opacity and rotation.
             Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 30f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Time++;
-
             Lighting.AddLight(Projectile.Center, 0f, 0f, 0.5f * Projectile.Opacity);
         }
 

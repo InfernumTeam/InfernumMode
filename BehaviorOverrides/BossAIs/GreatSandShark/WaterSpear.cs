@@ -17,6 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Water Spear");
+            Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }
@@ -44,6 +45,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + Gravity, -34f, 14f);
             Projectile.tileCollide = Projectile.Center.Y >= StartingYPosition + 72f;
+
+            // Frames
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 8)
+            {
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+                Projectile.frameCounter = 0;
+            }
         }
 
         public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
@@ -60,22 +69,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Water);
                 dust.velocity = Main.rand.NextVector2Circular(5f, 5f);
                 dust.noGravity = true;
-            }
+            }          
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
-            Vector2 origin = frame.Size() * 0.5f;
+            Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Projectile.type], frameY: Projectile.frame);
+            Vector2 origin = sourceRectangle.Size() * 0.5f;
 
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f;
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, sourceRectangle, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, sourceRectangle, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

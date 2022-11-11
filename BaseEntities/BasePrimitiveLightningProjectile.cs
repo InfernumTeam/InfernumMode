@@ -121,8 +121,6 @@ namespace InfernumMode.BaseEntities
             }
         }
 
-        
-
         public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)

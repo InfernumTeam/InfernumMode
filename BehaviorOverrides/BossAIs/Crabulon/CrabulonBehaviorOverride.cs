@@ -87,6 +87,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[1];
             ref float jumpCount = ref npc.Infernum().ExtraAI[6];
+            ref float currentFrame = ref npc.Infernum().ExtraAI[7];
+
+            // Use a temporary variable to store the current frame. This is necessary to ensure that claw offset calculations are correct server-side, since the server does not have access to
+            // frame information.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                int f = npc.frame.Y / npc.frame.Height;
+                if (currentFrame != f)
+                {
+                    currentFrame = f;
+                    npc.netUpdate = true;
+                }
+            }
 
             bool usingClaws = false;
             bool enraged = !target.ZoneGlowshroom && npc.Top.Y / 16 < Main.worldSurface && !BossRushEvent.BossRushActive;
@@ -379,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             int clawMoveTime = 72;
             int clawPressTime = 32;
             int clawSlamTime = 28;
-            int clawSlamWaitTime = 108;
+            int clawSlamWaitTime = 64;
             int slamCount = 3;
             Vector2 clawOffset = new(npc.Infernum().ExtraAI[DetachedHandOffsetXIndex], npc.Infernum().ExtraAI[DetachedHandOffsetYIndex]);
 
@@ -400,7 +413,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 }
                 else
                 {
-                    npc.velocity.X = (npc.velocity.X * 20f + npc.SafeDirectionTo(target.Center).X * 8f) / 21f;
+                    Vector2 walkDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 180f;
+                    npc.velocity.X = (npc.velocity.X * 20f + npc.SafeDirectionTo(walkDestination).X * 8f) / 21f;
                     PerformGravityCheck(npc, target);
                 }
             }
@@ -422,6 +436,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 float moveInterpolant = (float)Math.Pow(Utils.GetLerpValue(clawMoveTime + clawPressTime, clawMoveTime + clawPressTime + clawSlamTime, attackTimer, true), 8.3);
                 clawOffset.X = MathHelper.Lerp(30f, 42f, moveInterpolant);
                 clawOffset.Y = MathHelper.Lerp(-138f, 56f, moveInterpolant);
+                
+                if (attackTimer == clawMoveTime + clawPressTime + clawSlamTime - 15f)
+                    npc.netUpdate = true;
 
                 // Create a slam effect at the position where the claw slammed.
                 if (attackTimer == clawMoveTime + clawPressTime + clawSlamTime)
@@ -433,13 +450,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(clawCenter, Vector2.UnitX * i * -6f, ProjectileID.DD2OgreSmash, 0, 0f);
 
-                        // Release a bunch of falling crab shrooms into the air if the arm is facing the target.
-                        if (Main.netMode != NetmodeID.MultiplayerClient && i == (target.Center.X < npc.Center.X).ToDirectionInt())
+                        // Release a bunch of falling crab shrooms into the air from both arms.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int j = 0; j < 12; j++)
+                            for (int j = 0; j < (enraged ? 25 : 12); j++)
                             {
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
-                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                                int mushroom = Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                                if (Main.projectile.IndexInRange(mushroom))
+                                    Main.projectile[mushroom].ai[1] = target.Bottom.Y;
                             }
                         }
                     }
@@ -613,7 +632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public static Vector2 GetBaseClawOffset(NPC npc, bool right)
         {
-            int frame = npc.frame.Y / npc.frame.Height;
+            int frame = (int)npc.Infernum().ExtraAI[7];
             Vector2 defaultArmOffset = new Vector2(130f, 6f) * npc.scale;
             Vector2 frameBasedOffset = Vector2.Zero;
 

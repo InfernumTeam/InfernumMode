@@ -323,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         public static void DoAttack_ShadowDash(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float fadeToBlack)
         {
             int redirectTime = 20;
-            int telegraphTime = 30;
+            int telegraphTime = 42;
             int blackTime = 72;
             float maxInitialSlashDistance = 350f;
             float slashMovementSpeed = 41.5f;

@@ -1,11 +1,9 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System;
+using System.Collections.Generic;
 using Terraria;
-using Terraria.GameContent;
+using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -50,9 +48,25 @@ namespace InfernumMode.Systems
             private set;
         }
 
+        public static List<DrawData> ThingsToDrawOnTopOfBlur
+        {
+            get;
+            private set;
+        } = new();
+
+        public static List<DrawData> ThingsToBeManuallyBlurred
+        {
+            get;
+            private set;
+        } = new();
+
+        public static bool DebugDrawBloomMap => false;
+
+        public static bool UseFastBlurPass => true;
+
         public static int TotalBlurIterations => 1;
 
-        public static float DownscaleFactor => 16f;
+        public static float DownscaleFactor => 32f;
 
         public static float BlurBrightnessFactor => 4.5f;
 
@@ -79,14 +93,25 @@ namespace InfernumMode.Systems
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            while (ThingsToDrawOnTopOfBlur.Count > 0)
+            {
+                ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
+                ThingsToDrawOnTopOfBlur.RemoveAt(0);
+            }
+            Main.spriteBatch.End();
         }
 
         public override void OnModUnload()
         {
-            BloomTarget?.Dispose();
-            FinalScreenTarget?.Dispose();
-            DownscaledBloomTarget?.Dispose();
-            TemporaryAuxillaryTarget?.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                BloomTarget?.Dispose();
+                FinalScreenTarget?.Dispose();
+                DownscaledBloomTarget?.Dispose();
+                TemporaryAuxillaryTarget?.Dispose();
+            });
         }
         
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
@@ -117,7 +142,7 @@ namespace InfernumMode.Systems
             else
                 return;
 
-            if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f)
+            if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed)
                 return;
             
             // Get the downscaled texture.
@@ -130,11 +155,19 @@ namespace InfernumMode.Systems
             // Upscale the texture again.
             Main.instance.GraphicsDevice.SetRenderTarget(BloomTarget);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             Main.spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, DownscaleFactor, 0, 0f);
+
+            while (ThingsToBeManuallyBlurred.Count > 0)
+            {
+                ThingsToBeManuallyBlurred[0].Draw(Main.spriteBatch);
+                ThingsToBeManuallyBlurred.RemoveAt(0);
+            }
+
             Main.spriteBatch.End();
 
             // Apply blur iterations.
+            string blurPassName = UseFastBlurPass ? "DownsampleFastPass" : "DownsamplePass";
             for (int i = 0; i < TotalBlurIterations; i++)
             {
                 Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
@@ -145,7 +178,7 @@ namespace InfernumMode.Systems
                 var shader = Filters.Scene["InfernumMode:ScreenSaturationBlur"].GetShader().Shader;
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
-                shader.CurrentTechnique.Passes["DownsamplePass"].Apply();
+                shader.CurrentTechnique.Passes[blurPassName].Apply();
                 
                 Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();

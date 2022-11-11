@@ -1086,6 +1086,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
+            // Provide the target infinite flight time.
+            target.wingTime = target.wingTimeMax;
+
             // Eventually make the light orb fade away.
             fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
 

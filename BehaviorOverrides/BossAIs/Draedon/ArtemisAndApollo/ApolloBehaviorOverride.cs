@@ -26,6 +26,7 @@ using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -1604,13 +1605,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         afterimageColor.A /= 8;
 
                         Vector2 afterimageCenter = npc.oldPos[i] + frame.Size() * 0.5f - Main.screenPosition;
-                        Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-                        Main.spriteBatch.Draw(glowmask, afterimageCenter, npc.frame, afterimageBaseColor * afterimageOpacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, 0, 0f);
+                        Main.spriteBatch.Draw(glowmask, afterimageCenter, npc.frame, afterimageBaseColor * afterimageOpacity, npc.rotation, origin, npc.scale, 0, 0f);
                     }
                 }
 
-                Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(baseColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(glowmask, center + drawOffset, frame, npc.GetAlpha(afterimageBaseColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(baseColor), npc.rotation, origin, npc.scale, 0, 0f);
+                Main.spriteBatch.Draw(glowmask, center + drawOffset, frame, npc.GetAlpha(afterimageBaseColor), npc.rotation, origin, npc.scale, 0, 0f);
             }
 
             // Draw ribbons near the main thruster.

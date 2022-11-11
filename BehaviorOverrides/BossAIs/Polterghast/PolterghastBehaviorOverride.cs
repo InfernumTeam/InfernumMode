@@ -191,6 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (phase3)
                 npc.HitSound = SoundID.NPCHit36;
 
+            // Ensure that the total released souls count does not go below zero.
             if (totalReleasedSouls < 0f)
                 totalReleasedSouls = 0f;
 

@@ -259,22 +259,6 @@ namespace InfernumMode
             }
         }
         #endregion Update
-        #region Pre Hurt
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
-        {
-            if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].Calamity().CurrentlyEnraged)
-                damage = (int)MathHelper.Max(5500f / (1f - Player.endurance + 1e-6f), damage);
-
-            if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
-            {
-                while (damage is >= 1 and < 150)
-                    damage *= 2;
-                if (damage < 360)
-                    damage = Main.rand.Next(360, 375);
-            }
-            return true;
-        }
-        #endregion Pre Hurt
         #region Pre Kill
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {

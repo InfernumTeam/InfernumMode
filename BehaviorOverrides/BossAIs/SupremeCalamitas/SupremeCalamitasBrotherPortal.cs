@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.Opacity = Projectile.scale;
 
             // Create a lot of light particles around the portal.
-            float particleSpawnChance = Utilities.Remap(Time, 0f, 60f, 0.1f, 0.9f);
+            float particleSpawnChance = Utils.Remap(Time, 0f, 60f, 0.1f, 0.9f);
             for (int i = 0; i < 3; i++)
             {
                 if (Main.rand.NextFloat() > particleSpawnChance)

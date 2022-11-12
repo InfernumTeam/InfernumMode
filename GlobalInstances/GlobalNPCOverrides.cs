@@ -24,6 +24,7 @@ using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
+using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
@@ -245,7 +246,7 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
             {
                 Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
-                WorldgenSystem.GenerateProfanedArena(new(), new(new()));
+                ProfanedGarden.Generate(new(), new(new()));
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
             }
             

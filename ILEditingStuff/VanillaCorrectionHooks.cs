@@ -7,15 +7,18 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
+using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
 using InfernumMode.Tiles.Relics;
+using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using SubworldLibrary;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -470,6 +473,15 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => On.Terraria.Player.UpdateBiomes -= MakeDesertRequirementsMoreLenient;
     }
 
+    public class ReplaceAbyssWorldgen : IHookEdit
+    {
+        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
+
+        public void Load() => GenerateAbyss += ChangeAbyssGen;
+
+        public void Unload() => GenerateAbyss -= ChangeAbyssGen;
+    }
+
     public class SepulcherOnHitProjectileEffectRemovalHook : IHookEdit
     {
         internal static void EarlyReturn(ILContext il)
@@ -548,5 +560,87 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => AresBodyCanHitPlayer += LetAresHitPlayer;
 
         public void Unload() => AresBodyCanHitPlayer -= LetAresHitPlayer;
+    }
+
+    public class AdjustAbyssBaseDefinitionHook : IHookEdit
+    {
+        internal bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
+        {
+            Point point = player.Center.ToTileCoordinates();
+            playerYTileCoords = point.Y;
+
+            // Subworlds do not count as the abyss.
+            if (WeakReferenceSupport.InAnySubworld())
+                return false;
+            
+            // Check if the player is in the generous abyss area and has abyss walls behind them to determine if they are in the abyss.
+            ushort playerWallID = CalamityUtils.ParanoidTileRetrieval(point.X, point.Y).WallType;
+            bool aboveAbyssWall = playerWallID == ModContent.WallType<AbyssGravelWall>() || playerWallID == ModContent.WallType<VoidstoneWallUnsafe>();
+            bool horizontalCheck = false;
+            bool verticalCheck = point.Y <= Main.UnderworldLayer - 42 && point.Y > SulphurousSea.YStart + SulphurousSea.BlockDepth - 78;
+            if (Abyss.AtLeftSideOfWorld)
+            {
+                if (point.X < CustomAbyss.MaxAbyssWidth + 5)
+                    horizontalCheck = aboveAbyssWall;
+            }
+            else
+            {
+                if (point.X > Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 5)
+                    horizontalCheck = aboveAbyssWall;
+            }
+            
+            return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
+        }
+
+        public void Load() => MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
+
+        public void Unload() => MeetsBaseAbyssRequirement -= ChangeAbyssRequirement;
+    }
+
+    public class MakeMapGlitchInLayer4AbyssHook : IHookEdit
+    {
+        internal void CreateMapGlitchEffect(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", new Type[] { typeof(Color), typeof(float) });
+            ConstructorInfo colorConstructor = typeof(Color).GetConstructor(new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) });
+
+            // ==== APPLY EFFECT TO FULLSCREEN MAP =====
+
+            // Find the map background draw method and use it as a hooking reference.
+            if (!cursor.TryGotoNext(i => i.MatchCall<Main>("DrawMapFullscreenBackground")))
+                return;
+
+            // Go to the next 3 instances of Color.White being loaded and multiply them by the opacity factor.
+            for (int i = 0; i < 3; i++)
+            {
+                if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<Color>("get_White")))
+                    continue;
+
+                cursor.EmitDelegate(() => 1f - Main.LocalPlayer.Infernum().MapObscurityInterpolant);
+                cursor.Emit(OpCodes.Call, colorFloatMultiply);
+            }
+
+            // ==== APPLY EFFECT TO MAP RENDER TARGETS =====
+
+            // Move after the map target color is applied decided, and multiply the result by the opacity factor/add blackness to it.
+            if (!cursor.TryGotoNext(i => i.MatchLdfld<Main>("mapTarget")))
+                return;
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchNewobj(colorConstructor)))
+                return;
+
+            cursor.EmitDelegate((Color c) =>
+            {
+                float obscurityInterpolant = Main.LocalPlayer.Infernum().MapObscurityInterpolant;
+                if (Main.mapFullscreen)
+                    return c * (1f - obscurityInterpolant);
+
+                return Color.Lerp(c, Color.Black, obscurityInterpolant);
+            });
+        }
+
+        public void Load() => IL.Terraria.Main.DrawMap += CreateMapGlitchEffect;
+
+        public void Unload() => IL.Terraria.Main.DrawMap -= CreateMapGlitchEffect;
     }
 }

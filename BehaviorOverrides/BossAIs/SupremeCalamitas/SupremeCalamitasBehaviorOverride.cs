@@ -835,7 +835,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float dartSpeed = 8.4f;
             float horizontalOffset = 700f;
             float verticalBobAmplitude = 330f;
-            float hoverSpeedFactor = Utilities.Remap(attackTimer, 0f, shootDelay * 0.65f, 0.36f, 1f);
+            float hoverSpeedFactor = Utils.Remap(attackTimer, 0f, shootDelay * 0.65f, 0.36f, 1f);
             if (currentPhase >= 1)
             {
                 hellblastShootRate -= 2;
@@ -1405,7 +1405,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Adjust the jewel's rotation and create particles.
             if (attackTimer < jewelChargeupTime && jewelRef != null)
             {
-                float angularTurnSpeed = Utilities.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, MathHelper.Pi / 45f, MathHelper.Pi / 355f);
+                float angularTurnSpeed = Utils.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, MathHelper.Pi / 45f, MathHelper.Pi / 355f);
                 jewelRef.rotation = jewelRef.rotation.AngleTowards(jewelRef.AngleTo(target.Center), angularTurnSpeed);
 
                 float fireParticleScale = Main.rand.NextFloat(1f, 1.25f);

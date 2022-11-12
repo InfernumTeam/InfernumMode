@@ -30,7 +30,7 @@ namespace InfernumMode.Particles
 
         public override void Update()
         {
-            float rotationSlowdownFactor = Utilities.Remap(Scale, 3f, 6f, 1f, 0.1f);
+            float rotationSlowdownFactor = Utils.Remap(Scale, 3f, 6f, 1f, 0.1f);
             Rotation += MathHelper.Pi * rotationSlowdownFactor / 64f;
             if (Scale > 2f)
                 Scale += ScaleExpansionFactor * 0.018f;

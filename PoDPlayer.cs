@@ -46,6 +46,8 @@ namespace InfernumMode
 
         public bool HatGirlShouldGiveAdvice;
 
+        public float MapObscurityInterpolant = 1f;
+
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
         public bool InProfanedArena
@@ -183,6 +185,9 @@ namespace InfernumMode
                 }
             }
             LeaveLoop:
+
+            // Make the map become more faded the longer the player has been in the 4th layer of the abyss.
+            MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + Player.Calamity().ZoneAbyssLayer4.ToDirectionInt() * 0.02f, 0f, 1f);
 
             if (Main.netMode == NetmodeID.Server)
                 return;

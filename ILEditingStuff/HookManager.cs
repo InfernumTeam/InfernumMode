@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
@@ -233,10 +234,26 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.InstabridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event Action<Action> GenerateAbyss
+        {
+            add => HookEndpointManager.Add(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator ExoMechTileTileColor
         {
             add => HookEndpointManager.Modify(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);
+        }
+
+        public delegate bool AbyssRequirementDelegate(Player player, out int playerYTileCoords);
+
+        public delegate bool AbyssRequirementHookDelegate(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords);
+
+        public static event AbyssRequirementHookDelegate MeetsBaseAbyssRequirement
+        {
+            add => HookEndpointManager.Add(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
         }
     }
 }

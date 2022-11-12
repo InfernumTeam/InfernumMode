@@ -269,10 +269,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Teleport above the target on the very first frame. This ensures that DoG will always be in a consistent spot before the fight begins.
+            // Teleport to the sides of the target on the very first frame. This ensures that DoG will always be in a consistent spot before the fight begins.
             if (npc.Infernum().ExtraAI[HasTeleportedAboveTargetFlagIndex] == 0f)
             {
-                npc.Center = target.Center - Vector2.UnitY * 2000f;
+                npc.Center = target.Center - Vector2.UnitX * target.direction * 3200f;
+
+                // Bring segments to the teleport position.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                    {
+                        Main.npc[i].Center = npc.Center;
+                        Main.npc[i].netUpdate = true;
+                    }
+                }
+
                 npc.Infernum().ExtraAI[HasTeleportedAboveTargetFlagIndex] = 1f;
                 npc.netUpdate = true;
             }
@@ -281,7 +292,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (IntroScreenManager.ScreenIsObstructed)
             {
                 npc.dontTakeDamage = true;
-                npc.Center = target.Center - Vector2.UnitY * 2000f;
+                npc.Center = target.Center - Vector2.UnitX * target.direction * 3200f;
                 npc.netUpdate = true;
             }
 

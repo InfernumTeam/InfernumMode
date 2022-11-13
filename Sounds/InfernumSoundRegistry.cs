@@ -69,6 +69,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
 
+        public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Sounds/Custom/ProvidenceBlender") with { Volume = 2f };
+
         public static readonly SoundStyle ProvidenceHolyRaySound = new("CalamityMod/Sounds/Custom/ProvidenceHolyRay");
 
         public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Sounds/Custom/ProvidenceDoorSoundLoop");

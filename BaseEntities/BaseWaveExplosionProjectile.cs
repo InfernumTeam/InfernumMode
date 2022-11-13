@@ -17,6 +17,8 @@ namespace InfernumMode.BaseEntities
             set => Projectile.ai[0] = value;
         }
 
+        public virtual float Opacity { get; } = 1f;
+
         public virtual float MinScale { get; } = 1.2f;
         public virtual float MaxScale { get; } = 5f;
         public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
@@ -61,7 +63,7 @@ namespace InfernumMode.BaseEntities
                 ExplosionNoiseTexture,
                 drawPosition,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - (float)Math.Sqrt(1f - Projectile.timeLeft / (float)Lifetime))) * 0.7f * Projectile.Opacity,
+                new Color(new Vector4(1f - (float)Math.Sqrt(1f - Projectile.timeLeft / (float)Lifetime))) * 0.7f * Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,

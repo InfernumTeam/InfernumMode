@@ -296,12 +296,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (Main.netMode != NetmodeID.Server && !IntroScreenManager.ScreenIsObstructed)
             {
-                attackTimer = 30000f;
+                attackTimer = 35f;
                 npc.netUpdate = true;
             }
 
             // Create arms/head and go to the next attack state.
-            if (attackTimer >= 30000f)
+            if (attackTimer >= 35)
             {
                 SelectNextAttack(npc);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

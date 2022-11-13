@@ -186,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.TargetClosest(false);
 
                 // If no possible target was found, die.
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+                if (Main.netMode != NetmodeID.MultiplayerClient && npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 {
                     DespawnNPC((int)AttachedHeadNPC);
                     DespawnNPC((int)FreeHeadNPC);
@@ -231,8 +231,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             attachedHead.Calamity().DR = 0.3f;
 
             // Sync the heads, and end the fight if necessary
-            if (!attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
+            if (Main.netMode != NetmodeID.MultiplayerClient && !attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
             {
+
                 DespawnNPC(attachedHead.whoAmI);
                 DespawnNPC(freeHead.whoAmI);
                 DespawnNPC(leftFist.whoAmI);

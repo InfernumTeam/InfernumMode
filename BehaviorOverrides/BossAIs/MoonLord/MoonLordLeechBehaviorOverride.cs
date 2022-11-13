@@ -26,14 +26,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 			projectile.frame = projectile.frameCounter / 5 % 3;
 
 			// Die if the head or target are invalid.
+			
 			int headIndex = (int)Math.Abs(projectile.ai[0]) - 1;
 			int target = (int)projectile.ai[1];
-			if (!Main.npc[headIndex].active || Main.npc[headIndex].type != NPCID.MoonLordHead)
+			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				projectile.Kill();
-				return false;
+				if (!Main.npc[headIndex].active || Main.npc[headIndex].type != NPCID.MoonLordHead)
+				{
+					projectile.Kill();
+					return false;
+				}
 			}
-
 			// Retract if the player couldn't be hooked to in time.
 			projectile.localAI[0]++;
 			if (projectile.localAI[0] >= 330f && projectile.ai[0] > 0f && Main.netMode != NetmodeID.MultiplayerClient)

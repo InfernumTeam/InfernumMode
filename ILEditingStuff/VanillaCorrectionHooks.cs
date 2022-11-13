@@ -32,6 +32,10 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static int AlterGores(On.Terraria.Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
+            // Do not spawn gores on the server.
+            if (Main.netMode == NetmodeID.Server || Main.gamePaused) 
+                return 600;
+
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
                 return Main.maxDust;
             

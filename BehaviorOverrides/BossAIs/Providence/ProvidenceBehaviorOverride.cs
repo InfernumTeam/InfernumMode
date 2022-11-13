@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using Terraria.Graphics.Effects;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
@@ -997,7 +998,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 12f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.78f + (1f - lifeRatio) * 0.195f);
-            
+            float waveReleaseRate = 120;
+            float attackLength = laserShootDelay + laserShootTime + 20f; // 560
+
             if (IsEnraged)
             {
                 bladeReleaseRate -= 10;
@@ -1052,7 +1055,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Release crystal blades.
                 if (attackTimer % bladeReleaseRate == bladeReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with {Volume = 0.25f}, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int bladeDamage = !IsEnraged ? 225 : 350;
@@ -1060,12 +1063,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         Utilities.NewProjectileBetter(npc.Center, bladeVelocity, ModContent.ProjectileType<BouncingCrystalBlade>(), bladeDamage, 0f);
                     }
                 }
+
+                // Release waves
+                if ((attackTimer - laserShootDelay) % waveReleaseRate == waveReleaseRate - 1f)
+                {
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0);
+                }
             }
 
             // Cast fire beams.
             if (attackTimer == laserShootDelay)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBlenderSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int beamDamage = !IsEnraged ? 375 : 600;
@@ -1079,7 +1088,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            if (attackTimer >= laserShootDelay + laserShootTime + 20f)
+            if (attackTimer >= attackLength)
                 SelectNextAttack(npc);
         }
 

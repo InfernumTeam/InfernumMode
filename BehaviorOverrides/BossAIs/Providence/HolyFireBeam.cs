@@ -2,11 +2,9 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -27,7 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Fire Beam");
-
         }
 
         public override void SetDefaults()
@@ -96,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["Infernum:ProviLaserShader"]);
             Color color = ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.CadetBlue, Color.Cyan, Time) : Color.Lerp(Color.Gold, Color.Goldenrod, Time);
             GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(color);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1", (AssetRequestMode)1));
+            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
 
             float oldGlobalTime = Main.GlobalTimeWrappedHourly;
             Main.GlobalTimeWrappedHourly %= 1f;

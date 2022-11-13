@@ -182,6 +182,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                     npc.netUpdate = true;
                 }
+                else
+                    // Stop the multiplayer client getting stuck in an inf while loop and crashing.
+                    subphaseState++;
             }
         }
 

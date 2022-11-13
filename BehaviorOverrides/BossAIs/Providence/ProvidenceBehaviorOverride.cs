@@ -1066,9 +1066,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 // Release waves
                 if ((attackTimer - laserShootDelay) % waveReleaseRate == waveReleaseRate - 1f)
-                {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0);
-                }
             }
 
             // Cast fire beams.

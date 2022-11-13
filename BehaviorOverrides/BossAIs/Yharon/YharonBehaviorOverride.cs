@@ -595,7 +595,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             // Adjust various values before doing anything else. If these need to be changed later in certain attacks, they will be.
             npc.dontTakeDamage = false;
-            Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
+
+            // Ensure this isnt loaded on the server, as it will throw a null reference error.
+            if(Main.netMode != NetmodeID.Server)
+                Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
             npc.Infernum().ExtraAI[IllusionCountIndex] = 0f;
 
             // Define various attack-specific variables.
@@ -944,7 +947,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 fireIntensity = 1f;
                 float competionRatio = Utils.GetLerpValue(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
-                Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
+                // Ensure this isnt loaded on the server, as it will throw a null reference error.
+                if (Main.netMode != NetmodeID.Server)
+                    Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 2; i++)
@@ -1442,7 +1447,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static void DoBehavior_FinalDyingRoar(NPC npc)
         {
             npc.dontTakeDamage = true;
-            Filters.Scene["HeatDistortion"].GetShader().UseIntensity(3f);
+            // Ensure this isnt loaded on the server, as it will throw a null reference error.
+            if (Main.netMode != NetmodeID.Server)
+                Filters.Scene["HeatDistortion"].GetShader().UseIntensity(3f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 

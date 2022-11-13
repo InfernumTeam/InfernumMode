@@ -53,7 +53,15 @@ namespace InfernumMode.Systems
         {
             get;
             set;
-        } = false;
+        }
+
+        // This value is only set to true in new worldgen code. All prior worlds will never naturally have this flag enabled.
+        // This is done to allow backwards compatibility with old Abyss worldgen.
+        public static bool InPostAEWUpdateWorld
+        {
+            get;
+            set;
+        }
 
         public override void SaveWorldData(TagCompound tag)
         {
@@ -70,6 +78,8 @@ namespace InfernumMode.Systems
                 downed.Add("HasProvidenceDoorShattered");
             if (HasSepulcherAnimationBeenPlayed)
                 downed.Add("HasSepulcherAnimationBeenPlayed");
+            if (InPostAEWUpdateWorld)
+                downed.Add("InPostAEWUpdateWorld");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -88,6 +98,8 @@ namespace InfernumMode.Systems
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
+            InPostAEWUpdateWorld = downed.Contains("InPostAEWUpdateWorld");
+
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
         }

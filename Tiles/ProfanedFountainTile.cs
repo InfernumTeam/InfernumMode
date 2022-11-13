@@ -1,6 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using InfernumMode.Items;
+using InfernumMode.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;

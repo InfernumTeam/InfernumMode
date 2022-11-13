@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Balancing;
+using CalamityMod.BiomeManagers;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
@@ -10,6 +11,7 @@ using CalamityMod.Schematics;
 using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles.Relics;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
@@ -562,7 +564,7 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => AresBodyCanHitPlayer -= LetAresHitPlayer;
     }
 
-    public class AdjustAbyssBaseDefinitionHook : IHookEdit
+    public class AdjustAbyssDefinitionHook : IHookEdit
     {
         internal bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
         {
@@ -592,9 +594,67 @@ namespace InfernumMode.ILEditingStuff
             return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
         }
 
-        public void Load() => MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
+        internal bool ChangeLayer1Requirement(Func<AbyssLayer1Biome, Player, bool> orig, AbyssLayer1Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords <= CustomAbyss.Layer2Top;
+            }
 
-        public void Unload() => MeetsBaseAbyssRequirement -= ChangeAbyssRequirement;
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer2Requirement(Func<AbyssLayer2Biome, Player, bool> orig, AbyssLayer2Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer2Top && playerYTileCoords <= CustomAbyss.Layer3Top;
+            }
+
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer3Requirement(Func<AbyssLayer3Biome, Player, bool> orig, AbyssLayer3Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer3Top && playerYTileCoords <= CustomAbyss.Layer4Top;
+            }
+
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer4Requirement(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer4Top && playerYTileCoords <= CustomAbyss.AbyssBottom;
+            }
+            
+            return orig(self, player);
+        }
+
+        public void Load()
+        {
+            MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
+            IsAbyssLayer1BiomeActive += ChangeLayer1Requirement;
+            IsAbyssLayer2BiomeActive += ChangeLayer2Requirement;
+            IsAbyssLayer3BiomeActive += ChangeLayer3Requirement;
+            IsAbyssLayer4BiomeActive += ChangeLayer4Requirement;
+        }
+
+        public void Unload()
+        {
+            MeetsBaseAbyssRequirement -= ChangeAbyssRequirement;
+            IsAbyssLayer1BiomeActive -= ChangeLayer1Requirement;
+            IsAbyssLayer2BiomeActive -= ChangeLayer2Requirement;
+            IsAbyssLayer3BiomeActive -= ChangeLayer3Requirement;
+            IsAbyssLayer4BiomeActive -= ChangeLayer4Requirement;
+        }
     }
 
     public class MakeMapGlitchInLayer4AbyssHook : IHookEdit
@@ -623,7 +683,7 @@ namespace InfernumMode.ILEditingStuff
 
             // ==== APPLY EFFECT TO MAP RENDER TARGETS =====
 
-            // Move after the map target color is applied decided, and multiply the result by the opacity factor/add blackness to it.
+            // Move after the map target color is decided, and multiply the result by the opacity factor/add blackness to it.
             if (!cursor.TryGotoNext(i => i.MatchLdfld<Main>("mapTarget")))
                 return;
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchNewobj(colorConstructor)))

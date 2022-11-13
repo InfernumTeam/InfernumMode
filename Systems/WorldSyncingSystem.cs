@@ -15,6 +15,7 @@ namespace InfernumMode.Systems
             flags[2] = HasBeatedInfernumProvRegularly;
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
+            flags[5] = InPostAEWUpdateWorld;
             writer.Write(flags);
         }
 
@@ -26,6 +27,7 @@ namespace InfernumMode.Systems
             HasBeatedInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
+            InPostAEWUpdateWorld = flags[5];
         }
     }
 }

@@ -1,8 +1,7 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.Events;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
+using CalamityMod.Tiles.Abyss;
 using CalamityMod.World;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
@@ -46,7 +45,7 @@ namespace InfernumMode
 
         public bool HatGirlShouldGiveAdvice;
 
-        public float MapObscurityInterpolant = 1f;
+        public float MapObscurityInterpolant;
 
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
@@ -166,6 +165,10 @@ namespace InfernumMode
         #region Update
         public override void PreUpdate()
         {
+            // Make voidstone and abyss gravel merge.
+            Main.tileMerge[ModContent.TileType<AbyssGravel>()][ModContent.TileType<Voidstone>()] = true;
+            Main.tileMerge[ModContent.TileType<Voidstone>()][ModContent.TileType<AbyssGravel>()] = true;
+
             ProfanedLavaFountain = false;
             int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();
             for (int dx = -75; dx < 75; dx++)

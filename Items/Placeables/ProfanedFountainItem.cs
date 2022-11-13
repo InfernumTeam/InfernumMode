@@ -4,7 +4,7 @@ using Terraria.ID;
 using InfernumMode.Tiles;
 using CalamityMod.Items.Placeables.FurnitureProfaned;
 
-namespace InfernumMode.Items
+namespace InfernumMode.Items.Placeables
 {
     public class ProfanedFountainItem : ModItem
     {

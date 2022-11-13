@@ -239,7 +239,7 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Add(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
         }
-
+        
         public static event ILContext.Manipulator ExoMechTileTileColor
         {
             add => HookEndpointManager.Modify(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);
@@ -250,10 +250,42 @@ namespace InfernumMode.ILEditingStuff
 
         public delegate bool AbyssRequirementHookDelegate(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords);
 
+        public delegate bool AbyssInBiomeHookDelegate1(Func<AbyssLayer1Biome, Player, bool> orig, AbyssLayer1Biome self, Player player);
+
+        public delegate bool AbyssInBiomeHookDelegate2(Func<AbyssLayer2Biome, Player, bool> orig, AbyssLayer2Biome self, Player player);
+
+        public delegate bool AbyssInBiomeHookDelegate3(Func<AbyssLayer3Biome, Player, bool> orig, AbyssLayer3Biome self, Player player);
+
+        public delegate bool AbyssInBiomeHookDelegate4(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player);
+
         public static event AbyssRequirementHookDelegate MeetsBaseAbyssRequirement
         {
             add => HookEndpointManager.Add(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event AbyssInBiomeHookDelegate1 IsAbyssLayer1BiomeActive
+        {
+            add => HookEndpointManager.Add(typeof(AbyssLayer1Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(AbyssLayer1Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event AbyssInBiomeHookDelegate2 IsAbyssLayer2BiomeActive
+        {
+            add => HookEndpointManager.Add(typeof(AbyssLayer2Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(AbyssLayer2Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event AbyssInBiomeHookDelegate3 IsAbyssLayer3BiomeActive
+        {
+            add => HookEndpointManager.Add(typeof(AbyssLayer3Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(AbyssLayer3Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event AbyssInBiomeHookDelegate4 IsAbyssLayer4BiomeActive
+        {
+            add => HookEndpointManager.Add(typeof(AbyssLayer4Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(AbyssLayer4Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
         }
     }
 }

@@ -47,10 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             OffsetAngle += MathHelper.ToRadians(0.84f);
             Projectile.Center = Anahita.Center + OffsetAngle.ToRotationVector2() * 125f;
-            Projectile.frame = Anahita.frame.Y / Anahita.frame.Height;
+            int frameHeight = Anahita.frame.Height;
+            if (frameHeight == 0)
+                frameHeight = 190;
+            Projectile.frame = Anahita.frame.Y / frameHeight;
             Projectile.spriteDirection = Anahita.spriteDirection;
             Time++;
-
             Projectile.Opacity = Utils.GetLerpValue(0f, 24f, Projectile.timeLeft, true) * Anahita.Opacity;
         }
 

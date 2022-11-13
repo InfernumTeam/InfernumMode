@@ -574,7 +574,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             Vector2 crownPosition = new(npc.Center.X, npc.Top.Y - 12f);
             float crownOffset = 0f;
-            switch (npc.frame.Y / npc.frame.Height)
+            int frameHeight;
+            if (npc.frame.Height == 0)
+                frameHeight = 122;
+            else
+                frameHeight = npc.frame.Height;
+            switch (npc.frame.Y / frameHeight)
             {
                 case 1:
                     crownOffset -= 10f;

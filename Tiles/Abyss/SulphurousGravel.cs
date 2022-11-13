@@ -46,7 +46,7 @@ namespace InfernumMode.Tiles.Abyss
             Point p = new(i, j);
             if (Main.tile[p.X, p.Y - 1].HasTile)
             {
-                if (Main.tile[p.X, p.Y - 1].TileType == ModContent.TileType<SulphurousGroundVines>())
+                if (Main.tile[p.X, p.Y - 1].TileType == ModContent.TileType<SulphurousGroundVines>() || Main.tile[p.X, p.Y - 1].TileType == ModContent.TileType<AbyssalKelp>())
                 {
                     WorldGen.KillTile(p.X, p.Y - 1, false, false, false);
                     if (!Main.tile[p.X, p.Y - 1].HasTile && Main.netMode != NetmodeID.SinglePlayer)

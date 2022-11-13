@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
+using CalamityMod.Tiles.Abyss.Stalactite;
 using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Systems;
@@ -24,7 +25,7 @@ namespace InfernumMode.WorldGeneration
 
         public static int MaxAbyssWidth => BiomeWidth + 42;
 
-        public static int AbyssTop => YStart + BlockDepth - 64;
+        public static int AbyssTop => YStart + BlockDepth - 44;
 
         public static int Layer2Top => (int)(Main.rockLayer + Main.maxTilesY * 0.084f);
 
@@ -48,6 +49,8 @@ namespace InfernumMode.WorldGeneration
         public const float Layer1ForestNoiseMagnificationFactor = 0.00181f;
 
         public const float Layer1ForestMinNoiseValue = 0.235f;
+
+        public const int Layer1KelpCreationChance = 8;
 
         public static int Layer2TrenchCount => (int)Math.Sqrt(Main.maxTilesX / 176f);
 
@@ -194,6 +197,8 @@ namespace InfernumMode.WorldGeneration
 
             // Generate sulphurous gravel on the cave walls.
             GenerateLayer1SulphurousGravel(layer1Area);
+
+            GenerateAbyssalKelp(layer1Area);
         }
 
         public static void GenerateLayer1SulphurousGravel(Rectangle layer1Area)
@@ -203,7 +208,6 @@ namespace InfernumMode.WorldGeneration
 
             ushort abyssGravelID = (ushort)ModContent.TileType<AbyssGravel>();
             ushort sulphuricGravelID = (ushort)ModContent.TileType<SulphurousGravel>();
-            ushort vineID = (ushort)ModContent.TileType<SulphurousGroundVines>();
 
             // Edge score evaluation function that determines the propensity a tile has to become sandstone.
             // This is based on how much nearby empty areas there are, allowing for "edges" to appear.
@@ -264,16 +268,7 @@ namespace InfernumMode.WorldGeneration
                                             if (ddy <= 0)
                                                 TileLoader.RandomUpdate(vinePosition.X, vinePosition.Y - ddy, CalamityUtils.ParanoidTileRetrieval(vinePosition.X, vinePosition.Y - ddy).TileType);
                                             else
-                                            {
-                                                bool vineWasMade = SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy + 1));
-
-                                                // If something went wrong with the vine, destroy all of it.
-                                                if (!vineWasMade && CalamityUtils.ParanoidTileRetrieval(vinePosition.X, vinePosition.Y).TileType == vineID)
-                                                {
-                                                    WorldGen.KillTile(vinePosition.X, vinePosition.Y);
-                                                    break;
-                                                }
-                                            }
+                                                SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy + 1));
                                         }
                                     }
 
@@ -282,6 +277,57 @@ namespace InfernumMode.WorldGeneration
                                     { }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void GenerateAbyssalKelp(Rectangle layer1Area)
+        {
+            ushort kelpID = (ushort)ModContent.TileType<AbyssalKelp>();
+            for (int i = layer1Area.Left; i < layer1Area.Right; i++)
+            {
+                for (int y = layer1Area.Top; y <= layer1Area.Bottom; y++)
+                {
+                    int x = GetActualX(i);
+                    Tile t = CalamityUtils.ParanoidTileRetrieval(x, y);
+                    Tile above = CalamityUtils.ParanoidTileRetrieval(x, y - 1);
+
+                    // Randomly create kelp upward.
+                    if (WorldGen.SolidTile(t) && !above.HasTile && WorldGen.genRand.NextBool(Layer1KelpCreationChance))
+                    {
+                        int kelpHeight = WorldGen.genRand.Next(6, 12);
+                        bool areaIsOccupied = false;
+
+                        // Check if the area where the kelp would be created is occupied.
+                        for (int dy = 0; dy < kelpHeight + 4; dy++)
+                        {
+                            if (CalamityUtils.ParanoidTileRetrieval(x, y - dy - 1).HasTile)
+                            {
+                                areaIsOccupied = true;
+                                break;
+                            }
+                        }
+
+                        if (areaIsOccupied)
+                            continue;
+
+                        for (int dy = 0; dy < kelpHeight; dy++)
+                        {
+                            Main.tile[x, y - dy - 1].TileType = kelpID;
+                            Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().TileFrameX = 0;
+
+                            if (dy == 0)
+                                Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().TileFrameY = 72;
+                            else if (dy == kelpHeight - 1)
+                                Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().TileFrameY = 0;
+                            else
+                                Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().TileFrameY = (short)(WorldGen.genRand.Next(1, 4) * 18);
+
+                            Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().IsHalfBlock = false;
+                            Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                            Main.tile[x, y - dy - 1].Get<TileWallWireStateData>().HasTile = true;
                         }
                     }
                 }
@@ -397,7 +443,7 @@ namespace InfernumMode.WorldGeneration
             List<ushort> blockTileTypes = new()
             {
                 (ushort)ModContent.TileType<AbyssGravel>(),
-                (ushort)ModContent.TileType<Voidstone>(),
+                (ushort)ModContent.TileType<Voidstone>()
             };
 
             void getAttachedPoints(int x, int y, List<Point> points)

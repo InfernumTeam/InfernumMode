@@ -638,6 +638,14 @@ namespace InfernumMode.ILEditingStuff
             return orig(self, player);
         }
 
+        internal void ChangeAbyssWaterType(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.EmitDelegate(() => !WorldSaveSystem.InPostAEWUpdateWorld ? ModContent.Find<ModWaterStyle>("CalamityMod/AbyssWater") : ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater"));
+            cursor.Emit(OpCodes.Ret);
+        }
+
         public void Load()
         {
             MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
@@ -645,6 +653,10 @@ namespace InfernumMode.ILEditingStuff
             IsAbyssLayer2BiomeActive += ChangeLayer2Requirement;
             IsAbyssLayer3BiomeActive += ChangeLayer3Requirement;
             IsAbyssLayer4BiomeActive += ChangeLayer4Requirement;
+            AbyssLayer1Color += ChangeAbyssWaterType;
+            AbyssLayer2Color += ChangeAbyssWaterType;
+            AbyssLayer3Color += ChangeAbyssWaterType;
+            AbyssLayer4Color += ChangeAbyssWaterType;
         }
 
         public void Unload()
@@ -654,6 +666,10 @@ namespace InfernumMode.ILEditingStuff
             IsAbyssLayer2BiomeActive -= ChangeLayer2Requirement;
             IsAbyssLayer3BiomeActive -= ChangeLayer3Requirement;
             IsAbyssLayer4BiomeActive -= ChangeLayer4Requirement;
+            AbyssLayer1Color -= ChangeAbyssWaterType;
+            AbyssLayer2Color -= ChangeAbyssWaterType;
+            AbyssLayer3Color -= ChangeAbyssWaterType;
+            AbyssLayer4Color -= ChangeAbyssWaterType;
         }
     }
 

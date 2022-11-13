@@ -5,7 +5,7 @@ using Terraria.ID;
 
 namespace InfernumMode.Skies
 {
-	public class EmpressOfLightScreenShaderData : ScreenShaderData
+    public class EmpressOfLightScreenShaderData : ScreenShaderData
     {
         public int FairyIndex;
 

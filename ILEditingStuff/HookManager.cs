@@ -287,5 +287,29 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Add(typeof(AbyssLayer4Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(AbyssLayer4Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator AbyssLayer1Color
+        {
+            add => HookEndpointManager.Modify(typeof(AbyssLayer1Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AbyssLayer1Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator AbyssLayer2Color
+        {
+            add => HookEndpointManager.Modify(typeof(AbyssLayer2Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AbyssLayer2Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator AbyssLayer3Color
+        {
+            add => HookEndpointManager.Modify(typeof(AbyssLayer3Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AbyssLayer3Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator AbyssLayer4Color
+        {
+            add => HookEndpointManager.Modify(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

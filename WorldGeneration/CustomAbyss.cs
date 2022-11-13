@@ -39,8 +39,11 @@ namespace InfernumMode.WorldGeneration
         public static readonly float[] Layer1SpaghettiCaveCarveOutThresholds = new float[]
         {
             0.0382f,
-            0.0497f
+            0.0497f,
+            0.0509f
         };
+
+        public const int Layer1SmallPlantCreationChance = 6;
 
         public static int Layer2TrenchCount => (int)Math.Sqrt(Main.maxTilesX / 176f);
 
@@ -242,6 +245,10 @@ namespace InfernumMode.WorldGeneration
                                 if (CalamityUtils.ParanoidTileRetrieval(x + dx, y + dy).TileType == abyssGravelID)
                                 {
                                     Main.tile[x + dx, y + dy].TileType = sulphuricGravelID;
+
+                                    // Try to grow small plants.
+                                    if (WorldGen.genRand.NextBool(Layer1SmallPlantCreationChance) && SulphurousGravel.TryToGrowSmallPlantAbove(new(x + dx, y + dy)))
+                                    { }
                                 }
                             }
                         }
@@ -260,7 +267,7 @@ namespace InfernumMode.WorldGeneration
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
-                int trenchX = (int)MathHelper.Lerp(48f, width - 108f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-20, 20);
+                int trenchX = (int)MathHelper.Lerp(54f, width - 128f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(8);
                 GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4);
             }

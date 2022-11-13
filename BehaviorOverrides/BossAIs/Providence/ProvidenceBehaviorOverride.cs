@@ -1069,14 +1069,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0);
                 }
-
-                // Don't do anything if running server-side or if screen shake effects are disabled in the config.
-                if (Main.netMode != NetmodeID.Server || CalamityConfig.Instance.Screenshake)
-                {
-                    if (!Filters.Scene["InfernumMode:HeatDistortion"].IsActive())
-                        Filters.Scene.Activate("InfernumMode:HeatDistortion", npc.Center).GetShader().UseTargetPosition(npc.Center).UseIntensity(10).UseImage("Images/Misc/Perlin", 1);
-
-                }
             }
 
             // Cast fire beams.
@@ -1096,16 +1088,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            if(attackTimer >= attackLength - 20)
-            {
-                if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:HeatDistortion"].IsActive())
-                    Filters.Scene["InfernumMode:HeatDistortion"].Deactivate();
-            }
-
             if (attackTimer >= attackLength)
-            {
                 SelectNextAttack(npc);
-            }
         }
 
         public static void DoBehavior_FireSpearCrystalCocoon(NPC npc, Player target, Vector2 crystalCenter, Vector2 arenaCenter, ref float drawState, ref float attackTimer)

@@ -7,6 +7,12 @@ namespace InfernumMode.Systems
 {
     public class WorldSaveSystem : ModSystem
     {
+        public static int AbyssLayer1ForestSeed
+        {
+            get;
+            set;
+        }
+
         public static bool HasGeneratedProfanedShrine
         {
             get;
@@ -87,6 +93,7 @@ namespace InfernumMode.Systems
             tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
             tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
+            tag["AbyssLayer1ForestSeed"] = AbyssLayer1ForestSeed;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -102,6 +109,7 @@ namespace InfernumMode.Systems
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
+            AbyssLayer1ForestSeed = tag.GetInt("AbyssLayer1ForestSeed");
         }
     }
 }

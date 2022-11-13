@@ -29,9 +29,9 @@ namespace InfernumMode.Tiles.Abyss
             Main.tileLavaDeath[Type] = true;
             Main.tileWaterDeath[Type] = false;
             Main.tileFrameImportant[Type] = true;
-			TileID.Sets.ReplaceTileBreakUp[Type] = true;
-			TileID.Sets.SwaysInWindBasic[Type] = true;
-			TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
+            TileID.Sets.ReplaceTileBreakUp[Type] = true;
+            TileID.Sets.SwaysInWindBasic[Type] = true;
+            TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
             DustType = (int)CalamityDusts.SulfurousSeaAcid;
 
@@ -55,9 +55,7 @@ namespace InfernumMode.Tiles.Abyss
             b = 0.25f;
         }
 
-        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) => false;
-
-        public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
             Tile t = Main.tile[i, j];
             int frameX = t.TileFrameX;
@@ -70,6 +68,7 @@ namespace InfernumMode.Tiles.Abyss
             Color lightColor = Lighting.GetColor(i, j);
             spriteBatch.Draw(mainTexture, drawPos, new Rectangle(frameX, frameY, 18, 18), lightColor, 0f, Vector2.Zero, 1f, 0, 0f);
             spriteBatch.Draw(glowmask, drawPos, new Rectangle(frameX, frameY, 18, 18), Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+            return false;
         }
     }
 }

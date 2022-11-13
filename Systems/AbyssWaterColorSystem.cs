@@ -26,10 +26,21 @@ namespace InfernumMode.Systems
                 float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * 0.42f;
                 float sulphuricWaterInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top - 24f, CustomAbyss.AbyssTop - 4f, p.Y, true);
 
-                initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topLeftBrightness;
-                initialColor.TopRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topRightBrightness;
-                initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomLeftBrightness;
-                initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomRightBrightness;
+                // Conditional exists for optimization purposes.
+                if (sulphuricWaterInterpolant <= 0f)
+                {
+                    initialColor.TopLeftColor = abyssWaterColor * topLeftBrightness;
+                    initialColor.TopRightColor = abyssWaterColor * topRightBrightness;
+                    initialColor.BottomLeftColor = abyssWaterColor * bottomLeftBrightness;
+                    initialColor.BottomRightColor = abyssWaterColor * bottomRightBrightness;
+                }
+                else
+                {
+                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topLeftBrightness;
+                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topRightBrightness;
+                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomLeftBrightness;
+                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomRightBrightness;
+                }
 
                 initialColor.TopLeftColor = Color.Lerp(initialColor.TopLeftColor, Color.Black, blacknessInterpolant);
                 initialColor.TopRightColor = Color.Lerp(initialColor.TopRightColor, Color.Black, blacknessInterpolant);

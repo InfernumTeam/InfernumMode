@@ -45,6 +45,10 @@ namespace InfernumMode.WorldGeneration
 
         public const int Layer1SmallPlantCreationChance = 6;
 
+        public const float Layer1ForestNoiseMagnificationFactor = 0.00181f;
+
+        public const float Layer1ForestMinNoiseValue = 0.235f;
+
         public static int Layer2TrenchCount => (int)Math.Sqrt(Main.maxTilesX / 176f);
 
         public const int MinStartingTrenchWidth = 5;
@@ -195,8 +199,11 @@ namespace InfernumMode.WorldGeneration
         public static void GenerateLayer1SulphurousGravel(Rectangle layer1Area)
         {
             int sandstoneSeed = WorldGen.genRand.Next();
+            WorldSaveSystem.AbyssLayer1ForestSeed = WorldGen.genRand.Next();
+
             ushort abyssGravelID = (ushort)ModContent.TileType<AbyssGravel>();
             ushort sulphuricGravelID = (ushort)ModContent.TileType<SulphurousGravel>();
+            ushort vineID = (ushort)ModContent.TileType<SulphurousGroundVines>();
 
             // Edge score evaluation function that determines the propensity a tile has to become sandstone.
             // This is based on how much nearby empty areas there are, allowing for "edges" to appear.
@@ -245,6 +252,30 @@ namespace InfernumMode.WorldGeneration
                                 if (CalamityUtils.ParanoidTileRetrieval(x + dx, y + dy).TileType == abyssGravelID)
                                 {
                                     Main.tile[x + dx, y + dy].TileType = sulphuricGravelID;
+
+                                    // Encourage the growth of ground vines.
+                                    if (InsideOfLayer1Forest(new(x + dx, y + dy)))
+                                    {
+                                        int vineHeight = WorldGen.genRand.Next(9, 12);
+                                        Point vinePosition = new(x + dx, y + dy);
+
+                                        for (int ddy = 0; ddy < vineHeight; ddy++)
+                                        {
+                                            if (ddy <= 0)
+                                                TileLoader.RandomUpdate(vinePosition.X, vinePosition.Y - ddy, CalamityUtils.ParanoidTileRetrieval(vinePosition.X, vinePosition.Y - ddy).TileType);
+                                            else
+                                            {
+                                                bool vineWasMade = SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy + 1));
+
+                                                // If something went wrong with the vine, destroy all of it.
+                                                if (!vineWasMade && CalamityUtils.ParanoidTileRetrieval(vinePosition.X, vinePosition.Y).TileType == vineID)
+                                                {
+                                                    WorldGen.KillTile(vinePosition.X, vinePosition.Y);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
 
                                     // Try to grow small plants.
                                     if (WorldGen.genRand.NextBool(Layer1SmallPlantCreationChance) && SulphurousGravel.TryToGrowSmallPlantAbove(new(x + dx, y + dy)))
@@ -413,12 +444,26 @@ namespace InfernumMode.WorldGeneration
 
         public static void ResetToWater(Point p)
         {
+            WorldGen.KillTile(p.X, p.Y);
+
             Main.tile[p].Get<TileWallWireStateData>().HasTile = false;
             Main.tile[p].Get<LiquidData>().LiquidType = LiquidID.Water;
             Main.tile[p].LiquidAmount = 255;
 
             if (p.X >= 5 && p.Y < Main.maxTilesX - 5)
                 Tile.SmoothSlope(p.X, p.Y);
+        }
+
+        public static bool InsideOfLayer1Forest(Point p)
+        {
+            if (GetActualX(p.X) >= BiomeWidth - WallThickness + 1)
+                return false;
+
+            if (p.Y < AbyssTop + 25 || p.Y >= Layer2Top - 5)
+                return false;
+
+            float forestNoise = FractalBrownianMotion(p.X * Layer1ForestNoiseMagnificationFactor, p.Y * Layer1ForestNoiseMagnificationFactor, WorldSaveSystem.AbyssLayer1ForestSeed, 5) * 0.5f + 0.5f;
+            return forestNoise > Layer1ForestMinNoiseValue;
         }
         #endregion Utilities
     }

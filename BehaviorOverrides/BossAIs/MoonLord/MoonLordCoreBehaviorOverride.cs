@@ -301,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Create arms/head and go to the next attack state.
-            if (attackTimer >= 35)
+            if (attackTimer >= 35f)
             {
                 SelectNextAttack(npc);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

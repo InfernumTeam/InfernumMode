@@ -25,7 +25,7 @@ namespace InfernumMode.Items
             Item.width = 30;
             Item.height = 30;
 
-            Item.value = Item.sellPrice(platinum: 1);
+            Item.value = Item.sellPrice(copper: 69);
             Item.rare = ItemRarityID.Pink;
 
             Item.shoot = ModContent.ProjectileType<HatGirl>();

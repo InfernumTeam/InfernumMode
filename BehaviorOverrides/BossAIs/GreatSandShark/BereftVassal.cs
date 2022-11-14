@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
                 // Change music.
                 SceneEffectPriority = SceneEffectPriority.BossHigh;
-                Music = MusicID.Boss3;
+                Music = MusicID.OldOnesArmy;
                 if (ModLoader.TryGetMod("InfernumModeMusic", out Mod musicMod))
                     Music = MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/BereftVassal");
             }

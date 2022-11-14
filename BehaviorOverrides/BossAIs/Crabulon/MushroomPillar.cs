@@ -15,10 +15,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
     public class MushroomPillar : ModProjectile
     {
-        public ref float MaxPillarHeight => ref Projectile.ai[0];
-        public ref float Time => ref Projectile.ai[1];
         public float CurrentHeight = 0f;
+
+        public ref float MaxPillarHeight => ref Projectile.ai[0];
+
+        public ref float Time => ref Projectile.ai[1];
+
         public const float StartingHeight = 22f;
+        
         public override void SetStaticDefaults() => DisplayName.SetDefault("Mushroom Column");
 
         public override void SetDefaults()
@@ -28,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 240;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 

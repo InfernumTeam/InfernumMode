@@ -114,8 +114,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Do nothing other than hiding if instructed to do so.
             if (retreatingToHidingSpot == 1f)
             {
-                npc.velocity = npc.SafeDirectionTo(spotToHideIn) * 0.04f;
-                npc.Center = npc.Center.MoveTowards(spotToHideIn, 8f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(spotToHideIn) * 8f, 0.15f);
 
                 // Stop once the hiding spot has been reached.
                 stuckTimer++;
@@ -177,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Pick a potential direction to snap out.
             // This is important for attacking.
             int snapDirectionTries = 0;
-            float targetSnapAngularThreshold = 0.48f;
+            float targetSnapAngularThreshold = 0.68f;
             while ((CalamityUtils.DistanceToTileCollisionHit(spotToHideIn, snapDirection, 50) ?? 50f) < 5f)
             {
                 snapDirectionTries++;

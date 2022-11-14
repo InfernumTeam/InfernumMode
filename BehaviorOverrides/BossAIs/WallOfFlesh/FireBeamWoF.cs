@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
+            Projectile.width = Projectile.height = 30;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
@@ -89,18 +89,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
-            color = Color.Lerp(color, Color.Red, 0.65f);
+            Color color = Color.Lerp(Color.OrangeRed, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
+            color = Color.Lerp(color, Color.Orange, 0.65f);
             return color * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:ProviLaserShader"]);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            Color middleColor = Color.Lerp(Color.White, Color.Orange, 0.6f);
+            Color middleColor2 = Color.Lerp(Color.Red, Color.DarkRed, 0.5f);
+            Color finalColor = Color.Lerp(middleColor, middleColor2,  Time / 120);
+
+            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(finalColor);
+            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

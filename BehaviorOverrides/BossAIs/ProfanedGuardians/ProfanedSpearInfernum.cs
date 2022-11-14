@@ -29,9 +29,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         
         public override void AI()
         {
+            if(Projectile.alpha > 0)
+                Projectile.alpha -= 12;
+
             Projectile.tileCollide = Projectile.timeLeft < 210;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.08f, 0f, 1f);
+            //Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.08f, 0f, 1f);
 
             // Accelerate.
             if (Projectile.velocity.Length() < 42f)
@@ -44,7 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
+            float alpha = 1 - (float)Projectile.alpha / 255;
+            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             return false;
         }
     }

@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             Color color = Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
-            color = Color.Lerp(color, Color.DimGray, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
+            //color = Color.Lerp(color, Color.DimGray, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
             color.A = 50;
             return color * 1.32f;
         }

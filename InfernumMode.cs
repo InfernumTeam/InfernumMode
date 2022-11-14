@@ -94,6 +94,9 @@ namespace InfernumMode
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
+                Ref<Effect> genericLaserShader = new(Assets.Request<Effect>("Effects/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");
+
                 Ref<Effect> proviLaserShader = new(Assets.Request<Effect>("Effects/ProviLaserShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:ProviLaserShader"] = new MiscShaderData(proviLaserShader, "TrailPass");
 

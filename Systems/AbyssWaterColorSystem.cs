@@ -10,6 +10,12 @@ namespace InfernumMode.Systems
 {
     public class AbyssWaterColorSystem : ModSystem
     {
+        public static float WaterBlacknessInterpolant
+        {
+            get;
+            set;
+        } = 1f;
+
         internal VertexColors ChangeAbyssColors(VertexColors initialColor, int liquidType, Point p)
         {
             bool isAbyssWater = liquidType == ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
@@ -23,7 +29,7 @@ namespace InfernumMode.Systems
                 float bottomLeftBrightness = initialColor.BottomLeftColor.ToVector3().Length() / 1.732f;
                 float bottomRightBrightness = initialColor.BottomRightColor.ToVector3().Length() / 1.732f;
 
-                float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * 0.42f;
+                float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * WaterBlacknessInterpolant * 0.44f;
                 float sulphuricWaterInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top - 24f, CustomAbyss.AbyssTop - 4f, p.Y, true);
 
                 // Conditional exists for optimization purposes.
@@ -59,6 +65,11 @@ namespace InfernumMode.Systems
         public override void Unload()
         {
             ILChanges.ExtraColorChangeConditions -= ChangeAbyssColors;
+        }
+
+        public override void PreUpdateEntities()
+        {
+            WaterBlacknessInterpolant = MathHelper.Clamp(WaterBlacknessInterpolant + 0.02f, 0f, 1f);
         }
     }
 }

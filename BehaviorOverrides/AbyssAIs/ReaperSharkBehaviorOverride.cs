@@ -19,7 +19,8 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         public enum ReaperSharkAttackState
         {
             StalkTarget,
-            RoarAnimation
+            RoarAnimation,
+            RushAtTarget
         }
 
         public override int NPCOverrideType => ModContent.NPCType<ReaperShark>();
@@ -67,6 +68,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 case ReaperSharkAttackState.RoarAnimation:
                     DoBehavior_RoarAnimation(npc, target, ref attackTimer, ref eyeOpacity);
                     break;
+                case ReaperSharkAttackState.RushAtTarget:
+                    DoBehavior_RushAtTarget(npc, target, ref attackTimer);
+                    break;
             }
             attackTimer++;
             return false;
@@ -92,19 +96,20 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Handle teleports.
             if (nextTeleportDelay > 0f)
                 nextTeleportDelay--;
-            else
+            else if (attackTimer < stalkTime)
             {
                 // Play a roar sound.
                 soundSlotID = SoundEngine.PlaySound(ReaperShark.SearchRoarSound, target.Center).ToFloat();
 
                 // Determine the teleport offset.
-                teleportOffset = MathHelper.Lerp(936f, 350f, (float)Math.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
+                teleportOffset = MathHelper.Lerp(1436f, 450f, (float)Math.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
 
                 // Teleport near target.
                 float angleOffsetDirection = Main.rand.NextBool().ToDirectionInt();
                 do
                     teleportOffsetDirection += Main.rand.NextFloat(MathHelper.PiOver2);
-                while ((teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f);
+                while ((teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f ||
+                        (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(target.velocity) < 0.9f);
 
                 npc.Center = target.Center + teleportOffsetDirection.ToRotationVector2() * teleportOffset;
                 npc.velocity = (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2() * swimSpeed;
@@ -125,14 +130,15 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Update played sounds.
             if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(soundSlotID), out ActiveSound result)) 
             {
-                float lowPassFilter = Utils.GetLerpValue(854f, 360f, teleportOffset, true) * 0.8f + 0.05f;
+                float lowPassFilter = Utils.GetLerpValue(1400f, 460f, teleportOffset, true) * 0.8f + 0.05f;
                 result.Sound.SetLowPassFilter(lowPassFilter);
                 result.Sound.SetReverb(1f - lowPassFilter);
                 result.Position = target.Center;
             }
 
-            // Decide the body and eye opacity.
+            // Decide the eye opacity.
             eyeOpacity = Utils.GetLerpValue(delayBetweenTeleports - 20f, delayBetweenTeleports - 50f, nextTeleportDelay, true) * Utils.GetLerpValue(4f, 54f, nextTeleportDelay, true);
+            eyeOpacity *= Utils.GetLerpValue(250f, 390f, npc.Distance(target.Center), true);
 
             // Disable damage.
             npc.damage = 0;
@@ -145,14 +151,14 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = npc.velocity.ToRotation();
 
-            if (attackTimer >= stalkTime && MathHelper.Distance(target.Center.X, npc.Center.X) > 600f)
+            if (attackTimer >= stalkTime && MathHelper.Distance(target.Center.X, npc.Center.X) > 800f)
                 SelectNextAttack(npc);
         }
 
         public static void DoBehavior_RoarAnimation(NPC npc, Player target, ref float attackTimer, ref float eyeOpacity)
         {
             int fadeInTime = 32;
-            int waterBlackFadeTime = 54;
+            int waterBlackFadeTime = 92;
             float chargeSpeed = 29f;
 
             // Teleport next to the target on the first frame.
@@ -186,9 +192,28 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
 
             if (attackTimer >= waterBlackFadeTime)
-            {
-                //SelectNextAttack(npc);
-            }
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_RushAtTarget(NPC npc, Player target, ref float attackTimer)
+        {
+            int rushTime = 300;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float rushSpeed = MathHelper.Lerp(28f, 36.5f, 1f - lifeRatio);
+            float rushAcceleration = rushSpeed * 0.009f;
+
+            // Rush towards the player if sufficiently far away.
+            if (!npc.WithinRange(target.Center, 100f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * rushSpeed, rushAcceleration);
+
+            // Decide direction and rotation.
+            npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
+            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.02f, -0.3f, 0.3f);
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
+            if (attackTimer >= rushTime)
+                SelectNextAttack(npc);
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -196,8 +221,14 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             ReaperSharkAttackState currentAttack = (ReaperSharkAttackState)npc.ai[0];
             ReaperSharkAttackState nextAttack = currentAttack;
 
+            // Handle spawn animation triggers.
             if (currentAttack == ReaperSharkAttackState.StalkTarget)
                 nextAttack = ReaperSharkAttackState.RoarAnimation;
+            if (currentAttack == ReaperSharkAttackState.RoarAnimation)
+                nextAttack = ReaperSharkAttackState.RushAtTarget;
+
+            if (currentAttack == ReaperSharkAttackState.RushAtTarget)
+                nextAttack = ReaperSharkAttackState.RushAtTarget;
 
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;

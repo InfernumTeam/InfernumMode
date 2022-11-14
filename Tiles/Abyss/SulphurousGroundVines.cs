@@ -1,4 +1,5 @@
-﻿using CalamityMod.Dusts;
+﻿using CalamityMod;
+using CalamityMod.Dusts;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -102,6 +103,8 @@ namespace InfernumMode.Tiles.Abyss
                 Main.tile[p.X, p.Y - 1].TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
                 Main.tile[p.X, p.Y - 1].TileFrameY = 0;
                 Main.tile[p.X, p.Y - 1].Get<TileWallWireStateData>().HasTile = true;
+                Main.tile[p.X, p.Y - 1].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                Main.tile[p.X, p.Y - 1].Get<TileWallWireStateData>().IsHalfBlock = false;
 
                 Main.tile[p].TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
                 Main.tile[p].TileFrameY = (short)(WorldGen.genRand.Next(1, 5) * 18);
@@ -120,6 +123,14 @@ namespace InfernumMode.Tiles.Abyss
         }
 
         public override void RandomUpdate(int i, int j) => AttemptToGrowVine(new(i, j));
+
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile above = CalamityUtils.ParanoidTileRetrieval(i, j - 1);
+            if (above.TileType == Type && t.TileFrameY == 0)
+                WorldGen.KillTile(i, j - 1);
+        }
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {

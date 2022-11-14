@@ -268,7 +268,7 @@ namespace InfernumMode.WorldGeneration
                                             if (ddy <= 0)
                                                 TileLoader.RandomUpdate(vinePosition.X, vinePosition.Y - ddy, CalamityUtils.ParanoidTileRetrieval(vinePosition.X, vinePosition.Y - ddy).TileType);
                                             else
-                                                SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy + 1));
+                                                SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy));
                                         }
                                     }
 

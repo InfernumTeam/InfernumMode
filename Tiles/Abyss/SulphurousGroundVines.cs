@@ -73,7 +73,7 @@ namespace InfernumMode.Tiles.Abyss
 
         public static bool AttemptToGrowVine(Point p)
         {
-            if (!Main.tile[p.X, p.Y].HasTile || Main.tile[p.X, p.Y - 1].HasTile || Main.tile[p.X, p.Y].TileType != TileType)
+            if (!Main.tile[p.X, p.Y].HasTile || Main.tile[p.X, p.Y].TileType != TileType)
                 return false;
 
             if (Main.tile[p.X, p.Y - 1].LiquidAmount < 128 || Main.tile[p.X, p.Y - 1].LiquidType != LiquidID.Water)

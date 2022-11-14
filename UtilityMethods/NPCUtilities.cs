@@ -4,8 +4,11 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 
 namespace InfernumMode
 {
@@ -44,13 +47,6 @@ namespace InfernumMode
             }
         }
 
-        // This function returns an available Calamity Music Mod track, or null if the Calamity Music Mod is not available.
-        public static int? GetMusicFromMusicMod(string songFilename)
-        {
-            bool musicAvailable = ModLoader.TryGetMod("CalamityModMusic", out Mod musicMod);
-            return musicAvailable ? MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/" + songFilename) : null;
-        }
-
         public static bool IsExoMech(NPC npc)
         {
             // Thanatos.
@@ -82,6 +78,55 @@ namespace InfernumMode
             }
 
             return false;
+        }
+
+        public static NPC FindClosestAbyssPredator(this NPC npc, out float distanceToClosestPredator)
+        {
+            NPC closestPredator = null;
+            distanceToClosestPredator = 9999999f;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (!Main.npc[i].active || !Main.npc[i].Infernum().IsAbyssPredator)
+                    continue;
+
+                float extraDistance = (Main.npc[i].width / 2) + (Main.npc[i].height / 2);
+                extraDistance *= extraDistance;
+
+                bool canHit = Collision.CanHit(npc.Center, 1, 1, Main.npc[i].Center, 1, 1);
+                if (Vector2.DistanceSquared(npc.Center, Main.npc[i].Center) < (distanceToClosestPredator + extraDistance) && canHit)
+                {
+                    distanceToClosestPredator = Vector2.DistanceSquared(npc.Center, Main.npc[i].Center);
+                    closestPredator = Main.npc[i];
+                }
+            }
+
+            // Apply a square root on the squared distance.
+            distanceToClosestPredator = (float)Math.Sqrt(distanceToClosestPredator);
+
+            return closestPredator;
+        }
+
+        public static void TargetClosestAbyssPredator(NPC searcher, bool passiveToPlayers, float preySearchDistance)
+        {
+            bool playerSearchFilter(Player p)
+            {
+                return !passiveToPlayers;
+            }
+            bool npcSearchFilter(NPC n)
+            {
+                return n.Infernum().IsAbyssPrey && n.WithinRange(searcher.Center, preySearchDistance);
+            }
+
+            NPCUtils.TargetSearchResults searchResults = NPCUtils.SearchForTarget(searcher, NPCUtils.TargetSearchFlag.All, playerSearchFilter, npcSearchFilter);
+            if (searchResults.FoundTarget)
+            {
+                NPCUtils.TargetType value = searchResults.NearestTargetType;
+                if (searchResults.FoundTank && !searchResults.NearestTankOwner.dead && !passiveToPlayers)
+                    value = NPCUtils.TargetType.Player;
+
+                searcher.target = searchResults.NearestTargetIndex;
+                searcher.targetRect = searchResults.NearestTargetHitbox;
+            }
         }
     }
 }

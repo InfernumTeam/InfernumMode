@@ -45,10 +45,17 @@ namespace InfernumMode.GlobalInstances
 
         public const int TotalExtraAISlots = 100;
 
-        // I'll be fucking damned if this isn't enough.
         public bool ShouldUseSaturationBlur = false;
+
+        public bool IsAbyssPredator = false;
+
+        public bool IsAbyssPrey = false;
+
+        // I'll be fucking damned if this isn't enough.
         public float[] ExtraAI = new float[TotalExtraAISlots];
+
         public Rectangle Arena = default;
+
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
 
         internal static int Cryogen = -1;
@@ -95,6 +102,8 @@ namespace InfernumMode.GlobalInstances
                 ExtraAI[i] = 0f;
 
             ShouldUseSaturationBlur = false;
+            IsAbyssPredator = false;
+            IsAbyssPrey = false;
             OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
@@ -256,15 +265,6 @@ namespace InfernumMode.GlobalInstances
                     WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = true;
                 WorldSaveSystem.HasBeatedInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
-            }
-        }
-
-        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
-        {
-            if (player.Infernum().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
-            {
-                spawnRate *= 40000;
-                maxSpawns = 0;
             }
         }
 

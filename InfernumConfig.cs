@@ -22,6 +22,12 @@ namespace InfernumMode
         [Tooltip("Determines whether the pet from the Blasted Tophat should display its tips in chat or not.")]
         public bool DisplayTipsInChat { get; set; }
 
+        [Label("Reduced Graphical Settings")]
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(false)]
+        [Tooltip("Enables reduced graphics mode. Useful if performance is low.")]
+        public bool ReducedGraphicsConfig { get; set; }
+
         [Label("Saturation Bloom Intensity")]
         [BackgroundColor(224, 127, 180, 192)]
         [SliderColor(224, 165, 56, 128)]

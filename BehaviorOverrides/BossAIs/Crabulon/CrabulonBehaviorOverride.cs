@@ -169,8 +169,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 return;
             }
 
-            int sporeCloudCount = 15;
-            float sporeCloudSpeed = 6f;
+            int sporeCloudCount = 22;
+            int pillarMushroomSpawnRate = 28;
+            float sporeCloudSpeed = 9f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
             float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
@@ -196,6 +197,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             {
                 jumpSpeed *= 0.85f;
                 extraGravity = MathHelper.Clamp(extraGravity - 0.1f, 0f, 10f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % pillarMushroomSpawnRate == pillarMushroomSpawnRate - 1f)
+                {
+                    int mushroom = Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                    if (Main.projectile.IndexInRange(mushroom))
+                        Main.projectile[mushroom].ai[1] = target.Bottom.Y;
+                }
             }
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
@@ -256,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                                 int shroom = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
                                 {
-                                    Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 6f);
+                                    Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 5f);
                                     Main.npc[shroom].netUpdate = true;
                                 }
                             }
@@ -297,14 +305,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
 
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
-            bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
+            bool shouldSlowDown = horizontalDistanceFromTarget < 50f || Utilities.AnyProjectiles(ModContent.ProjectileType<MushroomPillar>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float walkSpeed = MathHelper.Lerp(2.4f, 5.6f, 1f - lifeRatio);
             if (enraged)
                 walkSpeed += 1.5f;
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 5f;
-
             walkSpeed += horizontalDistanceFromTarget * 0.004f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 

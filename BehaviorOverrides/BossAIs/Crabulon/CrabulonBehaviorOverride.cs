@@ -264,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                                 int shroom = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
                                 {
-                                    Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 5f);
+                                    Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 6f);
                                     Main.npc[shroom].netUpdate = true;
                                 }
                             }
@@ -324,8 +324,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 if (Main.netMode != NetmodeID.MultiplayerClient && canShoot)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
-                    shootVelocity.X += npc.SafeDirectionTo(target.Center).X * shootPower * 0.45f;
-                    shootVelocity.Y -= shootPower * 0.75f;
+                    shootVelocity.X += npc.SafeDirectionTo(target.Center).X * shootPower * 0.4f;
+                    shootVelocity.Y -= shootPower * 0.6f;
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
                 }
             }

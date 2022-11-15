@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,7 +21,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         {
             StalkTarget,
             RoarAnimation,
-            RushAtTarget
+            RushAtTarget,
+            UpwardCharges,
+            IceBreath,
+            MiniSharkFakeoutCharges
         }
 
         public override int NPCOverrideType => ModContent.NPCType<ReaperShark>();
@@ -34,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            ReaperSharkAttackState currentAttack = (ReaperSharkAttackState)npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float eyeOpacity = ref npc.localAI[0];
 
@@ -60,7 +65,14 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Reset the name of the NPC. It may be changed below to ensure that nothing is drawn when the mouse is over it.
             npc.GivenName = string.Empty;
 
-            switch ((ReaperSharkAttackState)npc.ai[0])
+            // Disable water slowness.
+            npc.RemoveWaterSlowness();
+
+            // Disable the blackness effect when attacking.
+            if (currentAttack is not ReaperSharkAttackState.StalkTarget and not ReaperSharkAttackState.RoarAnimation)
+                AbyssWaterColorSystem.WaterBlacknessInterpolant = 0f;
+
+            switch (currentAttack)
             {
                 case ReaperSharkAttackState.StalkTarget:
                     DoBehavior_StalkTarget(npc, target, ref attackTimer, ref eyeOpacity);
@@ -70,6 +82,15 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                     break;
                 case ReaperSharkAttackState.RushAtTarget:
                     DoBehavior_RushAtTarget(npc, target, ref attackTimer);
+                    break;
+                case ReaperSharkAttackState.UpwardCharges:
+                    DoBehavior_UpwardCharges(npc, target, ref attackTimer);
+                    break;
+                case ReaperSharkAttackState.IceBreath:
+                    DoBehavior_IceBreath(npc, target, ref attackTimer);
+                    break;
+                case ReaperSharkAttackState.MiniSharkFakeoutCharges:
+                    DoBehavior_MiniSharkFakeoutCharges(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -197,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public static void DoBehavior_RushAtTarget(NPC npc, Player target, ref float attackTimer)
         {
-            int rushTime = 300;
+            int rushTime = 480;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float rushSpeed = MathHelper.Lerp(28f, 36.5f, 1f - lifeRatio);
             float rushAcceleration = rushSpeed * 0.009f;
@@ -207,13 +228,230 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * rushSpeed, rushAcceleration);
 
             // Decide direction and rotation.
-            npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
+            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 50f)
+                npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.02f, -0.3f, 0.3f);
             if (npc.spriteDirection == 1)
                 npc.rotation += MathHelper.Pi;
 
             if (attackTimer >= rushTime)
                 SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_UpwardCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeCount = 4;
+            int chargeDelay = 42;
+            int chargeTime = 72;
+            int swimDisappearTime = 60;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float startingChargeSpeed = 13f;
+            float chargeSpeed = MathHelper.Lerp(32f, 40f, 1f - lifeRatio);
+            float angularTurnSpeed = 0.011f;
+            Vector2 directionToTarget = npc.SafeDirectionTo(target.Center);
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float hasReachedTarget = ref npc.Infernum().ExtraAI[1];
+            ref float initialDisappearTimer = ref npc.Infernum().ExtraAI[2];
+
+            // Swim downward and disappear before attacking.
+            if (initialDisappearTimer < swimDisappearTime)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 25f, 0.04f);
+                npc.rotation = npc.velocity.ToRotation();
+                initialDisappearTimer++;
+                attackTimer = 0f;
+                return;
+            }
+
+            // Hover to the bottom left/right of the player.
+            if (attackTimer < chargeDelay)
+            {
+                // Roar on the first frame.
+                if (attackTimer == 1f)
+                    SoundEngine.PlaySound(ReaperShark.EnragedRoarSound, target.Center);
+                npc.Opacity = attackTimer / (chargeDelay - 1f);
+                npc.Center = target.Center + new Vector2((chargeCounter % 2f == 0f).ToDirectionInt() * 150f, 700f);
+                npc.velocity = Vector2.Zero;
+                return;
+            }
+
+            // Charge at the target.
+            if (attackTimer == chargeDelay)
+            {
+                npc.velocity = directionToTarget * startingChargeSpeed;
+                npc.netUpdate = true;
+            }
+            npc.velocity = (npc.velocity * 1.05f).ClampMagnitude(startingChargeSpeed, chargeSpeed);
+            npc.rotation = npc.velocity.ToRotation();
+
+            // Turn towards the target once they've been reached.
+            if (hasReachedTarget == 1f || npc.WithinRange(target.Center, 180f))
+            {
+                Vector2 left = npc.velocity.RotatedBy(-angularTurnSpeed);
+                Vector2 right = npc.velocity.RotatedBy(angularTurnSpeed);
+                if (left.AngleBetween(directionToTarget) < right.AngleBetween(directionToTarget))
+                    npc.velocity = left;
+                else
+                    npc.velocity = right;
+                
+                if (hasReachedTarget != 1f)
+                {
+                    hasReachedTarget = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer == chargeDelay + 8f)
+                Utilities.CreateShockwave(npc.Center, 2, 8, 85, false);
+
+            if (attackTimer >= chargeDelay + chargeTime)
+            {
+                attackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                {
+                    npc.Center = target.Center + new Vector2(Main.rand.NextFloatDirection() * 500f, 800f);
+                    SelectNextAttack(npc);
+                }
+
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_IceBreath(NPC npc, Player target, ref float attackTimer)
+        {
+            int riseTime = 240;
+            int breathTime = 132;
+            int iceSpikeReleaseRate = 6;
+            float horizontalHoverSpeed = 20f;
+
+            // Fly towards the hover destination near the target.
+            if (attackTimer < riseTime)
+            {
+                Vector2 destination = target.Center + new Vector2((npc.Center.X > target.Center.X).ToDirectionInt() * 750f, -300f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * horizontalHoverSpeed;
+
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
+                npc.rotation = npc.rotation.AngleTowards(npc.spriteDirection == 1 ? MathHelper.Pi : 0f, 0.25f);
+
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+
+                // Once it has been reached, change the attack timer to begin the carpet bombing.
+                if (npc.WithinRange(destination, 32f))
+                    attackTimer = riseTime - 1f;
+            }
+
+            // Begin flying horizontally.
+            else if (attackTimer == riseTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ReaperSharkIceBreathSound, npc.Center);
+                
+                Vector2 moveDirection = (npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.2f)).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
+                npc.velocity = moveDirection * horizontalHoverSpeed;
+                npc.netUpdate = true;
+            }
+
+            // And release ice.
+            else
+            {
+                npc.position.X += npc.SafeDirectionTo(target.Center).X * 7f;
+                npc.position.Y += npc.SafeDirectionTo(target.Center + Vector2.UnitY * -400f).Y * 6f;
+                npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
+                npc.rotation = npc.velocity.ToRotation();
+
+                Vector2 aimDirection = npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection);
+                Vector2 mouthPosition = npc.Center + aimDirection * 54f;
+                Vector2 iceBreathVelocity = aimDirection.RotatedBy(npc.spriteDirection * -0.2f) * 7.5f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (attackTimer % 8f == 7f)
+                        Utilities.NewProjectileBetter(mouthPosition + aimDirection * 190f, iceBreathVelocity, ModContent.ProjectileType<ReaperSharkIceBreath>(), 350, 0f);
+                    if (attackTimer % iceSpikeReleaseRate == iceSpikeReleaseRate - 1f)
+                    {
+                        Vector2 icicleVelocity = -Vector2.UnitY.RotatedBy(npc.spriteDirection * 0.57f) * new Vector2(9f, 4f);
+                        Utilities.NewProjectileBetter(mouthPosition, icicleVelocity, ModContent.ProjectileType<AbyssalIce>(), 300, 0f);
+                    }
+                }
+            }
+            if (attackTimer >= riseTime + breathTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_MiniSharkFakeoutCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int miniSharkCount = 13;
+            int hoverTime = 105;
+            int reelbackTime = 45;
+            int chargeTime = 96;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float chargeSpeed = 26.67f;
+            float sharkShootSpeed = MathHelper.Lerp(8f, 12.5f, 1f - lifeRatio);
+
+            // Sound sharks.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+            {
+                for (int i = 0; i < miniSharkCount; i++)
+                {
+                    float offsetAngle = MathHelper.Lerp(-MathHelper.Pi, MathHelper.Pi, i / (float)(miniSharkCount - 1f));
+                    int shark = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MiniReaperShark>(), 300, 0f);
+                    if (Main.projectile.IndexInRange(shark))
+                    {
+                        Main.projectile[shark].ai[0] = npc.whoAmI;
+                        Main.projectile[shark].ModProjectile<MiniReaperShark>().SpinOffsetAngle = offsetAngle;
+                    }
+                }
+            }
+
+            // Hover to the top left/right of the target.
+            if (attackTimer < hoverTime)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, -350f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.6f);
+                npc.rotation = npc.AngleTo(target.Center);
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                return;
+            }
+
+            // Reel back.
+            if (attackTimer < hoverTime + reelbackTime)
+            {
+                npc.velocity = -npc.SafeDirectionTo(target.Center) * Utils.Remap(attackTimer - hoverTime, 0f, reelbackTime, 2.5f, 8f);
+                npc.velocity.Y -= Utils.GetLerpValue(0f, reelbackTime, attackTimer - hoverTime, true) * 3.5f;
+                npc.rotation = npc.AngleTo(target.Center);
+            }
+
+            // Rise into the air after the charge.
+            else
+            {
+                npc.velocity.X *= 0.95f;
+                npc.velocity.Y -= 0.3f;
+                npc.rotation = npc.velocity.ToRotation();
+            }
+
+            // Charge at the target.
+            if (attackTimer == hoverTime + reelbackTime)
+            {
+                // Make the sharks charge.
+                foreach (Projectile miniShark in Utilities.AllProjectilesByID(ModContent.ProjectileType<MiniReaperShark>()))
+                {
+                    float chargeOffsetAngle = MathHelper.WrapAngle(npc.AngleTo(target.Center) - miniShark.ModProjectile<MiniReaperShark>().SpinOffsetAngle) * 0.2f;
+                    Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(chargeOffsetAngle) * sharkShootSpeed;
+                    miniShark.velocity = chargeVelocity;
+                    miniShark.netUpdate = true;
+                }
+
+                Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
+                SoundEngine.PlaySound(ReaperShark.EnragedRoarSound, target.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer >= hoverTime + reelbackTime + chargeTime && npc.Center.Y < target.Center.Y - 800f)
+            {
+                npc.Center = target.Center + new Vector2(Main.rand.NextFloatDirection() * 500f, -700f);
+                npc.velocity *= 0.2f;
+                SelectNextAttack(npc);
+            }
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -228,6 +466,12 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 nextAttack = ReaperSharkAttackState.RushAtTarget;
 
             if (currentAttack == ReaperSharkAttackState.RushAtTarget)
+                nextAttack = ReaperSharkAttackState.MiniSharkFakeoutCharges;
+            if (currentAttack == ReaperSharkAttackState.UpwardCharges)
+                nextAttack = ReaperSharkAttackState.IceBreath;
+            if (currentAttack == ReaperSharkAttackState.IceBreath)
+                nextAttack = ReaperSharkAttackState.MiniSharkFakeoutCharges;
+            if (currentAttack == ReaperSharkAttackState.MiniSharkFakeoutCharges)
                 nextAttack = ReaperSharkAttackState.RushAtTarget;
 
             npc.ai[0] = (int)nextAttack;

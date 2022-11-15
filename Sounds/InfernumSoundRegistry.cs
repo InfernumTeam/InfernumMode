@@ -77,6 +77,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Sounds/Custom/ProvidenceDoorShatter");
 
+        public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Sounds/Custom/ReaperSharkIceBreath");
+
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Sounds/Custom/SCalBrothersSpawn");
 
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Sounds/Custom/SkeletronHeadBonk");

@@ -14,7 +14,7 @@ namespace InfernumMode.Systems
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if (Main.player[i].active && !Main.player[i].dead && Main.player[i].Infernum().InLayer3HadalZone && Main.rand.NextBool(2))
+                if (Main.player[i].active && !Main.player[i].dead && Main.player[i].Infernum().InLayer3HadalZone)
                 {
                     int tries = 0;
                     do

@@ -466,7 +466,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 nextAttack = ReaperSharkAttackState.RushAtTarget;
 
             if (currentAttack == ReaperSharkAttackState.RushAtTarget)
-                nextAttack = ReaperSharkAttackState.MiniSharkFakeoutCharges;
+                nextAttack = ReaperSharkAttackState.UpwardCharges;
             if (currentAttack == ReaperSharkAttackState.UpwardCharges)
                 nextAttack = ReaperSharkAttackState.IceBreath;
             if (currentAttack == ReaperSharkAttackState.IceBreath)

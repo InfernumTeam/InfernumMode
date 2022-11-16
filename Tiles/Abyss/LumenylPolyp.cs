@@ -5,7 +5,7 @@ using Terraria.ObjectData;
 
 namespace InfernumMode.Tiles.Abyss
 {
-    public class AbyssalCoral : ModTile
+    public class LumenylPolyp : ModTile
     {
         public override void SetStaticDefaults()
         {
@@ -17,18 +17,18 @@ namespace InfernumMode.Tiles.Abyss
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.addTile(Type);
 
-            DustType = 225;
+            DustType = 56;
             
-            AddMapEntry(new Color(70, 206, 160));
+            AddMapEntry(new Color(63, 50, 158));
 
             base.SetStaticDefaults();
         }
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
-            r = 0.05f;
-            g = 0.8f;
-            b = 0.9f;
+            r = 0.18f;
+            g = 0.76f;
+            b = 0.89f;
         }
     }
 }

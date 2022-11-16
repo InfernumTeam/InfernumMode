@@ -16,9 +16,9 @@ namespace InfernumMode.Systems
                 return;
             
             int crystalID = ModContent.TileType<LumenylCrystals>();
-            for (int dx = -80; dx < 80; dx++)
+            for (int dx = -70; dx < 70; dx++)
             {
-                for (int dy = -80; dy < 80; dy++)
+                for (int dy = -50; dy < 50; dy++)
                 {
                     int i = (int)(Main.LocalPlayer.Center.X / 16f + dx);
                     int j = (int)(Main.LocalPlayer.Center.Y / 16f + dy);

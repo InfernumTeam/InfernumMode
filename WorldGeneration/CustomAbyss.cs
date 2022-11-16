@@ -72,6 +72,8 @@ namespace InfernumMode.WorldGeneration
 
         public const int MaxTrenchOffset = 28;
 
+        public const int Layer2WildlifeSpawnAttempts = 95200;
+
         public const int Layer3CaveCarveoutSteps = 124;
 
         public const int MinLayer3CaveSize = 9;
@@ -80,15 +82,14 @@ namespace InfernumMode.WorldGeneration
 
         public static readonly float[] Layer3SpaghettiCaveCarveOutThresholds = new float[]
         {
-            0.0441f,
-            0.0617f
+            0.1161f
         };
 
-        public const float Layer3CrystalCaveMagnificationFactor = 0.00172f;
+        public const float Layer3CrystalCaveMagnificationFactor = 0.00109f;
 
-        public const float CrystalCaveNoiseThreshold = 0.476f;
+        public const float CrystalCaveNoiseThreshold = 0.58f;
 
-        public const int Layer3VentCount = 12;
+        public const int Layer3VentCount = 10;
 
         // How thick walls should be between the insides of the abyss and the outside. This should be relatively high, since you don't want the boring
         // vanilla caverns to be visible from within the abyss, for immersion reasons.
@@ -361,7 +362,7 @@ namespace InfernumMode.WorldGeneration
             int trenchCount = Layer2TrenchCount;
             int topOfLayer2 = Layer2Top - 30;
             int bottomOfLayer2 = Layer3Top;
-            int width = MaxAbyssWidth - WallThickness;
+            int maxWidth = MaxAbyssWidth - WallThickness;
 
             // Initialize the trench list.
             trenchBottoms = new();
@@ -369,10 +370,13 @@ namespace InfernumMode.WorldGeneration
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
-                int trenchX = (int)MathHelper.Lerp(54f, width - 128f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
+                int trenchX = (int)MathHelper.Lerp(54f, maxWidth - 128f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(8);
                 trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
             }
+
+            Rectangle layer2Area = new(1, Layer2Top, maxWidth, Layer3Top - Layer2Top);
+            GenerateLayer2Wildlife(layer2Area);
         }
 
         public static Point GenerateLayer2Trench(Point start, int cutOffPoint)
@@ -427,6 +431,23 @@ namespace InfernumMode.WorldGeneration
 
             // Return the end position of the trench. This is used by the layer 3 gen to determine where caves should begin being carved out.
             return currentPoint;
+        }
+
+        public static void GenerateLayer2Wildlife(Rectangle area)
+        {
+            List<int> wildlifeVariants = new()
+            {
+                ModContent.TileType<AbyssalCoral>(),
+                ModContent.TileType<FluorescentPolyp>(),
+                ModContent.TileType<HadalSeagrass>(),
+                ModContent.TileType<LumenylPolyp>(),
+            };
+
+            for (int i = 0; i < Layer2WildlifeSpawnAttempts; i++)
+            {
+                Point potentialPosition = new(GetActualX(WorldGen.genRand.Next(area.Left + 30, area.Right - 30)), WorldGen.genRand.Next(area.Top, area.Bottom));
+                WorldGen.PlaceTile(potentialPosition.X, potentialPosition.Y, WorldGen.genRand.Next(wildlifeVariants));
+            }
         }
 
         public static void GenerateLayer3(List<Point> trenchBottoms)
@@ -571,8 +592,13 @@ namespace InfernumMode.WorldGeneration
             ushort scoriaOre = (ushort)ModContent.TileType<ChaoticOre>();
             List<Point> ventPositions = new();
 
+            int tries = 0;
             for (int i = 0; i < Layer3VentCount; i++)
             {
+                tries++;
+                if (tries >= 20000)
+                    break;
+
                 Point potentialVentPosition = new(GetActualX(WorldGen.genRand.Next(area.Left + 30, area.Right - 30)), WorldGen.genRand.Next(area.Top, area.Bottom));
                 Tile t = CalamityUtils.ParanoidTileRetrieval(potentialVentPosition.X, potentialVentPosition.Y);
 
@@ -633,14 +659,16 @@ namespace InfernumMode.WorldGeneration
                 {
                     new Actions.SetTile(gravelID, true),
                 }));
-                WorldGen.PlacePot(floor.X, floor.Y - moundHeight, ventID);
+
+                if (MathHelper.Distance(Utilities.GetGroundPositionFrom(new Point(floor.X, floor.Y - moundHeight), new Searches.Up(50)).Y, floor.Y - moundHeight) >= 7f)
+                    WorldGen.PlacePot(floor.X, floor.Y - moundHeight, ventID);
                 ventPositions.Add(floor);
             }
         }
 
         public static void GenerateLayer3LumenylCrystals(Rectangle area)
         {
-            TryToGenerateLumenylCrystals(area, 300, false);
+            TryToGenerateLumenylCrystals(area, 80, false);
             TryToGenerateLumenylCrystals(area, 700, true, (x, y) => InsideOfLayer3LumenylZone(new(x, y)));
             TryToGenerateLumenylCrystals(area, 3000, false, (x, y) => InsideOfLayer3LumenylZone(new(x, y)));
         }
@@ -740,8 +768,10 @@ namespace InfernumMode.WorldGeneration
 
         public static void GenerateLayer3DeepwaterBasalt(Rectangle area)
         {
+            int top = Layer3Top - 10;
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
             ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
+            FastRandom rng = new(WorldGen.genRand.Next());
 
             for (int i = area.Left; i < area.Right; i++)
             {
@@ -752,6 +782,12 @@ namespace InfernumMode.WorldGeneration
                         continue;
 
                     if (!InsideOfLayer3HydrothermalZone(new(i, y)))
+                        continue;
+
+                    float ditherChance = Utils.GetLerpValue(top, top + 25f, y, true);
+
+                    // Perform dithering.
+                    if (rng.NextFloat() > ditherChance)
                         continue;
 
                     Main.tile[x, y].TileType = basaltID;
@@ -924,12 +960,10 @@ namespace InfernumMode.WorldGeneration
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
                 return false;
 
-            float caveNoise = FractalBrownianMotion(p.X * 0.00205f, p.Y * 0.00205f, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 0.5f + 0.5f;
+            float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
-            caveNoise = Utils.Remap(p.Y, Layer4Top - 80f, Layer4Top - 50f, caveNoise, 0f);
-
-            return caveNoise < CrystalCaveNoiseThreshold;
+            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 118f, Layer4Top - 80f, 1f, 0f) < CrystalCaveNoiseThreshold;
         }
 
         public static bool InsideOfLayer3HydrothermalZone(Point p)
@@ -944,12 +978,10 @@ namespace InfernumMode.WorldGeneration
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
                 return false;
 
-            float caveNoise = FractalBrownianMotion(p.X * 0.00106f, p.Y * 0.00106f, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 0.5f + 0.5f;
+            float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
-            caveNoise = Utils.Remap(p.Y, Layer4Top - 108f, Layer4Top - 75f, caveNoise, 0f);
-
-            return caveNoise >= CrystalCaveNoiseThreshold;
+            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 118f, Layer4Top - 80f, 1f, 0f) >= CrystalCaveNoiseThreshold;
         }
         #endregion Utilities
     }

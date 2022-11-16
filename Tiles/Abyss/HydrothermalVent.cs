@@ -16,6 +16,8 @@ namespace InfernumMode.Tiles.Abyss
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
+            TileObjectData.newTile.Height = 3;
+            TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Geyser");
@@ -34,7 +36,7 @@ namespace InfernumMode.Tiles.Abyss
         {
             Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
 
-            Vector2 spawnPosition = new(i * 16f + 12f, j * 16f + 10f);
+            Vector2 spawnPosition = new(i * 16f + 18f, j * 16f + 10f);
             if (!Main.gamePaused && t.TileFrameX % 36 == 0 && t.TileFrameY % 36 == 0 && Collision.CanHitLine(spawnPosition, 1, 1, spawnPosition - Vector2.UnitY * 100f, 1, 1))
             {
                 float positionInterpolant = (i + j) * 0.041f % 1f;

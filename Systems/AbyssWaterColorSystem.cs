@@ -31,10 +31,10 @@ namespace InfernumMode.Systems
                 Color abyssWaterColor = new(29, 15, 56);
                 Color orangeWaterColor = new(204, 58, 9);
 
-                float topLeftBrightness = initialColor.TopLeftColor.ToVector3().Length() / 1.732f;
-                float topRightBrightness = initialColor.TopRightColor.ToVector3().Length() / 1.732f;
-                float bottomLeftBrightness = initialColor.BottomLeftColor.ToVector3().Length() / 1.732f;
-                float bottomRightBrightness = initialColor.BottomRightColor.ToVector3().Length() / 1.732f;
+                float topLeftBrightness = initialColor.TopLeftColor.ToVector3().Length() * 0.5773f;
+                float topRightBrightness = initialColor.TopRightColor.ToVector3().Length() * 0.5773f;
+                float bottomLeftBrightness = initialColor.BottomLeftColor.ToVector3().Length() * 0.5773f;
+                float bottomRightBrightness = initialColor.BottomRightColor.ToVector3().Length() * 0.5773f;
 
                 float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * WaterBlacknessInterpolant * 0.44f;
                 float sulphuricWaterInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top - 24f, CustomAbyss.AbyssTop - 4f, p.Y, true);
@@ -42,17 +42,17 @@ namespace InfernumMode.Systems
                 // Conditional exists for optimization purposes.
                 if (sulphuricWaterInterpolant <= 0f)
                 {
-                    initialColor.TopLeftColor = abyssWaterColor * topLeftBrightness;
-                    initialColor.TopRightColor = abyssWaterColor * topRightBrightness;
-                    initialColor.BottomLeftColor = abyssWaterColor * bottomLeftBrightness;
-                    initialColor.BottomRightColor = abyssWaterColor * bottomRightBrightness;
+                    initialColor.TopLeftColor = abyssWaterColor;
+                    initialColor.TopRightColor = abyssWaterColor;
+                    initialColor.BottomLeftColor = abyssWaterColor;
+                    initialColor.BottomRightColor = abyssWaterColor;
                 }
                 else
                 {
-                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topLeftBrightness;
-                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * topRightBrightness;
-                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomLeftBrightness;
-                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant) * bottomRightBrightness;
+                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
+                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
+                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
+                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
                 }
 
                 if (blacknessInterpolant > 0f)
@@ -62,15 +62,19 @@ namespace InfernumMode.Systems
                     initialColor.BottomLeftColor = Color.Lerp(initialColor.BottomLeftColor, Color.Black, blacknessInterpolant);
                     initialColor.BottomRightColor = Color.Lerp(initialColor.BottomRightColor, Color.Black, blacknessInterpolant);
                 }
-
+                
                 float orangeWaterInterpolant = OrangeAbyssWaterInterpolant;
                 if (orangeWaterInterpolant > 0f)
                 {
-                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * topLeftBrightness;
-                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * topRightBrightness;
-                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * bottomLeftBrightness;
-                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * bottomRightBrightness;
+                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
+                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
+                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
+                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
                 }
+                initialColor.TopLeftColor *= topLeftBrightness;
+                initialColor.TopRightColor *= topRightBrightness;
+                initialColor.BottomLeftColor *= bottomLeftBrightness;
+                initialColor.BottomRightColor *= bottomRightBrightness;
             }
 
             return initialColor;

@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
-using CalamityMod.Tiles.Abyss.Stalactite;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
 using CalamityMod.World;
@@ -87,9 +86,9 @@ namespace InfernumMode.WorldGeneration
 
         public const float Layer3CrystalCaveMagnificationFactor = 0.00172f;
 
-        public const float CrystalCaveNoiseThreshold = 0.43f;
+        public const float CrystalCaveNoiseThreshold = 0.476f;
 
-        public const int Layer3VentCount = 27;
+        public const int Layer3VentCount = 12;
 
         // How thick walls should be between the insides of the abyss and the outside. This should be relatively high, since you don't want the boring
         // vanilla caverns to be visible from within the abyss, for immersion reasons.
@@ -553,10 +552,15 @@ namespace InfernumMode.WorldGeneration
             Rectangle layer3Area = new(1, Layer3Top, maxWidth - WallThickness, Layer4Top - Layer3Top);
             ClearOutStrayTiles(layer3Area);
 
-            // Generate scenic hydrothermal tiles.
+            WorldSaveSystem.AbyssLayer3CavernSeed = WorldGen.genRand.Next();
+
+            // Generate deepwater basalt in the hydrothermic zone.
+            GenerateLayer3DeepwaterBasalt(layer3Area);
+
+            // Generate scenic hydrothermal vents.
             GenerateLayer3Vents(layer3Area);
 
-            // Scatter crystals.
+            // Scatter crystals. This encompasses the creation of the lumenyl zone.
             GenerateLayer3LumenylCrystals(layer3Area);
         }
 
@@ -606,6 +610,17 @@ namespace InfernumMode.WorldGeneration
                     continue;
                 }
 
+                // Ignore points outside of the hydrothermal zone.
+                int zeroBiasedX = floor.X;
+                if (zeroBiasedX >= Main.maxTilesX / 2)
+                    zeroBiasedX = Main.maxTilesX - zeroBiasedX;
+
+                if (!InsideOfLayer3HydrothermalZone(new(zeroBiasedX, floor.Y)))
+                {
+                    i--;
+                    continue;
+                }
+
                 // Generate a stand of scoria.
                 // TODO -- Make the scoria ore a resource inside a shell of abyssal magma blocks.
                 int moundHeight = WorldGen.genRand.Next(4, 9);
@@ -625,16 +640,9 @@ namespace InfernumMode.WorldGeneration
 
         public static void GenerateLayer3LumenylCrystals(Rectangle area)
         {
-            int crystalCaveSeed = WorldGen.genRand.Next();
             TryToGenerateLumenylCrystals(area, 300, false);
-            TryToGenerateLumenylCrystals(area, 700, true, (x, y) =>
-            {
-                return FractalBrownianMotion(x * Layer3CrystalCaveMagnificationFactor, y * Layer3CrystalCaveMagnificationFactor, crystalCaveSeed, 5) * 0.5f + 0.5f < 0.71f;
-            });
-            TryToGenerateLumenylCrystals(area, 3000, false, (x, y) =>
-            {
-                return FractalBrownianMotion(x * Layer3CrystalCaveMagnificationFactor, y * Layer3CrystalCaveMagnificationFactor, crystalCaveSeed, 5) * 0.5f + 0.5f < 0.75f;
-            });
+            TryToGenerateLumenylCrystals(area, 700, true, (x, y) => InsideOfLayer3LumenylZone(new(x, y)));
+            TryToGenerateLumenylCrystals(area, 3000, false, (x, y) => InsideOfLayer3LumenylZone(new(x, y)));
         }
 
         public static void TryToGenerateLumenylCrystals(Rectangle area, int placementCount, bool largeCrystals, Func<int, int, bool> extraCondition = null)
@@ -730,6 +738,27 @@ namespace InfernumMode.WorldGeneration
             }
         }
 
+        public static void GenerateLayer3DeepwaterBasalt(Rectangle area)
+        {
+            ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
+            ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
+
+            for (int i = area.Left; i < area.Right; i++)
+            {
+                int x = GetActualX(i);
+                for (int y = area.Top; y < area.Bottom; y++)
+                {
+                    if (Main.tile[x, y].TileType != gravelID || !Main.tile[x, y].HasTile)
+                        continue;
+
+                    if (!InsideOfLayer3HydrothermalZone(new(i, y)))
+                        continue;
+
+                    Main.tile[x, y].TileType = basaltID;
+                }
+            }
+        }
+
         public static void GenerateLayer4()
         {
             int minWidth = MinAbyssWidth;
@@ -767,6 +796,7 @@ namespace InfernumMode.WorldGeneration
             ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
             ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
+            ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
             FastRandom rng = new(WorldGen.genRand.Next());
 
             for (int y = top; y < bottom; y++)
@@ -777,7 +807,11 @@ namespace InfernumMode.WorldGeneration
                     Tile t = CalamityUtils.ParanoidTileRetrieval(GetActualX(i), y);
 
                     // Don't convert tiles that aren't abyss gravel in some way.
-                    if ((t.WallType != gravelID || !t.HasTile) && t.WallType != gravelWallID)
+                    if ((t.TileType != gravelID || !t.HasTile) && t.WallType != gravelWallID)
+                        continue;
+
+                    // Don't convert deepwater basalt.
+                    if (t.TileType == basaltID)
                         continue;
 
                     // Perform dithering.
@@ -864,7 +898,11 @@ namespace InfernumMode.WorldGeneration
 
         public static bool InsideOfLayer1Forest(Point p)
         {
-            if (GetActualX(p.X) >= BiomeWidth - WallThickness + 1)
+            int x = p.X;
+            if (x >= Main.maxTilesX / 2)
+                x = Main.maxTilesX - x;
+
+            if (x >= BiomeWidth - WallThickness + 1)
                 return false;
 
             if (p.Y < AbyssTop + 25 || p.Y >= Layer2Top - 5)
@@ -872,6 +910,46 @@ namespace InfernumMode.WorldGeneration
 
             float forestNoise = FractalBrownianMotion(p.X * Layer1ForestNoiseMagnificationFactor, p.Y * Layer1ForestNoiseMagnificationFactor, WorldSaveSystem.AbyssLayer1ForestSeed, 5) * 0.5f + 0.5f;
             return forestNoise > Layer1ForestMinNoiseValue;
+        }
+
+        public static bool InsideOfLayer3LumenylZone(Point p)
+        {
+            int x = p.X;
+            if (x >= Main.maxTilesX / 2)
+                x = Main.maxTilesX - x;
+
+            if (x >= BiomeWidth - WallThickness + 1)
+                return false;
+
+            if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
+                return false;
+
+            float caveNoise = FractalBrownianMotion(p.X * 0.00205f, p.Y * 0.00205f, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 0.5f + 0.5f;
+
+            // Bias towards crystal caves as they reach the fourth layer.
+            caveNoise = Utils.Remap(p.Y, Layer4Top - 80f, Layer4Top - 50f, caveNoise, 0f);
+
+            return caveNoise < CrystalCaveNoiseThreshold;
+        }
+
+        public static bool InsideOfLayer3HydrothermalZone(Point p)
+        {
+            int x = p.X;
+            if (x >= Main.maxTilesX / 2)
+                x = Main.maxTilesX - x;
+
+            if (x >= BiomeWidth - WallThickness + 1)
+                return false;
+
+            if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
+                return false;
+
+            float caveNoise = FractalBrownianMotion(p.X * 0.00106f, p.Y * 0.00106f, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 0.5f + 0.5f;
+
+            // Bias towards crystal caves as they reach the fourth layer.
+            caveNoise = Utils.Remap(p.Y, Layer4Top - 108f, Layer4Top - 75f, caveNoise, 0f);
+
+            return caveNoise >= CrystalCaveNoiseThreshold;
         }
         #endregion Utilities
     }

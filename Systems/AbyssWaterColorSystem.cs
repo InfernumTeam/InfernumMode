@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.ILEditing;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
@@ -16,13 +15,21 @@ namespace InfernumMode.Systems
             set;
         } = 1f;
 
+        public static float OrangeAbyssWaterInterpolant
+        {
+            get;
+            set;
+        }
+
         internal VertexColors ChangeAbyssColors(VertexColors initialColor, int liquidType, Point p)
         {
             bool isAbyssWater = liquidType == ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
+
             if (WorldSaveSystem.InPostAEWUpdateWorld && isAbyssWater)
             {
                 Color acidWaterColor = new(62, 217, 145);
                 Color abyssWaterColor = new(29, 15, 56);
+                Color orangeWaterColor = new(204, 58, 9);
 
                 float topLeftBrightness = initialColor.TopLeftColor.ToVector3().Length() / 1.732f;
                 float topRightBrightness = initialColor.TopRightColor.ToVector3().Length() / 1.732f;
@@ -54,6 +61,15 @@ namespace InfernumMode.Systems
                     initialColor.TopRightColor = Color.Lerp(initialColor.TopRightColor, Color.Black, blacknessInterpolant);
                     initialColor.BottomLeftColor = Color.Lerp(initialColor.BottomLeftColor, Color.Black, blacknessInterpolant);
                     initialColor.BottomRightColor = Color.Lerp(initialColor.BottomRightColor, Color.Black, blacknessInterpolant);
+                }
+
+                float orangeWaterInterpolant = OrangeAbyssWaterInterpolant;
+                if (orangeWaterInterpolant > 0f)
+                {
+                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * topLeftBrightness;
+                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * topRightBrightness;
+                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * bottomLeftBrightness;
+                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant) * bottomRightBrightness;
                 }
             }
 

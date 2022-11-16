@@ -16,7 +16,11 @@ namespace InfernumMode.Systems
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
             flags[5] = InPostAEWUpdateWorld;
+
             writer.Write(flags);
+            
+            writer.Write(AbyssLayer1ForestSeed);
+            writer.Write(AbyssLayer3CavernSeed);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -28,6 +32,9 @@ namespace InfernumMode.Systems
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
             InPostAEWUpdateWorld = flags[5];
+
+            AbyssLayer1ForestSeed = reader.ReadInt32();
+            AbyssLayer3CavernSeed = reader.ReadInt32();
         }
     }
 }

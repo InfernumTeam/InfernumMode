@@ -13,6 +13,12 @@ namespace InfernumMode.Systems
             set;
         }
 
+        public static int AbyssLayer3CavernSeed
+        {
+            get;
+            set;
+        }
+
         public static bool HasGeneratedProfanedShrine
         {
             get;
@@ -94,6 +100,7 @@ namespace InfernumMode.Systems
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
             tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
             tag["AbyssLayer1ForestSeed"] = AbyssLayer1ForestSeed;
+            tag["AbyssLayer3CavernSeed"] = AbyssLayer3CavernSeed;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -110,6 +117,7 @@ namespace InfernumMode.Systems
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
             AbyssLayer1ForestSeed = tag.GetInt("AbyssLayer1ForestSeed");
+            AbyssLayer3CavernSeed = tag.GetInt("AbyssLayer3CavernSeed");
         }
     }
 }

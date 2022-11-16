@@ -10,6 +10,7 @@ using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
+using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using SubworldLibrary;
@@ -48,6 +49,8 @@ namespace InfernumMode
         public float MapObscurityInterpolant;
 
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
+
+        public bool InLayer3HadalZone => CustomAbyss.InsideOfLayer3HydrothermalZone(Player.Center.ToTileCoordinates());
 
         public bool InProfanedArena
         {
@@ -165,9 +168,8 @@ namespace InfernumMode
         #region Update
         public override void PreUpdate()
         {
-            // Make voidstone and abyss gravel merge.
-            Main.tileMerge[ModContent.TileType<AbyssGravel>()][ModContent.TileType<Voidstone>()] = true;
-            Main.tileMerge[ModContent.TileType<Voidstone>()][ModContent.TileType<AbyssGravel>()] = true;
+            // Decide the abyss orange water fade effect.
+            AbyssWaterColorSystem.OrangeAbyssWaterInterpolant = MathHelper.Clamp(AbyssWaterColorSystem.OrangeAbyssWaterInterpolant + InLayer3HadalZone.ToDirectionInt() * 0.008f, 0f, 0.5f);
 
             ProfanedLavaFountain = false;
             int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.Stalactite;
+using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Systems;
@@ -8,9 +9,11 @@ using InfernumMode.Tiles.Abyss;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static CalamityMod.World.SulphurousSea;
 
@@ -29,7 +32,7 @@ namespace InfernumMode.WorldGeneration
 
         public static int Layer2Top => (int)(Main.rockLayer + Main.maxTilesY * 0.084f);
 
-        public static int Layer3Top => (int)(Main.rockLayer + Main.maxTilesY * 0.17f);
+        public static int Layer3Top => (int)(Main.rockLayer + Main.maxTilesY * 0.184f);
 
         public static int Layer4Top => (int)(Main.rockLayer + Main.maxTilesY * 0.29f);
 
@@ -70,6 +73,24 @@ namespace InfernumMode.WorldGeneration
 
         public const int MaxTrenchOffset = 28;
 
+        public const int Layer3CaveCarveoutSteps = 124;
+
+        public const int MinLayer3CaveSize = 9;
+
+        public const int MaxLayer3CaveSize = 16;
+
+        public static readonly float[] Layer3SpaghettiCaveCarveOutThresholds = new float[]
+        {
+            0.0441f,
+            0.0617f
+        };
+
+        public const float Layer3CrystalCaveMagnificationFactor = 0.00172f;
+
+        public const float CrystalCaveNoiseThreshold = 0.43f;
+
+        public const int Layer3VentCount = 27;
+
         // How thick walls should be between the insides of the abyss and the outside. This should be relatively high, since you don't want the boring
         // vanilla caverns to be visible from within the abyss, for immersion reasons.
         public const int WallThickness = 70;
@@ -89,8 +110,10 @@ namespace InfernumMode.WorldGeneration
             GenerateGravelBlock();
             GenerateSulphurousSeaCut();
             GenerateLayer1();
-            GenerateLayer2();
+            GenerateLayer2(out List<Point> trenchBottoms);
+            GenerateLayer3(trenchBottoms);
             GenerateLayer4();
+            GenerateVoidstone();
         }
         #endregion Placement Methods
 
@@ -334,23 +357,26 @@ namespace InfernumMode.WorldGeneration
             }
         }
 
-        public static void GenerateLayer2()
+        public static void GenerateLayer2(out List<Point> trenchBottoms)
         {
             int trenchCount = Layer2TrenchCount;
             int topOfLayer2 = Layer2Top - 30;
             int bottomOfLayer2 = Layer3Top;
             int width = MaxAbyssWidth - WallThickness;
 
+            // Initialize the trench list.
+            trenchBottoms = new();
+
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
                 int trenchX = (int)MathHelper.Lerp(54f, width - 128f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(8);
-                GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4);
+                trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
             }
         }
 
-        public static void GenerateLayer2Trench(Point start, int cutOffPoint)
+        public static Point GenerateLayer2Trench(Point start, int cutOffPoint)
         {
             Point currentPoint = start;
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
@@ -376,6 +402,8 @@ namespace InfernumMode.WorldGeneration
                 {
                     int shellRadius = width + WorldGen.genRand.Next(4);
                     Point voidstoneShellCenter = new(currentPoint.X + currentOffset + WorldGen.genRand.NextBool().ToDirectionInt() * width / 2 + WorldGen.genRand.Next(-4, 4), currentPoint.Y + shellRadius + 1);
+                    voidstoneShellCenter.X = Utils.Clamp(voidstoneShellCenter.X, 35, Main.maxTilesX - 35);
+
                     WorldUtils.Gen(voidstoneShellCenter, new Shapes.Circle(shellRadius), Actions.Chain(new GenAction[]
                     {
                         new Modifiers.Blotches(),
@@ -396,6 +424,309 @@ namespace InfernumMode.WorldGeneration
                     ResetToWater(new(currentPoint.X + dx + currentOffset, currentPoint.Y));
 
                 currentPoint.Y++;
+            }
+
+            // Return the end position of the trench. This is used by the layer 3 gen to determine where caves should begin being carved out.
+            return currentPoint;
+        }
+
+        public static void GenerateLayer3(List<Point> trenchBottoms)
+        {
+            int entireAbyssTop = AbyssTop;
+            int entireAbyssBottom = AbyssBottom;
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            Point layer4ConvergencePoint = new(GetActualX((MaxAbyssWidth - WallThickness) / 2), Layer4Top + 5);
+            List<int> caveSeeds = new();
+            List<Vector2> caveNoisePositions = new();
+            List<Point> caveEndPoints = new();
+
+            // Initialize cave positions.
+            for (int i = 0; i < trenchBottoms.Count; i++)
+            {
+                caveSeeds.Add(WorldGen.genRand.Next());
+                caveNoisePositions.Add(WorldGen.genRand.NextVector2Unit());
+                caveEndPoints.Add(trenchBottoms[i]);
+            }
+
+            // Carve out the base caves.
+            for (int i = 0; i < trenchBottoms.Count; i++)
+            {
+                for (int j = 0; j < 196; j++)
+                {
+                    int carveOutArea = (int)Utils.Remap(caveNoisePositions[i].Y, Layer3Top, Layer4Top, MinLayer3CaveSize, MaxLayer3CaveSize);
+
+                    // Slightly update the coordinates of the input value, in "noise space".
+                    // This causes the worm's shape to be slightly different in the next frame.
+                    // The x coordinate of the input value is shifted in a negative direction,
+                    // which propagates the previous Perlin-noise values over to subsequent
+                    // segments.  This produces a "slithering" effect.
+                    caveNoisePositions[i] += new Vector2(-carveOutArea * 0.0002f, 0.0033f);
+
+                    // Make caves converge towards a central pit the closer they are to reaching the 4th layer.
+                    float convergenceInterpolant = Utils.GetLerpValue(Layer4Top - 75f, Layer4Top - 8f, caveEndPoints[i].Y, true);
+
+                    // Make caves stay within the abyss.
+                    float moveToEdgeInterpolant;
+                    Vector2 edgeDirection;
+                    if (Abyss.AtLeftSideOfWorld)
+                    {
+                        edgeDirection = -Vector2.UnitX;
+                        moveToEdgeInterpolant = Utils.GetLerpValue(MaxAbyssWidth - WallThickness - 32f, MaxAbyssWidth - WallThickness, caveEndPoints[i].X, true);
+                    }
+                    else
+                    {
+                        edgeDirection = Vector2.UnitX;
+                        moveToEdgeInterpolant = Utils.GetLerpValue(Main.maxTilesX - (MaxAbyssWidth - WallThickness), Main.maxTilesX - (MaxAbyssWidth - WallThickness - 32f), caveEndPoints[i].X, true);
+                    }
+
+                    // Make caves stay within layer 3.
+                    float moveDownwardInterpolant = Utils.GetLerpValue(Layer3Top + 50f, Layer3Top + 20f, caveEndPoints[i].Y, true);
+
+                    Vector2 directionToConvergencePoint = (layer4ConvergencePoint.ToVector2() - caveEndPoints[i].ToVector2()).SafeNormalize(Vector2.UnitY);
+                    Vector2 caveMoveDirection = (MathHelper.TwoPi * FractalBrownianMotion(caveNoisePositions[i].X, caveNoisePositions[i].Y, caveSeeds[i], 5)).ToRotationVector2();
+                    caveMoveDirection = Vector2.Lerp(caveMoveDirection, edgeDirection, moveToEdgeInterpolant);
+                    caveMoveDirection = Vector2.Lerp(caveMoveDirection, Vector2.UnitY, moveDownwardInterpolant);
+                    caveMoveDirection = Vector2.Lerp(caveMoveDirection, directionToConvergencePoint, convergenceInterpolant).SafeNormalize(Vector2.Zero);
+
+                    Vector2 caveMoveOffset = caveMoveDirection * carveOutArea * 0.333f;
+                    caveEndPoints[i] += caveMoveOffset.ToPoint();
+                    caveEndPoints[i] = new(Utils.Clamp(caveEndPoints[i].X, 45, Main.maxTilesX - 45), caveEndPoints[i].Y);
+
+                    WorldUtils.Gen(caveEndPoints[i], new Shapes.Circle(carveOutArea), Actions.Chain(new GenAction[]
+                    {
+                        new Actions.ClearTile(),
+                        new Actions.PlaceWall(voidstoneWallID),
+                        new Actions.SetLiquid(),
+                        new Actions.Smooth()
+                    }));
+                }
+            }
+
+            int minWidth = MinAbyssWidth;
+            int maxWidth = MaxAbyssWidth;
+
+            // Carve out finer, spaghetti caves.
+            for (int c = 0; c < Layer3SpaghettiCaveCarveOutThresholds.Length; c++)
+            {
+                int caveSeed = WorldGen.genRand.Next();
+                for (int y = Layer3Top; y < Layer4Top - 14; y++)
+                {
+                    float yCompletion = Utils.GetLerpValue(entireAbyssTop, entireAbyssBottom, y, true);
+                    int width = GetWidth(yCompletion, minWidth, maxWidth) - WallThickness;
+                    for (int i = 2; i < width; i++)
+                    {
+                        // Initialize variables for the cave.
+                        int x = GetActualX(i);
+                        float noise = FractalBrownianMotion(i * SpaghettiCaveMagnification, y * SpaghettiCaveMagnification, caveSeed, 3);
+
+                        // Bias noise away from 0, effectively making caves less likely to appear, based on how close it is to the edges and bottom.
+                        float biasAwayFrom0Interpolant = Utils.GetLerpValue(width - 24f, width - 9f, i, true) * 0.4f;
+                        biasAwayFrom0Interpolant += Utils.GetLerpValue(Layer4Top - 16f, Layer4Top - 3f, y, true) * 0.4f;
+
+                        // If the noise is less than 0, bias to -1, if it's greater than 0, bias away to 1.
+                        // This is done instead of biasing to -1 or 1 without exception to ensure that in doing so the noise does not cross into the
+                        // cutout threshold near 0 as it interpolates.
+                        noise = MathHelper.Lerp(noise, Math.Sign(noise), biasAwayFrom0Interpolant);
+
+                        if (Math.Abs(noise) < Layer3SpaghettiCaveCarveOutThresholds[c])
+                        {
+                            Main.tile[x, y].Get<TileWallWireStateData>().HasTile = false;
+                            Main.tile[x, y].Get<LiquidData>().LiquidType = LiquidID.Water;
+                            Main.tile[x, y].WallType = voidstoneWallID;
+                            Main.tile[x, y].LiquidAmount = 255;
+                            Tile.SmoothSlope(x, y);
+                        }
+                    }
+                }
+            }
+
+            // Carve out a large area at the layer 4 entrance.
+            WorldUtils.Gen(layer4ConvergencePoint, new Shapes.Circle(72), Actions.Chain(new GenAction[]
+            {
+                new Actions.ClearTile(),
+                new Actions.PlaceWall(voidstoneWallID),
+                new Actions.SetLiquid(),
+                new Actions.Smooth()
+            }));
+
+            // Clear out any stray tiles created by the cave generation.
+            Rectangle layer3Area = new(1, Layer3Top, maxWidth - WallThickness, Layer4Top - Layer3Top);
+            ClearOutStrayTiles(layer3Area);
+
+            // Generate scenic hydrothermal tiles.
+            GenerateLayer3Vents(layer3Area);
+
+            // Scatter crystals.
+            GenerateLayer3LumenylCrystals(layer3Area);
+        }
+
+        public static void GenerateLayer3Vents(Rectangle area)
+        {
+            ushort ventID = (ushort)ModContent.TileType<HydrothermalVent>();
+            ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
+            ushort scoriaOre = (ushort)ModContent.TileType<ChaoticOre>();
+            List<Point> ventPositions = new();
+
+            for (int i = 0; i < Layer3VentCount; i++)
+            {
+                Point potentialVentPosition = new(GetActualX(WorldGen.genRand.Next(area.Left + 30, area.Right - 30)), WorldGen.genRand.Next(area.Top, area.Bottom));
+                Tile t = CalamityUtils.ParanoidTileRetrieval(potentialVentPosition.X, potentialVentPosition.Y);
+
+                // Ignore placement positions that are already occupied.
+                if (t.HasTile)
+                {
+                    i--;
+                    continue;
+                }
+
+                // Ignore positions that are close to an existing vent.
+                Point floor = Utilities.GetGroundPositionFrom(potentialVentPosition);
+                if (ventPositions.Any(p => p.ToVector2().Distance(floor.ToVector2()) < 24f))
+                {
+                    i--;
+                    continue;
+                }
+
+                Point floorLeft = Utilities.GetGroundPositionFrom(new Point(potentialVentPosition.X - 3, potentialVentPosition.Y));
+                Point floorRight = Utilities.GetGroundPositionFrom(new Point(potentialVentPosition.X + 3, potentialVentPosition.Y));
+                Point ceiling = Utilities.GetGroundPositionFrom(potentialVentPosition, new Searches.Up(9001));
+
+                // Ignore cramped spaces.
+                if (floor.Y - ceiling.Y < 10)
+                {
+                    i--;
+                    continue;
+                }
+
+                // Ignore steep spaces.
+                float averageY = Math.Abs(floorLeft.Y + floor.Y + floorRight.Y) / 3f;
+                if (MathHelper.Distance(averageY, floor.Y) >= 4f)
+                {
+                    i--;
+                    continue;
+                }
+
+                // Generate a stand of scoria.
+                // TODO -- Make the scoria ore a resource inside a shell of abyssal magma blocks.
+                int moundHeight = WorldGen.genRand.Next(4, 9);
+                int scoriaGroundSize = WorldGen.genRand.Next(5, 7);
+                WorldUtils.Gen(new(floor.X, floor.Y + scoriaGroundSize / 2), new Shapes.Slime(scoriaGroundSize), Actions.Chain(new GenAction[]
+                {
+                    new Actions.SetTile(scoriaOre, true),
+                }));
+                WorldUtils.Gen(floor, new Shapes.Mound(5, moundHeight), Actions.Chain(new GenAction[]
+                {
+                    new Actions.SetTile(gravelID, true),
+                }));
+                WorldGen.PlacePot(floor.X, floor.Y - moundHeight, ventID);
+                ventPositions.Add(floor);
+            }
+        }
+
+        public static void GenerateLayer3LumenylCrystals(Rectangle area)
+        {
+            int crystalCaveSeed = WorldGen.genRand.Next();
+            TryToGenerateLumenylCrystals(area, 300, false);
+            TryToGenerateLumenylCrystals(area, 700, true, (x, y) =>
+            {
+                return FractalBrownianMotion(x * Layer3CrystalCaveMagnificationFactor, y * Layer3CrystalCaveMagnificationFactor, crystalCaveSeed, 5) * 0.5f + 0.5f < 0.71f;
+            });
+            TryToGenerateLumenylCrystals(area, 3000, false, (x, y) =>
+            {
+                return FractalBrownianMotion(x * Layer3CrystalCaveMagnificationFactor, y * Layer3CrystalCaveMagnificationFactor, crystalCaveSeed, 5) * 0.5f + 0.5f < 0.75f;
+            });
+        }
+
+        public static void TryToGenerateLumenylCrystals(Rectangle area, int placementCount, bool largeCrystals, Func<int, int, bool> extraCondition = null)
+        {
+            ushort lumenylID = (ushort)ModContent.TileType<LumenylCrystals>();
+            if (largeCrystals)
+                lumenylID = (ushort)ModContent.TileType<LargeLumenylCrystal>();
+
+            var fakeItem = new Item();
+            fakeItem.SetDefaults(ItemID.StoneBlock);
+
+            int tries = 0;
+
+            for (int i = 0; i < placementCount; i++)
+            {
+                // Give up once enough tries have been attempted.
+                tries++;
+                if (tries >= 32000)
+                    break;
+
+                Point potentialCrystalPosition = new(GetActualX(WorldGen.genRand.Next(area.Left + 30, area.Right - 30)), WorldGen.genRand.Next(area.Top, area.Bottom));
+                Tile t = CalamityUtils.ParanoidTileRetrieval(potentialCrystalPosition.X, potentialCrystalPosition.Y);
+
+                // Ignore placement positions that are already occupied.
+                if (t.HasTile)
+                {
+                    i--;
+                    continue;
+                }
+
+                // Ignore placement positions with nothing to attach to.
+                Tile left = CalamityUtils.ParanoidTileRetrieval(potentialCrystalPosition.X - 1, potentialCrystalPosition.Y);
+                Tile right = CalamityUtils.ParanoidTileRetrieval(potentialCrystalPosition.X + 1, potentialCrystalPosition.Y);
+                Tile top = CalamityUtils.ParanoidTileRetrieval(potentialCrystalPosition.X, potentialCrystalPosition.Y - 1);
+                Tile bottom = CalamityUtils.ParanoidTileRetrieval(potentialCrystalPosition.X, potentialCrystalPosition.Y + 1);
+                if (!left.HasTile && !right.HasTile && !top.HasTile && !bottom.HasTile)
+                {
+                    i--;
+                    continue;
+                }
+                if (!WorldGen.SolidTile(left) && !WorldGen.SolidTile(right) && !WorldGen.SolidTile(top) && !WorldGen.SolidTile(bottom))
+                {
+                    i--;
+                    continue;
+                }
+
+                // Ignore placement positions that violate the extra condition, if it exists.
+                if (!extraCondition?.Invoke(potentialCrystalPosition.X, potentialCrystalPosition.Y) ?? false)
+                {
+                    i--;
+                    continue;
+                }
+
+                t.TileType = lumenylID;
+                t.HasTile = true;
+                t.IsHalfBlock = false;
+                t.Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+
+                t.TileFrameX = (short)(WorldGen.genRand.Next(18) * 18);
+
+                bool invalidPlacement = false;
+
+                if (bottom.HasTile && Main.tileSolid[bottom.TileType] && bottom.Slope == 0 && !bottom.IsHalfBlock)
+                {
+                    t.TileFrameY = 0;
+                    if (largeCrystals && (CalamityUtils.DistanceToTileCollisionHit(potentialCrystalPosition.ToWorldCoordinates(), -Vector2.UnitY, 25) ?? 500f) < 64f)
+                        invalidPlacement = true;
+                }
+                else if (top.HasTile && Main.tileSolid[top.TileType] && top.Slope == 0 && !top.IsHalfBlock)
+                {
+                    t.TileFrameY = 18;
+                    if (largeCrystals && (CalamityUtils.DistanceToTileCollisionHit(potentialCrystalPosition.ToWorldCoordinates(), Vector2.UnitY, 25) ?? 500f) < 64f)
+                        invalidPlacement = true;
+                }
+                else if (right.HasTile && Main.tileSolid[right.TileType] && right.Slope == 0 && !right.IsHalfBlock)
+                {
+                    t.TileFrameY = 36;
+                    if (largeCrystals && (CalamityUtils.DistanceToTileCollisionHit(potentialCrystalPosition.ToWorldCoordinates(), -Vector2.UnitX, 25) ?? 500f) < 64f)
+                        invalidPlacement = true;
+                }
+                else if (left.HasTile && Main.tileSolid[left.TileType] && left.Slope == 0 && !left.IsHalfBlock)
+                {
+                    t.TileFrameY = 54;
+                    if (largeCrystals && (CalamityUtils.DistanceToTileCollisionHit(potentialCrystalPosition.ToWorldCoordinates(), Vector2.UnitX, 25) ?? 500f) < 64f)
+                        invalidPlacement = true;
+                }
+
+                if (invalidPlacement)
+                {
+                    i--;
+                    t.HasTile = false;
+                }
             }
         }
 
@@ -427,6 +758,37 @@ namespace InfernumMode.WorldGeneration
                 }
             }
         }
+
+        public static void GenerateVoidstone()
+        {
+            int top = Layer3Top - 10;
+            int bottom = AbyssBottom + 10;
+            ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
+            ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
+            ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
+            FastRandom rng = new(WorldGen.genRand.Next());
+
+            for (int y = top; y < bottom; y++)
+            {
+                float ditherChance = Utils.GetLerpValue(top, top + 16f, y, true);
+                for (int i = 0; i < MaxAbyssWidth; i++)
+                {
+                    Tile t = CalamityUtils.ParanoidTileRetrieval(GetActualX(i), y);
+
+                    // Don't convert tiles that aren't abyss gravel in some way.
+                    if ((t.WallType != gravelID || !t.HasTile) && t.WallType != gravelWallID)
+                        continue;
+
+                    // Perform dithering.
+                    if (rng.NextFloat() > ditherChance)
+                        continue;
+
+                    t.TileType = voidstoneID;
+                    t.WallType = voidstoneWallID;
+                }
+            }
+        }
         #endregion Generation Functions
 
         #region Utilities
@@ -450,7 +812,7 @@ namespace InfernumMode.WorldGeneration
             {
                 Tile t = CalamityUtils.ParanoidTileRetrieval(x, y);
                 Point p = new(x, y);
-                if (!blockTileTypes.Contains(t.TileType) || !t.HasTile || points.Count > 432 || points.Contains(p))
+                if (!blockTileTypes.Contains(t.TileType) || !t.HasTile || points.Count > 672 || points.Contains(p))
                     return;
 
                 points.Add(p);
@@ -470,7 +832,7 @@ namespace InfernumMode.WorldGeneration
                     List<Point> chunkPoints = new();
                     getAttachedPoints(x, y, chunkPoints);
 
-                    if (chunkPoints.Count is >= 2 and < 432)
+                    if (chunkPoints.Count is >= 2 and < 672)
                     {
                         foreach (Point p in chunkPoints)
                             ResetToWater(p);

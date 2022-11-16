@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Drawers;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -61,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 MaxCutoffBranchesPerBranch = 2,
                 BaseDirection = MathHelper.Pi * Direction / 9f,
             };
-            Drawer.Draw((Projectile.Center - Main.screenPosition).ToPoint());
+            Drawer.Draw(Projectile.Center.ToPoint(), true);
             return false;
         }
     }

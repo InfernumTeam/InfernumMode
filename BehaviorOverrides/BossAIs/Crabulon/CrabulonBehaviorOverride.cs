@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
-        internal enum CrabulonAttackState
+        public enum CrabulonAttackState
         {
             SpawnWait,
             JumpToTarget,
@@ -50,6 +50,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public const float Phase2LifeRatio = 0.85f;
 
         public const float Phase3LifeRatio = 0.45f;
+
+        public static CrabulonAttackState[] Phase1AttackCycle => new[]
+        {
+            CrabulonAttackState.WalkToTarget,
+            CrabulonAttackState.JumpToTarget
+        };
+
+        public static CrabulonAttackState[] Phase2AttackCycle => new[]
+        {
+            CrabulonAttackState.WalkToTarget,
+            CrabulonAttackState.JumpToTarget,
+            CrabulonAttackState.WalkToTarget,
+            CrabulonAttackState.CreateGroundMushrooms,
+            CrabulonAttackState.JumpToTarget,
+        };
+
+        public static CrabulonAttackState[] Phase3AttackCycle => new[]
+        {
+            CrabulonAttackState.WalkToTarget,
+            CrabulonAttackState.JumpToTarget,
+            CrabulonAttackState.ClawSlamMushroomWaves,
+            CrabulonAttackState.WalkToTarget,
+            CrabulonAttackState.CreateGroundMushrooms,
+            CrabulonAttackState.JumpToTarget,
+            CrabulonAttackState.ClawSlamMushroomWaves,
+        };
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -529,29 +555,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         {
             npc.TargetClosest();
 
+            CrabulonAttackState newAttackState;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            CrabulonAttackState currentAttackState = (CrabulonAttackState)(int)npc.ai[2];
-            CrabulonAttackState newAttackState = CrabulonAttackState.JumpToTarget;
-            switch (currentAttackState)
-            {
-                case CrabulonAttackState.SpawnWait:
-                    newAttackState = CrabulonAttackState.WalkToTarget;
-                    break;
-                case CrabulonAttackState.WalkToTarget:
-                    newAttackState = CrabulonAttackState.JumpToTarget;
-                    if (lifeRatio < Phase2LifeRatio && Main.rand.NextBool())
-                        newAttackState = CrabulonAttackState.ClawSlamMushroomWaves;
-                    break;
-                case CrabulonAttackState.ClawSlamMushroomWaves:
-                    newAttackState = CrabulonAttackState.CreateGroundMushrooms;
-                    break;
-                case CrabulonAttackState.CreateGroundMushrooms:
-                    newAttackState = CrabulonAttackState.WalkToTarget;
-                    break;
-                case CrabulonAttackState.JumpToTarget:
-                    newAttackState = CrabulonAttackState.WalkToTarget;
-                    break;
-            }
+
+            npc.Infernum().ExtraAI[5]++;
+            if (lifeRatio >= Phase2LifeRatio)
+                newAttackState = Phase1AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase1AttackCycle.Length];
+            else if (lifeRatio >= Phase3LifeRatio)
+                newAttackState = Phase2AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase2AttackCycle.Length];
+            else
+                newAttackState = Phase3AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase3AttackCycle.Length];
 
             npc.ai[2] = (int)newAttackState;
             npc.ai[1] = 0f;

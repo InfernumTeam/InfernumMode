@@ -67,6 +67,12 @@ namespace InfernumMode.Systems
             set;
         }
 
+        public static Point SquidDenCenter
+        {
+            get;
+            set;
+        }
+
         // This value is only set to true in new worldgen code. All prior worlds will never naturally have this flag enabled.
         // This is done to allow backwards compatibility with old Abyss worldgen.
         public static bool InPostAEWUpdateWorld
@@ -101,6 +107,8 @@ namespace InfernumMode.Systems
             tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
             tag["AbyssLayer1ForestSeed"] = AbyssLayer1ForestSeed;
             tag["AbyssLayer3CavernSeed"] = AbyssLayer3CavernSeed;
+            tag["SquidDenCenterX"] = SquidDenCenter.X;
+            tag["SquidDenCenterY"] = SquidDenCenter.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -118,6 +126,7 @@ namespace InfernumMode.Systems
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
             AbyssLayer1ForestSeed = tag.GetInt("AbyssLayer1ForestSeed");
             AbyssLayer3CavernSeed = tag.GetInt("AbyssLayer3CavernSeed");
+            SquidDenCenter = new(tag.GetInt("SquidDenCenterX"), tag.GetInt("SquidDenCenterY"));
         }
     }
 }

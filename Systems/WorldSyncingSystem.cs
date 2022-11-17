@@ -21,6 +21,8 @@ namespace InfernumMode.Systems
             
             writer.Write(AbyssLayer1ForestSeed);
             writer.Write(AbyssLayer3CavernSeed);
+            writer.Write(SquidDenCenter.X);
+            writer.Write(SquidDenCenter.Y);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -35,6 +37,7 @@ namespace InfernumMode.Systems
 
             AbyssLayer1ForestSeed = reader.ReadInt32();
             AbyssLayer3CavernSeed = reader.ReadInt32();
+            SquidDenCenter = new(reader.ReadInt32(), reader.ReadInt32());
         }
     }
 }

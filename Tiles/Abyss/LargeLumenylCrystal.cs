@@ -115,11 +115,15 @@ namespace InfernumMode.Tiles.Abyss
                         else if (right.HasTile && right.Slope == SlopeType.Solid && !right.IsHalfBlock && WorldGen.SolidTile(right))
                             offsetDirection = -MathHelper.PiOver2;
 
+                        float baseDistance = MathHelper.Lerp(40f, 64f, (i * 0.13f + j * 3.84f) % 1f);
+                        if ((i * 2 + j * 3) % 7 == 0)
+                            baseDistance *= 1.6f;
+
                         CrystalCache[p] = new()
                         {
                             Seed = p.X + p.Y * 3111,
-                            MaxDistanceBeforeCutoff = 50f,
-                            DistanceUsedForBase = 50f,
+                            MaxDistanceBeforeCutoff = baseDistance,
+                            DistanceUsedForBase = baseDistance,
                             BranchMaxBendFactor = 0.076f,
                             BranchTurnAngleVariance = 0.11f,
                             MinBranchLength = 85f,
@@ -129,7 +133,7 @@ namespace InfernumMode.Tiles.Abyss
                             BranchGrowthWidthDecay = 0.6f,
                             MaxCutoffBranchesPerBranch = 2,
                             BaseDirection = offsetDirection + MathHelper.Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
-                            IcicleColor = Color.LightCyan * 0.55f
+                            IcicleColor = Color.LightCyan * 0.6f
                         };
                     }
                 }

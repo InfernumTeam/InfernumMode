@@ -91,6 +91,10 @@ namespace InfernumMode.WorldGeneration
 
         public const int Layer3VentCount = 10;
 
+        public const int Layer3SquidDenOuterRadius = 60;
+
+        public const int Layer3SquidDenInnerRadius = Layer3SquidDenOuterRadius - 16;
+
         // How thick walls should be between the insides of the abyss and the outside. This should be relatively high, since you don't want the boring
         // vanilla caverns to be visible from within the abyss, for immersion reasons.
         public const int WallThickness = 70;
@@ -370,7 +374,7 @@ namespace InfernumMode.WorldGeneration
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
-                int trenchX = (int)MathHelper.Lerp(54f, maxWidth - 128f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
+                int trenchX = (int)MathHelper.Lerp(104f, maxWidth - 140f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(8);
                 trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
             }
@@ -583,6 +587,9 @@ namespace InfernumMode.WorldGeneration
 
             // Scatter crystals. This encompasses the creation of the lumenyl zone.
             GenerateLayer3LumenylCrystals(layer3Area);
+
+            // Generate the squid den.
+            GenerateLayer3SquidDen(layer3Area);
         }
 
         public static void GenerateLayer3Vents(Rectangle area)
@@ -795,6 +802,50 @@ namespace InfernumMode.WorldGeneration
             }
         }
 
+        public static void GenerateLayer3SquidDen(Rectangle area)
+        {
+            ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+
+            // Generate a voidstone circle for the den and then cut out most of its insides to create a shell.
+            WorldSaveSystem.SquidDenCenter = new(GetActualX(area.Left + Layer3SquidDenOuterRadius + 15), area.Top + Layer3SquidDenOuterRadius);
+            WorldUtils.Gen(WorldSaveSystem.SquidDenCenter, new Shapes.Circle(Layer3SquidDenOuterRadius), Actions.Chain(new GenAction[]
+            {
+                new Modifiers.Blotches(3),
+                new Actions.SetTile(voidstoneID),
+                new Actions.PlaceWall(voidstoneWallID)
+            }));
+            WorldUtils.Gen(WorldSaveSystem.SquidDenCenter, new Shapes.Circle(Layer3SquidDenInnerRadius), Actions.Chain(new GenAction[]
+            {
+                new Modifiers.Blotches(4),
+                new Actions.ClearTile(),
+                new Modifiers.Blotches(4),
+                new Actions.SetLiquid()
+            }));
+
+            // Carve out caves that cut through the shell.
+            Point caveStart = new(WorldSaveSystem.SquidDenCenter.X + Abyss.AtLeftSideOfWorld.ToDirectionInt() * Layer3SquidDenOuterRadius, WorldSaveSystem.SquidDenCenter.Y + Layer3SquidDenOuterRadius);
+            for (int i = 0; i < 50; i++)
+            {
+                float cavePerpendicularAngle = (float)Math.Sin(i * 0.39f);
+                Point currentCavePosition = Vector2.Lerp(caveStart.ToVector2(), WorldSaveSystem.SquidDenCenter.ToVector2(), i / 49f).ToPoint();
+                Vector2 directionToCenter = (WorldSaveSystem.SquidDenCenter.ToVector2() - caveStart.ToVector2()).SafeNormalize(Vector2.Zero);
+                currentCavePosition += (directionToCenter.RotatedBy(cavePerpendicularAngle) * 8f).ToPoint();
+
+                WorldUtils.Gen(currentCavePosition, new Shapes.Circle(3), Actions.Chain(new GenAction[]
+                {
+                    new Actions.ClearTile(),
+                    new Actions.SetLiquid()
+                }));
+            }
+
+            // Create a lot of crystals inside of the squid den.
+            Point zeroBiasedDenCenter = new(area.Left + Layer3SquidDenOuterRadius + 15, WorldSaveSystem.SquidDenCenter.Y);
+            Rectangle denArea = Utils.CenteredRectangle(zeroBiasedDenCenter.ToVector2(), Vector2.One * Layer3SquidDenOuterRadius * 2.4f);
+            TryToGenerateLumenylCrystals(denArea, 200, false);
+            TryToGenerateLumenylCrystals(denArea, 300, true);
+        }
+
         public static void GenerateLayer4()
         {
             int minWidth = MinAbyssWidth;
@@ -960,6 +1011,10 @@ namespace InfernumMode.WorldGeneration
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
                 return false;
 
+            // The squid den is always considered a part of the lumenyl zone.
+            if (InsideOfLayer3SquidDen(p))
+                return true;
+
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
@@ -978,10 +1033,22 @@ namespace InfernumMode.WorldGeneration
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
                 return false;
 
+            // The squid den is always considered a part of the lumenyl zone.
+            if (InsideOfLayer3SquidDen(p))
+                return false;
+
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
             return Utils.Remap(p.Y + verticalOffset, Layer4Top - 126f, Layer4Top - 104f, 1f, 0f) >= CrystalCaveNoiseThreshold;
+        }
+
+        public static bool InsideOfLayer3SquidDen(Point p)
+        {
+            if (p.X < Main.maxTilesX / 2)
+                p.X = Main.maxTilesX - p.X;
+
+            return p.ToVector2().WithinRange(WorldSaveSystem.SquidDenCenter.ToVector2(), Layer3SquidDenOuterRadius);
         }
         #endregion Utilities
     }

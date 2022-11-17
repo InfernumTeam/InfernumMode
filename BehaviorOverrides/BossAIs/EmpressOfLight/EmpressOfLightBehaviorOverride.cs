@@ -174,6 +174,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 return false;
             }
 
+            // Use the bloom shader at night.
+            if (!Main.dayTime)
+                npc.Infernum().ShouldUseSaturationBlur = true;
+
             // Enter new phases.
             float lifeRatio = npc.life / (float)npc.lifeMax;
             if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)

@@ -58,6 +58,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
             directionToNextSegment = directionToNextSegment.SafeNormalize(Vector2.Zero);
 
+            // Move hit registrations up to the head.
+            if (npc.justHit)
+                head.justHit = true;
+
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();

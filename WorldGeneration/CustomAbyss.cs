@@ -82,7 +82,7 @@ namespace InfernumMode.WorldGeneration
 
         public static readonly float[] Layer3SpaghettiCaveCarveOutThresholds = new float[]
         {
-            0.1161f
+            0.1389f
         };
 
         public const float Layer3CrystalCaveMagnificationFactor = 0.00109f;
@@ -963,7 +963,7 @@ namespace InfernumMode.WorldGeneration
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
-            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 118f, Layer4Top - 80f, 1f, 0f) < CrystalCaveNoiseThreshold;
+            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 126f, Layer4Top - 104f, 1f, 0f) < CrystalCaveNoiseThreshold;
         }
 
         public static bool InsideOfLayer3HydrothermalZone(Point p)
@@ -981,7 +981,7 @@ namespace InfernumMode.WorldGeneration
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
             // Bias towards crystal caves as they reach the fourth layer.
-            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 118f, Layer4Top - 80f, 1f, 0f) >= CrystalCaveNoiseThreshold;
+            return Utils.Remap(p.Y + verticalOffset, Layer4Top - 126f, Layer4Top - 104f, 1f, 0f) >= CrystalCaveNoiseThreshold;
         }
         #endregion Utilities
     }

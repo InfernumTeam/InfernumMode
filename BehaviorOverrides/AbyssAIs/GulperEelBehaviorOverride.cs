@@ -1,8 +1,11 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -30,18 +33,31 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Disable water distortion effects messing up the eel drawcode.
             npc.wet = false;
 
-            float snapFieldOfView = 0.46f;
-            float snapSpeed = 24.5f;
-            bool swallowingPlayer = target.Infernum().EelSwallowIndex == npc.whoAmI;
-            bool passiveMovement = swallowingPlayer;
-            bool canSnapAtPlayer = npc.velocity.Length() > 7.5f && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < snapFieldOfView && npc.WithinRange(target.Center, 450f);
-            if (!Collision.CanHitLine(npc.TopLeft, npc.width, npc.height, target.TopLeft, target.width, target.height) || swallowingPlayer)
-                canSnapAtPlayer = false;
-
             ref float hasSpawnedSegments = ref npc.localAI[0];
             ref float jawRotation = ref npc.localAI[1];
             ref float slitherTimer = ref npc.Infernum().ExtraAI[0];
             ref float snapAnticipation = ref npc.Infernum().ExtraAI[1];
+            ref float isHostile = ref npc.Infernum().ExtraAI[2];
+            ref float hostileAimTimer = ref npc.Infernum().ExtraAI[3];
+            ref float screamSlotID = ref npc.Infernum().ExtraAI[4];
+            ref float turnCountdown = ref npc.Infernum().ExtraAI[5];
+
+            int hostilityDelay = 167;
+            float snapFieldOfView = 0.46f;
+            float noticeFieldOfView = 0.73f;
+            float snapSpeed = 24.5f;
+            bool aboutToScream = false;
+            bool canNoticePlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < noticeFieldOfView && npc.WithinRange(target.Center, 840f);
+            bool swallowingPlayer = target.Infernum().EelSwallowIndex == npc.whoAmI;
+            bool passiveMovement = swallowingPlayer || isHostile == 0f;
+            bool canSnapAtPlayer = npc.velocity.Length() > 7.5f && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < snapFieldOfView && npc.WithinRange(target.Center, 450f);
+            if (!Collision.CanHitLine(npc.TopLeft, npc.width, npc.height, target.TopLeft, target.width, target.height) || swallowingPlayer)
+            {
+                canSnapAtPlayer = false;
+                canNoticePlayer = false;
+            }
+            if (npc.justHit)
+                canNoticePlayer = true;
 
             if (hasSpawnedSegments == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -49,30 +65,93 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 hasSpawnedSegments = 1f;
             }
 
-            // Move towards the target.
-            Vector2 left = npc.velocity.RotatedBy(-0.29f) * 0.75f;
-            Vector2 right = npc.velocity.RotatedBy(0.29f) * 0.75f;
+            // Calculate raycast distances
+            Vector2 left = npc.velocity.RotatedBy(-0.6f).ClampMagnitude(3f, 16f) * 0.8f;
+            Vector2 right = npc.velocity.RotatedBy(0.6f).ClampMagnitude(3f, 16f) * 0.8f;
             float distanceToCollision = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity) ?? 500f;
             float distanceToCollisionLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, left) ?? 500f;
             float distanceToCollisionRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, right) ?? 500f;
 
+            if (hostileAimTimer <= 0f && canNoticePlayer)
+            {
+                hostileAimTimer = 1f;
+                npc.netUpdate = true;
+            }
+
+            // Handle hostile animation triggers.
+            if (hostileAimTimer >= 1f && hostileAimTimer < hostilityDelay)
+            {
+                // Jitter in a frenzy.
+                npc.Center += Main.rand.NextVector2Circular(2f, 2f);
+
+                aboutToScream = hostileAimTimer >= hostilityDelay - 150f;
+                if (hostileAimTimer == hostilityDelay - 120f)
+                    screamSlotID = SoundEngine.PlaySound(InfernumSoundRegistry.GulperEelScreamSound with { Volume = 1.5f }, target.Center).ToFloat();
+
+                // Look at the target and very, very slowly approach them.
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 0.7f, 0.15f);
+
+                hostileAimTimer++;
+                if (hostileAimTimer >= hostilityDelay)
+                {
+                    isHostile = 1f;
+                    SoundEngine.PlaySound(SoundID.Item96, npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 18f;
+                    npc.netUpdate = true;
+                }
+            }
+
             // Avoid crashing into walls if possible.
-            if (distanceToCollision < 10f && !Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && npc.velocity.Length() > 2.6f)
+            else if ((distanceToCollision < 14f && !Collision.SolidCollision(npc.TopLeft, npc.width, npc.height)) || turnCountdown > 0f)
             {
                 if (distanceToCollisionLeft >= 5f && distanceToCollisionLeft > distanceToCollisionRight)
-                    npc.velocity = left;
+                    npc.velocity = Vector2.Lerp(npc.velocity, left, 0.1f);
                 else if (distanceToCollisionRight >= 5f && distanceToCollisionRight > distanceToCollisionLeft)
-                    npc.velocity = right;
+                    npc.velocity = Vector2.Lerp(npc.velocity, right, 0.1f);
+
+                if (npc.velocity.Length() > 3f)
+                    npc.velocity -= npc.velocity.SafeNormalize(Vector2.UnitY) * 0.9f;
+
+                if (turnCountdown > 0f)
+                    turnCountdown--;
+                else
+                    turnCountdown = 15f;
             }
+
+            // Handle passive movement.
             else if (passiveMovement)
             {
+                if (npc.velocity.Length() < 3f)
+                    npc.velocity.Y -= 0.25f;
                 if (npc.velocity.Length() > 6f)
                     npc.velocity *= 0.99f;
-                npc.velocity = npc.velocity.RotatedBy(0.01f);
-            }
-            else if (!npc.WithinRange(target.Center, 200f))
-                npc.velocity = (npc.velocity * 109f + npc.SafeDirectionTo(target.Center) * 19f) / 110f;
+                npc.velocity = npc.velocity.RotatedBy(0.005f);
 
+                // Randomly snap.
+                if (Main.rand.NextBool(270))
+                {
+                    npc.velocity = npc.velocity.RotatedByRandom(0.97f) * 1.7f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Handle attack movement.
+            else if (!npc.WithinRange(target.Center, 200f))
+                npc.velocity = (npc.velocity * 94f + npc.SafeDirectionTo(target.Center) * 19f) / 95f;
+
+            // Avoid the world edges.
+            if (npc.Center.X > Main.maxTilesX * 16f - 700f)
+                npc.velocity.X -= 0.8f;
+            if (npc.Center.X < 700f)
+                npc.velocity.X += 0.8f;
+
+            // Update the scream sound in terms of position and other side things.
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(screamSlotID), out ActiveSound result))
+            {
+                result.Sound.SetReverb(0.9f);
+                result.Position = target.Center;
+            }
+            
             // Try to snap at and swallow the player.
             snapAnticipation = MathHelper.Clamp(snapAnticipation + canSnapAtPlayer.ToDirectionInt(), 0f, 30f);
             if (snapAnticipation >= 30f)
@@ -85,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
 
             // Swallow the player if they're on top of the hitbox of the eel's head and snapping.
-            if (npc.velocity.Length() > 14.5f && npc.Hitbox.Intersects(target.Hitbox) && jawRotation > 0.1f)
+            if (npc.velocity.Length() > 14.5f && npc.Hitbox.Intersects(target.Hitbox) && jawRotation > 0.1f && !target.immune)
                 target.Infernum().EelSwallowIndex = npc.whoAmI;
 
             // Let the player go if hit while they're being swallowed.
@@ -93,11 +172,12 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             {
                 target.Infernum().EelSwallowIndex = -1;
                 target.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 16f;
+                target.GiveIFrames(45, true);
                 jawRotation = 0.8f;
             }
 
             // Decide the current jaw rotation.
-            jawRotation = MathHelper.Clamp(jawRotation + (canSnapAtPlayer ? 0.05f : -0.099f), 0f, 1.33f);
+            jawRotation = MathHelper.Clamp(jawRotation + (canSnapAtPlayer || aboutToScream ? 0.05f : -0.099f), 0f, 1.33f);
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -202,9 +282,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
             if (segmentPositions.Length >= 2)
             {
+                BezierCurve curve = new(segmentPositions);
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(segmentPositions, Vector2.Zero, 36);
-                float tailRotation = (segmentPositions[^2] - segmentPositions[^1]).ToRotation();
-                Vector2 tailDrawPosition = segmentPositions[^1] - (segmentPositions[^2] - segmentPositions[^1]).SafeNormalize(Vector2.Zero) * 24f;
+                float tailRotation = (curve.Evaluate(0.98f) - curve.Evaluate(1f)).ToRotation();
+                Vector2 tailDrawPosition = segmentPositions[^1] - (segmentPositions[^2] - segmentPositions[^1]).SafeNormalize(Vector2.Zero) * 20f;
                 SpriteEffects tailDirection = npc.velocity.X > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
                 Main.EntitySpriteDraw(tailTexture, tailDrawPosition, null, npc.GetAlpha(Color.Gray), tailRotation, tailTexture.Size() * new Vector2(0f, 0.5f), npc.scale * 1.16f, tailDirection, 0);
             }

@@ -43,6 +43,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSuddenRoar");
 
+        public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Sounds/Custom/GulperEelScream");
+
         public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Sounds/Custom/HeavyExplosion");
 
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");

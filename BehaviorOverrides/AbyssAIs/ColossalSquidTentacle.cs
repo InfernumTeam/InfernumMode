@@ -1,12 +1,8 @@
 using CalamityMod;
-using CalamityMod.DataStructures;
-using CalamityMod.NPCs;
-using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -24,14 +20,38 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public NPC Owner => Main.npc.IndexInRange((int)NPC.ai[1]) && Main.npc[(int)NPC.ai[1]].active ? Main.npc[(int)NPC.ai[1]] : null;
 
-        public PrimitiveTrailCopy LimbDrawer = null;
+        public PrimitiveTrailCopy TentacleDrawer = null;
 
         public Player Target => Main.player[NPC.target];
+
+        public Vector2[] SegmentPositions
+        {
+            get
+            {
+                Vector2 stickPosition = Owner.Center + new Vector2(RightSide ? -50f : 30f, 52f).RotatedBy(Owner.rotation);
+                Vector2 farLeft = Owner.Center - Vector2.UnitY * 500f;
+                Vector2 farRight = NPC.Center + Owner.SafeDirectionTo(NPC.Center).RotatedBy(RightSide.ToDirectionInt() * -0.4f) * 450f;
+                List<Vector2> segmentPositions = new();
+                segmentPositions.Add(stickPosition);
+                segmentPositions.Add(stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f);
+                for (int i = 0; i < 20; i++)
+                {
+                    float moveOffset = (float)Math.Sin(Owner.Infernum().ExtraAI[4] * 0.103f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
+                    Vector2 linearPosition = Vector2.CatmullRom(farLeft, stickPosition, NPC.Center, farRight, i / 19f);
+                    Vector2 perpendicularOffset = (stickPosition - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
+                    segmentPositions.Add(linearPosition + perpendicularOffset * moveOffset);
+                }
+
+                for (int i = 0; i < 20; i++)
+                    segmentPositions.Add(NPC.Center);
+                return segmentPositions.ToArray();
+            }
+        }
 
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Ghostly Leg");
+            DisplayName.SetDefault("Tentacle");
             NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
         }
 
@@ -40,14 +60,13 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 1800;
-            NPC.damage = 245;
+            NPC.damage = 240;
             NPC.lifeMax = 5000;
             NPC.dontTakeDamage = true;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.netAlways = true;
-            NPC.scale = 1.15f;
         }
 
         public override void AI()
@@ -58,19 +77,21 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 NPC.netUpdate = true;
                 return;
             }
+            NPC.rotation = (SegmentPositions[^22] - SegmentPositions[^1]).ToRotation() - MathHelper.PiOver2;
         }
 
-        public float SegmentWidthFunction(float _) => NPC.scale * 12f;
-
-        public Vector2[] GetSegmentPositions()
-        {
-            Vector2 stickPosition = Owner.Center + new Vector2(RightSide.ToDirectionInt() * 60f);
-        }
+        public float SegmentWidthFunction(float _) => NPC.scale * 8f;
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
             if (Owner is null)
                 return false;
+
+            foreach (Vector2 segmentPosition in SegmentPositions)
+            {
+                if (Utils.CenteredRectangle(segmentPosition, Vector2.One * 22f).Intersects(target.Hitbox))
+                    return true;
+            }
 
             return false;
         }
@@ -80,22 +101,24 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             if (Owner is null)
                 return false;
 
+            // Bruh.
+            spriteBatch.ResetBlendState();
+
             Vector2 headDrawPosition = NPC.Center - Main.screenPosition;
+            headDrawPosition.Y += 3f;
 
             // Initialize the segment drawer.
-            NPC.Infernum().OptionalPrimitiveDrawer ??= new(c => SegmentWidthFunction(c), _ => Color.Gray * NPC.Opacity, null, true, GameShaders.Misc["CalamityMod:PrimitiveTexture"]);
+            TentacleDrawer ??= new(c => SegmentWidthFunction(c), _ => Color.White * NPC.Opacity, null, true, GameShaders.Misc["CalamityMod:PrimitiveTexture"]);
 
-            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/GulperEelHead").Value;
-            Texture2D mouthTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/GulperEelMouth").Value;
-            Texture2D tailTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/GulperEelTail").Value;
-            Vector2[] segmentPositions = GetSegmentPositions(NPC);
-
+            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/ColossalSquidTentacleHead").Value;
+            Vector2[] segmentPositions = SegmentPositions;
+            
             Vector2 segmentAreaTopLeft = Vector2.One * 999999f;
             Vector2 segmentAreaTopRight = Vector2.Zero;
 
             for (int i = 0; i < segmentPositions.Length; i++)
             {
-                segmentPositions[i] += -Main.screenPosition - NPC.rotation.ToRotationVector2() * Math.Sign(NPC.velocity.X) * 2f;
+                segmentPositions[i] += -Main.screenPosition;
                 if (segmentAreaTopLeft.X > segmentPositions[i].X)
                     segmentAreaTopLeft.X = segmentPositions[i].X;
                 if (segmentAreaTopLeft.Y > segmentPositions[i].Y)
@@ -112,27 +135,21 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             Vector2 primitiveArea = (segmentAreaTopRight - segmentAreaTopLeft).RotatedBy(-offsetAngle);
             while (Math.Abs(primitiveArea.X) < 180f)
                 primitiveArea.X *= 1.5f;
+            while (Math.Abs(primitiveArea.Y) < 180f)
+                primitiveArea.Y *= 1.5f;
 
-            GameShaders.Misc["CalamityMod:PrimitiveTexture"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/GulperEelBody"));
+            GameShaders.Misc["CalamityMod:PrimitiveTexture"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/ColossalSquidTentacle"));
             GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["uPrimitiveSize"].SetValue(primitiveArea);
-            GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["flipVertically"].SetValue(NPC.velocity.X > 0f);
+            GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["flipVertically"].SetValue(!RightSide);
 
-            // Draw the head.
+            // Draw the end of the tentacle.
             float jawRotation = NPC.localAI[1];
-            SpriteEffects direction = NPC.velocity.X > 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Vector2 mouthDrawOffset = new Vector2(40f, (NPC.velocity.X > 0f).ToDirectionInt() * 14f).RotatedBy(NPC.rotation + (NPC.velocity.X > 0f).ToDirectionInt() * jawRotation - MathHelper.PiOver2);
-            Main.EntitySpriteDraw(mouthTexture, headDrawPosition + mouthDrawOffset, null, NPC.GetAlpha(Color.Gray), NPC.rotation + (NPC.velocity.X > 0f).ToDirectionInt() * jawRotation, mouthTexture.Size() * new Vector2(0.5f, 0f), NPC.scale, direction, 0);
-            Main.EntitySpriteDraw(headTexture, headDrawPosition, NPC.frame, NPC.GetAlpha(Color.Gray), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0);
+            SpriteEffects direction = RightSide ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.EntitySpriteDraw(headTexture, headDrawPosition, null, NPC.GetAlpha(Color.White), NPC.rotation, headTexture.Size() * 0.5f, NPC.scale, direction, 0);
 
             if (segmentPositions.Length >= 2)
-            {
-                BezierCurve curve = new(segmentPositions);
-                NPC.Infernum().OptionalPrimitiveDrawer.Draw(segmentPositions, Vector2.Zero, 36);
-                float tailRotation = (curve.Evaluate(0.98f) - curve.Evaluate(1f)).ToRotation();
-                Vector2 tailDrawPosition = segmentPositions[^1] - (segmentPositions[^2] - segmentPositions[^1]).SafeNormalize(Vector2.Zero) * 20f;
-                SpriteEffects tailDirection = NPC.velocity.X > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
-                Main.EntitySpriteDraw(tailTexture, tailDrawPosition, null, NPC.GetAlpha(Color.Gray), tailRotation, tailTexture.Size() * new Vector2(0f, 0.5f), NPC.scale * 1.16f, tailDirection, 0);
-            }
+                TentacleDrawer.Draw(segmentPositions, Vector2.Zero, 36);
+
             return false;
         }
 

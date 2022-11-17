@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.Tiles.Abyss;
 using CalamityMod.World;
@@ -26,14 +27,24 @@ namespace InfernumMode
 {
     public class PoDPlayer : ModPlayer
     {
+        public int EelSwallowIndex = -1;
+
         public int MadnessTime;
+
         public bool RedElectrified = false;
+
         public bool ShadowflameInferno = false;
+
         public bool DarkFlames = false;
+
         public bool Madness = false;
+
         public float CurrentScreenShakePower;
+
         public float MusicMuffleFactor;
+
         public float ShimmerSoundVolumeInterpolant;
+
         public SlotId ShimmerSoundID;
 
         public int ProvidenceRoomShatterTimer;
@@ -189,11 +200,16 @@ namespace InfernumMode
                     }
                 }
             }
-            LeaveLoop:
+        LeaveLoop:
 
             // Make the map become more faded the longer the player has been in the 4th layer of the abyss.
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + Player.Calamity().ZoneAbyssLayer4.ToDirectionInt() * 0.02f, 0f, 1f);
 
+            UpdateShiimerSound();
+        }
+
+        public void UpdateShiimerSound()
+        {
             if (Main.netMode == NetmodeID.Server)
                 return;
 
@@ -219,6 +235,23 @@ namespace InfernumMode
 
         public override void PostUpdate()
         {
+            // Handle eel swallow behaviors.
+            if (EelSwallowIndex >= 0 && Main.npc[EelSwallowIndex].active && Main.npc[EelSwallowIndex].type == ModContent.NPCType<GulperEelHead>() && !Collision.SolidCollision(Player.TopLeft, Player.width, Player.height))
+            {
+                // Be completely invisible when stuck, so as to give the illusion that they're inside of the eel.
+                Player.immuneAlpha = 260;
+
+                // Stick to the Gulper eel's mouth, changing the player's field of view.
+                Player.Center = Main.npc[EelSwallowIndex].Center;
+                Player.velocity = Vector2.Zero;
+
+                Player.mount?.Dismount(Player);
+            }
+
+            // Reset the swallow index if it's no longer applicable.
+            else if (EelSwallowIndex != -1)
+                EelSwallowIndex = -1;
+
             // Keep the player out of the providence arena if the door is around.
             if (WorldSaveSystem.ProvidenceDoorXPosition != 0 && !WorldSaveSystem.HasProvidenceDoorShattered && Player.Bottom.Y >= (Main.maxTilesY - 220f) * 16f)
             {

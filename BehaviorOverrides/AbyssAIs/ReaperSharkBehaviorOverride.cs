@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
         {
-            // Decide a target.
+            // Pick a target if a valid one isn't already decided.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 

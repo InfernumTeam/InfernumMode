@@ -46,6 +46,10 @@ namespace InfernumMode.Systems
 
         public static void AttemptToSpawnSquid(Player player, int squidID)
         {
+            int colossalSquidIndex = NPC.FindFirstNPC(ModContent.NPCType<ColossalSquid>());
+            if (colossalSquidIndex >= 0 && Main.npc[colossalSquidIndex].Infernum().ExtraAI[5] == 1f)
+                return;
+
             // Spawn a squid in the squid den.
             Vector2 squidSpawnPosition;
             do

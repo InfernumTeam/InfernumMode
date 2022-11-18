@@ -16,7 +16,8 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         public enum ColossalSquidAttackType
         {
             SwipeAtTarget,
-            SprayInk
+            SprayInk,
+            InkSlam
         }
 
         public override int NPCOverrideType => ModContent.NPCType<ColossalSquid>();
@@ -89,6 +90,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 case ColossalSquidAttackType.SprayInk:
                     DoBehavior_SprayInk(npc, target, leftTentacle, rightTentacle, ref attackTimer);
                     break;
+                case ColossalSquidAttackType.InkSlam:
+                    DoBehavior_InkSlam(npc, target, leftTentacle, rightTentacle, ref attackTimer);
+                    break;
             }
 
             // Increment the attack timers.
@@ -117,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             NPC tentacleToMove = swingFromRight == 1f ? rightTentacle : leftTentacle;
             NPC otherTentacle = swingFromRight == 1f ? leftTentacle : rightTentacle;
             Vector2 tentacleDirection = PiecewiseAnimation(swingCompletion, Anticipation, Slash, Recovery).ToRotationVector2() * new Vector2((swingFromRight == 1f).ToDirectionInt(), 1f);
-            Vector2 legDestination = npc.Center + tentacleDirection * (Convert01To010(swingCompletion) * 100f + 200f);
+            Vector2 legDestination = npc.Center + tentacleDirection * (Convert01To010(swingCompletion) * 210f + 200f);
             tentacleToMove.Center = tentacleToMove.Center.MoveTowards(legDestination, 54f);
             otherTentacle.Center = Vector2.Lerp(otherTentacle.Center, npc.Center + new Vector2((swingFromRight == 1f).ToDirectionInt() * -120f, 145f), 0.1f);
 
@@ -151,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             ref float tentacleLockCenterX = ref npc.Infernum().ExtraAI[0];
 
             // Move the tentacles such that they lock the player in.
-            if (tentacleLockCenterX == 0f)
+            if (tentacleLockCenterX == 0f || tentacleLockCenterX >= Main.maxTilesX * 16f - 920f || tentacleLockCenterX < 920f)
             {
                 tentacleLockCenterX = target.Center.X;
                 npc.netUpdate = true;
@@ -188,6 +192,87 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
         }
 
+        public static void DoBehavior_InkSlam(NPC npc, Player target, NPC leftTentacle, NPC rightTentacle, ref float attackTimer)
+        {
+            int hoverTime = 105;
+            int chargeDelay = 40;
+            int chargeTime = 150;
+            int stuckTime = 72;
+            int inkBoltCount = 8;
+            float chargeSpeed = 42f;
+
+            // Move tentacles.
+            leftTentacle.Center = Vector2.Lerp(leftTentacle.Center, npc.Center + new Vector2(-120f, 145f).RotatedBy(npc.rotation), 0.1f);
+            rightTentacle.Center = Vector2.Lerp(rightTentacle.Center, npc.Center + new Vector2(120f, 145f).RotatedBy(npc.rotation), 0.1f);
+
+            // Hover in place near the target. Avoid walls while doing so.
+            if (attackTimer < hoverTime)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 400f, -300f);
+                while (Collision.SolidCollision(hoverDestination - Vector2.One * 120f, 240, 240))
+                {
+                    hoverDestination.X += (target.Center.X > npc.Center.X).ToDirectionInt() * 6f;
+                    hoverDestination.Y++;
+                }
+
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 16f, 0.6f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                return;
+            }
+
+            // Slow down.
+            if (attackTimer < hoverTime + chargeDelay)
+            {
+                npc.velocity *= 0.95f;
+                return;
+            }
+
+            // Charge.
+            if (attackTimer == hoverTime + chargeDelay)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                npc.velocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * chargeSpeed;
+                npc.netUpdate = true;
+            }
+
+            // Handle tile hit logic.
+            if (attackTimer < hoverTime + chargeDelay + chargeTime)
+            {
+                if (npc.collideX || npc.collideY)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, npc.Center);
+                    Collision.HitTiles(npc.TopLeft, npc.velocity, npc.width, npc.height);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < inkBoltCount; i++)
+                        {
+                            float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount - 1f));
+                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle).ToRotationVector2() * 8f;
+                            Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
+                        }
+                        for (int i = 0; i < inkBoltCount / 2; i++)
+                        {
+                            float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount / 2f - 1f));
+                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle).ToRotationVector2() * 5f;
+                            Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
+                        }
+                    }
+                    attackTimer = hoverTime + chargeDelay + chargeTime;
+                    npc.velocity = Vector2.One * 0.01f;
+                    npc.netUpdate = true;
+                }
+                return;
+            }
+
+            // Jitter in place.
+            npc.velocity = Vector2.Zero;
+            npc.Center += Main.rand.NextVector2Circular(2f, 2f);
+
+            if (attackTimer >= hoverTime + chargeDelay + chargeTime + stuckTime)
+                SelectNextAttack(npc);
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             switch ((ColossalSquidAttackType)npc.ai[0])
@@ -196,6 +281,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                     npc.ai[0] = (int)ColossalSquidAttackType.SprayInk;
                     break;
                 case ColossalSquidAttackType.SprayInk:
+                    npc.ai[0] = (int)ColossalSquidAttackType.InkSlam;
+                    break;
+                case ColossalSquidAttackType.InkSlam:
                     npc.ai[0] = (int)ColossalSquidAttackType.SwipeAtTarget;
                     break;
             }

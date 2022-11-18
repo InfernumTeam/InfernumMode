@@ -36,7 +36,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 segmentPositions.Add(stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f);
                 for (int i = 0; i < 20; i++)
                 {
-                    float moveOffset = (float)Math.Sin(Owner.Infernum().ExtraAI[4] * 0.103f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
+                    float moveOffset = (float)Math.Sin(Owner.Infernum().ExtraAI[9] * 0.063f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
+                    if (Owner.Infernum().ExtraAI[9] <= 0f)
+                        moveOffset = 0f;
+
                     Vector2 linearPosition = Vector2.CatmullRom(farLeft, stickPosition, NPC.Center, farRight, i / 19f);
                     Vector2 perpendicularOffset = (stickPosition - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
                     segmentPositions.Add(linearPosition + perpendicularOffset * moveOffset);
@@ -60,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 1800;
-            NPC.damage = 240;
+            NPC.damage = 180;
             NPC.lifeMax = 5000;
             NPC.dontTakeDamage = true;
             NPC.knockBackResist = 0f;
@@ -78,6 +81,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 return;
             }
             NPC.rotation = (SegmentPositions[^22] - SegmentPositions[^1]).ToRotation() - MathHelper.PiOver2;
+            NPC.damage = Owner.dontTakeDamage ? 0 : NPC.defDamage;
         }
 
         public float SegmentWidthFunction(float _) => NPC.scale * 8f;
@@ -108,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             headDrawPosition.Y += 3f;
 
             // Initialize the segment drawer.
-            TentacleDrawer ??= new(c => SegmentWidthFunction(c), _ => Color.White * NPC.Opacity, null, true, GameShaders.Misc["CalamityMod:PrimitiveTexture"]);
+            TentacleDrawer ??= new(c => SegmentWidthFunction(c), _ => Color.Gray * NPC.Opacity, null, true, GameShaders.Misc["CalamityMod:PrimitiveTexture"]);
 
             Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/ColossalSquidTentacleHead").Value;
             Vector2[] segmentPositions = SegmentPositions;
@@ -135,8 +139,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             Vector2 primitiveArea = (segmentAreaTopRight - segmentAreaTopLeft).RotatedBy(-offsetAngle);
             while (Math.Abs(primitiveArea.X) < 180f)
                 primitiveArea.X *= 1.5f;
-            while (Math.Abs(primitiveArea.Y) < 180f)
-                primitiveArea.Y *= 1.5f;
 
             GameShaders.Misc["CalamityMod:PrimitiveTexture"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/ColossalSquidTentacle"));
             GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["uPrimitiveSize"].SetValue(primitiveArea);
@@ -145,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Draw the end of the tentacle.
             float jawRotation = NPC.localAI[1];
             SpriteEffects direction = RightSide ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Main.EntitySpriteDraw(headTexture, headDrawPosition, null, NPC.GetAlpha(Color.White), NPC.rotation, headTexture.Size() * 0.5f, NPC.scale, direction, 0);
+            Main.EntitySpriteDraw(headTexture, headDrawPosition, null, Color.Gray * NPC.Opacity, NPC.rotation, headTexture.Size() * 0.5f, NPC.scale, direction, 0);
 
             if (segmentPositions.Length >= 2)
                 TentacleDrawer.Draw(segmentPositions, Vector2.Zero, 36);

@@ -8,6 +8,7 @@ using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -34,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             ref float attackTimer = ref npc.ai[1];
             ref float groupIndex = ref npc.ai[2];
             ref float choirSlotID = ref npc.ai[3];
+            ref float teleportFadeInterpolant = ref npc.localAI[0];
             ref float isHostile = ref npc.Infernum().ExtraAI[5];
 
             // Reset things.
@@ -112,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             switch ((EidolistAttackType)attackType)
             {
                 case EidolistAttackType.TeleportDashes:
-                    DoBehavior_TeleportDashes(npc, target, groupIndex, totalEidolists, ref attackTimer);
+                    DoBehavior_TeleportDashes(npc, target, groupIndex, totalEidolists, ref attackTimer, ref teleportFadeInterpolant);
                     break;
             }
 
@@ -122,8 +124,19 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             return false;
         }
 
-        public static void DoBehavior_TeleportDashes(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer)
+        public static void DoBehavior_TeleportDashes(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
+            int fadeOutTime = 30;
+
+            // Do a teleport fadeout.
+            if (attackTimer <= fadeOutTime)
+            {
+                npc.dontTakeDamage = true;
+                teleportFadeInterpolant = Utils.GetLerpValue(fadeOutTime, 0f, attackTimer, true);
+                return;
+            }
+
+            attackTimer = 0f;
         }
         
         public static void SelectNextAttack(NPC npc)
@@ -146,13 +159,28 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            bool teleporting = npc.localAI[0] > 0f;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            if (teleporting)
+            {
+                Main.spriteBatch.EnterShaderRegion();
+                GameShaders.Misc["Infernum:Teleport"].UseSaturation(npc.localAI[0]);
+                GameShaders.Misc["Infernum:Teleport"].UseImage1("Images/Misc/noise");
+                GameShaders.Misc["Infernum:Teleport"].UseColor(Color.Cyan);
+                GameShaders.Misc["Infernum:Teleport"].Shader.Parameters["actualImageSize"].SetValue(texture.Size());
+                GameShaders.Misc["Infernum:Teleport"].Shader.Parameters["uActualSourceRect"].SetValue(new Vector4(npc.frame.X, npc.frame.Y, npc.frame.Width, npc.frame.Height));
+                GameShaders.Misc["Infernum:Teleport"].Apply();
+            }
+
             if (npc.Infernum().ExtraAI[5] == 0f)
                 texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/EidolistWorship").Value;
 
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(Color.Gray), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+
+            if (teleporting)
+                Main.spriteBatch.ExitShaderRegion();
             return false;
         }
         #endregion Frames and Drawcode

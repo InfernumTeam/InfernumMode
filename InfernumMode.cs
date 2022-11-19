@@ -189,6 +189,9 @@ namespace InfernumMode
 
                 Ref<Effect> yharonBurnShader = new(Assets.Request<Effect>("Effects/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
+                
+                Ref<Effect> teleportShader = new(Assets.Request<Effect>("Effects/TeleportShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:Teleport"] = new MiscShaderData(teleportShader, "HologramPass");
 
                 // Screen shaders.
                 Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;

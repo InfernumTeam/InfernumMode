@@ -9,6 +9,12 @@ namespace InfernumMode.Systems
 {
     public class AbyssWaterColorSystem : ModSystem
     {
+        public static int AbyssWaterID
+        {
+            get;
+            internal set;
+        }
+
         public static float WaterBlacknessInterpolant
         {
             get;
@@ -23,7 +29,7 @@ namespace InfernumMode.Systems
 
         internal VertexColors ChangeAbyssColors(VertexColors initialColor, int liquidType, Point p)
         {
-            bool isAbyssWater = liquidType == ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
+            bool isAbyssWater = liquidType == AbyssWaterID;
 
             if (WorldSaveSystem.InPostAEWUpdateWorld && isAbyssWater)
             {
@@ -88,6 +94,11 @@ namespace InfernumMode.Systems
         public override void Unload()
         {
             ILChanges.ExtraColorChangeConditions -= ChangeAbyssColors;
+        }
+
+        public override void OnModLoad()
+        {
+            AbyssWaterID = ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
         }
 
         public override void PreUpdateEntities()

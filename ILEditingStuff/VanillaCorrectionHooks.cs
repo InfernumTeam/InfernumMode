@@ -140,6 +140,9 @@ namespace InfernumMode.ILEditingStuff
 
         internal void DrawColosseumBackground(On.Terraria.Main.orig_DrawBackground orig, Main self)
         {
+            if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && !Main.LocalPlayer.Calamity().ZoneAbyss)
+                return;
+
             orig(self);
 
             if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<LostColosseum>())

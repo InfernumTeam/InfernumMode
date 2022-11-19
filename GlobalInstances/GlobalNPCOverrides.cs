@@ -4,10 +4,9 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
@@ -16,17 +15,13 @@ using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.BehaviorOverrides.BossAIs.EoW;
-using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
-using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
-using SubworldLibrary;
 using System;
 using System.Linq;
 using Terraria;
@@ -34,7 +29,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
-using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -203,40 +197,6 @@ namespace InfernumMode.GlobalInstances
             return base.PreAI(npc);
         }
 
-        public override bool PreKill(NPC npc)
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return base.PreKill(npc);
-
-            if (npc.type == NPCID.EaterofWorldsHead && OverridingListManager.Registered(npc.type))
-                return EoWHeadBehaviorOverride.PerformDeathEffect(npc);
-
-            if (npc.type == ModContent.NPCType<OldDukeNPC>() && OverridingListManager.Registered(npc.type))
-                CalamityMod.CalamityMod.StopRain();
-
-            int apolloID = ModContent.NPCType<Apollo>();
-            int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int aresID = ModContent.NPCType<AresBody>();
-            int totalExoMechs = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
-                    continue;
-                if (!Main.npc[i].active)
-                    continue;
-
-                totalExoMechs++;
-            }
-            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
-                return false;
-
-            // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.
-            if (InfernumMode.CanUseCustomAIs && npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
-                DropHelper.BlockDrops(ItemID.ChumBucket, ItemID.VampireFrogStaff, ItemID.BloodFishingRod, ItemID.BloodRainBow, ItemID.MoneyTrough, ItemID.BloodMoonStarter);
-
-            return base.PreKill(npc);
-        }
-
         public override void OnKill(NPC npc)
         {
             if (!InfernumMode.CanUseCustomAIs)
@@ -366,6 +326,8 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.AncientCultistSquidhead && OverridingListManager.Registered(NPCID.CultistBoss))
                 return false;
             if (npc.type == NPCID.MoonLordFreeEye && OverridingListManager.Registered(NPCID.MoonLordCore))
+                return false;
+            if (npc.type == ModContent.NPCType<Eidolist>() && OverridingListManager.Registered<Eidolist>())
                 return false;
 
             return base.CheckActive(npc);

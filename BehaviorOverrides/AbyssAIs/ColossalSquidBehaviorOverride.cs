@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
 
             // Become hostile if hit.
-            if (npc.justHit && npc.Infernum().ExtraAI[0] != 1f)
+            if (npc.justHit && isHostile != 1f)
             {
                 isHostile = 1f;
                 npc.netUpdate = true;

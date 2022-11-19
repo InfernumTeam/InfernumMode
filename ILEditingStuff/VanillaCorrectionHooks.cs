@@ -580,13 +580,14 @@ namespace InfernumMode.ILEditingStuff
                 return false;
             
             // Check if the player is in the generous abyss area and has abyss walls behind them to determine if they are in the abyss.
-            ushort playerWallID = CalamityUtils.ParanoidTileRetrieval(point.X, point.Y).WallType;
             bool horizontalCheck;
             bool verticalCheck = point.Y <= Main.UnderworldLayer - 42 && point.Y > SulphurousSea.YStart + SulphurousSea.BlockDepth - 78;
+            float yCompletion = Utils.GetLerpValue(CustomAbyss.AbyssTop, CustomAbyss.AbyssBottom - 1f, player.Center.Y / 16f, true);
+            int abyssWidth = CustomAbyss.GetWidth(yCompletion, CustomAbyss.MinAbyssWidth, CustomAbyss.MaxAbyssWidth);
             if (Abyss.AtLeftSideOfWorld)
-                horizontalCheck = point.X < CustomAbyss.MaxAbyssWidth + 5;
+                horizontalCheck = point.X < abyssWidth;
             else
-                horizontalCheck = point.X > Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 5;
+                horizontalCheck = point.X > Main.maxTilesX - abyssWidth;
             
             return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
         }

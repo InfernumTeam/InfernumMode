@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -39,7 +40,7 @@ namespace InfernumMode.Systems
                 if (p.dead || !p.active)
                     continue;
 
-                if (!p.Calamity().ZoneAbyssLayer4)
+                if (!p.Calamity().ZoneAbyssLayer4 || p.Center.Y < CustomAbyss.Layer4Top * 16f + 1000f)
                     continue;
 
                 if (!Main.rand.NextBool(MinibossSpawnRate))

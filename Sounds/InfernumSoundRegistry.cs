@@ -23,6 +23,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Sounds/Custom/DoGLaugh");
 
+        public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
+
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Sounds/Custom/ExoMechFinalPhaseChargeup");
 
         public static readonly SoundStyle ExoMechImpendingDeathSound = new("InfernumMode/Sounds/Custom/ExoMechImpendingDeathSound");

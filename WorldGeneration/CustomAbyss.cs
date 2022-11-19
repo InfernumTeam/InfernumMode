@@ -3,6 +3,7 @@ using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
 using CalamityMod.World;
+using InfernumMode.Miscellaneous;
 using InfernumMode.Systems;
 using InfernumMode.Tiles.Abyss;
 using Microsoft.Xna.Framework;
@@ -95,6 +96,8 @@ namespace InfernumMode.WorldGeneration
 
         public const int Layer3SquidDenInnerRadius = Layer3SquidDenOuterRadius - 16;
 
+        public const int EidolistPedestalRadius = 20;
+
         // How thick walls should be between the insides of the abyss and the outside. This should be relatively high, since you don't want the boring
         // vanilla caverns to be visible from within the abyss, for immersion reasons.
         public const int WallThickness = 70;
@@ -115,8 +118,8 @@ namespace InfernumMode.WorldGeneration
             GenerateSulphurousSeaCut();
             GenerateLayer1();
             GenerateLayer2(out List<Point> trenchBottoms);
-            GenerateLayer3(trenchBottoms);
-            GenerateLayer4();
+            GenerateLayer3(trenchBottoms, out Point layer4ConvergencePoint);
+            GenerateLayer4(layer4ConvergencePoint);
             GenerateVoidstone();
         }
         #endregion Placement Methods
@@ -454,12 +457,12 @@ namespace InfernumMode.WorldGeneration
             }
         }
 
-        public static void GenerateLayer3(List<Point> trenchBottoms)
+        public static void GenerateLayer3(List<Point> trenchBottoms, out Point layer4ConvergencePoint)
         {
             int entireAbyssTop = AbyssTop;
             int entireAbyssBottom = AbyssBottom;
             ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
-            Point layer4ConvergencePoint = new(GetActualX((MaxAbyssWidth - WallThickness) / 2), Layer4Top + 5);
+            layer4ConvergencePoint = new(GetActualX((MaxAbyssWidth - WallThickness) / 2), Layer4Top + 5);
             List<int> caveSeeds = new();
             List<Vector2> caveNoisePositions = new();
             List<Point> caveEndPoints = new();
@@ -846,7 +849,7 @@ namespace InfernumMode.WorldGeneration
             TryToGenerateLumenylCrystals(denArea, 300, true);
         }
 
-        public static void GenerateLayer4()
+        public static void GenerateLayer4(Point pedestalPosition)
         {
             int minWidth = MinAbyssWidth;
             int maxWidth = MaxAbyssWidth;
@@ -873,6 +876,21 @@ namespace InfernumMode.WorldGeneration
                     ResetToWater(new(x, y));
                 }
             }
+
+            // Create the eidolist pedestal.
+            GenerateEidolistPedestal(new(pedestalPosition.X, pedestalPosition.Y - 8));
+        }
+
+        public static void GenerateEidolistPedestal(Point pedestalCenter)
+        {
+            WorldSaveSystem.EidolistWorshipPedestalCenter = new(pedestalCenter.X, pedestalCenter.Y - 2);
+
+            ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
+            WorldUtils.Gen(pedestalCenter, new CustomInfernumShapes.HalfCircle(EidolistPedestalRadius), Actions.Chain(new GenAction[]
+            {
+                new Modifiers.Blotches(2, 0.36),
+                new Actions.SetTile(voidstoneID)
+            }));
         }
 
         public static void GenerateVoidstone()

@@ -67,7 +67,19 @@ namespace InfernumMode.Systems
             set;
         }
 
+        public static bool HasDefeatedEidolists
+        {
+            get;
+            set;
+        }
+
         public static Point SquidDenCenter
+        {
+            get;
+            set;
+        }
+
+        public static Point EidolistWorshipPedestalCenter
         {
             get;
             set;
@@ -109,6 +121,8 @@ namespace InfernumMode.Systems
             tag["AbyssLayer3CavernSeed"] = AbyssLayer3CavernSeed;
             tag["SquidDenCenterX"] = SquidDenCenter.X;
             tag["SquidDenCenterY"] = SquidDenCenter.Y;
+            tag["EidolistWorshipPedestalCenterX"] = EidolistWorshipPedestalCenter.X;
+            tag["EidolistWorshipPedestalCenterY"] = EidolistWorshipPedestalCenter.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -127,6 +141,7 @@ namespace InfernumMode.Systems
             AbyssLayer1ForestSeed = tag.GetInt("AbyssLayer1ForestSeed");
             AbyssLayer3CavernSeed = tag.GetInt("AbyssLayer3CavernSeed");
             SquidDenCenter = new(tag.GetInt("SquidDenCenterX"), tag.GetInt("SquidDenCenterY"));
+            EidolistWorshipPedestalCenter = new(tag.GetInt("EidolistWorshipPedestalCenterX"), tag.GetInt("EidolistWorshipPedestalCenterY"));
         }
     }
 }

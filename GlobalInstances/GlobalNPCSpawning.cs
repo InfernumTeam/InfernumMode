@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using SubworldLibrary;
@@ -39,6 +40,8 @@ namespace InfernumMode.GlobalInstances
 
             // Clear abyss miniboss spawns from the pool. They are always spawned manually, sincetraditional enemy spawns have a
             // tendency to be limited to spawning on sold ground.
+            pool.Remove(ModContent.NPCType<ColossalSquid>());
+            pool.Remove(ModContent.NPCType<Eidolist>());
             pool.Remove(ModContent.NPCType<EidolonWyrmHead>());
             pool.Remove(ModContent.NPCType<ReaperShark>());
         }

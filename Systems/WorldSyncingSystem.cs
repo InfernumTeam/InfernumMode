@@ -16,6 +16,7 @@ namespace InfernumMode.Systems
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
             flags[5] = InPostAEWUpdateWorld;
+            flags[6] = HasDefeatedEidolists;
 
             writer.Write(flags);
             
@@ -23,6 +24,8 @@ namespace InfernumMode.Systems
             writer.Write(AbyssLayer3CavernSeed);
             writer.Write(SquidDenCenter.X);
             writer.Write(SquidDenCenter.Y);
+            writer.Write(EidolistWorshipPedestalCenter.X);
+            writer.Write(EidolistWorshipPedestalCenter.Y);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -34,10 +37,12 @@ namespace InfernumMode.Systems
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
             InPostAEWUpdateWorld = flags[5];
+            HasDefeatedEidolists = flags[6];
 
             AbyssLayer1ForestSeed = reader.ReadInt32();
             AbyssLayer3CavernSeed = reader.ReadInt32();
             SquidDenCenter = new(reader.ReadInt32(), reader.ReadInt32());
+            EidolistWorshipPedestalCenter = new(reader.ReadInt32(), reader.ReadInt32());
         }
     }
 }

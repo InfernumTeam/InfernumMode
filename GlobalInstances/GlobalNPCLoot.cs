@@ -17,6 +17,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
@@ -31,12 +32,16 @@ using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Items.Relics;
+using InfernumMode.OverridingSystem;
+using InfernumMode.Systems;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -216,6 +221,45 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DemonicChaliceOfInfernum>());
             }
+        }
+
+        public override bool PreKill(NPC npc)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return base.PreKill(npc);
+
+            // Prevent eidolists from dropping anything unless it's the last one.
+            int eidolistID = ModContent.NPCType<Eidolist>();
+            if (npc.type == eidolistID && OverridingListManager.Registered(npc.type) && WorldSaveSystem.InPostAEWUpdateWorld)
+                return NPC.CountNPCS(eidolistID) <= 1;
+
+            if (npc.type == NPCID.EaterofWorldsHead && OverridingListManager.Registered(npc.type))
+                return EoWHeadBehaviorOverride.PerformDeathEffect(npc);
+
+            if (npc.type == ModContent.NPCType<OldDukeNPC>() && OverridingListManager.Registered(npc.type))
+                CalamityMod.CalamityMod.StopRain();
+
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                    continue;
+                if (!Main.npc[i].active)
+                    continue;
+
+                totalExoMechs++;
+            }
+            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
+                return false;
+
+            // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.
+            if (InfernumMode.CanUseCustomAIs && npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
+                DropHelper.BlockDrops(ItemID.ChumBucket, ItemID.VampireFrogStaff, ItemID.BloodFishingRod, ItemID.BloodRainBow, ItemID.MoneyTrough, ItemID.BloodMoonStarter);
+
+            return base.PreKill(npc);
         }
     }
 }

@@ -22,14 +22,14 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override int NPCOverrideType => ModContent.NPCType<ColossalSquid>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         // Piecewise function variables for determining the offset of tentacles when swiping at the target.
         public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, 0f, -0.53f, 2);
 
-        public static CurveSegment Slash => new(EasingType.PolyIn, 0.17f, Anticipation.EndingHeight, 2.2f, 3);
+        public static CurveSegment Slash => new(EasingType.PolyIn, 0.17f, Anticipation.EndingHeight, 2.5f, 3);
 
-        public static CurveSegment Recovery => new(EasingType.SineOut, 0.4f, Slash.EndingHeight, -1.7f);
+        public static CurveSegment Recovery => new(EasingType.SineOut, 0.4f, Slash.EndingHeight, -1.97f);
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
@@ -248,13 +248,13 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                         for (int i = 0; i < inkBoltCount; i++)
                         {
                             float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount - 1f));
-                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle).ToRotationVector2() * 8f;
+                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.04f).ToRotationVector2() * 8f;
                             Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
                         }
                         for (int i = 0; i < inkBoltCount / 2; i++)
                         {
                             float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount / 2f - 1f));
-                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle).ToRotationVector2() * 5f;
+                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.07f).ToRotationVector2() * 5f;
                             Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
                         }
                     }
@@ -296,6 +296,12 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         #endregion AI and Behaviors
 
         #region Frames and Drawcode
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            npc.frameCounter = (npc.frameCounter + 0.14f) % Main.npcFrameCount[npc.type];
+            npc.frame.Y = (int)npc.frameCounter * frameHeight;
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/AbyssAIs/SleepingColossalSquid").Value;

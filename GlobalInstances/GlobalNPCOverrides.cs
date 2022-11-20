@@ -12,6 +12,8 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -255,6 +257,15 @@ namespace InfernumMode.GlobalInstances
                     WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = true;
                 WorldSaveSystem.HasBeatedInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
+            }
+
+            if(npc.boss)
+            {
+                AchievementManager.ExtraUpdateAchievements(new UpdateContext(npc.type));
+            }
+            else if(KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
+            {
+                AchievementManager.ExtraUpdateAchievements(new UpdateContext(npc.type));
             }
         }
 

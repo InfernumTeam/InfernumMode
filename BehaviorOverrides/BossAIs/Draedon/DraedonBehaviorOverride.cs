@@ -6,6 +6,8 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
@@ -353,6 +355,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)
         {
+            AchievementManager.DraedonDefeated = true;
             // Become vulnerable after being defeated after a certain point.
             bool hasBeenKilled = npc.localAI[2] == 1f;
             ref float hologramEffectTimer = ref npc.localAI[1];

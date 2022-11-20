@@ -4,6 +4,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.World;
+using InfernumMode.Achievements;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;
@@ -15,6 +16,7 @@ using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -278,6 +280,8 @@ namespace InfernumMode
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             HatGirlTipsManager.PotentialTipToUse = HatGirlTipsManager.SelectTip();
+            if(CalamityPlayer.areThereAnyDamnBosses)
+                AchievementManager.ExtraUpdateAchievements(new UpdateContext(-1, -1, SpecificUpdateContexts.PlayerDeath));
         }
         #endregion Kill
         #region Life Regen
@@ -333,7 +337,7 @@ namespace InfernumMode
 
         public override void LoadData(TagCompound tag)
         {
-            ProfanedTempleAnimationHasPlayed = tag.GetBool("ProfanedTempleAnimationHasPlayed");
+            ProfanedTempleAnimationHasPlayed = tag.GetBool("ProfanedTempleAnimationHasPlayed");            
         }
         #endregion Saving and Loading
         #region Misc Effects

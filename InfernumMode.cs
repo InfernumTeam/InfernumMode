@@ -1,4 +1,5 @@
 using CalamityMod.Events;
+using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
@@ -76,7 +77,7 @@ namespace InfernumMode
 
             BalancingChangesManager.Load();
             HookManager.Load();
-
+            AchievementManager.LoadAchievements();
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {
@@ -269,6 +270,7 @@ namespace InfernumMode
             IntroScreenManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();
+            AchievementManager.UnloadAchievements();
             Instance = null;
             CalamityMod = null;
         }

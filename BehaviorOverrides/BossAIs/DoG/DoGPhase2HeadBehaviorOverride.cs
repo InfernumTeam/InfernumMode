@@ -6,6 +6,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using InfernumMode.Achievements;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Projectiles;
 using InfernumMode.Skies;
@@ -239,6 +240,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Do the death animation once dead.
             if (deathAnimationTimer > 0f)
             {
+                // Mark DoG as defeated for the achievement.
+                AchievementManager.DoGDefeated = true;
                 DoDeathEffects(npc, deathAnimationTimer, ref destroyedSegmentsCount);
                 jawRotation = jawRotation.AngleTowards(0f, 0.07f);
                 segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;

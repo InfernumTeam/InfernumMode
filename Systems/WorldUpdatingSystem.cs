@@ -1,6 +1,8 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.UI;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BossRush;
 using InfernumMode.Subworlds;
@@ -48,6 +50,8 @@ namespace InfernumMode.Systems
                 NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
                 LostColosseum.HasBereftVassalAppeared = true;
             }
+
+            AchievementManager.UpdateAchievements();
         }
     }
 }

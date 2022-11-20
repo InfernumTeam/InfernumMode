@@ -119,6 +119,10 @@ namespace InfernumMode.Systems
                 crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
             }
 
+            // Regularly reset the crystal cache.
+            if (Main.GameUpdateCount % 120 == 119)
+                LargeLumenylCrystal.CrystalCache.Clear();
+
             Main.spriteBatch.End();
         }
 
@@ -132,7 +136,7 @@ namespace InfernumMode.Systems
                 TemporaryAuxillaryTarget?.Dispose();
             });
         }
-        
+
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
             if (BloomTarget is not null && (width == BloomTarget.Width && height == BloomTarget.Height))
@@ -163,7 +167,7 @@ namespace InfernumMode.Systems
 
             if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed)
                 return;
-            
+
             // Get the downscaled texture.
             Main.instance.GraphicsDevice.SetRenderTarget(DownscaledBloomTarget);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
@@ -198,7 +202,7 @@ namespace InfernumMode.Systems
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
                 shader.CurrentTechnique.Passes[blurPassName].Apply();
-                
+
                 Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();
 
@@ -215,7 +219,7 @@ namespace InfernumMode.Systems
             // Update the intensity in accordance with the effect state.
             bool effectShouldBeActive = ShouldEffectBeActive && InfernumConfig.Instance.SaturationBloomIntensity > 0f;
             Intensity = MathHelper.Clamp(Intensity + effectShouldBeActive.ToDirectionInt() * 0.05f, 0f, 1f);
-            
+
             if (effectShouldBeActive)
             {
                 if (!Filters.Scene["InfernumMode:ScreenSaturationBlur"].IsActive())

@@ -45,6 +45,8 @@ namespace InfernumMode.GlobalInstances
 
         public bool IsAbyssPrey = false;
 
+        public bool HasResetHP = false;
+
         // I'll be fucking damned if this isn't enough.
         public float[] ExtraAI = new float[TotalExtraAISlots];
 
@@ -98,6 +100,7 @@ namespace InfernumMode.GlobalInstances
             ShouldUseSaturationBlur = false;
             IsAbyssPredator = false;
             IsAbyssPrey = false;
+            HasResetHP = false;
             OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
@@ -106,7 +109,7 @@ namespace InfernumMode.GlobalInstances
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }
         }
-
+        
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
@@ -149,9 +152,8 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0)
+                if (!HasResetHP && NPCHPValues.HPValues.TryGetValue(npc.type, out int maxHP) && maxHP >= 0)
                 {
-                    int maxHP = NPCHPValues.HPValues[npc.type];
                     AdjustMaxHP(ref maxHP);
 
                     if (maxHP != npc.lifeMax)
@@ -163,6 +165,7 @@ namespace InfernumMode.GlobalInstances
                         npc.netUpdate = true;
                     }
                 }
+                HasResetHP = true;
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
                 {

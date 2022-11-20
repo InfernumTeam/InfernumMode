@@ -5,6 +5,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -111,6 +112,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             if (!npc.WithinRange(target.Center, 7200f))
                 npc.active = false;
 
+            // Disable tile collision and gravity by default.
+            npc.noTileCollide = true;
+            npc.noGravity = true;
+
             switch ((EidolistAttackType)attackType)
             {
                 case EidolistAttackType.TeleportDashes:
@@ -126,13 +131,76 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public static void DoBehavior_TeleportDashes(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
-            int fadeOutTime = 30;
+            int initalFadeOutTime = 30;
+            int fadeInTime = 16;
+            int chargeTime = 45;
+            int chargeFadeOutTime = 12;
+            float chargeSpeed = 29.75f;
+            float teleportOffsetRadius = 400f;
+            ref float teleportAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             // Do a teleport fadeout.
-            if (attackTimer <= fadeOutTime)
+            if (attackTimer <= initalFadeOutTime)
             {
                 npc.dontTakeDamage = true;
-                teleportFadeInterpolant = Utils.GetLerpValue(fadeOutTime, 0f, attackTimer, true);
+                teleportFadeInterpolant = Utils.GetLerpValue(initalFadeOutTime, 0f, attackTimer, true);
+                return;
+            }
+
+            // When four eidolists are present, each one does a single teleport dash, waiting completing for the next eidolist to attack.
+            float adjustedAttackTimer = attackTimer - initalFadeOutTime;
+            if (totalEidolists == 4)
+            {
+                // Decide the angular offset for all Eidolists. They should be evenly spread.
+                if (adjustedAttackTimer == 1f)
+                {
+                    float teleportOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    AffectAllEidolists((n, gIndex) =>
+                    {
+                        n.Infernum().ExtraAI[0] = teleportOffsetAngle + MathHelper.TwoPi * gIndex / totalEidolists;
+                    });
+                }
+
+                int attackCycleTime = fadeInTime + chargeTime + chargeFadeOutTime;
+                float chargeTimer = adjustedAttackTimer - attackCycleTime * groupIndex;
+                bool doneCharging = chargeTimer >= attackCycleTime;
+                if (chargeTimer <= fadeInTime || doneCharging)
+                {
+                    if (chargeTimer < 0f || doneCharging)
+                        npc.Center = target.Center - Vector2.UnitY * 1400f;
+                    else
+                    {
+                        npc.Center = target.Center + teleportAngularOffset.ToRotationVector2() * teleportOffsetRadius;
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        npc.rotation = 0f;
+                    }
+                    
+                    teleportFadeInterpolant = doneCharging ? 1f : Utils.GetLerpValue(0f, fadeInTime, chargeTimer, true);
+
+                    // Go to the next attack state once the last eidolist has finished charging.
+                    if (groupIndex >= totalEidolists - 1f && doneCharging)
+                        AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
+                    return;
+                }
+
+                // Charge at the target.
+                if (chargeTimer == fadeInTime + 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = 0.15f }, npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                    npc.netUpdate = true;
+                }
+
+                // Fade out when done charging.
+                if (chargeTimer == fadeInTime + chargeTime)
+                {
+                    teleportFadeInterpolant = Utils.GetLerpValue(fadeInTime + chargeTime, fadeInTime + chargeTime + chargeFadeOutTime, chargeTimer, true);
+                    npc.velocity *= 0.95f;
+                }
+
+                // Rotate.
+                npc.rotation = npc.velocity.X * 0.02f;
                 return;
             }
 
@@ -141,11 +209,37 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         
         public static void SelectNextAttack(NPC npc)
         {
+            switch ((EidolistAttackType)npc.ai[0])
+            {
+                case EidolistAttackType.TeleportDashes:
+                    npc.ai[0] = (int)EidolistAttackType.LightningOrbs;
+                    break;
+                case EidolistAttackType.LightningOrbs:
+                    npc.ai[0] = (int)EidolistAttackType.SpinLaser;
+                    break;
+                case EidolistAttackType.SpinLaser:
+                    npc.ai[0] = (int)EidolistAttackType.TeleportDashes;
+                    break;
+            }
+
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
             npc.netUpdate = true;
+        }
+
+        public static void AffectAllEidolists(Action<NPC, int> action)
+        {
+            int eidolistID = ModContent.NPCType<Eidolist>();
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == eidolistID)
+                {
+                    action(Main.npc[i], (int)Main.npc[i].ai[2]);
+                    Main.npc[i].netUpdate = true;
+                }
+            }
         }
         #endregion AI and Behaviors
 
@@ -159,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            bool teleporting = npc.localAI[0] > 0f;
+            bool teleporting = npc.localAI[0] is > 0f and < 1f;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             if (teleporting)
             {

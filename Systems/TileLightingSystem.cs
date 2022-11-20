@@ -14,14 +14,17 @@ namespace InfernumMode.Systems
         {
             if (Main.netMode == NetmodeID.Server)
                 return;
-            
+
+            // Cached for performance reasons. Profiling revealed that all of the LocalPlayer/Center getters were causing slowdowns.
+            Vector2 playerCenter = Main.LocalPlayer.Center;
+
             int crystalID = ModContent.TileType<LumenylCrystals>();
             for (int dx = -160; dx < 160; dx++)
             {
                 for (int dy = -50; dy < 50; dy++)
                 {
-                    int i = (int)(Main.LocalPlayer.Center.X / 16f + dx);
-                    int j = (int)(Main.LocalPlayer.Center.Y / 16f + dy);
+                    int i = (int)(playerCenter.X / 16f + dx);
+                    int j = (int)(playerCenter.Y / 16f + dy);
                     if (!WorldGen.InWorld(i, j, 1))
                         continue;
 

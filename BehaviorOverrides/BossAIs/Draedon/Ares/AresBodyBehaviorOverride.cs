@@ -566,7 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int telegraphTime = 60;
             int spinTime = 600;
             int repositionTime = 50;
-            int totalLasers = 13;
+            int totalLasers = 11;
             int burstReleaseRate = 50;
 
             if (ExoMechManagement.CurrentAresPhase >= 5)
@@ -602,6 +602,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 else
                     return;
             }
+
+            // Drift towards the target.
+            if (attackTimer >= shootDelay && npc.ai[0] != (int)AresBodyAttackType.DirectionChangingSpinBursts && Collision.CanHitLine(npc.Center, npc.width, npc.height, npc.Center + npc.SafeDirectionTo(target.Center) * 1000f, npc.width, npc.height))
+                npc.Center = npc.Center.MoveTowards(target.Center, 5.5f);
 
             // Delete projectiles after the delay has concluded.
             if (attackTimer == shootDelay + 1f)
@@ -669,7 +673,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Make the laser spin.
-            float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
+            float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 196f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)

@@ -241,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (deathAnimationTimer > 0f)
             {
                 // Mark DoG as defeated for the achievement.
-                AchievementManager.DoGDefeated = true;
+                AchievementPlayer.DoGDefeated = true;
                 DoDeathEffects(npc, deathAnimationTimer, ref destroyedSegmentsCount);
                 jawRotation = jawRotation.AngleTowards(0f, 0.07f);
                 segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;

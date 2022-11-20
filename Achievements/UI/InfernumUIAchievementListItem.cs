@@ -51,7 +51,7 @@ namespace InfernumMode.Achievements.UI
             Width.Set(0f, 1f);
             PaddingTop = 8f;
             PaddingLeft = 9f;
-            int iconIndex = _iconIndex = AchievementManager.GetIconIndex(achievement);
+            int iconIndex = _iconIndex = AchievementPlayer.GetIconIndex(achievement);
 
             _iconFrameUnlocked = new Rectangle(0, iconIndex * 66, 64, 64);
             _iconFrameLocked = _iconFrameUnlocked;

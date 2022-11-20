@@ -64,7 +64,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
         {
             foreach (int exo in ExoMechIDs)
             {
-                if(NPC.AnyNPCs(exo) && exo != idToIgnore)
+                if (NPC.AnyNPCs(exo) && exo != idToIgnore)
                 {
                     return true;
                 }
@@ -118,12 +118,14 @@ namespace InfernumMode.Achievements.InfernumAchievements
             DoneCompletionEffects = tag.Get<bool>("BossesDoneCompletionEffects");
         }
 
-        public override void ExtraUpdateNPC(int npcID)
+        public override void ExtraUpdateNPC(int npcIndex)
         {
             bool breakOut = false;
+
             // The way these are done, all the Calamity + vanilla bosses go first, and any extra ones infernum add are at the end.
             // Vanilla ones
-            switch(npcID)
+            int npcID = Main.npc[npcIndex].type;
+            switch (npcID)
             {
                 case NPCID.KingSlime:
                     BossesCompleted[0] = true;

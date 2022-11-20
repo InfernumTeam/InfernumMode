@@ -1,10 +1,8 @@
 ﻿using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Subworlds;
-using System.Collections.Generic;
-    using System.Linq;
-    using Terraria;
-    using Terraria.ModLoader;
-    using Terraria.ModLoader.IO;
+using Terraria;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Achievements.InfernumAchievements
 {
@@ -14,13 +12,13 @@ namespace InfernumMode.Achievements.InfernumAchievements
         public override void Initialize()
         {
             Name = "Forgotten Sands";
-            Description = "Best the Bereft Vassal in combat, found in the far reaches of the desert's dunes\n[c/777777:Defeat the Bereft Vassal]";
+            Description = "Best the Bereft Vassal in combat, in the far reaches of the desert's dunes\n[c/777777:Defeat the Bereft Vassal]";
             TotalCompletion = 1;
             PositionInMainList = 2;
         }
-        public override void ExtraUpdateNPC(int npcID)
+        public override void ExtraUpdateNPC(int npcIndex)
         {
-            if(npcID == ModContent.NPCType<BereftVassal>())
+            if (Main.npc[npcIndex].type == ModContent.NPCType<BereftVassal>())
                 CurrentCompletion++;
         }
         public override void SaveProgress(TagCompound tag)

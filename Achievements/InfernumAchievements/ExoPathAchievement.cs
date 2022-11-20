@@ -1,11 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
+﻿using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
-using InfernumMode.ILEditingStuff;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -16,28 +12,13 @@ namespace InfernumMode.Achievements.InfernumAchievements
 {
     public class ExoPathAchievement : Achievement
     {
-        // 1 ares twin -> than
-        // 2 than ares -> twin
-        // 3 twin Than -> ares
         #region Fields
-        private Dictionary<int, bool> ExoCombosHaveHappened;
-
-        private static int Ares => ModContent.NPCType<AresBody>();
-        private static int Artemis => ModContent.NPCType<Artemis>();
-        private static int Apollo => ModContent.NPCType<Apollo>();
-        private static int Thanatos => ModContent.NPCType<ThanatosHead>();
-
-        public static List<int> ExoMechIDS => new()
+        public List<(int, int)> CompletedExoMechCombinations
         {
-            Ares,
-            Artemis,
-            Apollo,
-            Thanatos
-        };
+            get;
+            internal set;
+        } = new();
 
-        private const int AresIndex = 0;
-        private const int TwinsIndex = 1;
-        private const int ThanatosIndex = 2;
         #endregion
 
         #region Overrides
@@ -45,103 +26,69 @@ namespace InfernumMode.Achievements.InfernumAchievements
         {
             Name = "Lab Rat";
             Description = "Become Draedon's favorite test subject\n[c/777777:Beat all Infernum Exo Mech combinations]";
-            TotalCompletion = 3;
+            TotalCompletion = Utilities.NumberOfCombinations(ExoMechManagement.ExoMechIDs.Count, 2);
             PositionInMainList = 5;
-            CreateDict();
+            InitializeCompletionVariables();
         }
+
         public override void Update()
         {
-            int currentCompletion = 0;
-            for (int i = 0; i < ExoCombosHaveHappened.Count; i++)
-            {
-                if (ExoCombosHaveHappened[i])
-                {
-                    currentCompletion++;
-                }
-            }
-            CurrentCompletion = currentCompletion;
+            CurrentCompletion = CompletedExoMechCombinations.Count;
         }
-        public override void ExtraUpdateNPC(int npcID)
+
+        public override void ExtraUpdateNPC(int npcIndex)
         {
             // If not an exo mech, leave.
-            if (npcID != Ares && npcID != Apollo && npcID != Artemis && npcID != Thanatos)
+            NPC mech = Main.npc[npcIndex];
+            int npcID = mech.type;
+            if (!ExoMechManagement.ExoMechIDs.Contains(npcID))
                 return;
-            // If there arent any exo mechs alive.
-            if (!AnyOtherExosAlive(npcID))
+            
+            // Don't count a kill if this is not the last mech.
+            if (ExoMechManagement.TotalMechs <= 1)
             {
-                // Set it to true.
-                if (npcID == Ares)
-                    ExoCombosHaveHappened[AresIndex] = true;
-                else if (npcID == Artemis || npcID == Apollo)
-                    ExoCombosHaveHappened[TwinsIndex] = true;
-                else if (npcID == Thanatos)
-                    ExoCombosHaveHappened[ThanatosIndex] = true;
+                (int, int) combination = new((int)mech.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex], (int)mech.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex]);
+                (int, int) reverseCombination = new(combination.Item2, combination.Item1);
+                
+                if (!CompletedExoMechCombinations.Contains(combination) && !CompletedExoMechCombinations.Contains(reverseCombination))
+                    CompletedExoMechCombinations.Add(combination);
             }
         }
+
         public override void LoadProgress(TagCompound tag)
         {
-            if (!tag.ContainsKey("ExosDictInt") || !tag.ContainsKey("ExosDictBool"))
-                CreateDict();
+            if (!tag.ContainsKey("ExoMechCompletionsPrimary") || !tag.ContainsKey("ExoMechCompletionsSecondary"))
+                InitializeCompletionVariables();
             else
             {
-                List<int> keys = tag.Get<List<int>>("ExosDictInt");
-                List<bool> values = tag.Get<List<bool>>("ExosDictBool");
-                ExoCombosHaveHappened = keys.Zip(values, (int k, bool v) => new
-                {
-                    Key = k,
-                    Value = v
-                }).ToDictionary(k => k.Key, v => v.Value);
+                IList<int> primaryList = tag.GetList<int>("ExoMechCompletionsPrimary");
+                IList<int> secondaryList = tag.GetList<int>("ExoMechCompletionsSecondary");
+                
+                CompletedExoMechCombinations = new();
+                for (int i = 0; i < primaryList.Count; i++)
+                    CompletedExoMechCombinations.Add(new(primaryList[i], secondaryList[i]));
             }
             CurrentCompletion = tag.Get<int>("ExosCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("ExosDoneCompletionEffects");
         }
+
         public override void SaveProgress(TagCompound tag)
         {
-            tag["ExosDictInt"] = ExoCombosHaveHappened.Keys.ToList();
-            tag["ExosDictBool"] = ExoCombosHaveHappened.Values.ToList();
+            tag["ExoMechCompletionsPrimary"] = CompletedExoMechCombinations.Select(c => c.Item1).ToList();
+            tag["ExoMechCompletionsSecondary"] = CompletedExoMechCombinations.Select(c => c.Item2).ToList();
             tag["ExosCurrentCompletion"] = CurrentCompletion;
             tag["ExosDoneCompletionEffects"] = DoneCompletionEffects;
         }
         #endregion
 
         #region Methods
-        private void CreateDict()
+        private void InitializeCompletionVariables()
         {
-            ExoCombosHaveHappened = new();
-            for (int i = 0; i < TotalCompletion; i++)
-            {
-                ExoCombosHaveHappened[i] = false;
-            }
+            CompletedExoMechCombinations = new();
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
         }
-        private static bool AnyOtherExosAlive(int npcID)
-        {
-            foreach (var type in ExoMechIDS)
-            {
-                if(type != npcID)
-                {
-                    // If another is alive, and they both aren't exo twins.
-                    if (NPC.AnyNPCs(type) && (!IsExoTwin(npcID) && !IsExoTwin(type)))
-                        return true;
-                }
-            }
-            return false;
-        }
-        private static bool IsExoTwin(int npcID)
-        {
-            return npcID == Artemis || npcID == Apollo;
-        }
 
         #endregion
-    }
-    public enum FirstExoCombos
-    {
-        AresTwins,
-        TwinsAres,
-        AresThanatos,
-        ThanatosAres,
-        TwinsThanatos,
-        ThanatosTwins
     }
 }

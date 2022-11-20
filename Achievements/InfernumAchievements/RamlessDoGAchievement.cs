@@ -30,10 +30,10 @@ namespace InfernumMode.Achievements.InfernumAchievements
         public override void Update()
         {
             // If DoG was just killed.
-            if(AchievementManager.DoGDefeated)
+            if (AchievementPlayer.DoGDefeated)
             {
                 // And a dash was not used.
-                if(!UsedADash)
+                if (!UsedADash)
                 {
                     CurrentCompletion++;
                     return;
@@ -42,12 +42,12 @@ namespace InfernumMode.Achievements.InfernumAchievements
                 else
                 {
                     // Wait until he despawns to reset them.
-                    if(NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
+                    if (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
                         return;
                     else
                     {
                         // Reset stuff.
-                        AchievementManager.DoGDefeated = false;
+                        AchievementPlayer.DoGDefeated = false;
                         UsedADash = false;
                         return;
                     }

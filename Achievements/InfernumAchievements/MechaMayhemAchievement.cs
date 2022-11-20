@@ -36,10 +36,10 @@ namespace InfernumMode.Achievements.InfernumAchievements
                 MayhemIsOccuring = false;
                 return;
             }
-            if(MayhemIsOccuring)
+            if (MayhemIsOccuring)
             {
                 // If none of the mechs are alive.
-                if(!NPC.AnyNPCs(NPCID.SkeletronPrime) && !NPC.AnyNPCs(NPCID.TheDestroyer) && !NPC.AnyNPCs(NPCID.Retinazer) && !NPC.AnyNPCs(NPCID.Spazmatism))
+                if (!NPC.AnyNPCs(NPCID.SkeletronPrime) && !NPC.AnyNPCs(NPCID.TheDestroyer) && !NPC.AnyNPCs(NPCID.Retinazer) && !NPC.AnyNPCs(NPCID.Spazmatism))
                 {
                     // Mark the mayhem as ending next frame.
                     MayhemShouldEnd = true;
@@ -55,10 +55,12 @@ namespace InfernumMode.Achievements.InfernumAchievements
                 }
             }
         }
-        public override void ExtraUpdateNPC(int npcID)
+        public override void ExtraUpdateNPC(int npcIndex)
         {
             if (!MayhemIsOccuring)
                 return;
+
+            int npcID = Main.npc[npcIndex].type;
             if (IsAMech(npcID))
             {
                 if (AnyOtherMechsActive(npcID))
@@ -90,7 +92,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
         {
             foreach (int mechID in Mechs)
             {
-                if(mechID != npcID)
+                if (mechID != npcID)
                 {
                     if (NPC.AnyNPCs(mechID))
                     {

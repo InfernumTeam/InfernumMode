@@ -23,7 +23,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
         public override void Update()
         {
             // If Provi was just killed.
-            if (AchievementManager.ProviDefeated)
+            if (AchievementPlayer.ProviDefeated)
             {
                 // And it has not been day.
                 if (!HasBeenDay)
@@ -40,7 +40,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
                     else
                     {
                         // Reset stuff.
-                        AchievementManager.ProviDefeated = false;
+                        AchievementPlayer.ProviDefeated = false;
                         HasBeenDay = false;
                         return;
                     }

@@ -9,10 +9,6 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.OldDuke;
@@ -34,42 +30,74 @@ using System.Linq;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using CalamityMod.NPCs.ExoMechs;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using CalamityMod.Events;
 
 namespace InfernumMode.Achievements.InfernumAchievements
 {
     public class KillAllBossesAchievement : Achievement
     {
-        private Dictionary<int, bool> BossesCompleted;
+        private Dictionary<string, bool> BossesCompleted;
+
+        public static List<int> BossList => new()
+        {
+            NPCID.KingSlime,
+            ModContent.NPCType<DesertScourgeHead>(),
+            NPCID.EyeofCthulhu,
+            ModContent.NPCType<Crabulon>(),
+            NPCID.EaterofWorldsHead,
+            NPCID.BrainofCthulhu,
+            ModContent.NPCType<HiveMind>(),
+            ModContent.NPCType<PerforatorHive>(),
+            NPCID.QueenBee,
+            NPCID.Deerclops,
+            NPCID.SkeletronHead,
+            ModContent.NPCType<SlimeGodCore>(),
+            NPCID.WallofFlesh,
+            NPCID.BloodNautilus,
+            NPCID.QueenSlimeBoss,
+            ModContent.NPCType<Cryogen>(),
+            NPCID.Spazmatism,
+            ModContent.NPCType<BrimstoneElemental>(),
+            NPCID.TheDestroyer,
+            ModContent.NPCType<AquaticScourgeHead>(),
+            NPCID.SkeletronPrime,
+            ModContent.NPCType<CalamitasClone>(),
+            NPCID.Plantera,
+            ModContent.NPCType<Leviathan>(),
+            ModContent.NPCType<AstrumAureus>(),
+            NPCID.Golem,
+            ModContent.NPCType<PlaguebringerGoliath>(),
+            NPCID.HallowBoss,
+            NPCID.DukeFishron,
+            ModContent.NPCType<RavagerBody>(),
+            NPCID.CultistBoss,
+            ModContent.NPCType<AstrumDeusHead>(),
+            ModContent.NPCType<BereftVassal>(),
+            NPCID.MoonLordCore,
+            ModContent.NPCType<ProfanedGuardianCommander>(),
+            ModContent.NPCType<Bumblefuck>(),
+            ModContent.NPCType<Providence>(),
+            ModContent.NPCType<CeaselessVoid>(),
+            ModContent.NPCType<StormWeaverHead>(),
+            ModContent.NPCType<Signus>(),
+            ModContent.NPCType<Polterghast>(),
+            ModContent.NPCType<OldDuke>(),
+            ModContent.NPCType<DevourerofGodsHead>(),
+            ModContent.NPCType<Yharon>(),
+            ModContent.NPCType<Draedon>(),
+            ModContent.NPCType<SupremeCalamitas>(),
+        };
 
         private void CreateNewDict()
         {
-            BossesCompleted = new Dictionary<int, bool>();
-            for (int i = 0; i < TotalCompletion; i++)
-            {
-                BossesCompleted[i] = false;
-            }
+            BossesCompleted = new Dictionary<string, bool>();
+            foreach (int bossID in BossList)
+                BossesCompleted[Utilities.GetNPCNameFromID(bossID)] = false;
+
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
-        }
-
-        private static List<int> ExoMechIDs => new()
-        {
-            ModContent.NPCType<Artemis>(),
-            ModContent.NPCType<Apollo>(),
-            ModContent.NPCType<AresBody>(),
-            ModContent.NPCType<ThanatosHead>()
-        };
-
-        private static bool AnyOtherExoMechs(int idToIgnore)
-        {
-            foreach (int exo in ExoMechIDs)
-            {
-                if(NPC.AnyNPCs(exo) && exo != idToIgnore)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         #region Overrides
@@ -77,38 +105,32 @@ namespace InfernumMode.Achievements.InfernumAchievements
         {
             Name = "Infer-it-all!";
             Description = "Rip and tear, until it is done\n[c/777777:Beat every Infernum Boss]";
-            TotalCompletion = 46;
+            TotalCompletion = BossList.Count;
             PositionInMainList = 8;
             CreateNewDict();
         }
         public override void Update()
         {
-            int currentCompletion = 0;
-            for(int i = 0; i < BossesCompleted.Count; i++)
-            {
-                if (BossesCompleted[i])
-                {
-                    currentCompletion++;
-                }
-            }
-            CurrentCompletion = currentCompletion;
+            CurrentCompletion = BossesCompleted.Count(kv => kv.Value);
         }
+
         public override void SaveProgress(TagCompound tag)
         {
-            tag["BossesDictInt"] = BossesCompleted.Keys.ToList();
+            tag["BossesDictNames"] = BossesCompleted.Keys.ToList();
             tag["BossesDictBool"] = BossesCompleted.Values.ToList();
             tag["BossesCurrentCompletion"] = CurrentCompletion;
             tag["BossesDoneCompletionEffects"] = DoneCompletionEffects;
         }
+        
         public override void LoadProgress(TagCompound tag)
         {
-            if (!tag.ContainsKey("BossesDictInt") || !tag.ContainsKey("BossesDictBool"))
+            if (!tag.ContainsKey("BossesDictNames") || !tag.ContainsKey("BossesDictBool"))
                 CreateNewDict();
             else
             {
-                List<int> keys = tag.Get<List<int>>("BossesDictInt");
-                List<bool> values = tag.Get<List<bool>>("BossesDictBool");
-                BossesCompleted = keys.Zip(values, (int k, bool v) => new
+                IList<string> keys = tag.GetList<string>("BossesDictNames");
+                IList<bool> values = tag.GetList<bool>("BossesDictBool");
+                BossesCompleted = keys.Zip(values, (string k, bool v) => new
                 {
                     Key = k,
                     Value = v
@@ -118,195 +140,43 @@ namespace InfernumMode.Achievements.InfernumAchievements
             DoneCompletionEffects = tag.Get<bool>("BossesDoneCompletionEffects");
         }
 
-        public override void ExtraUpdateNPC(int npcID)
+        public override void ExtraUpdateNPC(int npcIndex)
         {
-            bool breakOut = false;
-            // The way these are done, all the Calamity + vanilla bosses go first, and any extra ones infernum add are at the end.
-            // Vanilla ones
-            switch(npcID)
-            {
-                case NPCID.KingSlime:
-                    BossesCompleted[0] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.EyeofCthulhu:
-                    BossesCompleted[2] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.EaterofWorldsHead:
-                    BossesCompleted[4] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.BrainofCthulhu:
-                    BossesCompleted[5] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.QueenBee:
-                    BossesCompleted[8] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.Deerclops:
-                    BossesCompleted[9] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.SkeletronHead:
-                    BossesCompleted[10] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.WallofFlesh:
-                    BossesCompleted[12] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.QueenSlimeBoss:
-                    BossesCompleted[13] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.Retinazer:
-                    // Only count this if the other boss(es) arent alive.
-                    if (!NPC.AnyNPCs(NPCID.Spazmatism))
-                    {
-                        BossesCompleted[15] = true;
-                        breakOut = true;
-                    }
-                    break;
-                case NPCID.Spazmatism:
-                    if (!NPC.AnyNPCs(NPCID.Retinazer))
-                    {
-                        BossesCompleted[15] = true;
-                        breakOut = true;
-                    }
-                    break;
-                case NPCID.TheDestroyer:
-                    BossesCompleted[17] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.SkeletronPrime:
-                    BossesCompleted[19] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.Plantera:
-                    BossesCompleted[21] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.Golem:
-                    BossesCompleted[24] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.HallowBoss:
-                    BossesCompleted[25] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.DukeFishron:
-                    BossesCompleted[27] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.CultistBoss:
-                    BossesCompleted[29] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.MoonLordCore:
-                    BossesCompleted[31] = true;
-                    breakOut = true;
-                    break;
-                case NPCID.BloodNautilus:
-                    BossesCompleted[45] = true;
-                    breakOut = true;
-                    break;
-            }
-
-            // If it was set in the switch case, leave.
-            if (breakOut)
+            // Don't count Boss Rush kills.
+            if (BossRushEvent.BossRushActive)
                 return;
 
-            // Modded ones
-            if (npcID == ModContent.NPCType<DesertScourgeHead>())
-                BossesCompleted[1] = true;
-            else if (npcID == ModContent.NPCType<Crabulon>())
-                BossesCompleted[3] = true;
-            else if (npcID == ModContent.NPCType<HiveMind>())
-                BossesCompleted[6] = true;
-            else if (npcID == ModContent.NPCType<PerforatorHive>())
-                BossesCompleted[7] = true;
-            else if (npcID == ModContent.NPCType<SlimeGodCore>())
-                BossesCompleted[11] = true;
-            else if (npcID == ModContent.NPCType<Cryogen>())
-                BossesCompleted[14] = true;
-            else if (npcID == ModContent.NPCType<BrimstoneElemental>())
-                BossesCompleted[16] = true;
-            else if (npcID == ModContent.NPCType<AquaticScourgeHead>())
-                BossesCompleted[18] = true;
-            else if (npcID == ModContent.NPCType<CalamitasClone>())
-                BossesCompleted[20] = true;
-            else if (npcID == ModContent.NPCType<Leviathan>())
+            int npcID = Main.npc[npcIndex].type;
+            switch (npcID)
             {
-                if (!NPC.AnyNPCs(ModContent.NPCType<Anahita>()))
-                    BossesCompleted[22] = true;
+                case NPCID.Retinazer:
+                case NPCID.Spazmatism:
+                    // Only count this if the other boss(es) arent alive.
+                    if (NPC.CountNPCS(NPCID.Spazmatism) + NPC.CountNPCS(NPCID.Retinazer) <= 1)
+                        BossesCompleted[Utilities.GetNPCNameFromID(NPCID.Spazmatism)] = true;
+                    break;
+                default:
+                    int leviathanID = ModContent.NPCType<Leviathan>();
+                    int draedonID = ModContent.NPCType<Draedon>();
+                    if (npcID == leviathanID)
+                    {
+                        if (!NPC.AnyNPCs(ModContent.NPCType<Anahita>()))
+                            BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)] = true;
+                    }
+                    else if (npcID == ModContent.NPCType<Anahita>())
+                    {
+                        if (!NPC.AnyNPCs(leviathanID))
+                            BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)] = true;
+                    }
+                    else if (ExoMechManagement.ExoMechIDs.Contains(npcID))
+                    {
+                        if (ExoMechManagement.TotalMechs <= 1)
+                            BossesCompleted[Utilities.GetNPCNameFromID(draedonID)] = true;
+                    }
+                    else if (BossList.Contains(npcID))
+                        BossesCompleted[Utilities.GetNPCNameFromID(npcID)] = true;
+                    break;
             }
-            else if (npcID == ModContent.NPCType<Anahita>())
-            {
-                if (!NPC.AnyNPCs(ModContent.NPCType<Leviathan>()))
-                    BossesCompleted[22] = true;
-            }
-            else if (npcID == ModContent.NPCType<AstrumAureus>())
-                BossesCompleted[23] = true;
-            else if (npcID == ModContent.NPCType<PlaguebringerGoliath>())
-                BossesCompleted[26] = true;
-            else if (npcID == ModContent.NPCType<RavagerBody>())
-                BossesCompleted[28] = true;
-            else if (npcID == ModContent.NPCType<AstrumDeusHead>())
-                BossesCompleted[30] = true;
-            else if (npcID == ModContent.NPCType<ProfanedGuardianCommander>())
-                BossesCompleted[32] = true;
-            else if (npcID == ModContent.NPCType<Bumblefuck>())
-                BossesCompleted[33] = true;
-            else if (npcID == ModContent.NPCType<Providence>())
-                BossesCompleted[34] = true;
-            else if (npcID == ModContent.NPCType<CeaselessVoid>())
-                BossesCompleted[35] = true;
-            else if (npcID == ModContent.NPCType<StormWeaverHead>())
-                BossesCompleted[36] = true;
-            else if (npcID == ModContent.NPCType<Signus>())
-                BossesCompleted[37] = true;
-            else if (npcID == ModContent.NPCType<Polterghast>())
-                BossesCompleted[38] = true;
-            else if (npcID == ModContent.NPCType<OldDuke>())
-                BossesCompleted[39] = true;
-            else if (npcID == ModContent.NPCType<DevourerofGodsHead>())
-                BossesCompleted[40] = true;
-            else if (npcID == ModContent.NPCType<Yharon>())
-                BossesCompleted[41] = true;
-            else if (npcID == ModContent.NPCType<Artemis>())
-            {
-                if (!AnyOtherExoMechs(ModContent.NPCType<Artemis>()))
-                {
-                    BossesCompleted[42] = true;
-                }
-            }
-            else if (npcID == ModContent.NPCType<Apollo>())
-            {
-                if (!AnyOtherExoMechs(ModContent.NPCType<Apollo>()))
-                {
-                    BossesCompleted[42] = true;
-                }
-            }
-            else if (npcID == ModContent.NPCType<AresBody>())
-            {
-                if (!AnyOtherExoMechs(ModContent.NPCType<AresBody>()))
-                {
-                    BossesCompleted[42] = true;
-                }
-            }
-            else if (npcID == ModContent.NPCType<ThanatosHead>())
-            {
-                if (!AnyOtherExoMechs(ModContent.NPCType<ThanatosHead>()))
-                {
-                    BossesCompleted[42] = true;
-                }
-            }
-            else if (npcID == ModContent.NPCType<SupremeCalamitas>())
-                BossesCompleted[43] = true;
-            else if (npcID == ModContent.NPCType<BereftVassal>())
-                BossesCompleted[44] = true;
         }
         #endregion
     }

@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Death effects.
             if (lifeRatio < 0.04f)
             {
-                AchievementManager.ProviDefeated = true;
+                AchievementPlayer.ProviDefeated = true;
                 npc.Opacity = 1f;
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
                 if (deathEffectTimer == 1f && !Main.dedServ)

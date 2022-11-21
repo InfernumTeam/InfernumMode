@@ -259,13 +259,17 @@ namespace InfernumMode.GlobalInstances
                 CalamityNetcode.SyncWorld();
             }
 
-            if(npc.boss)
+            // Trigger achievement checks.
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                AchievementManager.ExtraUpdateAchievements(new UpdateContext(npc.type));
-            }
-            else if(KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
-            {
-                AchievementManager.ExtraUpdateAchievements(new UpdateContext(npc.type));
+                if (!Main.player[i].active)
+                    continue;
+
+                Player player = Main.player[i];
+                if (npc.boss)
+                    AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(npc.whoAmI));
+                else if (KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
+                    AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(npc.whoAmI));
             }
         }
 

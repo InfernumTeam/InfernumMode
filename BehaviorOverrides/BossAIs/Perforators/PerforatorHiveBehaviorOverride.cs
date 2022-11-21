@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             HandleWormPhaseTriggers(npc, inPhase2, inPhase3, inPhase4, ref attackState, ref wormSummonState);
 
             // Calculate rotation, if not performing the death animation.
-            if(deathTimer !> 0)
+            if (deathTimer !> 0)
                 npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.04f, -MathHelper.Pi / 6f, MathHelper.Pi / 6f);
 
             // Make the background glow crimson in the form phase, once the large worm is dead.
@@ -235,7 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity = npc.DirectionTo(player.Center).SafeNormalize(Vector2.One).RotatedByRandom(MathHelper.TwoPi) * 6;
                 npc.rotation = npc.velocity.ToRotation();
             }
-            if(deathTimer % flinchInterval + 20 == 0)
+            if (deathTimer % flinchInterval + 20 == 0)
             {
                 // Snap back to the original position.
                 npc.velocity = Vector2.Zero;
@@ -243,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             }
 
             // Spawn a wave.
-            if(deathTimer == DeathAnimationLength - 10)
+            if (deathTimer == DeathAnimationLength - 10)
             {
                 SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1417,7 +1417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         
                     }
                 }
-                if(attackTimer % bloodReleaseRate == bloodReleaseRate - 1f)
+                if (attackTimer % bloodReleaseRate == bloodReleaseRate - 1f)
                 {
                     // Spawn blood particles below the hive.
                     Vector2 bloodPosition = npc.Center + new Vector2(0, 70) + new Vector2(Main.rand.NextFloat(-10, 10));

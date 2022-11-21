@@ -280,8 +280,8 @@ namespace InfernumMode
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             HatGirlTipsManager.PotentialTipToUse = HatGirlTipsManager.SelectTip();
-            if(CalamityPlayer.areThereAnyDamnBosses)
-                AchievementManager.ExtraUpdateAchievements(new UpdateContext(-1, -1, SpecificUpdateContexts.PlayerDeath));
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                AchievementPlayer.ExtraUpdateAchievements(Player, new UpdateContext(-1, -1, SpecificUpdateContexts.PlayerDeath));
         }
         #endregion Kill
         #region Life Regen

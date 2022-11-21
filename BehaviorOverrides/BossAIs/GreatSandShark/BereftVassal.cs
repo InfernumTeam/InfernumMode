@@ -1643,7 +1643,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         LostColosseum.HasBereftVassalBeenDefeated = true;
                         Main.BestiaryTracker.Kills.RegisterKill(NPC);
-                        Achievements.AchievementManager.ExtraUpdateAchievements(new(NPC.type));
+                        Achievements.AchievementPlayer.ExtraUpdateAchievements(Main.LocalPlayer, new(NPC.whoAmI));
                         NPC.active = false;
                     }
                 }

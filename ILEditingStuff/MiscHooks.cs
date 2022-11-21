@@ -69,54 +69,16 @@ namespace InfernumMode.ILEditingStuff
 
         public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
     }
-
-    /*
-    public class UseDeathContactDamageHook : IHookEdit
-    {
-        internal static FieldInfo EnemyStatsField = typeof(NPCStats).GetNestedType("EnemyStats", Utilities.UniversalBindingFlags).GetField("ContactDamageValues", Utilities.UniversalBindingFlags);
-        internal static void UseDeathContactDamageInInfernum(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
-            cursor.Emit(OpCodes.Ldloc_0);
-            cursor.EmitDelegate<Action<NPC>>(CalculateContactDamage);
-            cursor.Emit(OpCodes.Ret);
-        }
-
-        internal static void CalculateContactDamage(NPC npc)
-        {
-            double damageAdjustment = NPCStats.GetExpertDamageMultiplier(npc) * 2D;
-
-            // Safety check: If for some reason the contact damage array is not initialized yet, set the NPC's damage to 1.
-            SortedDictionary<int, int[]> enemyStats = (SortedDictionary<int, int[]>)EnemyStatsField.GetValue(null);
-            bool exists = enemyStats.TryGetValue(npc.type, out int[] contactDamage);
-            if (!exists)
-                npc.damage = 1;
-
-            int normalDamage = contactDamage[0];
-            int expertDamage = contactDamage[1] == -1 ? -1 : (int)Math.Round(contactDamage[1] / damageAdjustment);
-            int revengeanceDamage = contactDamage[2] == -1 ? -1 : (int)Math.Round(contactDamage[2] / damageAdjustment);
-            int deathDamage = contactDamage[3] == -1 ? -1 : (int)Math.Round(contactDamage[3] / damageAdjustment);
-
-            // If the assigned value would be -1, don't actually assign it. This allows for conditionally disabling the system.
-            int damageToUse = (CalamityWorld.death || WorldSaveSystem.InfernumMode) ? deathDamage : CalamityWorld.revenge ? revengeanceDamage : Main.expertMode ? expertDamage : normalDamage;
-            if (CalamityWorld.malice && damageToUse != -1)
-                damageToUse = (int)Math.Round(damageToUse * CalamityGlobalNPC.MaliceModeDamageMultiplier);
-            if (damageToUse != -1)
-                npc.damage = damageToUse;
-        }
-
-        public void Load() => NPCStatsDefineContactDamage += UseDeathContactDamageInInfernum;
-
-        public void Unload() => NPCStatsDefineContactDamage -= UseDeathContactDamageInInfernum;
-    }
-    */
-
+    
     public class AchievementMenuUIHookEdit : IHookEdit
     {
+        private static bool justHovered;
+
         public void Load()
         {
             On.Terraria.UI.AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
         }
+        
         public void Unload()
         {
             On.Terraria.UI.AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
@@ -133,7 +95,7 @@ namespace InfernumMode.ILEditingStuff
             DrawAchievementIcon(spriteBatch, position + new Vector2(10f, 5) * scale, scale, out bool hovered);
 
             // If not hovering, return.
-            if(!hovered)
+            if (!hovered)
                 return;
 
             // Add mouse text.
@@ -151,8 +113,6 @@ namespace InfernumMode.ILEditingStuff
             }
         }
 
-        private static bool justHovered;
-
         private static void DrawAchievementIcon(SpriteBatch spriteBatch, Vector2 position, float scale, out bool hovered)
         {
             // Set hovered to false by default.
@@ -169,11 +129,11 @@ namespace InfernumMode.ILEditingStuff
             Texture2D hoverTexture = Main.Assets.Request<Texture2D>("Images/UI/Achievement_Borders_MouseHoverThin").Value;
 
             // Get a local copy of the main, ordered achievement list.
-            List<Achievement> achievements = AchievementManager.GetAchievementsList();
+            List<Achievement> achievements = AchievementPlayer.GetAchievementsList();
             Achievement currentAchievement = null;
 
             // Loop through the list.
-            foreach(var achievement in achievements)
+            foreach (var achievement in achievements)
             {
                 // If the achievement isnt completed yet.
                 if (!achievement.IsCompleted)
@@ -213,8 +173,10 @@ namespace InfernumMode.ILEditingStuff
                 // If not hovering the frame before, play a sound.
                 if (!justHovered)
                     SoundEngine.PlaySound(SoundID.MenuTick);
+                
                 // Set this as true, to prevent the sound being played every frame the mouse is hovering.
                 justHovered = true;
+                
                 // Draw the hover texture.
                 spriteBatch.Draw(hoverTexture, position + borderOffset + new Vector2(-1, -1), null, new Color(255, 147, 68), 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             }
@@ -230,10 +192,11 @@ namespace InfernumMode.ILEditingStuff
             IngameFancyUI.CoverNextFrame();
             Main.playerInventory = false;
             Main.editChest = false;
-            Main.npcChatText = "";
+            Main.npcChatText = string.Empty;
             Main.ClosePlayerChat();
-            Main.chatText = "";
+            Main.chatText = string.Empty;
             Main.inFancyUI = true;
+            
             // Set this as the current UI state to draw. This is the custom UIState.
             Main.InGameUI.SetState(UIRenderingSystem.achievementUIManager);
         }

@@ -1,6 +1,7 @@
 ﻿using CalamityMod.NPCs.SunkenSea;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -73,9 +74,10 @@ namespace InfernumMode.Achievements.InfernumAchievements
             }
             CurrentCompletion = currentCompletion;
         }
-        public override void ExtraUpdateNPC(int npcID)
+        public override void ExtraUpdateNPC(int npcIndex)
         {
-            if(MinibossIDs.Contains(npcID))
+            int npcID = Main.npc[npcIndex].type;
+            if (MinibossIDs.Contains(npcID))
                 MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
         }
         #endregion

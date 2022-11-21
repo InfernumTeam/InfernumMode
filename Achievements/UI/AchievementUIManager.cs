@@ -85,7 +85,7 @@ namespace InfernumMode.Achievements.UI
             Backpanel = uITextPanel2;
 
             // Get a copy of the ordered achievement list.
-            List<Achievement> list = AchievementManager.GetAchievementsList();
+            List<Achievement> list = AchievementPlayer.GetAchievementsList();
             for (int i = 0; i < list.Count; i++)
             {
                 // Create a list item for each achievement, and add it to the local achievement list.

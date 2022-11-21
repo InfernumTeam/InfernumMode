@@ -597,7 +597,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.dontTakeDamage = false;
 
             // Ensure this isnt loaded on the server, as it will throw a null reference error.
-            if(Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.Server)
                 Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
             npc.Infernum().ExtraAI[IllusionCountIndex] = 0f;
 

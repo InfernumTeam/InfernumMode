@@ -9,10 +9,8 @@ namespace InfernumMode.GlobalInstances
         #region Overrides
         public override bool OnPickup(Item item, Player player)
         {
-            if(item.type == ModContent.ItemType<DemonicChaliceOfInfernum>())
-            {
-                AchievementManager.ExtraUpdateAchievements(new UpdateContext(-1, item.type));
-            }
+            if (item.type == ModContent.ItemType<DemonicChaliceOfInfernum>())
+                AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(-1, item.type));
             return true;
         }
         #endregion

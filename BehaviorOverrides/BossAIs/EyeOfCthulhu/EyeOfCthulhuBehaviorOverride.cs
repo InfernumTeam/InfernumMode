@@ -755,10 +755,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Spawn blood particles to add atmosphere
             if (Main.rand.NextBool(2))
             {
-                if(spawnPosition == default)
+                if (spawnPosition == default)
                     spawnPosition = npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
                 // Allow use of custom velocity for specific movement.
-                if(velocity == default)
+                if (velocity == default)
                     velocity = -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
                 Particle blood = new EoCBloodParticle(spawnPosition, velocity, 30, Main.rand.NextFloat(0.45f, 0.6f), color, npc.ai[1] == (float)EoCAttackType.BloodShots ? 3 : 22);
                 GeneralParticleHandler.SpawnParticle(blood);
@@ -780,7 +780,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             int afterimageCount = 7;
             Color color = lightColor;
             Color afterimageEndColor = Color.White;
-            if(CalamityConfig.Instance.Afterimages && drawAfterimages)
+            if (CalamityConfig.Instance.Afterimages && drawAfterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {

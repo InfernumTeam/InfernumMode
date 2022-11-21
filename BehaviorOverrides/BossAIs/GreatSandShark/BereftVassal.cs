@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Items;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
@@ -14,6 +15,7 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -1528,6 +1530,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 TeleportToPosition(Utilities.GetGroundPositionFrom(NPC.Center) - Vector2.UnitY * (NPC.height * 0.5f + 8f));
             }
 
+            // Play an rage sound when mourning has finished.
+            if (AttackTimer == mournTime + mournTransitionTime)
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalAngerSound, NPC.Center);
+
             // Jitter in rage after mourning.
             AngerInterpolant = Utils.GetLerpValue(mournTime, mournTime + mournTransitionTime + 32f, AttackTimer, true);
             if (AttackTimer >= mournTime)
@@ -1643,6 +1649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         LostColosseum.HasBereftVassalBeenDefeated = true;
                         Main.BestiaryTracker.Kills.RegisterKill(NPC);
+                        Achievements.AchievementPlayer.ExtraUpdateAchievements(Main.LocalPlayer, new(NPC.whoAmI));
                         NPC.active = false;
                     }
                 }
@@ -1753,6 +1760,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
+            LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
             // Weapons
             int[] weapons = new int[]
             {
@@ -1760,7 +1769,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<AridBattlecry>(),
             };
-            npcLoot.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
+            normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
         }
 
         public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);

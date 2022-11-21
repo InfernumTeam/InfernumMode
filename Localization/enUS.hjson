@@ -6,7 +6,8 @@ InfernumText2: "Very well, then.",
 
 UI:
 {
-    NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
+    NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]",
+    AchievementsHeader: "Death Wishes",
 }
 
 }}

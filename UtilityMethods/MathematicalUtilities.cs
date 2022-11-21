@@ -127,5 +127,31 @@ namespace InfernumMode
 
             return currentPosition + v.SafeNormalize(Vector2.Zero) * maxAmountAllowedToMove;
         }
+
+        public static int Factorial(int n)
+        {
+            if (n <= 0)
+                return 0;
+
+            if (n == 1)
+                return 1;
+
+            int sum = n;
+            int result = n;
+
+            for (int i = n - 2; i > 1; i -= 2)
+            {
+                sum += i;
+                result *= sum;
+            }
+
+            if (n % 2 != 0)
+                result *= n / 2 + 1;
+
+            return result;
+        }
+
+        public static int NumberOfCombinations(int sizeOfSet, int totalToSelect) =>
+            Factorial(sizeOfSet) / (Factorial(totalToSelect) * Factorial(sizeOfSet - totalToSelect));
     }
 }

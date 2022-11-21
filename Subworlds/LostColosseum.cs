@@ -1,3 +1,5 @@
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.InfernumAchievements;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System.Collections.Generic;
@@ -26,7 +28,7 @@ namespace InfernumMode.Subworlds
         public class LostColosseumGenPass : GenPass
         {
             public LostColosseumGenPass() : base("Terrain", 1f) { }
-            
+
             protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
             {
                 progress.Message = "Generating a Sunken Colosseum";
@@ -66,5 +68,20 @@ namespace InfernumMode.Subworlds
             color = Vector3.Max(color, lightMin);
             return false;
         }
+
+        internal static bool VassalWasCompleted = false;
+        public override void OnExit()
+        {
+            List<Achievement> achievementList = new List<Achievement>();
+            foreach (var achievement in achievementList)
+            {
+                if (achievement.GetType() == typeof(BereftVassalAchievement))
+                {
+                    if (achievement.DoneCompletionEffects)
+                        VassalWasCompleted = true;
+                }
+            }
+        }
+        
     }
 }

@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     npc.position.Y += 4f;
             }
 
-            if(deathTimer > 0)
+            if (deathTimer > 0)
             {
                 DoBehavior_DeathAnimation(npc, target, ref deathTimer);
                 deathTimer++;

@@ -334,6 +334,7 @@ namespace InfernumMode
                 NewProjectileBetter(target.Center + cinderSpawnOffset, cinderVelocity, cinderType, 0, 0f);
             }
         }
+
         public static string InfernalRelicText
         {
             get

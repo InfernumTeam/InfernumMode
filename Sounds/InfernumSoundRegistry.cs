@@ -5,11 +5,11 @@ namespace InfernumMode.Sounds
     public static class InfernumSoundRegistry
     {
         #region Bosses
-        public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/AresLaugh");
+        public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresLaugh");
 
-        public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/AresTeslaShot");
+        public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresTeslaShot");
 
-        public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Sounds/Custom/AresPulseCannonCharge");
+        public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresPulseCannonCharge");
 
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Sounds/Custom/BrimstoneElementalShellGroundHit");
 
@@ -25,25 +25,25 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
 
-        public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Sounds/Custom/ExoMechFinalPhaseChargeup");
+        public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Sounds/Custom/ExoMechs/ExoMechFinalPhaseChargeup");
 
-        public static readonly SoundStyle ExoMechImpendingDeathSound = new("InfernumMode/Sounds/Custom/ExoMechImpendingDeathSound");
+        public static readonly SoundStyle ExoMechImpendingDeathSound = new("InfernumMode/Sounds/Custom/ExoMechs/ExoMechImpendingDeathSound");
 
-        public static readonly SoundStyle ExoMechIntroSound = new("InfernumMode/Sounds/Custom/ExoMechIntro");
+        public static readonly SoundStyle ExoMechIntroSound = new("InfernumMode/Sounds/Custom/ExoMechs/ExoMechIntro");
 
         public static readonly SoundStyle GolemSansSound = new("InfernumMode/Sounds/Custom/BadTime");
 
         public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Sounds/Custom/[BIG SHOT]");
 
-        public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkChargeRoar");
+        public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Sounds/Custom/BereftVassal/GreatSandSharkChargeRoar");
 
-        public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkMiscRoar");
+        public static readonly SoundStyle GreatSandSharkMiscRoarSound = new("InfernumMode/Sounds/Custom/BereftVassal/GreatSandSharkMiscRoar");
 
         public static readonly SoundStyle GreatSandSharkHitSound = new("InfernumMode/Sounds/NPCHit/GreatSandSharkHit", 3);
 
-        public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSpawnSound");
+        public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Sounds/Custom/BereftVassal/GreatSandSharkSpawnSound");
 
-        public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Sounds/Custom/GreatSandSharkSuddenRoar");
+        public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Sounds/Custom/BereftVassal/GreatSandSharkSuddenRoar");
 
         public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Sounds/Custom/GulperEelScream");
 
@@ -89,19 +89,21 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
 
-        public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ThanatosTransition");
+        public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ExoMechs/ThanatosTransition");
+
+        public static readonly SoundStyle VassalAngerSound = new SoundStyle("InfernumMode/Sounds/Custom/BereftVassal/VassalAnger") with { Volume = 1.5f };
 
         public static readonly SoundStyle VassalHitSound = new("InfernumMode/Sounds/NPCHit/VassalHit", 3);
 
-        public static readonly SoundStyle VassalHornSound = new("InfernumMode/Sounds/Custom/VassalHornSound");
+        public static readonly SoundStyle VassalHornSound = new("InfernumMode/Sounds/Custom/BereftVassal/VassalHornSound");
 
-        public static readonly SoundStyle VassalJumpSound = new("InfernumMode/Sounds/Custom/VassalJump");
+        public static readonly SoundStyle VassalJumpSound = new("InfernumMode/Sounds/Custom/BereftVassal/VassalJump");
 
-        public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/VassalSlash") with { Volume = 1.5f };
+        public static readonly SoundStyle VassalSlashSound = new SoundStyle("InfernumMode/Sounds/Custom/BereftVassal/VassalSlash") with { Volume = 1.5f };
 
-        public static readonly SoundStyle VassalTeleportSound = new("InfernumMode/Sounds/Custom/VassalTeleport");
+        public static readonly SoundStyle VassalTeleportSound = new("InfernumMode/Sounds/Custom/BereftVassal/VassalTeleport");
 
-        public static readonly SoundStyle VassalWaterBeamSound = new("InfernumMode/Sounds/Custom/VassalWaterBeam");
+        public static readonly SoundStyle VassalWaterBeamSound = new("InfernumMode/Sounds/Custom/BereftVassal/VassalWaterBeam");
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
 
@@ -117,5 +119,11 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Sounds/Item/GlassmakerOutro");
 
         #endregion Items
+
+        #region Miscellaneous
+
+        public static readonly SoundStyle InfernumAchievementCompletionSound = new SoundStyle("InfernumMode/Sounds/Custom/InfernumAchievementComplete") with { Volume = 1.5f };
+
+        #endregion
     }
 }

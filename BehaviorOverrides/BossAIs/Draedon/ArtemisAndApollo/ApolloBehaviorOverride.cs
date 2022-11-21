@@ -513,13 +513,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
-                shootRate -= 3;
+                shootRate -= 5;
                 shootSpread *= 1.1f;
                 totalShots -= 2;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
-                shootRate -= 8;
+                shootRate -= 6;
                 totalShots += 5;
                 shootSpread *= 0.64f;
                 predictivenessFactor *= 1.08f;
@@ -705,6 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
                     Utilities.CreateShockwave(npc.Center - npc.velocity * 4f);
+                    ExoMechsSky.CreateLightningBolt(25);
 
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

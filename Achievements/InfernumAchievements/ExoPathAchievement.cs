@@ -1,6 +1,4 @@
-﻿using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
+﻿using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +11,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
     public class ExoPathAchievement : Achievement
     {
         #region Fields
-        public List<(int, int)> CompletedExoMechCombinations
+        public List<(string, string)> CompletedExoMechCombinations
         {
             get;
             internal set;
@@ -38,6 +36,10 @@ namespace InfernumMode.Achievements.InfernumAchievements
 
         public override void ExtraUpdateNPC(int npcIndex)
         {
+            // Don't count Boss Rush kills.
+            if (BossRushEvent.BossRushActive)
+                return;
+
             // If not an exo mech, leave.
             NPC mech = Main.npc[npcIndex];
             int npcID = mech.type;
@@ -47,8 +49,11 @@ namespace InfernumMode.Achievements.InfernumAchievements
             // Don't count a kill if this is not the last mech.
             if (ExoMechManagement.TotalMechs <= 1)
             {
-                (int, int) combination = new((int)mech.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex], (int)mech.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex]);
-                (int, int) reverseCombination = new(combination.Item2, combination.Item1);
+                var initialMech = NPCLoader.GetNPC((int)mech.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex]);
+                var complementMech = NPCLoader.GetNPC((int)mech.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex]);
+
+                (string, string) combination = new(initialMech.FullName, complementMech.FullName);
+                (string, string) reverseCombination = new(combination.Item2, combination.Item1);
                 
                 if (!CompletedExoMechCombinations.Contains(combination) && !CompletedExoMechCombinations.Contains(reverseCombination))
                     CompletedExoMechCombinations.Add(combination);
@@ -61,8 +66,8 @@ namespace InfernumMode.Achievements.InfernumAchievements
                 InitializeCompletionVariables();
             else
             {
-                IList<int> primaryList = tag.GetList<int>("ExoMechCompletionsPrimary");
-                IList<int> secondaryList = tag.GetList<int>("ExoMechCompletionsSecondary");
+                IList<string> primaryList = tag.GetList<string>("ExoMechCompletionsPrimary");
+                IList<string> secondaryList = tag.GetList<string>("ExoMechCompletionsSecondary");
                 
                 CompletedExoMechCombinations = new();
                 for (int i = 0; i < primaryList.Count; i++)

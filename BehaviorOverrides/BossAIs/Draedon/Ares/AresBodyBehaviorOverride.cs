@@ -450,6 +450,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 attackTime = 900;
 
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 410f;
+            Vector2 offset = hoverDestination - npc.Center;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
             if (attackTimer > attackTime)

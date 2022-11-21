@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         
         public void AdditiveDraw(SpriteBatch spriteBatch)
         {
-            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false, GameShaders.Misc["CalamityMod:Bordernado"]);
 
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
@@ -155,8 +155,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (float offset = 0f; offset < 6f; offset += 0.75f)
                 {
                     BeamDrawer.Draw(points, -Main.screenPosition, 28);
-                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
-                    BeamDrawer.Draw(points, - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
+                    BeamDrawer.Draw(points, - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
                 }
             }
         }

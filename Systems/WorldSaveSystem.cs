@@ -55,6 +55,18 @@ namespace InfernumMode.Systems
             set;
         } = false;
 
+        public static bool DownedEater
+        {
+            get;
+            set;
+        } = false;
+
+        public static bool DownedBrain
+        {
+            get;
+            set;
+        } = false;
+
         public override void SaveWorldData(TagCompound tag)
         {
             var downed = new List<string>();
@@ -77,6 +89,8 @@ namespace InfernumMode.Systems
             tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
             tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
+            tag["DownedEater"] = DownedEater;
+            tag["DownedBrain"] = DownedBrain;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -90,6 +104,8 @@ namespace InfernumMode.Systems
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
+            DownedEater = tag.GetBool("DownedEater");
+            DownedBrain = tag.GetBool("DownedBrain");
         }
     }
 }

@@ -30,11 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalPhaseTimerIndex = 16;
         public const int DeathAnimationTimerIndex = 19;
         public const int DeathAnimationHasStartedIndex = 22;
-        public const int StartingFinalPhaseAnimationHPIndex = 27;
-
-        // Destroyer variant from non-Destroyer variants, regular mech for Destroyer variants.
-        // For example, Thanatos could have Ares, while Apollo could have Thanatos.
         public const int SecondaryMechNPCTypeIndex = 24;
+        public const int StartingFinalPhaseAnimationHPIndex = 27;
+        public const int InitialMechNPCTypeIndex = 28;
 
         public const int Thanatos_AttackDelayIndex = 13;
 
@@ -42,8 +40,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int Ares_LineTelegraphInterpolantIndex = 17;
         public const int Ares_LineTelegraphRotationIndex = 18;
         public const int Ares_CannonInUseByExowl = 25;
-
-        public const int Athena_EnragedIndex = 8;
 
         public const int Twins_ComplementMechEnrageTimerIndex = 26;
         public const int Twins_SideSwitchDelayIndex = 18;
@@ -167,6 +163,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
+        // Artemis is intentionally not counted in this list due to primarily deferring to Apollo, the "leader" of the two for management.
+        public static List<int> ExoMechIDs => new()
+        {
+            ModContent.NPCType<AresBody>(),
+            ModContent.NPCType<Apollo>(),
+            ModContent.NPCType<ThanatosHead>(),
+        };
+
         public static int GetComplementMechType(NPC npc)
         {
             int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
@@ -184,12 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static int GetFinalMechType(NPC npc)
         {
             int secondaryMechNPCType = (int)npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
-            List<int> mechsInUse = new()
-            {
-                ModContent.NPCType<ThanatosHead>(),
-                ModContent.NPCType<AresBody>(),
-                ModContent.NPCType<Apollo>(),
-            };
+            List<int> mechsInUse = ExoMechIDs;
             mechsInUse.Remove(npc.type);
             mechsInUse.Remove(secondaryMechNPCType);
             return mechsInUse.First();
@@ -207,16 +206,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static NPC FindInitialMech()
         {
-            int apolloID = ModContent.NPCType<Apollo>();
-            int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int aresID = ModContent.NPCType<AresBody>();
             NPC initialMech = null;
 
             // Find the initial mech. If it cannot be found, return nothing.
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                if (!ExoMechIDs.Contains(Main.npc[i].type))
                     continue;
+
                 if (!Main.npc[i].active)
                     continue;
 
@@ -238,14 +235,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return null;
 
             // Check to see if the initial mech believes that the final mech index is in use by a mech.
-            int apolloID = ModContent.NPCType<Apollo>();
-            int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int athenaID = ModContent.NPCType<ThanatosHead>();
-            int aresID = ModContent.NPCType<AresBody>();
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                if (!ExoMechIDs.Contains(Main.npc[i].type))
                     continue;
+
                 if (!Main.npc[i].active)
                     continue;
 
@@ -328,6 +322,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
             complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
             complementMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+            complementMech.Infernum().ExtraAI[InitialMechNPCTypeIndex] = npc.Infernum().ExtraAI[InitialMechNPCTypeIndex];
+            complementMech.Infernum().ExtraAI[SecondaryMechNPCTypeIndex] = npc.Infernum().ExtraAI[SecondaryMechNPCTypeIndex];
             complementMech.velocity = complementMech.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
             complementMech.Opacity = 0.01f;
             complementMech.netUpdate = true;
@@ -365,14 +361,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             get
             {
-                int apolloID = ModContent.NPCType<Apollo>();
-                int thanatosID = ModContent.NPCType<ThanatosHead>();
-                int aresID = ModContent.NPCType<AresBody>();
                 int count = 0;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                    if (!ExoMechIDs.Contains(Main.npc[i].type))
                         continue;
+
                     if (!Main.npc[i].active || ExoMechAIUtilities.ShouldExoMechVanish(Main.npc[i]))
                         continue;
 

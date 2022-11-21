@@ -103,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 onSolidGround = true;
             float horizontalDistanceFromTarget = MathHelper.Distance(Target.Center.X, NPC.Center.X);
 
-            if(SyncedDeathTimer > 0)
+            if (SyncedDeathTimer > 0)
             {
                 DoBehaviorDeathAnimation();
                 SyncedDeathTimer++;
@@ -304,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         tearProjectileIndex = Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<DeathSlash>(), 200, 0f);
                 }
                 // If we have reached the end of the time we want to spend slashing.
-                if(SyncedDeathTimer > localDeathTimer + dashLength)
+                if (SyncedDeathTimer > localDeathTimer + dashLength)
                 {
                     // If we should vanish, this extraEndSlashDelay is the amount of time it takes for the slash to catch up to us,
                     if (SyncedDeathTimer > localDeathTimer + dashLength + extraEndSlashDelay)
@@ -325,7 +325,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     // Freeze in place.
                     NPC.velocity = Vector2.Zero;
                     // If we havent faded out, spawn dust. this is to prevent looping.
-                    if(NPC.Opacity > 0)
+                    if (NPC.Opacity > 0)
                         for (int i = 0; i < 6; i++)
                         {
                             Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);

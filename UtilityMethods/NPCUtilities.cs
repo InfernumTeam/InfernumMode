@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode
@@ -82,6 +83,26 @@ namespace InfernumMode
             }
 
             return false;
+        }
+
+        public static string GetNPCNameFromID(int id)
+        {
+            if (id < NPCID.Count)
+                return id.ToString();
+
+            return NPCLoader.GetNPC(id).FullName;
+        }
+
+        public static int GetNPCIDFromName(string name)
+        {
+            if (int.TryParse(name, out int id))
+                return id;
+
+            string[] splitName = name.Split('/');
+            if (ModContent.TryFind(splitName[0], splitName[1], out ModNPC modNpc))
+                return modNpc.Type;
+
+            return NPCID.None;
         }
     }
 }

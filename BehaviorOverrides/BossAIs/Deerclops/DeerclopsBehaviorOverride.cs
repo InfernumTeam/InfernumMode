@@ -1166,6 +1166,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             {
                 for (int i = 1; i < Math.Max(trailCount, npc.oldPos.Length); i++)
                 {
+                    if (i >= npc.oldPos.Length)
+                        break;
+
                     float shadowFade = 1f - i / (float)(trailCount - 1f);
                     Vector2 drawPosition = npc.oldPos[i] + new Vector2(npc.width * 0.5f, npc.height) - Main.screenPosition;
                     Color fadeColor = opacityAffectedColor * shadowFade;

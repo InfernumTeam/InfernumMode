@@ -6,6 +6,8 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
@@ -327,6 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (thanatos != null)
                     {
                         thanatos.velocity = thanatos.SafeDirectionTo(playerToFollow.Center) * 40f;
+                        thanatos.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex] = thanatos.type;
                         thanatos.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
                     }
                     break;
@@ -336,7 +339,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     Vector2 aresSpawnPosition = playerToFollow.Center - Vector2.UnitY * 1400f;
                     NPC ares = CalamityUtils.SpawnBossBetter(aresSpawnPosition, ModContent.NPCType<AresBody>());
                     if (ares != null)
+                    {
+                        ares.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex] = ares.type;
                         ares.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
+                    }
                     break;
 
                 // Summon Apollo and Artemis above the player to their sides.
@@ -346,13 +352,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     CalamityUtils.SpawnBossBetter(artemisSpawnPosition, ModContent.NPCType<Artemis>());
                     NPC apollo = CalamityUtils.SpawnBossBetter(apolloSpawnPosition, ModContent.NPCType<Apollo>());
                     if (apollo != null)
+                    {
+                        apollo.Infernum().ExtraAI[ExoMechManagement.InitialMechNPCTypeIndex] = apollo.type;
                         apollo.Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = secondaryMech;
+                    }
                     break;
             }
         }
 
         public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)
         {
+            AchievementPlayer.DraedonDefeated = true;
             // Become vulnerable after being defeated after a certain point.
             bool hasBeenKilled = npc.localAI[2] == 1f;
             ref float hologramEffectTimer = ref npc.localAI[1];

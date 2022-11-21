@@ -156,6 +156,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             npc.rotation += spinSpeed;
             npc.velocity *= 0.95f;
 
+            // Destroy any and all stray projectiles.
+            if (attackTimer == 2f)
+            {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DeceleratingEbonianGlob>(), ModContent.ProjectileType<DeceleratingCrimulanGlob>(), ModContent.ProjectileType<EvilBolt>(),
+                    ModContent.ProjectileType<GroundSlimeGlob>());
+            }
+
             // Move the camera to the core and draw in slime from outside sources.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f) && attackTimer < 150f)
             {

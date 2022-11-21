@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -20,11 +21,13 @@ namespace InfernumMode.Particles
             GameShaders.Misc["CalamityMod:BaseFusableParticleEdge"].Shader,
             GameShaders.Misc["CalamityMod:BaseFusableParticleEdge"].Shader,
         };
+        
         public override List<Texture2D> BackgroundTextures => new()
         {
-            ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow1").Value,
-            ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow2").Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow1").Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow2").Value,
         };
+
         public override FusableParticle SpawnParticle(Vector2 center, float sizeStrength)
         {
             Particles.Add(new FusableParticle(center, sizeStrength));

@@ -881,11 +881,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
-            int fadeTime = 15;
+            int fadeTime = 22;
             if (attackTimer <= fadeTime)
-                npc.Opacity = Utils.GetLerpValue(12f, 0f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(fadeTime * 0.8f, 0f, attackTimer, true);
             else if (attackTimer <= fadeTime * 2f)
-                npc.Opacity = Utils.GetLerpValue(12f, 24f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(fadeTime * 0.8f, fadeTime * 1.6f, attackTimer, true);
 
             // Decide frames.
             if (attackTimer > fadeTime - 4f && attackTimer < fadeTime + 4f)

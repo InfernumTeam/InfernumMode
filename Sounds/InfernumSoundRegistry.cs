@@ -111,5 +111,11 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Sounds/Item/GlassmakerOutro");
 
         #endregion Items
+
+        #region Miscellaneous
+
+        public static readonly SoundStyle InfernumAchievementCompletionSound = new SoundStyle("InfernumMode/Sounds/Custom/InfernumAchievementComplete") with { Volume = 1.5f };
+
+        #endregion
     }
 }

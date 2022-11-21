@@ -146,12 +146,15 @@ namespace InfernumMode.ILEditingStuff
                 }
             }
 
-            // If one wasn't picked in the loop, set it to the final one.
-            if (currentAchievement is null)
-                verticalOffset *= achievements.Count - 1;
-
             // Get the correct frame to draw based on the above.
-            Rectangle achievementFrame = new(66, verticalOffset, 66, 66);
+            Rectangle achievementFrame;
+            if (currentAchievement is null)
+            {
+                verticalOffset *= achievements.Count - 1;
+                achievementFrame = new(0, verticalOffset, 66, 66);
+            }
+            else
+                achievementFrame = new(66, verticalOffset, 66, 66);
 
             // If the mouse is hovering over the area.
             if (Main.MouseScreen.Between(position, position + achievementFrame.Size() * scale))
@@ -185,7 +188,7 @@ namespace InfernumMode.ILEditingStuff
                 justHovered = false;
         }
 
-        private static void OpenAchievementMenu()
+        internal static void OpenAchievementMenu()
         {
             // All of this is what lets the menu be the only thing on screen.
             Main.ingameOptionsWindow = false;

@@ -128,12 +128,7 @@ namespace InfernumMode.Achievements
 
         public override void OnEnterWorld(Player player)
         {
-            InitializeIfNecessary();
-            foreach (var achievement in AchievementInstances)
-            {
-                achievement.CurrentCompletion = 0;
-                achievement.DoneCompletionEffects = false;
-            }
+            AchivementsNotificationTracker.Clear();
         }
 
         public override void PostUpdate()
@@ -148,6 +143,7 @@ namespace InfernumMode.Achievements
                 else if (!achievement.IsCompleted)
                     achievement.Update();
             }
+            AchivementsNotificationTracker.Update();
         }
         #endregion
 

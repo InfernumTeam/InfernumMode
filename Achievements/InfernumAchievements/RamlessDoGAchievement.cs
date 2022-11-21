@@ -19,11 +19,12 @@ namespace InfernumMode.Achievements.InfernumAchievements
             ModContent.ItemType<AsgardianAegis>()
         };
         #endregion
+
         #region Overrides
         public override void Initialize()
         {
             Name = "Ramification";
-            Description = "Best the Devourer at his own game; without a ram!\n[c/777777:Beat the Infernum Devourer of Gods without using a ram dash]";
+            Description = "Best the Devourer at his own game: without a ram!\n[c/777777:Beat the Infernum Devourer of Gods without using a ram dash]";
             TotalCompletion = 1;
             PositionInMainList = 4;
         }
@@ -77,6 +78,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
             DoneCompletionEffects = tag.Get<bool>("RamDogDoneCompletionEffects");
         }
         #endregion
+
         #region Methods
         private bool PlayerHasRam()
         {

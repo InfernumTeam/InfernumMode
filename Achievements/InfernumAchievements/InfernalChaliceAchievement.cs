@@ -10,7 +10,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
         public override void Initialize()
         {
             Name = "Baptized By Hellfire";
-            Description = "Complete your journey, and earn your reward\n[c/777777:Obtain the Infernal Chalice]";
+            Description = "Complete the final challenge, and earn your reward\n[c/777777:Obtain the Infernal Chalice]";
             TotalCompletion = 1;
             PositionInMainList = 6;
         }

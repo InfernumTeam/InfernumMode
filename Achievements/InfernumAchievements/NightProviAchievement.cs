@@ -16,7 +16,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
         public override void Initialize()
         {
             Name = "Night Knight";
-            Description = "Challenge the Profaned Godness under the gaze of the stars\n[c/777777:Beat Infernum Night Providence]";
+            Description = "Challenge the Profaned Goddess under the gaze of the stars\n[c/777777:Beat Infernum Night Providence]";
             TotalCompletion = 1;
             PositionInMainList = 3;
         }

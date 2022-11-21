@@ -1,4 +1,8 @@
-﻿using Terraria.ModLoader.IO;
+﻿using InfernumMode.Sounds;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Achievements
 {
@@ -25,7 +29,9 @@ namespace InfernumMode.Achievements
         /// </summary>
         public virtual void OnCompletion()
         {
-            AchievementCompletionAnimationManager.AchievementsToShow.Add(this);
+            AchivementsNotificationTracker.AddAchievementAsCompleted(this);
+            Main.NewText($"Achievement Completed! [c/ff884d:{Name}]");
+            SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
         }
         
         /// <summary>
@@ -47,16 +53,16 @@ namespace InfernumMode.Achievements
 
         }
         /// <summary>
-        /// Load the completion amount and DoneCompletionEffects here. Called from OnWorldLoad(TagCompound tag).
+        /// Load the completion amount and DoneCompletionEffects here. Called from ModPlayer.LoadData(TagCompound tag).
         /// </summary>
         /// <param name="tag"></param>
         public virtual void LoadProgress(TagCompound tag)
         {
 
         }
-        
+
         /// <summary>
-        /// Save the completion amount and DoneCompletionEffects here. Called from OnWorldSave(TagCompound tag).
+        /// Save the completion amount and DoneCompletionEffects here. Called from ModPlayer.SaveData(TagCompound tag).
         /// </summary>
         /// <param name="tag"></param>
         public virtual void SaveProgress(TagCompound tag)

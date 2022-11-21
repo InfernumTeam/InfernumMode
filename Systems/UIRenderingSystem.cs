@@ -1,3 +1,4 @@
+using InfernumMode.Achievements;
 using InfernumMode.Achievements.UI;
 using InfernumMode.BossIntroScreens;
 using System.Collections.Generic;
@@ -20,6 +21,12 @@ namespace InfernumMode.Systems
                     IntroScreenManager.Draw();
                     return true;
                 }, InterfaceScaleType.None));
+                layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Achievment Completion Animation", () =>
+                {
+                    AchivementsNotificationTracker.DrawInGame(Main.spriteBatch);
+                    //AchivementsNotificationTracker.DrawInIngameOptions(Main.spriteBatch);
+                    return true;
+                }, InterfaceScaleType.UI));
             }
         }
     }

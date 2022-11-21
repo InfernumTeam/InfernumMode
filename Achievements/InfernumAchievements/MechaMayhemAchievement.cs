@@ -20,6 +20,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
             NPCID.Spazmatism
         };
         #endregion
+
         #region Overrides
         public override void Initialize()
         {

@@ -97,6 +97,7 @@ namespace InfernumMode.Balancing
             [NPCID.DukeFishron] = BossRushEvent.BossRushActive ? 1330000 : 100250,
             [NPCID.HallowBoss] = BossRushEvent.BossRushActive ? 2960000 : 192000,
             [ModContent.NPCType<RavagerHead>()] = BossRushEvent.BossRushActive ? -1 : 18000,
+            [ModContent.NPCType<Eidolist>()] = 20000,
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 104000,
             [NPCID.AncientCultistSquidhead] = BossRushEvent.BossRushActive ? -1 : 9020,
             [NPCID.CultistDragonHead] = BossRushEvent.BossRushActive ? -1 : 36500,

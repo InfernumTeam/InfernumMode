@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -121,6 +123,12 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 case EidolistAttackType.TeleportDashes:
                     DoBehavior_TeleportDashes(npc, target, groupIndex, totalEidolists, ref attackTimer, ref teleportFadeInterpolant);
                     break;
+                case EidolistAttackType.LightningOrbs:
+                    DoBehavior_LightningOrbs(npc, target, groupIndex, totalEidolists, ref attackTimer, ref teleportFadeInterpolant);
+                    break;
+                case EidolistAttackType.SpinLaser:
+                    SelectNextAttack(npc);
+                    break;
             }
 
             // Increment the attack timer.
@@ -129,15 +137,26 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             return false;
         }
 
+        #region Teleport Dashes
         public static void DoBehavior_TeleportDashes(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
             int initalFadeOutTime = 30;
             int fadeInTime = 16;
             int chargeTime = 45;
             int chargeFadeOutTime = 12;
+            int chargeCount = 1;
             float chargeSpeed = 29.75f;
             float teleportOffsetRadius = 400f;
             ref float teleportAngularOffset = ref npc.Infernum().ExtraAI[0];
+
+            if (totalEidolists <= 3)
+            {
+                fadeInTime -= 2;
+                chargeTime -= 6;
+                chargeSpeed += 5f;
+            }
+            if (totalEidolists <= 2)
+                chargeCount++;
 
             // Do a teleport fadeout.
             if (attackTimer <= initalFadeOutTime)
@@ -147,75 +166,295 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 return;
             }
 
-            // When four eidolists are present, each one does a single teleport dash, waiting completing for the next eidolist to attack.
+            // When two or more eidolists are present, each one does a single teleport dash, waiting completing for the next eidolist to attack.
+            // When there are only three eidolists, the charges are faster, and two can exist at once.
+            // When there are only two eidolists, they both charge together.
+            // When there is only one eidolist, they release exploding ice bombs.
+            
+            // Decide the angular offset for all Eidolists. They should be evenly spread.
+            float adjustedAttackTimer = attackTimer - initalFadeOutTime;
+            if (adjustedAttackTimer == 1f)
+            {
+                float teleportOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                AffectAllEidolists((n, gIndex) =>
+                {
+                    n.Infernum().ExtraAI[0] = teleportOffsetAngle + MathHelper.TwoPi * gIndex / totalEidolists;
+                });
+            }
+
+            int attackCycleTime = fadeInTime + chargeTime + chargeFadeOutTime;
+            float chargeTimer = adjustedAttackTimer - attackCycleTime * groupIndex;
+            if (totalEidolists == 3)
+                chargeTimer = adjustedAttackTimer - attackCycleTime * (int)(groupIndex * 0.5f);
+
+            bool doneCharging = chargeTimer >= attackCycleTime;
+            if (chargeTimer <= fadeInTime || doneCharging)
+            {
+                if (chargeTimer < 0f || doneCharging)
+                    npc.Center = target.Center - Vector2.UnitY * 1400f;
+                else
+                {
+                    npc.Center = target.Center + teleportAngularOffset.ToRotationVector2() * teleportOffsetRadius;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.rotation = 0f;
+                }
+
+                teleportFadeInterpolant = doneCharging ? 1f : Utils.GetLerpValue(0f, fadeInTime, chargeTimer, true);
+
+                // Go to the next attack state once the last eidolist has finished charging.
+                if (groupIndex >= totalEidolists - 1f && doneCharging)
+                {
+                    AffectAllEidolists((n, gIndex) =>
+                    {
+                        n.ai[1] = 0f;
+                        n.Infernum().ExtraAI[1]++;
+                        n.netUpdate = true;
+                        if (n.Infernum().ExtraAI[1] >= chargeCount)
+                            SelectNextAttack(n);
+                    });
+                }
+                return;
+            }
+
+            // Charge at the target.
+            if (chargeTimer == fadeInTime + 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item105, npc.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                npc.netUpdate = true;
+            }
+
+            // Fade out when done charging.
+            if (chargeTimer == fadeInTime + chargeTime)
+            {
+                teleportFadeInterpolant = Utils.GetLerpValue(fadeInTime + chargeTime, fadeInTime + chargeTime + chargeFadeOutTime, chargeTimer, true);
+                npc.velocity *= 0.95f;
+            }
+
+            // Rotate.
+            npc.rotation = npc.velocity.X * 0.02f;
+        }
+        #endregion Teleport Dashes
+
+        #region Lightning Orbs
+        public static void DoBehavior_LightningOrbs(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
+        {
+            int initalFadeOutTime = 30;
+            List<NPC> eidolists = Main.npc.Take(Main.maxNPCs).Where(n => n.type == npc.type && n.active).OrderBy(n => n.Infernum().ExtraAI[5]).ToList();
+            ref float teleportCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Do a teleport fadeout.
+            if (attackTimer <= initalFadeOutTime)
+            {
+                // Don't rotate.
+                npc.rotation = 0f;
+
+                // Teleport above the target on the first frame.
+                if (attackTimer == 1f)
+                {
+                    Vector2 hoverOffset = new(Main.rand.NextFloatDirection() * 500f, -400f);
+                    if (totalEidolists is < 4 and >= 2)
+                    {
+                        int localIndex = eidolists.IndexOf(npc);
+                        hoverOffset = hoverOffset.RotatedBy(MathHelper.TwoPi * localIndex / eidolists.Count + MathHelper.PiOver2);
+                    }
+                    npc.Center = target.Center + hoverOffset;
+
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
+
+                npc.dontTakeDamage = true;
+                teleportFadeInterpolant = Utils.GetLerpValue(initalFadeOutTime, 0f, attackTimer, true);
+                if (groupIndex >= 1f && totalEidolists >= 4)
+                    teleportFadeInterpolant = 1f;
+                return;
+            }
+
+            // When four eidolists are present, only the first one attacks, casting an orb with telegraph lines above the player.
             float adjustedAttackTimer = attackTimer - initalFadeOutTime;
             if (totalEidolists == 4)
             {
-                // Decide the angular offset for all Eidolists. They should be evenly spread.
-                if (adjustedAttackTimer == 1f)
-                {
-                    float teleportOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    AffectAllEidolists((n, gIndex) =>
-                    {
-                        n.Infernum().ExtraAI[0] = teleportOffsetAngle + MathHelper.TwoPi * gIndex / totalEidolists;
-                    });
-                }
+                DoBehavior_LightningOrbs4(npc, target, groupIndex, adjustedAttackTimer, ref attackTimer, ref teleportFadeInterpolant, ref teleportCounter);
+                return;
+            }
 
-                int attackCycleTime = fadeInTime + chargeTime + chargeFadeOutTime;
-                float chargeTimer = adjustedAttackTimer - attackCycleTime * groupIndex;
-                bool doneCharging = chargeTimer >= attackCycleTime;
-                if (chargeTimer <= fadeInTime || doneCharging)
+            // When three eidolists are present, all three perform a single orb cast.
+            if (totalEidolists == 3)
+            {
+                DoBehavior_LightningOrbs3(npc, target, adjustedAttackTimer);
+                return;
+            }
+
+            // When two eidolists are present, the first casts an orb while the second performs teleport charges.
+            if (totalEidolists == 2)
+            {
+                DoBehavior_LightningOrbs2(npc, target, eidolists, adjustedAttackTimer, ref attackTimer);
+                return;
+            }
+        }
+
+        public static void DoBehavior_LightningOrbs4(NPC npc, Player target, float groupIndex, float adjustedAttackTimer, ref float attackTimer, ref float teleportFadeInterpolant, ref float teleportCounter)
+        {
+            int teleportCount = 3;
+            int orbCastDelay = 40;
+            int lightningShootTime = EidolistElectricOrb.Lifetime + 45;
+
+            // Don't rotate.
+            npc.rotation = 0f;
+
+            // Do nothing if not the first eidolist.
+            if (groupIndex >= 1f)
+            {
+                npc.dontTakeDamage = true;
+                npc.Center = target.Center + Vector2.UnitY * 1200f;
+                teleportFadeInterpolant = 1f;
+                return;
+            }
+
+            // Create the lightning orb.
+            if (Main.netMode != NetmodeID.MultiplayerClient && adjustedAttackTimer == orbCastDelay)
+            {
+                // Look at the target.
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.netUpdate = true;
+
+                int lightningOrb = Utilities.NewProjectileBetter(npc.Top, Vector2.Zero, ModContent.ProjectileType<EidolistElectricOrb>(), 0, 0f);
+                if (Main.projectile.IndexInRange(lightningOrb))
+                    Main.projectile[lightningOrb].ai[0] = npc.whoAmI;
+            }
+
+            if (adjustedAttackTimer >= orbCastDelay + lightningShootTime)
+            {
+                teleportCounter++;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+
+                if (teleportCounter >= teleportCount)
+                    AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
+            }
+        }
+
+        public static void DoBehavior_LightningOrbs3(NPC npc, Player target, float adjustedAttackTimer)
+        {
+            int orbCastDelay = 40;
+            int lightningShootTime = EidolistElectricOrb2.Lifetime + 45;
+
+            // Don't rotate.
+            npc.rotation = 0f;
+
+            // Create the lightning orb.
+            if (Main.netMode != NetmodeID.MultiplayerClient && adjustedAttackTimer == orbCastDelay)
+            {
+                // Look at the target.
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.netUpdate = true;
+
+                int lightningOrb = Utilities.NewProjectileBetter(npc.Top, Vector2.Zero, ModContent.ProjectileType<EidolistElectricOrb2>(), 0, 0f);
+                if (Main.projectile.IndexInRange(lightningOrb))
                 {
-                    if (chargeTimer < 0f || doneCharging)
-                        npc.Center = target.Center - Vector2.UnitY * 1400f;
-                    else
+                    Main.projectile[lightningOrb].ai[0] = npc.whoAmI;
+                    Main.projectile[lightningOrb].ai[1] = 8f;
+                }
+            }
+
+            if (adjustedAttackTimer >= orbCastDelay + lightningShootTime)
+                AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
+
+        }
+
+        public static void DoBehavior_LightningOrbs2(NPC npc, Player target, List<NPC> eidolists, float adjustedAttackTimer, ref float attackTimer)
+        {
+            int orbCastDelay = 40;
+            int teleportCount = 4;
+            int lightningShootTime = EidolistElectricOrb2.Lifetime + 45;
+            ref float teleportCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Do cast behaviors.
+            if (eidolists.First() == npc)
+            {
+                // Don't rotate.
+                npc.rotation = 0f;
+
+                // Create the lightning orb.
+                if (Main.netMode != NetmodeID.MultiplayerClient && adjustedAttackTimer == orbCastDelay)
+                {
+                    // Look at the target.
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.netUpdate = true;
+
+                    int lightningOrb = Utilities.NewProjectileBetter(npc.Top, Vector2.Zero, ModContent.ProjectileType<EidolistElectricOrb2>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(lightningOrb))
                     {
-                        npc.Center = target.Center + teleportAngularOffset.ToRotationVector2() * teleportOffsetRadius;
-                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                        npc.rotation = 0f;
+                        Main.projectile[lightningOrb].ai[0] = npc.whoAmI;
+                        Main.projectile[lightningOrb].ai[1] = 13f;
                     }
-                    
-                    teleportFadeInterpolant = doneCharging ? 1f : Utils.GetLerpValue(0f, fadeInTime, chargeTimer, true);
-
-                    // Go to the next attack state once the last eidolist has finished charging.
-                    if (groupIndex >= totalEidolists - 1f && doneCharging)
-                        AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
-                    return;
                 }
 
-                // Charge at the target.
-                if (chargeTimer == fadeInTime + 1f)
+                if (adjustedAttackTimer >= orbCastDelay + lightningShootTime)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = 0.15f }, npc.Center);
+                    teleportCounter++;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+
+                    if (teleportCounter >= teleportCount)
+                        AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
+                }
+            }
+
+            // Do teleport charge behaviors.
+            else
+            {
+                int teleportFadeTime = 10;
+                int chargeTime = 44;
+                int attackCycleTime = teleportFadeTime * 2 + chargeTime;
+                float chargeSpeed = 24.5f;
+                float wrappedAttackTimer = adjustedAttackTimer % attackCycleTime;
+                float teleportOffsetRadius = 450f;
+
+                // Fade in.
+                if (wrappedAttackTimer <= teleportFadeTime)
+                {
+                    if (wrappedAttackTimer == 1f)
+                    {
+                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(teleportOffsetRadius, teleportOffsetRadius);
+                        npc.velocity = Vector2.Zero;
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        npc.netUpdate = true;
+                    }
+                    npc.Opacity = Utils.GetLerpValue(0f, teleportFadeTime, wrappedAttackTimer, true);
+                }
+
+                // Charge.
+                if (wrappedAttackTimer == teleportFadeTime)
+                {
+                    SoundEngine.PlaySound(SoundID.Item105, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                     npc.netUpdate = true;
                 }
 
-                // Fade out when done charging.
-                if (chargeTimer == fadeInTime + chargeTime)
-                {
-                    teleportFadeInterpolant = Utils.GetLerpValue(fadeInTime + chargeTime, fadeInTime + chargeTime + chargeFadeOutTime, chargeTimer, true);
-                    npc.velocity *= 0.95f;
-                }
+                // Fade out.
+                if (wrappedAttackTimer >= teleportFadeTime + chargeTime)
+                    npc.Opacity = Utils.GetLerpValue(teleportFadeTime, 0f, wrappedAttackTimer - teleportFadeTime - chargeTime, true);
 
-                // Rotate.
+                // Decide rotation.
                 npc.rotation = npc.velocity.X * 0.02f;
-                return;
             }
-
-            attackTimer = 0f;
         }
-        
+        #endregion Lightning Orbs
+
         public static void SelectNextAttack(NPC npc)
         {
+            int totalEidolists = NPC.CountNPCS(npc.type);
             switch ((EidolistAttackType)npc.ai[0])
             {
                 case EidolistAttackType.TeleportDashes:
                     npc.ai[0] = (int)EidolistAttackType.LightningOrbs;
                     break;
                 case EidolistAttackType.LightningOrbs:
-                    npc.ai[0] = (int)EidolistAttackType.SpinLaser;
+                    npc.ai[0] = (int)(totalEidolists <= 3 ? EidolistAttackType.SpinLaser : EidolistAttackType.TeleportDashes);
                     break;
                 case EidolistAttackType.SpinLaser:
                     npc.ai[0] = (int)EidolistAttackType.TeleportDashes;

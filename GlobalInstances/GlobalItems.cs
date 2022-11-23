@@ -1,9 +1,7 @@
-using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
-using CalamityMod.Items.TreasureBags.MiscGrabBags;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Items.Weapons.Ranged;
@@ -13,7 +11,6 @@ using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.Items;
 using InfernumMode.Projectiles;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;

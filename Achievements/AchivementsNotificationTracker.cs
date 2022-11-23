@@ -2,11 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Achievements;
 using Terraria.GameInput;
 using Terraria.ID;
-using Terraria.Social;
-using Terraria.Social.Base;
 using Terraria.UI;
 namespace InfernumMode.Achievements
 {

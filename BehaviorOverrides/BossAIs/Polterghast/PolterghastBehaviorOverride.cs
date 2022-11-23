@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Items.Armor.OmegaBlue;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;

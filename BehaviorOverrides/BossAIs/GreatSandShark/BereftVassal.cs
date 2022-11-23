@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
-using CalamityMod.Sounds;
 using InfernumMode.Items;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;

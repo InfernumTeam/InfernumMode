@@ -1,4 +1,3 @@
-using CalamityMod.Items.SummonItems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

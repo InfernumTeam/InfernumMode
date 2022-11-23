@@ -1,7 +1,5 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.Events;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.World;
 using InfernumMode.Achievements;
@@ -16,7 +14,6 @@ using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

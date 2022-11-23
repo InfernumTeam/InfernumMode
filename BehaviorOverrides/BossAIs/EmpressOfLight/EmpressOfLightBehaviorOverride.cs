@@ -14,7 +14,6 @@ using CalamityMod.Events;
 using Terraria.Audio;
 using System.Linq;
 using System.Collections.Generic;
-using CalamityMod.Particles;
 using Terraria.GameContent.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight

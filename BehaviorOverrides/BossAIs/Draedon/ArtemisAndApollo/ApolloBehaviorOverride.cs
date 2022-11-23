@@ -26,8 +26,6 @@ using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using InfernumMode.Systems;
-using ReLogic.Content;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {

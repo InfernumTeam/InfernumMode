@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
+﻿using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Achievements.InfernumAchievements
 {

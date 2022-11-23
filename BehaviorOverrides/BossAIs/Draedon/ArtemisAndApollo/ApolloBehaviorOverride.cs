@@ -27,6 +27,7 @@ using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedo
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using InfernumMode.Systems;
+using ReLogic.Content;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -1614,30 +1615,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Artemis telegraphs which direction it will spin when performing the alone Ohio beam attack.
             if (apollo.ai[0] == (int)TwinsAttackType.ArtemisLaserRay && isArtemis && npc.Infernum().ExtraAI[0] == 1f)
             {
-                // Initialize the telegraph drawer.
-                npc.Infernum().OptionalPrimitiveDrawer ??= new(TelegraphWidthFunction, c => TelegraphColorFunction(npc, c), null, false, GameShaders.Misc["Infernum:SideStreak"]);
-
-                float telegraphDirection = npc.Infernum().ExtraAI[1];
-                if (telegraphDirection == 0f)
-                    telegraphDirection = 1f;
-
-                Vector2 telegraphOffset = (npc.rotation + telegraphDirection * MathHelper.PiOver2 - MathHelper.PiOver2).ToRotationVector2() * 900f;
-                Vector2 telegraphStart = npc.Center + telegraphOffset;
-                Vector2 telegraphEnd = npc.Center;
-                Vector2[] telegraphPoints = new Vector2[]
+                // If the substate is the telegraph.
+                if (npc.Infernum().ExtraAI[0] == 1)
                 {
-                    telegraphEnd,
-                    (telegraphStart + telegraphEnd) * 0.5f,
-                    telegraphStart
-                };
-                npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 50);
-                telegraphPoints = new Vector2[]
-                {
-                    telegraphStart - telegraphOffset * 0.5f,
-                    (telegraphStart + telegraphEnd) * 0.5f - telegraphOffset * 0.5f,
-                    telegraphEnd - telegraphOffset * 0.5f
-                };
-                npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 50);
+                    Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/TrientCircularSmear", (AssetRequestMode)2).Value;
+
+                    float spinningPointX = npc.Infernum().ExtraAI[2];
+                    float spinningPointY = npc.Infernum().ExtraAI[3];
+                    Vector2 offset = npc.Center - new Vector2(spinningPointX, spinningPointY);
+                    float telegraphDirection = npc.Infernum().ExtraAI[1];
+                    if (telegraphDirection == 0)
+                        telegraphDirection = 1;
+
+                    // Get the correct opacity and rotation.
+                    float attackTimer = npc.ai[1];
+                    float telegraphOpacity = Utils.GetLerpValue(0f, 16f, attackTimer, true) * Utils.GetLerpValue(ArtemisLaserbeamTelegraph.TrueLifetime, ArtemisLaserbeamTelegraph.TrueLifetime - 8f, attackTimer, true);
+                    Color smearColor = Color.Lerp(Color.Gold, Color.Orange, 0.75f);
+                    smearColor *= telegraphOpacity;
+                    float rotationAmount = npc.rotation + (telegraphDirection == 1 ? MathHelper.Pi : 0);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+                    Main.EntitySpriteDraw(smear, npc.Center - (offset * 0.32f) - Main.screenPosition, null, smearColor, rotationAmount, smear.Size() / 2f, npc.scale * 3, (SpriteEffects)0, 0);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+                }              
             }
 
             // Draws a single instance of a regular, non-glowmask based Apollo.

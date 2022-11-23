@@ -66,10 +66,6 @@ namespace InfernumMode.Achievements
 
         #endregion
 
-        #region Constants
-        private const int AnimationLength = 240;
-        #endregion
-
         #region Methods
         public AchivementCompletionPopup(Achievement achievement)
         {

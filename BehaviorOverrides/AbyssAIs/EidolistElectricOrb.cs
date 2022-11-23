@@ -9,17 +9,17 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 {
     public class EidolistElectricOrb : ModProjectile
     {
-        public NPC EidolistOwner => Main.npc[(int)Projectile.ai[0]];
+        public NPC EidolistOwner => Projectile.ai[0] >= 0f ? Main.npc[(int)Projectile.ai[0]] : null;
 
-        public Player Target => Main.player[EidolistOwner.target];
+        public Player Target => Main.player[EidolistOwner?.target ?? Player.FindClosest(Projectile.Center, 1, 1)];
+
+        public int LightningCount => EidolistOwner is null ? 7 : 11;
 
         public ref float TelegraphDirection => ref Projectile.ai[1];
 
         public ref float Time => ref Projectile.localAI[0];
 
         public const int Lifetime = 75;
-
-        public const int LightningCount = 15;
 
         public const float LightningSpread = 0.98f; 
 
@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.067f, 0f, 1f);
 
             // Disappear if there is no eidolist.
-            if (!EidolistOwner.active)
+            if (EidolistOwner is not null && !EidolistOwner.active)
             {
                 Projectile.Kill();
                 return;
@@ -66,7 +66,8 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
 
             // Hover above the Eidolist.
-            Projectile.Center = EidolistOwner.Top - Vector2.UnitY * 75f;
+            if (EidolistOwner is not null)
+                Projectile.Center = EidolistOwner.Top - Vector2.UnitY * 75f;
 
             Time++;
         }
@@ -84,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 for (int i = 0; i < LightningCount; i++)
                 {
                     Vector2 lightningVelocity = (MathHelper.Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2() * 13f;
-                    int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 275, 0f);
+                    int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 175, 0f);
                     if (Main.projectile.IndexInRange(lightning))
                     {
                         Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();

@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 for (int i = 0; i < LightningCount; i++)
                 {
                     Vector2 lightningVelocity = (MathHelper.TwoPi * i / LightningCount).ToRotationVector2() * 13f;
-                    int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 275, 0f);
+                    int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 175, 0f);
                     if (Main.projectile.IndexInRange(lightning))
                     {
                         Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();

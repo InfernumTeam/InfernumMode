@@ -44,7 +44,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Reset things.
             npc.dontTakeDamage = false;
             npc.chaseable = isHostile == 1f;
-            npc.damage = npc.defDamage;
 
             // Don't naturally despawn if in silent worship.
             if (isHostile != 1f)
@@ -78,7 +77,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(choirSlotID), out ActiveSound result) && result.Sound.Volume > 0f)
                 {
                     result.Sound.SetLowPassFilter(0.9f);
-                    result.Sound.Pitch = -0.15f;
                     result.Position = npc.Center;
                     if (volume > 0f)
                         result.Volume = volume;
@@ -118,15 +116,20 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             npc.noTileCollide = true;
             npc.noGravity = true;
 
+            // Do contact damage.
+            npc.damage = npc.defDamage = 150;
+
             switch ((EidolistAttackType)attackType)
             {
                 case EidolistAttackType.TeleportDashes:
                     DoBehavior_TeleportDashes(npc, target, groupIndex, totalEidolists, ref attackTimer, ref teleportFadeInterpolant);
                     break;
                 case EidolistAttackType.LightningOrbs:
+                    npc.damage = 0;
                     DoBehavior_LightningOrbs(npc, target, groupIndex, totalEidolists, ref attackTimer, ref teleportFadeInterpolant);
                     break;
                 case EidolistAttackType.SpinLaser:
+                    npc.damage = 0;
                     SelectNextAttack(npc);
                     break;
             }
@@ -141,11 +144,11 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         public static void DoBehavior_TeleportDashes(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
             int initalFadeOutTime = 30;
-            int fadeInTime = 16;
+            int fadeInTime = 25;
             int chargeTime = 45;
             int chargeFadeOutTime = 12;
             int chargeCount = 1;
-            float chargeSpeed = 29.75f;
+            float chargeSpeed = 26f;
             float teleportOffsetRadius = 400f;
             ref float teleportAngularOffset = ref npc.Infernum().ExtraAI[0];
 
@@ -157,10 +160,13 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
             if (totalEidolists <= 2)
                 chargeCount++;
+            if (totalEidolists == 1)
+                fadeInTime += 30;
 
             // Do a teleport fadeout.
             if (attackTimer <= initalFadeOutTime)
             {
+                npc.damage = 0;
                 npc.dontTakeDamage = true;
                 teleportFadeInterpolant = Utils.GetLerpValue(initalFadeOutTime, 0f, attackTimer, true);
                 return;
@@ -183,11 +189,14 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             }
 
             int attackCycleTime = fadeInTime + chargeTime + chargeFadeOutTime;
-            float chargeTimer = adjustedAttackTimer - attackCycleTime * groupIndex;
+            float chargeTimer = adjustedAttackTimer;
+            if (totalEidolists >= 2)
+                chargeTimer -= attackCycleTime * groupIndex;
             if (totalEidolists == 3)
                 chargeTimer = adjustedAttackTimer - attackCycleTime * (int)(groupIndex * 0.5f);
 
             bool doneCharging = chargeTimer >= attackCycleTime;
+            bool currentlyCharging = chargeTimer >= fadeInTime && !doneCharging;
             if (chargeTimer <= fadeInTime || doneCharging)
             {
                 if (chargeTimer < 0f || doneCharging)
@@ -225,6 +234,10 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 npc.netUpdate = true;
             }
 
+            // Release icicle bombs when charging if this is the last eidolist.
+            if (Main.netMode != NetmodeID.MultiplayerClient && totalEidolists <= 1 && currentlyCharging && attackTimer % 9f == 8f && !npc.WithinRange(target.Center, 120f))
+                Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.1f, ModContent.ProjectileType<EidolistIceBomb>(), 0, 0f);
+
             // Fade out when done charging.
             if (chargeTimer == fadeInTime + chargeTime)
             {
@@ -254,6 +267,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 if (attackTimer == 1f)
                 {
                     Vector2 hoverOffset = new(Main.rand.NextFloatDirection() * 500f, -400f);
+                    if (totalEidolists <= 1)
+                        hoverOffset = -Vector2.UnitY * 500f;
+
                     if (totalEidolists is < 4 and >= 2)
                     {
                         int localIndex = eidolists.IndexOf(npc);
@@ -291,6 +307,13 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             if (totalEidolists == 2)
             {
                 DoBehavior_LightningOrbs2(npc, target, eidolists, adjustedAttackTimer, ref attackTimer);
+                return;
+            }
+
+            // When one eidolist is present, it casts directional orbs at all sides around the player.
+            if (totalEidolists == 1)
+            {
+                DoBehavior_LightningOrbs1(npc, target, adjustedAttackTimer, ref attackTimer, ref teleportCounter);
                 return;
             }
         }
@@ -406,12 +429,12 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Do teleport charge behaviors.
             else
             {
-                int teleportFadeTime = 10;
+                int teleportFadeTime = 23;
                 int chargeTime = 44;
                 int attackCycleTime = teleportFadeTime * 2 + chargeTime;
                 float chargeSpeed = 24.5f;
                 float wrappedAttackTimer = adjustedAttackTimer % attackCycleTime;
-                float teleportOffsetRadius = 450f;
+                float teleportOffsetRadius = 550f;
 
                 // Fade in.
                 if (wrappedAttackTimer <= teleportFadeTime)
@@ -441,6 +464,49 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
                 // Decide rotation.
                 npc.rotation = npc.velocity.X * 0.02f;
+            }
+        }
+
+        public static void DoBehavior_LightningOrbs1(NPC npc, Player target, float adjustedAttackTimer, ref float attackTimer, ref float teleportCounter)
+        {
+            int teleportCount = 2;
+            int orbCastDelay = 40;
+            int lightningShootTime = EidolistElectricOrb.Lifetime + 45;
+            float orbOffsetRadius = 1300f;
+
+            // Don't rotate.
+            npc.rotation = 0f;
+
+            // Create the lightning orbs.
+            if (Main.netMode != NetmodeID.MultiplayerClient && adjustedAttackTimer == orbCastDelay)
+            {
+                // Look at the target.
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.netUpdate = true;
+
+                int lightningOrb = Utilities.NewProjectileBetter(npc.Top, Vector2.Zero, ModContent.ProjectileType<EidolistElectricOrb>(), 0, 0f);
+                if (Main.projectile.IndexInRange(lightningOrb))
+                    Main.projectile[lightningOrb].ai[0] = npc.whoAmI;
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 orbOffset = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 3f) * orbOffsetRadius;
+                    if (orbOffset.AngleBetween(-Vector2.UnitY) < 0.01f)
+                        continue;
+
+                    lightningOrb = Utilities.NewProjectileBetter(target.Center + orbOffset, Vector2.Zero, ModContent.ProjectileType<EidolistElectricOrb>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(lightningOrb))
+                        Main.projectile[lightningOrb].ai[0] = -1f;
+                }
+            }
+
+            if (adjustedAttackTimer >= orbCastDelay + lightningShootTime)
+            {
+                teleportCounter++;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+
+                if (teleportCounter >= teleportCount)
+                    AffectAllEidolists((n, gIndex) => SelectNextAttack(n));
             }
         }
         #endregion Lightning Orbs

@@ -168,7 +168,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 destination = target.Center + Vector2.UnitX * 540f * xOffsetDirection;
 
                 float distanceFromDestination = npc.Distance(destination);
-                Vector2 linearVelocityToDestination = npc.SafeDirectionTo(destination) * MathHelper.Min(15f + target.velocity.Length() * 0.5f, distanceFromDestination);
+                Vector2 linearVelocityToDestination = npc.SafeDirectionTo(destination) * MathHelper.Min(11f + target.velocity.Length() * 0.4f, distanceFromDestination);
                 npc.velocity = Vector2.Lerp(linearVelocityToDestination, (destination - npc.Center) / 15f, Utils.GetLerpValue(180f, 420f, distanceFromDestination, true));
 
                 // Prepare to charge.

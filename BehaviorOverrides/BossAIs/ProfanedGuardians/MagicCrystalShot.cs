@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (Projectile.velocity.Length() < 43f)
                     Projectile.velocity *= 1.008f;
-                Projectile.velocity = Projectile.velocity.RotatedBy(offsetScale * MathHelper.TwoPi / 240f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(offsetScale * MathHelper.TwoPi / 360f);
             }
 
             if (Projectile.timeLeft > 30f)

@@ -34,8 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             // Accelerate.
-            if (Projectile.velocity.Length() < 42f)
-                Projectile.velocity *= 1.035f;
+            if (Projectile.velocity.Length() < 36f)
+                Projectile.velocity *= 1.028f;
 
             Lighting.AddLight(Projectile.Center, Vector3.One);
         }
@@ -44,8 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float alpha = 1 - (float)Projectile.alpha / 255;
+            float alpha = 1f - (float)Projectile.alpha / 255;
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
+            Projectile.DrawProjectileWithBackglow(Color.White with { A = 0 }, Color.White, 2f);
             return false;
         }
     }

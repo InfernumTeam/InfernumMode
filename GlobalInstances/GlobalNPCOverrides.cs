@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
@@ -186,7 +187,7 @@ namespace InfernumMode.GlobalInstances
                     npc.netOffset = Vector2.Zero;
 
                     bool result = OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
-                    if (ShouldUseSaturationBlur)
+                    if (ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
 
                     return result;

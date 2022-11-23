@@ -212,10 +212,7 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => ExoMechManagement.TotalMechs <= 1 && InfernumMode.CanUseCustomAIs, ModContent.ItemType<DraedonRelic>());
 
             if (npc.type == ModContent.NPCType<SupremeCalamitas>())
-            {
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DemonicChaliceOfInfernum>());
-            }
         }
     }
 }

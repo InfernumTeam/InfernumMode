@@ -304,10 +304,6 @@ namespace InfernumMode.BossRush
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierTwoEndText", XerocTextColor);
                     CreateTierAnimation(3);
                 },
-                [NPCID.SkeletronHead] = npc =>
-                {
-                    BringPlayersBackToSpawn();
-                },
                 [NPCID.Golem] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText", XerocTextColor);
@@ -369,7 +365,7 @@ namespace InfernumMode.BossRush
             Vector2? teleportPosition = null;
 
             // Teleport the player to the garden for the guardians fight in boss rush.
-            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !Main.LocalPlayer.ZoneUnderworldHeight)
+            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !player.ZoneUnderworldHeight)
             {
                 if (CurrentlyFoughtBoss == NPCID.WallofFlesh)
                     teleportPosition = CalamityPlayer.GetUnderworldPosition(player);   
@@ -379,10 +375,13 @@ namespace InfernumMode.BossRush
                     teleportPosition = WorldSaveSystem.ProvidenceArena.TopRight() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * -3.2f - 16f, 800f);
             }
 
+            if (BossRushStage < Bosses.Count && CurrentlyFoughtBoss == NPCID.SkeletronHead && player.ZoneUnderworldHeight)
+                player.Spawn(PlayerSpawnContext.RecallFromItem);
+
             // Teleport the player.
             if (teleportPosition.HasValue)
             {
-                if (WorldUtils.Find(teleportPosition.Value.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
+                if (CurrentlyFoughtBoss != NPCID.SkeletronHead && WorldUtils.Find(teleportPosition.Value.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
                     teleportPosition = p.ToWorldCoordinates(8f, -32f);
 
                 CalamityPlayer.ModTeleport(player, teleportPosition.Value, playSound: false, 7);

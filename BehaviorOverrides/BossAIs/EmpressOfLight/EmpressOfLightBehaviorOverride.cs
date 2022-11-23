@@ -175,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Use the bloom shader at night.
-            if (!Main.dayTime)
+            if (!Main.dayTime && currentPhase >= 1f)
                 npc.Infernum().ShouldUseSaturationBlur = true;
 
             // Enter new phases.

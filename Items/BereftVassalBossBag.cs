@@ -1,11 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
-using InfernumMode.Items.Relics;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
-using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

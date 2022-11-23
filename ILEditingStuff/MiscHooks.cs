@@ -14,7 +14,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.GameInput;
 using InfernumMode.Systems;
-using Terraria.GameContent;
 
 namespace InfernumMode.ILEditingStuff
 {

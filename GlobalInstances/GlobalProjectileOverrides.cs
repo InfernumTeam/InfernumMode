@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
+using CalamityMod.Projectiles.Typeless;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Systems;
@@ -208,6 +209,24 @@ namespace InfernumMode.GlobalInstances
                 }
                 return false;
             }
+
+            // Make the boss rush end thing create an infernal chalice as well as the rock.
+            if (projectile.type == ModContent.ProjectileType<BossRushEndEffectThing>())
+            {
+                for (int i = Main.maxPlayers - 1; i >= 0; i--)
+                {
+                    Player p = Main.player[i];
+                    if (p is null || !p.active)
+                        continue;
+                    int rock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        Main.timeItemSlotCannotBeReusedFor[rock] = 54000;
+                        NetMessage.SendData(MessageID.InstancedItem, i, -1, null, rock);
+                    }
+                }
+            }
+
             return base.PreKill(projectile, timeLeft);
         }
 

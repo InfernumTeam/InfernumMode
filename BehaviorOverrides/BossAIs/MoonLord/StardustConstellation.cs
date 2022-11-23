@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 break;
             }
 
-            float fadeToOrange = Utils.GetLerpValue(50f, 0f, Projectile.timeLeft, true);
+            float fadeToOrange = Utils.GetLerpValue(50f, 0f, Projectile.timeLeft, true) * 0.4f;
             Color stardustColor = new(0, 213, 255);
             Color solarColor = new(255, 140, 0);
             Color starColor = Color.Lerp(stardustColor, solarColor, fadeToOrange);

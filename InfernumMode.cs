@@ -1,5 +1,4 @@
 using CalamityMod.Events;
-using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;

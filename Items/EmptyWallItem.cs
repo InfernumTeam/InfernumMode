@@ -1,6 +1,5 @@
 ﻿using Terraria.ModLoader;
 using Terraria.ID;
-using InfernumMode.Tiles;
 using InfernumMode.Walls;
 
 namespace InfernumMode.Items

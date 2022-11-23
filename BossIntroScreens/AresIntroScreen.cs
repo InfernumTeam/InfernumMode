@@ -38,7 +38,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AresBody>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Sounds/Custom/ThanatosTransition");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Sounds/Custom/ExoMechs/ThanatosTransition");
 
         public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 

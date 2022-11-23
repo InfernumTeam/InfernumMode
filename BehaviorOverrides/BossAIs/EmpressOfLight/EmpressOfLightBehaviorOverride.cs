@@ -14,7 +14,6 @@ using CalamityMod.Events;
 using Terraria.Audio;
 using System.Linq;
 using System.Collections.Generic;
-using CalamityMod.Particles;
 using Terraria.GameContent.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
@@ -175,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Use the bloom shader at night.
-            if (!Main.dayTime)
+            if (!Main.dayTime && currentPhase >= 1f)
                 npc.Infernum().ShouldUseSaturationBlur = true;
 
             // Enter new phases.

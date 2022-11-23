@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -64,10 +62,6 @@ namespace InfernumMode.Achievements
 
         private Asset<Texture2D> AchievementBorderTexture;
 
-        #endregion
-
-        #region Constants
-        private const int AnimationLength = 240;
         #endregion
 
         #region Methods

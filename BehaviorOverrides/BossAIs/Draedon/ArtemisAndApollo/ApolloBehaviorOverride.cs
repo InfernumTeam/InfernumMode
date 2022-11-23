@@ -1615,32 +1615,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Artemis telegraphs which direction it will spin when performing the alone Ohio beam attack.
             if (apollo.ai[0] == (int)TwinsAttackType.ArtemisLaserRay && isArtemis && npc.Infernum().ExtraAI[0] == 1f)
             {
-                // If the substate is the telegraph.
-                if (npc.Infernum().ExtraAI[0] == 1)
-                {
-                    Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/TrientCircularSmear", (AssetRequestMode)2).Value;
+                Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/TrientCircularSmear").Value;
 
-                    float spinningPointX = npc.Infernum().ExtraAI[2];
-                    float spinningPointY = npc.Infernum().ExtraAI[3];
-                    Vector2 offset = npc.Center - new Vector2(spinningPointX, spinningPointY);
-                    float telegraphDirection = npc.Infernum().ExtraAI[1];
-                    if (telegraphDirection == 0)
-                        telegraphDirection = 1;
+                float spinningPointX = npc.Infernum().ExtraAI[2];
+                float spinningPointY = npc.Infernum().ExtraAI[3];
+                Vector2 offset = npc.Center - new Vector2(spinningPointX, spinningPointY);
+                float telegraphDirection = npc.Infernum().ExtraAI[1];
+                if (telegraphDirection == 0)
+                    telegraphDirection = 1;
 
-                    // Get the correct opacity and rotation.
-                    float attackTimer = npc.ai[1];
-                    float telegraphOpacity = Utils.GetLerpValue(0f, 16f, attackTimer, true) * Utils.GetLerpValue(ArtemisLaserbeamTelegraph.TrueLifetime, ArtemisLaserbeamTelegraph.TrueLifetime - 8f, attackTimer, true);
-                    Color smearColor = Color.Lerp(Color.Gold, Color.Orange, 0.75f);
-                    smearColor *= telegraphOpacity;
-                    float rotationAmount = npc.rotation + (telegraphDirection == 1 ? MathHelper.Pi : 0);
+                // Get the correct opacity and rotation.
+                float attackTimer = npc.ai[1];
+                float telegraphOpacity = Utils.GetLerpValue(0f, 16f, attackTimer, true) * Utils.GetLerpValue(ArtemisLaserbeamTelegraph.TrueLifetime, ArtemisLaserbeamTelegraph.TrueLifetime - 8f, attackTimer, true);
+                Color smearColor = Color.Lerp(Color.Gold, Color.Orange, 0.75f);
+                smearColor *= telegraphOpacity;
+                float smearRotation = npc.rotation + (telegraphDirection == 1 ? MathHelper.Pi : 0);
 
-                    Main.spriteBatch.End();
-                    Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-                    Main.EntitySpriteDraw(smear, npc.Center - (offset * 0.32f) - Main.screenPosition, null, smearColor, rotationAmount, smear.Size() / 2f, npc.scale * 3, (SpriteEffects)0, 0);
-
-                    Main.spriteBatch.End();
-                    Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-                }              
+                Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
+                Main.EntitySpriteDraw(smear, npc.Center - (offset * 0.32f) - Main.screenPosition, null, smearColor, smearRotation, smear.Size() * 0.5f, npc.scale * 3f, 0, 0);
+                Main.spriteBatch.ExitShaderRegion();
             }
 
             // Draws a single instance of a regular, non-glowmask based Apollo.

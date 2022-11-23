@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < spearBurstCount; i++)
                         {
                             float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)spearBurstCount);
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 15f)).RotatedBy(offsetAngle) * 9f;
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
                         }
 
@@ -378,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             int spearBurstShootRate = 22;
             int totalCharges = 4;
             float spearBurstSpread = MathHelper.ToRadians(25f);
-            float spearBurstSpeed = 14f;
+            float spearBurstSpeed = 5f;
             float chargeSpeed = MathHelper.Lerp(19f, 23f, Utils.GetLerpValue(ImmortalUntilPhase2LifeRatio, 0f, lifeRatio, true));
             float chargeAcceleration = 1.018f;
 
@@ -544,7 +544,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 9f;
+                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 6f;
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
                 }
             }

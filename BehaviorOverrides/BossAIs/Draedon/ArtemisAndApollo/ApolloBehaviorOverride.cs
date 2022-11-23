@@ -997,7 +997,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float spinningPointY = ref npc.Infernum().ExtraAI[3];
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[4];
 
-            Vector2 hoverDestination = target.Center + hoverOffsetDirection.ToRotationVector2() * spinRadius;
+            Vector2 hoverDestination = target.Center + hoverOffsetDirection.ToRotationVector2() * new Vector2(1f, 0.65f) * spinRadius;
 
             switch ((int)attackSubstate)
             {
@@ -1056,12 +1056,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         }
                     }
 
+                    if (spinDirection == 0f)
+                    {
+                        float angularOffset = MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2);
+
+                        if (Math.Abs(angularOffset) > 0.01f)
+                            spinDirection = Math.Sign(angularOffset);
+                    }
+
                     // Fire the laser.
                     if (attackTimer >= shootDelay)
                     {
                         attackTimer = 0f;
                         attackSubstate = 2f;
-                        spinDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2) > 0f).ToDirectionInt();
+                        if (spinDirection == 0f)
+                            spinDirection = 1f;
+
                         npc.netUpdate = true;
 
                         SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
@@ -1572,12 +1582,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             return false;
         }
 
+        public static float TelegraphWidthFunction(float _) => 96f;
+
+        public static Color TelegraphColorFunction(NPC npc, float completionRatio)
+        {
+            float attackTimer = npc.ai[1];
+            float telegraphOpacity = Utils.GetLerpValue(0f, 16f, attackTimer, true) * Utils.GetLerpValue(ArtemisLaserbeamTelegraph.TrueLifetime, ArtemisLaserbeamTelegraph.TrueLifetime - 8f, attackTimer, true);
+            float endFadeOpacity = Utils.GetLerpValue(0f, 0.15f, completionRatio, true) * Utils.GetLerpValue(1f, 0.8f, completionRatio, true);
+            return Color.Orange * endFadeOpacity * telegraphOpacity * 0.2f;
+        }
+
         public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveTrail ribbonTrail, PrimitiveTrail chargeFlameTrail, PrimitiveTrail chargeFlameTrailBig)
         {
             int numAfterimages = flashInterpolant > 0f ? 0 : 5;
+            bool isArtemis = npc.type == ModContent.NPCType<Artemis>();
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
-            if (npc.type == ModContent.NPCType<Artemis>())
+            if (isArtemis)
                 glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Artemis/ArtemisGlow").Value;
 
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechTwinGreen) || !Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen].active)
@@ -1589,6 +1610,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
             Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f || apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f ? Color.Red : Color.White;
+
+            // Artemis telegraphs which direction it will spin when performing the alone Ohio beam attack.
+            if (apollo.ai[0] == (int)TwinsAttackType.ArtemisLaserRay && isArtemis && npc.Infernum().ExtraAI[0] == 1f)
+            {
+                // Initialize the telegraph drawer.
+                npc.Infernum().OptionalPrimitiveDrawer ??= new(TelegraphWidthFunction, c => TelegraphColorFunction(npc, c), null, false, GameShaders.Misc["Infernum:SideStreak"]);
+
+                float telegraphDirection = npc.Infernum().ExtraAI[1];
+                if (telegraphDirection == 0f)
+                    telegraphDirection = 1f;
+
+                Vector2 telegraphOffset = (npc.rotation + telegraphDirection * MathHelper.PiOver2 - MathHelper.PiOver2).ToRotationVector2() * 900f;
+                Vector2 telegraphStart = npc.Center + telegraphOffset;
+                Vector2 telegraphEnd = npc.Center;
+                Vector2[] telegraphPoints = new Vector2[]
+                {
+                    telegraphEnd,
+                    (telegraphStart + telegraphEnd) * 0.5f,
+                    telegraphStart
+                };
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 50);
+                telegraphPoints = new Vector2[]
+                {
+                    telegraphStart - telegraphOffset * 0.5f,
+                    (telegraphStart + telegraphEnd) * 0.5f - telegraphOffset * 0.5f,
+                    telegraphEnd - telegraphOffset * 0.5f
+                };
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 50);
+            }
 
             // Draws a single instance of a regular, non-glowmask based Apollo.
             // This is created to allow easy duplication of them when drawing the charge.

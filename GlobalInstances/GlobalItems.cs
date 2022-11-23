@@ -10,6 +10,7 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
+using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Items;
@@ -23,9 +24,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode
+namespace InfernumMode.GlobalInstances
 {
-    public class PoDItems : GlobalItem
+    public partial class GlobalItems : GlobalItem
     {
         public static Dictionary<int, string> EnrageTooltipReplacements => new()
         {
@@ -150,9 +151,9 @@ namespace InfernumMode
 
                 string[] possibleEdgyShitToSay = new string[]
                 {
-                        "YOU CANNOT EVADE ME SO EASILY!",
-                        "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
-                        "NOT SO FAST!"
+                    "YOU CANNOT EVADE ME SO EASILY!",
+                    "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
+                    "NOT SO FAST!"
                 };
                 Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
                 HatGirl.SayThingWhileOwnerIsAlive(player, "It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!");
@@ -186,32 +187,11 @@ namespace InfernumMode
             return base.UseItem(item, player);
         }
 
-        public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
+        public override bool OnPickup(Item item, Player player)
         {
-            if (item.type == ModContent.ItemType<StarterBag>())
-                itemLoot.Add(ModContent.ItemType<BlastedTophat>());
-        }
-
-        public override void OpenVanillaBag(string context, Player player, int arg)
-        {
-            // Only apply bag drop contents in Infernum Mode and on boss bags.
-            if (context != "bossBag" || !InfernumMode.CanUseCustomAIs)
-                return;
-
-            if (arg == ItemID.EaterOfWorldsBossBag)
-            {
-                int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.EaterOfWorldsBossBag), ItemID.DemoniteOre, itemCount);
-                itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.EaterOfWorldsBossBag), ItemID.ShadowScale, itemCount);
-            }
-            if (arg == ItemID.BrainOfCthulhuBossBag)
-            {
-                int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.BrainOfCthulhuBossBag), ItemID.CrimtaneOre, itemCount);
-                itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(player.GetSource_OpenItem(ItemID.BrainOfCthulhuBossBag), ItemID.TissueSample, itemCount);
-            }
+            if (item.type == ModContent.ItemType<DemonicChaliceOfInfernum>())
+                AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(-1, item.type));
+            return true;
         }
     }
 }

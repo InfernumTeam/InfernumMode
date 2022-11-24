@@ -107,7 +107,7 @@ namespace InfernumMode.GlobalInstances
                 provInfLCR.Add(ModContent.ItemType<DivineGeode>(), 1, 30, 31);
             }
 
-            // Sentinels drops 8 extra of thier respective drop material.
+            // Sentinels drops 8 extra of their respective drop material.
             if (item.type == ModContent.ItemType<StormWeaverBag>())
             {
                 var swInfLCR = loot.DefineConditionalDropSet(DropHelper.If(() => InfernumMode.CanUseCustomAIs));

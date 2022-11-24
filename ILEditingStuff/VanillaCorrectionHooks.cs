@@ -144,30 +144,30 @@ namespace InfernumMode.ILEditingStuff
             Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGObjects").Value;
 
             // I don't know.
+            // I'm sorry.
             Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
-            Vector2 vector = new Vector2(gradient.Width, gradient.Height) * 0.5f;
-            float num2 = 1.08f;
-            Vector2 vector2 = new(1f / num2);
-            Rectangle rectangle = new(0, 0, gradient.Width, gradient.Height);
+            Vector2 center = new Vector2(gradient.Width, gradient.Height) * 0.5f;
+            Vector2 whyRedigit = new(0.92592f);
             float scale = 1.2f;
-            float scaledWidth = scale * (float)rectangle.Width;
-            int num11 = (int)((float)((int)(screenOffset.X * vector2.X - vector.X - (float)(Main.screenWidth >> 1))) / scaledWidth);
-            vector = vector.Floor();
-            int num12 = (int)Math.Ceiling((double)((float)Main.screenWidth / scaledWidth));
-            int num13 = (int)(scale * ((float)(rectangle.Width - 1) / vector2.X));
-            Vector2 vector3 = (new Vector2((float)((num11 - 2) * num13), (float)Main.maxTilesY * 4f) + vector - screenOffset) * vector2 + screenOffset - Main.screenPosition - vector;
-            vector3 = vector3.Floor();
-            while (vector3.X + scaledWidth < 0f)
+            float scaledWidth = scale * gradient.Width;
+            int range = (int)(screenOffset.X * whyRedigit.X - center.X - (Main.screenWidth >> 1) / scaledWidth);
+            center = center.Floor();
+            int aspectRatio = (int)Math.Ceiling(Main.screenWidth / scaledWidth);
+            int whyRedigit2 = (int)(scale * (gradient.Width - 1) / whyRedigit.X);
+            Vector2 drawPosition = (new Vector2((range - 2) * whyRedigit2, Main.maxTilesY * 4f) + center - screenOffset) * whyRedigit + screenOffset - Main.screenPosition - center;
+            drawPosition = drawPosition.Floor();
+
+            while (drawPosition.X + scaledWidth < 0f)
             {
-                num11++;
-                vector3.X += scaledWidth;
+                range++;
+                drawPosition.X += scaledWidth;
             }
-            vector3.Y += 250f;
-            for (int i = num11 - 2; i <= num11 + num12 + 2; i++)
+            drawPosition.Y += 250f;
+            for (int i = range - 2; i <= range + aspectRatio + 2; i++)
             {
-                Main.spriteBatch.Draw(gradient, vector3 - Vector2.UnitY * 400f, rectangle, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(bgObjects, vector3, rectangle, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                vector3.X += scaledWidth;
+                Main.spriteBatch.Draw(gradient, drawPosition - Vector2.UnitY * 400f, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bgObjects, drawPosition, gradient.Frame(), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                drawPosition.X += scaledWidth;
             }
         }
 

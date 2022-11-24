@@ -866,7 +866,7 @@ namespace InfernumMode.WorldGeneration
                 for (int y = top - yOffset; y < bottom - WallThickness + yOffset / 3; y++)
                 {
                     // Decide whether to cut off due to a Y point being far enough.
-                    int xOffset = (int)Math.Abs(FractalBrownianMotion(1.34f, y / 209f, offsetSeed, 5) * 15f);
+                    int xOffset = (int)Math.Abs(FractalBrownianMotion(1.34f, y / 209f, offsetSeed, 5) * 20f);
                     float yCompletion = Utils.GetLerpValue(entireAbyssTop, bottom - 1f, y, true);
                     if (i >= GetWidth(yCompletion, minWidth, maxWidth) - WallThickness + xOffset)
                         continue;

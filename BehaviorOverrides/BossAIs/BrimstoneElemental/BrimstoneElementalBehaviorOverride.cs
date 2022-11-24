@@ -129,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     DoBehavior_FlameChargeSkullBlasts(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.GrimmBulletHellCopyLmao:
-                    npc.damage = npc.defDamage;
+                    npc.damage = 0;
                     DoBehavior_CocoonBulletHell(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.EyeLaserbeams:

@@ -1,5 +1,4 @@
 using InfernumMode.OverridingSystem;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;

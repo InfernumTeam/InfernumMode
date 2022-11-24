@@ -20,7 +20,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
-using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.OverridingSystem;

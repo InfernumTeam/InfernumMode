@@ -48,8 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
-        public SlotId ThanatosRaySlot;
-        
         public const int SegmentCount = 100;
 
         public const int TransitionSoundDelay = 80;
@@ -715,7 +713,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
-        public void DoBehavior_ExoLightBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_ExoLightBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
@@ -731,7 +729,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             float pointAtTargetSpeed = 2f;
             float lightRaySpreadDegrees = 125f;
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[0];
-            ref float redirectCounter = ref npc.Infernum().ExtraAI[3];
+            ref float rayTelegraphSoundSlot = ref npc.Infernum().ExtraAI[1];
+            ref float redirectCounter = ref npc.Infernum().ExtraAI[2];
 
             // Initialize a hover offset direction.
             if (hoverOffsetDirection == 0f)
@@ -751,11 +750,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.position.Y = 600f;
 
             // Update the sound telegraph's position to account for Thanatos drifting.
-            if (SoundEngine.TryGetActiveSound(ThanatosRaySlot, out var t) && t.IsPlaying)
-            {
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(rayTelegraphSoundSlot), out var t) && t.IsPlaying)
                 t.Position = npc.Center;
-            }
-                // Attempt to get into position for the light attack.
+            
+            // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
             {
                 float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
@@ -781,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Create light telegraphs.
                 if (attackTimer == initialRedirectTime + 1f)
                 {
-                    ThanatosRaySlot = SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosLightRay with { Volume = 3f }, npc.Center);
+                    rayTelegraphSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosLightRay with { Volume = 3f }, npc.Center).ToFloat();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < totalLightRays; i++)

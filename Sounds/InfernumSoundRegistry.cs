@@ -11,6 +11,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresPulseCannonCharge");
 
+        public static readonly SoundStyle ArtemisSpinLaserbeamSound = new("InfernumMode/Sounds/Custom/ExoMechs/ArtemisSpinLaserbeam");
+
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Sounds/Custom/BrimstoneElementalShellGroundHit");
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
@@ -56,8 +58,6 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelSpin") with { Volume = 1.7f };
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelThrow") with { Volume = 1.8f };
-
-        public static readonly SoundStyle OhioBeam = new("InfernumMode/Sounds/Custom/ExoMechs/Ohio");
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 

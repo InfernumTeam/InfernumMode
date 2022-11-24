@@ -1039,7 +1039,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
 
                     if (attackTimer == 1f)
-                        SoundEngine.PlaySound(InfernumSoundRegistry.OhioBeam with { Volume = 1.4f }, new(spinningPointX, spinningPointY));
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ArtemisSpinLaserbeamSound with { Volume = 1.4f }, new(spinningPointX, spinningPointY));
 
                     // Create a beam telegraph.
                     if (attackTimer == 4f)
@@ -1467,18 +1467,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     do
                     {
                         npc.ai[0] = (int)TwinsAttackType.ArtemisLaserRay;
-                        //if (Main.rand.NextBool(3))
-                        //    npc.ai[0] = (int)TwinsAttackType.GatlingLaserAndPlasmaFlames;
-                        //if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-                        //    npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.ArtemisLaserRay : TwinsAttackType.ApolloPlasmaCharges);
-                        //if (ExoMechManagement.CurrentTwinsPhase >= 5 && Main.rand.NextBool())
-                        //    npc.ai[0] = (int)TwinsAttackType.SlowLaserRayAndPlasmaBlasts;
                         if (Main.rand.NextBool(3))
-                            npc.ai[0] = (int)TwinsAttackType.ArtemisLaserRay;
+                            npc.ai[0] = (int)TwinsAttackType.GatlingLaserAndPlasmaFlames;
                         if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-                            npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.ArtemisLaserRay : TwinsAttackType.ArtemisLaserRay);
+                            npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.ArtemisLaserRay : TwinsAttackType.ApolloPlasmaCharges);
                         if (ExoMechManagement.CurrentTwinsPhase >= 5 && Main.rand.NextBool())
-                            npc.ai[0] = (int)TwinsAttackType.ArtemisLaserRay;
+                            npc.ai[0] = (int)TwinsAttackType.SlowLaserRayAndPlasmaBlasts;
                         tries++;
 
                         if (tries >= 1000)

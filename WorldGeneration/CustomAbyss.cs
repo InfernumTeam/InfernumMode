@@ -24,9 +24,9 @@ namespace InfernumMode.WorldGeneration
         #region Fields and Properties
 
         // Loop variables that are accessed via getter methods should be stored externally in local variables for performance reasons.
-        public static int MinAbyssWidth => MaxAbyssWidth / 6;
+        public static int MinAbyssWidth => MaxAbyssWidth / 5;
 
-        public static int MaxAbyssWidth => BiomeWidth + 42;
+        public static int MaxAbyssWidth => BiomeWidth + 176;
 
         public static int AbyssTop => YStart + BlockDepth - 44;
 
@@ -34,7 +34,7 @@ namespace InfernumMode.WorldGeneration
 
         public static int Layer3Top => (int)(Main.rockLayer + Main.maxTilesY * 0.184f);
 
-        public static int Layer4Top => (int)(Main.rockLayer + Main.maxTilesY * 0.29f);
+        public static int Layer4Top => (int)(Main.rockLayer + Main.maxTilesY * 0.33f);
 
         public static ref int AbyssBottom => ref Abyss.AbyssChasmBottom;
 
@@ -42,9 +42,9 @@ namespace InfernumMode.WorldGeneration
         // This is used in the formula 'abs(noise(x, y)) < r' to determine whether the cave should remove tiles.
         public static readonly float[] Layer1SpaghettiCaveCarveOutThresholds = new float[]
         {
-            0.0382f,
-            0.0497f,
-            0.0509f
+            0.0396f,
+            0.0506f,
+            0.0521f
         };
 
         public const int Layer1SmallPlantCreationChance = 6;
@@ -325,7 +325,7 @@ namespace InfernumMode.WorldGeneration
                     Tile above = CalamityUtils.ParanoidTileRetrieval(x, y - 1);
 
                     // Randomly create kelp upward.
-                    if (WorldGen.SolidTile(t) && !above.HasTile && WorldGen.genRand.NextBool(Layer1KelpCreationChance))
+                    if (WorldGen.SolidTile(t) && !above.HasTile && WorldGen.genRand.NextBool(Layer1KelpCreationChance / (InsideOfLayer1Forest(new(x, y)) ? 4 : 1)))
                     {
                         int kelpHeight = WorldGen.genRand.Next(6, 12);
                         bool areaIsOccupied = false;
@@ -377,8 +377,8 @@ namespace InfernumMode.WorldGeneration
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
-                int trenchX = (int)MathHelper.Lerp(104f, maxWidth - 140f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
-                int trenchY = topOfLayer2 - WorldGen.genRand.Next(8);
+                int trenchX = (int)MathHelper.Lerp(104f, maxWidth * 0.7f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
+                int trenchY = topOfLayer2 - WorldGen.genRand.Next(25, 35);
                 trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
             }
 
@@ -548,7 +548,7 @@ namespace InfernumMode.WorldGeneration
 
                         // Bias noise away from 0, effectively making caves less likely to appear, based on how close it is to the edges and bottom.
                         float biasAwayFrom0Interpolant = Utils.GetLerpValue(width - 24f, width - 9f, i, true) * 0.4f;
-                        biasAwayFrom0Interpolant += Utils.GetLerpValue(Layer4Top - 16f, Layer4Top - 3f, y, true) * 0.4f;
+                        biasAwayFrom0Interpolant += Utils.GetLerpValue(Layer4Top - 24f, Layer4Top - 10f, y, true) * 0.4f;
 
                         // If the noise is less than 0, bias to -1, if it's greater than 0, bias away to 1.
                         // This is done instead of biasing to -1 or 1 without exception to ensure that in doing so the noise does not cross into the
@@ -856,19 +856,19 @@ namespace InfernumMode.WorldGeneration
             int entireAbyssTop = AbyssTop;
             int top = Layer4Top;
             int bottom = AbyssBottom;
-            float topOffsetPhaseShift = WorldGen.genRand.NextFloat(MathHelper.TwoPi);
+            int offsetSeed = WorldGen.genRand.Next();
             ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
 
             for (int i = 1; i < maxWidth; i++)
             {
                 int x = GetActualX(i);
-                float xCompletion = i / (float)maxWidth;
-                int yOffset = (int)(CalamityUtils.Convert01To010(xCompletion) * (float)Math.Sin(MathHelper.Pi * xCompletion + topOffsetPhaseShift * 6f) * 20f);
+                int yOffset = (int)Math.Abs(FractalBrownianMotion(x / 276f, 0.4f, offsetSeed, 5) * 40f);
                 for (int y = top - yOffset; y < bottom - WallThickness + yOffset / 3; y++)
                 {
                     // Decide whether to cut off due to a Y point being far enough.
+                    int xOffset = (int)Math.Abs(FractalBrownianMotion(1.34f, y / 209f, offsetSeed, 5) * 15f);
                     float yCompletion = Utils.GetLerpValue(entireAbyssTop, bottom - 1f, y, true);
-                    if (i >= GetWidth(yCompletion, minWidth, maxWidth) - WallThickness)
+                    if (i >= GetWidth(yCompletion, minWidth, maxWidth) - WallThickness + xOffset)
                         continue;
 
                     // Otherwise, clear out water.
@@ -1007,7 +1007,7 @@ namespace InfernumMode.WorldGeneration
             if (x >= Main.maxTilesX / 2)
                 x = Main.maxTilesX - x;
 
-            if (x >= BiomeWidth - WallThickness + 1)
+            if (x >= BiomeWidth - WallThickness + 20)
                 return false;
 
             if (p.Y < AbyssTop + 25 || p.Y >= Layer2Top - 5)
@@ -1023,7 +1023,7 @@ namespace InfernumMode.WorldGeneration
             if (x >= Main.maxTilesX / 2)
                 x = Main.maxTilesX - x;
 
-            if (x >= BiomeWidth - WallThickness + 1)
+            if (x >= MaxAbyssWidth - WallThickness + 20)
                 return false;
 
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
@@ -1031,7 +1031,7 @@ namespace InfernumMode.WorldGeneration
 
             // The squid den is always considered a part of the lumenyl zone.
             if (InsideOfLayer3SquidDen(p))
-                return true;
+                return false;
 
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 
@@ -1045,7 +1045,7 @@ namespace InfernumMode.WorldGeneration
             if (x >= Main.maxTilesX / 2)
                 x = Main.maxTilesX - x;
 
-            if (x >= BiomeWidth - WallThickness + 1)
+            if (x >= MaxAbyssWidth - WallThickness + 1)
                 return false;
 
             if (p.Y < Layer3Top + 1 || p.Y >= Layer4Top - 5)
@@ -1053,7 +1053,7 @@ namespace InfernumMode.WorldGeneration
 
             // The squid den is always considered a part of the lumenyl zone.
             if (InsideOfLayer3SquidDen(p))
-                return false;
+                return true;
 
             float verticalOffset = FractalBrownianMotion(p.X * Layer3CrystalCaveMagnificationFactor, p.Y * Layer3CrystalCaveMagnificationFactor, WorldSaveSystem.AbyssLayer3CavernSeed, 4) * 45f;
 

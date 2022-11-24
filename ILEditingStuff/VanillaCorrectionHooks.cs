@@ -720,4 +720,33 @@ namespace InfernumMode.ILEditingStuff
 
         public void Unload() => IL.Terraria.Main.DrawMap -= CreateMapGlitchEffect;
     }
+
+    public class PreventAbyssDungeonInteractionsHook : IHookEdit
+    {
+        internal static void FixAbyssDungeonInteractions(ILContext il)
+        {
+            // Prevent the Dungeon's halls from getting anywhere near the Abyss.
+            var cursor = new ILCursor(il);
+
+            // Forcefully clamp the X position of the new hall end.
+            // This prevents a hall, and as a result, the dungeon, from ever impeding on the Abyss/Sulph Sea.
+            for (int k = 0; k < 2; k++)
+            {
+                if (!cursor.TryGotoNext(MoveType.After, i => i.MatchStloc(6)))
+                    return;
+            }
+
+            cursor.Emit(OpCodes.Ldloc, 6);
+            cursor.EmitDelegate<Func<Vector2, Vector2>>(unclampedValue =>
+            {
+                unclampedValue.X = MathHelper.Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 25, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 25);
+                return unclampedValue;
+            });
+            cursor.Emit(OpCodes.Stloc, 6);
+        }
+
+        public void Load() => IL.Terraria.WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
+
+        public void Unload() => IL.Terraria.WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
+    }
 }

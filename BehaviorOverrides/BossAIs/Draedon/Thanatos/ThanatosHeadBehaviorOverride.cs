@@ -1,6 +1,4 @@
 using CalamityMod;
-using CalamityMod.Items.Tools;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -17,10 +15,7 @@ using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using ReLogic.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;

@@ -125,7 +125,10 @@ namespace InfernumMode.Achievements
             foreach (var achievement in AchievementInstances)
                 achievement.LoadProgress(tag);
         }
-
+        public override void Initialize()
+        {
+            InitializeIfNecessary();
+        }
         public override void OnEnterWorld(Player player)
         {
             AchivementsNotificationTracker.Clear();

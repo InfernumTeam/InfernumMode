@@ -1,6 +1,4 @@
 using CalamityMod;
-using CalamityMod.Items.Tools;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -17,6 +15,7 @@ using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -730,7 +729,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             float pointAtTargetSpeed = 2f;
             float lightRaySpreadDegrees = 125f;
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[0];
-            ref float redirectCounter = ref npc.Infernum().ExtraAI[3];
+            ref float rayTelegraphSoundSlot = ref npc.Infernum().ExtraAI[1];
+            ref float redirectCounter = ref npc.Infernum().ExtraAI[2];
 
             // Initialize a hover offset direction.
             if (hoverOffsetDirection == 0f)
@@ -749,6 +749,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (npc.position.Y < 600f)
                 npc.position.Y = 600f;
 
+            // Update the sound telegraph's position to account for Thanatos drifting.
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(rayTelegraphSoundSlot), out var t) && t.IsPlaying)
+                t.Position = npc.Center;
+            
             // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
             {
@@ -775,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Create light telegraphs.
                 if (attackTimer == initialRedirectTime + 1f)
                 {
-                    SoundEngine.PlaySound(CrystylCrusher.ChargeSound, npc.Center);
+                    rayTelegraphSoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosLightRay with { Volume = 3f }, npc.Center).ToFloat();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < totalLightRays; i++)
@@ -793,7 +797,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         }
                     }
                 }
-
                 // Approach the ideal position.
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.05f);
             }
@@ -801,8 +804,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Create a massive laser.
             if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserFireDelay)
             {
-                SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<OverloadBoom>(), 0, 0f);
@@ -822,10 +823,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Play a sound prior to switching attacks.
-            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f)
+            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f) // 
                 SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
-            if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
+            if(attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
             {
                 attackTimer = 0f;
                 hoverOffsetDirection += MathHelper.PiOver2;

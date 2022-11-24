@@ -979,7 +979,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 return;
             }
 
-            int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4;
+            int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4; // 40
             float spinRadius = 640f;
             float spinArc = MathHelper.Pi * 1.1f;
 
@@ -1005,6 +1005,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Determine which direction Artemis will spin in.
                     if (attackTimer == 1f)
                     {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, npc.Center);
                         hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
                         npc.netUpdate = true;
                     }
@@ -1036,6 +1037,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     // Calculate the charge flash.
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
+
+                    if (attackTimer == 1f)
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ArtemisSpinLaserbeamSound with { Volume = 1.4f }, new(spinningPointX, spinningPointY));
 
                     // Create a beam telegraph.
                     if (attackTimer == 4f)
@@ -1073,10 +1077,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
-
                         // Create an incredibly violent screen shake effect.
-                        Utilities.CreateShockwave(npc.Center, 4, 15, 192f);
+                        Utilities.CreateShockwave(npc.Center, 4, 15, 192f, false);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -1100,10 +1102,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.velocity = spinAngle.ToRotationVector2() * MathHelper.Pi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection * 1.8f;
                     npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
 
+                    for (int i = 0; i < 2; i++)
+                    {
+                        ElectricSpark electricSpark = new(npc.Center + Main.rand.NextVector2Circular(5, 5), npc.Center.DirectionTo(new Vector2(spinningPointX, spinningPointY)).RotatedByRandom(MathHelper.TwoPi) * 60 * Main.rand.NextFloat(0.9f, 1.1f), Color.Orange, Color.Gold, Main.rand.NextFloat(1.3f, 1.5f), 60);
+                        GeneralParticleHandler.SpawnParticle(electricSpark);
+                    }
+
                     // Calculate the charge flash.
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(ArtemisSpinLaser.LaserLifetime - 20f, ArtemisSpinLaser.LaserLifetime - 32f, attackTimer, true);
 
-                    if (attackTimer >= ArtemisSpinLaser.LaserLifetime - 16f)
+                    if (attackTimer >= ArtemisSpinLaser.LaserLifetime - 16f) // 56
                     {
                         foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<ArtemisSpinLaser>()))
                             laser.Kill();
@@ -1458,7 +1466,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     int tries = 0;
                     do
                     {
-                        npc.ai[0] = (int)TwinsAttackType.FireCharge;
+                        npc.ai[0] = (int)TwinsAttackType.ArtemisLaserRay;
                         if (Main.rand.NextBool(3))
                             npc.ai[0] = (int)TwinsAttackType.GatlingLaserAndPlasmaFlames;
                         if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())

@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.UI;
+
 namespace InfernumMode.Achievements
 {
     public class AchivementsNotificationTracker

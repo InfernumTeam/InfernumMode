@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -218,6 +219,10 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<SupremeCalamitas>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SupremeCalamitasRelic>());
+
+            // Make Eidolists always drop the tablet.
+            if (npc.type == ModContent.NPCType<Eidolist>())
+                npcLoot.Add(ModContent.ItemType<EidolonTablet>());
         }
 
         public override bool PreKill(NPC npc)

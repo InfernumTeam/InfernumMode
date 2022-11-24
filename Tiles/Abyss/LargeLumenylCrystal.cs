@@ -137,7 +137,7 @@ namespace InfernumMode.Tiles.Abyss
                             BranchGrowthWidthDecay = 0.6f,
                             MaxCutoffBranchesPerBranch = 2,
                             BaseDirection = offsetDirection + MathHelper.Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
-                            IcicleColor = Color.LightCyan * 0.6f
+                            IcicleColor = Color.LightCyan * 0.3f
                         };
                     }
                 }

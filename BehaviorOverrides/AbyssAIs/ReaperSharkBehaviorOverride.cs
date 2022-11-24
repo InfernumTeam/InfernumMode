@@ -202,6 +202,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = npc.velocity.ToRotation();
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             // Make the water darknesse recede away, so that the player can see the shark.
             AbyssWaterColorSystem.WaterBlacknessInterpolant = Utils.GetLerpValue(waterBlackFadeTime, 0f, attackTimer, true);
 

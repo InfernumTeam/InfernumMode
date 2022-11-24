@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -94,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             npc.boss = false;
             npc.Calamity().ShouldCloseHPBar = true;
             npc.Calamity().ProvidesProximityRage = isHostile == 1f;
-            if (volume > 0f && isHostile == 0f)
+            if (volume > 0f && isHostile == 0f && !AbyssMinibossSpawnSystem.MajorAbyssEnemyExists)
             {
                 npc.boss = true;
                 npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossMedium;

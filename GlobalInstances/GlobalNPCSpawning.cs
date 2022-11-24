@@ -38,12 +38,18 @@ namespace InfernumMode.GlobalInstances
             if (spawnInfo.Player.Calamity().ZoneAbyssLayer4)
                 pool = pool.Where(p => p.Key == ModContent.NPCType<BobbitWormHead>()).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            // Clear abyss miniboss spawns from the pool. They are always spawned manually, sincetraditional enemy spawns have a
-            // tendency to be limited to spawning on sold ground.
+            // Clear abyss miniboss spawns from the pool. They are always spawned manually, since traditional enemy spawns have a
+            // tendency to be limited to spawning on solid ground.
             pool.Remove(ModContent.NPCType<ColossalSquid>());
             pool.Remove(ModContent.NPCType<Eidolist>());
             pool.Remove(ModContent.NPCType<EidolonWyrmHead>());
             pool.Remove(ModContent.NPCType<ReaperShark>());
+
+            // Clear Devilfish from the pool, so that they can be moved to a different location.
+            pool.Remove(ModContent.NPCType<DevilFish>());
+            pool.Remove(ModContent.NPCType<DevilFishAlt>());
+            if (spawnInfo.Player.Infernum().InLayer3HadalZone && spawnInfo.Water)
+                pool[ModContent.NPCType<DevilFish>()] = 0.12f;
         }
     }
 }

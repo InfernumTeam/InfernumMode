@@ -45,6 +45,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Reset things.
             npc.dontTakeDamage = false;
             npc.chaseable = isHostile == 1f;
+            npc.noTileCollide = true;
             npc.damage = npc.defDamage;
 
             // Don't naturally despawn if sleeping.

@@ -68,6 +68,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         {
             NPC.noGravity = true;
             NPC.TargetClosest();
+            NPC.Infernum().IsAbyssPrey = true;
 
             // Choose a direction.
             NPC.spriteDirection = (NPC.velocity.X > 0f).ToDirectionInt();

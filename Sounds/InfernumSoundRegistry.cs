@@ -4,7 +4,7 @@ namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
-        #region Bosses
+        #region Bosses and Enemies
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresLaugh");
 
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresTeslaShot");
@@ -20,6 +20,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle DesertScourgeSandstormWindSound = new("InfernumMode/Sounds/Custom/DesertScourgeSandstormWind");
 
         public static readonly SoundStyle DesertScourgeShortRoar = new("InfernumMode/Sounds/Custom/DesertScourgeShortRoar");
+
+        public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Sounds/Custom/DevilfishRoar");
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Sounds/Custom/DoGLaugh");
 
@@ -108,7 +110,7 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Sounds/Custom/WyrmElectricCharge");
 
         public const int AresTelegraphSoundLength = 183;
-        #endregion Bosses
+        #endregion Bosses and Enemies
 
         #region Items
 

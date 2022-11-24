@@ -16,6 +16,7 @@ namespace InfernumMode
     public static partial class Utilities
     {
         public const float DefaultTargetRedecideThreshold = 4000f;
+        
         public static void TargetClosestIfTargetIsInvalid(this NPC npc, float distanceThreshold = DefaultTargetRedecideThreshold)
         {
             bool invalidTargetIndex = npc.target is < 0 or >= 255;

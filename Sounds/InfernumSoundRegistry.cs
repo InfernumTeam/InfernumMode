@@ -57,6 +57,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Sounds/Custom/MyrindaelThrow") with { Volume = 1.8f };
 
+        public static readonly SoundStyle OhioBeam = new("InfernumMode/Sounds/Custom/ExoMechs/Ohio");
+
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
         public static readonly SoundStyle PerforatorDeathAnimation = new("InfernumMode/Sounds/Custom/PerforatorDeathAnimation");
@@ -82,6 +84,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Sounds/Custom/SkeletronHeadBonk");
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
+
+        public static readonly SoundStyle ThanatosLightRay = new("InfernumMode/Sounds/Custom/ExoMechs/ThanatosLightRay");
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Sounds/Custom/ExoMechs/ThanatosTransition");
 

@@ -1,6 +1,4 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
+﻿using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Achievements.InfernumAchievements
 {

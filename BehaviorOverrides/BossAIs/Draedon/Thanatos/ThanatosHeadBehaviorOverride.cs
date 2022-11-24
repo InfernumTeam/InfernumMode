@@ -17,6 +17,8 @@ using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
+        public SlotId ThanatosRaySlot;
+        
         public const int SegmentCount = 100;
 
         public const int TransitionSoundDelay = 80;
@@ -716,7 +720,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
-        public static void DoBehavior_ExoLightBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public void DoBehavior_ExoLightBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
@@ -751,7 +755,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (npc.position.Y < 600f)
                 npc.position.Y = 600f;
 
-            // Attempt to get into position for the light attack.
+            // Update the sound telegraph's position to account for Thanatos drifting.
+            if (SoundEngine.TryGetActiveSound(ThanatosRaySlot, out var t) && t.IsPlaying)
+            {
+                t.Position = npc.Center;
+            }
+                // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
             {
                 float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
@@ -777,7 +786,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Create light telegraphs.
                 if (attackTimer == initialRedirectTime + 1f)
                 {
-                    SoundEngine.PlaySound(CrystylCrusher.ChargeSound, npc.Center);
+                    ThanatosRaySlot = SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosLightRay with { Volume = 3f }, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < totalLightRays; i++)
@@ -795,7 +804,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         }
                     }
                 }
-
                 // Approach the ideal position.
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.05f);
             }
@@ -803,8 +811,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Create a massive laser.
             if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserFireDelay)
             {
-                SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<OverloadBoom>(), 0, 0f);
@@ -824,10 +830,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Play a sound prior to switching attacks.
-            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f)
+            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f) // 
                 SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
-            if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
+            if(attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
             {
                 attackTimer = 0f;
                 hoverOffsetDirection += MathHelper.PiOver2;

@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             float alpha = 1f - (float)Projectile.alpha / 255;
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
-            Projectile.DrawProjectileWithBackglow(Color.White with { A = 0 }, Color.White, 2f);
+            //Projectile.DrawProjectileWithBackglow(Color.White with { A = 0 }, Color.White, 2f);
             return false;
         }
     }

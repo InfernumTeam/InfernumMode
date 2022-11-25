@@ -94,8 +94,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 end = nuke.Center + Main.rand.NextVector2Circular(8f, 8f);
                 Dust.QuickDust(NPC.Center, Color.Lime).scale = 1.4f;
                 Dust.QuickDust(end, Color.Lime).scale = 1.4f;
-                for (float num2 = 0f; num2 < 1f; num2 += 0.01f)
-                    Dust.QuickDust(Vector2.Lerp(NPC.Center, end, num2), Color.Lime).scale = 0.95f;
+                for (float i = 0f; i < 1f; i += 0.01f)
+                    Dust.QuickDust(Vector2.Lerp(NPC.Center, end, i), Color.Lime).scale = 0.95f;
 
                 switch (Main.rand.Next(4))
                 {

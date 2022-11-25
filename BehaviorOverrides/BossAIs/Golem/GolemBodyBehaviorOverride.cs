@@ -1634,14 +1634,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             Player closest = Main.player[npc.target];
 
-            int num = (int)closest.Center.X / 16;
-            int num2 = (int)closest.Center.Y / 16;
+            int centerX = (int)closest.Center.X / 16;
+            int centerY = (int)closest.Center.Y / 16;
             int altarX = 0;
             int altarY = 0;
             bool inRealTemple = false;
-            for (int i = num - 20; i < num + 20; i++)
+            for (int i = centerX - 20; i < centerX + 20; i++)
             {
-                for (int j = num2 - 20; j < num2 + 20; j++)
+                for (int j = centerY - 20; j < centerY + 20; j++)
                 {
                     if (!inRealTemple)
                         inRealTemple = Main.tile[i, j].WallType == WallID.LihzahrdBrickUnsafe;
@@ -1655,8 +1655,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
             if (altarX == 0 || altarY == 0)
             {
-                altarX = num;
-                altarY = num2;
+                altarX = centerX;
+                altarY = centerY;
             }
 
             int arenaBottom = altarY + 15;

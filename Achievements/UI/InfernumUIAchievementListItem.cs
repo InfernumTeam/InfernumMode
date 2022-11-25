@@ -82,69 +82,69 @@ namespace InfernumMode.Achievements.UI
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             base.DrawSelf(spriteBatch);
-            int num = _large.ToInt() * 6;
-            Vector2 vector = new(num, 0f);
+            int largeOffset = _large.ToInt() * 6;
+            
+            // Lock the UI once the achievement is finished.
             _locked = !_achievement.IsCompleted;
+
             UpdateIconFrame();
             CalculatedStyle innerDimensions = GetInnerDimensions();
             CalculatedStyle dimensions = _achievementIconBorders.GetDimensions();
-            float num2 = dimensions.X + dimensions.Width;
-            Vector2 vector2 = new(num2 + 7f, innerDimensions.Y);
+            Vector2 vector2 = new(dimensions.X + dimensions.Width + 7f, innerDimensions.Y);
             float completionRatio = _achievement.CompletionRatio;
-            bool flag = false;
-            if (_achievement.TotalCompletion > 1 && _locked)
-            {
-                flag = true;
-            }
+            bool canDrawProgress = _achievement.TotalCompletion > 1 && _locked;
 
-            float num3 = innerDimensions.Width - dimensions.Width + 1f - (float)(num * 2);
+            float panelWidth = innerDimensions.Width - dimensions.Width + 1f - largeOffset * 2;
             Vector2 baseScale = new(0.85f);
             Vector2 baseScale2 = new(0.92f);
-            string text = FontAssets.ItemStack.Value.CreateWrappedText(_achievement.Description, (num3 - 20f) * (1f / baseScale2.X), Language.ActiveCulture.CultureInfo);
-            Vector2 stringSize = ChatManager.GetStringSize(FontAssets.ItemStack.Value, text, baseScale2, num3);
-            if (!_large)
-            {
-                stringSize = ChatManager.GetStringSize(FontAssets.ItemStack.Value, _achievement.Description, baseScale2, num3);
-            }
+            string descriptionText = FontAssets.ItemStack.Value.CreateWrappedText(_achievement.Description, (panelWidth - 20f) * (1f / baseScale2.X), Language.ActiveCulture.CultureInfo);
 
-            Color value = (_locked ? Color.Silver : new Color(250, 190, 73));
-            value = Color.Lerp(value, Color.White, base.IsMouseHovering ? 0.5f : 0f);
-            Color value2 = (_locked ? Color.DarkGray : Color.Silver);
-            value2 = Color.Lerp(value2, Color.White, base.IsMouseHovering ? 1f : 0f);
-            Color color = (base.IsMouseHovering ? Color.White : Color.Gray);
-            Vector2 vector3 = vector2 - Vector2.UnitY * 2f + vector;
-            DrawPanelTop(spriteBatch, vector3, num3, color);
-            vector3.Y += 3f;
-            vector3.X += 9f;
-            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, _achievement.Name, vector3, value, 0f, Vector2.Zero, baseScale, num3);
-            vector3.X -= 17f;
-            Vector2 position = vector2 + Vector2.UnitY * 27f + vector;
-            DrawPanelBottom(spriteBatch, position, num3, color);
+            Color nameTextColor = _locked ? Color.Silver : new Color(250, 190, 73);
+            nameTextColor = Color.Lerp(nameTextColor, Color.White, IsMouseHovering ? 0.5f : 0f);
+
+            Color descriptionTextColor = _locked ? Color.DarkGray : Color.Silver;
+            descriptionTextColor = Color.Lerp(descriptionTextColor, Color.White, IsMouseHovering ? 1f : 0f);
+            
+            Color panelColor = IsMouseHovering ? Color.White : Color.Gray;
+            Vector2 panelDrawPosition = vector2 - Vector2.UnitY * 2f + Vector2.UnitX * largeOffset;
+
+            // Draw the top of the panel.
+            DrawPanelTop(spriteBatch, panelDrawPosition, panelWidth, panelColor);
+            panelDrawPosition.Y += 3f;
+            panelDrawPosition.X += 9f;
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, _achievement.Name, panelDrawPosition, nameTextColor, 0f, Vector2.Zero, baseScale, panelWidth);
+
+            // Draw the bottom of the panel.
+            panelDrawPosition.X -= 17f;
+
+            Vector2 position = vector2 + Vector2.UnitY * 27f + Vector2.UnitX * largeOffset;
+            DrawPanelBottom(spriteBatch, position, panelWidth, panelColor);
             position.X += 8f;
             position.Y += 4f;
-            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, text, position, value2, 0f, Vector2.Zero, baseScale2);
-            if (flag)
+
+            // Draw the description.
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, descriptionText, position, descriptionTextColor, 0f, Vector2.Zero, baseScale2);
+
+            // Draw the progress if it's available.
+            if (canDrawProgress)
             {
-                Vector2 vector4 = vector3 + Vector2.UnitX * num3 + Vector2.UnitY;
-                string text2 = _achievement.CurrentCompletion + "/" + _achievement.TotalCompletion;
-                Vector2 baseScale3 = new(0.75f);
-                Vector2 stringSize2 = ChatManager.GetStringSize(FontAssets.ItemStack.Value, text2, baseScale3);
-                float num5 = 80f;
-                Color color2 = new(255, 255, 100);
-                if (!base.IsMouseHovering)
+                Vector2 drawPosition = panelDrawPosition + Vector2.UnitX * panelWidth + Vector2.UnitY;
+                string percentageText = _achievement.CurrentCompletion + "/" + _achievement.TotalCompletion;
+                Vector2 textScale = new(0.75f);
+                Vector2 stringSize2 = ChatManager.GetStringSize(FontAssets.ItemStack.Value, percentageText, textScale);
+                
+                float barWidth = 80f;
+                Color fillColor = new(255, 255, 100);
+                Color progressBarColor = new(255, 255, 255);
+                if (!IsMouseHovering)
                 {
-                    color2 = Color.Lerp(color2, Color.Black, 0.25f);
+                    progressBarColor = Color.Lerp(progressBarColor, Color.Black, 0.25f);
+                    fillColor = Color.Lerp(fillColor, Color.Black, 0.25f);
                 }
 
-                Color color3 = new(255, 255, 255);
-                if (!base.IsMouseHovering)
-                {
-                    color3 = Color.Lerp(color3, Color.Black, 0.25f);
-                }
-
-                DrawProgressBar(spriteBatch, completionRatio, vector4 - Vector2.UnitX * num5 * 0.7f, num5, color3, color2, color2.MultiplyRGBA(new Color(new Vector4(1f, 1f, 1f, 0.5f))));
-                vector4.X -= num5 * 1.4f + stringSize2.X;
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, text2, vector4, value, 0f, new Vector2(0f, 0f), baseScale3, 90f);
+                DrawProgressBar(spriteBatch, completionRatio, drawPosition - Vector2.UnitX * barWidth * 0.7f, barWidth, progressBarColor, fillColor, fillColor.MultiplyRGBA(new Color(new Vector4(1f, 1f, 1f, 0.5f))));
+                drawPosition.X -= barWidth * 1.4f + stringSize2.X;
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, percentageText, drawPosition, nameTextColor, 0f, new Vector2(0f, 0f), textScale, 90f);
             }
         }
 
@@ -162,43 +162,34 @@ namespace InfernumMode.Achievements.UI
             spriteBatch.Draw(_innerPanelBottomTexture.Value, new Vector2(position.X + width - 6f, position.Y), new Rectangle(13, 0, 6, _innerPanelBottomTexture.Height()), color);
         }
 
-        private void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
+        private static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
         {
+            // Initialize things if nothing valid is supplied.
+            progress = MathHelper.Clamp(progress, 0f, 1f);
             if (BlipColor == Color.Transparent)
-            {
                 BlipColor = new Color(255, 165, 0, 127);
-            }
 
             if (FillingColor == Color.Transparent)
-            {
                 FillingColor = new Color(255, 241, 51);
-            }
 
             if (BackColor == Color.Transparent)
-            {
                 FillingColor = new Color(255, 255, 255);
-            }
 
-            Texture2D value = TextureAssets.ColorBar.Value;
-            _ = TextureAssets.ColorBlip.Value;
-            Texture2D value2 = TextureAssets.MagicPixel.Value;
-            float num = MathHelper.Clamp(progress, 0f, 1f);
-            float num2 = Width * 1f;
-            float num3 = 8f;
-            float num4 = num2 / 169f;
-            Vector2 position = spot + Vector2.UnitY * num3 + Vector2.UnitX * 1f;
-            spriteBatch.Draw(value, spot, new Rectangle(5, 0, value.Width - 9, value.Height), BackColor, 0f, new Vector2(84.5f, 0f), new Vector2(num4, 1f), SpriteEffects.None, 0f);
-            spriteBatch.Draw(value, spot + new Vector2((0f - num4) * 84.5f - 5f, 0f), new Rectangle(0, 0, 5, value.Height), BackColor, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-            spriteBatch.Draw(value, spot + new Vector2(num4 * 84.5f, 0f), new Rectangle(value.Width - 4, 0, 4, value.Height), BackColor, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-            position += Vector2.UnitX * (num - 0.5f) * num2;
-            position.X -= 1f;
-            spriteBatch.Draw(value2, position, new Rectangle(0, 0, 1, 1), FillingColor, 0f, new Vector2(1f, 0.5f), new Vector2(num2 * num, num3), SpriteEffects.None, 0f);
+            Texture2D barTexture = TextureAssets.ColorBar.Value;
+            Texture2D pixelTexture = TextureAssets.MagicPixel.Value;
+            float height = 8f;
+            float width = Width / 169f;
+            Vector2 position = spot + Vector2.UnitY * height + Vector2.UnitX * 1f;
+            spriteBatch.Draw(barTexture, spot, new Rectangle(5, 0, barTexture.Width - 9, barTexture.Height), BackColor, 0f, new Vector2(84.5f, 0f), new Vector2(width, 1f), SpriteEffects.None, 0f);
+            spriteBatch.Draw(barTexture, spot + new Vector2(width * -84.5f - 5f, 0f), new Rectangle(0, 0, 5, barTexture.Height), BackColor, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+            spriteBatch.Draw(barTexture, spot + new Vector2(width * 84.5f, 0f), new Rectangle(barTexture.Width - 4, 0, 4, barTexture.Height), BackColor, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+            position += Vector2.UnitX * (progress - 0.5f) * Width;
+            position.X--;
+            spriteBatch.Draw(pixelTexture, position, new Rectangle(0, 0, 1, 1), FillingColor, 0f, new Vector2(1f, 0.5f), new Vector2(Width * progress, height), SpriteEffects.None, 0f);
             if (progress != 0f)
-            {
-                spriteBatch.Draw(value2, position, new Rectangle(0, 0, 1, 1), BlipColor, 0f, new Vector2(1f, 0.5f), new Vector2(2f, num3), SpriteEffects.None, 0f);
-            }
+                spriteBatch.Draw(pixelTexture, position, new Rectangle(0, 0, 1, 1), BlipColor, 0f, new Vector2(1f, 0.5f), new Vector2(2f, height), SpriteEffects.None, 0f);
 
-            spriteBatch.Draw(value2, position, new Rectangle(0, 0, 1, 1), Color.Black, 0f, new Vector2(0f, 0.5f), new Vector2(num2 * (1f - num), num3), SpriteEffects.None, 0f);
+            spriteBatch.Draw(pixelTexture, position, new Rectangle(0, 0, 1, 1), Color.Black, 0f, new Vector2(0f, 0.5f), new Vector2(Width * (1f - progress), height), SpriteEffects.None, 0f);
         }
 
         private void UpdateIconFrame()

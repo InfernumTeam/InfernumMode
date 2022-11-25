@@ -31,17 +31,13 @@ namespace InfernumMode.Achievements.UI
             AchivementList = null;
             uIScrollbar1 = null;
 
-            // Vanilla code.
-            bool flag = true;
-            int num = flag.ToInt() * 100;
-
             // Create a new UI Element.
             // The following is all from the vanilla achievement UIState, to
             // ensure this looks identical to that.
             UIElement uIElement = new();
             uIElement.Width.Set(0f, 0.8f);
-            uIElement.MaxWidth.Set(800f + (float)num, 0f);
-            uIElement.MinWidth.Set(600f + (float)num, 0f);
+            uIElement.MaxWidth.Set(900f, 0f);
+            uIElement.MinWidth.Set(700f, 0f);
             uIElement.Top.Set(220f, 0f);
             uIElement.Height.Set(-220f, 1f);
             uIElement.HAlign = 0.5f;
@@ -89,7 +85,7 @@ namespace InfernumMode.Achievements.UI
             for (int i = 0; i < list.Count; i++)
             {
                 // Create a list item for each achievement, and add it to the local achievement list.
-                InfernumUIAchievementListItem item = new(list[i], flag);
+                InfernumUIAchievementListItem item = new(list[i], true);
                 AchivementList.Add(item);
                 AchievementElements.Add(item);
             }
@@ -149,9 +145,7 @@ namespace InfernumMode.Achievements.UI
 
             AchivementList.UpdateOrder();
             if (PlayerInput.UsingGamepadUI)
-            {
                 UILinkPointNavigator.ChangePoint(3002);
-            }
         }
     }
 }

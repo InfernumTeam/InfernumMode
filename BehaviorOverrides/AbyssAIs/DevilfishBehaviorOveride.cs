@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             ref float attackTimer = ref npc.Infernum().ExtraAI[3];
 
             // Pick a target if a valid one isn't already decided.
-            Utilities.TargetClosestAbyssPredator(npc, hasNoticedPlayer == 0f, 1600f);
+            Utilities.TargetClosestAbyssPredator(npc, hasNoticedPlayer == 0f, 1600f, 1600f);
             NPCAimedTarget target = npc.GetTargetData();
 
             // Initialize the variant.

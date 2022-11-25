@@ -108,11 +108,11 @@ namespace InfernumMode
             return closestPredator;
         }
 
-        public static void TargetClosestAbyssPredator(NPC searcher, bool passiveToPlayers, float preySearchDistance)
+        public static void TargetClosestAbyssPredator(NPC searcher, bool passiveToPlayers, float preySearchDistance, float playerSearchDistance)
         {
             bool playerSearchFilter(Player p)
             {
-                return !passiveToPlayers;
+                return !passiveToPlayers && p.WithinRange(searcher.Center, playerSearchDistance);
             }
             bool npcSearchFilter(NPC n)
             {

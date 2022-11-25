@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
                 npc.netUpdate = true;
             }
 
-            Utilities.TargetClosestAbyssPredator(npc, false, 500f);
+            Utilities.TargetClosestAbyssPredator(npc, false, 500f, 1600f);
             NPCAimedTarget target = npc.GetTargetData();
 
             // Become invulnerable and mostly transparent if hiding in a tile.

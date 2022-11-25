@@ -239,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Handle tile hit logic.
             if (attackTimer < hoverTime + chargeDelay + chargeTime)
             {
-                if (npc.collideX || npc.collideY)
+                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && attackTimer >= hoverTime + chargeDelay + 8f)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, npc.Center);
                     Collision.HitTiles(npc.TopLeft, npc.velocity, npc.width, npc.height);

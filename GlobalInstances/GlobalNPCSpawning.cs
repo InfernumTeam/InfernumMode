@@ -45,11 +45,14 @@ namespace InfernumMode.GlobalInstances
             pool.Remove(ModContent.NPCType<EidolonWyrmHead>());
             pool.Remove(ModContent.NPCType<ReaperShark>());
 
-            // Clear Devilfish from the pool, so that they can be moved to a different location.
+            // Clear Devilfish and Toxic Minnows from the pool, so that they can be moved to a different location.
             pool.Remove(ModContent.NPCType<DevilFish>());
             pool.Remove(ModContent.NPCType<DevilFishAlt>());
+            pool.Remove(ModContent.NPCType<ToxicMinnow>());
             if (spawnInfo.Player.Infernum().InLayer3HadalZone && spawnInfo.Water)
                 pool[ModContent.NPCType<DevilFish>()] = 0.12f;
+            if (spawnInfo.Player.Calamity().ZoneAbyssLayer1 && spawnInfo.Water)
+                pool[ModContent.NPCType<ToxicMinnow>()] = 0.1f;
         }
     }
 }

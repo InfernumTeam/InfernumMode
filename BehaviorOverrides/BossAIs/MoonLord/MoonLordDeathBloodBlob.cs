@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     float scale2 = 0.8f;
                     float scale3 = 2f;
                     Vector2 dustVelocity = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.velocity.Length();
-                    for (int num53 = 0; num53 < 10; num53++)
+                    for (int i = 0; i < 10; i++)
                     {
                         Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 200, default, scale);
                         greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         greenBlood.fadeIn = 1f;
                         greenBlood.velocity += dustVelocity * Main.rand.NextFloat();
                     }
-                    for (int num55 = 0; num55 < 5; num55++)
+                    for (int i = 0; i < 5; i++)
                     {
                         Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 0, default, scale3);
                         greenBlood.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;

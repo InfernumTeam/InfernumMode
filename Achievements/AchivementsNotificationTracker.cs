@@ -49,19 +49,18 @@ namespace InfernumMode.Achievements
 		}
 		public static void DrawInIngameOptions(SpriteBatch spriteBatch, Rectangle area, ref int gamepadPointIdLocalIndexToUse)
 		{
-			int num = 4;
-			int num2 = area.Height / 5 - num;
-			Rectangle area2 = new(area.X, area.Y, area.Width - 6, num2);
-			int num3 = 0;
+			int padding = 4;
+			int height = area.Height / 5 - padding;
+			Rectangle area2 = new(area.X, area.Y, area.Width - 6, height);
+			int i = 0;
 			foreach (IInGameNotification notification in Notifications)
 			{
 				notification.DrawInNotificationsArea(spriteBatch, area2, ref gamepadPointIdLocalIndexToUse);
-				area2.Y += num2 + num;
-				num3++;
-				if (num3 >= 5)
-				{
+				area2.Y += height + padding;
+
+				i++;
+				if (i >= 5)
 					break;
-				}
 			}
 		}
 		public static void Clear()

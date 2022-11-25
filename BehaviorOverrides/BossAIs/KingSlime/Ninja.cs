@@ -244,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             float teleportOffsetDifference = teleportOffset.Length();
             // Then the length in time it will take to move two of them at the charge speed.
             int dashLength = (int)(teleportOffsetDifference / chargeSpeed * 2);
-
+            
 
             // If king slime has set us a landing position.
             if (kingSlimeCenterX > 0 && localDeathTimer == 0)
@@ -276,6 +276,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // If we've teleported, and our local timer has been set.
             else if (localDeathTimer > 0)
             {
+                // Allow us to go through tiles.
+                NPC.noTileCollide = true;
+
                 // If the synced timer is equal to the saved one plus 1
                 if (SyncedDeathTimer == localDeathTimer + 1)
                 {

@@ -13,7 +13,7 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle ArtemisSpinLaserbeamSound = new("InfernumMode/Sounds/Custom/ExoMechs/ArtemisSpinLaserbeam");
 
-        public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Sounds/Custom/BrimstoneElementalShellGroundHit");
+        public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Sounds/Custom/DeathAnimations/BrimstoneElementalShellGroundHit");
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
@@ -47,6 +47,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Sounds/Custom/HeavyExplosion");
 
+        public static readonly SoundStyle KingSlimeDeathAnimation = new("InfernumMode/Sounds/Custom/DeathAnimations/KingSlimeDeathAnimation");
+
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Sounds/Custom/LeviathanSummonBase");
         
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Sounds/Custom/MoonLordIntro");
@@ -61,13 +63,13 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
-        public static readonly SoundStyle PerforatorDeathAnimation = new("InfernumMode/Sounds/Custom/PerforatorDeathAnimation");
+        public static readonly SoundStyle PerforatorDeathAnimation = new("InfernumMode/Sounds/Custom/DeathAnimations/PerforatorDeathAnimation");
 
         public static readonly SoundStyle PolterghastDash = new("InfernumMode/Sounds/Custom/PolterDash");
 
         public static readonly SoundStyle PolterghastShortDash = new("InfernumMode/Sounds/Custom/PolterDashShort");
 
-        public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/PolterghastDeath");
+        public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/DeathAnimations/PolterghastDeath");
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
 

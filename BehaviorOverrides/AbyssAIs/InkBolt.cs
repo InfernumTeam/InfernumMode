@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglow(Color.White with { A = 0 }, lightColor, 4f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, 4f);
             return false;
         }
     }

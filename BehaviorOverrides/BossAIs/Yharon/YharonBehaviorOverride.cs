@@ -403,6 +403,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public const int TeleportOffsetAngleIndex = 20;
 
+        public const int HasGottenNearPlayerIndex = 21;
+
         public const float Phase2LifeRatio = 0.5f;
 
         public const float BaseDR = 0.3f;
@@ -457,6 +459,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float transitionDRCountdown = ref npc.Infernum().ExtraAI[TransitionDRBoostCountdownIndex];
             ref float shouldPerformBerserkCharges = ref npc.Infernum().ExtraAI[ShouldPerformBerserkChargesIndex];
             ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[TeleportOffsetAngleIndex];
+            ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[HasGottenNearPlayerIndex];
 
             // Go to phase 2 if at 50%.
             if (!InSecondPhase && lifeRatio < Phase2LifeRatio)
@@ -713,11 +716,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 case YharonAttackType.Charge:
                 case YharonAttackType.TeleportingCharge:
                 case YharonAttackType.FireTrailCharge:
-                    DoBehavior_ChargesAndTeleportCharges(npc, target, chargeDelay, chargeTime, chargeSpeed, teleportChargeCounter, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType, ref teleportOffsetAngle);
+                    DoBehavior_ChargesAndTeleportCharges(npc, target, chargeDelay, chargeTime, chargeSpeed, teleportChargeCounter, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType, ref teleportOffsetAngle, ref hasGottenNearPlayer);
                     break;
                 case YharonAttackType.FastCharge:
                 case YharonAttackType.PhoenixSupercharge:
-                    DoBehavior_FastCharges(npc, target, berserkChargeMode, chargeDelay, chargeTime, chargeSpeed * fastChargeSpeedMultiplier, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType);
+                    DoBehavior_FastCharges(npc, target, berserkChargeMode, chargeDelay, chargeTime, chargeSpeed * fastChargeSpeedMultiplier, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType, ref hasGottenNearPlayer);
                     break;
                 case YharonAttackType.FireballBurst:
                     DoBehavior_FireballBurst(npc, target, mouthPosition, fireballBreathShootDelay, fireballBreathShootRate, totalFireballBreaths, ref attackTimer, ref attackType, ref specialFrameType);
@@ -788,7 +791,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.damage = 0;
         }
 
-        public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType, ref float offsetDirection)
+        public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float fireIntensity, 
+            ref float attackTimer, ref float attackType, ref float specialFrameType, ref float offsetDirection, ref float hasGottenNearPlayer)
         {
             float teleportOffset = 560f;
             bool teleporting = (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge;
@@ -896,11 +900,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(16f, 16f), npc.velocity * 0.3f, ModContent.ProjectileType<LingeringDragonFlames>(), 500, 0f);
             }
+
+            // Slow down after sufficiently far away from the target.
+            float slowdownRange = 800f;
+            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
+            {
+                hasGottenNearPlayer = 1f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer >= chargeDelay && !teleporting && !npc.WithinRange(target.Center, slowdownRange) && hasGottenNearPlayer == 1f)
+                npc.velocity *= 0.95f;
         }
 
-        public static void DoBehavior_FastCharges(NPC npc, Player target, bool berserkChargeMode, float chargeDelay, float chargeTime, float chargeSpeed, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
+        public static void DoBehavior_FastCharges(NPC npc, Player target, bool berserkChargeMode, float chargeDelay, float chargeTime, float chargeSpeed, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType, ref float hasGottenNearPlayer)
         {
-            if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
+            bool phoenixSupercharge = (YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge;
+            if (phoenixSupercharge)
             {
                 chargeDelay = (int)(chargeDelay * 0.8f);
                 if (attackTimer == 1f)
@@ -918,7 +934,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     xAimOffset = (berserkChargeMode ? 920f : 620f) * Math.Sign((npc.Center - target.Center).X);
 
                 // Transform into a phoenix flame form if doing a phoenix supercharge.
-                if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
+                if (phoenixSupercharge)
                     fireIntensity = MathHelper.Max(fireIntensity, Utils.GetLerpValue(0f, chargeDelay - 1f, attackTimer, true));
 
                 // Hover to the top left/right of the target and look at them.
@@ -943,7 +959,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Create sparkles and create heat distortion when charging if doing a phoenix supercharge.
-            else if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge && attackTimer < chargeDelay + chargeTime)
+            else if (phoenixSupercharge && attackTimer < chargeDelay + chargeTime)
             {
                 fireIntensity = 1f;
                 float competionRatio = Utils.GetLerpValue(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
@@ -959,6 +975,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
                 }
             }
+
+            // Slow down after sufficiently far away from the target.
+            float slowdownRange = 800f;
+            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
+            {
+                hasGottenNearPlayer = 1f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer >= chargeDelay && !npc.WithinRange(target.Center, slowdownRange) && hasGottenNearPlayer == 1f)
+                npc.velocity *= 0.95f;
 
             if (attackTimer >= chargeDelay + chargeTime)
             {
@@ -1852,6 +1879,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+            npc.Infernum().ExtraAI[HasGottenNearPlayerIndex] = 0f;
             npc.netUpdate = true;
         }
         #endregion

@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Release meteors upward.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time % 2f == 1f)
             {
-                Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.77f) * Main.rand.NextFloat(34f, 44f);
+                Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.27f) * Main.rand.NextFloat(34f, 44f);
                 Utilities.NewProjectileBetter(Projectile.Center, meteorShootVelocity, ModContent.ProjectileType<RedirectingYharonMeteor>(), 450, 0f);
             }
 

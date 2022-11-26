@@ -187,7 +187,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Wait for the player to select an exo mech.
-            if (talkTimer >= ExoMechChooseDelay && talkTimer < ExoMechChooseDelay + 8f && CalamityWorld.DraedonMechToSummon == ExoMech.None)
+            if (talkTimer >= ExoMechChooseDelay && talkTimer < ExoMechChooseDelay + 8f && CalamityWorld.DraedonMechToSummon == ExoMech.None && ExoMechManagement.TotalMechs <= 0)
             {
                 playerToFollow.Calamity().AbleToSelectExoMech = true;
                 talkTimer = ExoMechChooseDelay;
@@ -311,6 +311,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static void SummonExoMech(Player playerToFollow)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                NetcodeHandler.SyncExoMechSummon(playerToFollow);
+                return;
+            }
+
             int secondaryMech = (int)DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon;
             if (secondaryMech == (int)ExoMech.Destroyer)
                 secondaryMech = ModContent.NPCType<ThanatosHead>();
@@ -362,6 +368,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)
         {
             AchievementPlayer.DraedonDefeated = true;
+            
             // Become vulnerable after being defeated after a certain point.
             bool hasBeenKilled = npc.localAI[2] == 1f;
             ref float hologramEffectTimer = ref npc.localAI[1];

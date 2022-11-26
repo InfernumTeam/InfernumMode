@@ -152,11 +152,11 @@ namespace InfernumMode.ILEditingStuff
                     if (draedon != -1 && PrimaryMechToSummon.HasValue && DestroyerTypeToSummon.HasValue)
                     {
                         Main.npc[draedon].ai[0] = Draedon.ExoMechChooseDelay + 8f;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            DraedonBehaviorOverride.SummonExoMech(Main.player[Main.npc[draedon].target]);
-                            PrimaryMechToSummon = DestroyerTypeToSummon = null;
-                        }
+                        Main.npc[draedon].netSpam = 0;
+                        Main.npc[draedon].netUpdate = true;
+
+                        DraedonBehaviorOverride.SummonExoMech(Main.player[Main.npc[draedon].target]);
+                        PrimaryMechToSummon = DestroyerTypeToSummon = null;
                     }
                 }
                 Main.blockMouse = Main.LocalPlayer.mouseInterface = true;

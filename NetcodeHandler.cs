@@ -1,3 +1,6 @@
+using CalamityMod;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.ILEditingStuff;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -11,7 +14,8 @@ namespace InfernumMode
     public enum InfernumPacketType : short
     {
         SendExtraNPCData,
-        SyncInfernumActive
+        SyncInfernumActive,
+        SummonExoMech
     }
 
     public class InfernumNPCSyncInformation
@@ -80,6 +84,20 @@ namespace InfernumMode
                 SyncInfernumActivity(sender);
         }
 
+        public static void SyncExoMechSummon(Player p)
+        {
+            // Don't bother trying to send packets in singleplayer.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            packet.Write((short)InfernumPacketType.SummonExoMech);
+            packet.Write((short)p.whoAmI);
+            packet.Write((int)(DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon ?? 0));
+            packet.Write((int)(DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon ?? 0));
+            packet.Send();
+        }
+
         public static void ReceivePacket(Mod mod, BinaryReader reader, int whoAmI)
         {
             InfernumPacketType packetType = (InfernumPacketType)reader.ReadInt16();
@@ -117,6 +135,12 @@ namespace InfernumMode
                     // Since ModPackets go solely to the server when sent by a client this is necesssary
                     // to ensure that all clients are informed of what happened.
                     RecieveInfernumActivitySync(reader);
+                    break;
+                case InfernumPacketType.SummonExoMech:
+                    Player player = Main.player[reader.ReadInt16()];
+                    DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon = (ExoMech)reader.ReadInt32();
+                    DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon = (ExoMech)reader.ReadInt32();
+                    DraedonBehaviorOverride.SummonExoMech(player);                    
                     break;
             }
         }

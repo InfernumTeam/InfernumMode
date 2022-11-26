@@ -3,6 +3,7 @@ using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Systems
@@ -98,7 +99,8 @@ namespace InfernumMode.Systems
 
         public override void OnModLoad()
         {
-            AbyssWaterID = ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
+            if (Main.netMode != NetmodeID.Server)
+                AbyssWaterID = ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
         }
 
         public override void PreUpdateEntities()

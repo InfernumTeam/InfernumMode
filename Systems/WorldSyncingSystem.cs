@@ -26,6 +26,11 @@ namespace InfernumMode.Systems
             writer.Write(SquidDenCenter.Y);
             writer.Write(EidolistWorshipPedestalCenter.X);
             writer.Write(EidolistWorshipPedestalCenter.Y);
+
+            writer.Write(ProvidenceArena.X);
+            writer.Write(ProvidenceArena.Y);
+            writer.Write(ProvidenceArena.Width);
+            writer.Write(ProvidenceArena.Height);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -43,6 +48,8 @@ namespace InfernumMode.Systems
             AbyssLayer3CavernSeed = reader.ReadInt32();
             SquidDenCenter = new(reader.ReadInt32(), reader.ReadInt32());
             EidolistWorshipPedestalCenter = new(reader.ReadInt32(), reader.ReadInt32());
+
+            ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
         }
     }
 }

@@ -16,6 +16,11 @@ namespace InfernumMode.Systems
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
             writer.Write(flags);
+
+            writer.Write(ProvidenceArena.X);
+            writer.Write(ProvidenceArena.Y);
+            writer.Write(ProvidenceArena.Width);
+            writer.Write(ProvidenceArena.Height);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -26,6 +31,8 @@ namespace InfernumMode.Systems
             HasBeatedInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
+            
+            ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
         }
     }
 }

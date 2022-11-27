@@ -1,9 +1,18 @@
 using Terraria.Audio;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
+        public static SoundStyle SafeLoadCalamitySound(string path, SoundStyle fallback)
+        {
+            if (!ModContent.HasAsset($"CalamityMod/{path}"))
+                return fallback;
+
+            return new($"CalamityMod/{path}");
+        }
+
         #region Bosses
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresLaugh");
 

@@ -39,8 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             float hoverSpeed = 22f;
             if (BossRushEvent.BossRushActive)
                 hoverSpeed *= 1.5f;
-            ref float time = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[1];
 
+            // Hover into position and look at the target. Once reached, reel back.
             if (npc.ai[0] == 0f)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * hoverSpeed, 0.1f);
@@ -53,13 +54,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.rotation = npc.AngleTo(target.Center);
             }
 
+            // Reel back and decelerate.
             if (npc.ai[0] == 1f)
             {
                 npc.velocity *= 0.975f;
-                time++;
+                attackTimer++;
 
-                int chargeDelay = BossRushEvent.BossRushActive ? 30 : 60;
-                if (time >= chargeDelay)
+                int reelBackTime = BossRushEvent.BossRushActive ? 30 : 60;
+                if (attackTimer >= reelBackTime)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * hoverSpeed;
 
@@ -69,6 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.rotation = npc.AngleTo(target.Center);
             }
 
+            // Charge at the target and explode once a tile is hit.
             if (npc.ai[0] == 2f)
             {
                 npc.knockBackResist = 0f;

@@ -1,4 +1,5 @@
-﻿using InfernumMode.Systems;
+﻿using InfernumMode.GlobalInstances;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -95,7 +96,7 @@ namespace InfernumMode.Projectiles
                 Projectile.active = false;
                 return;
             }
-            PoDPlayer modPlayer = Owner.Infernum();
+            InfernumPlayer modPlayer = Owner.Infernum();
             if (Owner.dead)
             {
                 modPlayer.HatGirl = false;

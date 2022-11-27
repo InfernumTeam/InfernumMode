@@ -73,11 +73,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = NPC.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);
-                    int laser = Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f);
+                    int laser = Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f, -1, 0f, NPC.whoAmI);
                     if (Main.projectile.IndexInRange(laser))
                     {
                         Main.projectile[laser].ModProjectile<PlagueDeathray>().LocalLifetime = 1200;
-                        Main.projectile[laser].ai[1] = NPC.whoAmI;
+                        Main.projectile[laser].netUpdate = true;
                     }
                 }
             }

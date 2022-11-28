@@ -23,9 +23,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace InfernumMode
+namespace InfernumMode.GlobalInstances
 {
-    public class PoDPlayer : ModPlayer
+    [LegacyName("PoDPlayer")]
+    public class InfernumPlayer : ModPlayer
     {
         public int EelSwallowIndex = -1;
 

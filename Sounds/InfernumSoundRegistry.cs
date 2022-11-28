@@ -1,10 +1,20 @@
 using Terraria.Audio;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Sounds
 {
     public static class InfernumSoundRegistry
     {
+        public static SoundStyle SafeLoadCalamitySound(string path, SoundStyle fallback)
+        {
+            if (!ModContent.HasAsset($"CalamityMod/{path}"))
+                return fallback;
+
+            return new($"CalamityMod/{path}");
+        }
+        
         #region Bosses and Enemies
+
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresLaugh");
 
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresTeslaShot");
@@ -76,6 +86,8 @@ namespace InfernumMode.Sounds
         public static readonly SoundStyle PolterghastShortDash = new("InfernumMode/Sounds/Custom/PolterDashShort");
 
         public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/DeathAnimations/PolterghastDeath");
+
+        public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Sounds/Custom/PrimeSaw");
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
 

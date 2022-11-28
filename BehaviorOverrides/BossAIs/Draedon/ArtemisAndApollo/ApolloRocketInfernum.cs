@@ -176,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override void Kill(int timeLeft)
         {
-            // Rocket explosion.
+            // Create a rocket explosion.
             int height = 90;
             Projectile.position = Projectile.Center;
             Projectile.width = Projectile.height = height;

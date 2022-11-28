@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             // Deal no damage and increment the variable used to kill the projectile.
             Projectile.localAI[1]++;
-            if (Projectile.localAI[1] > 360f)
+            if (Projectile.localAI[1] > 180f)
             {
                 Projectile.localAI[0] += 10f;
                 Projectile.damage = 0;

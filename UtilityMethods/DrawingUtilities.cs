@@ -10,6 +10,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -150,6 +151,82 @@ namespace InfernumMode
                 burstSpeed += 3f;
             }
         }
+
+        public static void CreateFireExplosion(Vector2 topLeft, Vector2 area, Vector2 force)
+        {
+            // Sparks and such
+            for (int i = 0; i < 40; i++)
+            {
+                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 31, 0f, 0f, 100, default, 2f);
+                Main.dust[idx].velocity *= 3f;
+                if (Main.rand.NextBool(2))
+                {
+                    Main.dust[idx].scale = 0.5f;
+                    Main.dust[idx].fadeIn = 1f + Main.rand.Next(10) * 0.1f;
+                    Main.dust[idx].velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+                }
+            }
+            for (int i = 0; i < 70; i++)
+            {
+                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 6, 0f, 0f, 100, default, 3f);
+                Main.dust[idx].noGravity = true;
+                Main.dust[idx].velocity *= 5f;
+                Main.dust[idx].velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+
+                idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 6, 0f, 0f, 100, default, 2f);
+                Main.dust[idx].velocity *= 2f;
+                Main.dust[idx].velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+            }
+
+            // Smoke, which counts as a Gore
+            if (Main.netMode != NetmodeID.Server)
+            {
+                int goreAmt = 3;
+                Vector2 center = topLeft + area * 0.5f;
+                Vector2 source = new(center.X - 24f, center.Y - 24f);
+                for (int goreIndex = 0; goreIndex < goreAmt; goreIndex++)
+                {
+                    float velocityMult = 0.33f;
+                    if (goreIndex < (goreAmt / 3))
+                        velocityMult = 0.66f;
+                    if (goreIndex >= (2 * goreAmt / 3))
+                        velocityMult = 1f;
+
+                    int type = Main.rand.Next(61, 64);
+                    int smoke = Gore.NewGore(new EntitySource_WorldEvent(), source, default, type, 1f);
+                    Gore gore = Main.gore[smoke];
+                    gore.velocity *= velocityMult;
+                    gore.velocity.X += 1f;
+                    gore.velocity.Y += 1f;
+                    gore.velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+
+                    type = Main.rand.Next(61, 64);
+                    smoke = Gore.NewGore(new EntitySource_WorldEvent(), source, default, type, 1f);
+                    gore = Main.gore[smoke];
+                    gore.velocity *= velocityMult;
+                    gore.velocity.X -= 1f;
+                    gore.velocity.Y += 1f;
+                    gore.velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+
+                    type = Main.rand.Next(61, 64);
+                    smoke = Gore.NewGore(new EntitySource_WorldEvent(), source, default, type, 1f);
+                    gore = Main.gore[smoke];
+                    gore.velocity *= velocityMult;
+                    gore.velocity.X += 1f;
+                    gore.velocity.Y -= 1f;
+                    gore.velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+
+                    type = Main.rand.Next(61, 64);
+                    smoke = Gore.NewGore(new EntitySource_WorldEvent(), source, default, type, 1f);
+                    gore = Main.gore[smoke];
+                    gore.velocity *= velocityMult;
+                    gore.velocity.X -= 1f;
+                    gore.velocity.Y -= 1f;
+                    gore.velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
+                }
+            }
+        }
+
         /// <summary>
         /// Draws a projectile as a series of afterimages. The first of these afterimages is centered on the center of the projectile's hitbox.<br />
         /// This function is guaranteed to draw the projectile itself, even if it has no afterimages and/or the Afterimages config option is turned off.
@@ -188,7 +265,7 @@ namespace InfernumMode
                     // Standard afterimages. No customizable features other than total afterimage count.
                     // Type 0 afterimages linearly scale down from 100% to 0% opacity. Their color and lighting is equal to the main projectile's.
                     case 0:
-                        for (int i = 0; i < proj.oldPos.Length; ++i)
+                        for (int i = proj.oldPos.Length - 1; i >= 0; --i)
                         {
                             Vector2 drawPos = proj.oldPos[i] + centerOffset - Main.screenPosition + new Vector2(0f, proj.gfxOffY);
                             // DO NOT REMOVE THESE "UNNECESSARY" FLOAT CASTS. THIS WILL BREAK THE AFTERIMAGES.

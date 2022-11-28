@@ -1,3 +1,4 @@
+using InfernumMode.GlobalInstances;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
@@ -32,7 +33,7 @@ namespace InfernumMode.Projectiles
 			if (Main.myPlayer != Projectile.owner)
 				return;
 
-			PoDPlayer csp = player.Infernum();
+			InfernumPlayer csp = player.Infernum();
 
 			// If the player is no longer actively channeling the item (or gets cursed or CCed...), try to write a schematic of their selected area.
 			if (!player.channel || player.noItems || player.CCed)
@@ -100,7 +101,7 @@ namespace InfernumMode.Projectiles
 			if (Main.myPlayer != Projectile.owner)
 				return;
 			
-			PoDPlayer csp = player.Infernum();
+			InfernumPlayer csp = player.Infernum();
 			csp.CornerOne = csp.CornerTwo = null;
 		}
 	}

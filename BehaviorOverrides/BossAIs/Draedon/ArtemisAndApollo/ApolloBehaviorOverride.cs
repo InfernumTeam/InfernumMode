@@ -569,7 +569,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             hoverDestination += Vector2.UnitY * hoverSide * 485f;
 
             // Determine rotation.
-            npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.rotation.AngleLerp(aimDirection.ToRotation() + MathHelper.PiOver2, 0.3f);
 
             // Move to the appropriate side of the target.
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);

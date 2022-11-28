@@ -28,6 +28,7 @@ using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
+using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -74,10 +75,10 @@ namespace InfernumMode.Balancing
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(29950),
             [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : CalculateMechHP(29950),
             [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 989515 : CalculateMechHP(44444),
-            [NPCID.PrimeVice] = BossRushEvent.BossRushActive ? 200000 : CalculateMechHP(6300),
-            [NPCID.PrimeSaw] = BossRushEvent.BossRushActive ? 200000 : CalculateMechHP(6300),
-            [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? 200000 : CalculateMechHP(5005),
-            [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? 200000 : CalculateMechHP(5005),
+            [NPCID.PrimeVice] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
+            [NPCID.PrimeSaw] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
+            [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
+            [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
             [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 1110580 : CalculateMechHP(111000),
             [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
             [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 85515,

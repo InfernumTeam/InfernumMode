@@ -26,6 +26,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 PrimeViceBehaviorOverride.DoBehavior_SynchronizedMeleeArmCharges(npc, target, attackTimer);
                 return;
             }
+            if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+            {
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, attackTimer);
+                return;
+            }
 
             int extendTime = 20;
             int sawTime = 150;

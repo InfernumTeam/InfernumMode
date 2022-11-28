@@ -33,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             GenericCannonAttacking,
             SynchronizedMeleeArmCharges,
+            SlowSparkShrapnelMeleeCharges,
 
             MetalBurst,
             RocketRelease,
@@ -64,9 +65,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public const int CannonAttackCycleTime = 600;
 
         // These two constants should together add up to a clean integer dividend from CannonAttackCycleTime.
-        public const int GenericCannonTelegraphTime = 90;
+        public const int GenericCannonTelegraphTime = 60;
 
-        public const int GenericCannonShootTime = 210;
+        public const int GenericCannonShootTime = 240;
 
         public const int GenericCannonAttackTime = GenericCannonTelegraphTime + GenericCannonShootTime;
 
@@ -149,6 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // The behaviors between these attacks do differ between arms, but the head does not need to behave any differently.
                 case PrimeAttackType.GenericCannonAttacking:
                 case PrimeAttackType.SynchronizedMeleeArmCharges:
+                case PrimeAttackType.SlowSparkShrapnelMeleeCharges:
                     DoBehavior_GenericCannonAttacking(npc, target, ref attackTimer, ref frameType, ref cannonsShouldNotFire);
                     break;
                 case PrimeAttackType.MetalBurst:
@@ -295,6 +297,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer >= CannonAttackCycleTime * 2f && attackType == PrimeAttackType.GenericCannonAttacking)
                 SelectNextAttack(npc);
             if (attackTimer >= CannonAttackCycleTime && attackType == PrimeAttackType.SynchronizedMeleeArmCharges)
+                SelectNextAttack(npc);
+            if (attackTimer >= CannonAttackCycleTime * 0.62f && attackType == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 SelectNextAttack(npc);
         }
 
@@ -853,6 +857,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 attackSelector.Add(PrimeAttackType.GenericCannonAttacking);
                 attackSelector.Add(PrimeAttackType.SynchronizedMeleeArmCharges);
+                attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
             }
 
             // Reduce old velocity so that Prime doesn't fly off somewhere after an attack concludes.
@@ -896,7 +901,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             shootCycleTime = telegraphTime + totalShootTime;
 
             // The synchronized arm charges happen only once, and last throughout the duration of the overall cycle.
-            if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
+            if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
                 shootCycleTime = CannonAttackCycleTime;
                 totalShootTime = shootCycleTime - telegraphTime;
@@ -920,7 +925,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
             bool allCannonsCanFire = cannon.life < cannon.lifeMax * 0.5f;
             bool onlyRangedCannons = cannonAttackTimer % (shootCycleTime * 2f) < shootCycleTime;
-            if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
+            if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
                 allCannonsCanFire = false;
                 onlyRangedCannons = false;

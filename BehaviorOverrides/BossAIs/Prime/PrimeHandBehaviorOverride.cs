@@ -53,8 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (telegraphInterpolant > 0f)
             {
                 // Fly approximately near the hover position, with increasing precision as the telegraphs get stronger.
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 23f;
-                idealVelocity = Vector2.Lerp(idealVelocity, (hoverDestination - npc.Center) / 24f, telegraphInterpolant * 0.8f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 33f;
+                Vector2 hyperfastVelocity = Vector2.Zero.MoveTowards(((hoverDestination - npc.Center) / 12f).ClampMagnitude(20f, 80f), 80f);
+                idealVelocity = Vector2.Lerp(idealVelocity, hyperfastVelocity, telegraphInterpolant * 0.8f);
 
                 npc.SimpleFlyMovement(idealVelocity, 0.4f);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, telegraphInterpolant * 0.2f);

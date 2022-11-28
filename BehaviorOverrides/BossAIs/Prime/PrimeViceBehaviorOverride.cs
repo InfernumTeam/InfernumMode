@@ -1,11 +1,15 @@
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Prime.PrimeHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
@@ -25,6 +29,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
             {
                 DoBehavior_SynchronizedMeleeArmCharges(npc, target, attackTimer);
+                return;
+            }
+            if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+            {
+                DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, attackTimer);
                 return;
             }
 
@@ -148,6 +157,93 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
             }
+            localTimer++;
+        }
+
+        public static void DoBehavior_SlowSparkShrapnelMeleeCharges(NPC npc, Player target, float attackTimer)
+        {
+            // Achieve freedom and destroy the shackles that the base AI binds this hand's movement to.
+            npc.ai[2] = 1f;
+
+            NPC head = Main.npc[(int)npc.ai[1]];
+
+            int chargeDelay = 90;
+            float baseVerticalHoverOffset = 150f;
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            ref float localTimer = ref npc.Infernum().ExtraAI[1];
+            ref float sawSound = ref npc.Infernum().ExtraAI[2];
+
+            float idealRotation = npc.type == NPCID.PrimeSaw ? MathHelper.Pi / 6f : -MathHelper.Pi / 6f;
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.05f);
+
+            // At first, the arms move into a cross formation.
+            if (attackSubstate == 0f)
+            {
+                // Don't do damage when moving into position.
+                npc.damage = 0;
+
+                Vector2 hoverDestination = head.Center + Vector2.UnitY * baseVerticalHoverOffset;
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 16f, 0.06f);
+                if (npc.WithinRange(hoverDestination, 30f))
+                {
+                    npc.Center = hoverDestination;
+                    npc.velocity = Vector2.Zero;
+                }
+
+                npc.Center = Vector2.Lerp(npc.Center, new(head.Center.X, npc.Center.Y), 0.1f);
+
+                if (localTimer >= chargeDelay)
+                {
+                    // Begin moving downward.
+                    npc.velocity = Vector2.UnitY * 6f;
+
+                    attackSubstate = 1f;
+                    localTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            else
+            {
+                // Accelerate.
+                if (npc.velocity.Y < 12f)
+                    npc.velocity.Y *= 1.03f;
+
+                // Emit red light.
+                DelegateMethods.v3_1 = Color.OrangeRed.ToVector3() * 0.76f;
+                Utils.PlotTileLine(npc.Center - Vector2.UnitY * 20f, npc.Center + Vector2.UnitY * 16f, 8f, DelegateMethods.CastLight);
+
+                // Release sparks.
+                if (Main.rand.NextBool(3))
+                {
+                    Color sparkColor = Color.Lerp(Color.Yellow, Color.Orange, Main.rand.NextFloat(0.6f));
+                    SparkParticle spark = new(npc.Center, npc.velocity.RotatedByRandom(0.78f) * Main.rand.NextFloat(1.3f, 2f), Main.rand.NextBool(), 36, 0.9f, sparkColor);
+                    GeneralParticleHandler.SpawnParticle(spark);
+                }
+
+                // Release perpendicular sparks outward.
+                if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == NPCID.PrimeSaw && localTimer % 8f == 7f)
+                {
+                    int sparkID = ModContent.ProjectileType<SawSpark>();
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -7f, sparkID, 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 7f, sparkID, 140, 0f);
+                }
+
+                float volumeInterpolant = Utils.GetLerpValue(195f, 150f, localTimer, true);
+                bool shouldStopSawSound = volumeInterpolant <= 0f;
+                if (npc.type == NPCID.PrimeSaw && sawSound == 0f && !shouldStopSawSound)
+                    sawSound = SoundEngine.PlaySound(InfernumSoundRegistry.PrimeSawSound with { IsLooped = true }, npc.Center).ToFloat();
+
+                // Update the sound telegraph's position.
+                if (npc.type == NPCID.PrimeSaw && SoundEngine.TryGetActiveSound(SlotId.FromFloat(sawSound), out var t) && t.IsPlaying)
+                {
+                    t.Position = npc.Center;
+                    t.Volume = volumeInterpolant;
+                    if (shouldStopSawSound)
+                        t.Stop();
+                }
+            }
+
             localTimer++;
         }
     }

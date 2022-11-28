@@ -80,6 +80,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Sounds/Custom/DeathAnimations/PolterghastDeath");
 
+        public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Sounds/Custom/PrimeSaw");
+
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
 
         public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Sounds/Custom/ProvidenceBlender") with { Volume = 2f };

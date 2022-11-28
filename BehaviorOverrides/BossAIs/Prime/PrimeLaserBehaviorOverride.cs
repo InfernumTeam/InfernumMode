@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public override float PredictivenessFactor => 24f;
+        public override float PredictivenessFactor => 20f;
 
         public override Color TelegraphColor => Color.Red;
 
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         if (burstCount >= 2)
                             laserVelocity = laserVelocity.RotatedBy(MathHelper.Lerp(-0.61f, 0.61f, i / (burstCount - 1f)));
 
-                        Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, laserVelocity, ModContent.ProjectileType<PrimeSmallLaser>(), 140, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, laserVelocity, ModContent.ProjectileType<PrimeSmallLaser>(), 160, 0f);
                     }
                 }
             }

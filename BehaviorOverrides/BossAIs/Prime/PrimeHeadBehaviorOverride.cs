@@ -65,9 +65,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public const int CannonAttackCycleTime = 600;
 
         // These two constants should together add up to a clean integer dividend from CannonAttackCycleTime.
-        public const int GenericCannonTelegraphTime = 60;
-
-        public const int GenericCannonShootTime = 240;
+        public const int GenericCannonTelegraphTime = 54;
+        
+        public const int GenericCannonShootTime = 146;
 
         public const int GenericCannonAttackTime = GenericCannonTelegraphTime + GenericCannonShootTime;
 
@@ -135,6 +135,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Do the spawn animation again once entering the second phase.
             if (!AnyArms && hasRedoneSpawnAnimation == 0f && attackType != (int)PrimeAttackType.SpawnEffects)
             {
+                // Clear any stray projectiles.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<PrimeMissile>(), ModContent.ProjectileType<PrimeSmallLaser>(), ModContent.ProjectileType<SawSpark>());
+
                 attackTimer = 0f;
                 attackType = (int)PrimeAttackType.SpawnEffects;
                 hasRedoneSpawnAnimation = 1f;
@@ -276,14 +279,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.damage = 0;
 
             // Hover in place, either above or below the target.
+            PrimeAttackType attackType = (PrimeAttackType)npc.ai[0];
             float wrappedAttackTimer = attackTimer % CannonAttackCycleTime;
-            PerformDefaultArmPhaseHover(npc, target, attackTimer);
+            PerformDefaultArmPhaseHover(npc, target, attackTimer, attackType);
 
             // Make cannons not fire if near the target.
             cannonsShouldNotFire = npc.WithinRange(target.Center, 160f).ToInt();
 
             // Calculate the cannon attack timer.
-            PrimeAttackType attackType = (PrimeAttackType)npc.ai[0];
             GetCannonAttributesByAttack(attackType, out _, out _, out int shootCycleTime);
 
             npc.Infernum().ExtraAI[CannonCycleTimerIndex] = wrappedAttackTimer % shootCycleTime;
@@ -321,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 550f : 435f);
             if (!npc.WithinRange(destination, 40f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 65f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 37f);
             else
                 npc.velocity *= 1.02f;
             npc.rotation = npc.velocity.X * 0.04f;
@@ -925,18 +928,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
             bool allCannonsCanFire = cannon.life < cannon.lifeMax * 0.5f;
             bool onlyRangedCannons = cannonAttackTimer % (shootCycleTime * 2f) < shootCycleTime;
+            bool useTelegraphs = true;
             if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
                 allCannonsCanFire = false;
                 onlyRangedCannons = false;
             }
+            if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+                useTelegraphs = false;
 
             float shootTime = cannonAttackTimer;
             if (allCannonsCanFire)
             {
                 if (shootTime < telegraphTime)
                 {
-                    telegraphInterpolant = shootTime / telegraphTime;
+                    telegraphInterpolant = useTelegraphs ? shootTime / telegraphTime : 0f;
                     return false;
                 }
             }
@@ -946,7 +952,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // After this, only melee cannons will attack, and the two will alternate.
                 if (shootTime < telegraphTime)
                 {
-                    telegraphInterpolant = shootTime / telegraphTime;
+                    telegraphInterpolant = useTelegraphs ? shootTime / telegraphTime : 0f;
                     if (!onlyRangedCannons && rangedCannon)
                         telegraphInterpolant = 0f;
                     if (onlyRangedCannons && meleeCannon)
@@ -960,11 +966,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             return head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
         }
 
-        public static void PerformDefaultArmPhaseHover(NPC npc, Player target, float attackTimer)
+        public static void PerformDefaultArmPhaseHover(NPC npc, Player target, float attackTimer, PrimeAttackType attackType)
         {
             float hoverSpeed = 23f;
             float hoverAcceleration = 0.48f;
             float verticalHoverOffset = 360f;
+
+            if (attackType == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+                verticalHoverOffset -= 50f;
             
             bool hoverAboveTarget = attackTimer % (CannonAttackCycleTime * 2f) < CannonAttackCycleTime;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * hoverAboveTarget.ToDirectionInt() * verticalHoverOffset;

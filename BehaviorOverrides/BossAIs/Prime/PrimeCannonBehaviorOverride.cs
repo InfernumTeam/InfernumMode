@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public override float PredictivenessFactor => 24f;
+        public override float PredictivenessFactor => 20f;
 
         public override Color TelegraphColor => Color.Orange;
 
@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 Utilities.CreateFireExplosion(npc.TopLeft + cannonDirection * 60f, npc.Size, cannonDirection * 5f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, cannonDirection * cannonSpeed, ModContent.ProjectileType<PrimeMissile>(), 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, cannonDirection * cannonSpeed, ModContent.ProjectileType<PrimeMissile>(), 160, 0f);
             }
         }
     }

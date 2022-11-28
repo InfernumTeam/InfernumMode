@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public override float PredictivenessFactor => 18f;
+        public override float PredictivenessFactor => 15.5f;
 
         public override Color TelegraphColor => Color.Yellow;
         
@@ -36,6 +36,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int sawTime = 150;
             float chargeSpeed = 18f;
             float sawSpeed = 29f;
+
+            // Do more contact damage.
+            npc.defDamage = 150;
 
             if (attackTimer < extendTime + sawTime)
                 npc.ai[2] = 1f;

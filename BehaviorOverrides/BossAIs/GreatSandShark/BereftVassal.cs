@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Jump,
             Kneel
         }
-
+        
         public float AngerInterpolant;
 
         public float LineTelegraphDirection;
@@ -161,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 new FlavorTextBestiaryInfoElement("A vigilant guardian, once wandering without a purpose. Having learned that his king lives on, it'd seem that he has started to regain his will to live. He looks forward to fighting you again.")
             });
         }
-
+        
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(NPC.Opacity);
@@ -210,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Reset frames.
             NPC.frameCounter++;
             FrameType = BereftVassalFrameType.Idle;
-            CurrentFrame = (int)(NPC.frameCounter / 5f % 4f);
+            CurrentFrame = (int)(NPC.frameCounter / 5f % Main.npcFrameCount[Type]);
 
             // Make the anger interpolant decrease over time.
             AngerInterpolant = MathHelper.Clamp(AngerInterpolant - 0.05f, 0f, 1f);
@@ -1692,6 +1692,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (fromRight)
                 position.X = Main.screenWidth - position.X;
 
+            // Mostly from vanilla. Spawns sandstorm particles from the side.
             position.Y = Main.rand.NextFloat(0.1f, 0.9f) * Main.screenHeight;
             position += Main.screenPosition + Target.velocity;
             int tileCoordX = (int)position.X / 16;
@@ -1761,6 +1762,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
+            
             // Weapons
             int[] weapons = new int[]
             {
@@ -1840,12 +1842,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SmokeDrawer.DrawSet(NPC.Center);
 
             Main.EntitySpriteDraw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0);
+
+            // Draw a red overlay if angry.
             if (AngerInterpolant > 0f)
             {
                 Color angerColor = Color.Lerp(drawColor, new(1f, 0.2f, 0.04f, 1f), AngerInterpolant) * NPC.Opacity * AngerInterpolant * 0.7f;
                 Main.EntitySpriteDraw(texture, drawPosition, NPC.frame, angerColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0);
             }
 
+            // Draw the spear.
             BereftVassalSpear.DrawSpearInstance(spearDrawPosition, Color.White * NPC.Opacity, SpearOpacity, SpearRotation, NPC.scale * 0.8f, false);
 
             // Draw the electric shield if it's present.
@@ -1865,6 +1870,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             shieldEffect.Parameters["blowUpSize"].SetValue(0.5f);
             shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
 
+            // Prepare the forcefield opacity.
             float baseShieldOpacity = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2f);
             shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (ElectricShieldOpacity * 0.9f + 0.1f));
             shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
@@ -1872,12 +1878,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Color edgeColor = new(226, 179, 97);
             Color shieldColor = Color.Cyan;
 
+            // Prepare the forcefield colors.
             shieldEffect.Parameters["shieldColor"].SetValue(shieldColor.ToVector3());
             shieldEffect.Parameters["shieldEdgeColor"].SetValue(edgeColor.ToVector3());
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, shieldEffect, Main.GameViewMatrix.TransformationMatrix);
 
+            // Draw the forcefield. This doesn't happen if the lighting behind the vassal is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
             Texture2D noise = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak").Value;
             Vector2 noiseDrawPosition = NPC.Center + NPC.gfxOffY * Vector2.UnitY - Main.screenPosition;
             shieldColor = Color.White * NPC.Opacity * ElectricShieldOpacity * Lighting.Brightness((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f));

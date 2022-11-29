@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < 14f)
+            if (Projectile.velocity.Length() < 17f)
                 Projectile.velocity *= 1.02f;
             
             // Fade in.

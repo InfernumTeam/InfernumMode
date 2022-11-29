@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
         }
 
-        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection)
+        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection)
         {
             int shootRate = 35;
             int burstCount = 1;
@@ -45,6 +45,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             if (attackTimer % (shootRate * 5f) == shootRate * 4f)
                 burstCount += 2;
+            
+            if (pissed)
+            {
+                shootRate -= 10;
+                laserSpeed += 4f;
+            }
 
             // Release missiles.
             if (attackTimer % shootRate == 0f)

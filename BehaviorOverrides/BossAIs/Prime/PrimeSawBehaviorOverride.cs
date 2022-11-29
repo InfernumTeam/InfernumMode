@@ -1,6 +1,7 @@
 using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -13,22 +14,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     {
         public override int NPCOverrideType => NPCID.PrimeSaw;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override float PredictivenessFactor => 15.5f;
 
         public override Color TelegraphColor => Color.Yellow;
         
-        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection)
+        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection)
         {
             if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
             {
-                PrimeViceBehaviorOverride.DoBehavior_SynchronizedMeleeArmCharges(npc, target, attackTimer);
+                PrimeViceBehaviorOverride.DoBehavior_SynchronizedMeleeArmCharges(npc, target, pissed, attackTimer);
                 return;
             }
             if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
-                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, attackTimer);
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, pissed);
                 return;
             }
 
@@ -36,6 +37,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int sawTime = 150;
             float chargeSpeed = 18f;
             float sawSpeed = 29f;
+            
+            if (pissed)
+            {
+                extendTime -= 2;
+                chargeSpeed += 4f;
+                sawSpeed += 6f;
+            }
 
             // Do more contact damage.
             npc.defDamage = 150;
@@ -67,6 +75,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Stun the saw if it was hit.
             if (attackTimer >= extendTime && npc.justHit)
                 npc.velocity *= 0.1f;
+        }
+
+        public override bool CheckDead(NPC npc)
+        {
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[2]), out var t) && t.IsPlaying)
+                t.Stop();
+
+            return true;
         }
     }
 }

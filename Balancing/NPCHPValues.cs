@@ -73,7 +73,7 @@ namespace InfernumMode.Balancing
             [NPCID.QueenSlimeBoss] = BossRushEvent.BossRushActive ? 840000 : 25940,
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(29950),
             [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : CalculateMechHP(29950),
-            [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 989515 : CalculateMechHP(44444),
+            [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 989515 : CalculateMechHP(28000),
             [NPCID.PrimeVice] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
             [NPCID.PrimeSaw] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
             [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),

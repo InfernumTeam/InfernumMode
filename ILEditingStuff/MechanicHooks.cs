@@ -546,6 +546,7 @@ namespace InfernumMode.ILEditingStuff
                 orig(self);
             }
             catch (IndexOutOfRangeException) { }
+            catch (KeyNotFoundException) { }
 
             if (useShader)
             {

@@ -129,11 +129,21 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Sounds/Item/GlassmakerOutro");
 
+        public static readonly SoundStyle WayfinderCreateSound = new("InfernumMode/Sounds/Item/WayfinderCreate");
+
+        public static readonly SoundStyle WayfinderDestroySound = new("InfernumMode/Sounds/Item/WayfinderDestroy");
+
+        public static readonly SoundStyle WayfinderFail = new("InfernumMode/Sounds/Item/WayfinderFail");
+
+        public static readonly SoundStyle WayfinderTeleport = new("InfernumMode/Sounds/Item/WayfinderTeleport");
+
         #endregion Items
 
         #region Miscellaneous
 
         public static readonly SoundStyle InfernumAchievementCompletionSound = new SoundStyle("InfernumMode/Sounds/Custom/InfernumAchievementComplete") with { Volume = 1.5f };
+
+        public static readonly SoundStyle WayfinderGateLoop = new("InfernumMode/Sounds/Custom/WayfinderGateLoop");
 
         #endregion
     }

@@ -6,6 +6,7 @@ using InfernumMode.Achievements;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;
+using InfernumMode.Projectiles.Wayfinder;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -17,6 +18,7 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -33,8 +35,6 @@ namespace InfernumMode.GlobalInstances
         public bool Madness = false;
         public float CurrentScreenShakePower;
         public float MusicMuffleFactor;
-        public float ShimmerSoundVolumeInterpolant;
-        public SlotId ShimmerSoundID;
 
         public int ProvidenceRoomShatterTimer;
 
@@ -182,29 +182,7 @@ namespace InfernumMode.GlobalInstances
                     }
                 }
             }
-            LeaveLoop:
-
-            if (Main.netMode == NetmodeID.Server)
-                return;
-
-            // Handle shimmer sound looping when near the Providence door.
-            if (SoundEngine.TryGetActiveSound(ShimmerSoundID, out var sound))
-            {
-                float idealVolume = Main.soundVolume * ShimmerSoundVolumeInterpolant;
-                if (sound.Sound.Volume != idealVolume)
-                    sound.Sound.Volume = idealVolume;
-
-                if (WorldSaveSystem.HasProvidenceDoorShattered || ShimmerSoundVolumeInterpolant <= 0f)
-                    sound.Stop();
-                if (ShimmerSoundVolumeInterpolant > 0f)
-                    sound.Resume();
-            }
-            else
-            {
-                if (ShimmerSoundVolumeInterpolant > 0f && !WorldSaveSystem.HasProvidenceDoorShattered)
-                    ShimmerSoundID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.0001f });
-            }
-            ShimmerSoundVolumeInterpolant = MathHelper.Clamp(ShimmerSoundVolumeInterpolant - 0.02f, 0f, 1f);
+        LeaveLoop:;       
         }
 
         public override void PostUpdate()

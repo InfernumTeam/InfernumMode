@@ -5,6 +5,7 @@ using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -16,6 +17,7 @@ namespace InfernumMode.Tiles
 {
     public class ProvidenceRoomDoorPedestal : ModTile
     {
+        public SlotId ShimmerID;
         public const int Width = 4;
         public const int Height = 1;
 
@@ -67,10 +69,7 @@ namespace InfernumMode.Tiles
             ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
             
             if (WorldSaveSystem.HasProvidenceDoorShattered)
-            {
-                Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = 0f;
                 return;
-            }
 
             int verticalOffset = 0;
             for (int k = 2; k < 200; k++)
@@ -130,7 +129,11 @@ namespace InfernumMode.Tiles
                 Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason($"{Main.LocalPlayer.name} was somehow impaled by a pillar of crystals."), 100, 0);
                 Main.LocalPlayer.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
-            Main.LocalPlayer.Infernum().ShimmerSoundVolumeInterpolant = Utils.Remap(Main.LocalPlayer.Distance(bottom), 750f, 100f, 0f, 0.4f);
+            if (!SoundEngine.TryGetActiveSound(ShimmerID, out var _))
+            { 
+                if (!WorldSaveSystem.HasProvidenceDoorShattered)
+                    ShimmerID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.2f }, bottom);
+            }
         }
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)

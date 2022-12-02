@@ -252,6 +252,7 @@ namespace InfernumMode
         public override void PostSetupContent()
         {
             NPCBehaviorOverride.LoadPhaseIndicaors();
+            Utilities.UpdateMapIconList();
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);

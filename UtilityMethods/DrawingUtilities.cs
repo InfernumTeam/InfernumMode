@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Miscellaneous;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -15,6 +16,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
+using Terraria.Map;
 using Terraria.ModLoader;
 
 namespace InfernumMode
@@ -410,6 +412,18 @@ namespace InfernumMode
                     cinderVelocity.X *= -1f;
                 NewProjectileBetter(target.Center + cinderSpawnOffset, cinderVelocity, cinderType, 0, 0f);
             }
+        }
+
+        public static void UpdateMapIconList()
+        {
+            // Get the private list of fields
+            FieldInfo layers = typeof(MapIconOverlay).GetField("_layers", BindingFlags.Instance | BindingFlags.NonPublic);
+            // Save it locally.
+            List<IMapLayer> list = (List<IMapLayer>)layers.GetValue(Main.MapIcons);
+            // Add our one to the end.
+            list.Add(new WayfinderMapLayer());
+            // Set the value.
+            layers.SetValue(Main.MapIcons, list);
         }
 
         public static string InfernalRelicText

@@ -37,8 +37,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int sawTime = 150;
             float chargeSpeed = 18f;
             float sawSpeed = 29f;
-            
-            if (pissed)
+
+			if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+			{
+                chargeSpeed += 2.7f;
+                sawSpeed += 3f;
+			}
+
+			if (pissed)
             {
                 extendTime -= 2;
                 chargeSpeed += 4f;

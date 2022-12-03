@@ -896,7 +896,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
+            PrimeAttackType oldAttack = (PrimeAttackType)(int)npc.ai[0];
             WeightedRandom<PrimeAttackType> attackSelector = new(Main.rand);
             if (!AnyArms)
             {
@@ -924,10 +924,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             do
                 npc.ai[0] = (int)attackSelector.Get();
-            while (npc.ai[0] == (int)currentAttack);
+            while (npc.ai[0] == (int)oldAttack);
+
+            if (oldAttack is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+                npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             // Always start the fight with generic cannon attacks.
-            if (currentAttack is PrimeAttackType.SpawnEffects or PrimeAttackType.FakeDeathAnimation)
+            if (oldAttack is PrimeAttackType.SpawnEffects or PrimeAttackType.FakeDeathAnimation)
                 npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             npc.TargetClosest();
@@ -988,7 +991,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // All cannons can fire once their collective HP is below a certain life threshold while performing the generic attack.
             bool meleeCannon = cannon.type is NPCID.PrimeVice or NPCID.PrimeSaw;
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
-            bool onlyRangedCannons = cannonAttackTimer % (shootCycleTime * 2f) < shootCycleTime;
+            bool onlyRangedCannons = head.ai[1] % (shootCycleTime * 2f) < shootCycleTime;
             bool useTelegraphs = true;
             if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 onlyRangedCannons = false;

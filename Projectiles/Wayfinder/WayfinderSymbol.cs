@@ -94,12 +94,12 @@ namespace InfernumMode.Projectiles.Wayfinder
             Vector2 origin = texture.Size() * 0.5f;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             Main.spriteBatch.Draw(bloomTexture, drawPos, null, color * Projectile.Opacity * 0.55f, 0f, bloomTexture.Size() * 0.5f, 0.7f * MaxScale, 0, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             Main.spriteBatch.Draw(texture, drawPos, null, color * Projectile.Opacity * 0.5f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;

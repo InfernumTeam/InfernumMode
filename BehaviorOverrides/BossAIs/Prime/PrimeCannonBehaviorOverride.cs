@@ -40,7 +40,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             int shootRate = 26;
             float missileSpeed = 13.5f;
-            if (pissed)
+
+			if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+			{
+                shootRate -= 4;
+				missileSpeed += 3f;
+			}
+
+			if (pissed)
             {
                 shootRate -= 9;
                 missileSpeed += 7f;

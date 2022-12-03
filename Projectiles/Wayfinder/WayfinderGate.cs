@@ -1,5 +1,4 @@
-﻿using CalamityMod.DataStructures;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -9,21 +8,21 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Projectiles.Wayfinder
 {
     public class WayfinderGate : ModProjectile
-    {
-        public ref float Timer => ref Projectile.ai[0];
-        public SlotId LoopSlot;
+	{
+		public SlotId LoopSlot;
+
+		public ref float Timer => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wayfinder Gate");
         }
+
         public override void SetDefaults()
         {
             Projectile.hostile = false;
@@ -32,28 +31,28 @@ namespace InfernumMode.Projectiles.Wayfinder
             Projectile.timeLeft = 2;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.Opacity = 0;
+            Projectile.Opacity = 0f;
             Projectile.hide = true;
         }
 
         public override void AI()
         {
             // Only exist if the position is set.
-            if(WorldSaveSystem.WayfinderGateLocation == Vector2.Zero)
+            if (WorldSaveSystem.WayfinderGateLocation == Vector2.Zero)
                 Projectile.Kill();
             Projectile.active = true;
+
             // Fade in.
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
-            if (Timer >= (1 / 0.015f))
-                Projectile.Opacity = 1;
+            
             // Ensure the position remains accurate.
             Projectile.Center = WorldSaveSystem.WayfinderGateLocation;
 
-            // Never run out of time.
+            // Never die naturally.
             Projectile.timeLeft = 2;
 
             // Handle the loop sound.
-            if(Timer % 115 is 0)
+            if (Timer % 115f is 0f)
                 LoopSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderGateLoop with { Volume = 0.2f }, Projectile.Center);
 
             if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
@@ -67,17 +66,18 @@ namespace InfernumMode.Projectiles.Wayfinder
             for(int i = 0; i < Main.player.Length; i++)
             {
                 Player player = Main.player[i];
-                if (player.active && player.Center.Distance(Projectile.Center) < 1500)
+                if (player.active && player.WithinRange(Projectile.Center, 1500f))
                 {
                     nearbyPlayer = true;
                     break;
                 }
             }
-            if(nearbyPlayer)
+            
+            if (nearbyPlayer)
             {
                 if (Main.rand.NextBool(8))
                 {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(40, 10) + new Vector2(-7, -11);
+                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(40f, 10f) + new Vector2(-7f, -11f);
                     Dust fire = Dust.NewDustDirect(position, 16, 16, Main.rand.NextBool() ? 267 : 6, 0f, 0f, 254, Color.White, 1.4f);
                     fire.velocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.Next(3,6);
                     fire.color = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.7f));
@@ -85,20 +85,21 @@ namespace InfernumMode.Projectiles.Wayfinder
                 }
                 if (Main.rand.NextBool(20))
                 {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(40, 10) + new Vector2(-7, -11);
+                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(40f, 10f) + new Vector2(-7f, -11f);
                     Vector2 velocity = -Vector2.UnitY.RotatedByRandom(0.5f) * 5;
                     Particle particle = new CritSpark(position, velocity, Main.rand.NextBool() ? Color.Orange : Color.Gold, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.35f, 0.6f), 60, 0.2f);
                     GeneralParticleHandler.SpawnParticle(particle);
                 }
-                if(Main.rand.NextBool(80))
+                if (Main.rand.NextBool(80))
                 {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30, 10) + new Vector2(22, 20);
+                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
                 }
+                
                 // Spawn a symbol every 90 frames, due to the low chance of spawning often leading to empty patches of spawns.
-                if (Timer % 90 == 0)
+                if (Timer % 90f == 0f)
                 {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30, 10) + new Vector2(22, 20);
+                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
                 }
             }
@@ -131,10 +132,10 @@ namespace InfernumMode.Projectiles.Wayfinder
             float rotInner = Main.GlobalTimeWrappedHourly * 0.133f;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             int initialGateCreationTime = 120;
-            if(Timer > initialGateCreationTime)
+            if (Timer > initialGateCreationTime)
                 Main.spriteBatch.Draw(bloomTexture, drawPos, null, outerColor * Projectile.Opacity * 0.55f, 0f, bloomTexture.Size() * 0.5f, 1f, 0, 0);
             else
             {
@@ -147,7 +148,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             Main.spriteBatch.Draw(outerTexture, drawPos, null, outerColor * Projectile.Opacity, rotOuter, outerTexture.Size() * 0.5f, 1, 0, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             Main.spriteBatch.Draw(innerTexture, drawPos, null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1, 0, 0);
 

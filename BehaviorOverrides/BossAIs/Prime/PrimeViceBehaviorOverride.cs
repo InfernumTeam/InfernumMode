@@ -43,7 +43,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float chargeSpeed = 20.5f;
             float arcSpeed = 10f;
 
-            if (pissed)
+			if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+			{
+				chargeSpeed += 2.7f;
+				arcSpeed += 3f;
+			}
+
+			if (pissed)
             {
                 extendTime -= 16;
                 chargeSpeed += 4f;

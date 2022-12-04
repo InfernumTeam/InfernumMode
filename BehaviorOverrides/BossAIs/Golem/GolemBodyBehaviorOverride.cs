@@ -1512,10 +1512,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             bool inRealTemple = false;
             bool inPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
-            ref float AttackState = ref npc.ai[1];
-            ref float AttackTimer = ref npc.ai[2];
-            ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
-            ref float PreviousAttackState2 = ref npc.Infernum().ExtraAI[20];
+            ref float attackState = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[2];
+            ref float previousAttackState = ref npc.Infernum().ExtraAI[8];
+            ref float previousAttackState2 = ref npc.Infernum().ExtraAI[20];
 
             int x = (int)(npc.Center.X / 16f);
             int y = (int)(npc.Center.Y / 16f);
@@ -1550,21 +1550,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 possibleAttacks.Add(GolemAttackState.FistSpin);
 
             int failsafeCounter = 0;
-            GolemAttackState NextAttack;
+            GolemAttackState nextAttack;
             do
             {
-                NextAttack = Main.rand.Next(possibleAttacks);
+                nextAttack = Main.rand.Next(possibleAttacks);
                 failsafeCounter++;
 
                 if (failsafeCounter >= 100)
                     break;
             }
-            while ((float)NextAttack == AttackState || (float)NextAttack == PreviousAttackState2);
+            while ((float)nextAttack == attackState || (float)nextAttack == previousAttackState2);
 
-            PreviousAttackState2 = PreviousAttackState;
-            PreviousAttackState = AttackState;
-            AttackState = (float)NextAttack;
-            AttackTimer = 0f;
+            previousAttackState2 = previousAttackState;
+            previousAttackState = attackState;
+            attackState = (float)nextAttack;
+            attackTimer = 0f;
+            npc.netUpdate = true;
         }
 
         public static void DespawnNPC(int NPCID)

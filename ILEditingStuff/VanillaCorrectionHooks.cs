@@ -162,7 +162,7 @@ namespace InfernumMode.ILEditingStuff
             center = center.Floor();
             int aspectRatio = (int)Math.Ceiling(Main.screenWidth / scaledWidth);
             int whyRedigit2 = (int)(scale * (gradient.Width - 1) / whyRedigit.X);
-            Vector2 drawPosition = (new Vector2((range - 2) * whyRedigit2, Main.maxTilesY * 4f) + center - screenOffset) * whyRedigit + screenOffset - Main.screenPosition - center;
+            Vector2 drawPosition = (new Vector2((range - 2) / whyRedigit2, Main.maxTilesY * 4f) + center - screenOffset) * whyRedigit + screenOffset - Main.screenPosition - center;
             drawPosition = drawPosition.Floor();
 
             while (drawPosition.X + scaledWidth < 0f)

@@ -31,6 +31,8 @@ namespace InfernumMode.Systems
             writer.Write(ProvidenceArena.Y);
             writer.Write(ProvidenceArena.Width);
             writer.Write(ProvidenceArena.Height);
+            writer.Write(WayfinderGateLocation.X);
+            writer.Write(WayfinderGateLocation.Y);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -50,6 +52,8 @@ namespace InfernumMode.Systems
             EidolistWorshipPedestalCenter = new(reader.ReadInt32(), reader.ReadInt32());
 
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+
+            WayfinderGateLocation = new(reader.ReadSingle(), reader.ReadSingle());
         }
     }
 }

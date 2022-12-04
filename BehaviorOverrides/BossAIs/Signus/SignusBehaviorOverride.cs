@@ -722,21 +722,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             ref float attackState = ref npc.ai[1];
             float oldAttackState = npc.ai[1];
 
-            WeightedRandom<SignusAttackType> newStatePicker = new(Main.rand);
-            newStatePicker.Add(SignusAttackType.KunaiDashes);
-            newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
+            WeightedRandom<SignusAttackType> attackSelector = new(Main.rand);
+
+            attackSelector.Add(SignusAttackType.KunaiDashes);
+            attackSelector.Add(SignusAttackType.ScytheTeleportThrow);
+            
             if (!NPC.AnyNPCs(ModContent.NPCType<UnworldlyEntity>()))
-                newStatePicker.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
-            newStatePicker.Add(SignusAttackType.FastHorizontalCharge);
+                attackSelector.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
+
+            attackSelector.Add(SignusAttackType.FastHorizontalCharge);
 
             if (lifeRatio < Phase2LifeRatio)
             {
-                newStatePicker.Add(SignusAttackType.CosmicFlameChargeBombs, 1.85);
-                newStatePicker.Add(SignusAttackType.SummonEntities, 1.85);
+                attackSelector.Add(SignusAttackType.CosmicFlameChargeBombs, 1.85);
+                attackSelector.Add(SignusAttackType.SummonEntities, 1.85);
             }
 
             do
-                attackState = (int)newStatePicker.Get();
+                attackState = (int)attackSelector.Get();
             while (attackState == oldAttackState);
 
             npc.TargetClosest();

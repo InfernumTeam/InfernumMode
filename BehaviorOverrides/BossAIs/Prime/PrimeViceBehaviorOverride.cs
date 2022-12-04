@@ -20,20 +20,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public override float PredictivenessFactor => 18f;
+        public override float PredictivenessFactor => 15.5f;
 
         public override Color TelegraphColor => Color.Yellow;
 
-        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection)
+        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection)
         {
             if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
             {
-                DoBehavior_SynchronizedMeleeArmCharges(npc, target, attackTimer);
+                DoBehavior_SynchronizedMeleeArmCharges(npc, target, pissed, attackTimer);
                 return;
             }
             if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
-                DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, attackTimer);
+                DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, pissed);
                 return;
             }
 
@@ -42,6 +42,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int attackCycleTime = extendTime + arcTime;
             float chargeSpeed = 20.5f;
             float arcSpeed = 10f;
+
+            if (pissed)
+            {
+                extendTime -= 16;
+                chargeSpeed += 4f;
+                arcSpeed += 4.5f;
+            }
+
+            // Do more contact damage.
+            npc.defDamage = 150;
 
             if (attackTimer < extendTime + arcTime)
                 npc.ai[2] = 1f;
@@ -70,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.velocity *= 0.1f;
         }
 
-        public static void DoBehavior_SynchronizedMeleeArmCharges(NPC npc, Player target, float attackTimer)
+        public static void DoBehavior_SynchronizedMeleeArmCharges(NPC npc, Player target, bool pissed, float attackTimer)
         {
             // Achieve freedom and destroy the shackles that the base AI binds this hand's movement to.
             npc.ai[2] = 1f;
@@ -83,8 +93,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int chargeTime = 36;
             float hoverSpeed = 33f;
             float chargeSpeed = 24f;
+            if (pissed)
+            {
+                chargeTime -= 4;
+                hoverSpeed += 4f;
+                chargeSpeed += 3f;
+            }
+
             Vector2 baseHoverPosition = Main.npc[(int)npc.ai[1]].Center + ArmPositionOrdering[npc.type];
-            Vector2 hoverDestination = baseHoverPosition + hoverOffsetAngle.ToRotationVector2() * new Vector2(270f, 100f);
+            Vector2 hoverDestination = baseHoverPosition + hoverOffsetAngle.ToRotationVector2() * new Vector2(270f, 100f) + Vector2.UnitX * target.velocity * 25f;
 
             // Hover into position and look at the target. Once reached, reel back.
             if (attackSubstate == 0f)
@@ -118,7 +135,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (localTimer >= reelBackTime)
                 {
                     SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
-                    Utilities.CreateShockwave(npc.Center, 2, 90, 300, false);
 
                     if (notFirstCharge == 1f)
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -160,15 +176,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             localTimer++;
         }
 
-        public static void DoBehavior_SlowSparkShrapnelMeleeCharges(NPC npc, Player target, float attackTimer)
+        public static void DoBehavior_SlowSparkShrapnelMeleeCharges(NPC npc, Player target, bool pissed)
         {
             // Achieve freedom and destroy the shackles that the base AI binds this hand's movement to.
             npc.ai[2] = 1f;
 
             NPC head = Main.npc[(int)npc.ai[1]];
 
+            // Do a lot of contact damage.
+            npc.defDamage = 200;
+
             int chargeDelay = 90;
+            int sparkReleaseRate = 10;
             float baseVerticalHoverOffset = 150f;
+            float maxChargeSpeed = 12f;
+            if (pissed)
+            {
+                chargeDelay -= 16;
+                sparkReleaseRate -= 2;
+                maxChargeSpeed += 1.8f;
+            }
+            
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float localTimer = ref npc.Infernum().ExtraAI[1];
             ref float sawSound = ref npc.Infernum().ExtraAI[2];
@@ -206,8 +234,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             else
             {
                 // Accelerate.
-                if (npc.velocity.Y < 12f)
+                if (npc.velocity.Y < maxChargeSpeed)
                     npc.velocity.Y *= 1.03f;
+
+                // Move slowly towards the target.
+                npc.Center = npc.Center.MoveTowards(target.Center, 8f);
 
                 // Emit red light.
                 DelegateMethods.v3_1 = Color.OrangeRed.ToVector3() * 0.76f;
@@ -222,11 +253,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
 
                 // Release perpendicular sparks outward.
-                if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == NPCID.PrimeSaw && localTimer % 8f == 7f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == NPCID.PrimeSaw && localTimer % sparkReleaseRate == sparkReleaseRate - 1f)
                 {
                     int sparkID = ModContent.ProjectileType<SawSpark>();
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -7f, sparkID, 140, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 7f, sparkID, 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -7f, sparkID, 165, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 7f, sparkID, 165, 0f);
                 }
 
                 float volumeInterpolant = Utils.GetLerpValue(195f, 150f, localTimer, true);

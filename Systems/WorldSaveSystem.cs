@@ -94,16 +94,11 @@ namespace InfernumMode.Systems
         }
 
         public static bool DownedEater
+        public static Vector2 WayfinderGateLocation
         {
             get;
             set;
-        } = false;
-
-        public static bool DownedBrain
-        {
-            get;
-            set;
-        } = false;
+        } = Vector2.Zero;
 
         public override void SaveWorldData(TagCompound tag)
         {
@@ -139,6 +134,8 @@ namespace InfernumMode.Systems
 
             tag["DownedEater"] = DownedEater;
             tag["DownedBrain"] = DownedBrain;
+            tag["DreamgateLocationX"] = WayfinderGateLocation.X;
+            tag["DreamgateLocationY"] = WayfinderGateLocation.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -162,6 +159,20 @@ namespace InfernumMode.Systems
 
             DownedEater = tag.GetBool("DownedEater");
             DownedBrain = tag.GetBool("DownedBrain");
+            WayfinderGateLocation = new(tag.GetFloat("DreamgateLocationX"), tag.GetFloat("DreamgateLocationY"));
+        }
+
+        public override void OnWorldLoad()
+        {
+            InfernumMode = false;
+            HasGeneratedProfanedShrine = false;
+            HasBeatedInfernumProvRegularly = false;
+            HasBeatedInfernumNightProvBeforeDay = false;
+            HasProvidenceDoorShattered = false;
+            HasSepulcherAnimationBeenPlayed = false;
+            ProvidenceArena = Rectangle.Empty;
+            ProvidenceDoorXPosition = 0;
+            WayfinderGateLocation = Vector2.Zero;
         }
     }
 }

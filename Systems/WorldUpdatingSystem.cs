@@ -3,10 +3,17 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BossRush;
+using InfernumMode.Miscellaneous;
+using InfernumMode.Projectiles.Wayfinder;
 using InfernumMode.Subworlds;
+using Microsoft.Xna.Framework;
 using SubworldLibrary;
+using System.Collections.Generic;
+using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.Map;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Systems
@@ -47,6 +54,24 @@ namespace InfernumMode.Systems
                 int y = Main.maxTilesY * 8;
                 NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
                 LostColosseum.HasBereftVassalAppeared = true;
+            }
+
+            if (WorldSaveSystem.WayfinderGateLocation != Vector2.Zero)
+            {              
+                bool gateExists = false;
+                for (int i = 0; i < Main.projectile.Length; i++)
+                {
+                    Projectile projectile = Main.projectile[i];
+
+                    if (projectile.type == ModContent.ProjectileType<WayfinderGate>() && projectile.active)
+                    {
+                        gateExists = true;
+                        break;
+                    }
+                }
+
+                if (!gateExists && Main.netMode is not NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectileDirect(Entity.GetSource_None(), WorldSaveSystem.WayfinderGateLocation, Vector2.Zero, ModContent.ProjectileType<WayfinderGate>(), 0, 0, Main.myPlayer);
             }
         }
     }

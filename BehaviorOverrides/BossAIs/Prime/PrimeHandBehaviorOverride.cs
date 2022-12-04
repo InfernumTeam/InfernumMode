@@ -26,8 +26,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             NPC head = Main.npc[headIndex];
+            bool pissed = head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
             PrimeAttackType attackState = (PrimeAttackType)head.ai[0];
-            GetCannonAttributesByAttack(attackState, out int telegraphTime, out _, out _);
+            GetCannonAttributesByAttack(attackState, head, out int telegraphTime, out _, out _);
+
+            if (pissed && npc.life > 10000)
+                npc.life = 10000;
 
             float wrappedAttackTimer = head.Infernum().ExtraAI[CannonCycleTimerIndex] - telegraphTime;
             ref float telegraphIntensity = ref npc.localAI[0];
@@ -53,6 +57,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (telegraphInterpolant > 0f)
             {
                 // Fly approximately near the hover position, with increasing precision as the telegraphs get stronger.
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.1f);
+
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 33f;
                 Vector2 hyperfastVelocity = Vector2.Zero.MoveTowards(((hoverDestination - npc.Center) / 12f).ClampMagnitude(20f, 80f), 80f);
                 idealVelocity = Vector2.Lerp(idealVelocity, hyperfastVelocity, telegraphInterpolant * 0.8f);
@@ -105,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     npc.ai[2] = 0f;
 
                 Vector2 cannonDirection = (npc.rotation + MathHelper.PiOver2).ToRotationVector2();
-                PerformAttackBehaviors(npc, attackState, target, wrappedAttackTimer, cannonDirection);
+                PerformAttackBehaviors(npc, attackState, target, wrappedAttackTimer, pissed, cannonDirection);
             }
 
             return false;
@@ -149,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public abstract Color TelegraphColor { get; }
 
-        public abstract void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection);
+        public abstract void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection);
 
         public virtual void PerformTelegraphBehaviors(NPC npc, PrimeAttackType attackState, float telegraphIntensity, Vector2 cannonDirection) { }
     }

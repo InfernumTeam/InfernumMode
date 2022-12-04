@@ -40,15 +40,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
             // Fish spawned by this cannot create more fish.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[0] == 0f && npc.wet)
             {
-                // Larger schools are made rarer by this exponent by effectively "squashing" randomness.
-                float fishInterpolant = (float)Math.Pow(Main.rand.NextFloat(), 4D);
-                int fishCount = (int)MathHelper.Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
-
-                for (int i = 0; i < fishCount; i++)
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, npc.whoAmI, 1f);
-
-                npc.ai[0] = 1f;
-                npc.netUpdate = true;
+                Utilities.SpawnSchoolOfFish(npc, MinSchoolSize, MaxSchoolSize);
                 return false;
             }
 
@@ -82,17 +74,7 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
             // Avoid walls and exiting water.
             if (shouldTurnAround)
-            {
-                float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(-MathHelper.PiOver2)) ?? 999f;
-                float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(MathHelper.PiOver2)) ?? 999f;
-                float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
-                Vector2 idealVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2 * turnDirection);
-                if (aboutToLeaveWorld)
-                    idealVelocity = ahead.X >= Main.maxTilesX * 16f - 700f ? -Vector2.UnitX * 4f : Vector2.UnitX * 4f;
-
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.15f);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
-            }
+                Utilities.TurnAroundBehavior(npc, ahead, shouldTurnAround);
             else
                 DoSchoolingMovement(npc, ref hasFoundPlayer);
 

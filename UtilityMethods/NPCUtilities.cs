@@ -80,56 +80,7 @@ namespace InfernumMode
             }
 
             return false;
-        }
-
-        public static NPC FindClosestAbyssPredator(this NPC npc, out float distanceToClosestPredator)
-        {
-            NPC closestPredator = null;
-            distanceToClosestPredator = 9999999f;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (!Main.npc[i].active || !Main.npc[i].Infernum().IsAbyssPredator)
-                    continue;
-
-                float extraDistance = (Main.npc[i].width / 2) + (Main.npc[i].height / 2);
-                extraDistance *= extraDistance;
-
-                bool canHit = Collision.CanHit(npc.Center, 1, 1, Main.npc[i].Center, 1, 1);
-                if (Vector2.DistanceSquared(npc.Center, Main.npc[i].Center) < (distanceToClosestPredator + extraDistance) && canHit)
-                {
-                    distanceToClosestPredator = Vector2.DistanceSquared(npc.Center, Main.npc[i].Center);
-                    closestPredator = Main.npc[i];
-                }
-            }
-
-            // Apply a square root on the squared distance.
-            distanceToClosestPredator = (float)Math.Sqrt(distanceToClosestPredator);
-
-            return closestPredator;
-        }
-
-        public static void TargetClosestAbyssPredator(NPC searcher, bool passiveToPlayers, float preySearchDistance, float playerSearchDistance)
-        {
-            bool playerSearchFilter(Player p)
-            {
-                return !passiveToPlayers && p.WithinRange(searcher.Center, playerSearchDistance);
-            }
-            bool npcSearchFilter(NPC n)
-            {
-                return n.Infernum().IsAbyssPrey && n.WithinRange(searcher.Center, preySearchDistance);
-            }
-
-            NPCUtils.TargetSearchResults searchResults = NPCUtils.SearchForTarget(searcher, NPCUtils.TargetSearchFlag.All, playerSearchFilter, npcSearchFilter);
-            if (searchResults.FoundTarget)
-            {
-                NPCUtils.TargetType value = searchResults.NearestTargetType;
-                if (searchResults.FoundTank && !searchResults.NearestTankOwner.dead && !passiveToPlayers)
-                    value = NPCUtils.TargetType.Player;
-
-                searcher.target = searchResults.NearestTargetIndex;
-                searcher.targetRect = searchResults.NearestTargetHitbox;
-            }
-        }
+        }       
 
         public static string GetNPCNameFromID(int id)
         {

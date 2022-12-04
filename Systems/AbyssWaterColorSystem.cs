@@ -89,12 +89,12 @@ namespace InfernumMode.Systems
 
         public override void Load()
         {
-            ILChanges.ExtraColorChangeConditions += ChangeAbyssColors;
+            //ILChanges.ExtraColorChangeConditions += ChangeAbyssColors;
         }
 
         public override void Unload()
         {
-            ILChanges.ExtraColorChangeConditions -= ChangeAbyssColors;
+            //ILChanges.ExtraColorChangeConditions -= ChangeAbyssColors;
         }
 
         public override void OnModLoad()

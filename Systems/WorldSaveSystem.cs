@@ -93,7 +93,6 @@ namespace InfernumMode.Systems
             set;
         }
 
-        public static bool DownedEater
         public static Vector2 WayfinderGateLocation
         {
             get;
@@ -132,8 +131,6 @@ namespace InfernumMode.Systems
             tag["EidolistWorshipPedestalCenterX"] = EidolistWorshipPedestalCenter.X;
             tag["EidolistWorshipPedestalCenterY"] = EidolistWorshipPedestalCenter.Y;
 
-            tag["DownedEater"] = DownedEater;
-            tag["DownedBrain"] = DownedBrain;
             tag["DreamgateLocationX"] = WayfinderGateLocation.X;
             tag["DreamgateLocationY"] = WayfinderGateLocation.Y;
         }
@@ -157,8 +154,6 @@ namespace InfernumMode.Systems
             SquidDenCenter = new(tag.GetInt("SquidDenCenterX"), tag.GetInt("SquidDenCenterY"));
             EidolistWorshipPedestalCenter = new(tag.GetInt("EidolistWorshipPedestalCenterX"), tag.GetInt("EidolistWorshipPedestalCenterY"));
 
-            DownedEater = tag.GetBool("DownedEater");
-            DownedBrain = tag.GetBool("DownedBrain");
             WayfinderGateLocation = new(tag.GetFloat("DreamgateLocationX"), tag.GetFloat("DreamgateLocationY"));
         }
 

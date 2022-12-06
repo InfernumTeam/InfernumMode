@@ -119,6 +119,7 @@ namespace InfernumMode.Items
                 GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
 
                 drawData.Draw(spriteBatch);
+
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
                 return false;

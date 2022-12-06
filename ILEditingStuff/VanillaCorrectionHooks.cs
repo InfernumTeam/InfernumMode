@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Balancing;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
@@ -7,6 +8,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
+using CalamityMod.Skies;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
 using InfernumMode.Tiles.Relics;
@@ -14,12 +16,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour.HookGen;
+using ReLogic.Content;
 using SubworldLibrary;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
@@ -552,5 +559,68 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => AresBodyCanHitPlayer += LetAresHitPlayer;
 
         public void Unload() => AresBodyCanHitPlayer -= LetAresHitPlayer;
+    }
+
+    public class ChangeBRSkyColorHook : IHookEdit
+    {
+        public void Load() => BRSkyColor += ChangeBRSkyColor;
+
+        public void Unload() => BRSkyColor -= ChangeBRSkyColor;
+
+        private void ChangeBRSkyColor(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.EmitDelegate(() =>
+            {
+                Color color = Color.Lerp(new Color(205, 100, 100), Color.Black, WhiteDimness) * 0.2f;
+                return color;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+    }
+
+    public class ChangeBREyeTextureHook : IHookEdit
+    {
+        public void Load() => BRXerocEyeTexure += ChangeBREyeTexture;
+
+        public void Unload() => BRXerocEyeTexure -= ChangeBREyeTexture;
+
+        private void ChangeBREyeTexture(ILContext il)
+        {
+            // Better to rewrite the entire thing to get it looking just right.
+            ILCursor cursor = new(il);
+            cursor.GotoNext(MoveType.Before, i => i.MatchLdstr("CalamityMod/Skies/XerocEye"));
+            cursor.EmitDelegate(() =>
+            {
+
+                Vector2 screenCenter2 = Main.screenPosition + new Vector2((float)Main.screenWidth, (float)Main.screenHeight) * 0.5f;
+                screenCenter2 += new Vector2((float)Main.screenWidth, (float)Main.screenHeight) * (Main.GameViewMatrix.Zoom - Vector2.One) * 0.5f;
+
+                float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + (float)Math.Sin((double)BossRushSky.IdleTimer) * 0.01f;
+                Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter2) * 0.097f + screenCenter2 - Main.screenPosition - Vector2.UnitY * 100f;
+                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/XerocEyeAlt").Value;
+                Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);
+                
+                Main.spriteBatch.Draw(eyeTexture, drawPosition, null, baseColorDraw, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
+
+                Color fadedColor = Color.Lerp(baseColorDraw, Color.Red, 0.3f) * MathHelper.Lerp(0.18f, 0.3f, BossRushSky.IncrementalInterest);
+                fadedColor.A = 0;
+
+                float backEyeOutwardness = MathHelper.Lerp(8f, 4f, BossRushSky.IncrementalInterest);
+                int backInstances = (int)MathHelper.Lerp(6f, 24f, BossRushSky.IncrementalInterest);
+                for (int i = 0; i < backInstances; i++)
+                {
+                    Vector2 drawOffset = ((float)Math.PI * 4f * (float)i / (float)backInstances + Main.GlobalTimeWrappedHourly * 2.1f).ToRotationVector2() * backEyeOutwardness;
+                    Main.spriteBatch.Draw(eyeTexture, drawPosition + drawOffset, null, fadedColor * 0.3f, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
+                }
+
+                if (BossRushSky.ShouldDrawRegularly)
+                    BossRushSky.ShouldDrawRegularly = false;
+
+                return;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
     }
 }

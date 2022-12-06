@@ -17,6 +17,7 @@ using InfernumMode.Systems;
 using InfernumMode.Sounds;
 using System.Reflection;
 using System;
+using CalamityMod.Events;
 
 namespace InfernumMode.ILEditingStuff
 {

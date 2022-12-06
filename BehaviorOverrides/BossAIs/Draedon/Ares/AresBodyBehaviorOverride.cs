@@ -75,6 +75,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
+        public static bool Enraged
+        {
+            get
+            {
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
+                    return false;
+
+                return Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ExoMechManagement.Ares_EnragedIndex] == 1f;
+            }
+        }
+
         #region AI
         public override bool PreAI(NPC npc)
         {
@@ -103,9 +114,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
-            ref float enraged = ref npc.Infernum().ExtraAI[13];
+            ref float enraged = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_EnragedIndex];
             ref float backarmSwapTimer = ref npc.Infernum().ExtraAI[14];
-            ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[15];
+            ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
@@ -756,7 +767,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Stop being enraged after an idle hover.
             if (oldAttackType == AresBodyAttackType.IdleHover || (int)oldAttackType >= 100f)
-                npc.Infernum().ExtraAI[13] = 0f;
+                npc.Infernum().ExtraAI[ExoMechManagement.Ares_EnragedIndex] = 0f;
 
             npc.netUpdate = true;
         }
@@ -930,7 +941,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Color afterimageBaseColor = Color.White;
 
             // Become red if enraged.
-            if (npc.Infernum().ExtraAI[13] == 1f || ExoMechComboAttackContent.EnrageTimer > 0f)
+            if (Enraged || ExoMechComboAttackContent.EnrageTimer > 0f)
                 afterimageBaseColor = Color.Red;
 
             Color armGlowmaskColor = afterimageBaseColor;
@@ -959,7 +970,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             };
 
             // Swap arms as necessary
-            if (npc.Infernum().ExtraAI[15] == 1f)
+            if (npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex] == 1f)
             {
                 armProperties[0] = (1, true);
                 armProperties[1] = (-1, true);

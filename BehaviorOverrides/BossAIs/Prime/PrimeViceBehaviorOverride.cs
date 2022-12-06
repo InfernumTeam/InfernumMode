@@ -42,25 +42,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float chargeSpeed = 20.5f;
             float arcSpeed = 10f;
 
-			if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
-			{
-				chargeSpeed += 2.7f;
-				arcSpeed += 3f;
-			}
+            if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+            {
+                chargeSpeed += 2.7f;
+                arcSpeed += 3f;
+            }
 
-			if (pissed)
+            if (pissed)
             {
                 extendTime -= 16;
                 arcTime -= 72;
-				chargeSpeed += 4f;
+                chargeSpeed += 4f;
                 arcSpeed += 4.5f;
             }
 
             // Do more contact damage.
             npc.defDamage = 150;
 
-			int attackCycleTime = extendTime + arcTime;
-			if (attackTimer < extendTime + arcTime)
+            int attackCycleTime = extendTime + arcTime;
+            if (attackTimer < extendTime + arcTime)
                 npc.ai[2] = 1f;
             else
                 npc.damage = 0;

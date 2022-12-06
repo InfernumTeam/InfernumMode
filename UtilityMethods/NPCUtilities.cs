@@ -4,6 +4,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.OverridingSystem;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -103,6 +104,14 @@ namespace InfernumMode
                 return modNpc.Type;
 
             return NPCID.None;
+        }
+
+        public static T BehaviorOverride<T>(this NPC npc) where T : NPCBehaviorOverride
+        {
+            if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out NPCBehaviorOverride b) && b is T t)
+                return t;
+
+            return null;
         }
     }
 }

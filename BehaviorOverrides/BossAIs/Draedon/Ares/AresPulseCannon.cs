@@ -305,11 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(NPC, completionRatio),
                     null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
             }
-
-            // Don't draw anything if the cannon is detached. The Exowl that has it will draw it manually.
-            if (NPC.Infernum().ExtraAI[ExoMechManagement.Ares_CannonInUseByExowl] == 1f)
-                return false;
-
+            
             for (int i = 0; i < 2; i++)
             {
                 if (NPC.Infernum().ExtraAI[0] > 0f)

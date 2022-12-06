@@ -1466,7 +1466,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     int tries = 0;
                     do
                     {
-                        npc.ai[0] = (int)TwinsAttackType.ArtemisLaserRay;
+                        npc.ai[0] = (int)TwinsAttackType.FireCharge;
                         if (Main.rand.NextBool(3))
                             npc.ai[0] = (int)TwinsAttackType.GatlingLaserAndPlasmaFlames;
                         if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())

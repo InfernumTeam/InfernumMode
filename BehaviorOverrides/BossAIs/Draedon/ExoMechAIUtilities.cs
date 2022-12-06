@@ -105,6 +105,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 npc.spriteDirection = -npc.direction;
             }
+
+            // Determine direction based on rotation.
+            npc.direction = (npc.rotation > 0f).ToDirectionInt();
+
             return aimDirection;
         }
 

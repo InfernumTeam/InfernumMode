@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 Utilities.CreateFireExplosion(npc.TopLeft + cannonDirection * 60f, npc.Size, cannonDirection * 5f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, cannonDirection * missileSpeed, ModContent.ProjectileType<PrimeMissile>(), 160, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, cannonDirection * missileSpeed, ModContent.ProjectileType<PrimeMissile>(), 140, 0f);
             }
         }
     }

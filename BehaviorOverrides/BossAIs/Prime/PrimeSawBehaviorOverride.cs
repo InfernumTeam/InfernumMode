@@ -47,7 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 			if (pissed)
             {
                 extendTime -= 2;
-                chargeSpeed += 4f;
+                sawTime -= 66;
+				chargeSpeed += 4f;
                 sawSpeed += 6f;
             }
 
@@ -68,14 +69,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
             
             // Quickly attempt to saw through the target if sufficiently close.
-            if (attackTimer >= extendTime && npc.velocity.Y != 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 42f)
+            if (attackTimer >= extendTime && npc.velocity.Y != 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 42f && !pissed)
             {
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * sawSpeed * 0.35f;
                 npc.netUpdate = true;
             }
 
             // Acclerate the saw.
-            if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed)
+            if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed && !pissed)
                 npc.velocity *= 1.036f;
 
             // Stun the saw if it was hit.

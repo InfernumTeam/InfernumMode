@@ -39,7 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             int extendTime = 50;
             int arcTime = 120;
-            int attackCycleTime = extendTime + arcTime;
             float chargeSpeed = 20.5f;
             float arcSpeed = 10f;
 
@@ -52,14 +51,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 			if (pissed)
             {
                 extendTime -= 16;
-                chargeSpeed += 4f;
+                arcTime -= 72;
+				chargeSpeed += 4f;
                 arcSpeed += 4.5f;
             }
 
             // Do more contact damage.
             npc.defDamage = 150;
 
-            if (attackTimer < extendTime + arcTime)
+			int attackCycleTime = extendTime + arcTime;
+			if (attackTimer < extendTime + arcTime)
                 npc.ai[2] = 1f;
             else
                 npc.damage = 0;
@@ -73,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             // Arc around, towards the target.
-            if (attackTimer >= extendTime && attackTimer < attackCycleTime)
+            if (attackTimer >= extendTime && attackTimer < attackCycleTime && !pissed)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.12f);
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;

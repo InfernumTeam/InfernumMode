@@ -916,7 +916,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 attackSelector.Add(PrimeAttackType.GenericCannonAttacking);
                 attackSelector.Add(PrimeAttackType.SynchronizedMeleeArmCharges);
-                attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
+
+                if (npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 0f)
+                    attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
             }
 
             // Reduce old velocity so that Prime doesn't fly off somewhere after an attack concludes.
@@ -992,6 +994,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             bool meleeCannon = cannon.type is NPCID.PrimeVice or NPCID.PrimeSaw;
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
             bool onlyRangedCannons = head.ai[1] % (shootCycleTime * 2f) < shootCycleTime;
+            bool allCannonsCanFire = head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
             bool useTelegraphs = true;
             if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 onlyRangedCannons = false;
@@ -1013,7 +1016,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 return false;
             }
 
-            return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
+            if (allCannonsCanFire)
+                return head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
+
+			return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
         }
 
         public static void PerformDefaultArmPhaseHover(NPC npc, Player target, float attackTimer, PrimeAttackType attackType)

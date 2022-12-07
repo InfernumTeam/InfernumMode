@@ -12,5 +12,11 @@ namespace InfernumMode.GlobalInstances
 
             return base.CanExplode(i, j, type);
         }
+
+        public override void KillWall(int i, int j, int type, ref bool fail)
+        {
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)))
+                fail = true;
+        }
     }
 }

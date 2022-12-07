@@ -3,6 +3,7 @@ using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.GlobalInstances
@@ -44,6 +45,12 @@ namespace InfernumMode.GlobalInstances
                 return false;
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
+        }
+
+        public override void NearbyEffects(int i, int j, int type, bool closer)
+        {
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) && type is TileID.Tombstones)
+                WorldGen.KillTile(i, j);
         }
     }
 }

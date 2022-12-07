@@ -105,8 +105,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             orbCounter++;
         }
 
-        public override ref SlotId GetSoundSlot(NPC npc) => ref npc.ModNPC<AresTeslaCannon>().TelegraphSoundSlot;
-
         public override Vector2 GetHoverOffset(NPC npc, bool performingCharge)
         {
             if (performingCharge)

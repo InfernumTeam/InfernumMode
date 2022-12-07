@@ -542,6 +542,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float artemisHasPerformedTelegraph = ref npc.Infernum().ExtraAI[3];
             ref float laserBurstCounter = ref npc.Infernum().ExtraAI[4];
 
+            // Provide the target infinite flight time.
+            target.wingTime = target.wingTimeMax;
+
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 float wrappedAttackTimer = attackTimer % apolloChargeRate;

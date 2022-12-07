@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float chargeDelay = ref npc.ai[1];
             ref float currentDirection = ref npc.ai[3];
             ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
-            ref SlotId telegraphSound = ref GetSoundSlot(npc);
+            ref float telegraphSound = ref npc.Infernum().ExtraAI[2];
 
             // Initialize delays and other timers.
             shouldPrepareToFire = 0f;
@@ -109,10 +109,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Play a sound telegraph before firing.
             int telegraphTime = Math.Max((int)chargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
             if (attackTimer == telegraphTime && !currentlyDisabled)
-                telegraphSound = SoundEngine.PlaySound(FireTelegraphSound with { Volume = 1.6f }, npc.Center);
+                telegraphSound = SoundEngine.PlaySound(FireTelegraphSound with { Volume = 1.6f }, npc.Center).ToFloat();
 
             // Update the sound telegraph's position.
-            if (SoundEngine.TryGetActiveSound(telegraphSound, out var t) && t.IsPlaying)
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(telegraphSound), out var t) && t.IsPlaying)
             {
                 t.Position = npc.Center;
                 if (performingCharge)
@@ -187,8 +187,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public abstract void CreateDustTelegraphs(NPC npc, Vector2 endOfCannon);
 
         public abstract void ShootProjectiles(NPC npc, Vector2 endOfCannon, Vector2 aimDirection);
-
-        public abstract ref SlotId GetSoundSlot(NPC npc);
 
         public abstract Vector2 GetHoverOffset(NPC npc, bool performingCharge);
 

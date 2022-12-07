@@ -128,8 +128,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             laserShootCounter++;
         }
 
-        public override ref SlotId GetSoundSlot(NPC npc) => ref npc.ModNPC<AresLaserCannon>().TelegraphSoundSlot;
-
         public override Vector2 GetHoverOffset(NPC npc, bool performingCharge)
         {
             float backArmDirection = (Ares.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex] == 1f).ToDirectionInt();

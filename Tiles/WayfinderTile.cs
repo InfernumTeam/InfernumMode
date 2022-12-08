@@ -38,8 +38,12 @@ namespace InfernumMode.Tiles
             if (closer && t.TileFrameX == 18 && t.TileFrameY == 18)
             {
                 Vector2 spawnPosition = new Point(i, j).ToWorldCoordinates();
-                Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 7f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
-                WorldGen.KillTile(i, j);
+
+                if (Main.LocalPlayer.WithinRange(spawnPosition, 100f))
+                {
+                    Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 7f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
+                    WorldGen.KillTile(i, j);
+                }
             }
         }
     }

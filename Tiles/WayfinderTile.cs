@@ -41,7 +41,7 @@ namespace InfernumMode.Tiles
 
                 if (Main.LocalPlayer.WithinRange(spawnPosition, 100f))
                 {
-                    Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 7f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
                     WorldGen.KillTile(i, j);
                 }
             }

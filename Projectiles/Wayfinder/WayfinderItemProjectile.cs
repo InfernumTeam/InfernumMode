@@ -59,7 +59,7 @@ namespace InfernumMode.Projectiles.Wayfinder
         public override void AI()
         {
             // Slow down after flying upward for long enough.
-            if (Time >= 60f)
+            if (Time >= 45f)
                 Projectile.velocity *= 0.9f;
 
             // Decide frames.

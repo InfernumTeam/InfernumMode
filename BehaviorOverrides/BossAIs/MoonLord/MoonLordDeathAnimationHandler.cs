@@ -10,8 +10,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class MoonLordDeathAnimationHandler : ModProjectile
     {
         public PrimitiveTrailCopy LightDrawer = null;
+        
         public ref float Owner => ref Projectile.ai[0];
+
         public float AnimationTimer => Main.npc[(int)Owner].Infernum().ExtraAI[6];
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Death Animation");
 
         public override void SetDefaults()
@@ -110,10 +113,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * MathHelper.Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
             }
 
-            if (LightDrawer is null)
-                LightDrawer = new PrimitiveTrailCopy(c => rayWidthFunction(c, Projectile.Infernum().ExtraAI[8]), c => rayColorFunction(c, Projectile.Infernum().ExtraAI[8]), null, false);
+            LightDrawer ??= new PrimitiveTrailCopy(c => rayWidthFunction(c, Projectile.Infernum().ExtraAI[8]), c => rayColorFunction(c, Projectile.Infernum().ExtraAI[8]), null, false);
+            
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
-
             float length = MathHelper.Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
             List<Vector2> points = new();
             for (int i = 0; i <= 12; i++)

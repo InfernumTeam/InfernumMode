@@ -179,7 +179,7 @@ namespace InfernumMode
             // The logic here basically determines which indices are connected together.
             int totalIndices = (pointCount - 1) * 6;
             short[] indices = new short[totalIndices];
-
+            
             for (int i = 0; i < pointCount - 2; i++)
             {
                 int startingTriangleIndex = i * 6;

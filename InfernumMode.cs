@@ -1,3 +1,4 @@
+using CalamityMod.Cooldowns;
 using CalamityMod.Events;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
@@ -227,6 +228,8 @@ namespace InfernumMode
                 
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
             }
+
+            CooldownRegistry.RegisterModCooldowns(this);
 
             if (BossRushApplies)
                 BossRushChanges.Load();

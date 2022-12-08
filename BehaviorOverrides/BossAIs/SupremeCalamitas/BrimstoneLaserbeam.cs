@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Particles.Metaballs;
 using CalamityMod.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using System;
@@ -79,9 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public void CreateArmsOnSurfaces()
         {
-            Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength + Main.rand.NextVector2Circular(80f, 8f);
-            Vector2 idealCenter = endOfLaser;
-            Utilities.NewProjectileBetter(idealCenter, Vector2.Zero, ModContent.ProjectileType<AcceleratingDarkMagicFlame>(), 525, 0f, Projectile.owner);
+            Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength;
+            FusableParticleManager.GetParticleSetByType<RancorGroundLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 320f);
         }
 
         public void CreateTileHitEffects()
@@ -113,8 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
+            RayDrawer ??= new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
 
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
 

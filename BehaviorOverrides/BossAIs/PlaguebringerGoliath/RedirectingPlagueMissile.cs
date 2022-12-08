@@ -31,8 +31,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Projectile.Hitbox.Intersects(Target.Hitbox))
                 Projectile.Kill();
 
+            // Emit smoke effects.
+            EmitSmoke(Projectile);
+
             if (Time < 30f)
                 Projectile.velocity *= 1.01f;
+
             if (Time >= 30f)
             {
                 float newSpeed = MathHelper.Clamp(Projectile.velocity.Length() * 1.003f, 11f, 18f);
@@ -41,6 +45,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             Projectile.tileCollide = Time > 105f;
             Time++;
+        }
+
+        public static void EmitSmoke(Projectile projectile)
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            Vector2 currentDirection = projectile.velocity.SafeNormalize(Vector2.Zero);
+            Vector2 endOfRocket = projectile.Center - currentDirection * 36f;
+            Vector2 smokeVelocity = -currentDirection.RotatedByRandom(0.93f) * Main.rand.NextFloat(1f, 7f);
+
+            Dust smokeDust = Dust.NewDustPerfect(endOfRocket, 31);
+            smokeDust.velocity = smokeVelocity * Main.rand.NextFloat(0.3f, 1.1f) + projectile.velocity;
+            smokeDust.scale *= 0.92f;
+            smokeDust.fadeIn = -0.2f;
+            smokeDust.noGravity = true;
         }
 
         public override void Kill(int timeLeft)

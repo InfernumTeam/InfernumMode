@@ -31,6 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Projectile.Hitbox.Intersects(Target.Hitbox))
                 Projectile.Kill();
 
+            // Emit smoke effects.
+            RedirectingPlagueMissile.EmitSmoke(Projectile);
+
             Projectile.tileCollide = Projectile.Center.Y > Target.Center.Y;
             Time++;
         }

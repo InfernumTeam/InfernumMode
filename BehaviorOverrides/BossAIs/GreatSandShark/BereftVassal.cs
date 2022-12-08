@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using InfernumMode.Items;
+using InfernumMode.Items.Accessories;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
@@ -1760,7 +1761,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            npcLoot.Add(ModContent.ItemType<CherishedSealocket>());
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
+
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
             
             // Weapons
@@ -1855,13 +1858,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Draw the electric shield if it's present.
             if (ElectricShieldOpacity > 0f && !NPC.IsABestiaryIconDummy)
-                DrawElectricShield();
+                DrawElectricShield(ElectricShieldOpacity, NPC.Center + Vector2.UnitY * NPC.gfxOffY - Main.screenPosition, Lighting.Brightness((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f)));
             return false;
         }
 
-        public void DrawElectricShield()
+        public static void DrawElectricShield(float opacity, Vector2 drawPosition, float colorBrightness, float scaleFactor = 1f)
         {
-            float scale = MathHelper.Lerp(0.15f, 0.18f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f);
+            float scale = MathHelper.Lerp(0.15f, 0.18f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
             float noiseScale = MathHelper.Lerp(0.4f, 0.8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
 
             Effect shieldEffect = Terraria.Graphics.Effects.Filters.Scene["RoverDriveShield"].GetShader().Shader;
@@ -1872,7 +1875,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Prepare the forcefield opacity.
             float baseShieldOpacity = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2f);
-            shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (ElectricShieldOpacity * 0.9f + 0.1f));
+            shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (opacity * 0.9f + 0.1f));
             shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
 
             Color edgeColor = new(226, 179, 97);
@@ -1887,11 +1890,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Draw the forcefield. This doesn't happen if the lighting behind the vassal is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
             Texture2D noise = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak").Value;
-            Vector2 noiseDrawPosition = NPC.Center + NPC.gfxOffY * Vector2.UnitY - Main.screenPosition;
-            shieldColor = Color.White * NPC.Opacity * ElectricShieldOpacity * Lighting.Brightness((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f));
-
             if (shieldColor.ToVector4().Length() > 0.02f)
-                Main.spriteBatch.Draw(noise, noiseDrawPosition, null, shieldColor, 0, noise.Size() / 2f, scale * 2f, 0, 0);
+                Main.spriteBatch.Draw(noise, drawPosition, null, Color.White * opacity * colorBrightness, 0, noise.Size() / 2f, scale * 2f, 0, 0);
 
             Main.spriteBatch.ExitShaderRegion();
         }

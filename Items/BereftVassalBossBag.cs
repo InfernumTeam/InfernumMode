@@ -1,6 +1,8 @@
 ﻿using CalamityMod;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Items.Accessories;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
@@ -58,9 +60,13 @@ namespace InfernumMode.Items
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
+            itemLoot.Add(ModContent.ItemType<CherishedSealocket>());
+
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
             itemLoot.Add(DropHelper.CalamityStyle(DropHelper.BagWeaponDropRateFraction, ModContent.ItemType<Myrindael>(), ModContent.ItemType<TheGlassmaker>(), ModContent.ItemType<AridBattlecry>()));
+
             itemLoot.AddRevBagAccessories();
+
             itemLoot.Add(ModContent.ItemType<ThankYouPainting>(), 100);
         }
     }

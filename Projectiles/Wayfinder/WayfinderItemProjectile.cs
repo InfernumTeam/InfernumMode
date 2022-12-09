@@ -1,7 +1,10 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.Providence;
+using CalamityMod.Particles;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -18,6 +21,8 @@ namespace InfernumMode.Projectiles.Wayfinder
 
         public PrimitiveTrailCopy LightDrawer = null;
 
+        public SlotId SoundID;
+
         public Player Owner => Main.player[Projectile.owner];
 
         public ref float Time => ref Projectile.ai[0];
@@ -30,7 +35,7 @@ namespace InfernumMode.Projectiles.Wayfinder
 
         public const int VisualEffectsDissipateTime = 60;
 
-        public const int Lifetime = RayCreationTime + RayExpandTime + IdleDrawTime + VisualEffectsDissipateTime;
+        public const int Lifetime = RayCreationTime + RayExpandTime + IdleDrawTime + VisualEffectsDissipateTime; // 302
 
         #endregion
 
@@ -66,8 +71,34 @@ namespace InfernumMode.Projectiles.Wayfinder
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
 
-            if (Time == RayCreationTime + RayExpandTime)
-                SoundEngine.PlaySound(Providence.HolyRaySound with { Volume = 3f, Pitch = 0.4f });
+            if (Time == 0) // 170
+                SoundID = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderObtainSound, Projectile.Center);
+
+            if (SoundEngine.TryGetActiveSound(SoundID, out ActiveSound s))
+            {
+                if (s.IsPlaying && s.Position != Projectile.Center)
+                    s.Position = Projectile.Center;
+            }
+
+            if (Time is < RayCreationTime + RayExpandTime + IdleDrawTime and > 10f)
+            {
+                float interpolant = (Time - 10f) / (RayCreationTime + RayExpandTime + IdleDrawTime - 10f);
+                Main.NewText(interpolant);
+                int amount = (int)MathHelper.Lerp(0, 6f, interpolant);
+                float offsetAmount = MathHelper.Lerp(0f, 25f, interpolant);
+                float scale = MathHelper.Lerp(0f, 1.3f, interpolant);
+                WayfinderHoldout.CreateFlameExplosion(Projectile.Center, offsetAmount, offsetAmount, amount, scale, 30);
+            }
+
+            if (Time >= RayCreationTime + RayExpandTime + IdleDrawTime)
+            {
+                int fireLifetime = 30;
+                if (Time is Lifetime)
+                    fireLifetime = 60;
+              
+                WayfinderHoldout.CreateFlameExplosion(Projectile.Center, 25f, 25f, 30, 1.3f, fireLifetime);
+            }
+
             Projectile.rotation = -MathHelper.PiOver4;
 
             Time++;

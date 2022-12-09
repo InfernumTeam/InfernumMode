@@ -145,6 +145,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle WayfinderGateLoop = new("InfernumMode/Sounds/Custom/WayfinderGateLoop");
 
+        public static readonly SoundStyle WayfinderObtainSound = new("InfernumMode/Sounds/Custom/WayfinderObtainSound");
+
         #endregion
     }
 }

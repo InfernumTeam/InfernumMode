@@ -83,7 +83,6 @@ namespace InfernumMode.Projectiles.Wayfinder
             if (Time is < RayCreationTime + RayExpandTime + IdleDrawTime and > 10f)
             {
                 float interpolant = (Time - 10f) / (RayCreationTime + RayExpandTime + IdleDrawTime - 10f);
-                Main.NewText(interpolant);
                 int amount = (int)MathHelper.Lerp(0, 6f, interpolant);
                 float offsetAmount = MathHelper.Lerp(0f, 25f, interpolant);
                 float scale = MathHelper.Lerp(0f, 1.3f, interpolant);

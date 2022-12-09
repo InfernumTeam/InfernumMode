@@ -4,13 +4,16 @@ using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Achievements;
 using InfernumMode.Achievements.InfernumAchievements;
+using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 
@@ -20,6 +23,8 @@ namespace InfernumMode.Subworlds
 {
     public class LostColosseum : Subworld
     {
+        internal static bool VassalWasBeaten = false;
+
         public static bool HasBereftVassalAppeared
         {
             get;
@@ -32,6 +37,36 @@ namespace InfernumMode.Subworlds
             set;
         } = false;
 
+        public static float SunsetInterpolant
+        {
+            get;
+            set;
+        }
+
+        public static Color SunlightColor =>
+            Color.Lerp(Color.White, new(210, 85, 135), SunsetInterpolant * SunsetInterpolant * 0.67f);
+
+        public const int SchematicWidth = 1199;
+
+        public const int SchematicHeight = 251;
+
+        public const int CaveWidth = 180;
+
+        public static readonly Point PortalPosition = new(CaveWidth + 25, 190);
+
+        public static readonly Point CampfirePosition = new(CaveWidth + 320, 165);
+
+        public override int Width => SchematicWidth + CaveWidth + 36;
+
+        public override int Height => SchematicHeight + 32;
+
+        public override bool ShouldSave => true;
+
+        public override List<GenPass> Tasks => new()
+        {
+            new LostColosseumGenPass()
+        };
+
         public class LostColosseumGenPass : GenPass
         {
             public LostColosseumGenPass() : base("Terrain", 1f) { }
@@ -39,8 +74,8 @@ namespace InfernumMode.Subworlds
             protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
             {
                 progress.Message = "Generating a Lost Colosseum";
-                Main.worldSurface = 1;
-                Main.rockLayer = 3;
+                Main.worldSurface = Main.maxTilesY - 25;
+                Main.rockLayer = Main.maxTilesY - 30;
 
                 for (int i = 0; i < CaveWidth; i++)
                 {
@@ -51,15 +86,15 @@ namespace InfernumMode.Subworlds
                     }
                 }
 
-                GenerateCaveSystem(new(CaveWidth, 92), new(CaveWidth, 190));
+                GenerateCaveSystem(new(CaveWidth, 92), new(PortalPosition.X - 25, PortalPosition.Y));
 
                 bool _ = false;
                 Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 30);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
                 // Set the default spawn position.
-                Main.spawnTileX = CaveWidth + 25;
-                Main.spawnTileY = 190;
+                Main.spawnTileX = PortalPosition.X;
+                Main.spawnTileY = PortalPosition.Y;
             }
 
             public static void GenerateCaveSystem(Point start, Point end)
@@ -93,38 +128,22 @@ namespace InfernumMode.Subworlds
             }
         }
 
-        public const int SchematicWidth = 1199;
-
-        public const int SchematicHeight = 251;
-
-        public const int CaveWidth = 180;
-
-        public override int Width => SchematicWidth + CaveWidth + 36;
-
-        public override int Height => SchematicHeight + 32;
-
-        public override bool ShouldSave => true;
-
-        public override List<GenPass> Tasks => new()
-        {
-            new LostColosseumGenPass()
-        };
-
         public override bool GetLight(Tile tile, int x, int y, ref FastRandom rand, ref Vector3 color)
         {
             Vector3 lightMin = Vector3.Zero;
             bool notSolid = tile.Slope != SlopeType.Solid || tile.IsHalfBlock;
             if (!tile.HasTile || !Main.tileNoSunLight[tile.TileType] || (notSolid && Main.wallLight[tile.WallType] && tile.LiquidAmount < 200))
-                lightMin = Vector3.One;
+                lightMin = SunlightColor.ToVector3();
 
             color = Vector3.Max(color, lightMin);
             return false;
         }
 
-        internal static bool VassalWasCompleted = false;
-
         public override void OnExit()
         {
+            // Reset the sunset interpolant.
+            SunsetInterpolant = 0f;
+
             // Ensure that the vassal defeat achievement translates over when the player goes to a different subworld.
             List<Achievement> achievementList = new();
             foreach (var achievement in achievementList)
@@ -132,9 +151,43 @@ namespace InfernumMode.Subworlds
                 if (achievement.GetType() == typeof(BereftVassalAchievement))
                 {
                     if (achievement.DoneCompletionEffects)
-                        VassalWasCompleted = true;
+                        VassalWasBeaten = true;
                 }
             }
+        }
+
+        public static void ManageSandstorm()
+        {
+            Main.windSpeedCurrent = 1.5f;
+            bool useSandstorm = !HasBereftVassalBeenDefeated;
+            int vassal = NPC.FindFirstNPC(ModContent.NPCType<BereftVassal>());
+            if (useSandstorm && vassal >= 0 && !Main.LocalPlayer.dead)
+                useSandstorm = Main.npc[vassal].ModNPC<BereftVassal>().CurrentAttack == BereftVassal.BereftVassalAttackType.IdleState;
+
+            if (useSandstorm)
+            {
+                Sandstorm.Happening = true;
+                Sandstorm.TimeLeft = 240;
+                Sandstorm.IntendedSeverity = Sandstorm.Severity = 1.5f;
+            }
+            else
+            {
+                Sandstorm.StopSandstorm();
+                Sandstorm.Severity *= 0.96f;
+            }
+        }
+
+        public static void UpdateSunset()
+        {
+            // 12:00 PM.
+            int noon = 27000;
+
+            // 5:00 PM.
+            int evening = noon + 18000;
+            Main.time = (int)MathHelper.Lerp(noon, evening, SunsetInterpolant);
+
+            if (HasBereftVassalBeenDefeated)
+                SunsetInterpolant = 1f;
         }
     }
 }

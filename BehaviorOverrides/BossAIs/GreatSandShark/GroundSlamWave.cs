@@ -79,8 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (TornadoDrawer is null)
-                TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
+            TornadoDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
 
             GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 

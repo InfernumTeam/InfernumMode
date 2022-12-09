@@ -37,7 +37,8 @@ namespace InfernumMode.Items.Accessories
             {
                 get;
                 set;
-            }
+            } = 1f;
+            
             public float ForcefieldOpacity
             {
                 get;

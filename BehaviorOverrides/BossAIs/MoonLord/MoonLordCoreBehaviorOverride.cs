@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     SoundID.Zombie97
                 };
                 foreach (var sound in sounds)
-                    SoundEngine.PlaySound(sound with { Volume = 1.85f, Pitch = 0.35f });
+                    SoundEngine.PlaySound(sound with { Volume = 1.2f, Pitch = 0.35f });
             }
             wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 

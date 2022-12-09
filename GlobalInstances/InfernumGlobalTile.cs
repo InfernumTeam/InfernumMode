@@ -1,6 +1,8 @@
 using CalamityMod;
+using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
+using SubworldLibrary;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -30,7 +32,7 @@ namespace InfernumMode.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)))
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
             return base.CanExplode(i, j, type);
@@ -41,7 +43,7 @@ namespace InfernumMode.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)))
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
@@ -49,7 +51,8 @@ namespace InfernumMode.GlobalInstances
 
         public override void NearbyEffects(int i, int j, int type, bool closer)
         {
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) && type is TileID.Tombstones)
+            bool tombstonesShouldSpontaneouslyCombust = WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) || SubworldSystem.IsActive<LostColosseum>();
+            if (tombstonesShouldSpontaneouslyCombust && type is TileID.Tombstones)
                 WorldGen.KillTile(i, j);
         }
     }

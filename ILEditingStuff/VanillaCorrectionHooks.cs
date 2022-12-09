@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Balancing;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
@@ -16,17 +15,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour.HookGen;
-using ReLogic.Content;
 using SubworldLibrary;
 using System;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
@@ -140,46 +135,6 @@ namespace InfernumMode.ILEditingStuff
             orig(self, force || SubworldSystem.IsActive<LostColosseum>());
         }
 
-        internal void DrawColosseumBackground(On.Terraria.Main.orig_DrawBackground orig, Main self)
-        {
-            orig(self);
-
-            if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<LostColosseum>())
-                return;
-
-            Texture2D gradient = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGGradient").Value;
-            Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGObjects").Value;
-
-            // I don't know.
-            // I'm sorry.
-            Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
-            Vector2 center = new Vector2(gradient.Width, gradient.Height) * 0.5f;
-            Vector2 whyRedigit = new(0.92592f);
-            float scale = 1.6f;
-            float scaledWidth = scale * gradient.Width;
-            int range = (int)(screenOffset.X * whyRedigit.X - center.X - (Main.screenWidth >> 1) / scaledWidth);
-            center = center.Floor();
-            int aspectRatio = (int)Math.Ceiling(Main.screenWidth / scaledWidth);
-            int whyRedigit2 = (int)(scale * (gradient.Width - 1) / whyRedigit.X);
-            Vector2 drawPosition = (new Vector2((range - 2) / whyRedigit2, Main.maxTilesY * 4f) + center - screenOffset) * whyRedigit + screenOffset - Main.screenPosition - center;
-            drawPosition = drawPosition.Floor();
-
-            while (drawPosition.X + scaledWidth < 0f)
-            {
-                range++;
-                drawPosition.X += scaledWidth;
-            }
-
-            drawPosition.Y += 250f;
-            Main.spriteBatch.Draw(gradient, new Vector2(0f, Main.screenHeight - 660f) * 0.5f, null, Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
-            for (int i = range - 2; i <= range + aspectRatio + 2; i++)
-            {
-                Main.spriteBatch.Draw(gradient, drawPosition - Vector2.UnitY * 400f, null, Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(bgObjects, drawPosition, gradient.Frame(), Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
-                drawPosition.X += scaledWidth;
-            }
-        }
-
         internal void ChangeDrawBlackLimit(ILContext il)
         {
             ILCursor c = new(il);
@@ -197,18 +152,30 @@ namespace InfernumMode.ILEditingStuff
             c.Emit(OpCodes.Stloc, 3);
         }
 
+        private void GetRidOfPeskyBlackSpaceFade(On.Terraria.Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
+        {
+            Color oldSkyColor = Main.ColorOfTheSkies;
+            orig();
+
+            if (SubworldSystem.IsActive<LostColosseum>())
+            {
+                Main.atmo = 1f;
+                Main.ColorOfTheSkies = oldSkyColor;
+            }
+        }
+
         public void Load()
         {
-            On.Terraria.Main.DrawBackground += DrawColosseumBackground;
             On.Terraria.Main.DrawBlack += ForceDrawBlack;
             IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
+            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
         }
 
         public void Unload()
         {
-            On.Terraria.Main.DrawBackground -= DrawColosseumBackground;
             On.Terraria.Main.DrawBlack -= ForceDrawBlack;
             IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
+            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
         }
     }
 

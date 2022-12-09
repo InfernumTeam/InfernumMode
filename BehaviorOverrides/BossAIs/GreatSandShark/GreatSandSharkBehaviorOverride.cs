@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.active = false;
                 return false;
             }
-
+            
             // Do not despawn.
             npc.timeLeft = 7200;
 

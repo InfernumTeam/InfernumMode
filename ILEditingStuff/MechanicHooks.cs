@@ -9,10 +9,12 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -507,7 +509,7 @@ namespace InfernumMode.ILEditingStuff
             if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
                 return;
 
-            c.EmitDelegate<Action>(() =>
+            c.EmitDelegate(() =>
             {
                 if (NPC.AnyNPCs(NPCID.MoonLordCore) && InfernumMode.CanUseCustomAIs)
                     Main.LocalPlayer.noBuilding = true;
@@ -532,6 +534,18 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
 
         public void Unload() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
+    }
+
+    public class AllowSandstormInColosseumHook : IHookEdit
+    {
+        internal static bool LetSandParticlesAppear(On.Terraria.GameContent.Events.Sandstorm.orig_ShouldSandstormDustPersist orig)
+        {
+            return orig() || (SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening);
+        }
+
+        public void Load() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
+
+        public void Unload() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
     }
 
     public class DrawVoidBackgroundDuringMLFightHook : IHookEdit

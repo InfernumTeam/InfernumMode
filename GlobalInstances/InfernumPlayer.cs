@@ -154,8 +154,11 @@ namespace InfernumMode.GlobalInstances
             Madness = false;
             MadnessTime = 0;
 
-            // THIS IS A TEST EFFECT. REMOVE IT LATER.
-            LostColosseum.HasBereftVassalAppeared = false;
+            if (SubworldSystem.IsActive<LostColosseum>())
+            {
+                Main.spawnTileX = LostColosseum.CampfirePosition.X;
+                Main.spawnTileY = LostColosseum.CampfirePosition.Y;
+            }
 
             if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);

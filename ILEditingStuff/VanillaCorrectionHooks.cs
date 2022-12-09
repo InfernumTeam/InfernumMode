@@ -159,6 +159,7 @@ namespace InfernumMode.ILEditingStuff
             if (SubworldSystem.IsActive<LostColosseum>())
             {
                 Main.atmo = 1f;
+                Main.sunModY = 360;
                 Main.ColorOfTheSkies = oldSkyColor;
             }
         }
@@ -174,6 +175,9 @@ namespace InfernumMode.ILEditingStuff
             c.Emit(OpCodes.Pop);
             c.EmitDelegate(() =>
             {
+                if (Main.gameMenu)
+                    return Main.ColorOfTheSkies;
+
                 return Color.Lerp(Main.ColorOfTheSkies, new(241, 134, 95), LostColosseum.SunsetInterpolant * 0.8f);
             });
         }

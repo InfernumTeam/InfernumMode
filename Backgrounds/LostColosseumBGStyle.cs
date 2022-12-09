@@ -14,14 +14,20 @@ namespace InfernumMode.Backgrounds
     
     public class LostColosseumSurfaceBGStyle : ModSurfaceBackgroundStyle
     {
-        public override int ChooseFarTexture() => BackgroundTextureLoader.GetBackgroundSlot("InfernumMode/Backgrounds/LostColosseumBGObjects");
+        public override int ChooseFarTexture() => BackgroundTextureLoader.GetBackgroundSlot("Terraria/Images/Background_20");
 
-        public override int ChooseMiddleTexture() => BackgroundTextureLoader.GetBackgroundSlot("InfernumMode/Backgrounds/LostColosseumBGObjects");
+        public override int ChooseMiddleTexture() => BackgroundTextureLoader.GetBackgroundSlot("Terraria/Images/Background_207");
 
         public override int ChooseCloseTexture(ref float scale, ref double parallax, ref float a, ref float b)
         {
-            b = 700f;
+            b -= 250f;
             return BackgroundTextureLoader.GetBackgroundSlot("InfernumMode/Backgrounds/LostColosseumBGObjects");
+        }
+
+        public override void Load()
+        {
+            BackgroundTextureLoader.AddBackgroundTexture(Mod, "Terraria/Images/Background_20");
+            BackgroundTextureLoader.AddBackgroundTexture(Mod, "Terraria/Images/Background_207");
         }
 
         public override void ModifyFarFades(float[] fades, float transitionSpeed)

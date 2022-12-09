@@ -51,6 +51,7 @@ namespace InfernumMode.Systems
             {
                 LostColosseum.ManageSandstorm();
                 LostColosseum.UpdateSunset();
+                CalamityMod.CalamityMod.StopRain();
             }
 
             if (!LostColosseum.HasBereftVassalAppeared && inColosseum && !Main.LocalPlayer.dead)

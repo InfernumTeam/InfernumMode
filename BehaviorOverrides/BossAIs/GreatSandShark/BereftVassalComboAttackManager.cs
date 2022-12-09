@@ -185,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         {
                             Vector2 sandVelocity = new(npc.spriteDirection * -MathHelper.Lerp(4f, 15f, i / (float)(sandVomitCount - 1f)), -16f - i * 1.36f);
                             Vector2 mouthPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX * -npc.spriteDirection) * 108f;
-                            sandVelocity += Main.rand.NextVector2Circular(1.4f, 1.4f);
+                            sandVelocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
 
                             int blobIndex = Utilities.NewProjectileBetter(mouthPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                             if (Main.projectile.IndexInRange(blobIndex))
@@ -676,7 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -500f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
                             Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
                             int devil = Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f);
                             if (Main.projectile.IndexInRange(devil))

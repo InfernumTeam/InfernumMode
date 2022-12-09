@@ -91,7 +91,7 @@ namespace InfernumMode.Items.Accessories
 
             public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
             {
-                if (MechanicalEffectsApply && !Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _) && damage >= 2)
+                if (MechanicalEffectsApply && !Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _) && damage >= 100)
                 {
                     // Apply DR and disable typical hit graphical/sound effects.
                     damage = (int)(damage * (1f - ForcefieldDRMultiplier));

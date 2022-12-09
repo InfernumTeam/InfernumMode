@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Events;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -182,6 +183,9 @@ namespace InfernumMode.Projectiles.Wayfinder
             int dustSpawnRate = (int)MathHelper.Lerp(8, 1, Time / TeleportMaxTime);
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
 
+            if (IsGateSet)
+                MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
+
             if (Time == 0)
             {
                 if (IsGateSet)
@@ -211,9 +215,8 @@ namespace InfernumMode.Projectiles.Wayfinder
                 }
             }
             if (Time is > 70 and < TeleportationTime && IsGateSet)
-            {
                 CreateFlameExplosion(Owner.Center, 10, 20, 2, 0.6f, 45);
-            }
+
             // Teleport the player at the appropriate time.
             if (Time == TeleportationTime)
             {

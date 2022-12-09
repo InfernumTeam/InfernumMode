@@ -1761,7 +1761,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ModContent.ItemType<CherishedSealocket>());
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
 
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
@@ -1773,6 +1772,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<AridBattlecry>(),
             };
+            normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
             normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
         }
 

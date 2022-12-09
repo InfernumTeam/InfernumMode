@@ -137,8 +137,8 @@ namespace InfernumMode.GlobalInstances
                 ScreenFocusInterpolant = MathHelper.Clamp(ScreenFocusInterpolant - 0.2f, 0f, 1f);
             MusicMuffleFactor = 0f;
 
-            // Disable block placement and destruction in the profaned arena.
-            if (InProfanedArenaAntiCheeseZone)
+            // Disable block placement and destruction in the profaned arena and lost colosseum.
+            if (InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>())
             {
                 Player.AddBuff(BuffID.NoBuilding, 10);
                 Player.noBuilding = true;
@@ -187,6 +187,10 @@ namespace InfernumMode.GlobalInstances
 
         public override void PostUpdate()
         {
+            // Don't see the invisible blocks in the Colosseum build.
+            if (SubworldSystem.IsActive<LostColosseum>())
+                Player.CanSeeInvisibleBlocks = false;
+
             // Keep the player out of the providence arena if the door is around.
             if (WorldSaveSystem.ProvidenceDoorXPosition != 0 && !WorldSaveSystem.HasProvidenceDoorShattered && Player.Bottom.Y >= (Main.maxTilesY - 220f) * 16f)
             {

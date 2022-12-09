@@ -155,7 +155,7 @@ namespace InfernumMode.ILEditingStuff
             Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
             Vector2 center = new Vector2(gradient.Width, gradient.Height) * 0.5f;
             Vector2 whyRedigit = new(0.92592f);
-            float scale = 1.2f;
+            float scale = 1.6f;
             float scaledWidth = scale * gradient.Width;
             int range = (int)(screenOffset.X * whyRedigit.X - center.X - (Main.screenWidth >> 1) / scaledWidth);
             center = center.Floor();
@@ -169,11 +169,13 @@ namespace InfernumMode.ILEditingStuff
                 range++;
                 drawPosition.X += scaledWidth;
             }
+
             drawPosition.Y += 250f;
+            Main.spriteBatch.Draw(gradient, new Vector2(0f, Main.screenHeight - 660f) * 0.5f, null, Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
             for (int i = range - 2; i <= range + aspectRatio + 2; i++)
             {
-                Main.spriteBatch.Draw(gradient, drawPosition - Vector2.UnitY * 400f, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(bgObjects, drawPosition, gradient.Frame(), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(gradient, drawPosition - Vector2.UnitY * 400f, null, Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(bgObjects, drawPosition, gradient.Frame(), Color.White, 0f, Vector2.Zero, scale * 1.2f, SpriteEffects.None, 0f);
                 drawPosition.X += scaledWidth;
             }
         }

@@ -20,7 +20,6 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -164,11 +163,27 @@ namespace InfernumMode.ILEditingStuff
             }
         }
 
+        private void ChangeBackgroundColorSpecifically(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            if (!c.TryGotoNext(c => c.MatchStfld<Main>("unityMouseOver")))
+                return;
+
+            c.GotoNext(MoveType.After, c => c.MatchLdsfld<Main>("ColorOfTheSkies"));
+            c.Emit(OpCodes.Pop);
+            c.EmitDelegate(() =>
+            {
+                return Color.Lerp(Main.ColorOfTheSkies, new(241, 134, 95), LostColosseum.SunsetInterpolant * 0.8f);
+            });
+        }
+
         public void Load()
         {
             On.Terraria.Main.DrawBlack += ForceDrawBlack;
             IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
             On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+            IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
         }
 
         public void Unload()
@@ -176,6 +191,7 @@ namespace InfernumMode.ILEditingStuff
             On.Terraria.Main.DrawBlack -= ForceDrawBlack;
             IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
             On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+            IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
         }
     }
 

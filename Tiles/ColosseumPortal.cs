@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
 using CalamityMod.Tiles.FurnitureProfaned;
+using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Projectiles;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -42,6 +43,8 @@ namespace InfernumMode.Tiles
             get;
             set;
         } = null;
+
+        internal static List<Point> PortalCache = new();
 
         public override void SetStaticDefaults()
         {
@@ -91,8 +94,13 @@ namespace InfernumMode.Tiles
                 return false;
 
             SandPillarDrawer ??= new PrimitiveTrailCopy(PillarWidthFunction, PillarColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
-            DrawSpecialEffects(new Point(i, j).ToWorldCoordinates());
-            
+
+            Point p = new(i, j);
+            if (PortalCache.Contains(p))
+                PortalCache.Remove(p);
+
+            PortalCache.Add(p);
+
             return false;
         }
 
@@ -145,12 +153,15 @@ namespace InfernumMode.Tiles
         {
             Color lightSandColor = new(234, 179, 112);
             float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
-            float opacity = Utils.GetLerpValue(0.84f, 0.96f, AnimationCompletion, true);
-            return Color.Lerp(lightSandColor, Color.SkyBlue, (float)Math.Pow(colorShiftInterpolant, 1.64f)) * opacity;
+            float opacity = Utils.GetLerpValue(0.84f, 0.96f, AnimationCompletion, true) * Utils.GetLerpValue(0f, 0.13f, completionRatio, true);
+            return Color.Lerp(lightSandColor, Color.SkyBlue, (float)Math.Pow(colorShiftInterpolant, 1.64f)) * opacity * 0.85f;
         }
 
         public static void DrawSpecialEffects(Vector2 center)
         {
+            center.X -= 18f;
+            center.Y += 18f;
+
             Vector2 start = center;
             Vector2 end = start - Vector2.UnitY * 580f;
             
@@ -161,22 +172,17 @@ namespace InfernumMode.Tiles
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(start, end, i / 8f));
-
-            Vector2 fuckYou = (Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f - center) * new Vector2(0.125f, 0.225f);
-            fuckYou.X -= 12f;
-            fuckYou.Y += 20f;
-
-            Matrix perspective = Matrix.CreateTranslation(new Vector3(fuckYou, 0f)) * Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, 0f, 1f);
-            SandPillarDrawer.SpecifyPerspectiveMatrix(perspective);
+            
             SandPillarDrawer.Draw(points, -Main.screenPosition, 186);
 
             // Draw the portal.
-            int sideCount = 384;
+            int sideCount = 512;
             float radius = Utils.GetLerpValue(0.5f, 0.95f, AnimationCompletion, true) * 90f;
-            Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 6f), out var triangleIndices, out var vertices);
+            Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
 
+            CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
             GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(perspective);
+            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uTimeFactor"].SetValue(3.2f);

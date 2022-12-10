@@ -1,4 +1,6 @@
 using CalamityMod;
+using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -95,11 +97,20 @@ namespace InfernumMode.Systems
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            // WHAT THE FUCK NO ABORT ABORT ABORT
+            if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
+                ThingsToDrawOnTopOfBlur.Clear();
+
             while (ThingsToDrawOnTopOfBlur.Count > 0)
             {
                 ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
                 ThingsToDrawOnTopOfBlur.RemoveAt(0);
             }
+
+            foreach (Point p in ColosseumPortal.PortalCache)
+                ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
+
             Main.spriteBatch.End();
         }
 

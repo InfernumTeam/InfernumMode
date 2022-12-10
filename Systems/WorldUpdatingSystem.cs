@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -52,6 +53,7 @@ namespace InfernumMode.Systems
                 LostColosseum.ManageSandstorm();
                 LostColosseum.UpdateSunset();
                 CalamityMod.CalamityMod.StopRain();
+                LanternNight.WorldClear();
 
                 // Get rid of clouds.
                 for (int i = 0; i < Main.maxClouds; i++)
@@ -85,6 +87,9 @@ namespace InfernumMode.Systems
                 if (!gateExists && Main.netMode is not NetmodeID.MultiplayerClient)
                     Projectile.NewProjectileDirect(Entity.GetSource_None(), WorldSaveSystem.WayfinderGateLocation, Vector2.Zero, wayfinderGateID, 0, 0, Main.myPlayer);
             }
+
+            // Make the lost colosseum portal animation timer play if it isn't finished.
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = Utils.Clamp(WorldSaveSystem.LostColosseumPortalAnimationTimer + 1, 0, WorldSaveSystem.LostColosseumPortalAnimationTime);
         }
     }
 }

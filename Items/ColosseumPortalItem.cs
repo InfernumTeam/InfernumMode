@@ -4,17 +4,17 @@ using InfernumMode.Tiles;
 
 namespace InfernumMode.Items
 {
-    public class SandstoneItem : ModItem
+    public class ColosseumPortalItem : ModItem
     {
         public override void SetStaticDefaults()
         {
             SacrificeTotal = 100;
-            DisplayName.SetDefault("Connecting Sandstone");
+            DisplayName.SetDefault("Lost Colosseum Portal");
         }
 
         public override void SetDefaults()
         {
-            Item.createTile = ModContent.TileType<SandstoneTile>();
+            Item.createTile = ModContent.TileType<ColosseumPortal>();
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTurn = true;
             Item.useAnimation = 15;

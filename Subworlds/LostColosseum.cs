@@ -5,6 +5,8 @@ using CalamityMod.World;
 using InfernumMode.Achievements;
 using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Systems;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
@@ -52,7 +54,7 @@ namespace InfernumMode.Subworlds
 
         public const int CaveWidth = 180;
 
-        public static readonly Point PortalPosition = new(CaveWidth + 25, 190);
+        public static readonly Point PortalPosition = new(CaveWidth + 28, 190);
 
         public static readonly Point CampfirePosition = new(CaveWidth + 320, 165);
 
@@ -95,6 +97,13 @@ namespace InfernumMode.Subworlds
                 // Set the default spawn position.
                 Main.spawnTileX = PortalPosition.X;
                 Main.spawnTileY = PortalPosition.Y;
+
+                // Ensure that the portal is open when the player is there.
+                WorldSaveSystem.HasOpenedLostColosseumPortal = true;
+
+                Point p = PortalPosition;
+                while (!WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<ColosseumPortal>()))
+                    p.Y++;
             }
 
             public static void GenerateCaveSystem(Point start, Point end)
@@ -154,6 +163,8 @@ namespace InfernumMode.Subworlds
                         VassalWasBeaten = true;
                 }
             }
+
+            Main.LocalPlayer.Infernum().ReturnToPositionBeforeSubworld = true;
         }
 
         public static void ManageSandstorm()

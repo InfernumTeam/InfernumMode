@@ -684,7 +684,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int jumpDelay = 16;
             int waveCount = 7;
-            int spearSpinTime = 68;
+            int spearSpinTime = 75;
             int waterSpinTime = WaterTorrentBeam.Lifetime;
             float waterSpinArc = MathHelper.Pi * 0.28f;
             float recoilSpeed = 9f;
@@ -789,7 +789,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int jumpCount = 3;
             int jumpDelay = 12;
-            int hoverTime = 29;
+            int hoverTime = 40;
             int attackTransitionDelay = 45;
             int chargeTime = 40;
             int smallWaveCount = 13;
@@ -853,7 +853,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 // Rapidly decelerate.
                 NPC.velocity.X *= 0.9f;
-                NPC.velocity.Y += 0.7f;
+                NPC.velocity.Y += 0.6f;
 
                 // Enable tile collision if above the target.
                 NPC.noTileCollide = NPC.Bottom.Y >= Target.Center.Y;

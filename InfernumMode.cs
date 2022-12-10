@@ -76,7 +76,7 @@ namespace InfernumMode
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
 
             BalancingChangesManager.Load();
-            HookManager.Load();
+            Main.RunOnMainThread(HookManager.Load);
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())

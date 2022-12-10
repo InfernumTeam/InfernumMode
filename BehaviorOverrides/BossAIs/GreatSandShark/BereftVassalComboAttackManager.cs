@@ -660,6 +660,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // The bereft vassal rides atop the great sand shark at all times, releasing water waves in bursts.
             if (npc.type == ModContent.NPCType<BereftVassal>())
             {
+                // Create a sandstorm.
+                for (int i = 0; i < 2; i++)
+                    npc.ModNPC<BereftVassal>().CreateSandstormParticle(true);
+
                 // Ride the great sand shark.
                 RideGreatSandShark(npc);
 

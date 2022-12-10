@@ -52,6 +52,10 @@ namespace InfernumMode.Systems
                 LostColosseum.ManageSandstorm();
                 LostColosseum.UpdateSunset();
                 CalamityMod.CalamityMod.StopRain();
+
+                // Get rid of clouds.
+                for (int i = 0; i < Main.maxClouds; i++)
+                    Main.cloud[i].active = false;
             }
 
             if (!LostColosseum.HasBereftVassalAppeared && inColosseum && !Main.LocalPlayer.dead)

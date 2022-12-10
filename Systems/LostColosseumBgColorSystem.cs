@@ -13,7 +13,7 @@ namespace InfernumMode.Systems
             if (!SubworldSystem.IsActive<LostColosseum>())
                 return;
 
-            backgroundColor = Color.Lerp(new(229, 195, 146), new(184, 143, 164), LostColosseum.SunsetInterpolant);
+            backgroundColor = Color.Lerp(new(229, 195, 146), new(255, 143, 164), LostColosseum.SunsetInterpolant);
         }
     }
 }

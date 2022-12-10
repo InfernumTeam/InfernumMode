@@ -77,6 +77,7 @@ namespace InfernumMode
 
             BalancingChangesManager.Load();
             HookManager.Load();
+
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {

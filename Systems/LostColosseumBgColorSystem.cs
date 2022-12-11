@@ -1,7 +1,6 @@
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
-using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Systems

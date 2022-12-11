@@ -1,7 +1,5 @@
 ﻿using CalamityMod.Items;
-using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.GlobalInstances;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

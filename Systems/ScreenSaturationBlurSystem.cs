@@ -1,5 +1,4 @@
 using CalamityMod;
-using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

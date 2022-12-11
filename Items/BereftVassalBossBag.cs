@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Items.Accessories;

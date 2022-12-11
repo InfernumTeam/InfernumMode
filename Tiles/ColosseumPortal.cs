@@ -1,8 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
-using CalamityMod.Tiles.FurnitureProfaned;
-using InfernumMode.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Projectiles;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;

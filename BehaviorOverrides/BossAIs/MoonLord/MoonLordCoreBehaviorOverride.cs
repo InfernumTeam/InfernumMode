@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Events;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;

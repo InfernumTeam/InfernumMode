@@ -1,6 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs.Providence;
-using CalamityMod.Particles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

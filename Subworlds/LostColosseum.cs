@@ -94,6 +94,12 @@ namespace InfernumMode.Subworlds
                 Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 30);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
+                for (int i = 0; i < CaveWidth + 48; i++)
+                {
+                    for (int j = 0; j < Main.maxTilesY; j++)
+                        Main.tile[i, j].WallType = WallID.Sandstone;
+                }
+
                 // Set the default spawn position.
                 Main.spawnTileX = PortalPosition.X;
                 Main.spawnTileY = PortalPosition.Y;
@@ -128,7 +134,7 @@ namespace InfernumMode.Subworlds
                 // Carve out caves.
                 foreach (Vector2 curvePoint in baseCurvePoints)
                 {
-                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(7, 13), Actions.Chain(new GenAction[]
+                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(8, 13), Actions.Chain(new GenAction[]
                     {
                         new Modifiers.Blotches(3, 0.27),
                         new Actions.ClearTile()

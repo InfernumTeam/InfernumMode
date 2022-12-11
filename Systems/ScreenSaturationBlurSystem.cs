@@ -97,7 +97,7 @@ namespace InfernumMode.Systems
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
+            
             // WHAT THE FUCK NO ABORT ABORT ABORT
             if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
                 ThingsToDrawOnTopOfBlur.Clear();

@@ -52,7 +52,9 @@ namespace InfernumMode.Tiles
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
-            Main.tileNoAttach[ModContent.TileType<ProfanedCrystal>()] = false;
+
+            // This is necessary to ensure that the primitives properly render.
+            TileID.Sets.DrawTileInSolidLayer[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
             TileObjectData.newTile.Width = Width;
@@ -99,16 +101,14 @@ namespace InfernumMode.Tiles
             if (PortalCache.Contains(p))
                 PortalCache.Remove(p);
 
-            PortalCache.Add(p);
+            if (WorldSaveSystem.HasOpenedLostColosseumPortal)
+                PortalCache.Add(p);
 
             return false;
         }
 
         public override bool RightClick(int i, int j)
         {
-            // This is necessary to ensure that the primitives properly render.
-            TileID.Sets.DrawTileInSolidLayer[Type] = true;
-
             if (!Main.LocalPlayer.HasItem(ModContent.ItemType<SandstormsCore>()) && !WorldSaveSystem.HasOpenedLostColosseumPortal)
                 return true;
 
@@ -174,7 +174,7 @@ namespace InfernumMode.Tiles
                 points.Add(Vector2.Lerp(start, end, i / 8f));
             
             SandPillarDrawer.Draw(points, -Main.screenPosition, 186);
-
+            
             // Draw the portal.
             int sideCount = 512;
             float radius = Utils.GetLerpValue(0.5f, 0.95f, AnimationCompletion, true) * 90f;

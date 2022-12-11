@@ -120,6 +120,7 @@ namespace InfernumMode.GlobalInstances
             }
             return true;
         }
+
         #endregion Nurse Cheese Death
         #region Reset Effects
         public override void ResetEffects()

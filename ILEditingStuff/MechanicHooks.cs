@@ -9,6 +9,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.GlobalInstances;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -578,5 +579,31 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => On.Terraria.Main.DrawSurfaceBG += PrepareShaderForBG;
 
         public void Unload() => On.Terraria.Main.DrawSurfaceBG -= PrepareShaderForBG;
+    }
+
+    public class DrawCherishedSealocketHook : IHookEdit
+    {
+        private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (!Main.player[i].active || Main.player[i].outOfRange || Main.player[i].dead)
+                    continue;
+
+                SealocketPlayer modPlayer = Main.player[i].GetModPlayer<SealocketPlayer>();
+                modPlayer.ForcefieldOpacity = 1f;
+                if (modPlayer.ForcefieldOpacity <= 0.01f || modPlayer.ForcefieldDissipationInterpolant >= 0.99f)
+                    continue;
+
+                float forcefieldOpacity = (1f - modPlayer.ForcefieldDissipationInterpolant) * modPlayer.ForcefieldOpacity;
+                Vector2 forcefieldDrawPosition = Main.player[i].Center + Vector2.UnitY * Main.player[i].gfxOffY - Main.screenPosition;
+                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, modPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+            }
+            orig(self);
+        }
+
+        public void Load() => On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+
+        public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
     }
 }

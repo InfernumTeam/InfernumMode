@@ -13,7 +13,7 @@ namespace InfernumMode.Projectiles.Rogue
             set => Projectile.ai[0] = value.ToInt();
         }
 
-        public const int Lifetime = 480;
+        public const int Lifetime = 600;
 
         public override string Texture => "InfernumMode/Items/Weapons/Rogue/WanderersShell";
 
@@ -28,7 +28,7 @@ namespace InfernumMode.Projectiles.Rogue
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.Opacity = 1f;
-            Projectile.timeLeft = Lifetime * 3;
+            Projectile.timeLeft = Lifetime;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 25;

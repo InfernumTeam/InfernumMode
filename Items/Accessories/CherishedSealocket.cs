@@ -15,7 +15,7 @@ namespace InfernumMode.Items.Accessories
 
         public const int ForcefieldRechargeSeconds = 90;
 
-        public const float ForcefieldDRMultiplier = 0.8f;
+        public const float ForcefieldDRMultiplier = 0.6f;
 
         public const float DamageBoostWhenForcefieldIsUp = 0.12f;
 

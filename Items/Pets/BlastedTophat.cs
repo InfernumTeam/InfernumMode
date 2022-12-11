@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Items
+namespace InfernumMode.Items.Pets
 {
     public class BlastedTophat : ModItem
     {

@@ -9,17 +9,15 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
+namespace InfernumMode.Projectiles.Rogue
 {
-    public class WaterTorrentBeam : ModProjectile
+    public class WanderersShellWater : ModProjectile
     {
         internal PrimitiveTrailCopy BeamDrawer;
 
         public ref float Time => ref Projectile.ai[0];
-
-        public NPC Owner => Main.npc[(int)Projectile.ai[1]];
-
-        public const int Lifetime = 84;
+        
+        public const int Lifetime = 48;
 
         public const float LaserLength = 2400f;
 
@@ -29,14 +27,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 24;
-            Projectile.hostile = true;
+            Projectile.width = Projectile.height = 16;
+            Projectile.friendly = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 16;
             Projectile.alpha = 255;
-            Projectile.Calamity().DealsDefenseDamage = true;
+            Projectile.DamageType = RogueDamageClass.Instance;
         }
 
         public override void AI()
@@ -91,20 +91,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 }
             }
 
-            // And create bright light.
+            // Create bright light.
             DelegateMethods.v3_1 = ColorFunction(0f).ToVector3();
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, 16f, DelegateMethods.CastLight);
-
-            // Die if the owner is invalid in some way.
-            if (!Owner.active || Owner.type != ModContent.NPCType<BereftVassal>())
-            {
-                Projectile.Kill();
-                return;
-            }
-
-            // Stay glued to the vassal's spear.
-            Projectile.Center = Owner.Center;
-            Projectile.velocity = (Owner.ModNPC<BereftVassal>().SpearRotation - MathHelper.PiOver4).ToRotationVector2();
 
             Time++;
         }
@@ -125,6 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             return baseWidth * MathHelper.Lerp(1f, 2.3f, Projectile.localAI[0]);
         }
 
+        // Prevent natural movement.
         public override bool ShouldUpdatePosition() => false;
 
         public Color ColorFunction(float completionRatio)
@@ -136,8 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
             GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
@@ -150,11 +139,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
                 Projectile.localAI[0] = i;
             }
-            Main.spriteBatch.ExitShaderRegion();
 
             return false;
         }
-
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 8f;
     }
 }

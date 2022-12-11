@@ -1,11 +1,12 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
-using InfernumMode.Items;
 using InfernumMode.Items.Accessories;
+using InfernumMode.Items.BossBags;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
+using InfernumMode.Items.Weapons.Rogue;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
@@ -1776,9 +1777,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Weapons
             int[] weapons = new int[]
             {
-                ModContent.ItemType<TheGlassmaker>(),
-                ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<AridBattlecry>(),
+                ModContent.ItemType<Myrindael>(),
+                ModContent.ItemType<TheGlassmaker>(),
+                ModContent.ItemType<WanderersShell>()
             };
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
             normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));

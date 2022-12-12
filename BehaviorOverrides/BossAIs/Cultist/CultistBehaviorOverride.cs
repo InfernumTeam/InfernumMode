@@ -50,6 +50,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public const float Phase3LifeRatio = 0.25f;
         public const float TransitionAnimationTime = 90f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+        };
+
         public static readonly Color[] PillarsPallete = new Color[]
         {
             // Solar.

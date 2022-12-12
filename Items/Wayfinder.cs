@@ -1,21 +1,17 @@
 ﻿using CalamityMod;
 using CalamityMod.CalPlayer;
-using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using InfernumMode.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 using System.Linq;
 using Terraria.Graphics.Shaders;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
 
 namespace InfernumMode.Items
 {
@@ -119,6 +115,7 @@ namespace InfernumMode.Items
                 GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
 
                 drawData.Draw(spriteBatch);
+
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
                 return false;

@@ -250,7 +250,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Check if the ninja has initialized their local timer, which happens after they create the projectile, plus the length which is ~30.
             if (deathTimer > 70)
             {
-                if(deathTimer == 71)
+                if (deathTimer == 71)
                     SoundEngine.PlaySound(InfernumSoundRegistry.KingSlimeDeathAnimation, npc.position);
 
                 float interpolant = (deathTimer - 70) / (deathAnimationLength - 70);

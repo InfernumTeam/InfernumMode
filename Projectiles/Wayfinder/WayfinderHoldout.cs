@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.CalPlayer;
 using CalamityMod.Particles;
 using InfernumMode.Miscellaneous;
 using InfernumMode.Sounds;
@@ -7,11 +6,11 @@ using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Events;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -90,7 +89,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             }
 
             // Fade in.
-            if(Time < 60)
+            if (Time < 60)
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Stick to the owner.
@@ -182,9 +181,12 @@ namespace InfernumMode.Projectiles.Wayfinder
             int dustSpawnRate = (int)MathHelper.Lerp(8, 1, Time / TeleportMaxTime);
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
 
+            if (IsGateSet)
+                MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
+
             if (Time == 0)
             {
-                if(IsGateSet)
+                if (IsGateSet)
                     SoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderTeleport with { Volume = 0.7f }, Owner.Center);
                 else
                     SoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderFail with { Volume = 0.7f }, Owner.Center);
@@ -196,7 +198,7 @@ namespace InfernumMode.Projectiles.Wayfinder
                 CreateFireDust(Projectile.Center, Main.rand.NextFloat(2f, 2.5f));
             }
 
-            if(Time is >= SpinDelay and < TeleportationTime)
+            if (Time is >= SpinDelay and < TeleportationTime)
             {
                 if (Time <= SpinMaxTime)
                 {
@@ -210,10 +212,9 @@ namespace InfernumMode.Projectiles.Wayfinder
                     CenterOffset.Y = MathHelper.Lerp(-25, -45, moveInterpolant);
                 }
             }
-            if(Time is > 70 and < TeleportationTime && IsGateSet)
-            {
+            if (Time is > 70 and < TeleportationTime && IsGateSet)
                 CreateFlameExplosion(Owner.Center, 10, 20, 2, 0.6f, 45);
-            }
+
             // Teleport the player at the appropriate time.
             if (Time == TeleportationTime)
             {
@@ -291,7 +292,7 @@ namespace InfernumMode.Projectiles.Wayfinder
                 Vector2 tip = GetTip();
                 // Find the tile at the tip. The -5 here is because the tip is slightly embedded into the ground.
                 Tile tipTile = Main.tile[(int)tip.X / 16, ((int)tip.Y - 5) / 16];
-                if(tipTile.IsTileSolid())
+                if (tipTile.IsTileSolid())
                 {
                     // If its a solid tile, find the closest tile under the player and set the location to that.
                     WorldUtils.Find(new Vector2(Owner.position.X, Owner.position.Y).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
@@ -360,7 +361,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             if (Main.netMode is not NetmodeID.MultiplayerClient && Time % dustSpawnRate == 0 && Time < DestructionTime)
             {
                 CreateFireDust(Projectile.Center, Main.rand.NextFloat(2f, 2.5f));
-                if(IsGateSet)
+                if (IsGateSet)
                     CreateFlameExplosion(Projectile.Center + new Vector2 (5 * Projectile.spriteDirection, -5), 10, 15, flameSpawnAmount, 0.1f, 45);
             }
 
@@ -477,7 +478,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             Vector2 origin = sourceRectangle.Size() * 0.5f;
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if(Owner.direction == -1)
+            if (Owner.direction == -1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             // Backglow.

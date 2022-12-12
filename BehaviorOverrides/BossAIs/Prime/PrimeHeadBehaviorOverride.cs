@@ -382,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         rocketVelocity.Y = -1f;
                     rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rocketVelocity.Length(), 0.6f);
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ProjectileID.SaucerMissile, 150, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 150, 0f);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 12f == 11f && !AnyArms)
@@ -693,7 +693,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Vector2 mouthPosition = npc.Center + Vector2.UnitY * 33f;
                 if (attackTimer > 180f && attackTimer < 435f && attackTimer % 44f == 43f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item12, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -706,11 +706,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
                 if (attackTimer > 180f && attackTimer < 435f && attackTimer % 30f == 29f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item42, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item36, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 6.75f);
-                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ProjectileID.SaucerMissile, 155, 0f);
+                        Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 8f);
+                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 155, 0f);
                     }
                 }
             }
@@ -896,7 +896,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
+            PrimeAttackType oldAttack = (PrimeAttackType)(int)npc.ai[0];
             WeightedRandom<PrimeAttackType> attackSelector = new(Main.rand);
             if (!AnyArms)
             {
@@ -916,7 +916,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 attackSelector.Add(PrimeAttackType.GenericCannonAttacking);
                 attackSelector.Add(PrimeAttackType.SynchronizedMeleeArmCharges);
-                attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
+
+                if (npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 0f)
+                    attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
             }
 
             // Reduce old velocity so that Prime doesn't fly off somewhere after an attack concludes.
@@ -924,10 +926,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             do
                 npc.ai[0] = (int)attackSelector.Get();
-            while (npc.ai[0] == (int)currentAttack);
+            while (npc.ai[0] == (int)oldAttack);
+
+            if (oldAttack is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
+                npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             // Always start the fight with generic cannon attacks.
-            if (currentAttack is PrimeAttackType.SpawnEffects or PrimeAttackType.FakeDeathAnimation)
+            if (oldAttack is PrimeAttackType.SpawnEffects or PrimeAttackType.FakeDeathAnimation)
                 npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             npc.TargetClosest();
@@ -988,7 +993,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // All cannons can fire once their collective HP is below a certain life threshold while performing the generic attack.
             bool meleeCannon = cannon.type is NPCID.PrimeVice or NPCID.PrimeSaw;
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
-            bool onlyRangedCannons = cannonAttackTimer % (shootCycleTime * 2f) < shootCycleTime;
+            bool onlyRangedCannons = head.ai[1] % (shootCycleTime * 2f) < shootCycleTime;
+            bool allCannonsCanFire = head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
             bool useTelegraphs = true;
             if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 onlyRangedCannons = false;
@@ -1010,7 +1016,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 return false;
             }
 
-            return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
+            if (allCannonsCanFire)
+                return head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
+
+			return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
         }
 
         public static void PerformDefaultArmPhaseHover(NPC npc, Player target, float attackTimer, PrimeAttackType attackType)

@@ -462,11 +462,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Hover into position.
             if (attackSubstate == 0f)
             {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 375f, -270f);
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 350f, -200f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 20f;
 
                 npc.SimpleFlyMovement(idealVelocity, idealVelocity.Length() / 12f);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.032f);
 
                 // Slow down and go to the next attack substate if sufficiently close to the hover destination.
                 if (npc.WithinRange(hoverDestination, 75f))
@@ -550,6 +550,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                     if (chargeCounter >= chargeCount)
                         SelectNextAttack(npc);
+                    
                     attackSubstate = 0f;
                     attackTimer = 0f;
                     npc.velocity *= 0.45f;
@@ -741,7 +742,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int spinTime = 120;
             int chargeBlobCount = 8;
             int chargeTime = 35;
-            int chargeSlowdownTime = 25;
+            int chargeSlowdownTime = 108;
             float spinRadius = 325f;
             float totalSpinArc = MathHelper.TwoPi;
             float chargeSpeed = 16.5f;

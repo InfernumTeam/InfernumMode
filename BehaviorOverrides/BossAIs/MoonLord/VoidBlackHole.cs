@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (Timer >= 135f && Timer % asteroidReleaseRate == asteroidReleaseRate - 1f)
             {
                 Vector2 asteroidSpawnPosition = Target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
-                Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
+                Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 9.25f;
                 int asteroid = Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f);
                 if (Main.projectile.IndexInRange(asteroid))
                     Main.projectile[asteroid].ai[0] = core.whoAmI;

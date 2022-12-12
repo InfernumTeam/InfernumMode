@@ -2,7 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.Items.TreasureBags.MiscGrabBags;
-using InfernumMode.Items;
+using InfernumMode.Items.Pets;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

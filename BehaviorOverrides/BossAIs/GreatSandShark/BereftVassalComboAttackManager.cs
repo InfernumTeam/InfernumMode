@@ -185,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         {
                             Vector2 sandVelocity = new(npc.spriteDirection * -MathHelper.Lerp(4f, 15f, i / (float)(sandVomitCount - 1f)), -16f - i * 1.36f);
                             Vector2 mouthPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX * -npc.spriteDirection) * 108f;
-                            sandVelocity += Main.rand.NextVector2Circular(1.4f, 1.4f);
+                            sandVelocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
 
                             int blobIndex = Utilities.NewProjectileBetter(mouthPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                             if (Main.projectile.IndexInRange(blobIndex))
@@ -322,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_PerpendicularSandBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int sandBlastReleaseRate = 6;
+            int sandBlastReleaseRate = 8;
             int waterSpearReleaseRate = 7;
             int sandBlobCount = 20;
             int attackTransitionDelay = 160;
@@ -431,7 +431,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.damage = 0;
 
                 if (hasSlammedIntoGround == 0f)
+                {
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 11f, 0.03f);
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, -18f, 24f);
+                }
+
                 if (hasSlammedIntoGround == 0f && Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
                 {
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, npc.Center);
@@ -532,8 +536,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         {
                             groundHitTimer = 1f;
 
+                            // Release a spread of waves.
                             if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    float waveSpread = MathHelper.Lerp(-0.17f, 0.17f, i / 4f);
+                                    Vector2 waveVelocity = waveSpread.ToRotationVector2() * 11f;
+                                    Utilities.NewProjectileBetter(npc.Bottom, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
+                                    Utilities.NewProjectileBetter(npc.Bottom, -waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
+                                }
+
                                 Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                            }
                         }
                         npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * vassalChargeSpeed, 0.16f);
                         npc.noGravity = true;
@@ -660,6 +675,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // The bereft vassal rides atop the great sand shark at all times, releasing water waves in bursts.
             if (npc.type == ModContent.NPCType<BereftVassal>())
             {
+                // Create a sandstorm.
+                for (int i = 0; i < 2; i++)
+                    npc.ModNPC<BereftVassal>().CreateSandstormParticle(true);
+
                 // Ride the great sand shark.
                 RideGreatSandShark(npc);
 
@@ -676,7 +695,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -500f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
                             Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
                             int devil = Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f);
                             if (Main.projectile.IndexInRange(devil))

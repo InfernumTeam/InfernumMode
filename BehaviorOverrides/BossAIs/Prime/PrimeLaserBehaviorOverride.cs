@@ -42,17 +42,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int shootRate = 35;
             int burstCount = 1;
             float laserSpeed = 7f;
+            float laserSpread = 0.61f;
 
-            if (attackTimer % (shootRate * 5f) == shootRate * 4f)
-                burstCount += 2;
+            if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+            {
+                shootRate -= 7;
+                laserSpeed += 2.4f;
+            }
             
             if (pissed)
             {
                 shootRate -= 10;
                 laserSpeed += 4f;
+                laserSpread = 0.4f;
             }
 
-            // Release missiles.
+            if (attackTimer % (shootRate * 5f) == shootRate * 4f || pissed)
+                burstCount += 2;
+
+            // Release lasers.
             if (attackTimer % shootRate == 0f)
             {
                 SoundEngine.PlaySound(LaserShootSound with { Volume = 1.4f }, npc.Center);
@@ -63,9 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     {
                         Vector2 laserVelocity = cannonDirection * laserSpeed;
                         if (burstCount >= 2)
-                            laserVelocity = laserVelocity.RotatedBy(MathHelper.Lerp(-0.61f, 0.61f, i / (burstCount - 1f)));
+                            laserVelocity = laserVelocity.RotatedBy(MathHelper.Lerp(-laserSpread, laserSpread, i / (burstCount - 1f)));
 
-                        Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, laserVelocity, ModContent.ProjectileType<PrimeSmallLaser>(), 160, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, laserVelocity, ModContent.ProjectileType<PrimeSmallLaser>(), 140, 0f);
                     }
                 }
             }

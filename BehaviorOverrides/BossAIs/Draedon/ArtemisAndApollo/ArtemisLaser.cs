@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 InitialSpeed = Projectile.velocity.Length();
 
             // Fade in after telegraphs have faded.
-            float positionOffset = ExoMechManagement.CurrentTwinsPhase >= 2 ? 102f : 70f;
+            float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
             if (TelegraphDelay > TelegraphTotalTime)
             {
                 if (Projectile.alpha > 0)

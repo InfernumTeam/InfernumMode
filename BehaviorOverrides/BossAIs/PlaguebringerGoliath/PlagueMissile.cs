@@ -34,6 +34,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Time > 30f)
                 Projectile.velocity *= 1.01f;
 
+            // Emit smoke effects.
+            RedirectingPlagueMissile.EmitSmoke(Projectile);
+
             Projectile.tileCollide = Time > 34f;
             Time++;
         }

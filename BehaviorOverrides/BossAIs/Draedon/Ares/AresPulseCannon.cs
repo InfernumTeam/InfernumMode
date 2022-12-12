@@ -305,11 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(NPC, completionRatio),
                     null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
             }
-
-            // Don't draw anything if the cannon is detached. The Exowl that has it will draw it manually.
-            if (NPC.Infernum().ExtraAI[ExoMechManagement.Ares_CannonInUseByExowl] == 1f)
-                return false;
-
+            
             for (int i = 0; i < 2; i++)
             {
                 if (NPC.Infernum().ExtraAI[0] > 0f)
@@ -326,37 +322,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = NPC.frame;
             Vector2 origin = NPC.Center - NPC.position;
             Vector2 center = NPC.Center - Main.screenPosition;
-            bool enraged = aresBody.Infernum().ExtraAI[13] == 1f || ExoMechComboAttackContent.EnrageTimer > 0f;
-            Color afterimageBaseColor = enraged ? Color.Red : Color.White;
-            int numAfterimages = 5;
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(drawColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
-                }
-            }
+            bool enraged = AresBodyBehaviorOverride.Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
+            Color glowmaskColor = enraged ? Color.Red : Color.White;
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, NPC, texture, center, frame, origin);
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
             Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow").Value;
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(drawColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
-                }
-            }
-
-            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * NPC.Opacity, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, glowmaskColor * NPC.Opacity, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 

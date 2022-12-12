@@ -311,5 +311,16 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
         }
+        public static event ILContext.Manipulator BRSkyColor
+        {
+            add => HookEndpointManager.Modify(typeof(BossRushSky).GetMethod("get_GeneralColor", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(BossRushSky).GetMethod("get_GeneralColor", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator BRXerocEyeTexure
+        {
+            add => HookEndpointManager.Modify(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

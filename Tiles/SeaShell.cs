@@ -15,7 +15,8 @@ namespace InfernumMode.Tiles
             ModTranslation name = CreateMapEntryName();
             CalamityUtils.SetMerge(Type, TileID.Sand);
             CalamityUtils.SetMerge(Type, TileID.Sandstone);
-            CalamityUtils.SetMerge(Type, TileID.SandstoneBrick);
+			CalamityUtils.SetMerge(Type, ModContent.TileType<SandstoneTile>());
+			CalamityUtils.SetMerge(Type, TileID.SandstoneBrick);
             CalamityUtils.SetMerge(Type, TileID.HardenedSand);
 
             name.SetDefault("Sea Shell");

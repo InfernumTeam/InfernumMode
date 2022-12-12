@@ -99,6 +99,20 @@ namespace InfernumMode.Systems
             set;
         } = Vector2.Zero;
 
+        public static bool HasOpenedLostColosseumPortal
+        {
+            get;
+            set;
+        }
+
+        public static int LostColosseumPortalAnimationTimer
+        {
+            get;
+            set;
+        } = LostColosseumPortalAnimationTime;
+
+        public const int LostColosseumPortalAnimationTime = 150;
+
         public override void SaveWorldData(TagCompound tag)
         {
             var downed = new List<string>();
@@ -116,6 +130,8 @@ namespace InfernumMode.Systems
                 downed.Add("HasSepulcherAnimationBeenPlayed");
             if (InPostAEWUpdateWorld)
                 downed.Add("InPostAEWUpdateWorld");
+            if (HasOpenedLostColosseumPortal)
+                downed.Add("HasOpenedLostColosseumPortal");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -145,6 +161,7 @@ namespace InfernumMode.Systems
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             InPostAEWUpdateWorld = downed.Contains("InPostAEWUpdateWorld");
+            HasOpenedLostColosseumPortal = downed.Contains("HasOpenedLostColosseumPortal");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
@@ -165,6 +182,8 @@ namespace InfernumMode.Systems
             HasBeatedInfernumNightProvBeforeDay = false;
             HasProvidenceDoorShattered = false;
             HasSepulcherAnimationBeenPlayed = false;
+            HasOpenedLostColosseumPortal = false;
+            
             ProvidenceArena = Rectangle.Empty;
             ProvidenceDoorXPosition = 0;
             WayfinderGateLocation = Vector2.Zero;

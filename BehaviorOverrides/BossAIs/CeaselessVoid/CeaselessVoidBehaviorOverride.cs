@@ -177,7 +177,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             int totalRings = 4;
             int energyCountPerRing = 7;
-            int hoverRedirectDelay = 300;
             int portalFireRate = 105;
             int darkEnergyID = ModContent.NPCType<DarkEnergy>();
 
@@ -209,12 +208,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.netUpdate = true;
             }
 
-            // Redirect to a different offset after a sufficient amount of time has passed.
-            if (attackTimer >= hoverRedirectDelay)
-            {
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
+            // Approach the target if they're too far away.
+            float hoverSpeedInterpolant = Utils.Remap(npc.Distance(target.Center), DarkEnergyOffsetRadius + 120f, DarkEnergyOffsetRadius + 600f, 0f, 0.084f);
+            if (hoverSpeedInterpolant > 0f)
+                npc.Center = Vector2.Lerp(npc.Center, target.Center, hoverSpeedInterpolant);
 
             // Disable damage.
             npc.dontTakeDamage = true;

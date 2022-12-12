@@ -28,9 +28,9 @@ namespace InfernumMode.Achievements.InfernumAchievements
         }
         public override void LoadProgress(TagCompound tag)
         {
-            if (LostColosseum.VassalWasCompleted)
+            if (LostColosseum.VassalWasBeaten)
             {
-                LostColosseum.VassalWasCompleted = false;
+                LostColosseum.VassalWasBeaten = false;
                 CurrentCompletion = 1;
                 DoneCompletionEffects = true;
             }

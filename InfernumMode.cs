@@ -1,3 +1,4 @@
+using CalamityMod.Cooldowns;
 using CalamityMod.Events;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
@@ -75,7 +76,8 @@ namespace InfernumMode
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
 
             BalancingChangesManager.Load();
-            HookManager.Load();
+            Main.RunOnMainThread(HookManager.Load);
+
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {
@@ -230,6 +232,8 @@ namespace InfernumMode
                 
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
             }
+
+            CooldownRegistry.RegisterModCooldowns(this);
 
             if (BossRushApplies)
                 BossRushChanges.Load();

@@ -13,6 +13,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     {
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const float Phase2LifeRatio = 0.5f;
+
         public override bool PreAI(NPC npc)
         {
             int headIndex = (int)npc.ai[1];

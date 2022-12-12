@@ -1,4 +1,6 @@
+using InfernumMode.Subworlds;
 using InfernumMode.Systems;
+using SubworldLibrary;
 using Terraria.ModLoader;
 
 namespace InfernumMode.GlobalInstances
@@ -7,10 +9,16 @@ namespace InfernumMode.GlobalInstances
     {
         public override bool CanExplode(int i, int j, int type)
         {
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)))
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
             return base.CanExplode(i, j, type);
+        }
+
+        public override void KillWall(int i, int j, int type, ref bool fail)
+        {
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) || SubworldSystem.IsActive<LostColosseum>())
+                fail = true;
         }
     }
 }

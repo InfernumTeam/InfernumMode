@@ -1,11 +1,9 @@
-using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -39,13 +37,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             int extendTime = 50;
             int arcTime = 120;
-            int attackCycleTime = extendTime + arcTime;
             float chargeSpeed = 20.5f;
             float arcSpeed = 10f;
+
+            if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+            {
+                chargeSpeed += 2.7f;
+                arcSpeed += 3f;
+            }
 
             if (pissed)
             {
                 extendTime -= 16;
+                arcTime -= 72;
                 chargeSpeed += 4f;
                 arcSpeed += 4.5f;
             }
@@ -53,6 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Do more contact damage.
             npc.defDamage = 150;
 
+            int attackCycleTime = extendTime + arcTime;
             if (attackTimer < extendTime + arcTime)
                 npc.ai[2] = 1f;
             else
@@ -67,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             // Arc around, towards the target.
-            if (attackTimer >= extendTime && attackTimer < attackCycleTime)
+            if (attackTimer >= extendTime && attackTimer < attackCycleTime && !pissed)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.12f);
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;

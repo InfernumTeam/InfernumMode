@@ -1,317 +1,144 @@
 using CalamityMod;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.Particles;
 using CalamityMod.Sounds;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresLaserCannonBehaviorOverride : NPCBehaviorOverride
+    public class AresLaserCannonBehaviorOverride : AresCannonBehaviorOverride
     {
+        public const int LaserCounterIndex = 2;
+
         public override int NPCOverrideType => ModContent.NPCType<AresLaserCannon>();
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<AresBody>();
+        public override string GlowmaskTexturePath => "CalamityMod/NPCs/ExoMechs/Ares/AresLaserCannonGlow";
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
-        #region AI
-        public override bool PreAI(NPC npc)
+        public override float AimPredictiveness
         {
-            // Die if Ares is not present.
-            if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+            get
             {
-                npc.life = 0;
-                npc.HitEffect();
-                npc.active = false;
-                return false;
+                if (ExoMechManagement.CurrentAresPhase >= 5)
+                    return 30.5f;
+
+                return 25f;
             }
+        }
 
-            // Update the energy drawer.
-            npc.ModNPC<AresLaserCannon>().EnergyDrawer.Update();
+        public override int ShootTime
+        {
+            get
+            {
+                int shootTime = 480;
+                if (ExoMechManagement.CurrentAresPhase >= 5)
+                    shootTime += 105;
 
-            // Locate Ares' body as an NPC.
-            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
+                if (AresBodyBehaviorOverride.Enraged)
+                    shootTime /= 3;
 
-            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
-            Player target = Main.player[npc.target];
+                return shootTime;
+            }
+        }
 
-            // Define attack variables.
-            bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-            int shootTime = 480;
-            int totalLasersPerBurst = 12;
-            float aimPredictiveness = 25f;
+        public static int TotalLasersPerBurst
+        {
+            get
+            {
+                int lasersPerBurst = 12;
+
+                if (ExoMechManagement.CurrentAresPhase >= 5)
+                    lasersPerBurst += 2;
+
+                if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
+                    lasersPerBurst = 5;
+
+                return lasersPerBurst;
+            }
+        }
+
+        public override int ShootRate => ShootTime / TotalLasersPerBurst;
+
+        public override SoundStyle ShootSound => InfernumSoundRegistry.SafeLoadCalamitySound("Sounds/Custom/ExoMechs/ExoLaserShoot", CommonCalamitySounds.LaserCannonSound);
+
+        public override SoundStyle FireTelegraphSound => AresLaserCannon.TelSound;
+
+        public override Color TelegraphBackglowColor => Color.Red;
+
+        public override void ResetAttackCycleEffects(NPC npc) => npc.ai[LaserCounterIndex] = 0f;
+
+        public override void CreateDustTelegraphs(NPC npc, Vector2 endOfCannon)
+        {
+            Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
+            Dust laser = Dust.NewDustPerfect(dustSpawnPosition, 182);
+            laser.velocity = (endOfCannon - laser.position) * 0.04f;
+            laser.scale = 1.25f;
+            laser.noGravity = true;
+        }
+
+        public override void ShootProjectiles(NPC npc, Vector2 endOfCannon, Vector2 aimDirection)
+        {
+            int totalLasersPerBurst = 1;
+            int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
+            bool photonRipperAttack = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes;
             float laserShootSpeed = 10.6f;
-            ref float attackTimer = ref npc.ai[0];
-            ref float chargeDelay = ref npc.ai[1];
-            ref float laserCounter = ref npc.ai[2];
-            ref float currentDirection = ref npc.ai[3];
-            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
-            ref SlotId telegraphSound = ref npc.ModNPC<AresLaserCannon>().DeathraySoundSlot;
-            int laserCount = laserCounter % 3f == 2f ? 3 : 1;
+            ref float laserShootCounter = ref npc.ai[LaserCounterIndex];
 
+            // Every third shot releases more lasers than usual.
+            if (laserShootCounter % 3f == 2f)
+                totalLasersPerBurst += 2;
+
+            // Make things in general stronger based on Ares' current phase.
             if (ExoMechManagement.CurrentAresPhase >= 3)
             {
                 laserShootSpeed *= 0.9f;
 
-                if (laserCount == 3)
-                    laserCount += 2;
+                if (totalLasersPerBurst >= 3)
+                    totalLasersPerBurst += 2;
             }
-
             if (ExoMechManagement.CurrentAresPhase >= 5)
-            {
                 totalLasersPerBurst += 2;
-                shootTime += 105;
-                aimPredictiveness += 5.5f;
-            }
 
-            if (aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
+            // Make things a bit less chaotic during the photon ripper attack.
+            if (photonRipperAttack)
             {
                 totalLasersPerBurst = 5;
                 laserShootSpeed -= 2.3f;
             }
 
-            // Get very pissed off if Ares is enraged.
-            if (aresBody.Infernum().ExtraAI[13] == 1f)
+            // Fire the lasers.
+            for (int i = 0; i < totalLasersPerBurst; i++)
             {
-                shootTime /= 3;
-                laserShootSpeed *= 1.5f;
+                Vector2 laserShootVelocity = aimDirection * laserShootSpeed;
+                if (totalLasersPerBurst > 1)
+                    laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.52f, 0.52f, i / (float)(totalLasersPerBurst - 1f)));
+
+                // Add a small amount of randomness to laser directions.
+                laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
+
+                int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f);
+                if (Main.projectile.IndexInRange(laser))
+                    Main.projectile[laser].ai[1] = npc.whoAmI;
             }
 
-            int shootRate = shootTime / totalLasersPerBurst;
-
-            // Initialize delays and other timers.
-            shouldPrepareToFire = 0f;
-            if (chargeDelay == 0f)
-                chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
-
-            // Don't do anything if this arm should be disabled.
-            if (currentlyDisabled)
-                attackTimer = 1f;
-
-            // Become more resistant to damage as necessary.
-            npc.takenDamageMultiplier = 1f;
-            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
-                npc.takenDamageMultiplier *= 0.5f;
-
-            // Hover near Ares.
-            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge && !performingDeathAnimation;
-            float horizontalOffset = doingHoverCharge ? 380f : 575f;
-            float verticalOffset = doingHoverCharge ? 150f : 0f;
-            Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * -horizontalOffset, verticalOffset);
-            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 65f, 115f);
-            npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
-
-            // Check to see if Ares is in the middle of a death animation. If it is, participate in the death animation.
-            if (performingDeathAnimation)
-            {
-                AresBodyBehaviorOverride.HaveArmPerformDeathAnimation(npc, new Vector2(horizontalOffset, verticalOffset));
-                return false;
-            }
-
-            // Check to see if this arm should be used for special things in a combo attack.
-            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-            {
-                float _ = 0f;
-                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
-                ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
-                return false;
-            }
-
-            // Calculate the direction and rotation this arm should use.
-            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-            ExoMechAIUtilities.PerformAresArmDirectioning(npc, aresBody, target, aimDirection, currentlyDisabled, doingHoverCharge, ref currentDirection);
-
-            float rotationToEndOfCannon = npc.rotation;
-            if (rotationToEndOfCannon < 0f)
-                rotationToEndOfCannon += MathHelper.Pi;
-            Vector2 endOfCannon = npc.Center + rotationToEndOfCannon.ToRotationVector2() * 74f + Vector2.UnitY * 8f;
-
-            // Determine direction based on rotation.
-            npc.direction = (npc.rotation > 0f).ToDirectionInt();
-
-            // Play a sound telegraph before firing.
-            int telegraphTime = Math.Max((int)chargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
-            if (attackTimer == telegraphTime && !currentlyDisabled)
-                telegraphSound = SoundEngine.PlaySound(AresLaserCannon.TelSound with { Volume = 1.6f }, npc.Center);
-
-            // Update the sound telegraph's position.
-            if (SoundEngine.TryGetActiveSound(telegraphSound, out var t) && t.IsPlaying)
-            {
-                t.Position = npc.Center;
-                if (doingHoverCharge)
-                    t.Stop();
-            }
-
-            // Create a dust telegraph before firing.
-            if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
-            {
-                Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-                Dust laser = Dust.NewDustPerfect(dustSpawnPosition, 182);
-                laser.velocity = (endOfCannon - laser.position) * 0.04f;
-                laser.scale = 1.25f;
-                laser.noGravity = true;
-            }
-
-            // Decide the state of the particle drawer.
-            npc.ModNPC<AresLaserCannon>().EnergyDrawer.ParticleSpawnRate = 99999999;
-            if (attackTimer > chargeDelay * 0.45f)
-            {
-                shouldPrepareToFire = 1f;
-                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
-                npc.ModNPC<AresLaserCannon>().EnergyDrawer.ParticleSpawnRate = 3;
-                npc.ModNPC<AresLaserCannon>().EnergyDrawer.SpawnAreaCompactness = 100f;
-                npc.ModNPC<AresLaserCannon>().EnergyDrawer.chargeProgress = chargeCompletion;
-
-                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
-                    npc.ModNPC<AresLaserCannon>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
-            }
-
-            // Fire lasers.
-            if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
-            {
-                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
-                    for (int i = 0; i < laserCount; i++)
-                    {
-                        Vector2 laserShootVelocity = aimDirection * laserShootSpeed;
-                        if (laserCount > 1)
-                            laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.52f, 0.52f, i / (float)(laserCount - 1f)));
-                        laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].ai[1] = npc.whoAmI;
-                    }
-
-                    laserCounter++;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Reset the attack and laser counter after an attack cycle ends.
-            if (attackTimer >= chargeDelay + shootTime)
-            {
-                attackTimer = 0f;
-                laserCounter = 0f;
-                npc.netUpdate = true;
-            }
-            attackTimer++;
-            return false;
+            laserShootCounter++;
         }
 
-        #endregion AI
-
-        #region Frames and Drawcode
-        public override void FindFrame(NPC npc, int frameHeight)
+        public override Vector2 GetHoverOffset(NPC npc, bool performingCharge)
         {
-            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
+            float backArmDirection = (Ares.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex] == 1f).ToDirectionInt();
 
-            if (npc.ai[0] > npc.ai[1])
-            {
-                npc.frameCounter++;
-                if (npc.frameCounter >= 66f)
-                    npc.frameCounter = 0D;
-                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)npc.frameCounter / 66f));
-            }
-            else
-                npc.frameCounter = 0D;
+            if (performingCharge)
+                return new(backArmDirection * 380f, 150f);
 
-            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
-
-            npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
+            return new(backArmDirection * 575f, 0f);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            if (npc.Infernum().OptionalPrimitiveDrawer is null)
-            {
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
-                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
-            }
+        public override AresCannonChargeParticleSet GetEnergyDrawer(NPC npc) => npc.ModNPC<AresLaserCannon>().EnergyDrawer;
 
-            // Don't draw anything if the cannon is detached. The Exowl that has it will draw it manually.
-            if (npc.Infernum().ExtraAI[ExoMechManagement.Ares_CannonInUseByExowl] == 1f)
-                return false;
-
-            for (int i = 0; i < 2; i++)
-            {
-                if (npc.Infernum().ExtraAI[0] > 0f)
-                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition, 54);
-            }
-
-            SpriteEffects spriteEffects = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
-                spriteEffects = SpriteEffects.FlipHorizontally;
-
-            // Locate Ares' body as an NPC.
-            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Rectangle frame = npc.frame;
-            Vector2 origin = frame.Size() * 0.5f;
-            Vector2 center = npc.Center - Main.screenPosition;
-            bool enraged = aresBody.Infernum().ExtraAI[13] == 1f || ExoMechComboAttackContent.EnrageTimer > 0f;
-            Color afterimageBaseColor = enraged ? Color.Red : Color.White;
-            int numAfterimages = 5;
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
-                }
-            }
-
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
-            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Red, texture, center, frame, origin);
-            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresLaserCannonGlow").Value;
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
-                }
-            }
-
-            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
-
-            if (npc.Infernum().ExtraAI[1] == 1f)
-                npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawBloom(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
-            npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawPulses(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
-            npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawSet(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
-
-            Main.spriteBatch.ResetBlendState();
-            return false;
-        }
-        #endregion Frames and Drawcode
-
-        #region Death Effects
-        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
-        #endregion Death Effects
+        public override Vector2 GetCoreSpritePosition(NPC npc) => npc.ModNPC<AresLaserCannon>().CoreSpritePosition;
     }
 }

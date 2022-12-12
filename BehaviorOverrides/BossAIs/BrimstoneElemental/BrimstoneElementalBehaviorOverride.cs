@@ -729,8 +729,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.Calamity().ShouldCloseHPBar = true;
 
             // Make music stop abruptly.
-            npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
-            npc.ModNPC.Music = 0;
+            if (!BossRushEvent.BossRushActive)
+            {
+                npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
+                npc.ModNPC.Music = 0;
+            }
 
             // Don't rotate.
             npc.rotation = 0f;

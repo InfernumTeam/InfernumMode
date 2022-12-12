@@ -7,20 +7,15 @@ using InfernumMode.Achievements;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;
-using InfernumMode.Projectiles.Wayfinder;
-using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -46,7 +41,6 @@ namespace InfernumMode.GlobalInstances
 
         public float MusicMuffleFactor;
         public float ShimmerSoundVolumeInterpolant;
-        public SlotId ShimmerSoundID;
 
         public int ProvidenceRoomShatterTimer;
 
@@ -59,6 +53,10 @@ namespace InfernumMode.GlobalInstances
         public bool HatGirlShouldGiveAdvice;
 
         public float MapObscurityInterpolant;
+
+        public Vector2 PositionBeforeEnteringSubworld;
+
+        public bool ReturnToPositionBeforeSubworld;
 
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
@@ -137,6 +135,7 @@ namespace InfernumMode.GlobalInstances
             }
             return true;
         }
+
         #endregion Nurse Cheese Death
         #region Reset Effects
         public override void ResetEffects()
@@ -153,8 +152,8 @@ namespace InfernumMode.GlobalInstances
                 ScreenFocusInterpolant = MathHelper.Clamp(ScreenFocusInterpolant - 0.2f, 0f, 1f);
             MusicMuffleFactor = 0f;
 
-            // Disable block placement and destruction in the profaned arena.
-            if (InProfanedArenaAntiCheeseZone)
+            // Disable block placement and destruction in the profaned arena and lost colosseum.
+            if (InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>())
             {
                 Player.AddBuff(BuffID.NoBuilding, 10);
                 Player.noBuilding = true;
@@ -170,8 +169,11 @@ namespace InfernumMode.GlobalInstances
             Madness = false;
             MadnessTime = 0;
 
-            // THIS IS A TEST EFFECT. REMOVE IT LATER.
-            LostColosseum.HasBereftVassalAppeared = false;
+            if (SubworldSystem.IsActive<LostColosseum>())
+            {
+                Main.spawnTileX = LostColosseum.CampfirePosition.X;
+                Main.spawnTileY = LostColosseum.CampfirePosition.Y;
+            }
 
             if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
@@ -223,6 +225,10 @@ namespace InfernumMode.GlobalInstances
             else if (EelSwallowIndex != -1)
                 EelSwallowIndex = -1;
 
+            // Don't see the invisible blocks in the Colosseum build.
+            if (SubworldSystem.IsActive<LostColosseum>())
+                Player.CanSeeInvisibleBlocks = false;
+
             // Keep the player out of the providence arena if the door is around.
             if (WorldSaveSystem.ProvidenceDoorXPosition != 0 && !WorldSaveSystem.HasProvidenceDoorShattered && Player.Bottom.Y >= (Main.maxTilesY - 220f) * 16f)
             {
@@ -234,6 +240,22 @@ namespace InfernumMode.GlobalInstances
                     Player.position.X -= 0.1f;
                     passedDoor = true;
                 }
+            }
+            
+            if (ReturnToPositionBeforeSubworld && !Main.gameMenu)
+            {
+                Player.Spawn(PlayerSpawnContext.RecallFromItem);
+                Main.LocalPlayer.Center = PositionBeforeEnteringSubworld;
+
+                NPC.ResetNetOffsets();
+                Main.BlackFadeIn = 255;
+                Lighting.Clear();
+                Main.screenLastPosition = Main.screenPosition;
+                Main.screenPosition.X = Player.Center.X - Main.screenWidth * 0.5f;
+                Main.screenPosition.Y = Player.Center.Y - Main.screenHeight * 0.5f;
+                Main.instantBGTransitionCounter = 10;
+
+                ReturnToPositionBeforeSubworld = false;
             }
 
             if (CalamityPlayer.areThereAnyDamnBosses && Player.Calamity().momentumCapacitorBoost > 1.8f)

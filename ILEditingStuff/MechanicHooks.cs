@@ -9,10 +9,13 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.GlobalInstances;
+using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -507,7 +510,7 @@ namespace InfernumMode.ILEditingStuff
             if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
                 return;
 
-            c.EmitDelegate<Action>(() =>
+            c.EmitDelegate(() =>
             {
                 if (NPC.AnyNPCs(NPCID.MoonLordCore) && InfernumMode.CanUseCustomAIs)
                     Main.LocalPlayer.noBuilding = true;
@@ -534,6 +537,18 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
     }
 
+    public class AllowSandstormInColosseumHook : IHookEdit
+    {
+        internal static bool LetSandParticlesAppear(On.Terraria.GameContent.Events.Sandstorm.orig_ShouldSandstormDustPersist orig)
+        {
+            return orig() || (SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening);
+        }
+
+        public void Load() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
+
+        public void Unload() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
+    }
+
     public class DrawVoidBackgroundDuringMLFightHook : IHookEdit
     {
         public static void PrepareShaderForBG(On.Terraria.Main.orig_DrawSurfaceBG orig, Main self)
@@ -547,6 +562,7 @@ namespace InfernumMode.ILEditingStuff
             }
             catch (IndexOutOfRangeException) { }
             catch (KeyNotFoundException) { }
+            catch (DivideByZeroException) { }
 
             if (useShader)
             {
@@ -564,5 +580,31 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => On.Terraria.Main.DrawSurfaceBG += PrepareShaderForBG;
 
         public void Unload() => On.Terraria.Main.DrawSurfaceBG -= PrepareShaderForBG;
+    }
+
+    public class DrawCherishedSealocketHook : IHookEdit
+    {
+        private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (!Main.player[i].active || Main.player[i].outOfRange || Main.player[i].dead)
+                    continue;
+
+                SealocketPlayer modPlayer = Main.player[i].GetModPlayer<SealocketPlayer>();
+                modPlayer.ForcefieldOpacity = 1f;
+                if (modPlayer.ForcefieldOpacity <= 0.01f || modPlayer.ForcefieldDissipationInterpolant >= 0.99f)
+                    continue;
+
+                float forcefieldOpacity = (1f - modPlayer.ForcefieldDissipationInterpolant) * modPlayer.ForcefieldOpacity;
+                Vector2 forcefieldDrawPosition = Main.player[i].Center + Vector2.UnitY * Main.player[i].gfxOffY - Main.screenPosition;
+                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, modPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+            }
+            orig(self);
+        }
+
+        public void Load() => On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+
+        public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
     }
 }

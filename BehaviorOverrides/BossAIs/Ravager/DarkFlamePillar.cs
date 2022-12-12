@@ -69,8 +69,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity >= 0.9f;
 
-        
-
         public float WidthFunction(float completionRatio)
         {
             float tipFadeoffInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
@@ -90,8 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
 
             // Create a telegraph line upward that fades away away the pillar fades in.
             Vector2 start = Projectile.Top;

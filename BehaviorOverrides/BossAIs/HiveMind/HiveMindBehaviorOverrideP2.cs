@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public const float LungeSpinTotalRotations = 2f;
         public const float LungeSpinChargeDelay = 6f;
         public const float LungeSpinChargeTime = 20f;
-        public const float RainDashOffset = 380f;
+        public const float RainDashOffset = 456f;
         public const float EaterWallSlowdownTime = 40f;
         public const float EaterWallSummoningTime = 60f;
         public const float EaterWallTotalHeight = 1900f;
@@ -482,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Release rain.
             Vector2 rainSpawnPosition = npc.position + new Vector2(Main.rand.NextFloat(14f, npc.width - 14f), npc.height + 4f);
-            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 6f, ModContent.ProjectileType<ShaderainHostile>(), 82, 0f, Main.myPlayer, 0f, 0f);
+            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 3f, ModContent.ProjectileType<ShaderainHostile>(), 82, 0f, Main.myPlayer, 0f, 0f);
         }
 
         public static void DoBehavior_EaterWall(NPC npc, Player target, bool enraged, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)

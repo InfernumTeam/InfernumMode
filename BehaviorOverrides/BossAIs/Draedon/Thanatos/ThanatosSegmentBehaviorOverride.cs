@@ -90,6 +90,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 DoBehavior_DeathAnimation(npc, target, ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex], ref frameType);
             }
 
+            // Keep a handful of segments open if the head is open, for the sake of making it easier to damage Thanatos.
+            int openSegmentPeriodWhenHeadIsOpen = 12;
+            if (head.localAI[0] == (int)ThanatosFrameType.Open && segmentAttackIndex % openSegmentPeriodWhenHeadIsOpen == openSegmentPeriodWhenHeadIsOpen - 1f)
+            {
+                thanatosIsFiring = false;
+                canBeOpen = true;
+                segmentShouldContiuouslyBeOpen = true;
+            }
+
             // Handle segment opening/closing and projectile firing.
             if (thanatosIsFiring && canBeOpen)
             {

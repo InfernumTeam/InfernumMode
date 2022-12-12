@@ -78,34 +78,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             float rightBorderOpacity = Utils.GetLerpValue(right - 350f, right, Main.LocalPlayer.Center.X, true) * 0.6f;
 
             Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+            Color borderColor1 = Color.OrangeRed;
+            Color borderColor2 = Color.Cyan;
             if (leftBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
                 float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(700f, 755f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
-                Color borderColor = Color.Lerp(Color.Transparent, Color.Orange, leftBorderOpacity);
+                Color borderColor = Color.Lerp(Color.Transparent, borderColor1, leftBorderOpacity);
 
                 for (int i = 0; i < 150; i++)
                 {
                     float fade = 1f - Math.Abs(i - 75f) / 75f;
                     drawPosition = baseDrawPosition + Vector2.UnitY * (i - 75f) / 75f * borderOutwardness;
-                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Cyan, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, borderColor2, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
                 }
-                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Cyan, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
             }
 
             if (rightBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
                 float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(700f, 755f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
-                Color borderColor = Color.Lerp(Color.Transparent, Color.Orange, rightBorderOpacity);
+                Color borderColor = Color.Lerp(Color.Transparent, borderColor1, rightBorderOpacity);
 
                 for (int i = 0; i < 150; i++)
                 {
                     float fade = 1f - Math.Abs(i - 75f) / 75f;
                     drawPosition = baseDrawPosition + Vector2.UnitY * (i - 75f) / 75f * borderOutwardness;
-                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Cyan, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+                    Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, borderColor2, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
                 }
-                Main.spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Cyan, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
             }
 
             Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);

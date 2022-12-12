@@ -32,6 +32,8 @@ namespace InfernumMode
             }
         }
 
+        internal Matrix? PerspectiveMatrixOverride = null;
+
         public delegate float VertexWidthFunction(float completionRatio);
         public delegate Vector2 VertexOffsetFunction(float completionRatio);
         public delegate Color VertexColorFunction(float completionRatio);
@@ -179,7 +181,7 @@ namespace InfernumMode
             // The logic here basically determines which indices are connected together.
             int totalIndices = (pointCount - 1) * 6;
             short[] indices = new short[totalIndices];
-
+            
             for (int i = 0; i < pointCount - 2; i++)
             {
                 int startingTriangleIndex = i * 6;
@@ -194,6 +196,8 @@ namespace InfernumMode
 
             return indices;
         }
+
+        public void SpecifyPerspectiveMatrix(Matrix m) => PerspectiveMatrixOverride = m;
 
         public void Draw(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, float? directionOverride = null)
         {
@@ -221,8 +225,9 @@ namespace InfernumMode
 
             if (SpecialShader != null)
             {
-                SpecialShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+                SpecialShader.Shader.Parameters["uWorldViewProjection"].SetValue(PerspectiveMatrixOverride ?? (view * projection));
                 SpecialShader.Apply();
+                PerspectiveMatrixOverride = null;
             }
             else
                 BaseEffect.CurrentTechnique.Passes[0].Apply();

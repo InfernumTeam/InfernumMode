@@ -752,11 +752,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #region Drawing
         public static void CreateBloodParticles(NPC npc, Color color, Vector2 velocity = default, Vector2 spawnPosition = default)
         {
-            // Spawn blood particles to add atmosphere
-            if (Main.rand.NextBool(2))
+            // Spawn blood particles to add atmosphere.
+            if (Main.rand.NextBool())
             {
                 if (spawnPosition == default)
                     spawnPosition = npc.Center + Main.rand.NextVector2Circular(70, 70) + npc.velocity * 2f;
+                
                 // Allow use of custom velocity for specific movement.
                 if (velocity == default)
                     velocity = -npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
@@ -774,8 +775,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 eyeOrigin = eyeTexture.Size() / new Vector2(1f, Main.npcFrameCount[npc.type]) * 0.5f;
 
-            // Afterimages
-            // This is changed by attacks when needed.
+            // Afterimages.
+            // The quantity of afterimages is changed by attacks on a case-by-case basis.
             bool drawAfterimages = npc.Infernum().ExtraAI[5] == 1;
             int afterimageCount = 7;
             Color color = lightColor;
@@ -792,11 +793,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, eyeOrigin, npc.scale, spriteEffects, 0f);
 
             float gleamTimer = npc.localAI[0];
-            Vector2 pupilPosition = npc.Center + new Vector2(0f, 74f).RotatedBy(npc.rotation) - Main.screenPosition;
+            Vector2 pupilPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * 74f - Main.screenPosition;
             Texture2D pupilStarTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
             Vector2 pupilOrigin = pupilStarTexture.Size() * 0.5f;
 
-            Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.GetLerpValue(0f, 8f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 8f, gleamTimer, true); ;
+            Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.GetLerpValue(0f, 8f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 8f, gleamTimer, true);
             Color pupilColor = Color.Red * 0.6f * Utils.GetLerpValue(0f, 10f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 10f, gleamTimer, true);
             Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation, pupilOrigin, pupilScale, SpriteEffects.None, 0f);
             pupilScale = new Vector2(0.7f, 2.7f);

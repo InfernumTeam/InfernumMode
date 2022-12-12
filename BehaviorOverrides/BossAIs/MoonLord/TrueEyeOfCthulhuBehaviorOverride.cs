@@ -214,8 +214,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 if (attackTimer % asteroidReleaseRate == asteroidReleaseRate - 1f)
                 {
-                    Vector2 asteroidSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
-                    Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                    Vector2 asteroidSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(780f, 780f);
+                    Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
                     int asteroid = Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f);
                     if (Main.projectile.IndexInRange(asteroid))
                         Main.projectile[asteroid].ai[0] = core.whoAmI;
@@ -382,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public static void DoBehavior_PhantasmalDance(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int spinTime = 60;
-            int chargeTelegraphTime = 39;
+            int chargeTelegraphTime = 52;
             int chargeTime = 36;
             int chargeCount = 4;
             int orbReleaseRate = 5;
@@ -399,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (MoonLordCoreBehaviorOverride.IsEnraged)
             {
-                chargeTelegraphTime = 30;
+                chargeTelegraphTime = 34;
                 spinOffset = 375f;
                 chargeSpeed = 50f;
             }
@@ -439,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Define the telegraph direction.
                 if (telegraphCompletion < 0.9f)
-                    telegraphDirection = telegraphDirection.AngleLerp(npc.AngleTo(target.Center + target.velocity * chargePredictiveness), 0.15f);
+                    telegraphDirection = telegraphDirection.AngleLerp(npc.AngleTo(target.Center + target.velocity * chargePredictiveness), 0.18f);
 
                 // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)
@@ -500,7 +500,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             int repositionTime = 85;
             int sphereCastCount = 6;
-            int sphereCastRate = 5;
+            int sphereCastRate = 8;
             int boltCount = 3;
             int chargeTime = 32;
             int chargeCount = 4;

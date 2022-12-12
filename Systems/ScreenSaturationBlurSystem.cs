@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.Drawers;
+using InfernumMode.Tiles;
 using InfernumMode.Tiles.Abyss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -110,6 +111,7 @@ namespace InfernumMode.Systems
                 ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
                 ThingsToDrawOnTopOfBlur.RemoveAt(0);
             }
+
             LargeLumenylCrystal.DefineCrystalDrawers();
 
             IcicleDrawer.ApplyShader();
@@ -122,6 +124,10 @@ namespace InfernumMode.Systems
             // Regularly reset the crystal cache.
             if (Main.GameUpdateCount % 120 == 119)
                 LargeLumenylCrystal.CrystalCache.Clear();
+
+            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
+            foreach (Point p in ColosseumPortal.PortalCache)
+                ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 
             Main.spriteBatch.End();
         }

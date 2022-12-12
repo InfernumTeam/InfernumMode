@@ -36,8 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Hacky workaround to problems with popping.
             // The system regarding ML's death is held together with duct tape, broken promises, and three daily prayers. Do not question it, for your own safety.
-            if (npc.life < 1000)
-                npc.life = 1000;
+            if (npc.life < npc.lifeMax * 0.02)
+                npc.life = (int)(npc.lifeMax * 0.02);
 
             npc.target = core.target;
             npc.dontTakeDamage = false;
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 mouthPosition = npc.Center + Vector2.UnitY * 216f;
                     Vector2 leechVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 7f;
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, 255, npc.whoAmI + 1, npc.target);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, npc.target, npc.whoAmI + 1, npc.target);
                 }
                 leechCreationCounter = 0f;
                 npc.netUpdate = true;

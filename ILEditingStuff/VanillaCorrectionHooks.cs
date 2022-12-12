@@ -7,8 +7,9 @@ using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
-using CalamityMod.Schematics;
+using CalamityMod.Schematics; 
 using CalamityMod.Walls;
+using CalamityMod.Skies;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -18,12 +19,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using ReLogic.Content;
 using SubworldLibrary;
 using System;
 using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -138,47 +141,6 @@ namespace InfernumMode.ILEditingStuff
             orig(self, force || SubworldSystem.IsActive<LostColosseum>());
         }
 
-        internal void DrawColosseumBackground(On.Terraria.Main.orig_DrawBackground orig, Main self)
-        {
-            if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && !Main.LocalPlayer.Calamity().ZoneAbyss)
-                return;
-
-            orig(self);
-
-            if (Main.gameMenu || Main.dedServ || !SubworldSystem.IsActive<LostColosseum>())
-                return;
-
-            Texture2D gradient = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGGradient").Value;
-            Texture2D bgObjects = ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumBGObjects").Value;
-
-            // I don't know.
-            // I'm sorry.
-            Vector2 screenOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
-            Vector2 center = new Vector2(gradient.Width, gradient.Height) * 0.5f;
-            Vector2 whyRedigit = new(0.92592f);
-            float scale = 1.2f;
-            float scaledWidth = scale * gradient.Width;
-            int range = (int)(screenOffset.X * whyRedigit.X - center.X - (Main.screenWidth >> 1) / scaledWidth);
-            center = center.Floor();
-            int aspectRatio = (int)Math.Ceiling(Main.screenWidth / scaledWidth);
-            int whyRedigit2 = (int)(scale * (gradient.Width - 1) / whyRedigit.X);
-            Vector2 drawPosition = (new Vector2((range - 2) / whyRedigit2, Main.maxTilesY * 4f) + center - screenOffset) * whyRedigit + screenOffset - Main.screenPosition - center;
-            drawPosition = drawPosition.Floor();
-
-            while (drawPosition.X + scaledWidth < 0f)
-            {
-                range++;
-                drawPosition.X += scaledWidth;
-            }
-            drawPosition.Y += 250f;
-            for (int i = range - 2; i <= range + aspectRatio + 2; i++)
-            {
-                Main.spriteBatch.Draw(gradient, drawPosition - Vector2.UnitY * 400f, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(bgObjects, drawPosition, gradient.Frame(), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                drawPosition.X += scaledWidth;
-            }
-        }
-
         internal void ChangeDrawBlackLimit(ILContext il)
         {
             ILCursor c = new(il);
@@ -196,18 +158,102 @@ namespace InfernumMode.ILEditingStuff
             c.Emit(OpCodes.Stloc, 3);
         }
 
+        private void GetRidOfPeskyBlackSpaceFade(On.Terraria.Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
+        {
+            Color oldSkyColor = Main.ColorOfTheSkies;
+            orig();
+
+            if (SubworldSystem.IsActive<LostColosseum>())
+            {
+                Main.atmo = 1f;
+                Main.sunModY = 300;
+                Main.ColorOfTheSkies = oldSkyColor;
+            }
+        }
+
+        private void ChangeBackgroundColorSpecifically(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            if (!c.TryGotoNext(c => c.MatchStfld<Main>("unityMouseOver")))
+                return;
+
+            if (!c.TryGotoNext(c => c.MatchLdsfld<Main>("background")))
+                return;
+
+            int assetIndex = -1;
+            if (!c.TryGotoNext(MoveType.After, c => c.MatchStloc(out assetIndex)))
+                return;
+
+            c.Emit(OpCodes.Ldloc, assetIndex);
+            c.EmitDelegate((Asset<Texture2D> texture) =>
+            {
+                if (!Main.gameMenu && SubworldSystem.IsActive<LostColosseum>())
+                    return ModContent.Request<Texture2D>("InfernumMode/Backgrounds/LostColosseumSky");
+
+                return texture;
+            });
+            c.Emit(OpCodes.Stloc, assetIndex);
+        }
+
+        private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
+        {
+            float dayCompletion = (float)(Main.time / Main.dayLength);
+            float verticalOffsetInterpolant;
+            if (dayCompletion < 0.5f)
+                verticalOffsetInterpolant = (float)Math.Pow(1f - dayCompletion * 2f, 2D);
+            else
+                verticalOffsetInterpolant = (float)Math.Pow(dayCompletion - 0.5f, 2D) * 4f;
+
+            // Calculate the position of the sun.
+            Texture2D sunTexture = TextureAssets.Sun.Value;
+            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
+            int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
+            int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + 180f + Main.sunModY);
+            Vector2 sunPosition = new(x, y);
+
+            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
+
+            // Use brighter sun colors in general in the colosseum.
+            if (inColosseum)
+                sunColor = Color.Lerp(sunColor, Color.White with { A = 125 }, 0.6f);
+
+            // Draw a vibrant glow effect behind the sun if in the colosseum.
+            if (inColosseum)
+            {
+                // Use additive drawing.
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
+                Vector2 origin = backglowTexture.Size() * 0.5f;
+                float opacity = Utils.GetLerpValue(0.67f, 1f, LostColosseum.SunsetInterpolant);
+                Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Yellow * opacity * 0.5f, 0f, origin, 3f, 0, 0f);
+                Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Orange * opacity * 0.56f, 0f, origin, 6f, 0, 0f);
+                Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.IndianRed * opacity * 0.46f, 0f, origin, 12f, 0, 0f);
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+            }
+
+            orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+        }
+
         public void Load()
         {
-            On.Terraria.Main.DrawBackground += DrawColosseumBackground;
             On.Terraria.Main.DrawBlack += ForceDrawBlack;
             IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
+            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+            IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
+            On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
         }
 
         public void Unload()
         {
-            On.Terraria.Main.DrawBackground -= DrawColosseumBackground;
             On.Terraria.Main.DrawBlack -= ForceDrawBlack;
             IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
+            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+            IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
+            On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
         }
     }
 
@@ -748,5 +794,68 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => IL.Terraria.WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
 
         public void Unload() => IL.Terraria.WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
+    }
+
+    public class ChangeBRSkyColorHook : IHookEdit
+    {
+        public void Load() => BRSkyColor += ChangeBRSkyColor;
+
+        public void Unload() => BRSkyColor -= ChangeBRSkyColor;
+
+        private void ChangeBRSkyColor(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.EmitDelegate(() =>
+            {
+                Color color = Color.Lerp(new Color(205, 100, 100), Color.Black, WhiteDimness) * 0.2f;
+                return color;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+    }
+
+    public class ChangeBREyeTextureHook : IHookEdit
+    {
+        public void Load() => BRXerocEyeTexure += ChangeBREyeTexture;
+
+        public void Unload() => BRXerocEyeTexure -= ChangeBREyeTexture;
+
+        private void ChangeBREyeTexture(ILContext il)
+        {
+            // Better to rewrite the entire thing to get it looking just right.
+            ILCursor cursor = new(il);
+            cursor.GotoNext(MoveType.Before, i => i.MatchLdstr("CalamityMod/Skies/XerocEye"));
+            cursor.EmitDelegate(() =>
+            {
+                if (Main.gameMenu)
+                    return;
+
+                Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
+                screenCenter += new Vector2(Main.screenWidth, Main.screenHeight) * (Main.GameViewMatrix.Zoom - Vector2.One) * 0.5f;
+
+                float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + (float)Math.Sin((double)BossRushSky.IdleTimer) * 0.01f;
+                Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter) * 0.097f + screenCenter - Main.screenPosition - Vector2.UnitY * 100f;
+                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/XerocEyeAlt").Value;
+                Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);
+                
+                Main.spriteBatch.Draw(eyeTexture, drawPosition, null, baseColorDraw, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
+
+                Color fadedColor = Color.Lerp(baseColorDraw, Color.Red, 0.3f) * MathHelper.Lerp(0.18f, 0.3f, BossRushSky.IncrementalInterest);
+                fadedColor.A = 0;
+
+                float backEyeOutwardness = MathHelper.Lerp(8f, 4f, BossRushSky.IncrementalInterest);
+                int backInstances = (int)MathHelper.Lerp(6f, 24f, BossRushSky.IncrementalInterest);
+                for (int i = 0; i < backInstances; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * 4f * i / backInstances + Main.GlobalTimeWrappedHourly * 2.1f).ToRotationVector2() * backEyeOutwardness;
+                    Main.spriteBatch.Draw(eyeTexture, drawPosition + drawOffset, null, fadedColor * 0.3f, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
+                }
+
+                if (BossRushSky.ShouldDrawRegularly)
+                    BossRushSky.ShouldDrawRegularly = false;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
     }
 }

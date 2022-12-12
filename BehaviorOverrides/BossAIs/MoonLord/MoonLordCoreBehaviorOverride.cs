@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Events;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
@@ -191,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     SoundID.Zombie97
                 };
                 foreach (var sound in sounds)
-                    SoundEngine.PlaySound(sound with { Volume = 1.85f, Pitch = 0.35f });
+                    SoundEngine.PlaySound(sound with { Volume = 1.2f, Pitch = 0.35f });
             }
             wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 
@@ -276,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public static void HandleBodyPartDeathTriggers(NPC npc, double realDamage)
         {
-            int minLife = BossRushEvent.BossRushActive ? 10000 : 1000;
+            int minLife = (int)(npc.lifeMax * 0.02);
             if (npc.life - realDamage > minLife)
                 return;
 

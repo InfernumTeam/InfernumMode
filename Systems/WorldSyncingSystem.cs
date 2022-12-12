@@ -33,6 +33,7 @@ namespace InfernumMode.Systems
             writer.Write(ProvidenceArena.Height);
             writer.Write(WayfinderGateLocation.X);
             writer.Write(WayfinderGateLocation.Y);
+            writer.Write(LostColosseumPortalAnimationTimer);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -54,6 +55,7 @@ namespace InfernumMode.Systems
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
             WayfinderGateLocation = new(reader.ReadSingle(), reader.ReadSingle());
+            LostColosseumPortalAnimationTimer = reader.ReadInt32();
         }
     }
 }

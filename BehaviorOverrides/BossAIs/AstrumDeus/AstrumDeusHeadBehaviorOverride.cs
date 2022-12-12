@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             bool enteringLastPhase = lifeRatio < Phase3LifeRatio && inFinalPhase == 0f;
 
             // Clamp position into the world.
-            npc.position.X = MathHelper.Clamp(npc.position.X, 700f, Main.maxTilesX * 16f - 700f);
+            npc.position.X = MathHelper.Clamp(npc.position.X, 1300f, Main.maxTilesX * 16f - 1300f);
 
             // Have Deus fly high into the sky and shed its shell before flying back down in the final phase.
             if (enteringLastPhase)
@@ -270,7 +270,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     SoundEngine.PlaySound(AstrumDeusHead.SplitSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness * 1.35f;
+                        Vector2 topLeftOfWorld = Vector2.One * 1200f;
+                        Vector2 bottomRightOfWorld = new Vector2(Main.maxTilesX, Main.maxTilesY) * 16f - topLeftOfWorld;
+                        Vector2 teleportPosition = Vector2.Clamp(target.Center + teleportOffsetDirection * teleportOutwardness * 1.35f, topLeftOfWorld, bottomRightOfWorld);
+                        npc.Center = teleportPosition;
+
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
                         int telegraph = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f);
@@ -880,12 +884,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 starSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1150f, 1150f);
                 starSpawnCenterX = starSpawnPosition.X;
                 starSpawnCenterY = starSpawnPosition.Y;
+
                 npc.netUpdate = true;
             }
 
             // Ensure the star position stays within the world.
-            if (starSpawnCenterY < 700f)
-                starSpawnCenterY = 700f;
+            while (starSpawnCenterX < 1600f)
+                starSpawnCenterX++;
+            while (starSpawnCenterX > Main.maxTilesX * 16f - 1600f)
+                starSpawnCenterX--;
+            while (starSpawnCenterY < 1600f)
+                starSpawnCenterY++;
+            while (starSpawnCenterY > Main.maxTilesY * 16f - 1600f)
+                starSpawnCenterY--;
 
             // Circle around the star spawn center.
             if (attackTimer < repositionTimeBuffer + starGrowTime)

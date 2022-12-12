@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.active = false;
                 return false;
             }
-
+            
             // Do not despawn.
             npc.timeLeft = 7200;
 
@@ -47,6 +47,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Inherit attributes from the bereft vassal.
             BereftVassalComboAttackManager.InheritAttributesFromLeader(npc);
+
+            // Inehrit music from the bereft vassal.
+            npc.boss = true;
+            npc.ModNPC.Music = Main.npc[vassal].ModNPC.Music;
+            npc.ModNPC.SceneEffectPriority = (SceneEffectPriority)12;
 
             Player target = Main.player[npc.target];
             BereftVassalComboAttackManager.DoComboAttacksIfNecessary(npc, target, ref BereftVassalComboAttackManager.Vassal.ai[1]);

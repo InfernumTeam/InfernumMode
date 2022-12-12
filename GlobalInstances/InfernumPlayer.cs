@@ -6,19 +6,14 @@ using InfernumMode.Achievements;
 using InfernumMode.Biomes;
 using InfernumMode.Dusts;
 using InfernumMode.Projectiles;
-using InfernumMode.Projectiles.Wayfinder;
-using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -45,6 +40,10 @@ namespace InfernumMode.GlobalInstances
         public bool HatGirl;
 
         public bool HatGirlShouldGiveAdvice;
+
+        public Vector2 PositionBeforeEnteringSubworld;
+
+        public bool ReturnToPositionBeforeSubworld;
 
         public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
 
@@ -121,6 +120,7 @@ namespace InfernumMode.GlobalInstances
             }
             return true;
         }
+
         #endregion Nurse Cheese Death
         #region Reset Effects
         public override void ResetEffects()
@@ -205,6 +205,22 @@ namespace InfernumMode.GlobalInstances
                     Player.position.X -= 0.1f;
                     passedDoor = true;
                 }
+            }
+            
+            if (ReturnToPositionBeforeSubworld && !Main.gameMenu)
+            {
+                Player.Spawn(PlayerSpawnContext.RecallFromItem);
+                Main.LocalPlayer.Center = PositionBeforeEnteringSubworld;
+
+                NPC.ResetNetOffsets();
+                Main.BlackFadeIn = 255;
+                Lighting.Clear();
+                Main.screenLastPosition = Main.screenPosition;
+                Main.screenPosition.X = Player.Center.X - Main.screenWidth * 0.5f;
+                Main.screenPosition.Y = Player.Center.Y - Main.screenHeight * 0.5f;
+                Main.instantBGTransitionCounter = 10;
+
+                ReturnToPositionBeforeSubworld = false;
             }
 
             if (CalamityPlayer.areThereAnyDamnBosses && Player.Calamity().momentumCapacitorBoost > 1.8f)

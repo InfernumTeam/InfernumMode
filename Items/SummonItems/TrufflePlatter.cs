@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Items
+namespace InfernumMode.Items.SummonItems
 {
     public class TrufflePlatter : ModItem
     {

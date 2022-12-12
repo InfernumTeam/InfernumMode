@@ -5,6 +5,8 @@ using CalamityMod.World;
 using InfernumMode.Achievements;
 using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Systems;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
@@ -52,7 +54,7 @@ namespace InfernumMode.Subworlds
 
         public const int CaveWidth = 180;
 
-        public static readonly Point PortalPosition = new(CaveWidth + 25, 190);
+        public static readonly Point PortalPosition = new(CaveWidth + 28, 190);
 
         public static readonly Point CampfirePosition = new(CaveWidth + 320, 165);
 
@@ -92,9 +94,22 @@ namespace InfernumMode.Subworlds
                 Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 30);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
+                for (int i = 0; i < CaveWidth + 48; i++)
+                {
+                    for (int j = 0; j < Main.maxTilesY; j++)
+                        Main.tile[i, j].WallType = WallID.Sandstone;
+                }
+
                 // Set the default spawn position.
                 Main.spawnTileX = PortalPosition.X;
                 Main.spawnTileY = PortalPosition.Y;
+
+                // Ensure that the portal is open when the player is there.
+                WorldSaveSystem.HasOpenedLostColosseumPortal = true;
+
+                Point p = PortalPosition;
+                while (!WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<ColosseumPortal>()))
+                    p.Y++;
             }
 
             public static void GenerateCaveSystem(Point start, Point end)
@@ -119,7 +134,7 @@ namespace InfernumMode.Subworlds
                 // Carve out caves.
                 foreach (Vector2 curvePoint in baseCurvePoints)
                 {
-                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(7, 13), Actions.Chain(new GenAction[]
+                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(8, 13), Actions.Chain(new GenAction[]
                     {
                         new Modifiers.Blotches(3, 0.27),
                         new Actions.ClearTile()
@@ -154,6 +169,8 @@ namespace InfernumMode.Subworlds
                         VassalWasBeaten = true;
                 }
             }
+
+            Main.LocalPlayer.Infernum().ReturnToPositionBeforeSubworld = true;
         }
 
         public static void ManageSandstorm()

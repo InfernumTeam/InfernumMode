@@ -1093,6 +1093,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Start = portalPosition - offset;
                                 Main.projectile[cosmicTear].ModProjectile<RealitySlice>().End = portalPosition + offset;
                                 Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Cosmilite = true;
+                                Main.projectile[cosmicTear].timeLeft = Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Lifetime;
                             }
                         }
 

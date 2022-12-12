@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilScale = ref npc.localAI[2];
 
             // Hacky workaround to problems with popping.
-            if (npc.life < 1000)
-                npc.life = 1000;
+            if (npc.life < npc.lifeMax * 0.02)
+                npc.life = (int)(npc.lifeMax * 0.02);
 
             int idealFrame = 0;
 

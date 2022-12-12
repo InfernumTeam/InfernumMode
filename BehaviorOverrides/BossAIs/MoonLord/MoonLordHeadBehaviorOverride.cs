@@ -36,8 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Hacky workaround to problems with popping.
             // The system regarding ML's death is held together with duct tape, broken promises, and three daily prayers. Do not question it, for your own safety.
-            if (npc.life < 1000)
-                npc.life = 1000;
+            if (npc.life < npc.lifeMax * 0.02)
+                npc.life = (int)(npc.lifeMax * 0.02);
 
             npc.target = core.target;
             npc.dontTakeDamage = false;

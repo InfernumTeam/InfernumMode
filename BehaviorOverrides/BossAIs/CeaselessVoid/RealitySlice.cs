@@ -21,6 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public Vector2 End;
 
         public List<Vector2> TrailCache = new();
+
+        public int Lifetime => Cosmilite ? 248 : 84;
         
         public ref float Time => ref Projectile.ai[0];
 
@@ -36,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 84;
+            Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 2;
         }
 

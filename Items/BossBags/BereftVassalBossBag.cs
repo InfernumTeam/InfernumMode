@@ -1,11 +1,11 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Items.Accessories;
 using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
+using InfernumMode.Items.Weapons.Rogue;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -13,7 +13,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Items
+namespace InfernumMode.Items.BossBags
 {
     public class BereftVassalBossBag : ModItem
     {
@@ -49,21 +49,20 @@ namespace InfernumMode.Items
         {
             return Color.Lerp(lightColor, Color.White, 0.4f);
         }
-        public override void PostUpdate()
-        {
-            base.Item.TreasureBagLightAndDust();
-        }
+
+        public override void PostUpdate() => Item.TreasureBagLightAndDust();
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            return CalamityUtils.DrawTreasureBagInWorld(base.Item, spriteBatch, ref rotation, ref scale, whoAmI);
+            return CalamityUtils.DrawTreasureBagInWorld(Item, spriteBatch, ref rotation, ref scale, whoAmI);
         }
+        
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ModContent.ItemType<CherishedSealocket>());
 
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
-            itemLoot.Add(DropHelper.CalamityStyle(DropHelper.BagWeaponDropRateFraction, ModContent.ItemType<Myrindael>(), ModContent.ItemType<TheGlassmaker>(), ModContent.ItemType<AridBattlecry>()));
+            itemLoot.Add(DropHelper.CalamityStyle(DropHelper.BagWeaponDropRateFraction, ModContent.ItemType<Myrindael>(), ModContent.ItemType<TheGlassmaker>(), ModContent.ItemType<AridBattlecry>(), ModContent.ItemType<WanderersShell>()));
 
             itemLoot.AddRevBagAccessories();
 

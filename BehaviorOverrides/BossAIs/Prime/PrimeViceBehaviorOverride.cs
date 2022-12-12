@@ -1,11 +1,9 @@
-using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

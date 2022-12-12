@@ -107,6 +107,7 @@ namespace InfernumMode.Systems
                 ThingsToDrawOnTopOfBlur.RemoveAt(0);
             }
 
+            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 

@@ -219,12 +219,20 @@ namespace InfernumMode.GlobalInstances
 
                 totalExoMechs++;
             }
-            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
+            if (totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
                 return false;
 
             // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.
-            if (InfernumMode.CanUseCustomAIs && npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
+            if (npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
                 DropHelper.BlockDrops(ItemID.ChumBucket, ItemID.VampireFrogStaff, ItemID.BloodFishingRod, ItemID.BloodRainBow, ItemID.MoneyTrough, ItemID.BloodMoonStarter);
+
+            // Ensure that the great sand shark drops its items on top of the player. The reason for this is because if it releases items inside of blocks they will
+            // be completely unobtainable, due to the Colosseum subworld not being mineable.
+            if (npc.type == ModContent.NPCType<GreatSandShark>())
+            {
+                npc.damage = 0;
+                npc.Center = Main.player[npc.target].Center;
+            }
 
             return base.PreKill(npc);
         }

@@ -7,6 +7,7 @@ using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
 using InfernumMode.Items.Weapons.Rogue;
+using InfernumMode.Projectiles.Wayfinder;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
@@ -21,6 +22,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.PlayerDrawLayer;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
@@ -60,6 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public ThanatosSmokeParticleSet SmokeDrawer = new(-1, 3, 0f, 16f, 1.5f);
 
         public Player Target => Main.player[NPC.target];
+
+        public bool TargetIsOutsideOfColosseum => Target.Center.X < 14306f && SubworldSystem.IsActive<LostColosseum>();
 
         public BereftVassalAttackType CurrentAttack
         {
@@ -196,9 +200,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 
-            // Go away if the target is dead.
-            if ((!Target.active || Target.dead) && CurrentAttack != BereftVassalAttackType.IdleState)
+            // Go away if the target is dead or left the Colosseum.
+            if ((!Target.active || Target.dead || TargetIsOutsideOfColosseum) && CurrentAttack != BereftVassalAttackType.IdleState)
             {
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 firePosition = NPC.Center + Main.rand.NextVector2Circular(50f, 50f);
+                    float fireScale = Main.rand.NextFloat(1f, 1.32f);
+                    float fireRotationSpeed = Main.rand.NextFloat(-0.05f, 0.05f);
+
+                    var particle = new HeavySmokeParticle(firePosition, Vector2.Zero, Color.Cyan, 50, fireScale, 1, fireRotationSpeed, true, 0f, true);
+                    GeneralParticleHandler.SpawnParticle(particle);
+                }
+
                 NPC.active = false;
                 LostColosseum.HasBereftVassalAppeared = false;
             }
@@ -322,6 +336,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             FrameType = BereftVassalFrameType.Kneel;
             CurrentFrame = 0f;
 
+            // Get rid of any and all adrenaline.
+            Target.Calamity().adrenaline = 0f;
+
             if (hasBegunAnimation == 0f)
                 return;
 
@@ -397,9 +414,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public void DoBehavior_SandBlobSlam()
         {
-            int chargeCount = 1;
+            int chargeCount = 2;
             int repositionInterpolationTime = 32;
             int sandBlobCount = 30;
+            int sandBlobCount2 = 0;
             int slamDelay = 36;
             int attackTransitionDelay = 96;
             float slamSpeed = 28f;
@@ -409,9 +427,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             if (Enraged)
             {
-                chargeCount += 2;
+                chargeCount++;
                 repositionInterpolationTime -= 11;
                 sandBlobCount += 5;
+                sandBlobCount2 += 9;
                 slamDelay -= 14;
                 attackTransitionDelay -= 54;
                 slamSpeed += 4f;
@@ -523,6 +542,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Bottom);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        Vector2 sandSpawnPosition = NPC.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
                         for (int i = 0; i < sandBlobCount; i++)
                         {
                             float sandVelocityOffsetAngle = MathHelper.Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount - 1f));
@@ -531,10 +551,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                             sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
-                            Vector2 sandSpawnPosition = NPC.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
                             int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                             if (Main.projectile.IndexInRange(blobIndex))
                                 Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                        }
+
+                        // Release second spread of sand that goes higher up if necessary.
+                        if (sandBlobCount2 >= 1)
+                        {
+                            for (int i = 0; i < sandBlobCount2; i++)
+                            {
+                                float sandVelocityOffsetAngle = MathHelper.Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount2 - 1f));
+
+                                // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
+                                sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
+
+                                Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed * 1.18f;
+                                int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
+                                if (Main.projectile.IndexInRange(blobIndex))
+                                    Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                            }
                         }
 
                         Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
@@ -589,6 +625,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float teleportHoverOffset = 440f;
             float teleportChargeSpeed = 50f;
             float sandBlobSpeed = 16f;
+            bool canReleaseSandBlobs = true;
 
             if (Enraged)
             {
@@ -604,6 +641,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 chargeAnticipationTime += 9;
                 chargeTime += 6;
+                canReleaseSandBlobs = false;
             }
 
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
@@ -644,7 +682,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (AttackTimer == chargeAnticipationTime + attackDelayAfterTeleport)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, NPC.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.WithinRange(Target.Center, 336f))
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.WithinRange(Target.Center, 336f) && canReleaseSandBlobs)
                     {
                         for (int i = 0; i < sandBlobCount; i++)
                         {

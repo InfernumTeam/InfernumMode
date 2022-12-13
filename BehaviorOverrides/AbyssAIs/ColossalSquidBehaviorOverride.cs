@@ -27,9 +27,9 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
         // Piecewise function variables for determining the offset of tentacles when swiping at the target.
         public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, 0f, -0.53f, 2);
 
-        public static CurveSegment Slash => new(EasingType.PolyIn, 0.17f, Anticipation.EndingHeight, 2.5f, 3);
+        public static CurveSegment Slash => new(EasingType.PolyIn, 0.17f, -0.53f, 2.5f, 3);
 
-        public static CurveSegment Recovery => new(EasingType.SineOut, 0.4f, Slash.EndingHeight, -1.97f);
+        public static CurveSegment Recovery => new(EasingType.SineOut, 0.4f, -0.36f, -1.97f);
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)

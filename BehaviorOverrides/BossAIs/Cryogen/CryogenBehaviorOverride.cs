@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         };
 
         #region Enumerations
-        internal enum CryogenAttackState
+        public enum CryogenAttackState
         {
             IcicleCircleBurst,
             PredictiveIcicles,
@@ -56,6 +56,83 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             EternalWinter
         }
         #endregion
+
+        #region Attack Cycles
+
+        // Why does this boss have so many subphases anyway?
+        public static CryogenAttackState[] Subphase1AttackCycle => new[]
+        {
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.PredictiveIcicles,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+        };
+
+        public static CryogenAttackState[] Subphase2AttackCycle => new[]
+        {
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.ShatteringIcePillars,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.PredictiveIcicles,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.PredictiveIcicles,
+            CryogenAttackState.ShatteringIcePillars,
+        };
+
+        public static CryogenAttackState[] Subphase3AttackCycle => new[]
+        {
+            CryogenAttackState.ShatteringIcePillars,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.ShatteringIcePillars,
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.PredictiveIcicles,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.PredictiveIcicles,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.IcicleTeleportDashes,
+        };
+
+        public static CryogenAttackState[] Subphase4AttackCycle => new[]
+        {
+            CryogenAttackState.HorizontalDash,
+            CryogenAttackState.ShatteringIcePillars,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.ShatteringIcePillars,
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.TeleportAndReleaseIceBombs,
+            CryogenAttackState.HorizontalDash,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.IcicleTeleportDashes,
+        };
+
+        public static CryogenAttackState[] Subphase5AttackCycle => new[]
+        {
+            CryogenAttackState.HorizontalDash,
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.HorizontalDash,
+            CryogenAttackState.AuroraBulletHell,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.AuroraBulletHell
+        };
+
+        public static CryogenAttackState[] Subphase6AttackCycle => new[]
+        {
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.AuroraBulletHell,
+            CryogenAttackState.EternalWinter,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.IcicleTeleportDashes,
+            CryogenAttackState.AuroraBulletHell,
+            CryogenAttackState.IcicleCircleBurst,
+            CryogenAttackState.EternalWinter,
+        };
+
+        #endregion Attack Cycles
 
         #region AI
 
@@ -112,18 +189,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             // Reset damage every frame.
             npc.damage = npc.defDamage;
 
-            if (subphaseState == 0f)
-                DoWeakSubphase1Behavior(npc, target, ref attackTimer, ref attackState);
-            else if (subphaseState == 1f)
-                DoSubphase2Behavior(npc, target, ref attackTimer, ref attackState);
+            // Determine the attack power and cycle pattern to use based on the current subphase.
+            float attackPower = 1f;
+            CryogenAttackState[] attackCycle = Subphase1AttackCycle;
+            if (subphaseState == 1f)
+            {
+                attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackCycle = Subphase2AttackCycle;
+            }
             else if (subphaseState == 2f)
-                DoSubphase3Behavior(npc, target, ref attackTimer, ref attackState);
+            {
+                attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackCycle = Subphase3AttackCycle;
+            }
             else if (subphaseState == 3f)
-                DoSubphase4Behavior(npc, target, ref attackTimer, ref attackState);
+            {
+                attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackCycle = Subphase4AttackCycle;
+            }
             else if (subphaseState == 4f)
-                DoSubphase5Behavior(npc, target, ref attackTimer, ref attackState);
+            {
+                attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackCycle = Subphase5AttackCycle;
+            }
             else if (subphaseState == 5f)
-                DoSubphase6Behavior(npc, target, ref attackTimer, ref attackState);
+            {
+                attackPower = MathHelper.Lerp(1.5f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackCycle = Subphase6AttackCycle;
+            }
+
+            switch (attackCycle[(int)attackState % attackCycle.Length])
+            {
+                case CryogenAttackState.IcicleCircleBurst:
+                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.PredictiveIcicles:
+                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.TeleportAndReleaseIceBombs:
+                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.ShatteringIcePillars:
+                    DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.IcicleTeleportDashes:
+                    DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.HorizontalDash:
+                    DoAttack_HorizontalDash(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.AuroraBulletHell:
+                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+                case CryogenAttackState.EternalWinter:
+                    DoAttack_EternalWinter(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
+            }
+            attackTimer++;
 
             if (npc.damage == 0)
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.55f, 0.1f);
@@ -136,7 +258,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public static void HandleSubphaseTransitions(NPC npc, float lifeRatio, ref float subphaseState, ref float attackState, ref float attackTimer)
         {
-            
             int trueSubphaseState = 0;
             if (lifeRatio < Phase2LifeRatio)
                 trueSubphaseState++;
@@ -186,206 +307,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     // Stop the multiplayer client getting stuck in an inf while loop and crashing.
                     subphaseState++;
             }
-        }
-
-        public static void DoWeakSubphase1Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-            };
-
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, 1f);
-                    break;
-                case CryogenAttackState.PredictiveIcicles:
-                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, 1f);
-                    break;
-                case CryogenAttackState.TeleportAndReleaseIceBombs:
-                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, 1f);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase2Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.ShatteringIcePillars,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.ShatteringIcePillars,
-            };
-
-            float attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.PredictiveIcicles:
-                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.TeleportAndReleaseIceBombs:
-                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.ShatteringIcePillars:
-                    DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase3Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.ShatteringIcePillars,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.ShatteringIcePillars,
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.IcicleTeleportDashes,
-            };
-
-            float attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.PredictiveIcicles:
-                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.TeleportAndReleaseIceBombs:
-                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.ShatteringIcePillars:
-                    DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.IcicleTeleportDashes:
-                    DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase4Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.HorizontalDash,
-                CryogenAttackState.ShatteringIcePillars,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.ShatteringIcePillars,
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.HorizontalDash,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.IcicleTeleportDashes,
-            };
-
-            float attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.TeleportAndReleaseIceBombs:
-                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.ShatteringIcePillars:
-                    DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.IcicleTeleportDashes:
-                    DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.HorizontalDash:
-                    DoAttack_HorizontalDash(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase5Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.HorizontalDash,
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.HorizontalDash,
-                CryogenAttackState.AuroraBulletHell,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.AuroraBulletHell
-            };
-
-            float attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.IcicleTeleportDashes:
-                    DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.HorizontalDash:
-                    DoAttack_HorizontalDash(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.AuroraBulletHell:
-                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase6Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.AuroraBulletHell,
-                CryogenAttackState.EternalWinter,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.IcicleTeleportDashes,
-                CryogenAttackState.AuroraBulletHell,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.EternalWinter,
-            };
-
-            float attackPower = MathHelper.Lerp(1.5f, 2f, 1f - npc.life / (float)npc.lifeMax);
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.IcicleTeleportDashes:
-                    DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.AuroraBulletHell:
-                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.EternalWinter:
-                    DoAttack_EternalWinter(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-            }
-            attackTimer++;
         }
 
         public static void DoAttack_IcicleCircleBurst(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
@@ -851,9 +772,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public static void DoAttack_EternalWinter(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
-            float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 8;
-            float chargeSpeed = MathHelper.Lerp(20f, 25f, zeroBasedAttackPower);
+            float chargeSpeed = MathHelper.Lerp(20f, 25f, attackPower - 1f);
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Spin around and charge at the target periodically.
@@ -924,17 +844,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (npc.Infernum().ExtraAI[6] > 0)
                 return;
 
-            int amountToSpawn = wasACrit ? 30 : 20;
+            int particleCount = wasACrit ? 30 : 20;
             Vector2 direction = projectile.oldVelocity.SafeNormalize(Main.rand.NextVector2Unit());
             
-            for (int i = 0; i < amountToSpawn; i++)
+            for (int i = 0; i < particleCount; i++)
             {
                 Vector2 velocity = -direction * Main.rand.NextFloat(2,6) + npc.velocity;
+                
                 // Add a bit of randomness, but weight towards going in a cone from the hit zone.
                 Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(MathHelper.TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
                 Particle iceParticle = new SnowyIceParticle(projectile.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
                 GeneralParticleHandler.SpawnParticle(iceParticle);
             }
+            
             npc.Infernum().ExtraAI[6] = 15;
         }
         #endregion AI

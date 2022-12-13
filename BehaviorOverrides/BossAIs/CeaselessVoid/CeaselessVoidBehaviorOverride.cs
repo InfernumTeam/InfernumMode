@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (target.HasBuff(BuffID.VortexDebuff))
                 target.ClearBuff(BuffID.VortexDebuff);
 
-            // Reset things.
+            // Reset things every frame. They may be adjusted in the AI methods as necessary.
             npc.damage = 0;
             npc.dontTakeDamage = enraged;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
@@ -462,7 +462,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int shootDelay = 96;
             int burstShootRate = 26;
             int laserBurstCount = 12;
-            float burstShootSpeed = 13f;
+            int attackTime = 480;
+            float burstShootSpeed = 11f;
+
             if (phase2)
                 burstShootRate -= 4;
             if (phase3)
@@ -511,7 +513,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 }
             }
 
-            if (attackTimer >= 480f)
+            if (attackTimer >= attackTime)
                 SelectNewAttack(npc);
         }
 

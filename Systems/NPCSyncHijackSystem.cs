@@ -23,6 +23,7 @@ namespace InfernumMode.Systems
                 packet.Write(npc.whoAmI);
                 packet.Write(npc.realLife);
                 packet.Write(totalSlotsInUse);
+                packet.Write(npc.Infernum().TotalPlayersAtStart ?? 1);
                 packet.Write(npc.Infernum().Arena.X);
                 packet.Write(npc.Infernum().Arena.Y);
                 packet.Write(npc.Infernum().Arena.Width);

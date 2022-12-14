@@ -1,6 +1,7 @@
 using CalamityMod.Cooldowns;
 using CalamityMod.Events;
 using InfernumMode.Balancing;
+using InfernumMode.BossBars;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
@@ -88,6 +89,7 @@ namespace InfernumMode
             IntroScreenManager.Load();
             NPCBehaviorOverride.LoadAll();
             ProjectileBehaviorOverride.LoadAll();
+            BossBarManager.Load(Instance);
 
             if (Main.netMode != NetmodeID.Server)
             {

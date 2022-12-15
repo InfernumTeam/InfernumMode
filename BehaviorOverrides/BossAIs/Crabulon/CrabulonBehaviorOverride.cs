@@ -558,13 +558,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             CrabulonAttackState newAttackState;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            npc.Infernum().ExtraAI[5]++;
+            npc.ai[3]++;
             if (lifeRatio < Phase3LifeRatio)
-                newAttackState = Phase3AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase3AttackCycle.Length];
+                newAttackState = Phase3AttackCycle[(int)npc.ai[3] % Phase3AttackCycle.Length];
             else if (lifeRatio < Phase2LifeRatio)
-                newAttackState = Phase2AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase2AttackCycle.Length];
+                newAttackState = Phase2AttackCycle[(int)npc.ai[3] % Phase2AttackCycle.Length];
             else
-                newAttackState = Phase1AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase1AttackCycle.Length];
+                newAttackState = Phase1AttackCycle[(int)npc.ai[3] % Phase1AttackCycle.Length];
 
             npc.ai[2] = (int)newAttackState;
             npc.ai[1] = 0f;

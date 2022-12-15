@@ -238,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             npc.dontTakeDamage = true;
 
             // Make the camera focus on King Slime.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
+            if (Main.LocalPlayer.WithinRange(npc.Center, 3700f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);

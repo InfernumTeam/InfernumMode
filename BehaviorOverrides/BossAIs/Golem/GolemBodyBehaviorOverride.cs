@@ -134,7 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 // Otherwise prepare the fight
                 int maxHP = 156000;
-                GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
+                npc.Infernum().AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
                 npc.noTileCollide = false;

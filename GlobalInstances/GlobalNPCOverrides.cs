@@ -47,6 +47,7 @@ namespace InfernumMode.GlobalInstances
         public const int TotalExtraAISlots = 100;
 
         // I'll be fucking damned if this isn't enough.
+        public int? TotalPlayersAtStart = null;
         public bool ShouldUseSaturationBlur = false;
         public float[] ExtraAI = new float[TotalExtraAISlots];
         public Rectangle Arena = default;
@@ -110,20 +111,13 @@ namespace InfernumMode.GlobalInstances
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
         }
 
-        public static void AdjustMaxHP(ref int maxHP)
+        public void AdjustMaxHP(ref int maxHP)
         {
             float hpMultiplier = 1f;
             float accumulatedFactor = 0.35f;
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
-                int activePlayerCount = 0;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active)
-                        activePlayerCount++;
-                }
-
-                for (int i = 1; i < activePlayerCount; i++)
+                for (int i = 1; i < (TotalPlayersAtStart ?? 1); i++)
                 {
                     hpMultiplier += accumulatedFactor;
                     accumulatedFactor += (1f - accumulatedFactor) / 3f;
@@ -143,6 +137,19 @@ namespace InfernumMode.GlobalInstances
         {
             // Reset the saturation blur state.
             ShouldUseSaturationBlur = false;
+
+            // Initialize the amount of players the NPC had when it spawned.
+            if (!TotalPlayersAtStart.HasValue)
+            {
+                int activePlayerCount = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active)
+                        activePlayerCount++;
+                }
+                TotalPlayersAtStart = activePlayerCount;
+                npc.netUpdate = true;
+            }
             
             if (InfernumMode.CanUseCustomAIs)
             {

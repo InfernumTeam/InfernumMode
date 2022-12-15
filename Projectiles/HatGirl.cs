@@ -106,7 +106,7 @@ namespace InfernumMode.Projectiles
                 Projectile.timeLeft = 2;
 
             // Give some advice if the player died to a boss.
-            if (modPlayer.HatGirlShouldGiveAdvice && !Owner.dead)
+            if (Main.myPlayer == Projectile.owner && modPlayer.HatGirlShouldGiveAdvice && !Owner.dead)
             {
                 string tipText = HatGirlTipsManager.PotentialTipToUse;
                 if (!string.IsNullOrEmpty(tipText))

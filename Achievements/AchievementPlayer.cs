@@ -136,6 +136,9 @@ namespace InfernumMode.Achievements
 
         public override void PostUpdate()
         {
+            if (Main.myPlayer != Player.whoAmI)
+                return;
+
             foreach (var achievement in AchievementInstances)
             {
                 if (achievement.IsCompleted && !achievement.DoneCompletionEffects)

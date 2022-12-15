@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Closed,
             Open
         }
-
+        
         public enum ThanatosHeadAttackType
         {
             AggressiveCharge,
@@ -418,62 +418,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 SelectNextAttack(npc);
         }
         
-        public static void DoBehavior_LaserBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Closed;
-
-            int segmentShootDelay = 100;
-            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-            if (ExoMechManagement.CurrentThanatosPhase == 4)
-                segmentShootDelay += 60;
-
-            // Temporarily disable damage.
-            if (attackTimer < 150f)
-                npc.damage = 0;
-
-            // Do movement.
-            DoProjectileShootInterceptionMovement(npc, target);
-
-            // Select segment shoot attributes.
-            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
-            {
-                totalSegmentsToFire = 20f;
-                segmentFireTime = 75f;
-
-                if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                    totalSegmentsToFire += 3f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    totalSegmentsToFire += 3f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
-                {
-                    totalSegmentsToFire += 3f;
-                    segmentFireTime += 10f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 6)
-                {
-                    totalSegmentsToFire += 5f;
-                    segmentFireTime += 8f;
-                }
-
-                segmentFireCountdown = segmentFireTime;
-                npc.netUpdate = true;
-            }
-
-            if (segmentFireCountdown > 0f)
-                segmentFireCountdown--;
-
-            // Play a sound prior to switching attacks.
-            if (attackTimer == 600f - TransitionSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
-
-            if (attackTimer > 600f)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_ExoBomb(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.
@@ -683,6 +627,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 if (attackTimer % rotorReleaseRate == rotorReleaseRate - 1f)
                 {
+                    // Randomly pick a segment that's decently far away from the target but not too far away to release a rotor from.
                     var segments = (from n in Main.npc.Take(Main.maxNPCs)
                                     where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f) && n.WithinRange(target.Center, 1200f)
                                     orderby n.Distance(target.Center)

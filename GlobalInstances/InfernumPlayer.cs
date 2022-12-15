@@ -311,7 +311,10 @@ namespace InfernumMode.GlobalInstances
         #region Screen Shaking
         public override void ModifyScreenPosition()
         {
-            if (ScreenFocusInterpolant > 0f && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
+            if (Player.dead)
+                return;
+
+            if (ScreenFocusInterpolant > 0f)
             {
                 Vector2 idealScreenPosition = ScreenFocusPosition - new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 Main.screenPosition = Vector2.Lerp(Main.screenPosition, idealScreenPosition, ScreenFocusInterpolant);

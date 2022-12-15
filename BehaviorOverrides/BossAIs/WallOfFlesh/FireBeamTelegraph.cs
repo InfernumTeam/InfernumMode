@@ -88,9 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 return;
 
             Vector2 beamDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            int beam = Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 220, 0f);
-            if (Main.projectile.IndexInRange(beam))
-                Main.projectile[beam].ai[1] = Owner.whoAmI;
+            Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 220, 0f, -1, 0f, Owner.whoAmI);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

@@ -139,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Please don't tell the rest of the multiplayer server about this Toasty I want it to be a funny moment.
-            bool useMultiplayerPTJokeText = true;
+            bool useMultiplayerPTJokeText = Main.netMode != NetmodeID.SinglePlayer;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay)
             {

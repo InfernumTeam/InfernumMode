@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public override void SetDefaults()
         {
             Projectile.width = 60;
-            Projectile.height = 450;
+            Projectile.height = 360;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;

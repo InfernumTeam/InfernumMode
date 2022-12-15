@@ -406,7 +406,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         // Create the tornadoes.
                         for (int i = 0; i < 5; i++)
                         {
-                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 20.5f, i / 4f);
+                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(6f, 14.75f, i / 4f);
                             Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                             Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                         }

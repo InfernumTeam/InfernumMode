@@ -83,6 +83,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             if (target.dead)
             {
+                npc.TargetClosestIfTargetIsInvalid();
+                target = Main.player[npc.target];
+                if (!target.dead)
+                    return false;
+
                 DoAttack_Despawn(npc);
                 return false;
             }

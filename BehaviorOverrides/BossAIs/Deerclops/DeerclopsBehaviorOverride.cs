@@ -632,12 +632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 eyePosition = GetEyePosition(npc);
-                    int laser = Utilities.NewProjectileBetter(eyePosition, initialDirection, ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), 125, 0f);
-                    if (Main.projectile.IndexInRange(laser))
-                    {
-                        Main.projectile[laser].ai[0] = npc.whoAmI;
-                        Main.projectile[laser].ai[1] = laserSweepSpeed;
-                    }
+                    Utilities.NewProjectileBetter(eyePosition, initialDirection, ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), 125, 0f, -1, npc.whoAmI, laserSweepSpeed);
                 }
             }
 

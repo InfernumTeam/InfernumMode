@@ -58,6 +58,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             set;
         }
 
+        public static float BackgroundColorIntensity
+        {
+            get;
+            set;
+        }
+
         public static TwinsAttackState CurrentAttackState
         {
             get;
@@ -76,14 +82,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     return false;
 
                 // If only one eye is active, become enraged.
-                if (SpazmatismIndex == -1 && RetinazerIndex != -1)
-                    return true;
-                if (SpazmatismIndex != -1 && RetinazerIndex == -1)
+                if (InFinalPhase)
                     return true;
 
                 float spazmatismLifeRatio = Main.npc[SpazmatismIndex].life / (float)Main.npc[SpazmatismIndex].lifeMax;
                 float retinzerLifeRatio = Main.npc[RetinazerIndex].life / (float)Main.npc[RetinazerIndex].lifeMax;
                 return spazmatismLifeRatio < Phase2LifeRatioThreshold || retinzerLifeRatio < Phase2LifeRatioThreshold;
+            }
+        }
+
+        public static bool InFinalPhase
+        {
+            get
+            {
+                if (SpazmatismIndex == -1 && RetinazerIndex != -1)
+                    return true;
+                if (SpazmatismIndex != -1 && RetinazerIndex == -1)
+                    return true;
+                return false;
             }
         }
 
@@ -173,6 +189,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 UniversalAttackTimer = 0;
             }
 
+            // Adjust the background color intensity based on whether one of the eyes is enraged or not.
+            BackgroundColorIntensity = MathHelper.Clamp(BackgroundColorIntensity + InFinalPhase.ToDirectionInt() * 0.012f, 0f, 1f);
+
             SpazmatismIndex = RetinazerIndex = -1;
         }
         #endregion
@@ -180,8 +199,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         #region AI
 
         public const float Phase2TransitionTime = 200f;
+        
         public const float Phase2LifeRatioThreshold = 0.75f;
+
         public const float Phase3LifeRatioThreshold = 0.425f;
+
         public static bool DoAI(NPC npc)
         {
             bool isSpazmatism = npc.type == NPCID.Spazmatism;
@@ -199,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 return false;
             }
 
-            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
+            npc.Infernum().ShouldUseSaturationBlur = InFinalPhase;
 
             bool shouldDespawn = Main.dayTime || _targetIndex == -1 || !Target.active || Target.dead;
 

@@ -200,8 +200,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                             {
                                 float offsetAngle = MathHelper.TwoPi * j / crystalCount;
                                 Vector2 crystalSpawnPosition = npc.Center + Vector2.UnitY * 20f;
-                                Vector2 crystalShootVelocity = (target.Center - crystalSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed * 2.4f;
-                                int spike = Utilities.NewProjectileBetter(crystalSpawnPosition, crystalShootVelocity, ProjectileID.QueenSlimeMinionBlueSpike, 130, 0f);
+                                Vector2 crystalShootVelocity = (target.Center - crystalSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed * 1.75f;
+                                int spike = Utilities.NewProjectileBetter(crystalSpawnPosition, crystalShootVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), 130, 0f);
                                 if (Main.projectile.IndexInRange(spike))
                                     Main.projectile[spike].ai[1] = -2f;
                             }

@@ -181,7 +181,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             int dustSpawnRate = (int)MathHelper.Lerp(8, 1, Time / TeleportMaxTime);
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
 
-            if (IsGateSet)
+            if (IsGateSet && Main.myPlayer == Projectile.owner)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
 
             if (Time == 0)

@@ -754,11 +754,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), StrongerNormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(flamethrower))
-                            Main.projectile[flamethrower].ai[1] = npc.whoAmI;
-                    }
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), StrongerNormalShotDamage, 0f, -1, 0f, npc.whoAmI);
 
                     frame += 10f;
                 }
@@ -1100,6 +1096,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                                 {
                                     Main.projectile[telegraph].ai[0] = npc.whoAmI;
                                     Main.projectile[telegraph].ai[1] = MathHelper.Lerp(-0.62f, 0.62f, i);
+                                    Main.projectile[telegraph].netUpdate = true;
                                 }
                             }
                         }
@@ -1129,12 +1126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int type = ModContent.ProjectileType<ArtemisSpinLaser>();
-                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, type, 900, 0f, Main.myPlayer, npc.whoAmI);
-                            if (Main.projectile.IndexInRange(laser))
-                            {
-                                Main.projectile[laser].ai[0] = npc.whoAmI;
-                                Main.projectile[laser].ai[1] = spinDirection;
-                            }
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, type, 900, 0f, -1, npc.whoAmI, spinDirection);
                         }
                     }
                     break;
@@ -1399,9 +1391,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int laserbeam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisSweepLaserbeam>(), PowerfulShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(laserbeam))
-                            Main.projectile[laserbeam].ai[0] = npc.whoAmI;
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisSweepLaserbeam>(), PowerfulShotDamage, 0f, -1, npc.whoAmI);
+
                         spinDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.velocity = Vector2.Zero;
                         npc.netUpdate = true;

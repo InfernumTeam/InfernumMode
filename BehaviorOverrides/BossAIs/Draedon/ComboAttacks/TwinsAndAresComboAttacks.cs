@@ -430,6 +430,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 Main.projectile[beam].ai[0] = npc.whoAmI;
                                 Main.projectile[beam].localAI[0] = offsetAngle;
                                 Main.projectile[beam].ai[1] = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + Main.projectile[beam].localAI[0];
+                                Main.projectile[beam].netUpdate = true;
                             }
                         }
                     }
@@ -445,11 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                         int type = ModContent.ProjectileType<AresSpinningRedDeathray>();
                         for (int i = 0; i < aresLaserbeamCount; i++)
-                        {
-                            int beam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f);
-                            if (Main.projectile.IndexInRange(beam))
-                                Main.projectile[beam].ai[1] = npc.whoAmI;
-                        }
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                         
                         npc.netUpdate = true;
                     }

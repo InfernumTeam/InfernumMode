@@ -323,10 +323,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 healCountdown = TwinsShield.HealTime;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
-                    Main.projectile[shield].ai[0] = npc.whoAmI;
-                }
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, -1, npc.whoAmI);
+
                 Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
                 hasStartedHealFlag = 1f;
             }
@@ -1007,9 +1005,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         Utilities.CreateShockwave(npc.Center, 2, 5, 142f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 175, 0f);
-                            if (Main.projectile.IndexInRange(deathRay))
-                                Main.projectile[deathRay].ai[1] = npc.whoAmI;
+                            Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 175, 0f, -1, 0f, npc.whoAmI);
+
                             telegraphOpacity = 0f;
                             npc.netUpdate = true;
                         }

@@ -1140,12 +1140,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SoundEngine.PlaySound(SoundID.Item72, currentPoint);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<AstralConstellation>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
-                    {
-                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
-                        Main.projectile[star].ai[1] = npc.whoAmI;
-                    }
+                    int starIndex = (int)(patternCompletion * totalStarsToCreate);
+                    Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<AstralConstellation>(), 0, 0f, -1, starIndex, npc.whoAmI);
                 }
             }
 

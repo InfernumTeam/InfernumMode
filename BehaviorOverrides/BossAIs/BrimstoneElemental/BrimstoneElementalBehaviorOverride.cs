@@ -652,9 +652,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             deathrayDirection = npc.SafeDirectionTo(target.Center);
-                            int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f);
-                            if (Main.npc.IndexInRange(beam))
-                                Main.projectile[beam].ai[1] = npc.whoAmI;
+                            Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
 
@@ -669,11 +667,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         {
                             SoundEngine.PlaySound(SoundID.Item74, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f);
-                                if (Main.npc.IndexInRange(beam))
-                                    Main.projectile[beam].ai[1] = npc.whoAmI;
-                            }
+                                Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f, -1, 0f, npc.whoAmI);
                         }
 
                         IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());

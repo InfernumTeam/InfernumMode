@@ -1091,6 +1091,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     if (Main.npc.IndexInRange(clone) && clone < Main.maxNPCs)
                     {
                         Main.npc[clone].Infernum().ExtraAI[0] = npc.whoAmI;
+                        Main.npc[clone].netUpdate = true;
                         cultists.Add(clone);
                     }
                 }

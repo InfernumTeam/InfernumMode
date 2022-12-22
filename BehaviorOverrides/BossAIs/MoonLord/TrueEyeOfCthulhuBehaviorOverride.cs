@@ -294,11 +294,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         {
                             float angularVelocity = (pressureLaserEndingAngularOffset - pressureLaserStartingAngularOffset) / laserLifetime * i * 0.5f;
                             Vector2 laserDirection = npc.SafeDirectionTo(target.Center).RotatedBy(pressureLaserStartingAngularOffset * i);
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PressurePhantasmalDeathray>(), 300, 0f);
+                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PressurePhantasmalDeathray>(), 300, 0f, -1, 0f, npc.whoAmI);
                             if (Main.projectile.IndexInRange(telegraph))
                             {
-                                Main.projectile[telegraph].ai[1] = npc.whoAmI;
                                 Main.projectile[telegraph].ModProjectile<PressurePhantasmalDeathray>().AngularVelocity = angularVelocity;
+                                Main.projectile[telegraph].netUpdate = true;
                             }
                         }
                     }
@@ -589,12 +589,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 sphereVelocity = sphereOffset.SafeNormalize(Vector2.Zero) * 6f;
-                        int sphere = Utilities.NewProjectileBetter(npc.Center + sphereOffset, sphereVelocity, ProjectileID.PhantasmalSphere, 215, 0f);
+                        int sphere = Utilities.NewProjectileBetter(npc.Center + sphereOffset, sphereVelocity, ProjectileID.PhantasmalSphere, 215, 0f, -1, -1f, npc.whoAmI);
                         if (Main.projectile.IndexInRange(sphere))
                         {
                             Main.projectile[sphere].Opacity = sphereCastCompletion;
-                            Main.projectile[sphere].ai[0] = -1f;
-                            Main.projectile[sphere].ai[1] = npc.whoAmI;
+                            Main.projectile[sphere].netUpdate = true;
                         }
                     }
                 }

@@ -377,9 +377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     for (float dx = -1400f; dx < 1400f; dx += 120f)
                     {
                         Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
-                        int telegraph = Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[0] = npc.whoAmI;
+                        Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f, -1, npc.whoAmI);
                     }
                 }
             }

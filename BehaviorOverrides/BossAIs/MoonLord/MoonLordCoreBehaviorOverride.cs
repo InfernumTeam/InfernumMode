@@ -359,11 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 if (attackTimer == 61f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int deathAnimation = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordDeathAnimationHandler>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(deathAnimation))
-                            Main.projectile[deathAnimation].ai[0] = npc.whoAmI;
-                    }
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordDeathAnimationHandler>(), 0, 0f, -1, npc.whoAmI);
                 }
 
                 // Create explosions periodically.
@@ -409,11 +405,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 HatGirl.SayThingWhileOwnerIsAlive(target, "The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!");
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int blackHole = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f);
-                    if (Main.projectile.IndexInRange(blackHole))
-                        Main.projectile[blackHole].ai[1] = npc.whoAmI;
-                }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f, -1, 0f, npc.whoAmI);
             }
 
             if (attackTimer >= 540f)

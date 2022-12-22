@@ -794,10 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 {
                     // Apply recoil effects.
                     NPC.velocity -= (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * recoilSpeed;
-
-                    int waterBeam = Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterTorrentBeam>(), 225, 0f);
-                    if (Main.projectile.IndexInRange(waterBeam))
-                        Main.projectile[waterBeam].ai[1] = NPC.whoAmI;
+                    Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterTorrentBeam>(), 225, 0f, -1, 0f, NPC.whoAmI);
 
                     // Release an even spread of waves.
                     for (int i = 0; i < waveCount; i++)

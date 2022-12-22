@@ -1132,9 +1132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(lightOrb))
-                        Main.projectile[lightOrb].ai[1] = npc.whoAmI;
+                    Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f, -1, 0f, npc.whoAmI);
                     npc.netUpdate = true;
                 }
             }

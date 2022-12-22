@@ -132,8 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create the shield.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
             {
-                int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
-                Main.projectile[shield].ai[0] = npc.whoAmI;
+                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, -1, npc.whoAmI);
                 hasCreatedShield = 1f;
             }
 
@@ -518,13 +517,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Vector2 beamSpawnPosition = npc.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = (target.Center - beamSpawnPosition).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
 
-                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<PrimeEyeLaserRay>(), 230, 0f);
-                        if (Main.projectile.IndexInRange(beam))
-                        {
-                            Main.projectile[beam].ai[0] = i * angularOffset / 120f * 0.4f;
-                            Main.projectile[beam].ai[1] = npc.whoAmI;
-                            Main.projectile[beam].netUpdate = true;
-                        }
+                        float laserAngularVelocity = i * angularOffset / 120f * 0.4f;
+                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<PrimeEyeLaserRay>(), 230, 0f, -1, laserAngularVelocity, npc.whoAmI);
                     }
 
                     laserRayRotation = npc.AngleTo(target.Center);
@@ -1019,7 +1013,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (allCannonsCanFire)
                 return head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
 
-			return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
+            return (onlyRangedCannons ? rangedCannon : meleeCannon) && head.Infernum().ExtraAI[CannonsShouldNotFireIndex] == 0f;
         }
 
         public static void PerformDefaultArmPhaseHover(NPC npc, Player target, float attackTimer, PrimeAttackType attackType)

@@ -338,20 +338,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < icicleCount; i++)
                     {
-                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f);
+                        float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f, -1, icicleFireDirection, npc.whoAmI);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                            Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
 
-                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
+                        icicleFireDirection = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                            Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
                     }
                 }

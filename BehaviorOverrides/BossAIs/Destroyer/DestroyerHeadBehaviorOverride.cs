@@ -86,6 +86,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public const float Phase4LifeRatio = 0.2f;
 
+        public const float SegmentScale = 1.5f;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -99,11 +101,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.damage = npc.defDamage - 95;
             npc.dontTakeDamage = false;
 
-            if (npc.scale != 1.5f)
-            {
-                npc.Size /= npc.scale / 1.5f;
-                npc.scale = 1.5f;
-            }
+            // Reset the segment scale if necessary.
+            ResetScale(npc);
+
+            // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -177,9 +178,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 int newSegment;
                 if (i is >= 0 and < (int)(BodySegmentCount - 1f))
-                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.Center.X, (int)head.Center.Y, NPCID.TheDestroyerBody, head.whoAmI);
                 else
-                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.Center.X, (int)head.Center.Y, NPCID.TheDestroyerTail, head.whoAmI);
 
                 Main.npc[newSegment].realLife = head.whoAmI;
 
@@ -188,13 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 Main.npc[previousSegmentIndex].ai[0] = newSegment;
 
                 // And the segment number.
-                Main.npc[newSegment].localAI[0] = i;
-                if (Main.npc[newSegment].scale != 1.5f)
-                {
-                    Main.npc[newSegment].Size /= Main.npc[newSegment].scale / 1.5f;
-                    Main.npc[newSegment].scale = 1.5f;
-                }
-
+                Main.npc[newSegment].Infernum().ExtraAI[0] = i;
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newSegment, 0f, 0f, 0f, 0);
 
                 previousSegmentIndex = newSegment;
@@ -654,6 +649,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // And reset the misc ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+        }
+
+        public static void ResetScale(NPC npc)
+        {
+            if (npc.scale != SegmentScale)
+            {
+                npc.Size /= npc.scale / SegmentScale;
+                npc.scale = SegmentScale;
+            }
         }
 
         #endregion

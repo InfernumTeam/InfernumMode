@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create the shield.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
             {
-                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, -1, npc.whoAmI);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, -1, npc.whoAmI);
                 hasCreatedShield = 1f;
             }
 

@@ -468,6 +468,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 145, 0f);
                 }
+                npc.netUpdate = true;
             }
         }
 
@@ -488,6 +489,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
+
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
             if (UniversalAttackTimer > chargeDelay)
@@ -626,6 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * -6f;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
             }
 
             // And charge.
@@ -637,6 +641,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
+
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
 
@@ -670,6 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.rotation = npc.rotation.AngleTowards(isRetinazer ? MathHelper.PiOver2 : 0f, MathHelper.TwoPi / 4f);
                 npc.velocity = isRetinazer ? Vector2.UnitX * -17f : Vector2.UnitX * 17f;
+                npc.netUpdate = true;
             }
 
             // Release bursts of lasers and cursed fire.
@@ -717,6 +724,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.noTileCollide = npc.Bottom.Y > Target.Top.Y - 180f;
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 14f, 0.15f);
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                    npc.netUpdate = true;
                 }
                 else if (chargingTime > 0)
                 {
@@ -781,6 +789,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 23f, 0.15f);
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                    npc.netUpdate = true;
                 }
             }
 

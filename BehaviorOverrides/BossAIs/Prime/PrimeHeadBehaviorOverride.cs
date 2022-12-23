@@ -664,14 +664,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
                             Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f).ToRotationVector2();
-
-                            int beam = Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<EvenlySpreadPrimeLaserRay>(), 230, 0f);
-                            if (Main.projectile.IndexInRange(beam))
-                            {
-                                Main.projectile[beam].ai[0] = 0f;
-                                Main.projectile[beam].ai[1] = npc.whoAmI;
-                                Main.projectile[beam].netUpdate = true;
-                            }
+                            Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<EvenlySpreadPrimeLaserRay>(), 230, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
                 }

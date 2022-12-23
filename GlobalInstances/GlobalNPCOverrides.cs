@@ -21,12 +21,14 @@ using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
 using System.Linq;
@@ -330,6 +332,10 @@ namespace InfernumMode.GlobalInstances
                 SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
                 npc.soundDelay = 11;
             }
+
+            // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
+            if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

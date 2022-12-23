@@ -83,13 +83,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer >= extendTime && npc.justHit)
                 npc.velocity *= 0.1f;
         }
-
-        public override bool CheckDead(NPC npc)
-        {
-            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[2]), out var t) && t.IsPlaying)
-                t.Stop();
-
-            return true;
-        }
     }
 }

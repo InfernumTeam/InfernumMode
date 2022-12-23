@@ -266,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
 
                 float volumeInterpolant = Utils.GetLerpValue(195f, 150f, localTimer, true);
-                bool shouldStopSawSound = volumeInterpolant <= 0f;
+                bool shouldStopSawSound = volumeInterpolant <= 0f || npc.life <= 0;
                 if (npc.type == NPCID.PrimeSaw && sawSound == 0f && !shouldStopSawSound)
                     sawSound = SoundEngine.PlaySound(InfernumSoundRegistry.PrimeSawSound with { IsLooped = true }, npc.Center).ToFloat();
 

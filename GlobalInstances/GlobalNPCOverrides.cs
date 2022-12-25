@@ -28,7 +28,6 @@ using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
 using SubworldLibrary;
 using System;
 using System.Linq;

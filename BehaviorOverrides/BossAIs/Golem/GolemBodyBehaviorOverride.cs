@@ -4,7 +4,6 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;

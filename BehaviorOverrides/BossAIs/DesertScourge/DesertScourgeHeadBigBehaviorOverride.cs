@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using InfernumMode.Sounds;

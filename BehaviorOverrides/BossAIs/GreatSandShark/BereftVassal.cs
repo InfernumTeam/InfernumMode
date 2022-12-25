@@ -7,7 +7,6 @@ using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
 using InfernumMode.Items.Weapons.Rogue;
-using InfernumMode.Projectiles.Wayfinder;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;

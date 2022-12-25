@@ -1,4 +1,3 @@
-using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

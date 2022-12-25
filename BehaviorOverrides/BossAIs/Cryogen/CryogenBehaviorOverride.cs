@@ -338,20 +338,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < icicleCount; i++)
                     {
-                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f);
+                        float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f, -1, icicleFireDirection, npc.whoAmI);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                            Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
 
-                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
+                        icicleFireDirection = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                            Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
                     }
                 }
@@ -403,9 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 0; i < icicleCount; i++)
                     {
                         Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(angularOffsetRandomness) * Main.rand.NextFloat(7f, 11f);
-                        int icicle = Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f);
-                        if (Main.projectile.IndexInRange(icicleCount))
-                            Main.projectile[icicle].ai[1] = i / (float)icicleCount * 68f;
+                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f, -1, 0f, i / (float)icicleCount * 68f);
                     }
 
                     for (int i = 0; i < 4; i++)
@@ -534,6 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
 
                         icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
@@ -542,6 +541,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
+                            Main.projectile[icicle].netUpdate = true;
                         }
                     }
                 }
@@ -812,7 +812,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         Vector2 spawnPosition = npc.Center + projectileVelocity * 4f;
                         int projectile = Utilities.NewProjectileBetter(spawnPosition, projectileVelocity, projectileType, 135, 0f);
                         if (projectileType == ModContent.ProjectileType<AimedIcicleSpike>() && Main.projectile.IndexInRange(projectile))
+                        {
                             Main.projectile[projectile].ai[1] = 15f;
+                            Main.projectile[projectile].netUpdate = true;
+                        }
                     }
                 }
             }

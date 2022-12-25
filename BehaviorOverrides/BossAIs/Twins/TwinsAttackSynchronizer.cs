@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
@@ -11,6 +10,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -58,6 +58,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             set;
         }
 
+        public static float BackgroundColorIntensity
+        {
+            get;
+            set;
+        }
+
         public static TwinsAttackState CurrentAttackState
         {
             get;
@@ -76,14 +82,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     return false;
 
                 // If only one eye is active, become enraged.
-                if (SpazmatismIndex == -1 && RetinazerIndex != -1)
-                    return true;
-                if (SpazmatismIndex != -1 && RetinazerIndex == -1)
+                if (InFinalPhase)
                     return true;
 
                 float spazmatismLifeRatio = Main.npc[SpazmatismIndex].life / (float)Main.npc[SpazmatismIndex].lifeMax;
                 float retinzerLifeRatio = Main.npc[RetinazerIndex].life / (float)Main.npc[RetinazerIndex].lifeMax;
                 return spazmatismLifeRatio < Phase2LifeRatioThreshold || retinzerLifeRatio < Phase2LifeRatioThreshold;
+            }
+        }
+
+        public static bool InFinalPhase
+        {
+            get
+            {
+                if (SpazmatismIndex == -1 && RetinazerIndex != -1)
+                    return true;
+                if (SpazmatismIndex != -1 && RetinazerIndex == -1)
+                    return true;
+                return false;
             }
         }
 
@@ -173,6 +189,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 UniversalAttackTimer = 0;
             }
 
+            // Adjust the background color intensity based on whether one of the eyes is enraged or not.
+            BackgroundColorIntensity = MathHelper.Clamp(BackgroundColorIntensity + InFinalPhase.ToDirectionInt() * 0.012f, 0f, 1f);
+
             SpazmatismIndex = RetinazerIndex = -1;
         }
         #endregion
@@ -180,8 +199,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         #region AI
 
         public const float Phase2TransitionTime = 200f;
+        
         public const float Phase2LifeRatioThreshold = 0.75f;
+
         public const float Phase3LifeRatioThreshold = 0.425f;
+
         public static bool DoAI(NPC npc)
         {
             bool isSpazmatism = npc.type == NPCID.Spazmatism;
@@ -199,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 return false;
             }
 
-            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
+            npc.Infernum().ShouldUseSaturationBlur = InFinalPhase;
 
             bool shouldDespawn = Main.dayTime || _targetIndex == -1 || !Target.active || Target.dead;
 
@@ -301,10 +323,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 healCountdown = TwinsShield.HealTime;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int shield = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
-                    Main.projectile[shield].ai[0] = npc.whoAmI;
-                }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, -1, npc.whoAmI);
+
                 Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
                 hasStartedHealFlag = 1f;
             }
@@ -448,6 +468,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 145, 0f);
                 }
+                npc.netUpdate = true;
             }
         }
 
@@ -468,6 +489,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
+
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
             if (UniversalAttackTimer > chargeDelay)
@@ -540,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             int reelbackTime = 30;
             int chargeTime = 55;
             float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
-            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.5f), MathHelper.ToRadians(3f), 1f - CombinedLifeRatio);
+            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(3.3f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
 
@@ -578,10 +601,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 spinRotation += spinAngularVelocity * spinDirection * spinSlowdownInterpolant;
 
                 // Relase some projectiles while spinning to pass the time.
-                int fireRate = BossRushEvent.BossRushActive ? 18 : 35;
+                int fireRate = BossRushEvent.BossRushActive ? 18 : 30;
                 if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
                 {
-                    float shootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
+                    float shootSpeed = MathHelper.Lerp(9f, 11.5f, 1f - CombinedLifeRatio);
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                     int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
 
@@ -606,6 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * -6f;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
             }
 
             // And charge.
@@ -617,6 +641,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                npc.netUpdate = true;
+
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
 
@@ -650,6 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.rotation = npc.rotation.AngleTowards(isRetinazer ? MathHelper.PiOver2 : 0f, MathHelper.TwoPi / 4f);
                 npc.velocity = isRetinazer ? Vector2.UnitX * -17f : Vector2.UnitX * 17f;
+                npc.netUpdate = true;
             }
 
             // Release bursts of lasers and cursed fire.
@@ -697,6 +724,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.noTileCollide = npc.Bottom.Y > Target.Top.Y - 180f;
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 14f, 0.15f);
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                    npc.netUpdate = true;
                 }
                 else if (chargingTime > 0)
                 {
@@ -761,6 +789,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 23f, 0.15f);
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+                    npc.netUpdate = true;
                 }
             }
 
@@ -934,7 +963,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     break;
                 case RetinazerAttackState.LaserBarrage:
-                    int telegraphAimTime = 54;
+                    int telegraphAimTime = 78;
                     int laserShootRate = 24;
                     int laserbeamShootCount = 3;
                     destination = Target.Center - Vector2.UnitY * 360f;
@@ -943,7 +972,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     // Aim for longer on the first shot.
                     if (laserbeamShootCounter <= 0f)
-                        telegraphAimTime += 56;
+                        telegraphAimTime += 48;
 
                     if (npc.WithinRange(destination, 38f))
                     {
@@ -985,9 +1014,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         Utilities.CreateShockwave(npc.Center, 2, 5, 142f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 175, 0f);
-                            if (Main.projectile.IndexInRange(deathRay))
-                                Main.projectile[deathRay].ai[1] = npc.whoAmI;
+                            Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 175, 0f, -1, 0f, npc.whoAmI);
+
                             telegraphOpacity = 0f;
                             npc.netUpdate = true;
                         }
@@ -1364,6 +1392,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         #endregion
 
         #endregion
+
+        #region Netcode
+        public static void SyncState()
+        {
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            packet.Write((short)InfernumPacketType.UpdateTwinsAttackSynchronizer);
+            packet.Write(_targetIndex);
+            packet.Write(UniversalStateIndex);
+            packet.Write(UniversalAttackTimer);
+            packet.Write((int)CurrentAttackState);
+            packet.Send();
+        }
+
+        public static void ReadFromPacket(BinaryReader reader)
+        {
+            _targetIndex = reader.ReadInt32();
+            UniversalStateIndex = reader.ReadInt32();
+            UniversalAttackTimer = reader.ReadInt32();
+            CurrentAttackState = (TwinsAttackState)reader.ReadInt32();
+        }
+        #endregion Netcode
 
         #region Helper Methods
         public static int GetAttackLength(TwinsAttackState state)

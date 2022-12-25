@@ -587,7 +587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
 
             attackTimer++;
 

@@ -204,9 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[1] = npc.whoAmI;
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
 
                         npc.velocity = Vector2.Zero;
                         npc.netUpdate = true;
@@ -220,9 +218,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 SoundEngine.PlaySound(TeslaCannon.FireSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laserbeam = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisSweepLaserbeam>(), PowerfulShotDamage, 0f);
-                    if (Main.projectile.IndexInRange(laserbeam))
-                        Main.projectile[laserbeam].ai[0] = npc.whoAmI;
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisSweepLaserbeam>(), PowerfulShotDamage, 0f, -1, npc.whoAmI);
+
                     spinDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;

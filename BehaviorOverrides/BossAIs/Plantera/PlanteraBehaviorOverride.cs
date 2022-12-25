@@ -477,7 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 148f, time);
                     }
                 }
 
@@ -486,7 +486,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
-                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 112f, time);
                     }
                 }
             }

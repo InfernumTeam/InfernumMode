@@ -331,7 +331,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         if (Main.projectile.IndexInRange(shot))
                         {
                             if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
+                            {
                                 Main.projectile[shot].ai[0] = npc.whoAmI;
+                                Main.projectile[shot].netUpdate = true;
+                            }
                         }
                     }
                 }

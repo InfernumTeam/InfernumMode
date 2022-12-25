@@ -2,6 +2,7 @@ using CalamityMod.Particles;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -11,9 +12,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
     public class IcicleSpike : ModProjectile
     {
         public ref float Time => ref Projectile.localAI[0];
+
         public ref float SpeedPower => ref Projectile.localAI[1];
+
         public ref float OffsetRotation => ref Projectile.ai[0];
+
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Icicle Spike");
@@ -27,6 +32,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.alpha = 255;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(SpeedPower);
+            writer.Write(Time);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            SpeedPower = reader.ReadSingle();
+            Time = reader.ReadSingle();
         }
 
         public override void AI()

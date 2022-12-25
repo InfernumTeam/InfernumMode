@@ -127,9 +127,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.HallowedMimic
                     {
                         float offsetAngle = MathHelper.Lerp(-0.59f, 0.59f, i / (float)(crystalCount - 1f));
                         Vector2 crystalShootVelocity = (offsetAngle + aimDirection).ToRotationVector2() * 13f;
-                        int crystal = Utilities.NewProjectileBetter(npc.Center, crystalShootVelocity, ModContent.ProjectileType<PiercingCrystalShard>(), 120, 0f);
-                        if (Main.projectile.IndexInRange(crystal))
-                            Main.projectile[crystal].ai[1] = npc.whoAmI;
+                        Utilities.NewProjectileBetter(npc.Center, crystalShootVelocity, ModContent.ProjectileType<PiercingCrystalShard>(), 120, 0f, -1, 0f, npc.whoAmI);
                     }
                 }
             }

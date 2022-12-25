@@ -123,8 +123,7 @@ namespace InfernumMode.BaseEntities
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
+            LightningDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
             
             var whatTheHell = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).Where((x, i) => i % 3 == 0);
             LightningDrawer.Draw(whatTheHell, Projectile.Size * 0.5f - Main.screenPosition, 3);

@@ -439,9 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
                     Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
-                    int barrage = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f);
-                    if (Main.projectile.IndexInRange(barrage))
-                        Main.projectile[barrage].ai[1] = playerShootDirection;
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f, -1, 0f, playerShootDirection);
                 }
             }
 

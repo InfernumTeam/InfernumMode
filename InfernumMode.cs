@@ -202,6 +202,9 @@ namespace InfernumMode
                 Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
 
+                Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
+                SkyManager.Instance["InfernumMode:Twins"] = new TwinsSky();
+
                 Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 

@@ -1,4 +1,6 @@
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
@@ -29,32 +31,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (Projectile.timeLeft > 80)
                 Projectile.timeLeft = 80;
 
-            Time++;
-            if (Time <= 7f)
-                return;
+            // Start with a random color between green and a muted purple. The variance from this leads to a pseudo-gradient look.
+            float lifetimeInterpolant = 1f - Projectile.timeLeft / 80f;
+            float particleScale = MathHelper.Lerp(0.03f, 1.2f, (float)Math.Pow(lifetimeInterpolant, 0.53));
+            float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true) * 0.84f;
+            float fadeToBlack = Utils.GetLerpValue(5f, 32f, Projectile.timeLeft, true);
+            Color fireColor = Color.Lerp(Color.MediumPurple, Color.ForestGreen, Main.rand.NextFloat(0.2f, 0.67f));
 
-            float fireScale = MathHelper.Lerp(0.25f, 1f, Utils.GetLerpValue(8f, 10f, Time, true));
+            // Have the fire color dissipate into smoke as it reaches death.
+            fireColor = Color.Lerp(fireColor, Color.MediumPurple, fadeToBlack);
+
+            // Use a lime flame at the start of the flame's life, indicating extraordinary quantities of heat.
+            fireColor = Color.Lerp(fireColor, Color.LimeGreen, Utils.GetLerpValue(0.29f, 0f, lifetimeInterpolant, true) * 0.85f);
+
+            fireColor = Color.Lerp(fireColor, Color.Green, 0.18f);
+
+            // Emit light.
+            Lighting.AddLight(Projectile.Center, fireColor.ToVector3() * opacity);
+
             if (Main.rand.NextBool(2))
             {
-                for (int i = 0; i < 3; i++)
-                {
-                    int dustType = i == 2 ? 157 : 14;
-                    Dust shadeFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustType, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1f);
-                    if (Main.rand.NextBool(3))
-                    {
-                        shadeFire.noGravity = true;
-                        shadeFire.scale *= 1.75f;
-                        shadeFire.velocity *= 2f;
-                    }
-                    else
-                        shadeFire.scale *= 0.5f;
-
-                    shadeFire.velocity *= 1.2f;
-                    shadeFire.scale *= fireScale;
-                    shadeFire.velocity += Projectile.velocity;
-                    if (!shadeFire.noGravity)
-                        shadeFire.velocity *= 0.5f;
-                }
+                var particle = new HeavySmokeParticle(Projectile.Center, Projectile.velocity * 0.1f + Main.rand.NextVector2Circular(0.4f, 0.4f), fireColor, 30, particleScale, opacity, 0.05f, true, 0f, true);
+                GeneralParticleHandler.SpawnParticle(particle);
             }
         }
     }

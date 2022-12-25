@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White, 0);
             return false;
         }
     }

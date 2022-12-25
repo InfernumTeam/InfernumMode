@@ -1,7 +1,6 @@
 using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -82,14 +81,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Stun the saw if it was hit.
             if (attackTimer >= extendTime && npc.justHit)
                 npc.velocity *= 0.1f;
-        }
-
-        public override bool CheckDead(NPC npc)
-        {
-            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[2]), out var t) && t.IsPlaying)
-                t.Stop();
-
-            return true;
         }
     }
 }

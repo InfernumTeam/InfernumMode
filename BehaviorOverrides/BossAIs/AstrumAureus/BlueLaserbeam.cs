@@ -53,6 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.localAI[0] = reader.ReadSingle();
             Projectile.localAI[1] = reader.ReadSingle();
         }
+
         public override void AttachToSomething()
         {
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.AstrumAureus))

@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,8 @@ namespace InfernumMode
     {
         SendExtraNPCData,
         SyncInfernumActive,
-        SummonExoMech
+        SummonExoMech,
+        UpdateTwinsAttackSynchronizer
     }
 
     public class InfernumNPCSyncInformation
@@ -146,6 +148,9 @@ namespace InfernumMode
                     DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon = (ExoMech)reader.ReadInt32();
                     DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon = (ExoMech)reader.ReadInt32();
                     DraedonBehaviorOverride.SummonExoMech(player);                    
+                    break;
+                case InfernumPacketType.UpdateTwinsAttackSynchronizer:
+                    TwinsAttackSynchronizer.ReadFromPacket(reader);
                     break;
             }
         }

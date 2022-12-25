@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             Color finalColor = Color.Lerp(middleColor, middleColor2,  Time / 120);
 
             GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(finalColor);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
+            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.25f);
             GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();

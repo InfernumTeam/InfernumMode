@@ -841,7 +841,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public static void OnHitIceParticles(NPC npc, Projectile projectile, bool wasACrit)
         {
-            if (npc.Infernum().ExtraAI[6] > 0)
+            if (npc.Infernum().ExtraAI[6] > 0f)
                 return;
 
             int particleCount = wasACrit ? 30 : 20;
@@ -849,14 +849,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             
             for (int i = 0; i < particleCount; i++)
             {
-                Vector2 velocity = -direction * Main.rand.NextFloat(2,6) + npc.velocity;
+                Vector2 velocity = -direction * Main.rand.NextFloat(2f, 6f) + npc.velocity;
                 
                 // Add a bit of randomness, but weight towards going in a cone from the hit zone.
                 Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(MathHelper.TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
                 Particle iceParticle = new SnowyIceParticle(projectile.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
                 GeneralParticleHandler.SpawnParticle(iceParticle);
             }
-            
+
             npc.Infernum().ExtraAI[6] = 15;
         }
         #endregion AI

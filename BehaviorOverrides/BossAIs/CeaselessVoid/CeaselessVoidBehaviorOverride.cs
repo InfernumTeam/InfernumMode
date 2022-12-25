@@ -691,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(voidTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
+            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(InfernumTextureRegistry.Stars);
             GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
             drawData.Draw(Main.spriteBatch);
             Main.spriteBatch.ExitShaderRegion();

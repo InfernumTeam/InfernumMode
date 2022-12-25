@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             Color middleColor = new(252, 220, 178);
             Color middleColor2 = new(255, 162, 162);
             GameShaders.Misc["Infernum:GenericLaserShader"].UseColor(middleColor2);
-            GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
+            GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
 
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);

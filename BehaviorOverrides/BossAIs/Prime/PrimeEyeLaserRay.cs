@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Select textures to pass to the shader, along with the electricity color.
             GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(Color.DeepPink);
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak2"));
+            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
             GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Misc/Perlin");
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);

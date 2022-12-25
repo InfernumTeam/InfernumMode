@@ -794,7 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             float gleamTimer = npc.localAI[0];
             Vector2 pupilPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * 74f - Main.screenPosition;
-            Texture2D pupilStarTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+            Texture2D pupilStarTexture = InfernumTextureRegistry.Gleam.Value;
             Vector2 pupilOrigin = pupilStarTexture.Size() * 0.5f;
 
             Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.GetLerpValue(0f, 8f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 8f, gleamTimer, true);

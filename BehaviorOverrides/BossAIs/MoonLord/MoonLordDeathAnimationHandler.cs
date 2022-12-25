@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 10f;
-                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

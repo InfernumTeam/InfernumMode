@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D laserTelegraph = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+            Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
             float verticalScale = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(0f, 16f, Projectile.timeLeft, true) * 0.5f;
             verticalScale += CalamityUtils.Convert01To010(Utils.GetLerpValue(20f, 67f, Projectile.timeLeft, true)) * 0.5f;

@@ -156,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
                 float telegraphScaleFactor = TelegraphInterpolant * 0.7f;
 
                 Vector2 telegraphStart = Projectile.Center - Main.screenPosition;

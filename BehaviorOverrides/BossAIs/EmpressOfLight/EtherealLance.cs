@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D telegraphTex = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Line").Value;
+            Texture2D telegraphTex = InfernumTextureRegistry.Line.Value;
             Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
 
             int telegraphSize = 3600;

@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D sparkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+            Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
 
             // Orange and cyan.
             Color c1 = new(255, 63, 39);

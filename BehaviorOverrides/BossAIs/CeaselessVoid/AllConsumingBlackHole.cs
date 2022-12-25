@@ -142,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
+            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Stars);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
             GameShaders.Misc["Infernum:RealityTear"].Apply();
@@ -167,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.ExitShaderRegion();
 
             // Draw the black hole.
-            Texture2D blackHoleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WhiteHole").Value;
+            Texture2D blackHoleTexture = InfernumTextureRegistry.WhiteHole.Value;
             Vector2 blackHoleScale = Vector2.One * Radius / blackHoleTexture.Size() * 1.2f;
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 3; i++)

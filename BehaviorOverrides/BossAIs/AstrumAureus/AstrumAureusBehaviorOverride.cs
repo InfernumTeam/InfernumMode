@@ -1088,7 +1088,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                    Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
                     Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
 
                     Color outlineColor = Color.Lerp(Color.Cyan, Color.White, lineTelegraphInterpolant);

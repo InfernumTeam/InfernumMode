@@ -1947,7 +1947,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (brightness > 0f)
                 {
                     float twinkleScale = brightness;
-                    Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                    Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                     Vector2 drawPosition = npc.Center - Main.screenPosition;
                     float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

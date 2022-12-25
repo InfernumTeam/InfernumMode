@@ -2218,7 +2218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (berserkPhaseInterpolant > 0f)
             {
                 float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
-                Texture2D eyeGleam = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+                Texture2D eyeGleam = InfernumTextureRegistry.Gleam.Value;
                 Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -14f);
                 Vector2 horizontalGleamScaleSmall = new Vector2(berserkPhaseInterpolant * 3f, 1f) * 0.36f;
                 Vector2 verticalGleamScaleSmall = new Vector2(1f, berserkPhaseInterpolant * 2f) * 0.36f;

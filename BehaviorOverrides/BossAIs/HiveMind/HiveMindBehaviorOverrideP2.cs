@@ -275,8 +275,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (lifeRatio < HiveMindBehaviorOverrideP1.Phase3LifeRatio && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobBurst)
                 nextAttack = HiveMindP2AttackState.BlobBurst;
 
-            nextAttack = HiveMindP2AttackState.UndergroundFlameDash;
-
             // Reset things.
             npc.ai = new float[] { 0f, 0f, 0f, 0f };
             npc.Infernum().ExtraAI[0] = -1f;

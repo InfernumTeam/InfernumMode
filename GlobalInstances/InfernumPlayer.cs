@@ -170,17 +170,6 @@ namespace InfernumMode.GlobalInstances
         #region Update
         public override void PreUpdate()
         {
-            // WHY THE FUCK IS THIS NECESSARY IN MULTIPLAYER???????
-            // Trying to access the sound slot at the the time of death for the saw yields nothing for multiplayer clients and I haven't the foggiest idea as to why.
-            // This solution is godawful but at least it actually works.
-            bool primeSawIsPresent = NPC.AnyNPCs(NPCID.PrimeSaw);
-            SlotVector<ActiveSound> activeSounds = (SlotVector<ActiveSound>)typeof(SoundPlayer).GetField("_trackedSounds", Utilities.UniversalBindingFlags).GetValue(SoundEngine.SoundPlayer);
-            foreach (var fuckYou in activeSounds)
-            {
-                if (fuckYou.Value.Style == InfernumSoundRegistry.PrimeSawSound && !primeSawIsPresent)
-                    fuckYou.Value.Stop();
-            }
-
             ProfanedLavaFountain = false;
             int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();
             for (int dx = -75; dx < 75; dx++)

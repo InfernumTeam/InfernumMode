@@ -22,7 +22,6 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark

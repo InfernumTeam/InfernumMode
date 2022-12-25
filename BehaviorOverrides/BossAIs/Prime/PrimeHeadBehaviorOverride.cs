@@ -69,6 +69,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public const int HasPerformedDeathAnimationIndex = 7;
 
+        public const int HasPerformedLaserRayAttackIndex = 8;
+
         public const int BaseCollectiveCannonHP = 22000;
 
         public const int BaseCollectiveCannonHPBossRush = 346000;
@@ -86,6 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public const int EnragedCannonShootTime = 105;
 
         public const float Phase2LifeRatio = 0.4f;
+
+        public const float ForcedLaserRayLifeRatio = 0.2f;
 
         public static Dictionary<int, Vector2> ArmPositionOrdering => new()
         {
@@ -807,6 +811,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, new Color[] { Color.Gray, Color.OrangeRed * 0.72f }, 2.3f, 75, 0.4f));
                 
                 npc.life = 1;
+                npc.Center = target.Center - Vector2.UnitY * 400f;
+                npc.netUpdate = true;
 
                 SpawnArms(npc, 10000);
                 SelectNextAttack(npc);
@@ -915,6 +921,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.ai[0] = (int)attackSelector.Get();
             while (npc.ai[0] == (int)oldAttack);
 
+            // Force Prime to use the laser ray attack if it hasn't yet and is at sufficiently low health.
+            // This obviously does not happen if arms are present, on the offhand chance that the player melts him so quickly that this check is triggered during the
+            // desperation phase.
+            if (lifeRatio < ForcedLaserRayLifeRatio && npc.Infernum().ExtraAI[HasPerformedLaserRayAttackIndex] == 0f && !AnyArms)
+            {
+                npc.ai[0] = (int)PrimeAttackType.EyeLaserRays;
+                npc.Infernum().ExtraAI[HasPerformedLaserRayAttackIndex] = 1f;
+            }
+
             if (oldAttack is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
@@ -996,11 +1011,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (shootTime < telegraphTime)
             {
                 telegraphInterpolant = useTelegraphs ? shootTime / telegraphTime : 0f;
-                if (!onlyRangedCannons && rangedCannon)
-                    telegraphInterpolant = 0f;
-                if (onlyRangedCannons && meleeCannon)
-                    telegraphInterpolant = 0f;
-                return false;
+
+                if (!allCannonsCanFire)
+                {
+                    if (!onlyRangedCannons && rangedCannon)
+                        telegraphInterpolant = 0f;
+                    if (onlyRangedCannons && meleeCannon)
+                        telegraphInterpolant = 0f;
+                    return false;
+                }
             }
 
             if (allCannonsCanFire)

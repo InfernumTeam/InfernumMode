@@ -11,6 +11,7 @@ using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -563,7 +564,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             int reelbackTime = 30;
             int chargeTime = 55;
             float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
-            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.5f), MathHelper.ToRadians(3f), 1f - CombinedLifeRatio);
+            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(3.3f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
 
@@ -601,10 +602,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 spinRotation += spinAngularVelocity * spinDirection * spinSlowdownInterpolant;
 
                 // Relase some projectiles while spinning to pass the time.
-                int fireRate = BossRushEvent.BossRushActive ? 18 : 35;
+                int fireRate = BossRushEvent.BossRushActive ? 18 : 30;
                 if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
                 {
-                    float shootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
+                    float shootSpeed = MathHelper.Lerp(9f, 11.5f, 1f - CombinedLifeRatio);
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                     int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
 
@@ -963,7 +964,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     break;
                 case RetinazerAttackState.LaserBarrage:
-                    int telegraphAimTime = 54;
+                    int telegraphAimTime = 78;
                     int laserShootRate = 24;
                     int laserbeamShootCount = 3;
                     destination = Target.Center - Vector2.UnitY * 360f;
@@ -972,7 +973,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     // Aim for longer on the first shot.
                     if (laserbeamShootCounter <= 0f)
-                        telegraphAimTime += 56;
+                        telegraphAimTime += 48;
 
                     if (npc.WithinRange(destination, 38f))
                     {
@@ -1392,6 +1393,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         #endregion
 
         #endregion
+
+        #region Netcode
+        public static void SyncState()
+        {
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            packet.Write((short)InfernumPacketType.UpdateTwinsAttackSynchronizer);
+            packet.Write(_targetIndex);
+            packet.Write(UniversalStateIndex);
+            packet.Write(UniversalAttackTimer);
+            packet.Write((int)CurrentAttackState);
+            packet.Send();
+        }
+
+        public static void ReadFromPacket(BinaryReader reader)
+        {
+            _targetIndex = reader.ReadInt32();
+            UniversalStateIndex = reader.ReadInt32();
+            UniversalAttackTimer = reader.ReadInt32();
+            CurrentAttackState = (TwinsAttackState)reader.ReadInt32();
+        }
+        #endregion Netcode
 
         #region Helper Methods
         public static int GetAttackLength(TwinsAttackState state)

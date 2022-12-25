@@ -277,9 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[1] = 32f;
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f, -1, 0f, 32f);
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -1008,6 +1006,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                         Main.projectile[star].ai[1] = (i + 1) % starsInConstellation;
                         Main.projectile[star].ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
                         Main.projectile[star].ModProjectile<DarkStar>().AnchorPoint = new(blackHoleCenterX, blackHoleCenterY);
+                        Main.projectile[star].netUpdate = true;
                     }
                 }
                 Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);

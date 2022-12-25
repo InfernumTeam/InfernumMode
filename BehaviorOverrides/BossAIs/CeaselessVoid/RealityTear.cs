@@ -69,9 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 int barragePointIndex = Main.rand.Next(TrailCache.Count - 1);
                 Vector2 barrageVelocity = Main.rand.NextVector2CircularEdge(8f, 8f);
                 Vector2 barrageSpawnPosition = Vector2.Lerp(TrailCache[barragePointIndex], TrailCache[barragePointIndex + 1], Main.rand.NextFloat());
-                int barrage = Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f);
-                if (Main.projectile.IndexInRange(barrage))
-                    Main.projectile[barrage].ai[1] = ScaleFactorDelta;
+                Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f, -1, 0f, ScaleFactorDelta);
             }
             
             // Fade in.

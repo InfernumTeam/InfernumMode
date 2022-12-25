@@ -358,11 +358,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                             Dust.QuickDustLine(eyePosition, roseSpawnPosition, 45f, Color.Red);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int rose = Utilities.NewProjectileBetter(roseSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneRose>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(rose))
-                                    Main.projectile[rose].ai[1] = pissedOff.ToInt();
-                            }
+                                Utilities.NewProjectileBetter(roseSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneRose>(), 0, 0f, -1, 0f, pissedOff.ToInt());
                         }
 
                         attackTimer = 0f;

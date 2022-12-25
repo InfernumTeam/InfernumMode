@@ -69,11 +69,11 @@ namespace InfernumMode
 
         public static readonly Asset<Texture2D> TelegraphLine = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
 
-        public static readonly Asset<Texture2D> VoronoiShapes = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes");
+        public static readonly Asset<Texture2D> VoronoiShapes = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes");
 
-        public static readonly Asset<Texture2D> Water = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Water");
+        public static readonly Asset<Texture2D> Water = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water");
 
-        public static readonly Asset<Texture2D> WhiteHole = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/WhiteHole");
+        public static readonly Asset<Texture2D> WhiteHole = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WhiteHole");
 
         public static readonly string InvisPath = "InfernumMode/ExtraTextures/Invisible";
     }

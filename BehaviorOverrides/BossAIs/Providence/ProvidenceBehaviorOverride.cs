@@ -18,6 +18,7 @@ using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
@@ -145,6 +146,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Use the screen saturation effect.
             npc.Infernum().ShouldUseSaturationBlur = true;
+
+            // Enable the distortion filter if it isnt active.
+            if (!Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
+            {
+                Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
+                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().UseImage("Images/Extra_193");
+                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().Shader.Parameters["distortionAmount"].SetValue(4);
+                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2);
+            }
 
             // Set the global NPC index to this NPC. Used as a means of lowering the need for loops.
             CalamityGlobalNPC.holyBoss = npc.whoAmI;
@@ -1006,7 +1016,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 bladeReleaseRate -= 10;
                 bladeSpeed += 3f;
             }
-            
+
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];

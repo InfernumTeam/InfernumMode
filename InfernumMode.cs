@@ -234,6 +234,9 @@ namespace InfernumMode
                 Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
                 
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
+
+                Ref<Effect> screenDistortionShader = new(Assets.Request<Effect>("Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+                Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
             }
 
             CooldownRegistry.RegisterModCooldowns(this);

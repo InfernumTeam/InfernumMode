@@ -229,14 +229,10 @@ namespace InfernumMode.GlobalInstances
             if (CalamityPlayer.areThereAnyDamnBosses && Player.Calamity().momentumCapacitorBoost > 1.8f)
                 Player.Calamity().momentumCapacitorBoost = 1.8f;
 
-            if (Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
-            {
-
+            // Reset the screen distortion shader for the next frame.
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
                 Filters.Scene["InfernumMode:ScreenDistortion"].Deactivate();
-
-            }
             
-
             if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
                 return;
 

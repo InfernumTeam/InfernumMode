@@ -148,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.Infernum().ShouldUseSaturationBlur = true;
 
             // Enable the distortion filter if it isnt active.
-            if (!Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
             {
                 Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
                 Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().UseImage("Images/Extra_193");

@@ -95,6 +95,9 @@ namespace InfernumMode
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
+                Ref<Effect> cloudShader = new(Assets.Request<Effect>("Effects/CloudShader", AssetRequestMode.ImmediateLoad).Value);
+                GameShaders.Misc["Infernum:CloudShader"] = new MiscShaderData(cloudShader, "TrailPass");
+
                 Ref<Effect> genericLaserShader = new(Assets.Request<Effect>("Effects/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");
 
@@ -202,6 +205,9 @@ namespace InfernumMode
                 Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
 
+                Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
+                SkyManager.Instance["InfernumMode:Twins"] = new TwinsSky();
+
                 Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 
@@ -231,6 +237,9 @@ namespace InfernumMode
                 Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
                 
                 SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
+
+                Ref<Effect> screenDistortionShader = new(Assets.Request<Effect>("Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+                Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
             }
 
             CooldownRegistry.RegisterModCooldowns(this);

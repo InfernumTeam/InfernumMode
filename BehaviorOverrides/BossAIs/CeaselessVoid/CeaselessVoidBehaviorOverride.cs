@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (target.HasBuff(BuffID.VortexDebuff))
                 target.ClearBuff(BuffID.VortexDebuff);
 
-            // Reset things.
+            // Reset things every frame. They may be adjusted in the AI methods as necessary.
             npc.damage = 0;
             npc.dontTakeDamage = enraged;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
@@ -439,9 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
                     Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
-                    int barrage = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f);
-                    if (Main.projectile.IndexInRange(barrage))
-                        Main.projectile[barrage].ai[1] = playerShootDirection;
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f, -1, 0f, playerShootDirection);
                 }
             }
 
@@ -462,7 +460,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int shootDelay = 96;
             int burstShootRate = 26;
             int laserBurstCount = 12;
-            float burstShootSpeed = 13f;
+            int attackTime = 480;
+            float burstShootSpeed = 11f;
+
             if (phase2)
                 burstShootRate -= 4;
             if (phase3)
@@ -511,7 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 }
             }
 
-            if (attackTimer >= 480f)
+            if (attackTimer >= attackTime)
                 SelectNewAttack(npc);
         }
 
@@ -689,7 +689,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(voidTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
+            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(InfernumTextureRegistry.Stars);
             GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
             drawData.Draw(Main.spriteBatch);
             Main.spriteBatch.ExitShaderRegion();

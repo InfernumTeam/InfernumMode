@@ -934,15 +934,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
-                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f);
+                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)swordCount);
                         if (Main.projectile.IndexInRange(sword))
                         {
-                            Main.projectile[sword].ai[0] = npc.whoAmI;
-                            Main.projectile[sword].ai[1] = i / (float)swordCount;
                             Main.projectile[sword].ModProjectile<EmpressSword>().SwordIndex = i;
                             Main.projectile[sword].ModProjectile<EmpressSword>().SwordCount = swordCount;
                             Main.projectile[sword].ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
                             Main.projectile[sword].ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
+                            Main.projectile[sword].netUpdate = true;
                         }
                     }
                     npc.netUpdate = true;
@@ -1947,7 +1946,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (brightness > 0f)
                 {
                     float twinkleScale = brightness;
-                    Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                    Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                     Vector2 drawPosition = npc.Center - Main.screenPosition;
                     float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

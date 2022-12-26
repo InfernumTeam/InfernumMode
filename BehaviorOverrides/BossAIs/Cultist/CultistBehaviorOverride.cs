@@ -50,6 +50,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public const float Phase3LifeRatio = 0.25f;
         public const float TransitionAnimationTime = 90f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio,
+            Phase3LifeRatio,
+        };
+
         public static readonly Color[] PillarsPallete = new Color[]
         {
             // Solar.
@@ -751,9 +757,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 200, 0f);
-                                    Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
-                                    Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                                     Main.projectile[lightning].tileCollide = false;
                                 }
                             }
@@ -793,12 +797,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             for (int i = 0; i < lightningCount; i++)
                             {
                                 Vector2 telegraphDirection = (MathHelper.TwoPi * i / lightningCount + nebulaLightningDirection).ToRotationVector2();
-                                int line = Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f);
+                                int line = Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f, -1, 0f, nebulaTelegraphTime - 1f);
                                 if (Main.projectile.IndexInRange(line))
-                                {
-                                    Main.projectile[line].ai[1] = nebulaTelegraphTime - 1f;
                                     Main.projectile[line].localAI[0] = MathHelper.Lerp(1f, 0.35f, i / (float)(lightningCount - 1f));
-                                }
                             }
                             npc.netUpdate = true;
                         }
@@ -816,14 +817,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 225, 0f);
-                        if (Main.projectile.IndexInRange(lightning))
-                        {
-                            Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                            Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                        }
-                    }
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 225, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                 }
             }
 
@@ -1085,6 +1079,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     if (Main.npc.IndexInRange(clone) && clone < Main.maxNPCs)
                     {
                         Main.npc[clone].Infernum().ExtraAI[0] = npc.whoAmI;
+                        Main.npc[clone].netUpdate = true;
                         cultists.Add(clone);
                     }
                 }

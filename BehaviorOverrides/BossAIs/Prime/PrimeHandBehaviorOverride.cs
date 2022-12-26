@@ -24,6 +24,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (headIndex < 0 || headIndex >= Main.maxNPCs || !Main.npc[headIndex].active)
             {
                 npc.active = false;
+                if (npc.type == NPCID.PrimeSaw)
+                    PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
+
                 return false;
             }
 

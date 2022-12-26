@@ -7,7 +7,6 @@ using InfernumMode.Items.Weapons.Magic;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Items.Weapons.Ranged;
 using InfernumMode.Items.Weapons.Rogue;
-using InfernumMode.Projectiles.Wayfinder;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
@@ -22,7 +21,6 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
@@ -794,10 +792,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 {
                     // Apply recoil effects.
                     NPC.velocity -= (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * recoilSpeed;
-
-                    int waterBeam = Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterTorrentBeam>(), 225, 0f);
-                    if (Main.projectile.IndexInRange(waterBeam))
-                        Main.projectile[waterBeam].ai[1] = NPC.whoAmI;
+                    Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterTorrentBeam>(), 225, 0f, -1, 0f, NPC.whoAmI);
 
                     // Release an even spread of waves.
                     for (int i = 0; i < waveCount; i++)

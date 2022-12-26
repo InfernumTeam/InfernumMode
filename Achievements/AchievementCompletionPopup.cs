@@ -53,9 +53,6 @@ namespace InfernumMode.Achievements
 
         public object CreationObject { get; private set; }
 
-        private Achievement TheAchievement;
-
-
         private Rectangle AchievementIconFrame;
 
         private Asset<Texture2D> AchievementTexture;
@@ -69,7 +66,6 @@ namespace InfernumMode.Achievements
         {
             CreationObject = achievement;
             IngameDisplayTimeLeft = 300;
-            TheAchievement = achievement;
             Title = achievement.Name;
             AchievementIconFrame = new Rectangle(0, achievement.PositionInMainList * 66, 64, 64);
             AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);

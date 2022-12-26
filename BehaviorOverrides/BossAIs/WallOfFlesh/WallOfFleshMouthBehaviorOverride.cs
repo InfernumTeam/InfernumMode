@@ -354,9 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 return;
 
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
-            int fire = Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<FireBeamTelegraph>(), 0, 0f);
-            if (Main.projectile.IndexInRange(fire))
-                Main.projectile[fire].ai[1] = npc.whoAmI;
+            Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<FireBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
         }
 
         #endregion

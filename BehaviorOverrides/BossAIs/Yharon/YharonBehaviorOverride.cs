@@ -1086,11 +1086,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 SoundEngine.PlaySound(YharonBoss.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f);
-                    if (Main.projectile.IndexInRange(flamethrower))
-                        Main.projectile[flamethrower].ai[1] = npc.whoAmI;
-                }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f, -1, 0f, npc.whoAmI);
             }
 
             npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;

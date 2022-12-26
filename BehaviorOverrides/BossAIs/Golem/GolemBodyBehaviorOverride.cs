@@ -4,7 +4,6 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
@@ -131,10 +130,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                     return false;
                 }
-
+                
                 // Otherwise prepare the fight
-                int maxHP = 156000;
-                GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
+                int maxHP = 198700;
+                npc.Infernum().AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
                 npc.noTileCollide = false;
@@ -1610,7 +1609,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
                 Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(laserRayTelegraphInterpolant * 0.5f, 2.4f);

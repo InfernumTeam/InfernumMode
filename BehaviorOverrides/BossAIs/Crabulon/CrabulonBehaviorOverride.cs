@@ -225,11 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 extraGravity = MathHelper.Clamp(extraGravity - 0.1f, 0f, 10f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % pillarMushroomSpawnRate == pillarMushroomSpawnRate - 1f)
-                {
-                    int mushroom = Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f);
-                    if (Main.projectile.IndexInRange(mushroom))
-                        Main.projectile[mushroom].ai[1] = target.Bottom.Y;
-                }
+                    Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
             }
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
@@ -489,9 +485,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                             for (int j = 0; j < (enraged ? 25 : 12); j++)
                             {
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
-                                int mushroom = Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
-                                if (Main.projectile.IndexInRange(mushroom))
-                                    Main.projectile[mushroom].ai[1] = target.Bottom.Y;
+                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
                             }
                         }
                     }
@@ -558,13 +552,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             CrabulonAttackState newAttackState;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            npc.Infernum().ExtraAI[5]++;
+            npc.ai[3]++;
             if (lifeRatio < Phase3LifeRatio)
-                newAttackState = Phase3AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase3AttackCycle.Length];
+                newAttackState = Phase3AttackCycle[(int)npc.ai[3] % Phase3AttackCycle.Length];
             else if (lifeRatio < Phase2LifeRatio)
-                newAttackState = Phase2AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase2AttackCycle.Length];
+                newAttackState = Phase2AttackCycle[(int)npc.ai[3] % Phase2AttackCycle.Length];
             else
-                newAttackState = Phase1AttackCycle[(int)npc.Infernum().ExtraAI[5] % Phase1AttackCycle.Length];
+                newAttackState = Phase1AttackCycle[(int)npc.ai[3] % Phase1AttackCycle.Length];
 
             npc.ai[2] = (int)newAttackState;
             npc.ai[1] = 0f;

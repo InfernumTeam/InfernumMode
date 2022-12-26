@@ -39,5 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Utilities.DrawAfterimagesCentered(Projectile, drawColor, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return true;
         }
+
+        // This is mainly for multiplayer, to ensure that walls don't spawn on top of players and cheaply hit them.
+        public override bool? CanDamage() => Projectile.timeLeft < 460 ? null : false;
     }
 }

@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.6f;
 
         public override bool PreDraw(ref Color lightColor)
         {

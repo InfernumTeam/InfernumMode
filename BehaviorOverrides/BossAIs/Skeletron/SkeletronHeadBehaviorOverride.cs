@@ -631,19 +631,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
                         shootVelocity.Y += Main.rand.NextFloat(2f);
-                        int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f);
-                        if (Main.projectile.IndexInRange(fire))
-                        {
-                            Main.projectile[fire].ai[0] = offset + fuck;
-                            Main.projectile[fire].netUpdate = true;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f, -1, offset + fuck);
                     }
 
                     // Fire one skull directly at the target.
                     Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center) * 5f;
-                    int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f);
-                    if (Main.projectile.IndexInRange(skull))
-                        Main.projectile[skull].ai[0] = -9999f;
+                    Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f, -1, -9999f);
                 }
             }
 

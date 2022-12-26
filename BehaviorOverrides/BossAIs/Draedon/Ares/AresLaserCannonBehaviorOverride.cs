@@ -118,10 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Add a small amount of randomness to laser directions.
                 laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
-
-                int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f);
-                if (Main.projectile.IndexInRange(laser))
-                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f, -1, 0f, npc.whoAmI);
             }
 
             laserShootCounter++;

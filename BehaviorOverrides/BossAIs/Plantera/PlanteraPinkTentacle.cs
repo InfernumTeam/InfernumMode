@@ -12,7 +12,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
     public class PlanteraPinkTentacle : ModNPC
     {
         public Player Target => Main.player[NPC.target];
-        public ref float Time => ref NPC.ai[0];
+
+        public ref float Time => ref NPC.ai[2];
+
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
@@ -53,20 +55,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             float attachAngle = NPC.ai[0];
             ref float attachOffset = ref NPC.ai[1];
-            ref float time = ref NPC.ai[2];
 
             // Reel inward prior to snapping.
-            if (time > 0f && time < 45f)
-                attachOffset = MathHelper.Lerp(attachOffset, 60f, 0.05f);
+            if (Time > 0f && Time < 45f)
+                attachOffset = MathHelper.Lerp(attachOffset, 108f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
-            if (time > 180f)
+            if (Time > 180f)
                 attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
 
-            if (time == 180f)
+            if (Time == 180f)
                 SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
 
-            if (time > 220f)
+            if (Time > 220f)
             {
                 NPC.scale *= 0.85f;
 
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             NPC.rotation = attachAngle + MathHelper.Pi;
             NPC.dontTakeDamage = true;
 
-            time++;
+            Time++;
         }
 
         public override void DrawBehind(int index)

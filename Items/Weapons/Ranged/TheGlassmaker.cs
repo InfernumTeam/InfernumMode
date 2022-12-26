@@ -46,15 +46,5 @@ namespace InfernumMode.Items.Weapons.Ranged
         public override bool CanConsumeAmmo(Item ammo, Player player) => Main.rand.NextFloat() >= 0.9f;
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0;
-
-        public override void AddRecipes()
-        {
-            CreateRecipe().
-                AddIngredient(ItemID.FlareGun).
-                AddIngredient(ItemID.Ruby).
-                AddIngredient(ItemID.Gel, 12).
-                AddTile(TileID.Anvils).
-                Register();
-        }
     }
 }

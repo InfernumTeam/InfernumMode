@@ -53,6 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.localAI[0] = reader.ReadSingle();
             Projectile.localAI[1] = reader.ReadSingle();
         }
+
         public override void AttachToSomething()
         {
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.AstrumAureus))
@@ -89,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Select textures to pass to the shader, along with the electricity color.
             GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(187, 220, 237);
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak2"));
+            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
             GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Misc/Perlin");
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);

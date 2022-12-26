@@ -556,13 +556,14 @@ namespace InfernumMode.ILEditingStuff
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
 
+            FixWeirdDivisionBy0Bug();
+            
             try
             {
                 orig(self);
             }
             catch (IndexOutOfRangeException) { }
             catch (KeyNotFoundException) { }
-            catch (DivideByZeroException) { }
 
             if (useShader)
             {
@@ -574,6 +575,19 @@ namespace InfernumMode.ILEditingStuff
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin();
+            }
+        }
+
+        // I don't know why this is a problem. I'd assume it's some quirk with the Lost Colosseum bg code, but it's hard to know for sure given how
+        // utterly hideous that stuff is on vanilla's end.
+        public static void FixWeirdDivisionBy0Bug()
+        {
+            for (int i = 0; i < Main.desertBG.Length; i++)
+            {
+                if (Main.desertBG[i] <= -1)
+                    Main.desertBG[i] = 207;
+                if (Main.backgroundWidth[Main.desertBG[i]] <= 0)
+                    Main.backgroundWidth[Main.desertBG[i]] = 1024;
             }
         }
 

@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GrayscaleWater"));
+            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.GrayscaleWater);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
             return false;

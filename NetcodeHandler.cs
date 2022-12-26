@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,8 @@ namespace InfernumMode
     {
         SendExtraNPCData,
         SyncInfernumActive,
-        SummonExoMech
+        SummonExoMech,
+        UpdateTwinsAttackSynchronizer
     }
 
     public class InfernumNPCSyncInformation
@@ -23,6 +25,7 @@ namespace InfernumMode
         public int NPCIndex = -1;
         public int CachedRealLife = -1;
         public int TotalUniqueIndicesUsed;
+        public int TotalPlayersAtStart;
         public int[] ExtraAIIndicesUsed;
         public float[] ExtraAIValues;
         public Rectangle ArenaRectangle;
@@ -46,6 +49,8 @@ namespace InfernumMode
             }
             if (ArenaRectangle != default)
                 Main.npc[NPCIndex].Infernum().Arena = ArenaRectangle;
+
+            Main.npc[NPCIndex].Infernum().TotalPlayersAtStart = TotalPlayersAtStart;
 
             return true;
         }
@@ -107,6 +112,7 @@ namespace InfernumMode
                     int npcIndex = reader.ReadInt32();
                     int realLife = reader.ReadInt32();
                     int totalUniqueAIIndicesUsed = reader.ReadInt32();
+                    int totalPlayersAtStart = reader.ReadInt32();
                     int[] indicesUsed = new int[totalUniqueAIIndicesUsed];
                     float[] aiValues = new float[totalUniqueAIIndicesUsed];
                     Rectangle arenaRectangle = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
@@ -121,6 +127,7 @@ namespace InfernumMode
                         NPCIndex = npcIndex,
                         CachedRealLife = realLife,
                         TotalUniqueIndicesUsed = totalUniqueAIIndicesUsed,
+                        TotalPlayersAtStart = totalPlayersAtStart,
                         ExtraAIIndicesUsed = indicesUsed,
                         ExtraAIValues = aiValues,
                         ArenaRectangle = arenaRectangle
@@ -141,6 +148,9 @@ namespace InfernumMode
                     DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon = (ExoMech)reader.ReadInt32();
                     DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon = (ExoMech)reader.ReadInt32();
                     DraedonBehaviorOverride.SummonExoMech(player);                    
+                    break;
+                case InfernumPacketType.UpdateTwinsAttackSynchronizer:
+                    TwinsAttackSynchronizer.ReadFromPacket(reader);
                     break;
             }
         }

@@ -19,6 +19,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
@@ -40,7 +41,10 @@ namespace InfernumMode.GlobalInstances
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
+        // I'll be fucking damned if this isn't enough.
         public const int TotalExtraAISlots = 100;
+
+        public int? TotalPlayersAtStart = null;
 
         public bool ShouldUseSaturationBlur = false;
 
@@ -118,20 +122,13 @@ namespace InfernumMode.GlobalInstances
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
         }
 
-        public static void AdjustMaxHP(ref int maxHP)
+        public void AdjustMaxHP(ref int maxHP)
         {
             float hpMultiplier = 1f;
             float accumulatedFactor = 0.35f;
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
-                int activePlayerCount = 0;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active)
-                        activePlayerCount++;
-                }
-
-                for (int i = 1; i < activePlayerCount; i++)
+                for (int i = 1; i < (TotalPlayersAtStart ?? 1); i++)
                 {
                     hpMultiplier += accumulatedFactor;
                     accumulatedFactor += (1f - accumulatedFactor) / 3f;
@@ -151,6 +148,19 @@ namespace InfernumMode.GlobalInstances
         {
             // Reset the saturation blur state.
             ShouldUseSaturationBlur = false;
+
+            // Initialize the amount of players the NPC had when it spawned.
+            if (!TotalPlayersAtStart.HasValue)
+            {
+                int activePlayerCount = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active)
+                        activePlayerCount++;
+                }
+                TotalPlayersAtStart = activePlayerCount;
+                npc.netUpdate = true;
+            }
             
             if (InfernumMode.CanUseCustomAIs)
             {
@@ -177,7 +187,7 @@ namespace InfernumMode.GlobalInstances
                         npc.Calamity().AITimer = npc.Calamity().KillTime;
 
                     // If any boss NPC is active, apply Zen to nearby players to reduce spawn rate.
-                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))
+                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
                     {
                         if (!Main.player[Main.myPlayer].dead && Main.player[Main.myPlayer].active && npc.WithinRange(Main.player[Main.myPlayer].Center, 6400f))
                             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossEffects>(), 2);
@@ -280,6 +290,10 @@ namespace InfernumMode.GlobalInstances
                 SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
                 npc.soundDelay = 11;
             }
+
+            // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
+            if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

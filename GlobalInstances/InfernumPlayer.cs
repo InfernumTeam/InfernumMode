@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.Polterghast;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.World;
 using InfernumMode.Achievements;
 using InfernumMode.Biomes;
@@ -14,9 +15,11 @@ using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -261,6 +264,10 @@ namespace InfernumMode.GlobalInstances
             if (CalamityPlayer.areThereAnyDamnBosses && Player.Calamity().momentumCapacitorBoost > 1.8f)
                 Player.Calamity().momentumCapacitorBoost = 1.8f;
 
+            // Reset the screen distortion shader for the next frame.
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
+                Filters.Scene["InfernumMode:ScreenDistortion"].Deactivate();
+            
             if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
                 return;
 
@@ -346,7 +353,10 @@ namespace InfernumMode.GlobalInstances
         #region Screen Shaking
         public override void ModifyScreenPosition()
         {
-            if (ScreenFocusInterpolant > 0f && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
+            if (Player.dead)
+                return;
+
+            if (ScreenFocusInterpolant > 0f)
             {
                 Vector2 idealScreenPosition = ScreenFocusPosition - new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 Main.screenPosition = Vector2.Lerp(Main.screenPosition, idealScreenPosition, ScreenFocusInterpolant);

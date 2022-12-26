@@ -69,9 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 int barragePointIndex = Main.rand.Next(TrailCache.Count - 1);
                 Vector2 barrageVelocity = Main.rand.NextVector2CircularEdge(8f, 8f);
                 Vector2 barrageSpawnPosition = Vector2.Lerp(TrailCache[barragePointIndex], TrailCache[barragePointIndex + 1], Main.rand.NextFloat());
-                int barrage = Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f);
-                if (Main.projectile.IndexInRange(barrage))
-                    Main.projectile[barrage].ai[1] = ScaleFactorDelta;
+                Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f, -1, 0f, ScaleFactorDelta);
             }
             
             // Fade in.
@@ -103,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
+            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Stars);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 82);
             return false;

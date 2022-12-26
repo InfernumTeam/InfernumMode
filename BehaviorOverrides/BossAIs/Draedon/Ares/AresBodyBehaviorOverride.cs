@@ -1040,7 +1040,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
                 float telegraphRotation = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphRotationIndex];
                 float telegraphScaleFactor = telegraphInterpolant * 1.2f;
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;

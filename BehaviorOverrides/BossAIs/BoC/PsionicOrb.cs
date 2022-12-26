@@ -108,14 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * 16f;
-                int ray = Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 135, 0f, 255);
-
-                if (Main.projectile.IndexInRange(ray))
-                {
-                    Main.projectile[ray].ai[0] = shootVelocity.ToRotation();
-                    Main.projectile[ray].ai[1] = Main.rand.Next(100);
-                    Main.projectile[ray].tileCollide = false;
-                }
+                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 135, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
             }
 
             for (int i = 0; i < 36; i++)
@@ -156,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
                 float telegraphScaleFactor = TelegraphInterpolant * 0.7f;
 
                 Vector2 telegraphStart = Projectile.Center - Main.screenPosition;

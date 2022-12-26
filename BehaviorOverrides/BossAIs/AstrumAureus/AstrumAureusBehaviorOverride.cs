@@ -739,14 +739,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < 2; i++)
                     {
+                        int laserDirection = (i == 0).ToDirectionInt();
+                        float laserAngle = MathHelper.Pi / OrangeLaserbeam.LaserLifetime * laserDirection * 0.84f;
                         int laserbeamType = i == 0 ? ModContent.ProjectileType<OrangeLaserbeam>() : ModContent.ProjectileType<BlueLaserbeam>();
-                        int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, laserbeamType, 280, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, laserbeamType, 280, 0f, -1, laserAngle, npc.whoAmI);
                         if (Main.projectile.IndexInRange(laser))
                         {
-                            int laserDirection = (i == 0).ToDirectionInt();
                             Main.projectile[i].Infernum().ExtraAI[0] = i;
-                            Main.projectile[i].ai[0] = MathHelper.Pi / OrangeLaserbeam.LaserLifetime * laserDirection * 0.84f;
-                            Main.projectile[i].ai[1] = npc.whoAmI;
+                            Main.projectile[i].netUpdate = true;
                         }
                     }
                 }
@@ -1088,7 +1088,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                    Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
                     Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
 
                     Color outlineColor = Color.Lerp(Color.Cyan, Color.White, lineTelegraphInterpolant);

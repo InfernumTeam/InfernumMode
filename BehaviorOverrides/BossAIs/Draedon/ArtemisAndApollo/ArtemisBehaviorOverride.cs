@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Artemis>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
             
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
             DrawExoTwin(npc, lightColor, npc.ModNPC<Artemis>().ChargeFlash, npc.ModNPC<Artemis>().RibbonTrail, npc.ModNPC<Artemis>().ChargeFlameTrail, npc.ModNPC<Artemis>().ChargeFlameTrailBig);
             return false;
         }

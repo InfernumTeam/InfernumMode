@@ -216,6 +216,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.scale = 0.01f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    Vector2 teleportDestination = target.Center;
+
+                    // Avoid teleporting very, very far away.
+                    if (!npc.WithinRange(teleportDestination, 8400f))
+                    {
+                        npc.TargetClosest();
+                        target = Main.player[npc.target];
+                        teleportDestination = target.Center;
+
+                        // If the closest player is still super far away, just disappear.
+                        if (!npc.WithinRange(teleportDestination, 8400f))
+                        {
+                            npc.active = false;
+                            return false;
+                        }
+                    }
+
                     npc.Center = target.Center;
                     npc.position.Y = target.position.Y - npc.height;
                     int tilePosX = (int)npc.Center.X / 16;

@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool CanHitPlayer(Player target) => Time <= 1800f && Time > 120f;
+        public override bool CanHitPlayer(Player target) => Time is <= 1800f and > 120f;
 
         public override Color? GetAlpha(Color lightColor)
         {

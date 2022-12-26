@@ -1132,9 +1132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(lightOrb))
-                        Main.projectile[lightOrb].ai[1] = npc.whoAmI;
+                    Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f, -1, 0f, npc.whoAmI);
                     npc.netUpdate = true;
                 }
             }
@@ -2218,7 +2216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (berserkPhaseInterpolant > 0f)
             {
                 float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
-                Texture2D eyeGleam = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+                Texture2D eyeGleam = InfernumTextureRegistry.Gleam.Value;
                 Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -14f);
                 Vector2 horizontalGleamScaleSmall = new Vector2(berserkPhaseInterpolant * 3f, 1f) * 0.36f;
                 Vector2 verticalGleamScaleSmall = new Vector2(1f, berserkPhaseInterpolant * 2f) * 0.36f;

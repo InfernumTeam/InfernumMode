@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Give the taret infinite flight time.
+            // Give the target infinite flight time.
             target.wingTime = target.wingTimeMax;
             target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
 
@@ -705,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 crystalSpeed += 4f;
             }
 
-            // Use less wide fan if using a sinusoidal pattern.
+            // Use a less wide fan if using a sinusoidal pattern.
             if (useSinusoidalFan)
                 maxFanOffsetAngle *= 0.6f;
 

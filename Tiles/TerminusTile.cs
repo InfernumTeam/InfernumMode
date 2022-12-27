@@ -60,7 +60,7 @@ namespace InfernumMode.Tiles
 
             // Due to tile layering fuckery the Terminus should only be drawn by the final subtile.
             // Doing it earlier could result in incoming tiles having weird layering artifacts, which would be undesirable.
-            if (t.TileFrameX != 54 || t.TileFrameY != 36)
+            if (t.TileFrameX != 36 || t.TileFrameY != 18)
                 return true;
 
             // Don't draw the Terminus if the Terminus animation is happening or the AEW fight is ongoing.
@@ -68,15 +68,13 @@ namespace InfernumMode.Tiles
                 return true;
 
             // Draw the Terminus at an angle below the rest of the rubble.
-            Color color = Lighting.GetColor(i, j);
-            Rectangle frame = new(t.TileFrameX, t.TileFrameY, 18, 18);
-            float terminusRotation = MathHelper.PiOver2 + 0.43f;
+            float terminusRotation = MathHelper.PiOver2 - 0.43f;
             Texture2D terminusTexture = ModContent.Request<Texture2D>("CalamityMod/Items/SummonItems/Terminus").Value;
-            Vector2 drawPosition = new Vector2(i * 16f, j * 16f) - Main.screenPosition;
+            Vector2 drawPosition = new Vector2(i * 16f, j * 16f) - Main.screenPosition + new Vector2(8f, -36f);
             if (!Main.drawToScreen)
                 drawPosition += Vector2.One * Main.offScreenRange;
 
-            spriteBatch.Draw(terminusTexture, drawPosition, frame, color, terminusRotation, Vector2.One, 1f, 0, 0f);
+            spriteBatch.Draw(terminusTexture, drawPosition, null, Color.White, terminusRotation, Vector2.One, 1f, 0, 0f);
             return true;
         }
     }

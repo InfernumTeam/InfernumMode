@@ -1,11 +1,16 @@
+using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
+using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -74,6 +79,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             target.breath = target.breathMax;
             target.ignoreWater = true;
             target.wingTime = target.wingTimeMax;
+            AbyssWaterColorSystem.WaterBlacknessInterpolant = 0f;
+
+            // This is necessary to allow the boss effects buff to be shown.
+            npc.Calamity().KillTime = 1;
 
             switch ((AEWAttackType)attackType)
             {
@@ -87,6 +96,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Determine rotation based on the current velocity.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Increment the attack timer.
+            attackTimer++;
 
             return false;
         }
@@ -132,7 +144,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void DoBehavior_ThreateninglyHoverNearPlayer(NPC npc, Player target, ref float eyeGlowOpacity, ref float attackTimer)
         {
-            int eyeGlowFadeinTime = 120;
+            int roarDelay = 60;
+            int eyeGlowFadeinTime = 105;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, -360f);
             ref float hasReachedDestination = ref npc.Infernum().ExtraAI[0];
 
@@ -147,10 +160,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 }
 
                 // Don't let the attack timer increment.
-                attackTimer = 0f;
+                attackTimer = -1f;
 
                 return;
             }
+
+            // Roar after a short delay.
+            if (attackTimer == roarDelay)
+                SoundEngine.PlaySound(InfernumSoundRegistry.AEWThreatenRoar);
 
             // Slow down and look at the target threateningly before attacking.
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 3f, 0.071f);
@@ -207,8 +224,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         #endregion AI Utility Methods
 
+        #region Draw Effects
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            npc.frame = new(0, 0, 254, 138);
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrmHeadGlow").Value;
+            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWEyes").Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Color eyeColor = Color.Cyan * npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
+
+            Main.EntitySpriteDraw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+            Main.EntitySpriteDraw(glowmaskTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+            ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+
+            // Hacky way of ensuring that PostDraw doesn't do anything.
+            npc.frame = Rectangle.Empty;
+
+            return false;
+        }
+        #endregion Draw Effects
+
         #region Tips
-        
+
         #endregion Tips
     }
 }

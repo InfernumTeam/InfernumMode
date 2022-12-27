@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
@@ -65,6 +67,19 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
             // Disable water slowness.
             npc.RemoveWaterSlowness();
+
+            // Try to get away if the AEW is coming or present.
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -36f, 0.08f);
+                npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
+                npc.rotation = npc.velocity.ToRotation();
+
+                if (!npc.WithinRange(target.Center, 1400f))
+                    npc.active = false;
+
+                return false;
+            }
 
             // Disable the blackness effect when attacking.
             if (currentAttack is not ReaperSharkAttackState.StalkTarget and not ReaperSharkAttackState.RoarAnimation)

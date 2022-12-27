@@ -18,7 +18,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool TextShouldBeCentered => true;
 
-        // This is no credit. Your idea has been STOLEN!
+        // There is no credit. Your idea has been STOLEN!
         public override string TextToDisplay => "The Infected Stomper\nAstrum Aureus";
 
         public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:MechsIntro"].Shader;

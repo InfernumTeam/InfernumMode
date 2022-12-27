@@ -32,6 +32,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.scale = head.scale;
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
+            npc.damage = 0;
+
+            // Fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
 
             // Decide segment offset stuff.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
@@ -42,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
 
             // Decide segment offset stuff.
-            float segmentOffset = 92f;
+            float segmentOffset = 66f;
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * segmentOffset;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();

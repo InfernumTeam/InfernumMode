@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.Projectiles;
 using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -15,7 +16,7 @@ namespace InfernumMode.Systems
         {
             get
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()))
+                if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
                     return true;
                 if (NPC.AnyNPCs(ModContent.NPCType<EidolonWyrmHead>()))
                     return true;

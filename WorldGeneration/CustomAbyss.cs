@@ -5,6 +5,7 @@ using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Miscellaneous;
 using InfernumMode.Systems;
+using InfernumMode.Tiles;
 using InfernumMode.Tiles.Abyss;
 using Microsoft.Xna.Framework;
 using System;
@@ -879,6 +880,9 @@ namespace InfernumMode.WorldGeneration
 
             // Create the eidolist pedestal.
             GenerateEidolistPedestal(new(pedestalPosition.X, pedestalPosition.Y - 8));
+
+            // Place the Terminus tile.
+            GenerateTerminusTile(new(pedestalPosition.X, pedestalPosition.Y + 50));
         }
 
         public static void GenerateEidolistPedestal(Point pedestalCenter)
@@ -893,6 +897,23 @@ namespace InfernumMode.WorldGeneration
             }));
         }
 
+        public static void GenerateTerminusTile(Point searchPosition)
+        {
+            int terminusTileID = ModContent.TileType<TerminusTile>();
+
+            for (int tries = 0; tries < 180; tries++)
+            {
+                Point groundPosition = Utilities.GetGroundPositionFrom(searchPosition);
+                groundPosition.Y--;
+
+                if (WorldGen.PlaceTile(groundPosition.X, groundPosition.Y, terminusTileID))
+                    break;
+
+                // Slide to the right for a different search position if the current one didn't find a valid spot.
+                searchPosition.X++;
+            }
+        }
+        
         public static void GenerateVoidstone()
         {
             int top = Layer3Top - 10;

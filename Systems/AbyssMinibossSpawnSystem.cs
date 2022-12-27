@@ -27,7 +27,7 @@ namespace InfernumMode.Systems
         }
 
         public const int MinibossSpawnRate = 1380;
-
+        
         public override void PreUpdateWorld()
         {
             // Don't mess with abyss spawns in worlds without a reworked abyss.

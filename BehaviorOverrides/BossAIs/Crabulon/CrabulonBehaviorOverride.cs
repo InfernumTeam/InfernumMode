@@ -24,8 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
     {
         public override int NPCOverrideType => ModContent.NPCType<CrabulonNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum CrabulonAttackState
         {

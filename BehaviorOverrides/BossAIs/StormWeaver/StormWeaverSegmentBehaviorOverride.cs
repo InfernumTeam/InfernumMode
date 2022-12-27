@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public static void SegmentAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
@@ -67,8 +65,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
     public class StormWeaverTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public override bool PreAI(NPC npc)
         {

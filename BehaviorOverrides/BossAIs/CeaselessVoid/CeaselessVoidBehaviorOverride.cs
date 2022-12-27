@@ -27,8 +27,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         public override int NPCOverrideType => ModContent.NPCType<CeaselessVoidBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         #region Enumerations
         public enum CeaselessVoidAttackType
         {

@@ -19,8 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     {
         public override int NPCOverrideType => NPCID.TheDestroyer;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region Enumerations
         public enum DestroyerAttackType
         {

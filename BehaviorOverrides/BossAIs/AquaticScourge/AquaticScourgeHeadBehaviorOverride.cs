@@ -36,8 +36,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
         {

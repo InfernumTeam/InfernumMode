@@ -111,8 +111,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public override int NPCOverrideType => NPCID.Deerclops;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,

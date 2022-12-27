@@ -34,8 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public const float Phase3LifeRatio = 0.25f;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum ProvidenceAttackType
         {

@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
     {
         public override int NPCOverrideType => ModContent.NPCType<AureusSpawn>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             int aureus = NPC.FindFirstNPC(ModContent.NPCType<AureusBoss>());

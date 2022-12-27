@@ -23,8 +23,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
     {
         public override int NPCOverrideType => NPCID.DukeFishron;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum DukeAttackType
         {

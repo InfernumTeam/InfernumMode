@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
     {
         public override int NPCOverrideType => ModContent.NPCType<CryogenBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.9f;
 
         public const float Phase3LifeRatio = 0.7f;

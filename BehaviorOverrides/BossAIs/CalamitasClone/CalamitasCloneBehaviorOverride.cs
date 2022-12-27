@@ -24,8 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum CloneAttackType
         {

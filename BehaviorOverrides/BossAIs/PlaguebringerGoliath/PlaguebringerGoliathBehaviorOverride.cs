@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     {
         public override int NPCOverrideType => ModContent.NPCType<PlaguebringerBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public const float Phase2LifeRatio = 0.75f;
 
         public const float Phase3LifeRatio = 0.3f;

@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
         public override int NPCOverrideType => NPCID.BigMimicCorruption;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Pick a target.

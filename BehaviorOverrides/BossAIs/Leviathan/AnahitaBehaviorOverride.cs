@@ -39,8 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override int NPCOverrideType => ModContent.NPCType<Anahita>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ComboAttackManager.LeviathanSummonLifeRatio

@@ -20,8 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
     {
         public override int NPCOverrideType => NPCID.EyeofCthulhu;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum EoCAttackType
         {

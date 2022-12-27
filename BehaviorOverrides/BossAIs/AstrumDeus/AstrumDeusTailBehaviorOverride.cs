@@ -13,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusTail>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Main.npc[(int)npc.ai[0]].active)

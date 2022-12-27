@@ -52,8 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public const float Phase2LifeRatio = 0.8f;
 
         public const int PassiveMovementTimeP1 = 420;

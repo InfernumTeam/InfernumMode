@@ -43,8 +43,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override int NPCOverrideType => ModContent.NPCType<Apollo>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         public const int Phase2TransitionTime = 270;
 
         public override float[] PhaseLifeRatioThresholds => new float[]

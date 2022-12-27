@@ -23,8 +23,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.HallowedMimic
 
         public override int NPCOverrideType => NPCID.BigMimicHallow;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Pick a target.

@@ -24,8 +24,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CrimsonMimic
 
         public override int NPCOverrideType => NPCID.BigMimicCrimson;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Pick a target.

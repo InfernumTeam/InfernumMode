@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorBodyMedium>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];

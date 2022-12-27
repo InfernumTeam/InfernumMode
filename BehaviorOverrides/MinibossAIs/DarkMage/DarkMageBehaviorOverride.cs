@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
         public override int NPCOverrideType => NPCID.DD2DarkMageT1;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc) => DoAI(npc);
 
         public static bool DoAI(NPC npc)

@@ -46,8 +46,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int NPCOverrideType => ModContent.NPCType<AresBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ExoMechManagement.Phase4LifeRatio

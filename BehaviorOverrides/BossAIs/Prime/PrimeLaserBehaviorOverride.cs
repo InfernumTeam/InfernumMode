@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     {
         public override int NPCOverrideType => NPCID.PrimeLaser;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override float PredictivenessFactor => 20f;
 
         public override Color TelegraphColor => Color.Red;

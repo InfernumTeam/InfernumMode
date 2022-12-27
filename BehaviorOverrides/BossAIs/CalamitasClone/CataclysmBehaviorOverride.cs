@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     {
         public override int NPCOverrideType => ModContent.NPCType<Cataclysm>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region Enumerations
         public enum CataclysmAttackType
         {

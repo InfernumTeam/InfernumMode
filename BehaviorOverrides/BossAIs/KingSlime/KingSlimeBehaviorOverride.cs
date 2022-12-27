@@ -25,8 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public override int NPCOverrideType => NPCID.KingSlime;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         #region Enumerations
         public enum KingSlimeAttackType
         {

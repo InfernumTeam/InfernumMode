@@ -31,9 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterghastBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         // These store the roar sound slot to allow for updating its position.
+        // TODO -- Why are these public fields in the behavior override class and not wrapped inside of a npc.localAI instance? These classes are singletons and this will
+        // probably fail if two or more instances of the NPC are present.
         public SlotId RoarSlot;
 
         public SlotId ShortRoarSlot;

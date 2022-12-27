@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.GolemHeadFree;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)

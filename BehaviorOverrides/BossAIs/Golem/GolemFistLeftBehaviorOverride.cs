@@ -8,8 +8,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.GolemFistLeft;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI; // | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc) => DoFistAI(npc, true);
 
         // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawFist(npc, Main.spriteBatch, lightColor, true);

@@ -29,8 +29,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override int NPCOverrideType => ModContent.NPCType<Eidolist>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
         {

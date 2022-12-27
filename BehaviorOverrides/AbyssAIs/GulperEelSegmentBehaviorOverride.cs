@@ -13,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<GulperEelBodyAlt>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public static bool DoSegmentingAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(npc.realLife))
@@ -87,8 +85,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<GulperEelBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-        
         public override bool PreAI(NPC npc) => GulperEelBody1BehaviorOverride.DoSegmentingAI(npc);
 
         // Drawing is handled by the head.
@@ -102,8 +98,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     public class GulperEelTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<GulperEelTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc) => GulperEelBody1BehaviorOverride.DoSegmentingAI(npc);
 

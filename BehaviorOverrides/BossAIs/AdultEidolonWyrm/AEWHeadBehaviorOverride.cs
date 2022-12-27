@@ -21,8 +21,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
         {

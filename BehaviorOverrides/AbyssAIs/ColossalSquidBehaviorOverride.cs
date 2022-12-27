@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 
         public override int NPCOverrideType => ModContent.NPCType<ColossalSquid>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         // Piecewise function variables for determining the offset of tentacles when swiping at the target.
         public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, 0f, -0.53f, 2);
 

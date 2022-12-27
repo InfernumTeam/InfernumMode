@@ -12,8 +12,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<OarfishBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public static bool DoSegmentingAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(npc.realLife))
@@ -70,8 +68,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     public class OarfishTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<OarfishTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc) => OarfishBodyBehaviorOverride.DoSegmentingAI(npc);
 

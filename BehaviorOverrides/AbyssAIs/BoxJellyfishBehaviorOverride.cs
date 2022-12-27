@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
 {
     public class BoxJellyfishBehaviorOverride : NPCBehaviorOverride
     {
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override int NPCOverrideType => ModContent.NPCType<BoxJellyfish>();
 
         #region Fields

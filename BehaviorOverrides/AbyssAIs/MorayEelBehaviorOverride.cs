@@ -1,12 +1,9 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
-using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
-using CalamityMod.NPCs.AstrumAureus;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -20,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     public class MorayEelBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<MorayEel>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public const int HidingSpotXIndex = 0;
 

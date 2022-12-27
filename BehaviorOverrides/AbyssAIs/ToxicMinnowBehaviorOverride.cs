@@ -18,8 +18,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<ToxicMinnow>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region AI and Behaviors
 
         public const int MinSchoolSize = 4;

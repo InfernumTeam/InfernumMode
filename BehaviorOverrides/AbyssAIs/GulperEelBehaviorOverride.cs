@@ -20,8 +20,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<GulperEelHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const int SegmentCount = 20;
         
         public override bool PreAI(NPC npc)

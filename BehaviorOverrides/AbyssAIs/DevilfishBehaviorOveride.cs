@@ -25,8 +25,6 @@ namespace InfernumMode.BehaviorOverrides.AbyssAIs
     {
         public override int NPCOverrideType => ModContent.NPCType<DevilFish>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
         {

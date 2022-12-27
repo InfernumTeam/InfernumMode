@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public static void SegmentAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
@@ -61,8 +59,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmBodyAlt>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             AEWBody1BehaviorOverride.SegmentAI(npc);
@@ -73,8 +69,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     public class AEWTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public override bool PreAI(NPC npc)
         {

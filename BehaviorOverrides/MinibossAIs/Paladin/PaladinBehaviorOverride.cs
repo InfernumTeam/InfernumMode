@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Paladin
 
         public override int NPCOverrideType => NPCID.Paladin;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Select a target as necessary.

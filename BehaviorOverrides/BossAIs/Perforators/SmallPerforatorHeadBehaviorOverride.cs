@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadSmall>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             int fallingIchorCount = 12;

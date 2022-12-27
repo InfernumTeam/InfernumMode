@@ -33,8 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,

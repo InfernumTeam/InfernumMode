@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
     {
         public override int NPCOverrideType => ModContent.NPCType<Artemis>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ExoMechManagement.Phase3LifeRatio,

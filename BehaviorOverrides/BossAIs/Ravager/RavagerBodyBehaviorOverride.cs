@@ -47,8 +47,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const int AttackDelay = 135;
         
         public const float BaseDR = 0.325f;

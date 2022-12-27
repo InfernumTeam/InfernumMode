@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadLarge>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Create segments.

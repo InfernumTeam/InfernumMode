@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadMedium>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             int toothBallReleaseRate = 120;

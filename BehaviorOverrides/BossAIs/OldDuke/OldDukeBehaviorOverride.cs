@@ -45,8 +45,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public override int NPCOverrideType => ModContent.NPCType<OldDukeBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.75f;
         public const float Phase3LifeRatio = 0.375f;
         public const float Phase4LifeRatio = 0.2f;

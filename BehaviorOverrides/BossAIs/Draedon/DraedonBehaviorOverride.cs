@@ -25,8 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public override int NPCOverrideType => ModContent.NPCType<DraedonNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public const int IntroSoundLength = 106;
 
         public const int PostBattleMusicLength = 5120;

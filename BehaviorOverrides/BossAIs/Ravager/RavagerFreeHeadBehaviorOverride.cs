@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerHead2>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Die if the main body does not exist anymore.
@@ -45,8 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
             Vector2 cinderShootPosition = npc.Center + aimDirection * 36f;
             npc.rotation = aimDirection.ToRotation() - MathHelper.PiOver2;
-            bool dontFire = currentAttack == RavagerBodyBehaviorOverride.RavagerAttackType.DownwardFistSlam ||
-                currentAttack == RavagerBodyBehaviorOverride.RavagerAttackType.SlamAndCreateMovingFlamePillars;
+            bool dontFire = currentAttack is RavagerBodyBehaviorOverride.RavagerAttackType.DownwardFistSlam or RavagerBodyBehaviorOverride.RavagerAttackType.SlamAndCreateMovingFlamePillars;
 
             // Create a dust telegraph prior to releasing cinders.
             if (currentAttack != RavagerBodyBehaviorOverride.RavagerAttackType.DetachedHeadCinderRain)

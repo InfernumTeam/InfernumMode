@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     {
         public override int NPCOverrideType => NPCID.WallofFleshEye;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public const int IsDetachedFlagIndex = 2;
 
         public const int DetachDamage = 1550;

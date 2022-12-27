@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 {
     public class CloudElementalBehaviorOverride : NPCBehaviorOverride
     {
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override int NPCOverrideType => ModContent.NPCType<ThiccWaifu>();
 
         public enum AttackTypes

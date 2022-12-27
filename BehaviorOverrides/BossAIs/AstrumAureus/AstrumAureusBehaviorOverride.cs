@@ -30,8 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
     {
         public override int NPCOverrideType => ModContent.NPCType<AureusBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum AureusAttackType
         {

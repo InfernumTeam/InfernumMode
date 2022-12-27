@@ -29,8 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override int NPCOverrideType => NPCID.BloodNautilus;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.55f;
 
         public const float Phase3LifeRatio = 0.25f;

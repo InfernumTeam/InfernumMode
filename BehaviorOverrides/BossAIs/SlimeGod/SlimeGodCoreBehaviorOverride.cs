@@ -21,8 +21,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
     {
         public override int NPCOverrideType => ModContent.NPCType<SlimeGodCore>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum SlimeGodCoreAttackType
         {

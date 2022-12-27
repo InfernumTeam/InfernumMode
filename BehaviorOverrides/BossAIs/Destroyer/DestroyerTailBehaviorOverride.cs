@@ -8,8 +8,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     {
         public override int NPCOverrideType => NPCID.TheDestroyerTail;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc) => DestroyerBodyBehaviorOverride.DoBehavior(npc);
     }
 }

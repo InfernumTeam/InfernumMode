@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
     {
         public override int NPCOverrideType => NPCID.QueenBee;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum QueenBeeAttackState
         {

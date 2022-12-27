@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
     {
         public override int NPCOverrideType => NPCID.SkeletronHand;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             float armDirection = -npc.ai[0];

@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     {
         public override int NPCOverrideType => NPCID.Spazmatism;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         #region AI
         public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
         #endregion AI

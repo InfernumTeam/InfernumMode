@@ -33,8 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.475f;
         public override float[] PhaseLifeRatioThresholds => new float[]

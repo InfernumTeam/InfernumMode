@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
     {
         public override int NPCOverrideType => ModContent.NPCType<OldDukeToothBall>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             npc.rotation += npc.velocity.X * 0.05f;

@@ -34,8 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<Anahita>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.

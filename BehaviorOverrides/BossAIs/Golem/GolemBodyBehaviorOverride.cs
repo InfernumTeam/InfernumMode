@@ -42,8 +42,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.Golem;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public static int ArenaWidth = 115;
 
         public static int ArenaHeight = 105;

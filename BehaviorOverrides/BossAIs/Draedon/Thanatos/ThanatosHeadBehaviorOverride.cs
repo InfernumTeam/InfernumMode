@@ -46,8 +46,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override int NPCOverrideType => ModContent.NPCType<ThanatosHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public const int SegmentCount = 100;
 
         public const int TransitionSoundDelay = 80;

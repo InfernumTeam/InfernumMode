@@ -39,8 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override int NPCOverrideType => NPCID.HallowBoss;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         #region Constants and Attack Patterns
 
         public static bool ShouldBeEnraged => Main.dayTime || BossRushEvent.BossRushActive;

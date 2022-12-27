@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 
         public override int NPCOverrideType => NPCID.DD2OgreT2;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc) => DoAI(npc);
 
         public static bool OnGround(NPC npc, out Vector2 groundPosition)

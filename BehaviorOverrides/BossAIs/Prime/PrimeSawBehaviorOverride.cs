@@ -13,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     {
         public override int NPCOverrideType => NPCID.PrimeSaw;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float PredictivenessFactor => 15.5f;
 
         public override Color TelegraphColor => Color.Yellow;

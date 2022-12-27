@@ -18,8 +18,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     {
         public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         private static readonly FieldInfo invincibilityTimeField = typeof(DevourerofGodsBody).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo bodyPhase2StartedField = typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo tailPhase2StartedField = typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -263,8 +261,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     public class DoGPhase1TailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {

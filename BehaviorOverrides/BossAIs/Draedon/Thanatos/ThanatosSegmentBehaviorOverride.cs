@@ -23,8 +23,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody1>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override bool PreAI(NPC npc)
         {
             DoSegmentAI(npc);
@@ -269,8 +267,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody2>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override bool PreAI(NPC npc)
         {
             ThanatosBody1BehaviorOverride.DoSegmentAI(npc);
@@ -308,8 +304,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ThanatosTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         public override bool PreAI(NPC npc)
         {

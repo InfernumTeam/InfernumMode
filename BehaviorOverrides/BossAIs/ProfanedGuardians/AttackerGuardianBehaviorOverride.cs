@@ -51,8 +51,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianCommander>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ImmortalUntilPhase2LifeRatio,

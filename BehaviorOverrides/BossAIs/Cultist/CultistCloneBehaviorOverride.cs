@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => NPCID.CultistBossClone;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region AI
 
         public override bool PreAI(NPC npc)

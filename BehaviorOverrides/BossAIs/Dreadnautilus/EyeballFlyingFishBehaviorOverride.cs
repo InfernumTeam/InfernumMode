@@ -8,8 +8,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
     {
         public override int NPCOverrideType => NPCID.EyeballFlyingFish;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             if (NPC.AnyNPCs(NPCID.BloodNautilus))

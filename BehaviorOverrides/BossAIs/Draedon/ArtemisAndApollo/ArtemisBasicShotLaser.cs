@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             // Draw the telegraph line.
             Vector2 start = Projectile.Center - Main.screenPosition;
-            Texture2D line = InfernumTextureRegistry.Line.Value;
+            Texture2D line = InfernumTextureRegistry.BloomLine.Value;
 
             Vector2 beamOrigin = new(line.Width / 2f, line.Height);
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);

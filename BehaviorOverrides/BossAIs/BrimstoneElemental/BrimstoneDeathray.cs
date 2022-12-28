@@ -87,14 +87,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width;
+        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * 3;
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -5.2f + completionRatio * 23f) * 0.5f + 0.5f;
             Color color1 = new(255, 0, 25);
-            Color color2 = new(255, 46, 50);
-            return Color.Lerp(color1, color2, colorInterpolant);
+            return Color.Lerp(Color.Red, color1, colorInterpolant);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -111,8 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Select textures to pass to the shader, along with the electricity color.
             Color middleColor = new(252, 220, 178);
             Color middleColor2 = new(255, 162, 162);
-            GameShaders.Misc["Infernum:GenericLaserShader"].UseColor(middleColor2);
-            GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            GameShaders.Misc["Infernum:GenericLaserShader"].UseColor(middleColor2 * 2);
+            GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);

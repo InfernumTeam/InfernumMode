@@ -48,13 +48,12 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
     // Get the pixel from the provided streak/fade map.
-    float y = coords.y + sin(coords.x * 68 + uTime * 6.283) * 0.04;
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 10 - uTime * 5.6), y));
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 - uTime * 2.5), coords.y));
     
     // Calcuate the grayscale version of the pixel and use it as the opacity.
     float opacity = fadeMapColor.r;
     // Lerp between the base color, and the provided one.
-    float4 colorCorrected = lerp(color, float4(uColor, 1), fadeMapColor.r * 0.75f);
+    float4 colorCorrected = lerp(color, float4(uColor, 1), fadeMapColor.r);
     
     // Fade out at the top and bottom of the streak.
     if (coords.y < 0.05)
@@ -68,7 +67,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (coords.x > 0.95)
         opacity *= pow(1 - (coords.x - 0.95) / 0.05, 6);
     
-    return colorCorrected * opacity;
+    return colorCorrected * opacity * 6;
 }
 
 technique Technique1

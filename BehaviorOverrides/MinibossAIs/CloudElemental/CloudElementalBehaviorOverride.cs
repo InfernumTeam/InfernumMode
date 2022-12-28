@@ -29,7 +29,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             HailChunks
         }
 
-        public const int BaseContactDamage = 38;
+        public const int BaseContactDamage = 60;
+
+        public const float PhaseTwoLifeRatio = 0.5f;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -40,10 +42,14 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
             // Make immune to knockback
             npc.knockBackResist = 0;
+            npc.damage = BaseContactDamage;
+            
 
             // Set variables.
             ref float attackTimer = ref npc.ai[0];
             ref float currentAttack = ref npc.ai[1];
+            float lifeRatio = (float)npc.life / npc.lifeMax;
+            bool phase2 = lifeRatio <= PhaseTwoLifeRatio;
 
             // Perform the current attack.
             switch ((AttackTypes)currentAttack)
@@ -52,13 +58,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
                 case AttackTypes.LightningShotgun:
-                    DoBehavior_LightingShotgun(npc, target, ref attackTimer);
+                    DoBehavior_LightingShotgun(npc, target, ref attackTimer, phase2);
                     break;
                 case AttackTypes.IceBulletHell:
                     DoBehavior_IceBulletHell(npc, target, ref attackTimer);
                         break;
                 case AttackTypes.HailChunks:
-                    DoBehavior_HailChunks(npc, target, ref attackTimer);
+                    DoBehavior_HailChunks(npc, target, ref attackTimer, phase2);
                     break;
             }
 
@@ -78,6 +84,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 npc.Center = target.Center + new Vector2(0, -400);
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
+                npc.lifeMax = 18000;
+                npc.life = npc.lifeMax;
             }
 
             // Create visuals at the teleport position
@@ -107,17 +115,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             }
         }
 
-        public static void DoBehavior_LightingShotgun(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_LightingShotgun(NPC npc, Player target, ref float attackTimer, bool phase2)
         {
             float attackLength = 120;
-            float initialDelay = 30;
-            float fadeTime = 15;
+            float initialDelay = 40;
+            float fadeTime = 20;
             float teleportDistance = 400;
             float lightningAmount = 6;
             float lightningSoundDelay = 30;
+            float totalShotsToDo = phase2 ? 2 : 1;
+            ref float doneShots = ref npc.Infernum().ExtraAI[0];
             
             // Set the position at the beginning of the attack.
-            if (attackTimer is 1)
+            if (attackTimer == fadeTime)
             {
                 npc.Center = target.Center + (Vector2.One * teleportDistance).RotatedByRandom(MathHelper.TwoPi);
                 npc.velocity = Vector2.Zero;
@@ -137,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                     npc.Opacity = MathHelper.Lerp(1, 0, interpolant);
                 }
                 // And fade back in.
-                else if (attackTimer >= initialDelay - initialDelay)
+                else if (attackTimer >= initialDelay - fadeTime)
                 {
                     float interpolant = (attackTimer - (initialDelay - fadeTime)) / (initialDelay - fadeTime);
                     npc.Opacity = MathHelper.Lerp(0, 1, interpolant);
@@ -154,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 for (int i = 0; i <= lightningAmount; i++)
                 {
                     Vector2 velocity = baseVelocity.RotatedBy(baseRotation * (i / lightningAmount));
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, velocity, ModContent.ProjectileType<CloudLightning>(), 60, 0, Main.myPlayer);
+                    Utilities.NewProjectileBetter(npc.Center, velocity, ModContent.ProjectileType<CloudLightning>(), 150, 0);
                 }
             }
 
@@ -162,7 +172,15 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
             if (attackTimer >= attackLength)
-                SelectNextAttack(npc);
+            {
+                if (doneShots < totalShotsToDo - 1)
+                {
+                    attackTimer = 0;
+                    doneShots++;
+                }
+                else
+                    SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_IceBulletHell(NPC npc, Player target, ref float attackTimer)
@@ -201,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 
                 if (attackTimer >= attackLength - fadeTime)
                 {
-                    float interpolant = attackTimer - (attackLength - fadeTime) / attackLength;
+                    float interpolant = (attackTimer - (attackLength - fadeTime)) / attackLength;
                     npc.Opacity = MathHelper.Lerp(0, 1, interpolant);
                 }
             }
@@ -213,15 +231,17 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             }
         }
 
-        public static void DoBehavior_HailChunks(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_HailChunks(NPC npc, Player target, ref float attackTimer, bool phase2)
         {
             float attackLength = 180f;
             float hailSpawnDelay = 60f;
-            int hailAmount = 4;
-            float hailSpeed = 6.5f;
+            int hailAmount = phase2 ? 6 : 4;
+            float hailSpeed = phase2 ? 13f : 9f;
+            float fadeTime = 20;
 
             // Float towards the player.
-            npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 7f, 0.35f);
+            float amountToMove = MathHelper.Lerp(0.35f, 0.55f, attackTimer / attackLength);
+            npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 20 * amountToMove, amountToMove);
 
             // Shoot out 4 large hails.
             if ((attackTimer == hailSpawnDelay || attackTimer == (int)(hailSpawnDelay * 2.5f)) && Main.netMode != NetmodeID.MultiplayerClient)
@@ -229,6 +249,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 float angleOffset = Main.rand.NextBool() ? 0f : MathHelper.PiOver4;
                 for (int i = 0; i <= hailAmount; i++)
                     Utilities.NewProjectileBetter(target.Center, Vector2.UnitY.RotatedBy((MathHelper.TwoPi * i / hailAmount) + angleOffset) * hailSpeed, ModContent.ProjectileType<LargeHail>(), 0, 0, Main.myPlayer, (int)LargeHail.HailType.Shatter);
+            }
+
+            if (attackTimer >= attackLength - fadeTime)
+            {
+                float interpolant = (attackTimer - (attackLength - fadeTime)) / attackLength;
+                npc.Opacity = MathHelper.Lerp(1, 0, interpolant);
             }
                 
             if (attackTimer >= attackLength)

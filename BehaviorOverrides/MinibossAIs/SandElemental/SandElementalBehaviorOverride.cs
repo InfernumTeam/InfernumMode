@@ -19,8 +19,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 
         public override int NPCOverrideType => NPCID.SandElemental;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Pick a target.

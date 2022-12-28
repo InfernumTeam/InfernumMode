@@ -13,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public override int NPCOverrideType => ModContent.NPCType<KingSlimeJewel>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             ref float time = ref npc.ai[0];

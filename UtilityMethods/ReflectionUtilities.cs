@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Linq;
 using System.Reflection;
 
 namespace InfernumMode
@@ -25,6 +27,20 @@ namespace InfernumMode
 
                 yield return type;
             }
+        }
+
+        /// <summary>
+        /// Converts a <see cref="MethodInfo"/> to a generic <see cref="Delegate"/> type.
+         /// </summary>
+        /// <param name="method">The method.</param>
+        /// <param name="instance">The instance to create the delegate around.</param>
+        public static Delegate ConvertToDelegate(this MethodInfo method, object instance)
+        {
+            List<Type> paramTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToList();
+            paramTypes.Add(method.ReturnType);
+
+            Type delegateType = Expression.GetDelegateType(paramTypes.ToArray());
+            return Delegate.CreateDelegate(delegateType, instance, method);
         }
     }
 }

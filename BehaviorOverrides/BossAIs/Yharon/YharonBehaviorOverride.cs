@@ -29,8 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     {
         public override int NPCOverrideType => ModContent.NPCType<YharonBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum YharonAttackType
         {

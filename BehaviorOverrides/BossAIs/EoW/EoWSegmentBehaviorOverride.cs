@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
     {
         public override int NPCOverrideType => NPCID.EaterofWorldsBody;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public static void SegmentAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
@@ -46,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (head.damage == 0)
                 npc.damage = 0;
 
-            // What the actual fuck why is this needed.
+            // What the actual fuck why is this needed?
             if (npc.life <= 0)
                 npc.active = false;
 
@@ -67,8 +65,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
     public class EoWTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.EaterofWorldsTail;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public override bool PreAI(NPC npc)
         {

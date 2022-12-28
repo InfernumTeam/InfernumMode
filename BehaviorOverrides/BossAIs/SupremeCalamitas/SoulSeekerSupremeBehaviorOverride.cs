@@ -19,8 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SoulSeekerSupreme>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
 		public override bool PreAI(NPC npc)
         {
             // Die if SCal is no longer present.

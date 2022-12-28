@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCatastrophe>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             SupremeCataclysmBehaviorOverride.DoAI(npc);

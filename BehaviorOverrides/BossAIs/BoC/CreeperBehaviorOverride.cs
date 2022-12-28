@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     {
         public override int NPCOverrideType => NPCID.Creeper;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Main.npc[NPC.crimsonBoss].active)

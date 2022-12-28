@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
-
         public override void SetDefaults(NPC npc) => DoSetDefaults(npc);
 
         public override bool PreAI(NPC npc) => DoAI(npc);
@@ -98,8 +96,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherBodyEnergyBall>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
-
         public override void SetDefaults(NPC npc) => SepulcherBody1BehaviorOverride.DoSetDefaults(npc);
 
         public override bool PreAI(NPC npc) => SepulcherBody1BehaviorOverride.DoAI(npc);
@@ -108,8 +104,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     public class SepulcherTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<SepulcherTail>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI;
 
         public override void SetDefaults(NPC npc) => SepulcherBody1BehaviorOverride.DoSetDefaults(npc);
 

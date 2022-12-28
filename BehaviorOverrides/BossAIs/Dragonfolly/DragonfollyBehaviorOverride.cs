@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
     {
         public override int NPCOverrideType => ModContent.NPCType<Bumblefuck>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Attacks and Frame Enumeration
         public enum DragonfollyAttackType
         {

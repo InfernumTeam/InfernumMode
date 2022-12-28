@@ -29,8 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     {
         public override int NPCOverrideType => NPCID.SkeletronPrime;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         #region Enumerations
         public enum PrimeAttackType
         {

@@ -20,8 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
     {
         public override int NPCOverrideType => NPCID.QueenSlimeBoss;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public const float Phase2LifeRatio = 0.625f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]

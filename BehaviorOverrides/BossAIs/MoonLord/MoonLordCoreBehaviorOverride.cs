@@ -109,8 +109,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,

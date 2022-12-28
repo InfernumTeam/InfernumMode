@@ -30,8 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         #region Enumerations
         public enum BrimmyAttackType
         {

@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
     {
         public override int NPCOverrideType => NPCID.PlanterasTentacle;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Die if Plantera is absent or not using tentacles.

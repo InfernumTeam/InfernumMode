@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
     {
         public override int NPCOverrideType => ModContent.NPCType<HiveMindBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.8f;
 
         public const float Phase3LifeRatio = 0.2f;

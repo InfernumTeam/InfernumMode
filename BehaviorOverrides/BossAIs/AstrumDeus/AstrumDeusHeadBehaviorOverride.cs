@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum DeusAttackType
         {

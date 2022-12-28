@@ -13,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.GolemHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public static Dictionary<GolemAttackState, Color> AttackEyeColorPairs => new()
         {
             [GolemAttackState.SummonDelay] = Color.Transparent,

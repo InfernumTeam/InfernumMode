@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
     {
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeTail>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)

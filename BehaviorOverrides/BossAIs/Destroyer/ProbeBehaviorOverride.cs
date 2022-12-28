@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     {
         public override int NPCOverrideType => NPCID.Probe;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             if (npc.scale != 1f)

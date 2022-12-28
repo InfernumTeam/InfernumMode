@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
     {
         public override int NPCOverrideType => ModContent.NPCType<CrabShroom>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             Lighting.AddLight((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f), 0f, 0.2f, 0.4f);

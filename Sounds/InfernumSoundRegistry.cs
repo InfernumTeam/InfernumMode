@@ -15,7 +15,7 @@ namespace InfernumMode.Sounds
 
         #region Bosses and Enemies
 
-        public static readonly SoundStyle AEWThreatenRoar = new SoundStyle("InfernumMode/Sounds/Custom/AEW/AEWThreatenRoar") with { Volume = 1.3f };
+        public static readonly SoundStyle AEWThreatenRoar = new SoundStyle("InfernumMode/Sounds/Custom/AEW/AEWThreatenRoar") with { Volume = 1.64f };
 
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Sounds/Custom/ExoMechs/AresLaugh");
 

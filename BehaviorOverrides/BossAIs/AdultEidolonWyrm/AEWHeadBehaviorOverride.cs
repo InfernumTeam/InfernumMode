@@ -20,8 +20,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public enum AEWAttackType
         {
+            // Spawn animation states.
             SnatchTerminus,
-            ThreateninglyHoverNearPlayer
+            ThreateninglyHoverNearPlayer,
+
+            // Neutral attacks.
+            SplitFormCharges,
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmHead>();
@@ -91,6 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.ThreateninglyHoverNearPlayer:
                     DoBehavior_ThreateninglyHoverNearPlayer(npc, target, ref eyeGlowOpacity, ref attackTimer);
+                    break;
+                case AEWAttackType.SplitFormCharges:
+                    DoBehavior_SplitFormCharges(npc, target, ref attackTimer);
                     break;
             }
 
@@ -176,6 +183,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             eyeGlowOpacity = Utils.GetLerpValue(0f, eyeGlowFadeinTime, attackTimer, true);
         }
 
+        public static void DoBehavior_SplitFormCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            
+        }
+
         #endregion Specific Behaviors
 
         #region AI Utility Methods
@@ -214,6 +226,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (currentAttack == AEWAttackType.SnatchTerminus)
                 nextAttack = AEWAttackType.ThreateninglyHoverNearPlayer;
+            else
+            {
+                nextAttack = AEWAttackType.SplitFormCharges;
+            }
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

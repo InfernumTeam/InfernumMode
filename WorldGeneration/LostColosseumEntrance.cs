@@ -19,8 +19,8 @@ namespace InfernumMode.WorldGeneration
             while (CalamityUtils.ParanoidTileRetrieval(centerLeft.X, centerLeft.Y).HasTile)
                 centerLeft.X++;
 
-            bool _ = false;
-            PlaceSchematic<Action<Chest>>("LostColosseumEntrance", centerLeft, SchematicAnchor.CenterLeft, ref _);
+            bool _3 = false;
+            PlaceSchematic<Action<Chest>>("LostColosseumEntrance", centerLeft, SchematicAnchor.CenterLeft, ref _3);
         }
     }
 }

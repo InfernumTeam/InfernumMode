@@ -11,8 +11,10 @@ namespace InfernumMode.Systems
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {
             int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
+            if (floatingIslandIndex != -1)
+                tasks.Insert(++floatingIslandIndex, new PassLegacy("Lost Colosseum Entrance", LostColosseumEntrance.Generate));
+
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
-            
             if (finalCleanupIndex != -1)
             {
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Jungle Digout Area", JungleArena.Generate));

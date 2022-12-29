@@ -50,7 +50,7 @@ namespace InfernumMode.GlobalInstances
 
             bool isGSSItem = item.type == ModContent.ItemType<GrandScale>() || item.type == ModContent.ItemType<DuststormInABottle>() || item.type == ModContent.ItemType<SandSharknadoStaff>() ||
                 item.type == ModContent.ItemType<Sandslasher>() || item.type == ModContent.ItemType<SandstormGun>() || item.type == ModContent.ItemType<ShiftingSands>() || item.type == ModContent.ItemType<Tumbleweed>() ||
-                item.type == ModContent.ItemType<SandSharkToothNecklace>();
+                item.type == ModContent.ItemType<SandSharkToothNecklace>() || item.type == ModContent.ItemType<SandstormsCore>();
 
             if (isGSSItem)
                 item.rare = ItemRarityID.Cyan;
@@ -106,13 +106,13 @@ namespace InfernumMode.GlobalInstances
                     tooltip0.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
             }
 
-            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<SandstormsCore>())
+            if (item.type == ModContent.ItemType<SandstormsCore>())
             {
                 var tooltip0 = tooltips.FirstOrDefault(x => x.Name == "Tooltip0" && x.Mod == "Terraria");
                 if (tooltip0 != null)
                 {
-                    tooltip0.Text = "This item is not usable in an Infernum Mode world";
-                    tooltip0.OverrideColor = Color.Red;
+                    tooltip0.Text = "Opens a portal to the Lost Colosseum";
+                    tooltip0.OverrideColor = Color.Lerp(Color.Orange, Color.Yellow, 0.55f);
                 }
                 tooltips.RemoveAll(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
             }

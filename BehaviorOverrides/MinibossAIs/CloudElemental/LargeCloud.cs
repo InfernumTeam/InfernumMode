@@ -65,6 +65,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.03f, 0f, 1f);
 
             NPC parent = Main.npc[(int)ParentIndex];
+            float parentLifeRatio = (float)parent.life / parent.lifeMax;
+            if (parentLifeRatio <= CloudElementalBehaviorOverride.PhaseTwoLifeRatio)
+                HailDropRate = 3;
+
             Player player = Main.player[parent.target];
 
             // Constantly stick above the player.
@@ -76,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             {
                 Vector2 position = Projectile.Center + new Vector2(Main.rand.NextFloat(-CloudRadius * 0.9f, CloudRadius * 0.9f), Main.rand.NextFloat(-2, 2) - 20);
                 float hailSpeed = Main.rand.NextFloat(5, 6);
-                Utilities.NewProjectileBetter(position, Vector2.UnitY * hailSpeed, ModContent.ProjectileType<LargeHail>(), 60, 0f, Main.myPlayer, (float)LargeHail.HailType.Fall);
+                Utilities.NewProjectileBetter(position, (Vector2.UnitY * hailSpeed).RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)), ModContent.ProjectileType<LargeHail>(), 120, 0f, Main.myPlayer, (float)LargeHail.HailType.Fall);
             }
 
             // Sound stuff

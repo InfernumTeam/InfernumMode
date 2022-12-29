@@ -54,7 +54,13 @@ namespace InfernumMode
 
         public static readonly Asset<Texture2D> Stars = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars");
 
+        public static readonly Asset<Texture2D> StreakBubble = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak3");
+
+        public static readonly Asset<Texture2D> StreakBubbleGlow = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak4");
+
         public static readonly Asset<Texture2D> StreakFaded = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2");
+
+        public static readonly Asset<Texture2D> StreakFire = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/FireStreak");
 
         public static readonly Asset<Texture2D> StreakSolid = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak");
 

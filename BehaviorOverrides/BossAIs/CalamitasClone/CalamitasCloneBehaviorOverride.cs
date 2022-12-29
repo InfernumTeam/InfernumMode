@@ -482,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 19f;
-            float fireballSpeed = MathHelper.Lerp(12f, 15.6f, 1f - lifeRatio);
+            float fireballSpeed = MathHelper.Lerp(13.5f, 17.5f, 1f - lifeRatio);
 
             int fireballCount = 5;
             int fireballReleaseRate = 36;
@@ -598,7 +598,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
                     npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
-                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
+                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 80f))
                     {
                         SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;

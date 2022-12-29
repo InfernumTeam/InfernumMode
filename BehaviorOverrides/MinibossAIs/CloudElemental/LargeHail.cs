@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 int hailNumber = Main.rand.Next(5, 8);
                 int hailSpeed = 7;
                 for (int i = 0; i < hailNumber; i++)
-                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.UnitY.RotatedBy((MathHelper.TwoPi * i / hailNumber) + Main.rand.NextFloat(-0.3f, 0.3f)) * hailSpeed, ModContent.ProjectileType<SmallHail>(), 60, 0, Main.myPlayer);
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.UnitY.RotatedBy((MathHelper.TwoPi * i / hailNumber) + Main.rand.NextFloat(-0.3f, 0.3f)) * hailSpeed, ModContent.ProjectileType<SmallHail>(), 100, 0, Main.myPlayer);
             }
 
             for (int i = 0; i < 20; i++)

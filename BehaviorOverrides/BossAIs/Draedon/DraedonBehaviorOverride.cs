@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Stay within the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
-            npc.spriteDirection = (playerToFollow.Center.X < npc.Center.X).ToDirectionInt();
+            npc.spriteDirection = (playerToFollow.Center.X > npc.Center.X).ToDirectionInt();
 
             // Handle delays when re-appearing after being killed.
             if (killReappearDelay > 0f)

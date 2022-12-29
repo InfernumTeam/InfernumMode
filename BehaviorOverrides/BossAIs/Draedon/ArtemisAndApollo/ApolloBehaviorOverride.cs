@@ -629,7 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 int laserID = ModContent.ProjectileType<ArtemisBasicShotLaser>();
                 bool laserExists = Utilities.AnyProjectiles(laserID);
                 bool aboutToFire = attackTimer >= telegraphTime - 30f && artemisHasPerformedTelegraph == 0f;
-                float angularVelocity = 0.06f;
+                float angularVelocity = 0.04f;
                 float driftSpeed = 21f;
                 if (laserExists || aboutToFire)
                     angularVelocity *= ExoMechManagement.CurrentTwinsPhase >= 6 ? 0.36f : 0.1f;

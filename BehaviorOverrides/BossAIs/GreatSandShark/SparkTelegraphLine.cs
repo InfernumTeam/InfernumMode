@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public ref float Lifetime => ref Projectile.ai[1];
 
-        public ref float BombRadius => ref Projectile.localAI[0];
-
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");

@@ -33,9 +33,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.damage = 0;
-
-            // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.Opacity = head.Opacity;
+            npc.hide = npc.Opacity <= 0f;
 
             // Decide segment offset stuff.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;

@@ -1,6 +1,11 @@
+using CalamityMod;
+using CalamityMod.Dusts;
+using InfernumMode.BehaviorOverrides.AbyssAIs;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
@@ -11,6 +16,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             get => Projectile.ai[0] == 1f;
             set => Projectile.ai[0] = value.ToInt();
+        }
+
+        public bool HasCreatedIcicleBurstSpread
+        {
+            get => Projectile.ai[1] == 1f;
+            set => Projectile.ai[1] = value.ToInt();
         }
 
         public const int SegmentCount = 60;
@@ -37,6 +48,106 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             // Decide rotation.
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Emit particles.
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            if (Projectile.WithinRange(target.Center, 1000f) && Projectile.FinalExtraUpdate())
+                EmitParticles();
+
+            // Create a burst of icicles if the dark form collides with another split AEW.
+            if (DarkForm && !HasCreatedIcicleBurstSpread)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].type != Projectile.type)
+                        continue;
+
+                    if (!Main.projectile[i].active)
+                        continue;
+
+                    if (!Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox))
+                        continue;
+
+                    if (i == Projectile.whoAmI)
+                        continue;
+
+                    HasCreatedIcicleBurstSpread = true;
+                    Projectile.netUpdate = true;
+
+                    Main.projectile[i].ModProjectile<AEWSplitForm>().HasCreatedIcicleBurstSpread = true;
+                    Main.projectile[i].netUpdate = true;
+                }
+
+                if (HasCreatedIcicleBurstSpread)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 27; i++)
+                        {
+                            Vector2 icicleVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * 8.4f;
+                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f);
+                        }
+                        for (int i = 0; i < 14; i++)
+                        {
+                            Vector2 icicleVelocity = (MathHelper.TwoPi * i / 14f).ToRotationVector2() * 16f;
+                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f);
+                        }
+                    }
+
+                    Utilities.CreateShockwave(Projectile.Center);
+                }
+            }
+
+            // Fade away once the split versions have dissipated.
+            if (HasCreatedIcicleBurstSpread && Projectile.FinalExtraUpdate())
+            {
+                Projectile.Opacity -= 0.06f;
+                if (Projectile.Opacity <= 0f)
+                    Projectile.Kill();
+            }
+        }
+
+        public void EmitParticles()
+        {
+            Vector2 idealParticleVelocity = -Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(2f, 6f);
+
+            if (DarkForm)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust darkMatter = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 109, 0f, -3f, 0, default, 1.4f);
+                    darkMatter.noGravity = true;
+                    darkMatter.velocity = Vector2.Lerp(darkMatter.velocity, idealParticleVelocity, 0.55f);
+                    darkMatter.fadeIn = Main.rand.NextFloat(0.3f, 0.8f);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust light = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 267, 0f, -3f, 0, default, 1.3f);
+                    light.noGravity = true;
+                    light.velocity = Vector2.Lerp(light.velocity, idealParticleVelocity, 0.55f);
+                    light.fadeIn = Main.rand.NextFloat(0.4f, 0.85f);
+                    light.noLight = true;
+                    light.color = Color.Yellow;
+                    light.scale = 2f;
+                }
+
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust light = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(60f, 60f), ModContent.DustType<AuricBarDust>(), Main.rand.NextVector2Circular(2f, 2f));
+                    light.noGravity = true;
+                    light.alpha = 127;
+                    light.scale = 3f;
+                    light.fadeIn = 1.1f;
+                }
+            }
+        }
+
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return (DarkForm ? new Color(65, 41, 132, 100) : new Color(255, 178, 167, 0)) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -72,13 +183,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i < SegmentCount + 1; i++)
             {
                 Texture2D texture = decideSegmentTexture(i);
-                Color color = DarkForm ? new(103, 84, 164, 0) : new(244, 207, 112, 0);
+                Color color = (DarkForm ? new Color(103, 84, 164, 0) : new Color(244, 207, 112, 0)) * Projectile.Opacity;
                 Vector2 drawPosition = decideDrawPosition(i);
 
                 for (int j = 0; j < 3; j++)
                 {
-                    Vector2 drawOffset = Projectile.rotation.ToRotationVector2() * Projectile.scale * new Vector2(10f, 5f);
-                    Main.EntitySpriteDraw(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
+                    float offsetAngle = MathHelper.Lerp(-MathHelper.PiOver2, MathHelper.PiOver2, j / 2f);
+                    Vector2 drawOffset = (Projectile.rotation + offsetAngle).ToRotationVector2() * Projectile.scale * new Vector2(10f, 5f);
+                    ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
                 }
             }
 
@@ -87,7 +199,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 Texture2D texture = decideSegmentTexture(i);
                 Color color = Projectile.GetAlpha(Color.White);
-                Main.EntitySpriteDraw(texture, decideDrawPosition(i), null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
+                for (int j = 0; j < 2; j++)
+                    ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, decideDrawPosition(i), null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
             }
 
             return false;

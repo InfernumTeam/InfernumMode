@@ -1,9 +1,11 @@
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.BehaviorOverrides.AbyssAIs;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using InfernumMode.Systems;
+using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -24,6 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             SnatchTerminus,
             ThreateninglyHoverNearPlayer,
 
+            // Light attacks.
+            BurningGaze,
+
             // Neutral attacks.
             SplitFormCharges,
         }
@@ -39,6 +44,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Phase5LifeRatio
         };
 
+        // Projectile damage values.
+        public const int NormalShotDamage = 540;
+
+        public const int StrongerNormalShotDamage = 560;
+
+        public const int PowerfulShotDamage = 850;
+
         public const float Phase2LifeRatio = 0.8f;
 
         public const float Phase3LifeRatio = 0.6f;
@@ -53,9 +65,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
-
-            // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
@@ -88,6 +97,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // This is necessary to allow the boss effects buff to be shown.
             npc.Calamity().KillTime = 1;
 
+            // Why are you despawning?
+            npc.boss = true;
+            npc.timeLeft = 7200;
+
             switch ((AEWAttackType)attackType)
             {
                 case AEWAttackType.SnatchTerminus:
@@ -95,6 +108,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.ThreateninglyHoverNearPlayer:
                     DoBehavior_ThreateninglyHoverNearPlayer(npc, target, ref eyeGlowOpacity, ref attackTimer);
+                    break;
+                case AEWAttackType.BurningGaze:
+                    DoBehavior_BurningGaze(npc, target, ref attackTimer);
                     break;
                 case AEWAttackType.SplitFormCharges:
                     DoBehavior_SplitFormCharges(npc, target, ref attackTimer);
@@ -128,6 +144,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             float chargeSpeed = 41f;
             List<Projectile> terminusInstances = Utilities.AllProjectilesByID(ModContent.ProjectileType<TerminusAnimationProj>()).ToList();
 
+            // Fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+
             // Transition to the next attack if there are no more Terminus instances.
             if (terminusInstances.Count <= 0)
             {
@@ -153,6 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int roarDelay = 60;
             int eyeGlowFadeinTime = 105;
+            int attackTransitionDelay = 210;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, -360f);
             ref float hasReachedDestination = ref npc.Infernum().ExtraAI[0];
 
@@ -181,11 +201,94 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Make the eye glowmask gradually fade in.
             eyeGlowOpacity = Utils.GetLerpValue(0f, eyeGlowFadeinTime, attackTimer, true);
+
+            if (attackTimer >= roarDelay + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_BurningGaze(NPC npc, Player target, ref float attackTimer)
+        {
+            
         }
 
         public static void DoBehavior_SplitFormCharges(NPC npc, Player target, ref float attackTimer)
         {
-            
+            int swimTime = 105;
+            int telegraphTime = 42;
+            int chargeTime = 45;
+            int chargeCount = 5;
+            int attackCycleTime = telegraphTime + chargeTime;
+            int chargeCounter = (int)(attackTimer - swimTime) / attackCycleTime;
+            float attackCycleTimer = (attackTimer - swimTime) % attackCycleTime;
+            bool shouldStopAttacking = chargeCounter >= chargeCount && !Utilities.AnyProjectiles(ModContent.ProjectileType<AEWSplitForm>());
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+
+            // Don't let the attack cycle timer increment if still swimming.
+            if (attackTimer < swimTime)
+                attackCycleTimer = 0f;
+
+            // Swim away from the target. If they're close to the bottom of the abyss, swim up. Otherwise, swim down.
+            if (verticalSwimDirection == 0f)
+            {
+                verticalSwimDirection = 1f;
+                if (target.Center.Y >= CustomAbyss.AbyssBottom * 16f - 2400f)
+                    verticalSwimDirection = -1f;
+                
+                npc.netUpdate = true;
+            }
+            else if (!shouldStopAttacking)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * verticalSwimDirection * 105f, 0.1f);
+
+                // Fade out after enough time has passed, in anticipation of the attack.
+                npc.Opacity = Utils.GetLerpValue(swimTime - 1f, swimTime - 35f, attackTimer, true);
+            }
+
+            // Stay below the target once completely invisible.
+            if (npc.Opacity <= 0f)
+            {
+                npc.Center = target.Center + Vector2.UnitY * verticalSwimDirection * 1600f;
+                npc.velocity = -Vector2.UnitY * verticalSwimDirection * 23f;
+            }
+
+            // Fade back in if ready to transition to the next attack.
+            if (shouldStopAttacking)
+            {
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+                if (npc.Opacity >= 1f)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<EidolistIce>());
+                    SelectNextAttack(npc);
+                }
+            }
+
+            // Cast telegraph direction lines. Once they dissipate the split forms will appear and charge.
+            if (attackCycleTimer == 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item158, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int crossLineID = ModContent.ProjectileType<AEWTelegraphLine>();
+                    bool firstCrossIsDark = Main.rand.NextBool();
+                    float crossSpawnOffset = 2080f;
+                    bool flipHorizontalDirection = target.Center.X < Main.maxTilesX * 16f - 3000f;
+                    float directionX = flipHorizontalDirection.ToDirectionInt();
+                    switch (chargeCounter % 2)
+                    {
+                        // Plus-shaped cross.
+                        case 0:
+                            Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * directionX * crossSpawnOffset, -Vector2.UnitX * directionX, crossLineID, 0, 0f, -1, firstCrossIsDark.ToInt(), telegraphTime);
+                            Utilities.NewProjectileBetter(target.Center + Vector2.UnitY * crossSpawnOffset, -Vector2.UnitY, crossLineID, 0, 0f, -1, 1f - firstCrossIsDark.ToInt(), telegraphTime);
+                            break;
+
+                        // X-shaped cross.
+                        case 1:
+                            Utilities.NewProjectileBetter(target.Center + new Vector2(directionX, -1f) * crossSpawnOffset * 0.707f, new(-directionX, 1f), crossLineID, 0, 0f, -1, firstCrossIsDark.ToInt(), telegraphTime);
+                            Utilities.NewProjectileBetter(target.Center + new Vector2(directionX, 1f) * crossSpawnOffset * 0.707f, new(-directionX, -1f), crossLineID, 0, 0f, -1, 1f - firstCrossIsDark.ToInt(), telegraphTime);
+                            break;
+                    }
+                }
+            }
         }
 
         #endregion Specific Behaviors
@@ -226,10 +329,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (currentAttack == AEWAttackType.SnatchTerminus)
                 nextAttack = AEWAttackType.ThreateninglyHoverNearPlayer;
-            else
-            {
+            else if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
                 nextAttack = AEWAttackType.SplitFormCharges;
-            }
+            else if (currentAttack == AEWAttackType.SplitFormCharges)
+                nextAttack = AEWAttackType.BurningGaze;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Schematics;
 using CalamityMod.Walls;
 using Microsoft.Xna.Framework;
@@ -20,7 +21,7 @@ namespace InfernumMode.Systems
         {
             int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
             if (floatingIslandIndex != -1)
-                tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateUndergroundDesertArea));
+                tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateLostColosseumEntrance));
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
             if (finalCleanupIndex != -1)
             {
@@ -34,20 +35,16 @@ namespace InfernumMode.Systems
             }
         }
 
-        public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration config)
+        public static void GenerateLostColosseumEntrance(GenerationProgress progress, GameConfiguration config)
         {
-            Vector2 cutoutAreaCenter = WorldGen.UndergroundDesertLocation.Center.ToVector2();
-            cutoutAreaCenter.Y -= 100f;
+            Point centerLeft = WorldGen.UndergroundDesertLocation.Center;
+            centerLeft.Y -= 120;
 
-            for (int i = 0; i < 4; i++)
-            {
-                cutoutAreaCenter += WorldGen.genRand.NextVector2Circular(15f, 15f);
-                WorldUtils.Gen(cutoutAreaCenter.ToPoint(), new Shapes.Mound(75, 48), Actions.Chain(
-                    new Modifiers.Blotches(12),
-                    new Actions.ClearTile(),
-                    new Actions.PlaceWall(WallID.Sandstone)
-                    ));
-            }
+            while (CalamityUtils.ParanoidTileRetrieval(centerLeft.X, centerLeft.Y).HasTile)
+                centerLeft.X++;
+
+            bool _ = false;
+            PlaceSchematic<Action<Chest>>("LostColosseumEntrance", centerLeft, SchematicAnchor.CenterLeft, ref _);
         }
 
         public static void GenerateUndergroundJungleArea(GenerationProgress progress, GameConfiguration configuration)
@@ -96,7 +93,7 @@ namespace InfernumMode.Systems
                     break;
             }
 
-            int index = WorldGen.numDungeonPlatforms / 2;
+            int index = WorldGen.numDungeonPlatforms / 2 + 1;
             Point dungeonCenter = new(WorldGen.dungeonPlatformX[index], WorldGen.dungeonPlatformY[index]);
             WorldUtils.Gen(dungeonCenter, new Shapes.Rectangle(boxArea, boxArea), Actions.Chain(
                 new Actions.SetTile(dungeonTileID, true)));

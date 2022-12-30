@@ -49,9 +49,9 @@ namespace InfernumMode.WorldGeneration
                 cavePosition.X -= 4;
             }
 
-            bool _ = false;
+            bool _3 = false;
             fuck.X += 32;
-            PlaceSchematic<Action<Chest>>("LostColosseumEntrance", fuck, SchematicAnchor.Center, ref _);
+            PlaceSchematic<Action<Chest>>("LostColosseumEntrance", fuck, SchematicAnchor.Center, ref _3);
         }
     }
 }

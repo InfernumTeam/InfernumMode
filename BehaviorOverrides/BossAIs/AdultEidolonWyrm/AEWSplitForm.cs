@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 6;
             Projectile.timeLeft = Projectile.MaxUpdates * 240;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

@@ -1,6 +1,7 @@
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -56,6 +57,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             SegmentAI(npc);
             return false;
         }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
+            return false;
+        }
     }
 
     public class AEWBody2BehaviorOverride : NPCBehaviorOverride
@@ -67,6 +74,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             AEWBody1BehaviorOverride.SegmentAI(npc);
             return false;
         }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
+            return false;
+        }
     }
 
     public class AEWTailBehaviorOverride : NPCBehaviorOverride
@@ -76,6 +89,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreAI(NPC npc)
         {
             AEWBody1BehaviorOverride.SegmentAI(npc);
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
             return false;
         }
     }

@@ -17,6 +17,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             set => Projectile.ai[0] = value.ToInt();
         }
 
+        public bool CreateSplitAEW
+        {
+            get => Projectile.localAI[1] == 0f;
+            set => Projectile.localAI[1] = 1f - value.ToInt();
+        }
+
         public ref float Time => ref Projectile.localAI[0];
 
         public ref float Lifetime => ref Projectile.ai[1];
@@ -65,6 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void Kill(int timeLeft)
         {
+            if (!CreateSplitAEW)
+                return;
+
             // Play a roar before charging.
             if (DarkForm)
             {

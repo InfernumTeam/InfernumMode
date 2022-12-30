@@ -310,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
                     // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
-                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 30f)
+                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 42f)
                     {
                         attackTimer = 0f;
                         attackState = 1f;
@@ -332,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Do the charge.
                 case 1:
                     npc.damage = npc.defDamage;
-                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection.ToRotationVector2() * chargeSpeed, 0.125f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection.ToRotationVector2() * chargeSpeed, 0.09f);
                     if (attackTimer >= chargeTime)
                     {
                         attackState = 0f;

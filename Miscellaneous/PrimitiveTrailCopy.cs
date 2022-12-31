@@ -136,13 +136,41 @@ namespace InfernumMode
                     offset += OffsetFunction(completionRatio);
                 controlPoints.Add(originalPositions.ElementAt(i) + offset);
             }
-            BezierCurve bezierCurve = new(controlPoints.ToArray());
-            return controlPoints.Count <= 1 ? controlPoints : bezierCurve.GetPoints(totalTrailPoints);
+
+            if (controlPoints.Count <= 1)
+                return controlPoints;
+            
+            List<Vector2> points = new();
+
+            // Round up the trail point count to the nearest multiple of the position count, to ensure that interpolants work.
+            int splineIterations = (int)Math.Ceiling(totalTrailPoints / (double)controlPoints.Count);
+            totalTrailPoints = splineIterations * totalTrailPoints;
+
+            // The GetPoints method uses imprecise floating-point looping, which can result in inaccuracies with point generation.
+            // Instead, an integer-based loop is used to mitigate such problems.
+            for (int i = 1; i < controlPoints.Count - 2; i++)
+            {
+                for (int j = 0; j < splineIterations; j++)
+                {
+                    float splineInterpolant = j / (float)splineIterations;
+                    if (splineIterations <= 1f)
+                        splineInterpolant = 0.5f;
+
+                    points.Add(Vector2.CatmullRom(controlPoints[i - 1], controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], splineInterpolant));
+                }
+            }
+
+            // Manually insert the front and end points.
+            points.Insert(0, controlPoints.First());
+            points.Add(controlPoints.Last());
+
+            return points;
         }
 
         public VertexPosition2DColor[] GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
         {
             List<VertexPosition2DColor> vertices = new();
+
             for (int i = 0; i < trailPoints.Count - 1; i++)
             {
                 float completionRatio = i / (float)trailPoints.Count;

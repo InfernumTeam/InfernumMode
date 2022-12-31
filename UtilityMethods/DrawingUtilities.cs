@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using InfernumMode.Miscellaneous;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
@@ -7,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.Audio;
@@ -38,8 +40,8 @@ namespace InfernumMode
         /// <param name="spriteBatch">The sprite batch.</param>
         public static void EnterShaderRegion(this SpriteBatch spriteBatch)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace InfernumMode
             rasterizer.ScissorTestEnable = true;
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, newBlendState ?? BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, perspective);
+            spriteBatch.Begin(sortMode, newBlendState ?? BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, perspective);
             spriteBatch.GraphicsDevice.ScissorRectangle = cutoffRegion;
         }
 
@@ -155,6 +157,32 @@ namespace InfernumMode
                 }
                 burstSpeed += 3f;
             }
+        }
+        
+        public static List<Vector2> CorrectBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, IEnumerable<float> _ = null)
+        {
+            List<Vector2> controlPoints = new();
+            for (int i = 0; i < originalPositions.Count(); i++)
+            {
+                // Don't incorporate points that are zeroed out.
+                // They are almost certainly a result of incomplete oldPos arrays.
+                if (originalPositions.ElementAt(i) == Vector2.Zero)
+                    continue;
+                controlPoints.Add(originalPositions.ElementAt(i) + generalOffset);
+            }
+
+            if (controlPoints.Count <= 1)
+                return controlPoints;
+
+            List<Vector2> points = new();
+            BezierCurve bezierCurve = new(controlPoints.ToArray());
+
+            // The GetPoints method uses imprecise floating-point looping, which can result in inaccuracies with point generation.
+            // Instead, an integer-based loop is used to mitigate such problems.
+            for (int i = 0; i < totalTrailPoints; i++)
+                points.Add(bezierCurve.Evaluate(i / (float)(totalTrailPoints - 1f)));
+            
+            return points;
         }
 
         public static void CreateFireExplosion(Vector2 topLeft, Vector2 area, Vector2 force)
@@ -244,8 +272,7 @@ namespace InfernumMode
         /// <param name="drawCentered">If <b>false</b>, the afterimages will be centered on the projectile's position instead of its own center.</param>
         public static void DrawAfterimagesCentered(Projectile proj, Color lightColor, int mode, int typeOneIncrement = 1, Texture2D texture = null, bool drawCentered = true)
         {
-            if (texture is null)
-                texture = TextureAssets.Projectile[proj.type].Value;
+            texture ??= TextureAssets.Projectile[proj.type].Value;
 
             int frameHeight = texture.Height / Main.projFrames[proj.type];
             int frameY = frameHeight * proj.frame;

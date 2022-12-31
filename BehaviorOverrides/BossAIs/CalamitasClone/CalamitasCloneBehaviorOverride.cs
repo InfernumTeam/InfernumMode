@@ -802,6 +802,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
+            // Kill me.
+            npc.frameCounter += 0.15f;
+            npc.frameCounter %= Main.npcFrameCount[npc.type];
+            int frame = (int)npc.frameCounter;
+            npc.frame.Y = frame * npc.frame.Height;
+
             int afterimageCount = 7;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 origin = npc.frame.Size() * 0.5f;

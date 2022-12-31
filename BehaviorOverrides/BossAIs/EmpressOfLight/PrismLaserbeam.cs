@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -12,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
 	public class PrismLaserbeam : ModProjectile
     {
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
         public Projectile Prism
         {
             get
@@ -91,8 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
             GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;

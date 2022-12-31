@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
     public class AstralMissile : ModProjectile
     {
-        public PrimitiveTrail FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer = null;
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override bool PreDraw(ref Color lightColor)
         {
             // Initialize the flame trail drawer.
-            FlameTrailDrawer ??= new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+            FlameTrailDrawer ??= new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             Vector2 trailOffset = Projectile.Size * 0.5f;
             trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;

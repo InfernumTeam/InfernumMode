@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public class PrimeEyeLaserRay : BaseLaserbeamProjectile
     {
-        public PrimitiveTrail LaserDrawer
+        public PrimitiveTrailCopy LaserDrawer
         {
             get;
             set;
@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
                 return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
             for (int i = 0; i < baseDrawPoints.Length; i++)

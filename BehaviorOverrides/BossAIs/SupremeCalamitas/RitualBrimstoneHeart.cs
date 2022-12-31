@@ -1,7 +1,5 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -12,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class RitualBrimstoneHeart : ModProjectile
     {
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
 
         public const float LaserLength = 2700f;
 
@@ -65,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
             Vector2 overallOffset = -Main.screenPosition;
             Vector2[] basePoints = new Vector2[24];

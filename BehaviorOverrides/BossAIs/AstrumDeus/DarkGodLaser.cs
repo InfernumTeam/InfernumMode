@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             set => Projectile.ai[0] = value;
         }
 
-        public PrimitiveTrail LaserDrawer = null;
+        public PrimitiveTrailCopy LaserDrawer = null;
 
         public const int LaserLifetime = 300;
         public override float MaxScale => 1f;
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 return false;
 
             if (LaserDrawer is null)
-                LaserDrawer = new PrimitiveTrail(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["Infernum:ArtemisLaser"]);
+                LaserDrawer = new(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:ArtemisLaser"]);
 
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];

@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
     // Not going to use the primitive lighting projectile until the lag is fixed.
     public class CloudLightning : BaseLaserbeamProjectile
     {
-        public PrimitiveTrail LightningDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy LightningDrawer { get; private set; } = null;
 
         public const int TelegraphFadeTime = 15;
 
@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, GameShaders.Misc["Infernum:GenericLaserShader"]);
+            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:GenericLaserShader"]);
             Vector2 basePos = Projectile.Center - Main.screenPosition;
             // Telegraphs.
             if (Time <= TelegraphTotalTime)

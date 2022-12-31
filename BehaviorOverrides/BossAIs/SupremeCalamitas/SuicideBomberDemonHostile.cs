@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public Player Owner => Main.player[Projectile.owner];
 
-        public PrimitiveTrail FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer = null;
 
         public const int RiseTime = 45;
 
@@ -216,7 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Initialize the flame trail drawer.
             if (FlameTrailDrawer is null)
-                FlameTrailDrawer = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+                FlameTrailDrawer = new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);

@@ -10,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class PhotonRipperCrystal : ModProjectile
     {
-        public PrimitiveTrail TrailDrawer;
+        public PrimitiveTrailCopy TrailDrawer;
 
         public override void SetStaticDefaults()
         {
@@ -55,8 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (TrailDrawer is null)
-                TrailDrawer = new PrimitiveTrail(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
+            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
 
             GameShaders.Misc["CalamityMod:PrismaticStreak"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
 

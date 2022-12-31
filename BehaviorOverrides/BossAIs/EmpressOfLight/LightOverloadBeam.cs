@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class LightOverloadBeam : ModProjectile
     {
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
         public NPC Owner => Main.npc[(int)Projectile.ai[0]];
         public ref float LaserLength => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public override bool PreDraw(ref Color lightColor)
         {
             if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
             Vector2 overallOffset = -Main.screenPosition;
             Vector2[] basePoints = new Vector2[24];

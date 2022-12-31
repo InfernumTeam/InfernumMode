@@ -17,7 +17,7 @@ namespace InfernumMode.Projectiles.Melee
 {
     public class MyrindaelBonkProjectile : ModProjectile
     {
-        public PrimitiveTrail PierceAfterimageDrawer = null;
+        public PrimitiveTrailCopy PierceAfterimageDrawer = null;
 
         public Player Owner => Main.player[Projectile.owner];
 
@@ -135,7 +135,7 @@ namespace InfernumMode.Projectiles.Melee
             secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
 
             // Initialize the trail drawer.
-            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, GameShaders.Misc["CalamityMod:ExobladePierce"]);
+            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
 
             Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));

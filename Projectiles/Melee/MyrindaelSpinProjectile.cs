@@ -18,7 +18,7 @@ namespace InfernumMode.Projectiles.Melee
     {
         public float InitialDirection;
 
-        public PrimitiveTrail PierceAfterimageDrawer = null;
+        public PrimitiveTrailCopy PierceAfterimageDrawer = null;
 
         public float SpinCompletion => Utils.GetLerpValue(0f, Myrindael.SpinTime, Time, true);
 
@@ -189,7 +189,7 @@ namespace InfernumMode.Projectiles.Melee
             secondaryColor = Color.Lerp(Color.White, secondaryColor, Projectile.Opacity * 0.6f + 0.4f);
 
             // Initialize the trail drawer.
-            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, GameShaders.Misc["CalamityMod:ExobladePierce"]);
+            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
 
             Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));

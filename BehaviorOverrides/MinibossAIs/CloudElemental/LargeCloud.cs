@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 {
     public class LargeCloud : ModProjectile
     {
-        public PrimitiveTrail CloudDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy CloudDrawer { get; private set; } = null;
 
         public ref float Timer => ref Projectile.ai[0];
 
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            CloudDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, GameShaders.Misc["Infernum:CloudShader"]);
+            CloudDrawer ??= new(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:CloudShader"]);
             Asset<Texture2D> texture = TextureAssets.Projectile[Projectile.type];
 
             // Set the draw points for the trail using the radius.

@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.Polterghast;
-using CalamityMod.NPCs.Providence;
 using CalamityMod.World;
 using InfernumMode.Achievements;
 using InfernumMode.Biomes;
@@ -13,14 +12,12 @@ using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using InfernumMode.BossRush;
 
 namespace InfernumMode.GlobalInstances
 {

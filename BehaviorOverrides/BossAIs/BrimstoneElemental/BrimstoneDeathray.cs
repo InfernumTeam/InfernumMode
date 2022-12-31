@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
     public class BrimstoneDeathray : BaseLaserbeamProjectile
     {
-        public PrimitiveTrail LaserDrawer
+        public PrimitiveTrailCopy LaserDrawer
         {
             get;
             set;
@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
                 return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["Infernum:GenericLaserShader"]);
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:GenericLaserShader"]);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
             for (int i = 0; i < baseDrawPoints.Length; i++)

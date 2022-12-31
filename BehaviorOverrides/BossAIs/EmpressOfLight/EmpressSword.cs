@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -18,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public int SwordCount;
         public int TotalSwordsThatShouldAttack;
         public float TelegraphInterpolant;
-        public PrimitiveTrail TrailDrawer;
+        public PrimitiveTrailCopy TrailDrawer;
 
         public NPC Owner
         {
@@ -254,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = texture.Size() * 0.5f;
 
             // Initialize the telegraph drawer.
-            TrailDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
             // Prepare trail data.
             GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.2f);

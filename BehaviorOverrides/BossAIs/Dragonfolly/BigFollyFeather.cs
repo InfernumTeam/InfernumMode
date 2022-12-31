@@ -90,12 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Vector2 lightningVelocity = Projectile.SafeDirectionTo(target.Center) * 1.35f;
-            int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 250, 0f);
-            if (Main.projectile.IndexInRange(lightning))
-            {
-                Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-            }
+            Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 250, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
         }
     }
 }

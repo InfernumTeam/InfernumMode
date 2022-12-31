@@ -592,12 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Vector2 lightningSpawnPosition = npc.Center - Vector2.UnitY * 1300f + Main.rand.NextVector2Circular(30f, 30f);
                         if (lightningSpawnPosition.Y < 600f)
                             lightningSpawnPosition.Y = 600f;
-                        int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(1.7f, 2f), ModContent.ProjectileType<LightningStrike>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(lightning))
-                        {
-                            Main.projectile[lightning].ai[0] = MathHelper.PiOver2;
-                            Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                        }
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(1.7f, 2f), ModContent.ProjectileType<LightningStrike>(), 0, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
                     }
                 }
 

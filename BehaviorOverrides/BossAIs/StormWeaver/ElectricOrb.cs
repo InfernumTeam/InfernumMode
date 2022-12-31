@@ -47,13 +47,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             // Release a lightning bolt and circle of sparks.
             Vector2 lightningVelocity = Projectile.SafeDirectionTo(target.Center) * (Projectile.Distance(target.Center) / 450f + 6.1f);
-            int arc = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 280, 0f);
+            int arc = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 280, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
             if (Main.projectile.IndexInRange(arc))
-            {
-                Main.projectile[arc].ai[0] = lightningVelocity.ToRotation();
-                Main.projectile[arc].ai[1] = Main.rand.Next(100);
                 Main.projectile[arc].tileCollide = false;
-            }
 
             float initialSparkRotation = Main.rand.NextFloat(MathHelper.TwoPi);
             for (int i = 0; i < 6; i++)

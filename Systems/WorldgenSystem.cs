@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Schematics;
 using CalamityMod.Walls;
 using CalamityMod.World;

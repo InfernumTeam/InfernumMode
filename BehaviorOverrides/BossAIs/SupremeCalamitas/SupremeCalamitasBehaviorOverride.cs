@@ -335,8 +335,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
-            // Randomly create symbols far from the target.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(12))
+            // Randomly create symbols far from the target. This is affected by the graphics config.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(12) && !InfernumConfig.Instance.ReducedGraphicsConfig)
             {
                 Vector2 arenaEdge = npc.Infernum().Arena.Center.ToVector2();
                 Vector2 symbolSpawnPosition = arenaEdge + Main.rand.NextVector2Unit() * npc.Infernum().Arena.Size() * Main.rand.NextFloat(1.4f, 1.96f) * 0.5f;

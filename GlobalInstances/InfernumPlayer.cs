@@ -20,6 +20,7 @@ using Terraria.ID;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using InfernumMode.BossRush;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -188,7 +189,7 @@ namespace InfernumMode.GlobalInstances
                     }
                 }
             }
-        LeaveLoop:;       
+        LeaveLoop:;
         }
 
         public override void PostUpdate()
@@ -232,6 +233,12 @@ namespace InfernumMode.GlobalInstances
             // Reset the screen distortion shader for the next frame.
             if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
                 Filters.Scene["InfernumMode:ScreenDistortion"].Deactivate();
+
+            //// Check whether to change the boss rush list.
+            //if (WorldSaveSystem.InfernumMode && !BossRushChanges.InfernumChangesActive)
+            //    BossRushChanges.SwapToOrder(true);
+            //else if (!WorldSaveSystem.InfernumMode && BossRushChanges.InfernumChangesActive)
+            //    BossRushChanges.SwapToOrder(false);
             
             if (Main.myPlayer != Player.whoAmI || !ZoneProfaned || !Player.ZoneUnderworldHeight)
                 return;

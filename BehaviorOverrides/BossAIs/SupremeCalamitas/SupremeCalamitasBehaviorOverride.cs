@@ -379,9 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.dontTakeDamage = true;
                 npc.netUpdate = true;
             }
-
-            attackType = (int)SCalAttackType.DesperationPhase;
-
+            
             bool inBerserkPhase = berserkPhaseInterpolant > 0f;
             switch ((SCalAttackType)attackType)
             {

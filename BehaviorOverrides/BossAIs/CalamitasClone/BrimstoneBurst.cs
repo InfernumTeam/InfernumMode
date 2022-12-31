@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 13);
+            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 85);
             return false;
         }
     }

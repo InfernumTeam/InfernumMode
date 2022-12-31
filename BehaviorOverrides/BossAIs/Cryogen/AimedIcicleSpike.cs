@@ -72,15 +72,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            float alpha = 1 - (float)Projectile.alpha / 255;
+            
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
                 Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
-                Color afterimageColor = new Color(46, 188, 234, 0f) * 0.4f * alpha;
+                Color afterimageColor = new Color(46, 188, 234, 0f) * 0.4f * Projectile.Opacity;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White * alpha, Projectile.rotation, texture.Size() * 0.5f, 1, 0, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, 1, 0, 0);
             return false;
         }
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 60f;

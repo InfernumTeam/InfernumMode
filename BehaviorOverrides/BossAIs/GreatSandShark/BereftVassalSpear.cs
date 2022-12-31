@@ -61,12 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 lightningSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * 15f, -1000f);
-                    int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 210, 0f);
-                    if (Main.projectile.IndexInRange(lightning))
-                    {
-                        Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                        Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                    }
+                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 210, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
                 }
             }
 

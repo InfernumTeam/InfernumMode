@@ -421,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             {
                                 for (int i = 0; i < 8; i++)
                                 {
-                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(14f, 16f);
+                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(10.5f, 13f);
                                     Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, missileVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
                                 }
                             }
@@ -482,16 +482,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int missileDamage = 165;
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(0.72f) * Main.rand.NextFloat(13f, 14f);
+                    Vector2 missileShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(0.72f) * Main.rand.NextFloat(11f, 13f);
                     if (enraged)
                     {
                         missileDamage = (int)(missileDamage * EnragedDamageFactor);
-                        rocketShootVelocity *= 1.45f;
+                        missileShootVelocity *= 1.45f;
                     }
 
                     if (!targetAndCloseAndShouldNotFire)
-                        Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
-                    Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<MissileTelegraphLine>(), 0, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 3f, missileShootVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 3f, missileShootVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<MissileTelegraphLine>(), 0, 0f);
 
                     rocketShootTimer = 0f;
                     npc.netUpdate = true;

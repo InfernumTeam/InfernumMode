@@ -105,7 +105,7 @@ float4 Downsample(float2 coords : TEXCOORD0) : COLOR0
             result += tex2D(uImage0, coords + float2(sin(angle + 1.57), sin(angle)) * maxOffset * i / 12);
     }
     return result / 145;
-}
+}   
 
 float4 DownsampleFast(float2 coords : TEXCOORD0) : COLOR0
 {

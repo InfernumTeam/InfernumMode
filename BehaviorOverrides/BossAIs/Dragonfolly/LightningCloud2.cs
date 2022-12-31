@@ -66,12 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-7f, 7f);
                 spawnPosition.Y -= 2800f;
 
-                int lightning = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), 305, 0f);
-                if (Main.projectile.IndexInRange(lightning))
-                {
-                    Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                    Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                }
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), 305, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
             }
         }
     }

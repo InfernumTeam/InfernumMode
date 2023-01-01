@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D lightTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LaserCircle").Value;
+            Texture2D lightTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = portalTexture.Size() * 0.5f;
             Color baseColor = Color.White;

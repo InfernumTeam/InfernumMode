@@ -14,7 +14,7 @@ namespace InfernumMode.Miscellaneous
             if (WorldSaveSystem.WayfinderGateLocation == Vector2.Zero)
                 return;
 
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderGateMap").Value;
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/UI/WayfinderGateMap").Value;
             if (context.Draw(texture, WorldSaveSystem.WayfinderGateLocation / 16, Alignment.Bottom).IsMouseOver)
                 text = "Wayfinder Gate";
         }

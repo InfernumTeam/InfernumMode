@@ -644,7 +644,7 @@ namespace InfernumMode.ILEditingStuff
 
                 float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + (float)Math.Sin((double)BossRushSky.IdleTimer) * 0.01f;
                 Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter) * 0.097f + screenCenter - Main.screenPosition - Vector2.UnitY * 100f;
-                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/XerocEyeAlt").Value;
+                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Skies/XerocEyeAlt").Value;
                 Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);
                 
                 Main.spriteBatch.Draw(eyeTexture, drawPosition, null, baseColorDraw, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);

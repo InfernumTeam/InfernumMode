@@ -40,7 +40,7 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Orange.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Yellow.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value;
+            shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.CultistRayMap.Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());

@@ -1065,8 +1065,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         {
             Main.spriteBatch.EnterShaderRegion();
 
-            Texture2D blackHoleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WhiteHole").Value;
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D blackHoleTexture = InfernumTextureRegistry.WhiteHole.Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 diskScale = new(1.4f, dragPortalAppearInterpolant * 0.425f);
             Vector2 drawPosition = new Vector2(npc.Center.X, dragPortalCenterY) - Main.screenPosition;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(dragPortalAppearInterpolant);

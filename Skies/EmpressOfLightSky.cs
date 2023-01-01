@@ -144,8 +144,8 @@ namespace InfernumMode.Skies
             }
 
             // Draw all fairies.
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Fairy").Value;
-            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/FairyGlowmask").Value;
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Skies/Fairy").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/Skies/FairyGlowmask").Value;
             for (int i = 0; i < Fairies.Count; i++)
             {
                 Fairies[i].Update();
@@ -169,7 +169,7 @@ namespace InfernumMode.Skies
             }
 
             // Draw all lights.
-            texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/EmpressStar").Value;
+            texture = InfernumTextureRegistry.EmpressStar.Value;
 
             for (int i = 0; i < Lights.Count; i++)
             {

@@ -121,8 +121,8 @@ namespace InfernumMode.Projectiles.Wayfinder
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D bloomTexture = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
-            Texture2D outerTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderGateOuter").Value;
-            Texture2D innerTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderGateInner").Value;
+            Texture2D outerTexture = ModContent.Request<Texture2D>("InfernumMode/Projectiles/Wayfinder/WayfinderGateOuter").Value;
+            Texture2D innerTexture = ModContent.Request<Texture2D>("InfernumMode/Projectiles/Wayfinder/WayfinderGateInner").Value;
 
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
             Color outerColor = CalamityMod.CalamityUtils.ColorSwap(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 10f);

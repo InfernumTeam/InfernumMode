@@ -1792,7 +1792,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 // Draw the pupil gleam.
                 float pupilOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
                 Vector2 pupilPosition = npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * pupilOffset - Main.screenPosition;
-                Texture2D pupilStarTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                Texture2D pupilStarTexture = InfernumTextureRegistry.LargeStar.Value;
                 Vector2 pupilOrigin = pupilStarTexture.Size() * 0.5f;
 
                 float gleamFadeFactor = Utils.GetLerpValue(0f, 0.24f, telegraphInterpolant, true) * Utils.GetLerpValue(1f, 0.76f, telegraphInterpolant, true);
@@ -1803,8 +1803,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, Color.OrangeRed * gleamFadeFactor, npc.rotation + MathHelper.PiOver2, pupilOrigin, pupilScale, 0, 0f);
 
                 // Draw the telegraph line.
-
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 float telegraphWidth = telegraphInterpolant * 1.1f;
                 Color telegraphColor = Color.Orange * telegraphInterpolant * gleamFadeFactor;

@@ -150,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             Main.spriteBatch.EnterShaderRegion();

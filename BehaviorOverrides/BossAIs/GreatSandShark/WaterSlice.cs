@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             LightningDrawer ??= new(WidthFunction, ColorFunction, null, GameShaders.Misc["Infernum:RealityTear"]);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water"));
+            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Water);
             GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 54);
             return false;

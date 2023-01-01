@@ -111,7 +111,7 @@ namespace InfernumMode.Items
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
                 DrawData drawData = new(texture, position, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, true), drawColor * 0.1f, 0f, origin, scale, SpriteEffects.None, 0);
-                GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderLayer"));
+                GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
                 GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
 
                 drawData.Draw(spriteBatch);
@@ -142,7 +142,7 @@ namespace InfernumMode.Items
                 spriteBatch.EnterShaderRegion();
 
                 DrawData drawData = new(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, true), lightColor * 0.1f, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
-                GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderLayer"));
+                GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
                 GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
 
                 drawData.Draw(spriteBatch);

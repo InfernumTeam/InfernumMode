@@ -145,7 +145,7 @@ namespace InfernumMode.Skies
 
             Vector2 drawOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
             Rectangle rectangle = new(-1000, -1000, 4000, 4000);
-            Texture2D starTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+            Texture2D starTexture = InfernumTextureRegistry.Gleam.Value;
             for (int j = startingDrawIndex; j < endingDrawIndex; j++)
             {
                 // Draw less stars if the background is disabled, to prevent too much visual distraction.

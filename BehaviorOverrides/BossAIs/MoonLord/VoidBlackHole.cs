@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public ref float Timer => ref Projectile.ai[0];
         public ref float Owner => ref Projectile.ai[1];
         public Player Target => Main.player[Projectile.owner];
-        public override string Texture => "InfernumMode/ExtraTextures/WhiteHole";
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/WhiteHole";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Void");
 
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D blackHoleTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             Main.spriteBatch.EnterShaderRegion();

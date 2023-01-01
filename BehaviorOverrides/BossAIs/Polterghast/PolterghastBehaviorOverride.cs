@@ -1512,7 +1512,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
-                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PolterghastLayer"));
+                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/PolterghastLayer"));
                 GameShaders.Misc["Infernum:CircleCutout2"].Apply();
                 Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();

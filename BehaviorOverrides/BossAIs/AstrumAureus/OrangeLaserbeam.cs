@@ -28,8 +28,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Orange;
         public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/OrangeLaserbeamMid", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/OrangeLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/OrangeLaserbeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/OrangeLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Deathray");

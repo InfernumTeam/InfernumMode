@@ -30,6 +30,6 @@ namespace InfernumMode.Items
             Item.shoot = ModContent.ProjectileType<WaterglassTokenProjectile>();
         }
         
-        public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0;
+        public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0 && InfernumMode.CanUseCustomAIs;
     }
 }

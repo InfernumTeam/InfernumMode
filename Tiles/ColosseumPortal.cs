@@ -116,6 +116,13 @@ namespace InfernumMode.Tiles
                     SubworldSystem.Exit();
                 else
                 {
+                    // Don't allow the player to use the portal if Infernum is not active.
+                    if (!InfernumMode.CanUseCustomAIs)
+                    {
+                        CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
+                        return true;
+                    }
+
                     Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
                     SubworldSystem.Enter<LostColosseum>();
                 }

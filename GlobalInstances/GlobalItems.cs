@@ -84,10 +84,12 @@ namespace InfernumMode.GlobalInstances
                     tooltip1.Text = "Summons the Profaned Guardians when used in the profaned garden at the far right of the underworld";
 
                     tooltips.RemoveAt(tooltips.IndexOf(tooltip1) + 1);
+
+                    // Warn the player about not having a profaned garden if it hasn't been generated yet.
                     if (!WorldSaveSystem.HasGeneratedProfanedShrine)
                     {
                         TooltipLine warningTooltip = new(Mod, "Warning",
-                            "Your world does not currently have a garden. kill the Moon Lord again to generate it\n" +
+                            "Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it\n" +
                             "Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab");
                         warningTooltip.OverrideColor = Color.Orange;
                         tooltips.Insert(tooltips.IndexOf(tooltip1) + 1, warningTooltip);
@@ -114,8 +116,18 @@ namespace InfernumMode.GlobalInstances
                 var tooltip0 = tooltips.FirstOrDefault(x => x.Name == "Tooltip0" && x.Mod == "Terraria");
                 if (tooltip0 != null)
                 {
-                    tooltip0.Text = "Opens a portal to the Lost Colosseum";
-                    tooltip0.OverrideColor = Color.Lerp(Color.Orange, Color.Yellow, 0.55f);
+                    if (WorldSaveSystem.HasGeneratedColosseumEntrance || SubworldSystem.IsActive<LostColosseum>())
+                    {
+                        tooltip0.Text = "Opens a portal to the Lost Colosseum";
+                        tooltip0.OverrideColor = Color.Lerp(Color.Orange, Color.Yellow, 0.55f);
+                    }
+
+                    // Warn the player about not having a colosseum entrance if it hasn't been generated yet.
+                    else
+                    {
+                        tooltip0.Text = "Your world does not currently have a Lost Gateway. Kill the Lunatic Cultist again to generate it.";
+                        tooltip0.OverrideColor = Color.Orange;
+                    }
                 }
                 tooltips.RemoveAll(x => x.Name == "Tooltip1" && x.Mod == "Terraria");
             }

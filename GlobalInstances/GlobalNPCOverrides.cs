@@ -262,13 +262,25 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
+            if (!WeakReferenceSupport.InAnySubworld())
             {
-                Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
-                WorldgenSystem.GenerateProfanedArena(new(), new(new()));
-                WorldSaveSystem.HasGeneratedProfanedShrine = true;
+                // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
+                if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
+                {
+                    Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                    WorldgenSystem.GenerateProfanedArena(new(), new(new()));
+                    WorldSaveSystem.HasGeneratedProfanedShrine = true;
+                }
+
+                // Create a lost colosseum entrance after the cultistis killed if it doesn't exist yet, for backwards world compatibility reasons.
+                if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance)
+                {
+                    Utilities.DisplayText("Mysterious ruins have materialized in the heart of the desert!", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
+                    WorldgenSystem.GenerateLostColosseumEntrance(new(), new(new()));
+                    WorldSaveSystem.HasGeneratedColosseumEntrance = true;
+                }
             }
-            
+
             if (npc.type == ModContent.NPCType<Providence>())
             {
                 if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)

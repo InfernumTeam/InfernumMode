@@ -56,7 +56,7 @@ namespace InfernumMode.Subworlds
 
         public static Point PortalPosition => new(CaveWidth + 166, 160);
 
-        public static Point CampfirePosition => new(CaveWidth + 320, 165);
+        public static Point CampfirePosition => new(CaveWidth + 464, 165);
 
         public override int Width => SchematicWidth + CaveWidth - 64;
 

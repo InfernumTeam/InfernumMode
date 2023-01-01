@@ -1,14 +1,17 @@
-﻿using InfernumMode.Achievements.InfernumAchievements;
+﻿using CalamityMod.CalPlayer;
+using InfernumMode.Achievements;
+using InfernumMode.Achievements.InfernumAchievements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 using Terraria.ModLoader.IO;
 
-namespace InfernumMode.Achievements
+namespace InfernumMode.GlobalInstances.Players
 {
     public class AchievementPlayer : ModPlayer
     {
@@ -150,6 +153,12 @@ namespace InfernumMode.Achievements
                     achievement.Update();
             }
             AchivementsNotificationTracker.Update();
+        }
+
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            if (CalamityPlayer.areThereAnyDamnBosses)
+               ExtraUpdateAchievements(Player, new UpdateContext(-1, -1, SpecificUpdateContexts.PlayerDeath));
         }
         #endregion
 

@@ -215,9 +215,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Focus on the boss as it spawns.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(animationTime, animationTime - 8f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(animationTime, animationTime - 8f, attackTimer, true);
             }
 
             // Don't do damage during the spawn animation.

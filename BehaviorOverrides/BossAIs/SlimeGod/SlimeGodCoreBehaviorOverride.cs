@@ -164,9 +164,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             // Move the camera to the core and draw in slime from outside sources.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f) && attackTimer < 150f)
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 24f, attackTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(dustAnimationTime, dustAnimationTime - 10f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 24f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(dustAnimationTime, dustAnimationTime - 10f, attackTimer, true);
 
                 float offsetAngle = MathHelper.Lerp(0f, MathHelper.Pi, (float)Math.Pow(attackTimer / dustAnimationTime, 4.2));
                 float dustOffsetRadius = MathHelper.Lerp(24f, 300f, attackTimer / dustAnimationTime);

@@ -116,7 +116,7 @@ namespace InfernumMode.Tiles
                     SubworldSystem.Exit();
                 else
                 {
-                    Main.LocalPlayer.Infernum().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
+                    Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
                     SubworldSystem.Enter<LostColosseum>();
                 }
                 return true;

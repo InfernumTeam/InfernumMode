@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Items.Accessories.CherishedSealocket;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.GlobalInstances.Players
 {
     public class SealocketPlayer : ModPlayer
     {

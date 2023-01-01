@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Items.Accessories;
 using InfernumMode.Items.BossBags;
 using InfernumMode.Items.Weapons.Magic;
@@ -341,9 +342,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 return;
 
             // Have the camera zoom in on the vassal once the animation begins.
-            Target.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
-            Target.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(0f, -animationFocusReturnTime, AttackTimer - animationFocusTime - animationTime, true);
-            Target.Infernum().ScreenFocusPosition = NPC.Center;
+            Target.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
+            Target.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(0f, -animationFocusReturnTime, AttackTimer - animationFocusTime - animationTime, true);
+            Target.Infernum_Camera().ScreenFocusPosition = NPC.Center;
 
             // Spin the spear.
             int animationTimer = (int)(AttackTimer - animationFocusTime);
@@ -1533,10 +1534,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Have the camera zoom in on the vassal once the animation begins.
             float screenShakeInterpolant = Utils.GetLerpValue(0f, 60f, AttackTimer - jumpHoverTime - hornSoundTime, true) * Utils.GetLerpValue(-2f, -22f, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
-            Target.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
-            Target.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(-54f, -54f - animationFocusReturnTime, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
-            Target.Infernum().CurrentScreenShakePower = screenShakeInterpolant * 6f;
-            Target.Infernum().ScreenFocusPosition = NPC.Center;
+            Target.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(2f, animationFocusTime, AttackTimer, true);
+            Target.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(-54f, -54f - animationFocusReturnTime, AttackTimer - jumpHoverTime - hornSoundTime - gssSummonDelay, true);
+            Target.Infernum_Camera().CurrentScreenShakePower = screenShakeInterpolant * 6f;
+            Target.Infernum_Camera().ScreenFocusPosition = NPC.Center;
 
             // Create sand particles from the left.
             for (int i = 0; i < 6; i++)
@@ -1691,7 +1692,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         LostColosseum.HasBereftVassalBeenDefeated = true;
                         Main.BestiaryTracker.Kills.RegisterKill(NPC);
-                        Achievements.AchievementPlayer.ExtraUpdateAchievements(Main.LocalPlayer, new(NPC.whoAmI));
+                        AchievementPlayer.ExtraUpdateAchievements(Main.LocalPlayer, new(NPC.whoAmI));
                         NPC.active = false;
                     }
                 }

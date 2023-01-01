@@ -180,7 +180,8 @@ namespace InfernumMode.Subworlds
                 }
             }
 
-            Main.LocalPlayer.Infernum().ReturnToPositionBeforeSubworld = true;
+            // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
+            Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
         }
 
         public static void ManageSandstorm()

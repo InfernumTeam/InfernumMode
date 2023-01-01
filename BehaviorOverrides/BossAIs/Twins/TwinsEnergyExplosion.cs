@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
             Radius = MathHelper.Lerp(Radius, 3516f, 0.15f);
             Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));

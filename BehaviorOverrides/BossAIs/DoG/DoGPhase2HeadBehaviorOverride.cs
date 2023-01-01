@@ -8,6 +8,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Achievements;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Projectiles;
 using InfernumMode.Skies;
 using InfernumMode.Sounds;

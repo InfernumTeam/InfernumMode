@@ -10,6 +10,7 @@ using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles.Relics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -362,14 +363,14 @@ namespace InfernumMode.ILEditingStuff
 
             // Pop original value off.
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+            c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionNormal");
 
             if (!c.TryGotoNext(MoveType.After, x => x.MatchLdstr("UI.WorldDescriptionMaster")))
                 return;
 
             // Pop original value off.
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+            c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
         }
 
         public void Load() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;

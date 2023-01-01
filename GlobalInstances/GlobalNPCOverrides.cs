@@ -24,6 +24,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
@@ -292,7 +293,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.Infernum().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
+            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;

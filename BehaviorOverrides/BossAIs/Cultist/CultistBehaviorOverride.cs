@@ -271,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.netUpdate = true;
 
                 // Create a rumble effect to go with the summoning of the pillars.
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = 15f;
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
                 return;
             }
             

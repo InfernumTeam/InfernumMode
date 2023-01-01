@@ -317,7 +317,7 @@ namespace InfernumMode.Projectiles.Wayfinder
                     WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);
                 }
 
-                Owner.Infernum().CurrentScreenShakePower = 5;
+                Owner.Infernum_Camera().CurrentScreenShakePower = 5;
                 for (int i = 0; i < 60; i++)
                 {
                     CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));

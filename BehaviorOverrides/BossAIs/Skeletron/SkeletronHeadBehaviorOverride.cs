@@ -195,9 +195,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Focus on the boss as it spawns.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(200f, 192f, animationTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(200f, 192f, animationTimer, true);
             }
 
             npc.Opacity = Utils.GetLerpValue(0f, 45f, animationTimer, true);
@@ -735,9 +735,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Make the camera focus on Skeletron as he dies.
             if (groundHitTimer >= 1f)
             {
-                Main.LocalPlayer.Infernum().ScreenFocusHoldInPlaceTime = 30;
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, groundHitTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusHoldInPlaceTime = 30;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, groundHitTimer, true);
 
                 // Jitter in pain.
                 if (groundHitTimer >= 60f)

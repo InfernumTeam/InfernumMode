@@ -11,9 +11,12 @@ using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Projectiles;
+using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
+using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -168,8 +171,9 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedShard>() || item.type == ModContent.ItemType<ProfanedCore>() || item.type == ModContent.ItemType<SandstormsCore>()))
                 return false;
 
-            bool illegalItemForProvArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb;
-            if (illegalItemForProvArena && player.Infernum().InProfanedArenaAntiCheeseZone)
+            bool inArena = player.Infernum_Biome().InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>();
+            bool illegalItemForArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb;
+            if (illegalItemForArena && inArena)
                 return false;
 
             return base.CanUseItem(item, player);

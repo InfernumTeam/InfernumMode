@@ -238,9 +238,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Make the camera focus on King Slime.
             if (Main.LocalPlayer.WithinRange(npc.Center, 3700f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(210f, 202f, deathTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, deathTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(210f, 202f, deathTimer, true);
             }
 
             // Perform a large jump
@@ -252,7 +252,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     SoundEngine.PlaySound(InfernumSoundRegistry.KingSlimeDeathAnimation, npc.position);
 
                 float interpolant = (deathTimer - 70) / (deathAnimationLength - 70);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(0, 13, interpolant);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(0, 13, interpolant);
                 for (int i = 0; i < MathHelper.Lerp(2, 4, interpolant); i++)
                 {
                     Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), 4);

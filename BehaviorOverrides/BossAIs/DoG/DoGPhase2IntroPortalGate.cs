@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Projectile.localAI[1] = 1f;
             }
 
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)

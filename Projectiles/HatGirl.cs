@@ -1,4 +1,5 @@
 ﻿using InfernumMode.GlobalInstances;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
@@ -83,7 +84,7 @@ namespace InfernumMode.Projectiles
                 hatGirl.netUpdate = true;
             }
 
-            owner.Infernum().HatGirlShouldGiveAdvice = true;
+            owner.Infernum_HatGirl().HatGirlShouldGiveAdvice = true;
             HatGirlTipsManager.PotentialTipToUse = text;
             HatGirlTipsManager.SaidText.Add(text);
         }
@@ -96,7 +97,7 @@ namespace InfernumMode.Projectiles
                 Projectile.active = false;
                 return;
             }
-            InfernumPlayer modPlayer = Owner.Infernum();
+            HatGirlTipsPlayer modPlayer = Owner.Infernum_HatGirl();
             if (Owner.dead)
             {
                 modPlayer.HatGirl = false;
@@ -128,7 +129,7 @@ namespace InfernumMode.Projectiles
                         Main.combatText[textIndex].lifeTime *= 3;
                     }
 
-                    Owner.Infernum().HatGirlShouldGiveAdvice = false;
+                    Owner.Infernum_HatGirl().HatGirlShouldGiveAdvice = false;
                     TalkAnimationCounter = 1f;
                     
                     HatGirlTipsManager.SaidText.Add(tipText);

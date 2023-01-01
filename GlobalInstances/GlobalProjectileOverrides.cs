@@ -5,6 +5,7 @@ using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -224,6 +225,7 @@ namespace InfernumMode.GlobalInstances
                     Player p = Main.player[i];
                     if (p is null || !p.active)
                         continue;
+                    
                     int rock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
                     if (Main.netMode == NetmodeID.Server)
                     {

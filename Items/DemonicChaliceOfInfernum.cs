@@ -4,7 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode
+namespace InfernumMode.Items
 {
     public class DemonicChaliceOfInfernum : ModItem
     {

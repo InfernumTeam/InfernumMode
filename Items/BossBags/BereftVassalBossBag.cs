@@ -67,7 +67,7 @@ namespace InfernumMode.Items.BossBags
 
             itemLoot.AddRevBagAccessories();
 
-            itemLoot.Add(ModContent.ItemType<ThankYouPainting>(), 100);
+            itemLoot.Add(ModContent.ItemType<ThankYouPainting>(), ThankYouPainting.DropInt);
         }
     }
 }

@@ -12,6 +12,7 @@ using InfernumMode.Achievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Items;
 using InfernumMode.Projectiles;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;

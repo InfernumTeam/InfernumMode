@@ -31,6 +31,8 @@ namespace InfernumMode.Skies
         private float intensity = 0f;
         private int HiveIndex = -1;
 
+        public static readonly Color SkyColor = new(52, 42, 82);
+
         public override void Update(GameTime gameTime)
         {
             if (isActive && intensity < 1f)
@@ -87,7 +89,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float intensity = this.GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), InfernumMode.HiveMindSkyColor * intensity);
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), SkyColor * intensity);
             }
         }
 

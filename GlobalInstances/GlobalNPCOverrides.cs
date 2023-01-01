@@ -326,11 +326,9 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            // Create Cryogens custom on hit effects.
+            // Make Cryogen release ice particles when hit.
             if (npc.type == ModContent.NPCType<CryogenNPC>() && OverridingListManager.Registered(npc.type))
-            {
                 CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, crit);
-            }
         }
 
         public override void HitEffect(NPC npc, int hitDirection, double damage)

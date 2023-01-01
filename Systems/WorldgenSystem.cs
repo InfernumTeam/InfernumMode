@@ -50,7 +50,7 @@ namespace InfernumMode.Systems
             // This part creates a lumpy, circular layer of sandstone around the entrance.
             for (int i = 0; i < 5; i++)
             {
-                Point lumpCenter = (fuck.ToVector2() + Main.rand.NextVector2Circular(15f, 15f)).ToPoint();
+                Point lumpCenter = (fuck.ToVector2() + WorldGen.genRand.NextVector2Circular(15f, 15f)).ToPoint();
                 WorldUtils.Gen(lumpCenter, new Shapes.Circle(88, 65), Actions.Chain(new GenAction[]
                 {
                     new Modifiers.RadialDither(82f, 88f),

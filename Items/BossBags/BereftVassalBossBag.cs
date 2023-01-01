@@ -60,6 +60,7 @@ namespace InfernumMode.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ModContent.ItemType<CherishedSealocket>());
+            itemLoot.Add(ModContent.ItemType<WaterglassToken>());
 
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
             itemLoot.Add(DropHelper.CalamityStyle(DropHelper.BagWeaponDropRateFraction, ModContent.ItemType<Myrindael>(), ModContent.ItemType<TheGlassmaker>(), ModContent.ItemType<AridBattlecry>(), ModContent.ItemType<WanderersShell>()));

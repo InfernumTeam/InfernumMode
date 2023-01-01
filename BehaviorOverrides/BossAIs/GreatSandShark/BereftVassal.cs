@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Particles;
 using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Items;
 using InfernumMode.Items.Accessories;
 using InfernumMode.Items.BossBags;
 using InfernumMode.Items.Weapons.Magic;
@@ -1817,6 +1818,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<WanderersShell>()
             };
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
+            normalOnly.Add(ModContent.ItemType<WaterglassToken>());
             normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
         }
 

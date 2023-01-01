@@ -15,8 +15,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     public class TwinsEnergyExplosion : ModProjectile
     {
         public ref float OwnerType => ref Projectile.ai[0];
+
         public ref float Radius => ref Projectile.ai[1];
+
         public const int Lifetime = 80;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public override void SetStaticDefaults()
         {

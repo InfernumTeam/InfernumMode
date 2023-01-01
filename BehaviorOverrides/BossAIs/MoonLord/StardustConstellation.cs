@@ -14,7 +14,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class StardustConstellation : ModProjectile
     {
         public ref float Index => ref Projectile.ai[0];
+
         public ref float Time => ref Projectile.localAI[1];
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/LaserCircle";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Star");
 
         public override void SetDefaults()

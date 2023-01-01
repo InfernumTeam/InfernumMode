@@ -10,7 +10,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPulseBlast : ModProjectile
     {
-        public bool ShouldExplodeDiagonally => Projectile.ai[0] == 1f;
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/BigGreyscaleCircle";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exopulse Energy Burst");

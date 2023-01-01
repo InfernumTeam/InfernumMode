@@ -7,6 +7,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     public class HostilePlagueSeeker : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        // TODO -- This projectile needs an actual texture. Hostile dust puffs are not OK.
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Seeker");
 
         public override void SetDefaults()
@@ -31,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 }
             }
 
-            // If this projectile is not close to death, home in.
+            // If not close to death, home in on the closest player.
             if (Time > 55f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

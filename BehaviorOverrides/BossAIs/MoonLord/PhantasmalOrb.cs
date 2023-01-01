@@ -15,6 +15,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             get => Projectile.ai[1] == 0f;
             set => Projectile.ai[1] = 1 - value.ToInt();
         }
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Phantasmal Orb");
@@ -48,7 +51,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, -orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
             }
         }
-
 
         public override bool PreDraw(ref Color lightColor)
         {

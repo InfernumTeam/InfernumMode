@@ -22,8 +22,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public const int LaserCount = 6;
 
         public ref float Timer => ref Projectile.ai[0];
+
         public ref float Owner => ref Projectile.ai[1];
+
         public Player Target => Main.player[Projectile.owner];
+
         public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/WhiteHole";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Black Hole");

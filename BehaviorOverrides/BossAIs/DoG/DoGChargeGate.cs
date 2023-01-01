@@ -36,6 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float TelegraphWidth = 6400f;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()

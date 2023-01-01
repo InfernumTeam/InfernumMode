@@ -8,6 +8,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
     public class CursedFlameBurstTelegraph : ModProjectile
     {
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");

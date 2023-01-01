@@ -18,6 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int Phase2AnimationTime = 280;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Portal");

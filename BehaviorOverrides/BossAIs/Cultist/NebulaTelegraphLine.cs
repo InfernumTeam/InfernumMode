@@ -11,7 +11,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public ref float Time => ref Projectile.ai[0];
 
         public ref float Lifetime => ref Projectile.ai[1];
-        
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()

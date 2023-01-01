@@ -14,6 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
     public class PlasmaGas : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/NebulaGas1";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma");
 
         public override void SetDefaults()

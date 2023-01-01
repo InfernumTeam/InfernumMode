@@ -11,8 +11,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 	public class ShimmeringLightWave : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 80;
+
         public override float MaxRadius => 1000f;
+
         public override float RadiusExpandRateInterpolant => 0.15f;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(1f, 5f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));

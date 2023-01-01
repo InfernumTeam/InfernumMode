@@ -12,6 +12,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public Vector2[] TelegraphPoints;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Energy Shard");
@@ -46,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 float opacity = Utils.GetLerpValue(0f, 0.15f, completionRatio, true);
                 return Projectile.GetAlpha(Color.White) * opacity;
             });
-            TelegraphDrawer.Draw(TelegraphPoints, -Main.screenPosition, 48);
+            TelegraphDrawer.Draw(TelegraphPoints, -Main.screenPosition, 112);
             return false;
         }
     }

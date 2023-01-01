@@ -9,9 +9,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
     public class ProvidenceWave : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 90;
+
         public override float MaxRadius => 3000f;
+
         public override float RadiusExpandRateInterpolant => 0.07f;
-        public override float Opacity => 0.50f;
+
+        public override float Opacity => 0.5f;
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {

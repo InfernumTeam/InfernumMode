@@ -31,6 +31,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const int LaserReleaseDelay = 125;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Light Orb");

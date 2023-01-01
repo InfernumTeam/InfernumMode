@@ -17,9 +17,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ExolaserBomb : ModProjectile
     {
         public int GrowTime;
+
         public PrimitiveTrailCopy FireDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float Radius => ref Projectile.ai[1];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Bomb");
 
         public override void SetDefaults()

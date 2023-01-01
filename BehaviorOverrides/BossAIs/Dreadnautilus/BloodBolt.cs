@@ -10,6 +10,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 {
     public class BloodBolt : ModProjectile
     {
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blood Bolt");

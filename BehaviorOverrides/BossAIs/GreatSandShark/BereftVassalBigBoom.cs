@@ -11,6 +11,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override float RadiusExpandRateInterpolant => 0.15f;
 
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => 4f;
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)

@@ -25,7 +25,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             set => Projectile.ai[1] = value;
         }
         public bool ShouldDeleteProjectiles => Projectile.localAI[1] != 0f;
+
         public const int Lifetime = 120;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public static readonly int[] YharonProjectiles = new int[]
         {

@@ -17,7 +17,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public ref float Time => ref Projectile.ai[0];
         
         public ref float Radius => ref Projectile.ai[1];
-        
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Demonic Explosion");
 
         public override void SetDefaults()

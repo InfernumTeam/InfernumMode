@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static void DoEyeDrawing(NPC npc)
         {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemEyeGlow").Value;
+            Texture2D texture = InfernumTextureRegistry.Gleam.Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, npc.ai[1] / 240f);
             float rotation2 = MathHelper.Lerp(MathHelper.TwoPi, 0f, npc.ai[1] / 240f);

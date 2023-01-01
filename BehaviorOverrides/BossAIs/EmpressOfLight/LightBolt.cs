@@ -22,6 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
 
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/LaserCircle";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Light Bolt");

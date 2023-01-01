@@ -11,8 +11,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
     public class AcidFountainBubble : ModProjectile
     {
         public PrimitiveTrailCopy WaterDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public const float Radius = 24f;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
 
         public override void SetDefaults()

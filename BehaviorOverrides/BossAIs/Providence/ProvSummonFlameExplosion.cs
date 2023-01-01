@@ -8,7 +8,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
     public class ProvSummonFlameExplosion : ModProjectile
     {
-        public override string Texture => "InfernumMode/BehaviorOverrides/BossAIs/Yharon/YharonFlameExplosion";
+        public override string Texture => "CalamityMod/Skies/XerocLight";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperthermal Explosion");
 

@@ -1,9 +1,6 @@
-﻿using InfernumMode.GlobalInstances.Players;
-using InfernumMode.Subworlds;
-using InfernumMode.Systems;
+﻿using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
-using System;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ModLoader;

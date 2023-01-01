@@ -1,5 +1,4 @@
 using CalamityMod.Sounds;
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;

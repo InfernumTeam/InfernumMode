@@ -9,7 +9,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
-using InfernumMode.GlobalInstances;
 using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;

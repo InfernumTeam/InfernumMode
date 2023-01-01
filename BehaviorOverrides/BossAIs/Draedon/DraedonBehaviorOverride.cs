@@ -6,7 +6,6 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
-using InfernumMode.Achievements;
 using InfernumMode.GlobalInstances.Players;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;

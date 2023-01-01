@@ -1,7 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
-using InfernumMode.ILEditingStuff;
-using InfernumMode.Particles;
+﻿using InfernumMode.ILEditingStuff;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;

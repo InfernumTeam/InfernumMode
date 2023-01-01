@@ -14,7 +14,6 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
-using InfernumMode.Achievements;
 using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;

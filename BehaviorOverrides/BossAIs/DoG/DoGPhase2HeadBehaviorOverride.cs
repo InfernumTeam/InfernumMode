@@ -6,7 +6,6 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.Achievements;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Projectiles;

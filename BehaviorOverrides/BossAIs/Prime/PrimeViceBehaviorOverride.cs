@@ -1,6 +1,5 @@
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;

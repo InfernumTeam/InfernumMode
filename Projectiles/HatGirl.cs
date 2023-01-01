@@ -1,5 +1,4 @@
-﻿using InfernumMode.GlobalInstances;
-using InfernumMode.GlobalInstances.Players;
+﻿using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;

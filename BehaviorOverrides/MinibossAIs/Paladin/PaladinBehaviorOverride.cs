@@ -1,9 +1,3 @@
-using CalamityMod;
-using InfernumMode.OverridingSystem;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Paladin
 {
     /*

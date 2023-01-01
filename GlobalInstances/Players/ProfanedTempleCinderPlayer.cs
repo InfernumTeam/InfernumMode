@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.CalPlayer;
 using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;

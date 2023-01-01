@@ -22,7 +22,6 @@ using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using InfernumMode.Achievements;
 using InfernumMode.GlobalInstances.Players;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence

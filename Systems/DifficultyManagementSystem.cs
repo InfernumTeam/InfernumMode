@@ -37,7 +37,7 @@ namespace InfernumMode.Systems
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
             {
                 Utilities.DisplayText("Infernum is not allowed in Master Mode, For the Worthy, or Eternity Mode.", Color.Red);
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                if (Main.netMode == NetmodeID.Server)
                     NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
                 WorldSaveSystem.InfernumMode = false;
             }

@@ -8,8 +8,6 @@ namespace InfernumMode
 {
     public static class InfernumTextureRegistry
     {
-        public static readonly Asset<Texture2D> AEWTailShield = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/AEWTailShield");
-
         public static readonly Asset<Texture2D> BinaryLine = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BinaryLine");
 
         public static readonly Asset<Texture2D> BloomLine = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine");

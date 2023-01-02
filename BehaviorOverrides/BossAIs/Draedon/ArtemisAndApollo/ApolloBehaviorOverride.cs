@@ -510,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int totalLaserBurstCount = 4;
             float apolloChargeSpeed = 32f;
             float apolloChargeSpinSpeed = 0.018f;
-            float plasmaBlastShootSpeed = 11f;
+            float plasmaBlastShootSpeed = 16f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 3)
             {
@@ -533,9 +533,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 apolloChargeRate -= 2;
                 apolloChargeSpeed += 3f;
             }
+            if (enrageTimer > 0f)
+            {
+                apolloChargeRate = 28;
+                apolloChargeSpeed = 72f;
+            }
 
             int laserbeamAttackCycleTime = ArtemisBasicShotLaser.Lifetime / 5 + delayBetweenLaserbeams;
-            Vector2 artemisAimDestination = target.Center + target.velocity * Vector2.UnitX * 4.25f;
+            Vector2 artemisAimDestination = target.Center;
             ref float artemisGleamTelegraphInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float artemisLaserTimer = ref npc.Infernum().ExtraAI[1];
             ref float artemisLaserCounter = ref npc.Infernum().ExtraAI[2];
@@ -547,6 +552,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (npc.type == ModContent.NPCType<Apollo>())
             {
+                // Do damage.
+                npc.damage = npc.defDamage;
+
                 float wrappedAttackTimer = attackTimer % apolloChargeRate;
                 Vector2 directionToTarget = npc.SafeDirectionTo(target.Center);
                 if (wrappedAttackTimer == 1f)
@@ -629,10 +637,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 int laserID = ModContent.ProjectileType<ArtemisBasicShotLaser>();
                 bool laserExists = Utilities.AnyProjectiles(laserID);
                 bool aboutToFire = attackTimer >= telegraphTime - 30f && artemisHasPerformedTelegraph == 0f;
-                float angularVelocity = 0.04f;
+                float angularVelocity = 0.052f;
                 float driftSpeed = 21f;
                 if (laserExists || aboutToFire)
                     angularVelocity *= ExoMechManagement.CurrentTwinsPhase >= 6 ? 0.36f : 0.1f;
+                if (enrageTimer > 0f)
+                {
+                    angularVelocity *= 3f;
+                    driftSpeed *= 2f;
+                }
 
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center - Vector2.UnitY * 350f) * driftSpeed, 0.02f);
                 if (angularVelocity > 0f)
@@ -681,6 +694,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.netUpdate = true;
                 }
             }
+
+            // Decide frames.
+            npc.frameCounter++;
+            frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+            if (ExoMechManagement.ExoTwinsAreInSecondPhase && frame <= 30f)
+                frame += 60f;
         }
 
         public static void DoBehavior_FireCharge(NPC npc, Player target, float hoverSide, float enrageTimer, ref float frame, ref float attackTimer)

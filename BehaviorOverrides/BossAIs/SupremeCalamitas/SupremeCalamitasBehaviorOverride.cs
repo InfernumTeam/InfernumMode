@@ -2136,7 +2136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         gigablastShootCounter++;
 
-                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 4f;
+                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
                         if (gigablastReleaseCountdown <= 44f)
                             gigablastReleaseCountdown = 44f;
 

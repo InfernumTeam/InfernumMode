@@ -219,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             if (LimbDrawer is null)
-                LimbDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:PolterghastEctoplasm"]);
+                LimbDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.PolterghastEctoplasmVertexShader);
 
             if (Polterghast.ai[2] >= 54f)
                 return;
@@ -227,7 +227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Limbs is null)
                 return;
 
-            GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+            InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
@@ -246,8 +246,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 for (int j = 4; j >= 0; j--)
                 {
-                    GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseOpacity((float)Math.Pow(MathHelper.Lerp(0.9f, 0.05f, j / 4f), 4D));
-                    GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseSaturation(i);
+                    InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.UseOpacity((float)Math.Pow(MathHelper.Lerp(0.9f, 0.05f, j / 4f), 4D));
+                    InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.UseSaturation(i);
 
                     if (j > 0 && NPC.velocity == Vector2.Zero)
                         continue;

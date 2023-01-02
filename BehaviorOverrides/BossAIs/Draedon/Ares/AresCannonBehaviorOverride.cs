@@ -217,7 +217,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
                     completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+                    null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
             }
             
             // Draw the back flames if Ares is dashing.

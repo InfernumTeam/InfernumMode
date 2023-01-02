@@ -11,7 +11,7 @@ using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 
-namespace InfernumMode.Effects
+namespace InfernumMode
 {
     public static class InfernumEffectsRegistry
     {

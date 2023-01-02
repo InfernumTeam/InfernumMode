@@ -140,7 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override bool PreDraw(ref Color lightColor)
         {
             if (OrbDrawer is null)
-                OrbDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
+                OrbDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
             List<Vector2> drawPoints = new();
 

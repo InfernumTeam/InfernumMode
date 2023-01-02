@@ -253,11 +253,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = texture.Size() * 0.5f;
 
             // Initialize the telegraph drawer.
-            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             // Prepare trail data.
-            GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.2f);
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.2f);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             // Draw a telegraph line if necessary.

@@ -86,10 +86,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
+                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Stars);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
 
             Projectile.localAI[0] = 0f;
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);

@@ -96,14 +96,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:ProviLaserShader"]);
+                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.ProviLaserVertexShader);
 
             Color middleColor = Color.Lerp(Color.White, Color.Orange, 0.6f);
             Color middleColor2 = Color.Lerp(Color.Red, Color.DarkRed, 0.5f);
             Color finalColor = Color.Lerp(middleColor, middleColor2,  Time / 120);
 
-            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(finalColor);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            InfernumEffectsRegistry.ProviLaserVertexShader.UseColor(finalColor);
+            InfernumEffectsRegistry.ProviLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

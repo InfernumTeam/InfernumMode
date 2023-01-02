@@ -82,9 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
             Main.spriteBatch.EnterShaderRegion();
 
-            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
-            GameShaders.Misc["Infernum:CircleCutout"].Shader.Parameters["uCircleRadius"].SetValue(Radius * 1.414f);
-            GameShaders.Misc["Infernum:CircleCutout"].Apply();
+            InfernumEffectsRegistry.CircleCutoutShader.Shader.Parameters["uImageSize0"].SetValue(circleScale);
+            InfernumEffectsRegistry.CircleCutoutShader.Shader.Parameters["uCircleRadius"].SetValue(Radius * 1.414f);
+            InfernumEffectsRegistry.CircleCutoutShader.Apply();
             Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
             Main.spriteBatch.ExitShaderRegion();
 

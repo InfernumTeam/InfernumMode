@@ -146,12 +146,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.Infernum().ShouldUseSaturationBlur = true;
 
             // Enable the distortion filter if it isnt active.
-            if (Main.netMode != NetmodeID.Server && !Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
+            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
             {
                 Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
-                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().UseImage("Images/Extra_193");
-                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().Shader.Parameters["distortionAmount"].SetValue(4);
-                Filters.Scene["InfernumMode:ScreenDistortion"].GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(4);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2);
             }
 
             // Set the global NPC index to this NPC. Used as a means of lowering the need for loops.

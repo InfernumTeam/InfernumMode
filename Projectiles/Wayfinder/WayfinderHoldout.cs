@@ -466,8 +466,8 @@ namespace InfernumMode.Projectiles.Wayfinder
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(texture, Projectile.Center - Main.screenPosition, sourceRectangle, lightColor * opacity * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale * 0.75f, spriteEffects, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
-            GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
+            InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
+            InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
 
             drawData.Draw(Main.spriteBatch);
 

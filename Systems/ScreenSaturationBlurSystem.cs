@@ -186,7 +186,7 @@ namespace InfernumMode.Systems
 
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
 
-                var shader = Filters.Scene["InfernumMode:ScreenSaturationBlur"].GetShader().Shader;
+                var shader = InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.GetShader().Shader;
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
                 shader.CurrentTechnique.Passes[blurPassName].Apply();
@@ -210,11 +210,11 @@ namespace InfernumMode.Systems
             
             if (effectShouldBeActive)
             {
-                if (!Filters.Scene["InfernumMode:ScreenSaturationBlur"].IsActive())
+                if (!InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.IsActive())
                     Filters.Scene.Activate("InfernumMode:ScreenSaturationBlur", Main.LocalPlayer.Center);
             }
-            else if (Filters.Scene["InfernumMode:ScreenSaturationBlur"].IsActive() && Intensity <= 0f)
-                Filters.Scene["InfernumMode:ScreenSaturationBlur"].Deactivate();
+            else if (InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.IsActive() && Intensity <= 0f)
+                InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.Deactivate();
 
             ShouldEffectBeActive = false;
         }

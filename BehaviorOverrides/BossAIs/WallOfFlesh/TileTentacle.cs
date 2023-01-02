@@ -103,11 +103,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         public override bool PreDraw(ref Color lightColor)
         {
             if (TentacleDrawer is null)
-                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
+                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFTentacleVertexShader);
 
-            GameShaders.Misc["Infernum:WoFTentacleTexture"].UseColor(new Color(108, 23, 23));
-            GameShaders.Misc["Infernum:WoFTentacleTexture"].UseSecondaryColor(new Color(184, 78, 113));
-            GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+            InfernumEffectsRegistry.WoFTentacleVertexShader.UseColor(new Color(108, 23, 23));
+            InfernumEffectsRegistry.WoFTentacleVertexShader.UseSecondaryColor(new Color(184, 78, 113));
+            InfernumEffectsRegistry.WoFTentacleVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             List<Vector2> points = new()
             {

@@ -3,7 +3,6 @@ using CalamityMod.Events;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
-using InfernumMode.Effects;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;

@@ -696,11 +696,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             else if (npc.Infernum().ExtraAI[UsingDetachedHandsFlagIndex] == 1f)
             {
                 // Initialize the claw drawer.
-                npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(ClawArmWidthFunction, c => ClawArmColorFunction(npc, c), null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
+                npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(ClawArmWidthFunction, c => ClawArmColorFunction(npc, c), null, true, InfernumEffectsRegistry.WoFTentacleVertexShader);
 
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].UseColor(new Color(70, 90, 166));
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].UseSecondaryColor(new Color(113, 255, 233));
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.UseColor(new Color(70, 90, 166));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.UseSecondaryColor(new Color(113, 255, 233));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
                 Main.spriteBatch.EnterShaderRegion();
                 spriteBatch.Draw(textureArmless, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);

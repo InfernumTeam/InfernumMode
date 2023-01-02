@@ -168,8 +168,8 @@ namespace InfernumMode.GlobalInstances.Players
                 Player.Calamity().momentumCapacitorBoost = 1.8f;
 
             // Reset the screen distortion shader for the next frame.
-            if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:ScreenDistortion"].IsActive())
-                Filters.Scene["InfernumMode:ScreenDistortion"].Deactivate();
+            if (Main.netMode != NetmodeID.Server && InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
 
             // Check whether to change the boss rush list.
 

@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(ref Color lightColor)
         {
-            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
             // Create a telegraph line upward that fades away away the pillar fades in.
             Vector2 start = Projectile.Top;
@@ -98,8 +98,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
             List<Vector2> points = new();

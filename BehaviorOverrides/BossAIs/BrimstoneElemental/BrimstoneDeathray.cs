@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
                 return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:GenericLaserShader"]);
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
             for (int i = 0; i < baseDrawPoints.Length; i++)
@@ -110,8 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Select textures to pass to the shader, along with the electricity color.
             Color middleColor = new(252, 220, 178);
             Color middleColor2 = new(255, 162, 162);
-            GameShaders.Misc["Infernum:GenericLaserShader"].UseColor(middleColor2 * 2);
-            GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakFire);
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(middleColor2 * 2);
+            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
 
             LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);

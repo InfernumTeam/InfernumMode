@@ -86,10 +86,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(ref Color lightColor)
         {
-            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.7f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
             FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 85);
             return false;
         }

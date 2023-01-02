@@ -51,19 +51,19 @@ namespace InfernumMode.Projectiles
             if (Main.netMode == NetmodeID.Server || !CalamityConfig.Instance.Screenshake)
                 return;
 
-            if (!Filters.Scene["InfernumMode:ScreenShake"].IsActive())
+            if (!InfernumEffectsRegistry.ScreenShakeScreenShader.IsActive())
                 Filters.Scene.Activate("InfernumMode:ScreenShake", Projectile.Center).GetShader().UseColor(RippleCount, RippleSize, RippleSpeed).UseTargetPosition(Projectile.Center);
             else
             {
                 float progress = Utils.Remap(Projectile.timeLeft, Lifetime, 0f, 0f, 1f);
-                Filters.Scene["InfernumMode:ScreenShake"].GetShader().UseProgress(progress).UseOpacity((1f - progress) * 150f);
+                InfernumEffectsRegistry.ScreenShakeScreenShader.GetShader().UseProgress(progress).UseOpacity((1f - progress) * 150f);
             }
         }
 
         public override void Kill(int timeLeft)
         {
-            if (Main.netMode != NetmodeID.Server && Filters.Scene["InfernumMode:ScreenShake"].IsActive())
-                Filters.Scene["InfernumMode:ScreenShake"].Deactivate();
+            if (Main.netMode != NetmodeID.Server && InfernumEffectsRegistry.ScreenShakeScreenShader.IsActive())
+                InfernumEffectsRegistry.ScreenShakeScreenShader.Deactivate();
         }
     }
 }

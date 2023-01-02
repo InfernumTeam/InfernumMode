@@ -114,18 +114,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             if (TentacleDrawer is null)
-                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
+                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
 
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(-1f);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(-1f);
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
+            InfernumEffectsRegistry.WoFGeyserVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center - Vector2.UnitY * GeyserHeight, i / 8f));
             TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
 
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(1f);
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(1f);
             TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
 
             return false;

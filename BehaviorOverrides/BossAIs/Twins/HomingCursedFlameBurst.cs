@@ -97,10 +97,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(Projectile.velocity.Length() / 13f);
-            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(Projectile.velocity.Length() / 13f);
+            InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
             FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
             return false;
         }

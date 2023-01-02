@@ -95,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            TrailDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+            TrailDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
 
-            GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 39);
             return false;
         }

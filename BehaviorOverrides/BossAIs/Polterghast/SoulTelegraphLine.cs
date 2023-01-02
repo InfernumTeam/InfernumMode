@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool PreDraw(ref Color lightColor)
         {
-            TelegraphDrawer ??= new(TelegraphWidthFunction, TelegraphColorFunction, null, true, GameShaders.Misc["Infernum:SideStreak"]);
+            TelegraphDrawer ??= new(TelegraphWidthFunction, TelegraphColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
             
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = Projectile.Center + Projectile.velocity * 5000f;

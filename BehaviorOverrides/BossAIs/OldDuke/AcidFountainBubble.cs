@@ -63,9 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public override bool PreDraw(ref Color lightColor)
         {
             if (WaterDrawer is null)
-                WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+                WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
-            GameShaders.Misc["Infernum:DukeTornado"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.DukeTornadoVertexShader.UseImage1("Images/Misc/Perlin");
             List<Vector2> drawPoints = new();
 
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 6f)

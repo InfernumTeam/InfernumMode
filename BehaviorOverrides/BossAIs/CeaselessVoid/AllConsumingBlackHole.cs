@@ -142,10 +142,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Stars);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
-            GameShaders.Misc["Infernum:RealityTear"].Apply();
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
+            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

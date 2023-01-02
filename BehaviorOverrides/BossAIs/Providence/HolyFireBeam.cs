@@ -90,10 +90,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["Infernum:ProviLaserShader"]);
+                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: InfernumEffectsRegistry.ProviLaserVertexShader);
             Color color = ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.CadetBlue, Color.Cyan, Time) : Color.Lerp(Color.Gold, Color.Goldenrod, Time);
-            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(color);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            InfernumEffectsRegistry.ProviLaserVertexShader.UseColor(color);
+            InfernumEffectsRegistry.ProviLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
 
             float oldGlobalTime = Main.GlobalTimeWrappedHourly;
             Main.GlobalTimeWrappedHourly %= 1f;

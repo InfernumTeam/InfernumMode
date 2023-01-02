@@ -1446,7 +1446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Initialize the telegraph primitive drawer.
-            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, true, GameShaders.Misc["Infernum:SideStreak"]);
+            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
             bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             bool enraged = npc.ai[3] == 1f;
@@ -1509,11 +1509,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 Main.spriteBatch.EnterShaderRegion();
 
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
-                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/PolterghastLayer"));
-                GameShaders.Misc["Infernum:CircleCutout2"].Apply();
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uImageSize0"].SetValue(circleScale);
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
+                InfernumEffectsRegistry.CircleCutout2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/PolterghastLayer"));
+                InfernumEffectsRegistry.CircleCutout2Shader.Apply();
                 Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();
             }

@@ -21,7 +21,7 @@ namespace InfernumMode.BossIntroScreens
         // This is no credit. Your idea has been STOLEN!
         public override string TextToDisplay => "The Infected Stomper\nAstrum Aureus";
 
-        public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:MechsIntro"].Shader;
+        public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.MechsIntroLetterShader.Shader;
 
         public override void PrepareShader(Effect shader)
         {

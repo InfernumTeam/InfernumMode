@@ -303,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 NPC.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(NPC, completionRatio),
                     completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(NPC, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+                    null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
             }
             
             for (int i = 0; i < 2; i++)

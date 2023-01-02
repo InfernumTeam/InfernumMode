@@ -86,9 +86,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override bool PreDraw(ref Color lightColor)
         {
             if (TornadoDrawer is null)
-                TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+                TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+            InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
             Vector2 upwardAscent = Vector2.UnitY * TornadoHeight;
             Vector2 top = Projectile.Bottom - upwardAscent;
             List<Vector2> drawPoints = new()

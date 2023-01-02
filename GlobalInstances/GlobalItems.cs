@@ -190,7 +190,7 @@ namespace InfernumMode.GlobalInstances
 
             return base.CanUseItem(item, player);
         }
-        public override bool? UseItem(Item item, Player player)/* tModPorter Suggestion: Return null instead of false */
+        public override bool? UseItem(Item item, Player player)
         {
             if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
             {

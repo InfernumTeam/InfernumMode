@@ -148,10 +148,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, GameShaders.Misc["Infernum:AresLightningArc"]);
+                LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, InfernumEffectsRegistry.AresLightningVertexShader);
 
-            GameShaders.Misc["Infernum:AresLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["Infernum:AresLightningArc"].Apply();
+            InfernumEffectsRegistry.AresLightningVertexShader.UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.AresLightningVertexShader.Apply();
 
             LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 11);
             return false;

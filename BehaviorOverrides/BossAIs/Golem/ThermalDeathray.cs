@@ -91,12 +91,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

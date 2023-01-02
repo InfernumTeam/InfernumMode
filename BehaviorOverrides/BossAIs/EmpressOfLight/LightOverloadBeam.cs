@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public override bool PreDraw(ref Color lightColor)
         {
             if (RayDrawer is null)
-                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             Vector2 overallOffset = -Main.screenPosition;
             Vector2[] basePoints = new Vector2[24];
@@ -91,14 +91,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Projectile.scale *= 0.8f;
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
             Projectile.scale /= 0.8f;
 
             RayDrawer.Draw(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
-            GameShaders.Misc["Infernum:PrismaticRay"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
             RayDrawer.Draw(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;

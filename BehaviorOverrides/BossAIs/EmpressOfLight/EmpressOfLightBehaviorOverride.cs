@@ -291,12 +291,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (attackType == (int)EmpressOfLightAttackType.EnterSecondPhase)
                     screenShaderStrength = Utils.GetLerpValue(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, attackTimer, true);
 
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/noise");
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/Perlin", 2);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseColor(Color.Pink);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseOpacity(deathAnimationScreenShaderStrength);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseIntensity(screenShaderStrength);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/noise");
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/Perlin", 2);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseColor(Color.Pink);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseOpacity(deathAnimationScreenShaderStrength);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseIntensity(screenShaderStrength);
             }
 
             wingFrameCounter++;

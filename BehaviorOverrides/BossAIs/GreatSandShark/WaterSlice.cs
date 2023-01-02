@@ -102,10 +102,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new(WidthFunction, ColorFunction, null, GameShaders.Misc["Infernum:RealityTear"]);
+            LightningDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(InfernumTextureRegistry.Water);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 54);
             return false;
         }

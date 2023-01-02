@@ -1969,18 +1969,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity += 0.325f;
             }
 
-            GameShaders.Misc["Infernum:YharonBurn"].UseOpacity(fireIntensity * 0.7f);
-            GameShaders.Misc["Infernum:YharonBurn"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-            GameShaders.Misc["Infernum:YharonBurn"].UseColor(burnColor * 0.7f);
-            GameShaders.Misc["Infernum:YharonBurn"].UseSecondaryColor(Color.White * 0.12f);
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uTimeFactor"].SetValue(1.1f);
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uZoomFactor"].SetValue(new Vector2(1f, 1f));
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uNoiseReadZoomFactor"].SetValue(new Vector2(0.2f, 0.2f));
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uSecondaryLavaPower"].SetValue(10f);
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uZoomFactorSecondary"].SetValue(0.5f);
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uNPCRectangle"].SetValue(new Vector4(npc.frame.X, npc.frame.Y, npc.frame.Width, npc.frame.Height));
-            GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uActualImageSize0"].SetValue(tex.Size());
-            GameShaders.Misc["Infernum:YharonBurn"].Apply();
+            InfernumEffectsRegistry.YharonBurnShader.UseOpacity(fireIntensity * 0.7f);
+            InfernumEffectsRegistry.YharonBurnShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.YharonBurnShader.UseColor(burnColor * 0.7f);
+            InfernumEffectsRegistry.YharonBurnShader.UseSecondaryColor(Color.White * 0.12f);
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uTimeFactor"].SetValue(1.1f);
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uZoomFactor"].SetValue(new Vector2(1f, 1f));
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uNoiseReadZoomFactor"].SetValue(new Vector2(0.2f, 0.2f));
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uSecondaryLavaPower"].SetValue(10f);
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uZoomFactorSecondary"].SetValue(0.5f);
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uNPCRectangle"].SetValue(new Vector4(npc.frame.X, npc.frame.Y, npc.frame.Width, npc.frame.Height));
+            InfernumEffectsRegistry.YharonBurnShader.Shader.Parameters["uActualImageSize0"].SetValue(tex.Size());
+            InfernumEffectsRegistry.YharonBurnShader.Apply();
 
             float opacity = npc.Opacity;
 

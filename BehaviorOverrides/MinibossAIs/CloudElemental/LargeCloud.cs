@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            CloudDrawer ??= new(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:CloudShader"]);
+            CloudDrawer ??= new(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.CloudVertexShader);
             Asset<Texture2D> texture = TextureAssets.Projectile[Projectile.type];
 
             // Set the draw points for the trail using the radius.
@@ -122,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 baseDrawPoints[i] = Vector2.Lerp(startPos, endPos, i / (float)(baseDrawPoints.Length - 1f));
 
             // Set the shader fademap.
-            GameShaders.Misc["Infernum:CloudShader"].SetShaderTexture(texture);
+            InfernumEffectsRegistry.CloudVertexShader.SetShaderTexture(texture);
 
             CloudDrawer.Draw(baseDrawPoints, -Main.screenPosition, 10);
             return false;

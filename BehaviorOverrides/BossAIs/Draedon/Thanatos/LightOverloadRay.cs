@@ -91,10 +91,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             if (LaserDrawer is null)
-                LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.14f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.14f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();

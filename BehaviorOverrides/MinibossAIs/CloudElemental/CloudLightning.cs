@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:GenericLaserShader"]);
+            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
             Vector2 basePos = Projectile.Center - Main.screenPosition;
             // Telegraphs.
             if (Time <= TelegraphTotalTime)
@@ -73,8 +73,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             // Draw the lightning itself.
             else if (Time > TelegraphTotalTime)
             {
-                GameShaders.Misc["Infernum:GenericLaserShader"].SetShaderTexture(InfernumTextureRegistry.LightningStreak);
-                GameShaders.Misc["Infernum:GenericLaserShader"].UseColor(Color.White);
+                InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.LightningStreak);
+                InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(Color.White);
 
                 Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
                 Vector2[] baseDrawPoints = new Vector2[8];

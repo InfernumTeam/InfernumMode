@@ -1622,9 +1622,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             else if (deathTimer > 120f)
             {
                 Main.spriteBatch.EnterShaderRegion();
-                GameShaders.Misc["Infernum:CultistDeath"].UseOpacity((1f - Utils.GetLerpValue(120f, 305f, deathTimer, true)) * 0.8f);
-                GameShaders.Misc["Infernum:CultistDeath"].UseImage1("Images/Misc/Perlin");
-                GameShaders.Misc["Infernum:CultistDeath"].Apply();
+                InfernumEffectsRegistry.CultistDeathVertexShader.UseOpacity((1f - Utils.GetLerpValue(120f, 305f, deathTimer, true)) * 0.8f);
+                InfernumEffectsRegistry.CultistDeathVertexShader.UseImage1("Images/Misc/Perlin");
+                InfernumEffectsRegistry.CultistDeathVertexShader.Apply();
             }
 
             bool inPhase2 = npc.ai[2] == 2f;

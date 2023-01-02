@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using InfernumMode.Balancing;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
+using InfernumMode.Effects;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
@@ -87,7 +88,7 @@ namespace InfernumMode
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
-                EffectLoadingSystem.Load();
+                InfernumEffectsRegistry.LoadEffects();
             }
 
             CooldownRegistry.RegisterModCooldowns(this);

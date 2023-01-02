@@ -1,16 +1,75 @@
-using InfernumMode.Skies;
+﻿using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Effects
 {
-    public static class EffectLoadingSystem
+    public static class InfernumEffectsRegistry
     {
-        public static void Load()
+        #region Texture Shaders
+        public static MiscShaderData AEWPsychicEnergyShader => GameShaders.Misc["Infernum:AEWPsychicEnergy"];
+        public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
+        public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
+        public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
+        public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
+        public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
+        public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
+        public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
+        public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
+        public static MiscShaderData CyclicHueShader => GameShaders.Misc["Infernum:CyclicHueShader"];
+        public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
+        public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
+        public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
+        public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
+        public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
+        public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
+        public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
+        public static MiscShaderData LinearTransformationVertexShader => GameShaders.Misc["Infernum:LinearTransformation"];
+        public static MiscShaderData NecroplasmicRoarShader => GameShaders.Misc["Infernum:NecroplasmicRoar"];
+        public static MiscShaderData MechsIntroLetterShader => GameShaders.Misc["Infernum:MechsIntro"];
+        public static MiscShaderData MoonLordBGDistortionShader => GameShaders.Misc["Infernum:MoonLordBGDistortion"];
+        public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
+        public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
+        public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
+        public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
+        public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
+        public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
+        public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
+        public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
+        public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
+        public static MiscShaderData WoFGeyserVertexShader => GameShaders.Misc["Infernum:WoFGeyserTexture"];
+        public static MiscShaderData WoFTentacleVertexShader => GameShaders.Misc["Infernum:WoFTentacleTexture"];
+        public static MiscShaderData YharonBurnShader => GameShaders.Misc["Infernum:YharonBurn"];
+        #endregion
+
+        #region Screen Shaders
+        public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
+        public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
+        public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
+        public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
+        public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
+        public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
+        public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
+        public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
+        public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
+        public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
+        public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
+        public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
+        public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
+        public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
+        #endregion
+
+        #region Methods
+        public static void LoadEffects()
         {
             var assets = InfernumMode.Instance.Assets;
 
@@ -28,9 +87,6 @@ namespace InfernumMode.Systems
 
             Ref<Effect> basicTintShader = new(assets.Request<Effect>("Effects/BasicTint", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:BasicTint"] = new MiscShaderData(basicTintShader, "BasicTint");
-
-            Ref<Effect> madnessShader = new(assets.Request<Effect>("Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
 
             Ref<Effect> aewPsychicEnergyShader = new(assets.Request<Effect>("Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
@@ -155,10 +211,13 @@ namespace InfernumMode.Systems
             Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
 
+            Ref<Effect> madnessShader = new(assets.Request<Effect>("Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
 
             Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
         }
+        #endregion
     }
 }

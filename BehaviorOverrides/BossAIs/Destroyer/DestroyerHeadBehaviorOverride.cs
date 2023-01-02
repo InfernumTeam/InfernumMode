@@ -311,9 +311,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
 
                 // Create shake effects for players.
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.GetLerpValue(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 2f, 7f);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower *= Utils.GetLerpValue(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
 
                 if (attackTimer == diveTime + ascendTime - 15f)
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);

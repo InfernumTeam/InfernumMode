@@ -66,7 +66,7 @@ namespace InfernumMode.Tiles
                 CalamityNetcode.SyncWorld();
             }
 
-            ref int shatterTimer = ref Main.LocalPlayer.Infernum().ProvidenceRoomShatterTimer;
+            ref int shatterTimer = ref Main.LocalPlayer.Infernum_Biome().providenceRoomShatterTimer;
             
             if (WorldSaveSystem.HasProvidenceDoorShattered)
                 return;

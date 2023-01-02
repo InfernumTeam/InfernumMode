@@ -14,6 +14,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public float LifetimeCompletion => Timer / Lifetime;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Homing Fireball");
@@ -44,6 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
                 }
             }
+
             // If its null, dont do this, but still create the visuals.
             if (closestTarget is not null)
             {

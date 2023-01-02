@@ -15,8 +15,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     public class TwinsEnergyExplosion : ModProjectile
     {
         public ref float OwnerType => ref Projectile.ai[0];
+
         public ref float Radius => ref Projectile.ai[1];
+
         public const int Lifetime = 80;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public override void SetStaticDefaults()
         {
@@ -42,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
             Radius = MathHelper.Lerp(Radius, 3516f, 0.15f);
             Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));

@@ -17,9 +17,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ExolaserBomb : ModProjectile
     {
         public int GrowTime;
+
         public PrimitiveTrailCopy FireDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float Radius => ref Projectile.ai[1];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Bomb");
 
         public override void SetDefaults()
@@ -44,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (Projectile.timeLeft < 60f)
             {
                 Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

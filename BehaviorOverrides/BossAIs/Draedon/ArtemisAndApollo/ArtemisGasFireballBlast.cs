@@ -115,9 +115,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int type = ModContent.ProjectileType<SuperheatedExofireGas>();
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 18; i++)
                 {
-                    Vector2 fireVelocity = Main.rand.NextVector2Circular(15f, 15f);
+                    Vector2 fireVelocity = Main.rand.NextVector2Circular(12f, 12f);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, fireVelocity, type, Projectile.damage, 0f, Main.myPlayer);
                 }
             }

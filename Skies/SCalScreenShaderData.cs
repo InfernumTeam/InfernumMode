@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
@@ -33,9 +32,9 @@ namespace InfernumMode.Skies
             uvScaledArena = new(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
 
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
-            UseImage(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value, 0, SamplerState.AnisotropicWrap);
+            UseImage(InfernumTextureRegistry.CultistRayMap.Value, 0, SamplerState.AnisotropicWrap);
 
-            base.UseOpacity(0.36f);
+            UseOpacity(0.36f);
             base.Apply();
         }
     }

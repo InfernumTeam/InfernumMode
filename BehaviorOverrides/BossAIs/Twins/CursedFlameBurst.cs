@@ -12,7 +12,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     public class CursedFlameBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
+
         public const int Lifetime = 240;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame");

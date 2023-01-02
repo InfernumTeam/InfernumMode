@@ -317,7 +317,7 @@ namespace InfernumMode.Projectiles.Wayfinder
                     WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);
                 }
 
-                Owner.Infernum().CurrentScreenShakePower = 5;
+                Owner.Infernum_Camera().CurrentScreenShakePower = 5;
                 for (int i = 0; i < 60; i++)
                 {
                     CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));
@@ -466,7 +466,7 @@ namespace InfernumMode.Projectiles.Wayfinder
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(texture, Projectile.Center - Main.screenPosition, sourceRectangle, lightColor * opacity * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale * 0.75f, spriteEffects, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderLayer"));
+            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
             GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
 
             drawData.Draw(Main.spriteBatch);

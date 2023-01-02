@@ -1,5 +1,4 @@
 using CalamityMod.Schematics;
-using CalamityMod.Walls;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using System;
@@ -38,12 +37,20 @@ namespace InfernumMode.Systems
             Point fuck = WorldGen.UndergroundDesertLocation.Center;
             fuck.Y -= 75;
 
+            // Use the sunken sea lab as a reference if not in the middle of worldgen, since the underground desert location rectangle is discarded after initial world-gen, meaning
+            // that it won't contain anything useful.
+            if (!WorldGen.gen)
+            {
+                fuck = CalamityWorld.SunkenSeaLabCenter.ToTileCoordinates();
+                fuck.Y -= 280;
+            }
+
             // As much as I would like to do so, I will resist the urge to write juvenile venting comments about my current frustrations with this
             // requested feature inside of a code comment.
             // This part creates a lumpy, circular layer of sandstone around the entrance.
             for (int i = 0; i < 5; i++)
             {
-                Point lumpCenter = (fuck.ToVector2() + Main.rand.NextVector2Circular(15f, 15f)).ToPoint();
+                Point lumpCenter = (fuck.ToVector2() + WorldGen.genRand.NextVector2Circular(15f, 15f)).ToPoint();
                 WorldUtils.Gen(lumpCenter, new Shapes.Circle(88, 65), Actions.Chain(new GenAction[]
                 {
                     new Modifiers.RadialDither(82f, 88f),
@@ -73,6 +80,18 @@ namespace InfernumMode.Systems
             bool _ = false;
             fuck.X += 32;
             PlaceSchematic<Action<Chest>>("LostColosseumEntrance", fuck, SchematicAnchor.Center, ref _);
+
+            // Sync the tile changes in case they were done due to a boss kill effect.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                for (int i = fuck.X - 124; i < fuck.X + 124; i++)
+                {
+                    for (int j = fuck.Y - 100; j < fuck.Y + 100; j++)
+                        NetMessage.SendTileSquare(-1, i, j);
+                }
+            }
+
+            WorldSaveSystem.HasGeneratedColosseumEntrance = true;
         }
 
         public static void GenerateUndergroundJungleArea(GenerationProgress progress, GameConfiguration configuration)
@@ -140,55 +159,18 @@ namespace InfernumMode.Systems
             int height = schematic.GetLength(1);
 
             WorldSaveSystem.ProvidenceArena = new(bottomLeftOfWorld.X - width, bottomLeftOfWorld.Y - height, width, height);
+
+            // Sync the tile changes in case they were done due to a boss kill effect.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                for (int i = bottomLeftOfWorld.X - width; i < bottomLeftOfWorld.X; i++)
+                {
+                    for (int j = bottomLeftOfWorld.Y - height; j < bottomLeftOfWorld.Y; j++)
+                        NetMessage.SendTileSquare(-1, i, j);
+                }
+            }
+
             WorldSaveSystem.HasGeneratedProfanedShrine = true;
-        }
-
-        public static void GenerateProfanedShrinePillar(Point bottom, int topY)
-        {
-            ushort runicBrickWallID = (ushort)ModContent.WallType<RunicProfanedBrickWall>();
-            ushort profanedSlabWallID = (ushort)ModContent.WallType<ProfanedSlabWall>();
-            ushort profanedRockWallID = (ushort)ModContent.WallType<ProfanedRockWall>();
-
-            int y = bottom.Y;
-
-            while (y > topY)
-            {
-                for (int dx = -2; dx <= 2; dx++)
-                {
-                    for (int dy = 0; dy < 6; dy++)
-                    {
-                        ushort wallID = profanedRockWallID;
-                        if (Math.Abs(dx) >= 2 || dy <= 1 || dy == 4)
-                            wallID = profanedSlabWallID;
-                        if (Math.Abs(dx) <= 1 && dy >= 1 && dy <= 3)
-                            wallID = runicBrickWallID;
-                        if (Math.Abs(dx) == 2 || dy == 5)
-                            wallID = profanedRockWallID;
-
-                        int x = bottom.X + dx;
-                        Main.tile[x, y + dy].WallType = wallID;
-                        if (y + dy == (bottom.Y + topY) / 2 - 1 && dx == 0)
-                        {
-                            Main.tile[x, y + dy].TileType = TileID.Torches;
-                            Main.tile[x, y + dy].Get<TileWallWireStateData>().HasTile = true;
-                        }
-                    }
-                }
-                y -= 6;
-            }
-
-            // Frame everything.
-            for (y = topY; y < bottom.Y; y += 6)
-            {
-                for (int dx = -2; dx <= 2; dx++)
-                {
-                    for (int dy = 0; dy < 6; dy++)
-                    {
-                        int x = bottom.X + dx;
-                        WorldGen.SquareWallFrame(x, y + dy);
-                    }
-                }
-            }
         }
     }
 }

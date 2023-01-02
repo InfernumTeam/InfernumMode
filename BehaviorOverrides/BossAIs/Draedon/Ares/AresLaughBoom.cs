@@ -8,8 +8,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
     public class AresLaughBoom : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 60;
+
         public override float MaxRadius => 1000f;
+
         public override float RadiusExpandRateInterpolant => 0.15f;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(3f, 12f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));

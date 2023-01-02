@@ -40,10 +40,7 @@ namespace InfernumMode
         public VertexWidthFunction WidthFunction;
         public VertexColorFunction ColorFunction;
         public VertexOffsetFunction OffsetFunction;
-
-        // NOTE: Beziers can be laggy when a lot of control points are used, since our implementation
-        // uses a recursive Lerp that gets more computationally expensive the more original indices.
-        // n(n - 1)/2 linear interpolations to be precise, where n is the amount of original indices.
+        
         public bool UsesSmoothening;
         public BasicEffect BaseEffect;
         public MiscShaderData SpecialShader;

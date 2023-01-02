@@ -8,12 +8,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
     public class YharonFlameExplosion : ModProjectile
     {
+        public override string Texture => "CalamityMod/Skies/XerocLight";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperthermal Explosion");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
-            Projectile.hostile = true;
+            Projectile.width = Projectile.height = 16;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.extraUpdates = 1;
@@ -49,12 +50,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Main.spriteBatch.ResetBlendState();
             return false;
         }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
-        }
-
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.45f;
     }
 }

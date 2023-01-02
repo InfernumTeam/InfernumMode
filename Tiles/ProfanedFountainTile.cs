@@ -22,7 +22,7 @@ namespace InfernumMode.Tiles
         public override void NearbyEffects(int i, int j, bool closer)
         {
             if (Main.tile[i, j].TileFrameX < 36)
-                Main.LocalPlayer.Infernum().ProfanedLavaFountain = true;
+                Main.LocalPlayer.Infernum_Biome().ProfanedLavaFountain = true;
         }
 
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;

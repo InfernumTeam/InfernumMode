@@ -27,7 +27,7 @@ namespace InfernumMode.BossIntroScreens
         {
             Color gleamColor = Color.Lerp(new Color(255, 164, 94), new Color(109, 242, 196), (float)Math.Cos(Main.GlobalTimeWrappedHourly * 6f) * 0.5f + 0.5f);
             shader.Parameters["uColor"].SetValue(gleamColor.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
+            shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AstrumAureus>());

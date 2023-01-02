@@ -15,6 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public float AnimationTimer => Main.npc[(int)Owner].Infernum().ExtraAI[6];
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Death Animation");
 
         public override void SetDefaults()

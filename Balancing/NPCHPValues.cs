@@ -69,6 +69,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 7464,
             [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 140800 : 3232,
             [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 854000 : 10476,
+            [ModContent.NPCType<ThiccWaifu>()] = 18000,
             [NPCID.DD2OgreT2] = 15100,
             [NPCID.QueenSlimeBoss] = BossRushEvent.BossRushActive ? 840000 : 25940,
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(29950),

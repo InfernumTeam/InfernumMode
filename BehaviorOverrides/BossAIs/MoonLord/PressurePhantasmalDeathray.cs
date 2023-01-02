@@ -18,12 +18,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override float Lifetime => LifetimeConstant;
         public override Color LaserOverlayColor => new(1f, 1f, 1f, 0f);
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamBegin", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamMid", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PhantasmalBeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PhantasmalBeamBegin", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PhantasmalBeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PhantasmalBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3200f;
         public override float MaxScale => 1f;
-        public override string Texture => "InfernumMode/ExtraTextures/PhantasmalBeamBegin";
+        public override string Texture => "InfernumMode/ExtraTextures/Lasers/PhantasmalBeamBegin";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Phantasmal Deathray");
 
         public override void SetDefaults()

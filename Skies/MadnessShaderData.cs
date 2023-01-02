@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using InfernumMode.GlobalInstances.Players;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
 
@@ -10,9 +11,8 @@ namespace InfernumMode.Skies
 
         public override void Apply()
         {
-            float interpolant = Main.LocalPlayer.Infernum().MadnessInterpolant;
             UseTargetPosition(Main.LocalPlayer.Center);
-            base.UseIntensity(interpolant);
+            UseIntensity(Main.LocalPlayer.GetModPlayer<DebuffEffectsPlayer>().MadnessInterpolant);
             base.Apply();
         }
     }

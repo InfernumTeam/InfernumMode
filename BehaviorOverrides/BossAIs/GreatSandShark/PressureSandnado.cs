@@ -16,7 +16,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public ref float Time => ref Projectile.ai[0];
 
         public ref float StuckTimer => ref Projectile.localAI[0];
-        
+
+        public override string Texture => "CalamityMod/Projectiles/TornadoProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sand Tornado");

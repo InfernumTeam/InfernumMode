@@ -103,8 +103,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
             List<Vector2> points = new();
-            for (int i = 0; i <= 8; i++)
-                points.Add(Vector2.Lerp(start, end, i / 8f));
+            for (int i = 0; i <= 64; i++)
+                points.Add(Vector2.Lerp(start, end, i / 64f) + Vector2.UnitY * 20f);
 
             if (Time >= 2f)
                 FireDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 166);

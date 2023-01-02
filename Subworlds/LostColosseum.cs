@@ -56,7 +56,7 @@ namespace InfernumMode.Subworlds
 
         public static Point PortalPosition => new(CaveWidth + 166, 160);
 
-        public static Point CampfirePosition => new(CaveWidth + 320, 165);
+        public static Point CampfirePosition => new(CaveWidth + 464, 165);
 
         public override int Width => SchematicWidth + CaveWidth - 64;
 
@@ -89,7 +89,7 @@ namespace InfernumMode.Subworlds
                 }
 
                 bool _ = false;
-                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 30);
+                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 20);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
                 for (int i = 0; i < CaveWidth + 188; i++)
@@ -101,6 +101,13 @@ namespace InfernumMode.Subworlds
 
                         Main.tile[i, j].WallType = WallID.Sandstone;
                     }
+                }
+
+                // Why the fuck???
+                for (int x = 585; x < 590; x++)
+                {
+                    for (int y = 154; y < 163; y++)
+                        Main.tile[x, y].Get<TileWallWireStateData>().IsActuated = false;
                 }
 
                 // Set the default spawn position.
@@ -173,7 +180,8 @@ namespace InfernumMode.Subworlds
                 }
             }
 
-            Main.LocalPlayer.Infernum().ReturnToPositionBeforeSubworld = true;
+            // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
+            Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
         }
 
         public static void ManageSandstorm()

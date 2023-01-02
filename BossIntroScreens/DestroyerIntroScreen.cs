@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
@@ -23,7 +22,7 @@ namespace InfernumMode.BossIntroScreens
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(0.02f, 0.54f, 0.91f));
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
+            shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.TheDestroyer);

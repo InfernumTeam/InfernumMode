@@ -342,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                    Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
 
                     float angularOffset = npc.Infernum().ExtraAI[1];
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);

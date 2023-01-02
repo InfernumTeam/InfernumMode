@@ -9,7 +9,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -107,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D laserTelegraph = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
                 Vector2 scaleInner = new(telegraphOpacity * 0.3f, AimedDeathray.LaserLengthConst / laserTelegraph.Height);

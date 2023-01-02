@@ -1,5 +1,5 @@
 ﻿using CalamityMod.Items;
-using InfernumMode.GlobalInstances;
+using InfernumMode.GlobalInstances.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

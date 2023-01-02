@@ -673,9 +673,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // Focus on the boss as it transforms.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
             }
 
             // Roar right before transitioning back to attacking.
@@ -691,9 +691,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // Focus on the boss as it transforms.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
             }
 
             // Roar right and turn into a trap plant thing before transitioning back to attacking.

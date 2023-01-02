@@ -8,8 +8,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
     public class DeerclopsP2Wave : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 180;
+
         public override float MaxRadius => 2000f;
+
         public override float RadiusExpandRateInterpolant => 0.12f;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(2f, 9f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));

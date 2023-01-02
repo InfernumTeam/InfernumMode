@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public const int Lifetime = 45;
         
-        public override string Texture => "InfernumMode/ExtraTextures/LargeStar";
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/LargeStar";
         
         public override void SetStaticDefaults() => DisplayName.SetDefault("Lens Flare");
 

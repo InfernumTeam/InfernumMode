@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -30,6 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public const int OverloadBeamLifetime = 300;
 
         public const int LaserReleaseDelay = 125;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {

@@ -13,6 +13,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class NebulaCloud : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/NebulaGas1";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Nebula");
 
         public override void SetDefaults()

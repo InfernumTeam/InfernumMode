@@ -14,6 +14,6 @@ namespace InfernumMode.Buffs
             Main.buffNoSave[Type] = true;
         }
 
-        public override void Update(Player player, ref int buffIndex) => player.Infernum().Madness = true;
+        public override void Update(Player player, ref int buffIndex) => player.Infernum_Debuff().Madness = true;
     }
 }

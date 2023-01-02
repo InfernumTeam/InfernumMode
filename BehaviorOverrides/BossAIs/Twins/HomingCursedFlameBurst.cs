@@ -10,9 +10,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     public class HomingCursedFlameBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
+
         public const int HomeTime = 90;
+
         public const int Lifetime = 360;
+
         public const int TimeBeforeSwirl = 170;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame");
@@ -91,8 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(Projectile.velocity.Length() / 13f);
             GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");

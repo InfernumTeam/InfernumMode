@@ -1,15 +1,12 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -26,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
             IceBulletHell,
             HailChunks
         }
-
+        
         public const int BaseContactDamage = 60;
 
         public const float PhaseTwoLifeRatio = 0.5f;
@@ -82,8 +79,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 npc.Center = target.Center + new Vector2(0, -400);
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
-                npc.lifeMax = 18000;
-                npc.life = npc.lifeMax;
             }
 
             // Create visuals at the teleport position
@@ -261,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public static void SelectNextAttack(NPC npc)
         {
-            // Clear the first 4 extra ai slots.
+            // Clear the first 5 extra ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 

@@ -15,6 +15,8 @@ namespace InfernumMode.Systems
             flags[2] = HasBeatedInfernumProvRegularly;
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
+            flags[5] = HasGeneratedProfanedShrine;
+            flags[6] = HasGeneratedColosseumEntrance;
             writer.Write(flags);
 
             writer.Write(ProvidenceArena.X);
@@ -34,7 +36,9 @@ namespace InfernumMode.Systems
             HasBeatedInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
-            
+            HasGeneratedProfanedShrine = flags[5];
+            HasGeneratedColosseumEntrance = flags[6];
+
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
             WayfinderGateLocation = new(reader.ReadSingle(), reader.ReadSingle());

@@ -116,7 +116,14 @@ namespace InfernumMode.Tiles
                     SubworldSystem.Exit();
                 else
                 {
-                    Main.LocalPlayer.Infernum().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
+                    // Don't allow the player to use the portal if Infernum is not active.
+                    if (!InfernumMode.CanUseCustomAIs)
+                    {
+                        CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
+                        return true;
+                    }
+
+                    Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
                     SubworldSystem.Enter<LostColosseum>();
                 }
                 return true;
@@ -164,8 +171,8 @@ namespace InfernumMode.Tiles
             Vector2 end = start - Vector2.UnitY * 580f;
             
             GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(0.84f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
+            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)

@@ -29,6 +29,7 @@ namespace InfernumMode.BaseEntities
         public abstract Color DetermineExplosionColor(float lifetimeCompletionRatio);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()

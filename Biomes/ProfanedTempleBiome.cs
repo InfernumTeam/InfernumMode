@@ -17,7 +17,7 @@ namespace InfernumMode.Biomes
 
         public override bool IsBiomeActive(Player player)
         {
-            return !player.ZoneDungeon && ((InfernumBiomeTileCounterSystem.ProfanedTile > 350 && player.ZoneUnderworldHeight) || player.Infernum().InProfanedArena);
+            return !player.ZoneDungeon && ((InfernumBiomeTileCounterSystem.ProfanedTile > 350 && player.ZoneUnderworldHeight) || player.Infernum_Biome().InProfanedArena);
         }
     }
 }

@@ -11,7 +11,13 @@ namespace InfernumMode.Systems
         {
             get;
             set;
-        } = false;
+        }
+
+        public static bool HasGeneratedColosseumEntrance
+        {
+            get;
+            set;
+        }
 
         public static bool HasBeatedInfernumProvRegularly
         {
@@ -82,6 +88,8 @@ namespace InfernumMode.Systems
                 downed.Add("InfernumModeActive");
             if (HasGeneratedProfanedShrine)
                 downed.Add("HasGeneratedProfanedShrine");
+            if (HasGeneratedColosseumEntrance)
+                downed.Add("HasGeneratedColosseumEntrance");
             if (HasBeatedInfernumProvRegularly)
                 downed.Add("HasBeatedInfernumProvRegularly");
             if (HasBeatedInfernumNightProvBeforeDay)
@@ -108,6 +116,7 @@ namespace InfernumMode.Systems
             var downed = tag.GetList<string>("downed");
             InfernumMode = downed.Contains("InfernumModeActive");
             HasGeneratedProfanedShrine = downed.Contains("HasGeneratedProfanedShrine");
+            HasGeneratedColosseumEntrance = downed.Contains("HasGeneratedColosseumEntrance");
             HasBeatedInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly");
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
@@ -123,6 +132,7 @@ namespace InfernumMode.Systems
         {
             InfernumMode = false;
             HasGeneratedProfanedShrine = false;
+            HasGeneratedColosseumEntrance = false;
             HasBeatedInfernumProvRegularly = false;
             HasBeatedInfernumNightProvBeforeDay = false;
             HasProvidenceDoorShattered = false;

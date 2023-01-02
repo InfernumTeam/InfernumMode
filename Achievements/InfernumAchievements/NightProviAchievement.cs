@@ -1,5 +1,6 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
+using InfernumMode.GlobalInstances.Players;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;

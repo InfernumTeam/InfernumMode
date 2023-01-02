@@ -19,9 +19,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             get => Projectile.ai[1];
             set => Projectile.ai[1] = value;
         }
+
         public const int Lifetime = 90;
+
         public const int FadeinTime = 18;
+
         public const int FadeoutTime = 18;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Sparkle");
 
         public override void SetDefaults()

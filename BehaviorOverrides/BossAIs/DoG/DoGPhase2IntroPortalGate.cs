@@ -18,6 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int Phase2AnimationTime = 280;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Portal");
@@ -42,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Projectile.localAI[1] = 1f;
             }
 
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
@@ -94,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Projectile.timeLeft <= 45f)
                 fade = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
 
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);

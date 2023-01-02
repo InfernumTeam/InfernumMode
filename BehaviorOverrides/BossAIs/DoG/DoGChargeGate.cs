@@ -36,6 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float TelegraphWidth = 6400f;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
@@ -105,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Time >= Lifetime - FadeoutTime)
                 fade = Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
 
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)

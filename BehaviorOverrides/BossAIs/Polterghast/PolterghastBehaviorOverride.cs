@@ -351,13 +351,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 // Focus on the boss as it jitters and explode.
                 if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
                 {
-                    Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                    Main.LocalPlayer.Infernum().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;
                 }
 
                 // Make the polterghast jitter around a little bit.
                 Vector2 jitter = Main.rand.NextVector2Unit() * 2.25f;
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = jitter.Length() * Utils.GetLerpValue(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = jitter.Length() * Utils.GetLerpValue(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
 
                 if (initialDeathPositionX != 0f && initialDeathPositionY != 0f)
                     npc.Center = new Vector2(initialDeathPositionX, initialDeathPositionY) + jitter;
@@ -1512,7 +1512,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
                 GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
-                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PolterghastLayer"));
+                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/PolterghastLayer"));
                 GameShaders.Misc["Infernum:CircleCutout2"].Apply();
                 Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();

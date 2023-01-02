@@ -11,8 +11,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     public class LingeringDragonFlames : ModProjectile, IAdditiveDrawer
     {
         public ref float Time => ref Projectile.ai[0];
+
         public ref float LaserLength => ref Projectile.ai[1];
-        public override string Texture => "InfernumMode/ExtraTextures/Smoke";
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Smoke";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Dragonfire");
 

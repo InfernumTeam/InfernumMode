@@ -8,6 +8,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
     public class ShadeFire : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");

@@ -19,7 +19,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override string TextToDisplay => "Cleansed Site\nThe Profaned Garden";
         
-        public override bool ShouldBeActive() => Main.LocalPlayer.Infernum().ZoneProfaned && !Main.LocalPlayer.Infernum().ProfanedTempleAnimationHasPlayed;
+        public override bool ShouldBeActive() => Main.LocalPlayer.Infernum_Biome().ZoneProfaned && !Main.LocalPlayer.Infernum_Biome().ProfanedTempleAnimationHasPlayed;
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
 
@@ -42,7 +42,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override void DoCompletionEffects()
         {
-            Main.LocalPlayer.Infernum().ProfanedTempleAnimationHasPlayed = true;
+            Main.LocalPlayer.Infernum_Biome().ProfanedTempleAnimationHasPlayed = true;
             AnimationTimer = 0;
         }
     }

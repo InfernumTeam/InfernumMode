@@ -1970,7 +1970,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             GameShaders.Misc["Infernum:YharonBurn"].UseOpacity(fireIntensity * 0.7f);
-            GameShaders.Misc["Infernum:YharonBurn"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            GameShaders.Misc["Infernum:YharonBurn"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
             GameShaders.Misc["Infernum:YharonBurn"].UseColor(burnColor * 0.7f);
             GameShaders.Misc["Infernum:YharonBurn"].UseSecondaryColor(Color.White * 0.12f);
             GameShaders.Misc["Infernum:YharonBurn"].Shader.Parameters["uTimeFactor"].SetValue(1.1f);
@@ -2051,7 +2051,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 4.75f;
-                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 

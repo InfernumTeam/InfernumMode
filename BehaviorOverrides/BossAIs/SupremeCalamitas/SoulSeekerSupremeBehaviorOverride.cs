@@ -29,6 +29,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
+            npc.frameCounter += 0.15f;
+            npc.frameCounter %= Main.npcFrameCount[npc.type];
+            int frame = (int)npc.frameCounter;
+            npc.frame.Y = frame * npc.frame.Height;
+
             npc.target = SCal.target;
             Player Target = Main.player[npc.target];
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection == -1 ? 40f : -36f, 16f);

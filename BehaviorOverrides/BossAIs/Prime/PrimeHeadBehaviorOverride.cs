@@ -215,9 +215,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Focus on the boss as it spawns.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(animationTime, animationTime - 8f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(animationTime, animationTime - 8f, attackTimer, true);
             }
 
             // Don't do damage during the spawn animation.
@@ -1092,7 +1092,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D eyeGlowTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeEyes").Value;
+            Texture2D eyeGlowTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Prime/PrimeEyes").Value;
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             for (int i = 9; i >= 0; i -= 2)
@@ -1132,7 +1132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[2];
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
                 Player target = Main.player[npc.target];
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
@@ -1153,7 +1153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[5];
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);

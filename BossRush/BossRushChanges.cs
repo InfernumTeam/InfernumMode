@@ -84,11 +84,11 @@ namespace InfernumMode.BossRush
 
         public static void Load()
         {
-            // Cache the calamity boss order.
-            CalamityBosses = Bosses;
+            //// Cache the calamity boss order.
+            //CalamityBosses = Bosses;
 
-            // Cache our own boss order.
-            InfernumBosses = new List<Boss>()
+            //// Cache our own boss order.
+            Bosses = new List<Boss>()
             {
                 new Boss(NPCID.KingSlime, permittedNPCs: new int[] { ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>() }),
 
@@ -310,7 +310,7 @@ namespace InfernumMode.BossRush
             };
 
             // Cache our own boss death effects.
-            InfernumBossDeathEffects = new Dictionary<int, Action<NPC>>()
+            BossDeathEffects = new Dictionary<int, Action<NPC>>()
             {
                 [NPCID.WallofFlesh] = npc =>
                 {
@@ -350,7 +350,7 @@ namespace InfernumMode.BossRush
                         Projectile.NewProjectile(new EntitySource_WorldEvent(), npc.Center, Vector2.Zero, ModContent.ProjectileType<BossRushEndEffectThing>(), 0, 0f, Main.myPlayer);
                 }
             };
-            InfernumBossIDsAfterDeath = new Dictionary<int, int[]> 
+            BossIDsAfterDeath = new Dictionary<int, int[]> 
             { 
                 [ModContent.NPCType<Apollo>()] = new int[]
                 {
@@ -370,9 +370,9 @@ namespace InfernumMode.BossRush
             };
 
             // TODO: Make these properly swapable without breaking.
-            Bosses = InfernumBosses;
-            BossDeathEffects = InfernumBossDeathEffects;
-            BossIDsAfterDeath = InfernumBossIDsAfterDeath;
+            //Bosses = InfernumBosses;
+            //BossDeathEffects = InfernumBossDeathEffects;
+            //BossIDsAfterDeath = InfernumBossIDsAfterDeath;
         }
 
         internal static void BringPlayersBackToSpawn()

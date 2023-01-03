@@ -145,8 +145,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Use the screen saturation effect.
             npc.Infernum().ShouldUseSaturationBlur = true;
 
-            // Enable the distortion filter if it isnt active.
-            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
+            // Enable the distortion filter if it isnt active and the player's config permits it.
+            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
             {
                 Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
                 InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");

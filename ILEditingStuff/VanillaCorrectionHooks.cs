@@ -497,13 +497,11 @@ namespace InfernumMode.ILEditingStuff
                 fire.noGravity = true;
             }
 
-            // I LOVE RANDOM ERRORS IN VANILLA METHODS THAT DISRUPT MY GODDAMN DEBUGGING ENVIRONMENT.
-            // It's so FUN!
-            try
-            {
+            // I don't know who fucked this up. I don't know if it was me.
+            // But I'm sick of my game going to 1 FPS due to hundreds of exceptions being thrown every single frame and as such will be the one
+            // to fix it.
+            if (tileCache.TileType != TileID.LeafBlock)
                 orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
-            }
-            catch (IndexOutOfRangeException) { }
         }
 
         public void Load() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;

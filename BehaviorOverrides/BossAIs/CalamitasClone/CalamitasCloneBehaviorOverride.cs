@@ -132,9 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < 50; i++)
                 {
                     float seekerAngle = MathHelper.TwoPi * i / 50f;
-                    int seeker = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>());
-                    if (Main.npc.IndexInRange(seeker))
-                        Main.npc[seeker].ai[0] = seekerAngle;
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>(), npc.whoAmI, seekerAngle);
                 }
 
                 npc.netUpdate = true;

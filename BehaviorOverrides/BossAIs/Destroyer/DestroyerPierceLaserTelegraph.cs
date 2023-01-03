@@ -55,9 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int laser = Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity * 18f, ProjectileID.DeathLaser, 120, 0f);
-            if (Main.projectile.IndexInRange(laser))
-                Main.projectile[laser].tileCollide = false;
+            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity.SafeNormalize(-Vector2.UnitY), ModContent.ProjectileType<DestroyerPierceLaser>(), 120, 0f);
         }
     }
 }

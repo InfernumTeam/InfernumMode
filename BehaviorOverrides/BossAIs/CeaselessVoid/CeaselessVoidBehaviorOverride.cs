@@ -15,7 +15,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -260,7 +259,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         darkEnergy.netUpdate = true;
                     }
                 }
-                
+
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGBeam>());
                 SelectNewAttack(npc);
             }
         }
@@ -342,7 +342,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         npc.netUpdate = true;
 
                         if (chargeCounter >= chargeCount)
+                        {
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
                             SelectNewAttack(npc);
+                        }
                         else
                             npc.velocity *= 0.3f;
                     }

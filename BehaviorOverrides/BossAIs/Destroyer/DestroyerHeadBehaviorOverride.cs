@@ -358,19 +358,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 npc.velocity.Y *= 0.98f;
 
-                int shootRate = lifeRatio < Phase3LifeRatio ? 48 : 60;
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 120f && attackTimer % shootRate == shootRate - 1f)
+                int shootRate = lifeRatio < Phase3LifeRatio ? 40 : 54;
+                if (attackTimer > 120f && attackTimer % shootRate == shootRate - 1f)
                 {
-                    float offset = Main.rand.NextFloat(120f);
-                    Vector2 laserDirection = -Vector2.UnitY;
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
 
-                    // Add some randomness to the lasers in phase 3.
-                    if (lifeRatio < Phase3LifeRatio)
-                        laserDirection = laserDirection.RotatedByRandom(0.66f);
-                    for (float dx = -1400f; dx < 1400f; dx += 120f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
-                        Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f, -1, npc.whoAmI);
+                        float offset = Main.rand.NextFloat(120f);
+                        Vector2 laserDirection = -Vector2.UnitY;
+
+                        // Add some randomness to the lasers in phase 3.
+                        if (lifeRatio < Phase3LifeRatio)
+                            laserDirection = laserDirection.RotatedByRandom(0.66f);
+                        for (float dx = -1400f; dx < 1400f; dx += 120f)
+                        {
+                            Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
+                            Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f, -1, npc.whoAmI);
+                        }
+
+                        npc.netUpdate = true;
                     }
                 }
             }

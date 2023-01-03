@@ -1446,7 +1446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Initialize the telegraph primitive drawer.
-            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, true, InfernumEffectsRegistry.SideStreakVertexShader);
+            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, false, InfernumEffectsRegistry.SideStreakVertexShader);
 
             bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             bool enraged = npc.ai[3] == 1f;

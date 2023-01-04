@@ -41,6 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoBomb,
             ExoLightBarrage,
             RefractionRotorRays,
+
+            // Ultimate attack. Only happens when in the final phase.
             MaximumOverdrive
         }
 

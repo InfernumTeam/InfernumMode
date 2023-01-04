@@ -429,7 +429,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.EmitDelegate<Action>(() =>
             {
                 float fadeToBlack = 0f;
-                if (CalamityGlobalNPC.signus != -1)
+                if (CalamityGlobalNPC.signus != -1 && Main.npc[CalamityGlobalNPC.signus].active)
                     fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];
                 if (InfernumMode.BlackFade > 0f)
                     fadeToBlack = InfernumMode.BlackFade;

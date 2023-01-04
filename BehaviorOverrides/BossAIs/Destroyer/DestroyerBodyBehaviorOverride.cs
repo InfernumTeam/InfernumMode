@@ -32,11 +32,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Reset the segment scale if necessary.
             ResetScale(npc);
 
-            NPC head = Main.npc[npc.realLife];
-            npc.Calamity().DR = 0.2f;
-
             // Inherit various attributes from the ahead segment.
             // This code will go upstream across every segment, until it reaches the head.
+            NPC head = Main.npc[npc.realLife];
             npc.Opacity = aheadSegment.Opacity;
             npc.chaseable = true;
             npc.friendly = false;

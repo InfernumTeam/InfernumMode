@@ -465,9 +465,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 // Let the descent persist if not sufficiently far down below the target yet.
                 if (isntFarEnoughDown && attackTimer >= minDescendTime - 5f)
                     attackTimer = minDescendTime - 5f;
-                
+
                 if (attackTimer >= minDescendTime + minRiseTime + attackTransitionDelay)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AstralRubble>());
                     SelectNextAttack(npc);
+                }
 
                 npc.velocity.X *= 0.985f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + descendGravity, -16f, maxDescendSpeed);

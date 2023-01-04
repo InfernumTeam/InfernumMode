@@ -50,9 +50,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 int lasersPerBurst = 12;
 
-                if (ExoMechManagement.CurrentAresPhase >= 5)
-                    lasersPerBurst += 2;
-
                 if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
                     lasersPerBurst = 5;
 
@@ -99,8 +96,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (totalLasersPerBurst >= 3)
                     totalLasersPerBurst += 2;
             }
-            if (ExoMechManagement.CurrentAresPhase >= 5)
-                totalLasersPerBurst += 2;
 
             // Make things a bit less chaotic during the photon ripper attack.
             if (photonRipperAttack)

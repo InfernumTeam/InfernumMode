@@ -24,6 +24,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using Terraria.GameContent.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -41,7 +42,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             HoverCharge,
             LaserSpinBursts,
             DirectionChangingSpinBursts,
-            PhotonRipperSlashes
+            PhotonRipperSlashes,
+
+            // Ultimate attack. Only happens when in the final phase.
+            PrecisionBlasts
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AresBody>();
@@ -117,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
-
+            
             // Use the screen saturation effect.
             npc.Infernum().ShouldUseSaturationBlur = true;
 
@@ -302,6 +306,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     case AresBodyAttackType.DirectionChangingSpinBursts:
                         DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType);
                         break;
+                    case AresBodyAttackType.PrecisionBlasts:
+                        DoBehavior_PrecisionBlasts(npc, target, ref enraged, ref attackTimer, ref frameType);
+
+                        // Back-arms should not swap during the ultimate attack, to ensure that attack harmony is maintained.
+                        backarmSwapTimer = 300f;
+                        break;
                 }
             }
             else
@@ -326,15 +336,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoLaughEffect(NPC npc, Player target)
         {
-            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 5f });
+            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f });
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
         }
 
-        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)
-        {
-
-        }
+        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset) { }
 
         public static void DoBehavior_DeathAnimation(NPC npc, ref float deathAnimationTimer)
         {
@@ -456,10 +463,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
                 attackTime = 1350;
             if (ExoMechManagement.CurrentAresPhase >= 6)
-                attackTime = 900;
+                attackTime = 1260;
 
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 410f;
-            Vector2 offset = hoverDestination - npc.Center;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
             if (attackTimer > attackTime)
@@ -561,7 +567,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
 
-            // Have Ares laugh.
+            // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;
             if (attackTimer == 1f)
                 DoLaughEffect(npc, target);
@@ -614,7 +620,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Drift towards the target.
-            if (attackTimer >= shootDelay && npc.ai[0] != (int)AresBodyAttackType.DirectionChangingSpinBursts && Collision.CanHitLine(npc.Center, npc.width, npc.height, npc.Center + npc.SafeDirectionTo(target.Center) * 1000f, npc.width, npc.height))
+            bool lineOfSightIsClear = Collision.CanHitLine(npc.Center, npc.width, npc.height, npc.Center + npc.SafeDirectionTo(target.Center) * 1000f, npc.width, npc.height);
+            if (attackTimer >= shootDelay && npc.ai[0] != (int)AresBodyAttackType.DirectionChangingSpinBursts && lineOfSightIsClear)
                 npc.Center = npc.Center.MoveTowards(target.Center, 5.5f);
 
             // Delete projectiles after the delay has concluded.
@@ -633,10 +640,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < totalLasers; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                    int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f);
+                    int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                     if (Main.projectile.IndexInRange(telegraph))
                     {
-                        Main.projectile[telegraph].ai[1] = npc.whoAmI;
                         Main.projectile[telegraph].localAI[0] = telegraphTime;
                         Main.projectile[telegraph].netUpdate = true;
                     }
@@ -660,10 +666,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f);
+                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                         if (Main.projectile.IndexInRange(deathray))
                         {
-                            Main.projectile[deathray].ai[1] = npc.whoAmI;
                             Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
                             Main.projectile[deathray].netUpdate = true;
                         }
@@ -708,7 +713,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Get pissed off if the player attempts to leave the laser circle.
             if (!npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 135f) && enraged == 0f)
             {
-                if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
+                if (Main.LocalPlayer.active && !Main.LocalPlayer.dead)
                     SoundEngine.PlaySound(AresBody.EnragedSound, target.Center);
 
                 // Have Draedon comment on the player's attempts to escape.
@@ -728,6 +733,260 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
+        public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        {
+            int startingShootDelay = 60;
+            int endingShootDelay = 28;
+            int textSubstateTime = 172;
+            int cannonAttackTime = 960;
+            int metalReleaseRate = 23;
+
+            int laserbeamCount = 6;
+            int laserbeamTelegraphTime = 60;
+            int laserbeamSpinTime = 900;
+            int sparkBurstReleaseRate = 45;
+            int circularBoltCount = 21;
+            int draedonIndex = NPC.FindFirstNPC(ModContent.NPCType<DraedonNPC>());
+            Vector2 coreCenter = npc.Center + Vector2.UnitY * 24f;
+
+            ref float laserAngularOffset = ref npc.Infernum().ExtraAI[0];
+            ref float shootCountdown = ref npc.Infernum().ExtraAI[1];
+            ref float shootDelay = ref npc.Infernum().ExtraAI[2];
+            ref float cannonsCanShoot = ref npc.Infernum().ExtraAI[3];
+            ref float cannonAttackTimer = ref npc.Infernum().ExtraAI[4];
+            ref float overheatInterpolant = ref npc.localAI[3];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[9];
+
+            // Disable damage during this attack.
+            npc.Calamity().DR = 0.9999999f;
+            npc.Calamity().unbreakableDR = true;
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Disable the enrage effect.
+            enraged = 0f;
+
+            // Reset the cannons. Attack substates can give them permission to attack.
+            cannonsCanShoot = 0f;
+
+            switch ((int)attackSubstate)
+            {
+                // Sit in place and give some warning text before attacking.
+                case 0:
+                    if (attackTimer == 1f)
+                        DoLaughEffect(npc, target);
+
+                    // Cease movement.
+                    npc.velocity = Vector2.Zero;
+
+                    // Reset the heat interpolant.
+                    overheatInterpolant = 0f;
+
+                    // Prevent a bug where the cannons fire too soon.
+                    cannonAttackTimer = -5f;
+
+                    if (attackTimer == textSubstateTime / 2)
+                        Utilities.DisplayText("ARES-09: CORE TEMPERATURES RAPIDLY INCREASING. SELF DESTRUCTION IMMINENT.", AresTextColor);
+
+                    if (attackTimer >= textSubstateTime)
+                    {
+                        Utilities.DisplayText("ARES-09: PREPARING 'PRECISION GAMMA-BLASTS' MUTUAL DESTRUCTION PROTOCOL.", AresTextColor);
+
+                        attackTimer = 0f;
+                        attackSubstate = 1f;
+                        npc.netUpdate = true;
+                    }
+
+                    ExoMechManagement.ClearAwayTransitionProjectiles();
+
+                    break;
+
+                // Hover above the target and begin attacking.
+                case 1:
+                    Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
+
+                    // Allow shooting.
+                    cannonsCanShoot = 1f;
+
+                    // Calculate the shoot delay.
+                    int oldShootDelay = (int)shootDelay;
+                    shootDelay = (int)Utils.Remap(attackTimer, 0f, cannonAttackTime * 0.55f, startingShootDelay, endingShootDelay);
+
+                    // Calculate the overheat interpolant.
+                    overheatInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, cannonAttackTime * 0.67f, attackTimer, true), 1.96) * 0.56f;
+
+                    // Account for discrepancies caused by countdowns in the charge delay.
+                    if (shootDelay < oldShootDelay)
+                        cannonAttackTimer -= oldShootDelay - shootDelay;
+                    cannonAttackTimer++;
+                    if (cannonAttackTimer >= shootDelay + 1f)
+                    {
+                        cannonAttackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+
+                    // Periodically release chunks of metal into the air.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % metalReleaseRate == metalReleaseRate - 1f)
+                    {
+                        Vector2 metalVelocity = -Vector2.UnitY.RotatedByRandom(0.66f) * Main.rand.NextFloat(14f, 17f);
+                        Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 90f + Main.rand.NextVector2Circular(30f, 30f), metalVelocity, ModContent.ProjectileType<HotMetal>(), StrongerNormalShotDamage, 0f, -1, npc.localAI[3]);
+                    }
+
+                    if (attackTimer >= cannonAttackTime)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 2f;
+
+                        // Delete leftover projectiles.
+                        Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HotMetal>());
+
+                        npc.netUpdate = true;
+                    }
+
+                    break;
+
+                // Hover in place and laugh before performing a final, super-blender.
+                case 2:
+                    // Cease movement.
+                    npc.velocity *= 0.9f;
+
+                    // Cast telegraph lines outward.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+                    {
+                        for (int i = 0; i < laserbeamCount; i++)
+                        {
+                            Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
+                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
+                            if (Main.projectile.IndexInRange(telegraph))
+                            {
+                                Main.projectile[telegraph].localAI[0] = laserbeamTelegraphTime;
+                                Main.projectile[telegraph].netUpdate = true;
+                            }
+                        }
+                        laserAngularOffset = 0f;
+                        npc.netUpdate = true;
+                    }
+
+                    // Disable cannon time effects.
+                    cannonAttackTimer = 0f;
+
+                    if (attackTimer >= laserbeamTelegraphTime)
+                    {
+                        DoLaughEffect(npc, target);
+                        
+                        SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
+
+                        // Create lightning bolts in the sky.
+                        if (Main.netMode != NetmodeID.Server)
+                            ExoMechsSky.CreateLightningBolt(80, true);
+
+                        // Create the blender.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < laserbeamCount; i++)
+                            {
+                                Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
+                                int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
+                                if (Main.projectile.IndexInRange(deathray))
+                                {
+                                    Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
+                                    Main.projectile[deathray].netUpdate = true;
+                                }
+                            }
+
+                            attackTimer = 0f;
+                            attackSubstate = 3f;
+                            npc.netUpdate = true;
+                        }
+                    }
+
+                    break;
+
+                // Do things during the blender.
+                case 3:
+                    // Grant the target infinite flight time.
+                    target.wingTime = target.wingTimeMax;
+
+                    // Make the laser spin.
+                    float spinSpeedInterpolant = Utils.GetLerpValue(0f, 360f, attackTimer, true);
+                    laserAngularOffset += MathHelper.ToRadians(spinSpeedInterpolant * 0.93f);
+
+                    // Periodically release slow bursts of sparks in a spread.
+                    if (attackTimer % sparkBurstReleaseRate == sparkBurstReleaseRate - 1f)
+                    {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
+                            float circularSpreadAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                            for (int i = 0; i < circularBoltCount; i++)
+                            {
+                                Vector2 boltShootVelocity = (MathHelper.TwoPi * i / circularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 9f;
+                                Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
+                                Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
+                            }
+                        }
+                    }
+
+                    // Make Draedon become enraged if you leave the blender.
+                    if (draedonIndex != -1 && Main.npc[draedonIndex].active && Main.npc[draedonIndex].Infernum().ExtraAI[1] == 0f && !npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 40f))
+                    {
+                        SoundEngine.PlaySound(AresBody.EnragedSound with { Volume = 2f });
+                        Utilities.DisplayText("You have made a grave miscalculation.", DraedonNPC.TextColorEdgy);
+
+                        NPC draedon = Main.npc[draedonIndex];
+                        draedon.Infernum().ExtraAI[1] = 1f;
+                        draedon.netUpdate = true;
+                    }
+
+                    if (attackTimer >= laserbeamSpinTime)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 4f;
+
+                        // Delete leftover projectiles.
+                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HotMetal>(), ModContent.ProjectileType<AresTeslaSpark>());
+
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Explode violently.
+                case 4:
+                    MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
+                    
+                    if (attackTimer == 60f)
+                    {
+                        GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, 4f, 120));
+                        SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);                        
+                    }
+
+                    if (attackTimer >= 84f)
+                    {
+                        npc.life = 0;
+                        npc.HitEffect();
+                        npc.StrikeNPC(10, 0f, 1);
+                        npc.checkDead();
+                    }
+
+                    break;
+            }
+
+            // Laugh.
+            frameType = (int)AresBodyFrameType.Laugh;
+
+            // Emit smoke once hot enough.
+            var smokeDrawer = npc.ModNPC<AresBody>().SmokeDrawer;
+            smokeDrawer.ParticleSpawnRate = int.MaxValue;
+            if (npc.localAI[3] >= 0.42f)
+            {
+                smokeDrawer.ParticleSpawnRate = 1;
+                smokeDrawer.BaseMoveRotation = npc.rotation + MathHelper.PiOver2;
+                smokeDrawer.SpawnAreaCompactness = 120f;
+            }
+            smokeDrawer.Update();
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
@@ -737,6 +996,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             else
             {
                 npc.ai[0] = (int)AresBodyAttackType.IdleHover;
+
                 if (oldAttackType == AresBodyAttackType.IdleHover)
                 {
                     if ((Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 2) && ExoMechManagement.CurrentAresPhase <= 5)
@@ -756,6 +1016,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                         if (Main.rand.NextFloat() < photonRipperChance)
                             npc.ai[0] = (int)AresBodyAttackType.PhotonRipperSlashes;
                     }
+
+                    // Use the ultimate attack in the final phase.
+                    if (ExoMechManagement.CurrentAresPhase >= 6)
+                        npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
             }
 
@@ -779,6 +1043,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return true;
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+            // Cannons are disabled only when the attack says so during the ultimate attack.
+            // Otherwise, all of them fire.
+            if (aresBody.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
+                return aresBody.Infernum().ExtraAI[3] == 0f;
 
             int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
             if (thanatosIndex >= 0 && aresBody.ai[0] >= 100f && Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)
@@ -908,8 +1177,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.frame = new Rectangle(npc.width * (int)(currentFrame / 8), npc.height * (int)(currentFrame % 8), npc.width, npc.height);
         }
 
-        internal static MethodInfo DrawArmFunction = typeof(AresBody).GetMethod("DrawArm", BindingFlags.Public | BindingFlags.Instance);
-
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
             return MathHelper.SmoothStep(60f, 22f, completionRatio) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true);
@@ -924,6 +1191,166 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
             color.A = 0;
             return color;
+        }
+
+        public static void DrawArm(NPC npc, Vector2 handPosition, Vector2 screenOffset, Color glowmaskColor, int direction, bool backArm, Color? colorToInterpolateTo = null, float colorInterpolant = 0f)
+        {
+            ref PrimitiveTrail lightningDrawer = ref npc.ModNPC<AresBody>().LightningDrawer;
+            ref PrimitiveTrail lightningBackgroundDrawer = ref npc.ModNPC<AresBody>().LightningBackgroundDrawer;
+
+            // Initialize lightning drawers.
+            lightningDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
+            lightningBackgroundDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
+
+            SpriteEffects spriteDirection = direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            float distanceFromHand = npc.Distance(handPosition);
+            float frameTime = Main.GlobalTimeWrappedHourly * 0.9f % 1f;
+
+            // Draw back arms.
+            if (backArm)
+            {
+                Texture2D shoulderTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopShoulder").Value;
+                Texture2D armTexture1 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopPart1").Value;
+                Texture2D armSegmentTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopSegment").Value;
+                Texture2D armTexture2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopPart2").Value;
+
+                Texture2D shoulderGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopShoulderGlow").Value;
+                Texture2D armSegmentGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopSegmentGlow").Value;
+                Texture2D armGlowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopPart2Glow").Value;
+
+                Vector2 shoulderDrawPosition = npc.Center + npc.scale * new Vector2(direction * 176f, -100f);
+                Vector2 arm1DrawPosition = shoulderDrawPosition + npc.scale * new Vector2(direction * (shoulderTexture.Width + 16f), 10f);
+                Vector2 armSegmentDrawPosition = arm1DrawPosition;
+
+                // Determine frames.
+                Rectangle shoulderFrame = shoulderTexture.Frame(1, 9, 0, (int)(frameTime * 9f));
+                Rectangle armSegmentFrame = armSegmentTexture.Frame(1, 9, 0, (int)(frameTime * 9f));
+                Rectangle arm2Frame = armTexture2.Frame(1, 9, 0, (int)(frameTime * 9f));
+
+                Vector2 arm1Origin = armTexture1.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
+                Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
+
+                float arm1Rotation = MathHelper.Clamp(distanceFromHand * direction / 1200f, -0.12f, 0.12f);
+                float arm2Rotation = (handPosition - armSegmentDrawPosition - Vector2.UnitY * 12f).ToRotation();
+                if (direction == 1)
+                    arm2Rotation += MathHelper.Pi;
+                float armSegmentRotation = arm2Rotation;
+
+                // Handle offsets for points.
+                armSegmentDrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * -14f;
+                armSegmentDrawPosition -= arm2Rotation.ToRotationVector2() * npc.scale * direction * 20f;
+                Vector2 arm2DrawPosition = armSegmentDrawPosition;
+                arm2DrawPosition -= arm2Rotation.ToRotationVector2() * direction * npc.scale * 40f;
+                arm2DrawPosition += (arm2Rotation - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 14f;
+
+                // Calculate colors.
+                Color shoulderLightColor = npc.GetAlpha(Lighting.GetColor((int)shoulderDrawPosition.X / 16, (int)shoulderDrawPosition.Y / 16));
+                Color arm1LightColor = npc.GetAlpha(Lighting.GetColor((int)arm1DrawPosition.X / 16, (int)arm1DrawPosition.Y / 16));
+                Color armSegmentLightColor = npc.GetAlpha(Lighting.GetColor((int)armSegmentDrawPosition.X / 16, (int)armSegmentDrawPosition.Y / 16));
+                Color arm2LightColor = npc.GetAlpha(Lighting.GetColor((int)arm2DrawPosition.X / 16, (int)arm2DrawPosition.Y / 16));
+                Color glowmaskAlphaColor = npc.GetAlpha(glowmaskColor);
+                if (colorInterpolant >= 0f && colorToInterpolateTo.HasValue)
+                {
+                    shoulderLightColor = Color.Lerp(shoulderLightColor, colorToInterpolateTo.Value, colorInterpolant);
+                    arm1LightColor = Color.Lerp(arm1LightColor, colorToInterpolateTo.Value, colorInterpolant);
+                    armSegmentLightColor = Color.Lerp(armSegmentLightColor, colorToInterpolateTo.Value, colorInterpolant);
+                    arm2LightColor = Color.Lerp(arm2LightColor, colorToInterpolateTo.Value, colorInterpolant);
+                }
+
+                // Draw electricity between arms.
+                if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
+                {
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(armSegmentDrawPosition, arm2DrawPosition + arm2Rotation.ToRotationVector2() * -direction * 20f, 250290787);
+                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+
+                    // Draw electricity between the final arm and the hand.
+                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 100f, handPosition, 27182);
+                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                }
+
+                shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                arm1DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                armSegmentDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                arm2DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+
+                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, null, arm1LightColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection, 0f);
+                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection, 0f);
+                Main.spriteBatch.Draw(armSegmentTexture, armSegmentDrawPosition, armSegmentFrame, armSegmentLightColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armSegmentGlowmask, armSegmentDrawPosition, armSegmentFrame, glowmaskAlphaColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
+                Main.spriteBatch.Draw(armGlowmask2, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
+            }
+            else
+            {
+                Texture2D shoulderTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmShoulder").Value;
+                Texture2D connectorTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmConnector").Value;
+                Texture2D armTexture1 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart1").Value;
+                Texture2D armTexture2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2").Value;
+
+                Texture2D shoulderGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmShoulderGlow").Value;
+                Texture2D armTexture1Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart1Glow").Value;
+                Texture2D armTexture2Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2Glow").Value;
+
+                Vector2 shoulderDrawPosition = npc.Center + npc.scale * new Vector2(direction * 110f, -54f);
+                Vector2 connectorDrawPosition = shoulderDrawPosition + npc.scale * new Vector2(direction * 20f, 32f);
+                Vector2 arm1DrawPosition = shoulderDrawPosition + npc.scale * Vector2.UnitX * direction * 20f;
+
+                // Determine frames.
+                Rectangle arm1Frame = armTexture1.Frame(1, 9, 0, (int)(frameTime * 9f));
+                Rectangle shoulderFrame = shoulderTexture.Frame(1, 9, 0, (int)(frameTime * 9f));
+                Rectangle arm2Frame = armTexture2.Frame(1, 9, 0, (int)(frameTime * 9f));
+
+                Vector2 arm1Origin = arm1Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
+                Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
+
+                float arm1Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
+                connectorDrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * -26f;
+                arm1DrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * (armTexture1.Width - 14f);
+                float arm2Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
+
+                Vector2 arm2DrawPosition = arm1DrawPosition + arm2Rotation.ToRotationVector2() * npc.scale * direction * (armTexture2.Width + 16f) - Vector2.UnitY * 16f;
+
+                // Calculate colors.
+                Color shoulderLightColor = npc.GetAlpha(Lighting.GetColor((int)shoulderDrawPosition.X / 16, (int)shoulderDrawPosition.Y / 16));
+                Color arm1LightColor = npc.GetAlpha(Lighting.GetColor((int)arm1DrawPosition.X / 16, (int)arm1DrawPosition.Y / 16));
+                Color arm2LightColor = npc.GetAlpha(Lighting.GetColor((int)arm2DrawPosition.X / 16, (int)arm2DrawPosition.Y / 16));
+                Color glowmaskAlphaColor = npc.GetAlpha(glowmaskColor);
+                if (colorInterpolant >= 0f && colorToInterpolateTo.HasValue)
+                {
+                    shoulderLightColor = Color.Lerp(shoulderLightColor, colorToInterpolateTo.Value, colorInterpolant);
+                    arm1LightColor = Color.Lerp(arm1LightColor, colorToInterpolateTo.Value, colorInterpolant);
+                    arm2LightColor = Color.Lerp(arm2LightColor, colorToInterpolateTo.Value, colorInterpolant);
+                }
+
+                // Draw electricity between arms.
+                if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
+                {
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
+                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+
+                    // Draw electricity between the final arm and the hand.
+                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 20f, handPosition, 27182);
+                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                }
+
+                shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                connectorDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                arm1DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+                arm2DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
+
+                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, arm1Rotation, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, arm1Rotation, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(connectorTexture, connectorDrawPosition, null, shoulderLightColor, 0f, connectorTexture.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, arm1Frame, arm1LightColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture1Glowmask, arm1DrawPosition, arm1Frame, glowmaskAlphaColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -952,6 +1379,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 afterimageBaseColor = new Color(255, 55, 0, 0);
             }
 
+            // Interpolate towards overheat colors.
+            Color baseInterpolateColor = Color.Red with { A = 100 };
+            lightColor = Color.Lerp(lightColor, baseInterpolateColor, npc.localAI[3] * 0.48f);
+            armGlowmaskColor = Color.Lerp(armGlowmaskColor, Color.Red with { A = 0 }, npc.localAI[3] * 0.48f);
+
             (int, bool)[] armProperties = new (int, bool)[]
             {
                 // Laser arm.
@@ -974,22 +1406,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 armProperties[1] = (-1, true);
             }
 
+            // Draw smoke.
+            npc.ModNPC<AresBody>().SmokeDrawer.DrawSet(npc.Center);
+
             // Draw arms for each hand.
             if (npc.Opacity > 0.05f)
             {
                 if (laserArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[laserArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
+                    DrawArm(npc, Main.npc[laserArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
                 if (pulseArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[pulseArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
+                    DrawArm(npc, Main.npc[pulseArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
                 if (teslaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[teslaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
+                    DrawArm(npc, Main.npc[teslaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
                 if (plasmaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, Main.npc[plasmaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
+                    DrawArm(npc, Main.npc[plasmaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
 
                 foreach (NPC photonRipper in photonRippers)
                 {
                     int direction = (photonRipper.Infernum().ExtraAI[0] == 1f).ToDirectionInt();
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { Main.spriteBatch, photonRipper.Center, Main.screenPosition, armGlowmaskColor, direction, true });
+                    DrawArm(npc, photonRipper.Center, Main.screenPosition, armGlowmaskColor, direction, true, baseInterpolateColor, npc.localAI[3] * 0.6f);
                 }
             }
 
@@ -997,30 +1432,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            int numAfterimages = 9;
 
             float finalPhaseGlowInterpolant = Utils.GetLerpValue(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
             if (finalPhaseGlowInterpolant > 0f)
             {
-                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f + npc.localAI[3] * 10f;
                 for (int i = 0; i < 8; i++)
                 {
                     Color color = Main.hslToRgb((i / 8f + Main.GlobalTimeWrappedHourly * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color = Color.Lerp(color, Color.Red * 0.3f, npc.localAI[3]);
                     color.A = 0;
+
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-                }
-            }
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = numAfterimages - 1; i >= 1; i--)
-                {
-                    Color afterimageColor = lightColor;
-                    afterimageColor = npc.GetAlpha(Color.Lerp(afterimageColor, afterimageBaseColor, 0.8f));
-                    afterimageColor *= (numAfterimages - i) / 15f;
-                    Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
 
@@ -1055,7 +1479,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         #endregion Frames and Drawcode
 
         #region Death Effects
-        public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
+        public override bool CheckDead(NPC npc)
+        {
+            if (npc.ai[0] == (int)AresBodyAttackType.PrecisionBlasts && ExoMechManagement.TotalMechs <= 1)
+                return true;
+
+            return ExoMechManagement.HandleDeathEffects(npc);
+        }
         #endregion Death Effects
 
         #region Tips

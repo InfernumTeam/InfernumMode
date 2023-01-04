@@ -78,6 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.target = apollo.target;
             npc.life = apollo.life;
             npc.lifeMax = apollo.lifeMax;
+            npc.Calamity().DR = apollo.Calamity().DR;
+            npc.Calamity().unbreakableDR = apollo.Calamity().unbreakableDR;
 
             // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];

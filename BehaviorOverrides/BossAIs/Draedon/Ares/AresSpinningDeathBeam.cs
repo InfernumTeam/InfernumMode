@@ -28,7 +28,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public float InitialSpinDirection = -100f;
 
-        public float LifetimeThing;
+        public bool SuperLaser => Main.npc[OwnerIndex].localAI[3] >= 0.1f;
+
+        public float LifetimeThing = 600f;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => AresDeathBeamTelegraph.TelegraphWidth;
         public override float Lifetime => LifetimeThing;
@@ -76,9 +78,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (InitialSpinDirection == -100f)
                 InitialSpinDirection = Projectile.velocity.ToRotation();
 
+            // Adjust the size if this is a super laser.
+            if (Projectile.width <= 102f && SuperLaser)
+                Projectile.width = 200;
+
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>() && Main.npc[OwnerIndex].Opacity > 0.35f)
             {
-                Projectile.velocity = (InitialSpinDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[0]).ToRotationVector2();
+                float spinOffset = Main.npc[OwnerIndex].Infernum().ExtraAI[0];
+                Projectile.velocity = (InitialSpinDirection + spinOffset).ToRotationVector2();
                 Vector2 fireFrom = new(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
                 fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(2f, 16f, Projectile.scale * Projectile.scale);
                 Projectile.Center = fireFrom;
@@ -132,6 +139,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public Color ColorFunction(float completionRatio)
         {
             Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f + Projectile.identity * 0.27f) % 1f, 1f, 0.6f);
+            if (SuperLaser)
+            {
+                Color laserFireColor = Color.Lerp(Color.Orange, Color.Red, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.7f + completionRatio * 2.3f) * 0.5f + 0.5f);
+                color = Color.Lerp(color, laserFireColor, 0.8f);
+            }
+
             color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
             color.A = 50;
             return color * 1.32f;

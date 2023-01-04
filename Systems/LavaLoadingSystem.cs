@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Systems
 {
-    public class ModLoadingSystem : ModSystem
+    public class LavaLoadingSystem : ModSystem
     {
         internal static List<CustomLavaStyle> CustomLavaStyles
         {

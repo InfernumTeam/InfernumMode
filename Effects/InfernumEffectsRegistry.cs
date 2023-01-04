@@ -52,6 +52,7 @@ namespace InfernumMode
         #endregion
 
         #region Screen Shaders
+        public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
@@ -73,6 +74,13 @@ namespace InfernumMode
         {
             var assets = InfernumMode.Instance.Assets;
 
+            LoadRegularShaders(assets);
+
+            LoadScreenShaders(assets);
+        }
+
+        public static void LoadRegularShaders(AssetRepository assets)
+        {
             Ref<Effect> gaussianBlur = new(assets.Request<Effect>("Effects/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["InfernumMode:GaussianBlur"] = new MiscShaderData(gaussianBlur, "ScreenPass");
 
@@ -171,52 +179,72 @@ namespace InfernumMode
 
             Ref<Effect> yharonBurnShader = new(assets.Request<Effect>("Effects/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
+        }
 
-            // Screen shaders.
+        public static void LoadScreenShaders(AssetRepository assets)
+        {
+            // Ares (ultimate attack).
+            Filters.Scene["InfernumMode:Ares"] = new Filter(new AresScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Ares"] = new AresSky();
+
+            // Astrum Deus.
+            Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
+
+            // Dragonfolly.
+            Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Dragonfolly"] = new DragonfollySky();
+
+            // Devourer of Gods.
+            Filters.Scene["InfernumMode:DoG"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0.4f, 0.1f, 1.0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
+
+            // Empress of Light.
             Effect screenShader = assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
+            // Hive Mind.
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSky.SkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
 
-            Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Twins"] = new TwinsSky();
-
-            Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
-
-            Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Dragonfolly"] = new DragonfollySky();
-
-            Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
-
-            Filters.Scene["InfernumMode:NightProvidence"] = new Filter(new NightProvidenceShaderData("FilterMiniTower").UseOpacity(0.67f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:NightProvidence"] = new NightProvidenceSky();
-
-            Filters.Scene["InfernumMode:OldDuke"] = new Filter(new OldDukeScreenShaderData("FilterMiniTower").UseOpacity(0.6f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
-
-            Filters.Scene["InfernumMode:DoG"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0.4f, 0.1f, 1.0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
-
-            Ref<Effect> scalScreenShader = new(assets.Request<Effect>("Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(scalScreenShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
-
-            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
-
-            Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
-
+            // Deerclops.
             Ref<Effect> madnessShader = new(assets.Request<Effect>("Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
 
+            // Night Providence.
+            Filters.Scene["InfernumMode:NightProvidence"] = new Filter(new NightProvidenceShaderData("FilterMiniTower").UseOpacity(0.67f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:NightProvidence"] = new NightProvidenceSky();
+
+            // Old Duke.
+            Filters.Scene["InfernumMode:OldDuke"] = new Filter(new OldDukeScreenShaderData("FilterMiniTower").UseOpacity(0.6f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
+
+            // Perforators (death animation).
+            Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
+
+            // Supreme Calamitas.
+            Ref<Effect> scalScreenShader = new(assets.Request<Effect>("Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(scalScreenShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
+
+            // General screen shake distortion.
+            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
+
+            // Screen saturation blur system shader.
+            Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
+
+            // Heat distortion effect.
             Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
+
+            // Twins (desperation phase).
+            Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Twins"] = new TwinsSky();
         }
         #endregion
     }

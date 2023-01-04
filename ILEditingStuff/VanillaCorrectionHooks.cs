@@ -230,7 +230,7 @@ namespace InfernumMode.ILEditingStuff
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
             }
-
+            
             orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
         }
 

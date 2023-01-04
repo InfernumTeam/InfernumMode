@@ -35,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int InitialMechNPCTypeIndex = 28;
 
         public const int Thanatos_AttackDelayIndex = 13;
+        public const int Thanatos_FinalPhaseAttackCounter = 14;
 
         public const int Ares_ProjectileDamageBoostIndex = 8;
         public const int Ares_EnragedIndex = 13;
@@ -318,7 +319,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1500f;
             int complementMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, complementMechType, 1);
             NPC complementMech = Main.npc[complementMechIndex];
-            npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMechIndex;
 
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
             complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
@@ -328,6 +328,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             complementMech.velocity = complementMech.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
             complementMech.Opacity = 0.01f;
             complementMech.netUpdate = true;
+
+            npc.Infernum().ExtraAI[WasNotInitialSummonIndex] = 0f;
+            npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMechIndex;
+            npc.netUpdate = true;
         }
 
         public static void SummonFinalMech(NPC npc)

@@ -110,6 +110,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.defDamage = TwinsChargeContactDamage;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = (int)Apollo.Phase.ChargeCombo;
+            npc.Calamity().DR = 0.3f;
+            npc.Calamity().unbreakableDR = false;
 
             // Decrement the enrage timer.
             if (enrageTimer > 0f)
@@ -1516,7 +1518,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Give some warning text before attacking.
                     // What? What do you MEAN Artemis isn't actually saying this line?? I FEEL CHEATED!!!
                     if (isApollo && attackTimer == textSubstateTime / 2)
-                        Utilities.DisplayText("ARTEMIS-01: COMBINED ENERGY RESERVES AT LOW CAPACITY. SYSTEM FAILURE IMMINENT.", new(245, 139, 24));
+                        Utilities.DisplayText("ARTEMIS-01: COMBINED ENERGY RESERVES AT LOW CAPACITY. SYSTEM FAILURE IMMINENT.", ArtemisTextColor);
 
                     // Look at the target.
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -1524,7 +1526,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     if (attackTimer >= textSubstateTime && isApollo)
                     {
                         if (isApollo)
-                            Utilities.DisplayText("APOLLO-03: PREPARING 'THERMONUCLEAR BLITZ' MUTUAL DESTRUCTION PROTOCOL.", new(44, 172, 36));
+                            Utilities.DisplayText("APOLLO-03: PREPARING 'THERMONUCLEAR BLITZ' MUTUAL DESTRUCTION PROTOCOL.", ApolloTextColor);
+
                         attackSubstate = 1f;
                         attackTimer = 0f;
                         deathOrbRadius = 1f;
@@ -1759,7 +1762,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         npc.ai[0] = (int)TwinsAttackType.ThemonuclearBlitz;
                 }
             }
-            npc.ai[0] = (int)TwinsAttackType.ThemonuclearBlitz;
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -2094,9 +2096,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
-            if (npc.ai[0] != (int)TwinsAttackType.ThemonuclearBlitz)
-                ExoMechManagement.HandleDeathEffects(npc);
-            return true;
+            if (npc.ai[0] == (int)TwinsAttackType.ThemonuclearBlitz && ExoMechManagement.TotalMechs <= 1)
+                return true;
+            return ExoMechManagement.HandleDeathEffects(npc);
         }
         #endregion Death Effects
 

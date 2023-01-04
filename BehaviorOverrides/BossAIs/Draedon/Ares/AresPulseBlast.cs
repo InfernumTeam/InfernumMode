@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void AI()
         {
-            Projectile.velocity *= 1.065f;
+            Projectile.velocity *= 1.049f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
         }

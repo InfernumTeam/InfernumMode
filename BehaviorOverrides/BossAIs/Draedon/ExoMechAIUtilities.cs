@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     Color color = Main.hslToRgb((i / 12f + Main.GlobalTimeWrappedHourly * 0.6f + npc.whoAmI * 0.54f) % 1f, 1f, 0.56f);
                     color.A = 0;
 
-                    if (Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
+                    if (npc.realLife >= 0 && Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
                         color *= (float)Math.Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9);
 
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;

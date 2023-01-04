@@ -225,9 +225,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
                 DoBehavior_DoFinalPhaseTransition(npc, target, finalPhaseAnimationTime);
-                
+
                 if (finalPhaseAnimationTime >= ExoMechManagement.FinalPhaseTransitionTime)
+                {
+                    npc.Infernum().ExtraAI[ExoMechManagement.Thanatos_FinalPhaseAttackCounter] = 0f;
                     SelectNextAttack(npc);
+                }
 
                 // The delay before returning is to ensure that DR code is executed that reflects the fact that Thanatos' head segment is closed.
                 if (finalPhaseAnimationTime >= 3f)
@@ -789,15 +792,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Dash or die.
             npc.damage = ThanatosHeadDamageMaximumOverdrive;
 
-            int chargeDelay = 174;
+            int chargeDelay = 270;
             int attackTime = 720;
             int cooloffTime = 360;
-            bool dontAttackYet = attackTimer >= chargeDelay;
-            bool firstTimeAttacking = npc.Infernum().ExtraAI[ExoMechManagement.Thanatos_FinalPhaseAttackCounter] <= 2f;
+            bool dontAttackYet = attackTimer <= chargeDelay;
+            bool firstTimeAttacking = npc.Infernum().ExtraAI[ExoMechManagement.Thanatos_FinalPhaseAttackCounter] <= 3f;
             if (!firstTimeAttacking)
                 chargeDelay = 30;
 
-            float chargeSpeedInterpolant = Utils.GetLerpValue(chargeDelay - 16f, chargeDelay + 25f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - 45f, attackTimer, true);
+            float chargeSpeedInterpolant = Utils.GetLerpValue(chargeDelay - 16f, chargeDelay + 25f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - 45f, attackTimer - chargeDelay, true);
             float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.25f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
@@ -809,14 +812,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 Utilities.DisplayText("THANATOS-05: PREPAREING 'MAXIMUM OVERDRIVE CHARGE' MUTUTAL DESTRUCTION PROTOCOL.", ThanatosTextColor);
 
             // Play a danger sound before the attack begins.
-            if (attackTimer == chargeDelay - 90f)
+            if (attackTimer == chargeDelay - (firstTimeAttacking ? 90f : 12f))
                 SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with { Volume = 3f });
 
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
 
             // Decide whether to cool off or not.
-            coolingOff = (attackTimer > attackTime - 12f).ToInt();
+            coolingOff = (attackTimer > attackTime + chargeDelay - 12f).ToInt();
 
             // Handle movement.
             DoAggressiveChargeMovement(npc, target, attackTimer, chargeSpeedFactor);

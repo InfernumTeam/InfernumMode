@@ -277,6 +277,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 if (isApollo)
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ApolloFlamethrower>(), ModContent.ProjectileType<ArtemisSpinLaser>());
 
+                npc.ai[0] = (int)TwinsAttackType.FireCharge;
+
                 if (isApollo)
                     DoBehavior_DeathAnimation(npc, target, ref frame, ref npc.ModNPC<Apollo>().ChargeComboFlash, ref deathAnimationTimer);
                 else

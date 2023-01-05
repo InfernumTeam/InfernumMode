@@ -120,7 +120,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 leftHandCenterPos = GetLeftFistAttachmentPosition(npc);
             Vector2 rightHandCenterPos = GetRightFistAttachmentPosition(npc);
 
-            int maxHP = 198700;
             if (AITimer == 0f)
             {
                 npc.TargetClosest();
@@ -138,9 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     return false;
                 }
                 
-                // Otherwise prepare the fight
-                npc.Infernum().AdjustMaxHP(ref maxHP);
-                npc.life = npc.lifeMax = maxHP;
+                // Otherwise prepare the fight.
                 npc.noGravity = true;
                 npc.noTileCollide = false;
                 npc.chaseable = false;
@@ -185,9 +182,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 return false;
             }
-
-            // Desync unfuckery.
-            npc.lifeMax = maxHP;
 
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -239,12 +233,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref NPC rightFist = ref Main.npc[(int)RightFistNPC];
             ref Player target = ref Main.player[npc.target];
 
-            // Ensure that the max HP doesn't desync across the body parts.
-            freeHead.lifeMax = npc.lifeMax;
-            attachedHead.lifeMax = npc.lifeMax;
-            leftFist.lifeMax = npc.lifeMax;
-            rightFist.lifeMax = npc.lifeMax;
-
             // Reset head DR.
             if (freeHead.active)
                 freeHead.Calamity().DR = 0.3f;
@@ -255,6 +243,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 attachedHead.Calamity().DR = 0.3f;
             else if (npc.life > npc.lifeMax * 0.8f)
                 return false;
+
+            // Reset body part indices if necessary.
+            if (leftFist.type != NPCID.GolemFistLeft)
+            {
+                LeftFistNPC = NPC.FindFirstNPC(NPCID.GolemFistLeft);
+                leftFist = ref Main.npc[(int)LeftFistNPC];
+            }
+            if (rightFist.type != NPCID.GolemFistRight)
+            {
+                RightFistNPC = NPC.FindFirstNPC(NPCID.GolemFistRight);
+                rightFist = ref Main.npc[(int)RightFistNPC];
+            }
+
+            // Ensure that the max HP doesn't desync across the body parts.
+            freeHead.lifeMax = npc.lifeMax;
+            attachedHead.lifeMax = npc.lifeMax;
+            leftFist.lifeMax = npc.lifeMax;
+            rightFist.lifeMax = npc.lifeMax;
 
             // Sync the heads, and end the fight if necessary
             if (Main.netMode != NetmodeID.MultiplayerClient && !attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
@@ -615,13 +621,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public static void DoBehavior_FloorFire(NPC npc, Player target, bool inPhase2, bool inPhase3, ref float attackTimer, ref float attackCooldown, ref float jumpState, ref float attackCounter, ref float slamTelegraphInterpolant)
         {
             int jumpDelay = 25;
-            int jumpCount = 2;
+            int jumpCount = 3;
             int minHoverTime = 35;
             int maxHoverTime = 150;
             int slamDelay = 20;
             int postJumpSitTime = 90;
             int platformReleaseRate = 0;
-            float fireCrystalSpacing = 120f;
+            float fireCrystalSpacing = 150f;
             float slamSpeed = 42f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -684,6 +690,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Sit in place, creating a downward telegraph, and slam.
                 else if (attackTimer < maxHoverTime + slamDelay)
                 {
+                    npc.noTileCollide = true;
+                    npc.noGravity = true;
+
                     // Disable contact damage.
                     npc.damage = 0;
 
@@ -694,10 +703,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Slam downward.
                 else
                 {
+                    npc.noTileCollide = true;
+                    npc.noGravity = true;
+
                     npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * slamSpeed, 0.125f);
 
                     bool hitGround = false;
-                    while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && npc.Center.Y >= npc.Infernum().Arena.Center.Y)
                     {
                         hitGround = true;
                         npc.position.Y -= 2f;
@@ -746,7 +758,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // As well as on the sides of the arena in the third phase.
                         if (inPhase3)
                         {
-                            for (float y = npc.Infernum().Arena.Top + 20f; y < npc.Infernum().Arena.Bottom - 20f; y += fireCrystalSpacing * 2f)
+                            for (float y = npc.Infernum().Arena.Top + 20f; y < npc.Infernum().Arena.Bottom - 20f; y += fireCrystalSpacing * 3f)
                             {
                                 float x = npc.Infernum().Arena.Center.X;
                                 Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x, y + horizontalOffset), new Searches.Left(9001));
@@ -1030,6 +1042,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Play a telegraph sound prior to firing.
                 if (attackTimer == 5f)
                     SoundEngine.PlaySound(CrystylCrusher.ChargeSound, target.Center);
+
+                if (attackTimer % 10f == 9f)
+                    freeHead.netUpdate = true;
             }
 
             // Release the lasers from eyes.
@@ -1126,14 +1141,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laser = Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f);
-                    if (Main.projectile.IndexInRange(laser))
-                    {
-                        Main.projectile[laser].ModProjectile<ThermalDeathray>().AngularVelocity = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
-                        Main.projectile[laser].ModProjectile<ThermalDeathray>().OwnerIndex = npc.whoAmI + 1;
-                        Main.projectile[laser].ModProjectile<ThermalDeathray>().Lifetime = laserLifetime;
-                        Main.projectile[laser].netUpdate = true;
-                    }
+                    Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f, -1, 0f, laserLifetime);
+
+                    // Store the angular velocity for the laser to read.
+                    npc.Infernum().ExtraAI[0] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
+                    npc.netUpdate = true;
                 }
             }
 
@@ -1176,7 +1188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (inPhase3)
             {
                 fistShootRate -= 4;
-                shootTime -= 45;
+                shootTime += 15;
             }
 
             npc.noTileCollide = false;
@@ -1508,6 +1520,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     spear.ModProjectile<StationarySpikeTrap>().SpikesShouldExtendOutward = true;
                     spear.netUpdate = true;
                 }
+                npc.netUpdate = true;
             }
 
             // Release a burst of fireballs outward. This happens after some platforms have spawned, and serves to teach the player about the platforms by
@@ -1523,6 +1536,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 16f + shootOffsetAngle).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center, fireShootVelocity, ProjectileID.EyeBeam, 200, 0f);
                     }
+                    npc.netUpdate = true;
                 }
             }
         }

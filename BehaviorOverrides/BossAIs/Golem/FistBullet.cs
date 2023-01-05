@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (Main.player.IndexInRange((int)Projectile.Infernum().ExtraAI[2]))
                 {
                     Player target = Main.player[(int)Projectile.Infernum().ExtraAI[2]];
-                    Vector2 shootDirection = Projectile.SafeDirectionTo(target.Center + target.velocity * 4f);
+                    Vector2 shootDirection = Projectile.SafeDirectionTo(target.Center + target.velocity * 12f);
                     float rotation = -(Projectile.rotation + MathHelper.Pi - (shootDirection.ToRotation() + MathHelper.Pi));
                     Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
 

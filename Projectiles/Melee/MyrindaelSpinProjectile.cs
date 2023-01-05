@@ -176,7 +176,7 @@ namespace InfernumMode.Projectiles.Melee
             return width;
         }
 
-        public Color PierceColorFunction(float completionRatio) => Color.Lime * Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Projectile.Opacity;
+        public Color PierceColorFunction(float completionRatio) => Color.Lime * (float)Math.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 2.4) * Projectile.Opacity;
 
         public void DrawTrail()
         {

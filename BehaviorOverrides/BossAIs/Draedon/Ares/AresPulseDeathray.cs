@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresPulseCannon>() && Main.npc[OwnerIndex].Opacity > 0.25f)
             {
                 NPC pulseCannon = Main.npc[OwnerIndex];
-                Projectile.Center = pulseCannon.Center + new Vector2(pulseCannon.spriteDirection * -7f, 24f).RotatedBy(pulseCannon.rotation);
+                Projectile.Center = pulseCannon.Center + new Vector2(pulseCannon.spriteDirection * -56f, 16f).RotatedBy(pulseCannon.rotation);
             }
 
             // Die of the owner is invalid in some way.
@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage1("Images/Extra_189");
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
-            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 96);
         }
         
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

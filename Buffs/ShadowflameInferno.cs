@@ -16,7 +16,7 @@ namespace InfernumMode.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.Infernum().ShadowflameInferno = true;
+            player.Infernum_Debuff().ShadowflameInferno = true;
         }
     }
 }

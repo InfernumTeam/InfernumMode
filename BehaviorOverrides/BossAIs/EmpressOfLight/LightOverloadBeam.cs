@@ -1,18 +1,18 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class LightOverloadBeam : ModProjectile
+    public class LightOverloadBeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
         public NPC Owner => Main.npc[(int)Projectile.ai[0]];
         public ref float LaserLength => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -81,10 +81,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             Vector2 overallOffset = -Main.screenPosition;
             Vector2[] basePoints = new Vector2[24];
@@ -92,18 +93,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Projectile.scale *= 0.8f;
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
             Projectile.scale /= 0.8f;
 
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
-            GameShaders.Misc["Infernum:PrismaticRay"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;
-            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

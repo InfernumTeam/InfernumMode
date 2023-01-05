@@ -1,15 +1,17 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
-    public class ThermalDeathray : ModProjectile
+    public class ThermalDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public int OwnerIndex;
@@ -42,7 +44,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             if (OwnerIndex <= 0 || !Main.npc[OwnerIndex - 1].active)
             {
-                Projectile.Kill();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.Kill();
                 return;
             }
 
@@ -88,15 +91,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             return color * Projectile.Opacity * 1.15f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();
@@ -107,9 +111,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             if (Time >= 2f)
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
-            return false;
         }
 
         public override bool ShouldUpdatePosition() => false;

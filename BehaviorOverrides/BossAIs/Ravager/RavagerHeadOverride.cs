@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Fuck off if the main boss is gone.

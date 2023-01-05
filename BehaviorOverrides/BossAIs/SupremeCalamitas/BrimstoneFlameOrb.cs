@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,13 +7,12 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class BrimstoneFlameOrb : ModProjectile
+    public class BrimstoneFlameOrb : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
 
@@ -29,6 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public const int OverloadBeamLifetime = 300;
 
         public const int LaserReleaseDelay = 125;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {
@@ -71,9 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 for (int i = 0; i < LaserCount; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                    int laser = Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), 900, 0f);
-                    if (Main.projectile.IndexInRange(laser))
-                        Main.projectile[laser].ai[0] = Owner.whoAmI;
+                    Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), 900, 0f, -1, Owner.whoAmI);
                 }
             }
             
@@ -95,16 +95,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Owner is null || !Owner.active)
                 return false;
 
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, GameShaders.Misc["Infernum:PrismaticRay"]);
-
-            GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.25f);
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
-
-            List<float> rotationPoints = new();
-            List<Vector2> drawPoints = new();
-
             // Draw telegraphs.
             if (TelegraphInterpolant is >= 0 and < 1)
             {
@@ -117,9 +107,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Color telegraphColor = Color.Orange * (float)Math.Pow(TelegraphInterpolant, 0.67);
                     Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
                 }
-            }
+            }            
+            return false;
+        }
 
-            Main.spriteBatch.EnterShaderRegion();
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            if (Owner is null || !Owner.active)
+                return;
+
+            FireDrawer ??= new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, InfernumEffectsRegistry.PrismaticRayVertexShader);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.25f);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
+
+            List<float> rotationPoints = new();
+            List<Vector2> drawPoints = new();
+
+            spriteBatch.EnterShaderRegion();
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 30f)
             {
                 Projectile.localAI[0] = MathHelper.Clamp((offsetAngle + MathHelper.PiOver2) / MathHelper.Pi, 0f, 1f);
@@ -135,10 +140,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 3f));
                 }
 
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 30);
+                FireDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 30);
             }
-            Main.spriteBatch.ExitShaderRegion();
-            return false;
+            spriteBatch.ExitShaderRegion();
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Radius * 0.85f);

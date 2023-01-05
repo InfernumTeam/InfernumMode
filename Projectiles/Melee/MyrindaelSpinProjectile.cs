@@ -18,7 +18,7 @@ namespace InfernumMode.Projectiles.Melee
     {
         public float InitialDirection;
 
-        public PrimitiveTrail PierceAfterimageDrawer = null;
+        public PrimitiveTrailCopy PierceAfterimageDrawer = null;
 
         public float SpinCompletion => Utils.GetLerpValue(0f, Myrindael.SpinTime, Time, true);
 
@@ -144,12 +144,7 @@ namespace InfernumMode.Projectiles.Melee
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -800f);
-                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage / 2, 0f, Projectile.owner);
-                    if (Main.projectile.IndexInRange(lightning))
-                    {
-                        Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                        Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                    }
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage / 2, 0f, Projectile.owner, MathHelper.PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -194,7 +189,7 @@ namespace InfernumMode.Projectiles.Melee
             secondaryColor = Color.Lerp(Color.White, secondaryColor, Projectile.Opacity * 0.6f + 0.4f);
 
             // Initialize the trail drawer.
-            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, GameShaders.Misc["CalamityMod:ExobladePierce"]);
+            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
 
             Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));

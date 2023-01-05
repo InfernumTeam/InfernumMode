@@ -20,8 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
     {
         public override int NPCOverrideType => NPCID.EyeofCthulhu;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum EoCAttackType
         {
@@ -40,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public const float Phase3LifeRatio = 0.35f;
         public const float Phase4LifeRatio = 0.15f;
 
-        public static EoCAttackType[] Phase1AttackPattern = new EoCAttackType[]
+        public static EoCAttackType[] Phase1AttackPattern => new EoCAttackType[]
         {
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
@@ -51,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.ChargingServants,
         };
 
-        public static EoCAttackType[] Phase2AttackPattern = new EoCAttackType[]
+        public static EoCAttackType[] Phase2AttackPattern => new EoCAttackType[]
         {
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
@@ -70,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.SpinDash,
         };
 
-        public static EoCAttackType[] Phase3AttackPattern = new EoCAttackType[]
+        public static EoCAttackType[] Phase3AttackPattern => new EoCAttackType[]
         {
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
@@ -166,6 +164,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
                 return false;
             }
+            
+            // Ensure that the gleam doesn't linger in multiplayer due to desyncs.
+            if (phase2ResetTimer >= 175f)
+                gleamTimer = 0f;
 
             switch ((EoCAttackType)(int)npc.ai[1])
             {
@@ -359,9 +361,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 1.7f;
 
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                     npc.netUpdate = true;
                     attackTimer = 0f;
+                    
                     // High pitched boss roar.
                     SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
                 }
@@ -370,6 +372,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // And shoot blood spit/balls.
             if (attackSubstate == 1f)
             {
+                if (attackTimer == 10f)
+                    npc.netUpdate = true;
+
+                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                
                 // Use afterimages when firing.
                 drawAfterimages = true;
 
@@ -794,7 +801,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             float gleamTimer = npc.localAI[0];
             Vector2 pupilPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * 74f - Main.screenPosition;
-            Texture2D pupilStarTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+            Texture2D pupilStarTexture = InfernumTextureRegistry.Gleam.Value;
             Vector2 pupilOrigin = pupilStarTexture.Size() * 0.5f;
 
             Vector2 pupilScale = new Vector2(0.7f, 1.5f) * Utils.GetLerpValue(0f, 8f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 8f, gleamTimer, true);

@@ -1,3 +1,4 @@
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Terraria;
 using Terraria.ID;
@@ -28,6 +29,7 @@ namespace InfernumMode.Systems
                 packet.Write(npc.Infernum().Arena.Y);
                 packet.Write(npc.Infernum().Arena.Width);
                 packet.Write(npc.Infernum().Arena.Height);
+                
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
@@ -37,7 +39,14 @@ namespace InfernumMode.Systems
                     packet.Write(npc.Infernum().ExtraAI[i]);
                 }
 
+                if (InfernumMode.CanUseCustomAIs)
+                    npc.BehaviorOverride<NPCBehaviorOverride>()?.SendExtraData(npc, packet);
+
                 packet.Send();
+
+                // Have the twins send a specialized packet to ensure that the attack synchronizer is updated.
+                if (npc.type is NPCID.Retinazer or NPCID.Spazmatism)
+                    TwinsAttackSynchronizer.SyncState();
             }
             return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
         }

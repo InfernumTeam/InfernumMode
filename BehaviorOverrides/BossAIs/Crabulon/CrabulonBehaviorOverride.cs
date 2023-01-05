@@ -24,8 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
     {
         public override int NPCOverrideType => ModContent.NPCType<CrabulonNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum CrabulonAttackState
         {
@@ -225,11 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 extraGravity = MathHelper.Clamp(extraGravity - 0.1f, 0f, 10f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % pillarMushroomSpawnRate == pillarMushroomSpawnRate - 1f)
-                {
-                    int mushroom = Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f);
-                    if (Main.projectile.IndexInRange(mushroom))
-                        Main.projectile[mushroom].ai[1] = target.Bottom.Y;
-                }
+                    Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
             }
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
@@ -489,9 +483,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                             for (int j = 0; j < (enraged ? 25 : 12); j++)
                             {
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
-                                int mushroom = Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
-                                if (Main.projectile.IndexInRange(mushroom))
-                                    Main.projectile[mushroom].ai[1] = target.Bottom.Y;
+                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
                             }
                         }
                     }
@@ -704,11 +696,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             else if (npc.Infernum().ExtraAI[UsingDetachedHandsFlagIndex] == 1f)
             {
                 // Initialize the claw drawer.
-                npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(ClawArmWidthFunction, c => ClawArmColorFunction(npc, c), null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
+                npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(ClawArmWidthFunction, c => ClawArmColorFunction(npc, c), null, true, InfernumEffectsRegistry.WoFTentacleVertexShader);
 
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].UseColor(new Color(70, 90, 166));
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].UseSecondaryColor(new Color(113, 255, 233));
-                GameShaders.Misc["Infernum:WoFTentacleTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.UseColor(new Color(70, 90, 166));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.UseSecondaryColor(new Color(113, 255, 233));
+                InfernumEffectsRegistry.WoFTentacleVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
                 Main.spriteBatch.EnterShaderRegion();
                 spriteBatch.Draw(textureArmless, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);

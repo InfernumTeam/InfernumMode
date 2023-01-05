@@ -1,6 +1,5 @@
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
@@ -15,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     public class PrimeViceBehaviorOverride : PrimeHandBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.PrimeVice;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override float PredictivenessFactor => 15.5f;
 
@@ -204,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float localTimer = ref npc.Infernum().ExtraAI[1];
-            ref float sawSound = ref npc.Infernum().ExtraAI[2];
+            ref float sawSound = ref npc.localAI[3];
 
             float idealRotation = npc.type == NPCID.PrimeSaw ? MathHelper.Pi / 6f : -MathHelper.Pi / 6f;
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.05f);
@@ -266,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
 
                 float volumeInterpolant = Utils.GetLerpValue(195f, 150f, localTimer, true);
-                bool shouldStopSawSound = volumeInterpolant <= 0f;
+                bool shouldStopSawSound = volumeInterpolant <= 0f || npc.life <= 0 || !npc.active;
                 if (npc.type == NPCID.PrimeSaw && sawSound == 0f && !shouldStopSawSound)
                     sawSound = SoundEngine.PlaySound(InfernumSoundRegistry.PrimeSawSound with { IsLooped = true }, npc.Center).ToFloat();
 

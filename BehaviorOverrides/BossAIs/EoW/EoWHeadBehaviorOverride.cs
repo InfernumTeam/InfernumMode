@@ -27,8 +27,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         // This is applicable to all split worms as well.
         // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).
         public const int TotalLifeAcrossWorm = 4000;
@@ -83,6 +81,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             if (target.dead)
             {
+                npc.TargetClosestIfTargetIsInvalid();
+                target = Main.player[npc.target];
+                if (!target.dead)
+                    return false;
+
                 DoAttack_Despawn(npc);
                 return false;
             }

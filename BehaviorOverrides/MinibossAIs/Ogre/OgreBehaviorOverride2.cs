@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
     {
         public override int NPCOverrideType => NPCID.DD2OgreT3;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc) => OgreBehaviorOverride.DoAI(npc);
 
         public override void FindFrame(NPC npc, int frameHeight)

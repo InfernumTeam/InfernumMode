@@ -1,15 +1,15 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
-    public class LightOverloadRay : ModProjectile
+    public class LightOverloadRay : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer;
         public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
@@ -86,15 +86,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             return color;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            spriteBatch.SetBlendState(BlendState.Additive);
 
             if (LaserDrawer is null)
-                LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.14f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.14f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
@@ -116,11 +118,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     drawPoints.Add(Vector2.Lerp(start, end, j / 8f));
                 }
 
-                LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
-                LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
+                LaserDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 20);
+                LaserDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 20);
             }
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
-            return false;
         }
 
         public override Color? GetAlpha(Color lightColor) => new Color(Projectile.Opacity, Projectile.Opacity, Projectile.Opacity, 0);

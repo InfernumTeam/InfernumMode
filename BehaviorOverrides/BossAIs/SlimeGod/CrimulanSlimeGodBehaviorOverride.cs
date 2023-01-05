@@ -12,8 +12,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
     {
         public override int NPCOverrideType => ModContent.NPCType<CrimulanSlimeGod>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             SlimeGodComboAttackManager.SummonSecondSlimeLifeRatio

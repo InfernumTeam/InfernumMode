@@ -1,6 +1,6 @@
 using CalamityMod;
-using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
-    public class EvenlySpreadPrimeLaserRay : BaseLaserbeamProjectile, IAdditiveDrawer
+    public class EvenlySpreadPrimeLaserRay : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy BeamDrawer
         {
@@ -26,10 +26,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public override float Lifetime => 260;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamBegin", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamMid", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamEnd", AssetRequestMode.ImmediateLoad).Value;
-        public override string Texture => "InfernumMode/ExtraTextures/PrimeBeamBegin";
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamBegin", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override string Texture => "InfernumMode/ExtraTextures/Lasers/PrimeBeamBegin";
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
@@ -82,18 +82,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             Color color = Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
-            color.A = 50;
+            color.A = 5;
             return color * 1.32f;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
 
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
-            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
@@ -103,9 +103,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 for (float offset = 0f; offset < 6f; offset += 0.75f)
                 {
-                    BeamDrawer.Draw(points, -Main.screenPosition, 28);
-                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
-                    BeamDrawer.Draw(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                    BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
+                    BeamDrawer.DrawPixelated(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
+                    BeamDrawer.DrawPixelated(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
                 }
             }
         }

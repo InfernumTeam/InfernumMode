@@ -37,8 +37,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<AresBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         #region AI
         public override bool PreAI(NPC npc)
         {
@@ -62,6 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Player target = Main.player[npc.target];
 
             // Define attack variables.
+            int shootTime = ShootTime;
+            int shootRate = ShootRate;
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
@@ -78,6 +78,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (currentlyDisabled)
                 attackTimer = 1f;
 
+            // Inherit the attack timer from Ares if he's performing the ultimate attack.
+            bool doingUltimateAttack = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts && Ares.Infernum().ExtraAI[9] >= 1f;
+            if (doingUltimateAttack)
+            {
+                chargeDelay = (int)Ares.Infernum().ExtraAI[2];
+                attackTimer = Ares.Infernum().ExtraAI[4];
+                shootRate = 1;
+                shootTime = 1;
+            }
+
             // Hover near Ares.
             bool performingCharge = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge && !performingDeathAnimation;
             Vector2 hoverOffset = PerformHoverMovement(npc, performingCharge);
@@ -85,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Update the telegraph outline intensity timer.
             npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + performingCharge.ToDirectionInt(), 0f, 15f);
 
-            // Check to see if Ares is in the middle of a death animation. If it is, participate in the death animation.
+            // Check to see if Ares is in the middle of a death animation. If he is, participate in the death animation.
             if (performingDeathAnimation)
             {
                 AresBodyBehaviorOverride.HaveArmPerformDeathAnimation(npc, hoverOffset);
@@ -97,7 +107,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return false;
 
             // Calculate the direction and rotation this arm should use.
-            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * AimPredictiveness);
+            Vector2 predictivenessFactor = Vector2.One * AimPredictiveness;
+            if (doingUltimateAttack)
+            {
+                predictivenessFactor.X *= 0.6f;
+                predictivenessFactor.Y *= 0.33f;
+            }
+
+            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
             ExoMechAIUtilities.PerformAresArmDirectioning(npc, Ares, target, aimDirection, currentlyDisabled, performingCharge, ref currentDirection);
 
             float rotationToEndOfCannon = npc.rotation;
@@ -137,19 +154,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Fire lasers.
-            if (attackTimer >= chargeDelay && attackTimer % ShootRate == ShootRate - 1f)
+            if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
                 SoundEngine.PlaySound(ShootSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    ShootProjectiles(npc, endOfCannon, aimDirection);
+                    if (!doingUltimateAttack)
+                        ShootProjectiles(npc, endOfCannon, aimDirection);
+                    else
+                        Utilities.NewProjectileBetter(endOfCannon, aimDirection, ModContent.ProjectileType<AresPrecisionBlast>(), DraedonBehaviorOverride.PowerfulShotDamage, 0f, -1, npc.whoAmI);
+
                     npc.netUpdate = true;
                 }
             }
-
+            
             // Reset the attack and laser counter after an attack cycle ends.
-            if (attackTimer >= chargeDelay + ShootTime)
+            if (attackTimer >= chargeDelay + shootTime)
             {
                 attackTimer = 0f;
                 ResetAttackCycleEffects(npc);
@@ -214,33 +235,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            // Initialize the back flame primitive drawer.
-            if (npc.Infernum().OptionalPrimitiveDrawer is null)
-            {
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
-                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
-            }
-            
-            // Draw the back flames if Ares is dashing.
-            for (int i = 0; i < 2; i++)
-            {
-                if (npc.Infernum().ExtraAI[0] > 0f)
-                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition, 54);
-            }
-
             SpriteEffects direction = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 direction = SpriteEffects.FlipHorizontally;
 
             // Locate Ares' body for reference with certain AI attributes.
-            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
             bool enraged = AresBodyBehaviorOverride.Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
             Color glowmaskColor = enraged ? Color.Red : Color.White;
+
+            // Use the heat effect, just like the body.
+            lightColor = Color.Lerp(lightColor, Color.Red with { A = 100 }, Ares.localAI[3] * 0.48f);
+
+            // Draw telegraphs if necessary during the ultimate attack.
+            float telegraphIntensity = 0f;
+            if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts)
+                telegraphIntensity = Ares.Infernum().ExtraAI[4] / Ares.Infernum().ExtraAI[2];
+
+            if (telegraphIntensity > 0f)
+            {
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
+                Color outlineColor = Color.Lerp(Color.Red, Color.White, telegraphIntensity) * Utils.GetLerpValue(1f, 0.7f, telegraphIntensity, true);
+                Vector2 beamOrigin = new(line.Width / 2f, line.Height);
+                Vector2 beamScale = new(telegraphIntensity * 0.5f, 2.4f);
+                Vector2 beamDirection = npc.rotation.ToRotationVector2();
+                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2 * npc.spriteDirection;
+                Vector2 beamCenter = center - beamDirection.RotatedBy(-MathHelper.PiOver2) * npc.scale * 10f;
+                Main.spriteBatch.Draw(line, beamCenter, null, outlineColor, beamRotation, beamOrigin, beamScale, 0, 0f);
+
+                Main.spriteBatch.ResetBlendState();
+            }
 
             // Draw backglow effects, telegraphs, and the base texture.
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
@@ -250,6 +279,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Draw glowmasks.
             texture = ModContent.Request<Texture2D>(GlowmaskTexturePath).Value;
 
+            // Draw the main texture.
             Main.spriteBatch.Draw(texture, center, frame, glowmaskColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
             // Draw energy effects for telegraph purposes.

@@ -12,8 +12,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
     {
         public override int NPCOverrideType => NPCID.DD2LanePortal;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Idly emit light if the portal has completely faded in.

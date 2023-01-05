@@ -9,7 +9,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -18,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override int NPCOverrideType => NPCID.Retinazer;
 
         public override int? NPCIDToDeferToForTips => NPCID.Spazmatism;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
 
         #region AI
         public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
@@ -54,11 +51,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => FlameTrailWidthFunctionBig(npc, completionRatio),
                     completionRatio => FlameTrailColorFunctionBig(npc, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+                    null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
             }
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
-                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
+                InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
                 Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
@@ -109,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D laserTelegraph = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
                 Vector2 scaleInner = new(telegraphOpacity * 0.3f, AimedDeathray.LaserLengthConst / laserTelegraph.Height);

@@ -5,10 +5,13 @@ using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Subworlds;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SubworldLibrary;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -50,16 +53,20 @@ namespace InfernumMode.GlobalInstances
             // No tombs.
             // h.
             bool isTomb = projectile.type is ProjectileID.Tombstone or ProjectileID.Gravestone or ProjectileID.RichGravestone1 or ProjectileID.RichGravestone2 or 
-                ProjectileID.RichGravestone3 or ProjectileID.RichGravestone4 or ProjectileID.RichGravestone4 or ProjectileID.Headstone;
+                ProjectileID.RichGravestone3 or ProjectileID.RichGravestone4 or ProjectileID.RichGravestone4 or ProjectileID.Headstone or ProjectileID.Obelisk;
 
             bool illegalRocket = projectile.type is ProjectileID.DryRocket or ProjectileID.DryGrenade or ProjectileID.DryMine or ProjectileID.DrySnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.WetRocket or ProjectileID.WetGrenade or ProjectileID.WetMine or ProjectileID.WetBomb or ProjectileID.WetSnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.HoneyRocket or ProjectileID.HoneyGrenade or ProjectileID.HoneyMine or ProjectileID.HoneyBomb or ProjectileID.HoneySnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.LavaRocket or ProjectileID.LavaGrenade or ProjectileID.LavaMine or ProjectileID.LavaBomb or ProjectileID.LavaSnowmanRocket;
             illegalRocket |= projectile.type is ProjectileID.DirtBomb or ProjectileID.DirtStickyBomb;
-            if (illegalRocket && new Rectangle((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena))
+
+            bool projectileInProvArena = new Rectangle((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena);
+            bool mouseInProvArena = new Rectangle((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena);
+            bool inColosseum = SubworldSystem.IsActive<LostColosseum>();
+            if (illegalRocket && (projectileInProvArena || inColosseum))
                 projectile.active = false;
-            if (projectile.type == ModContent.ProjectileType<CrystylCrusherRay>() && new Rectangle((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena))
+            if (projectile.type == ModContent.ProjectileType<CrystylCrusherRay>() && (mouseInProvArena || inColosseum))
                 projectile.active = false;
 
             if (isTomb)
@@ -218,6 +225,7 @@ namespace InfernumMode.GlobalInstances
                     Player p = Main.player[i];
                     if (p is null || !p.active)
                         continue;
+                    
                     int rock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
                     if (Main.netMode == NetmodeID.Server)
                     {

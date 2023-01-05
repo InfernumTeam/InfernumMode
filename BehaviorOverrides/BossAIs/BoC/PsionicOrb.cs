@@ -1,3 +1,4 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
-    public class PsionicOrb : ModProjectile
+    public class PsionicOrb : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy OrbDrawer;
 
@@ -108,14 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * 16f;
-                int ray = Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 135, 0f, 255);
-
-                if (Main.projectile.IndexInRange(ray))
-                {
-                    Main.projectile[ray].ai[0] = shootVelocity.ToRotation();
-                    Main.projectile[ray].ai[1] = Main.rand.Next(100);
-                    Main.projectile[ray].tileCollide = false;
-                }
+                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 135, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
             }
 
             for (int i = 0; i < 36; i++)
@@ -146,17 +140,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (OrbDrawer is null)
-                OrbDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
 
-            List<Vector2> drawPoints = new();
 
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
                 float telegraphScaleFactor = TelegraphInterpolant * 0.7f;
 
                 Vector2 telegraphStart = Projectile.Center - Main.screenPosition;
@@ -166,9 +157,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
+            return false;
+        }
 
-            Main.spriteBatch.EnterShaderRegion();
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            OrbDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
+            List<Vector2> drawPoints = new();
+            spriteBatch.EnterShaderRegion();
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
             {
@@ -180,10 +177,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 for (int i = 0; i < 16; i++)
                     drawPoints.Add(Vector2.Lerp(center - offsetDirection * Radius * 0.925f, center + offsetDirection * Radius * 0.925f, i / 16f));
 
-                OrbDrawer.Draw(drawPoints, Projectile.Size * 0.5f - Main.screenPosition, 24);
+                OrbDrawer.DrawPixelated(drawPoints, Projectile.Size * 0.5f - Main.screenPosition, 24);
             }
-            Main.spriteBatch.ExitShaderRegion();
-            return false;
+            spriteBatch.ExitShaderRegion();
         }
     }
 }

@@ -28,11 +28,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public ref float Time => ref Projectile.localAI[1];
 
         public const int PointsInStar = 6;
+
         public const float RadiusOfConstellation = 575f;
 
         public const int Lifetime = 960;
+
         public const int FadeinTime = 18;
+
         public const int FadeoutTime = 18;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public static Vector2 CalculateStarPosition(Vector2 origin, float offsetAngle, float spinAngle)
         {
@@ -94,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D sparkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+            Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
 
             // Orange and cyan.
             Color c1 = new(255, 63, 39);

@@ -36,8 +36,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -205,6 +203,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (npc.timeLeft > 210)
                 npc.timeLeft = 210;
+
+            Player closestTarget = Main.player[Player.FindClosest(npc.Center, 1, 1)];
+            if (!npc.WithinRange(closestTarget.Center, 3200f))
+                npc.active = false;
         }
 
         public static void DoBehavior_BelchAcid(NPC npc, Player target, float attackTimer, float enrageFactor)

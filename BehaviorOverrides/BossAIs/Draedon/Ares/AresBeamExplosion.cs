@@ -10,8 +10,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
     public class AresBeamExplosion : ModProjectile
     {
         public ref float Identity => ref Projectile.ai[0];
-        public PrimitiveTrail LightningDrawer;
-        public PrimitiveTrail LightningBackgroundDrawer;
+        public PrimitiveTrailCopy LightningDrawer;
+        public PrimitiveTrailCopy LightningBackgroundDrawer;
 
         public override void SetStaticDefaults()
         {

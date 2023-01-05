@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
+using InfernumMode.Graphics;
 using InfernumMode.Projectiles;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -93,7 +94,7 @@ namespace InfernumMode.Tiles
             if (t.TileFrameX != 54 || t.TileFrameY != 18)
                 return false;
 
-            SandPillarDrawer ??= new PrimitiveTrailCopy(PillarWidthFunction, PillarColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
+            SandPillarDrawer ??= new PrimitiveTrailCopy(PillarWidthFunction, PillarColorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
             Point p = new(i, j);
             if (PortalCache.Contains(p))
@@ -116,7 +117,14 @@ namespace InfernumMode.Tiles
                     SubworldSystem.Exit();
                 else
                 {
-                    Main.LocalPlayer.Infernum().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
+                    // Don't allow the player to use the portal if Infernum is not active.
+                    if (!InfernumMode.CanUseCustomAIs)
+                    {
+                        CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
+                        return true;
+                    }
+
+                    Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
                     SubworldSystem.Enter<LostColosseum>();
                 }
                 return true;
@@ -162,10 +170,10 @@ namespace InfernumMode.Tiles
 
             Vector2 start = center;
             Vector2 end = start - Vector2.UnitY * 580f;
-            
-            GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(0.84f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
+
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.UseSaturation(0.84f);
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
@@ -179,13 +187,13 @@ namespace InfernumMode.Tiles
             Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uTimeFactor"].SetValue(3.2f);
-            GameShaders.Misc["Infernum:RealityTear"].UseSaturation(0.3f);
-            GameShaders.Misc["Infernum:RealityTear"].Apply();
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uTimeFactor"].SetValue(3.2f);
+            InfernumEffectsRegistry.RealityTearVertexShader.UseSaturation(0.3f);
+            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

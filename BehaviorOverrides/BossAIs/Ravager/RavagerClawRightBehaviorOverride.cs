@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerClawRight>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc) => RavagerClawLeftBehaviorOverride.DoClawAI(npc, false);
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => RavagerClawLeftBehaviorOverride.DrawClaw(npc, Main.spriteBatch, lightColor, false);

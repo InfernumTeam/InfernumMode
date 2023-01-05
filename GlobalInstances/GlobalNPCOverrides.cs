@@ -9,11 +9,11 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
-using InfernumMode.Achievements;
 using InfernumMode.Achievements.InfernumAchievements;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
@@ -21,7 +21,10 @@ using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
+using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Graphics;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;
@@ -176,7 +179,7 @@ namespace InfernumMode.GlobalInstances
                         npc.Calamity().AITimer = npc.Calamity().KillTime;
 
                     // If any boss NPC is active, apply Zen to nearby players to reduce spawn rate.
-                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))
+                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
                     {
                         if (!Main.player[Main.myPlayer].dead && Main.player[Main.myPlayer].active && npc.WithinRange(Main.player[Main.myPlayer].Center, 6400f))
                             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossEffects>(), 2);
@@ -259,13 +262,25 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
+            if (!WeakReferenceSupport.InAnySubworld())
             {
-                Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
-                WorldgenSystem.GenerateProfanedArena(new(), new(new()));
-                WorldSaveSystem.HasGeneratedProfanedShrine = true;
+                // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
+                if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
+                {
+                    Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                    WorldgenSystem.GenerateProfanedArena(new(), new(new()));
+                    WorldSaveSystem.HasGeneratedProfanedShrine = true;
+                }
+
+                // Create a lost colosseum entrance after the cultistis killed if it doesn't exist yet, for backwards world compatibility reasons.
+                if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance)
+                {
+                    Utilities.DisplayText("Mysterious ruins have materialized in the heart of the desert!", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
+                    WorldgenSystem.GenerateLostColosseumEntrance(new(), new(new()));
+                    WorldSaveSystem.HasGeneratedColosseumEntrance = true;
+                }
             }
-            
+
             if (npc.type == ModContent.NPCType<Providence>())
             {
                 if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)
@@ -290,7 +305,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.Infernum().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
+            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;
@@ -312,11 +327,9 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            // Create Cryogens custom on hit effects.
+            // Make Cryogen release ice particles when hit.
             if (npc.type == ModContent.NPCType<CryogenNPC>() && OverridingListManager.Registered(npc.type))
-            {
                 CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, crit);
-            }
         }
 
         public override void HitEffect(NPC npc, int hitDirection, double damage)
@@ -330,6 +343,10 @@ namespace InfernumMode.GlobalInstances
                 SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
                 npc.soundDelay = 11;
             }
+
+            // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
+            if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

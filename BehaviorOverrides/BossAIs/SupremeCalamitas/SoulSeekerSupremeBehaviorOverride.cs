@@ -19,8 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SoulSeekerSupreme>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
 		public override bool PreAI(NPC npc)
         {
             // Die if SCal is no longer present.
@@ -30,6 +28,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
                 return false;
             }
+
+            npc.frameCounter += 0.15f;
+            npc.frameCounter %= Main.npcFrameCount[npc.type];
+            int frame = (int)npc.frameCounter;
+            npc.frame.Y = frame * npc.frame.Height;
 
             npc.target = SCal.target;
             Player Target = Main.player[npc.target];

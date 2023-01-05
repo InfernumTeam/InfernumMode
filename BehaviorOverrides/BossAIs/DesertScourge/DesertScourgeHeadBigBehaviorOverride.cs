@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using InfernumMode.Sounds;
@@ -33,8 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public const float Phase3LifeRatio = 0.25f;
 
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeHead>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -146,12 +143,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     {
                         Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
-                        if (Main.projectile.IndexInRange(sand))
-                        {
-                            Main.projectile[sand].MaxUpdates = 1;
-                            Main.projectile[sand].tileCollide = false;
-                        }
+                        Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 80, 0f);
+
                         for (int j = 0; j < 5; j++)
                             CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
                         SoundEngine.PlaySound(SoundID.Item21, spawnPosition);
@@ -239,19 +232,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
                         Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(9.25f, 13.5f);
-                        int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
-                        if (Main.projectile.IndexInRange(sand))
-                        {
-                            Main.projectile[sand].MaxUpdates = 1;
-                            Main.projectile[sand].tileCollide = false;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
 
-                        sand = Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
-                        if (Main.projectile.IndexInRange(sand))
-                        {
-                            Main.projectile[sand].MaxUpdates = 1;
-                            Main.projectile[sand].tileCollide = false;
-                        }
                         for(int i = 0; i < 5; i++)
                             CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
                         SoundEngine.PlaySound(SoundID.Item21, npc.Center);
@@ -393,12 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         for (int i = 0; i < sandBurstCount; i++)
                         {
                             Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
-                            int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
-                            if (Main.projectile.IndexInRange(sand))
-                            {
-                                Main.projectile[sand].MaxUpdates = 1;
-                                Main.projectile[sand].tileCollide = false;
-                            }
+                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
                             for(int j = 0; j < 2; j++)
                                 CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
                         }

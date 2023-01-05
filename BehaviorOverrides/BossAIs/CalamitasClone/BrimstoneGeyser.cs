@@ -1,3 +1,4 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class BrimstoneGeyser : ModProjectile
+    public class BrimstoneGeyser : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy LavaDrawer;
         internal ref float Time => ref Projectile.ai[0];
@@ -79,22 +80,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
             }
 
-            if (LavaDrawer is null)
-                LavaDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
+            return false;
+        }
 
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(-1f);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(Color.Orange);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            LavaDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(-1f);
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Orange);
+            InfernumEffectsRegistry.WoFGeyserVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             List<Vector2> points = new();
             for (int i = 0; i < 25; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center - Vector2.UnitY * GeyserHeight, i / 24f));
-            LavaDrawer.Draw(points, Vector2.UnitX * 10f - Main.screenPosition, 35);
+            LavaDrawer.DrawPixelated(points, Vector2.UnitX * 10f - Main.screenPosition, 35);
 
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(1f);
-            LavaDrawer.Draw(points, Vector2.UnitX * -10f - Main.screenPosition, 35);
-
-            return false;
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(1f);
+            LavaDrawer.DrawPixelated(points, Vector2.UnitX * -10f - Main.screenPosition, 35);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

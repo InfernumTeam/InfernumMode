@@ -64,8 +64,30 @@ namespace InfernumMode.BossRush
 {
     public static class BossRushChanges
     {
+        public static List<Boss> InfernumBosses { get; private set; }
+        public static List<Boss> CalamityBosses { get; private set; }
+
+        public static Dictionary<int, Action<NPC>> InfernumBossDeathEffects { get; private set; }
+        public static Dictionary<int, Action<NPC>> CalamityBossDeathEffects { get; private set; }
+
+        public static Dictionary<int, int[]> InfernumBossIDsAfterDeath { get; private set; }
+
+        public static bool InfernumChangesActive
+        {
+            get
+            {
+                if (Bosses == InfernumBosses)
+                    return true;
+                return false;
+            }
+        }
+
         public static void Load()
         {
+            //// Cache the calamity boss order.
+            //CalamityBosses = Bosses;
+
+            //// Cache our own boss order.
             Bosses = new List<Boss>()
             {
                 new Boss(NPCID.KingSlime, permittedNPCs: new int[] { ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>() }),
@@ -287,6 +309,7 @@ namespace InfernumMode.BossRush
                     ModContent.NPCType<SupremeCatastrophe>(), ModContent.NPCType<ShadowDemon>() }),
             };
 
+            // Cache our own boss death effects.
             BossDeathEffects = new Dictionary<int, Action<NPC>>()
             {
                 [NPCID.WallofFlesh] = npc =>
@@ -327,22 +350,29 @@ namespace InfernumMode.BossRush
                         Projectile.NewProjectile(new EntitySource_WorldEvent(), npc.Center, Vector2.Zero, ModContent.ProjectileType<BossRushEndEffectThing>(), 0, 0f, Main.myPlayer);
                 }
             };
-
-            BossIDsAfterDeath[ModContent.NPCType<Apollo>()] = new int[]
-            {
-                ModContent.NPCType<Apollo>(),
-                ModContent.NPCType<Artemis>(),
-                ModContent.NPCType<AresBody>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresGaussNuke>(),
-                ModContent.NPCType<AresPulseCannon>(),
-                ModContent.NPCType<ThanatosHead>(),
-                ModContent.NPCType<ThanatosBody1>(),
-                ModContent.NPCType<ThanatosBody2>(),
-                ModContent.NPCType<ThanatosTail>(),
+            BossIDsAfterDeath = new Dictionary<int, int[]> 
+            { 
+                [ModContent.NPCType<Apollo>()] = new int[]
+                {
+                    ModContent.NPCType<Apollo>(),
+                    ModContent.NPCType<Artemis>(),
+                    ModContent.NPCType<AresBody>(),
+                    ModContent.NPCType<AresLaserCannon>(),
+                    ModContent.NPCType<AresPlasmaFlamethrower>(),
+                    ModContent.NPCType<AresTeslaCannon>(),
+                    ModContent.NPCType<AresGaussNuke>(),
+                    ModContent.NPCType<AresPulseCannon>(),
+                    ModContent.NPCType<ThanatosHead>(),
+                    ModContent.NPCType<ThanatosBody1>(),
+                    ModContent.NPCType<ThanatosBody2>(),
+                    ModContent.NPCType<ThanatosTail>(),
+                }
             };
+
+            // TODO: Make these properly swapable without breaking.
+            //Bosses = InfernumBosses;
+            //BossDeathEffects = InfernumBossDeathEffects;
+            //BossIDsAfterDeath = InfernumBossIDsAfterDeath;
         }
 
         internal static void BringPlayersBackToSpawn()
@@ -386,6 +416,22 @@ namespace InfernumMode.BossRush
 
                 CalamityPlayer.ModTeleport(player, teleportPosition.Value, playSound: false, 7);
                 SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, player.Center);
+            }
+        }
+
+        public static void SwapToOrder(bool infernumOrder)
+        {
+            if (infernumOrder)
+            {
+                Bosses = InfernumBosses;
+                BossDeathEffects = InfernumBossDeathEffects;
+                BossIDsAfterDeath = InfernumBossIDsAfterDeath;
+            }
+            else
+            {
+                Bosses = CalamityBosses;
+                BossDeathEffects = CalamityBossDeathEffects;
+                BossIDsAfterDeath.Clear();
             }
         }
     }

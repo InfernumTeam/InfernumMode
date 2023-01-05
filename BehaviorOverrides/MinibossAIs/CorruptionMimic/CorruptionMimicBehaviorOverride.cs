@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
         public override int NPCOverrideType => NPCID.BigMimicCorruption;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             // Pick a target.
@@ -393,9 +391,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CorruptionMimic
                     {
                         float offsetAngle = MathHelper.Lerp(-1.18f, 1.18f, i / (float)(guillotineCount - 1f));
                         Vector2 guillotineShootVelocity = (offsetAngle + aimDirection).ToRotationVector2() * 15f;
-                        int chain = Utilities.NewProjectileBetter(npc.Center, guillotineShootVelocity, ModContent.ProjectileType<ChainGuillotine>(), 120, 0f);
-                        if (Main.projectile.IndexInRange(chain))
-                            Main.projectile[chain].ai[1] = npc.whoAmI;
+                        Utilities.NewProjectileBetter(npc.Center, guillotineShootVelocity, ModContent.ProjectileType<ChainGuillotine>(), 120, 0f, -1, 0f, npc.whoAmI);
                     }
                 }
             }

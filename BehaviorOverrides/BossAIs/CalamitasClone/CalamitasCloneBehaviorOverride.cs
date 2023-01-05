@@ -24,8 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum CloneAttackType
         {
@@ -134,9 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < 50; i++)
                 {
                     float seekerAngle = MathHelper.TwoPi * i / 50f;
-                    int seeker = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>());
-                    if (Main.npc.IndexInRange(seeker))
-                        Main.npc[seeker].ai[0] = seekerAngle;
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>(), npc.whoAmI, seekerAngle);
                 }
 
                 npc.netUpdate = true;
@@ -484,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 19f;
-            float fireballSpeed = MathHelper.Lerp(12f, 15.6f, 1f - lifeRatio);
+            float fireballSpeed = MathHelper.Lerp(13.5f, 17.5f, 1f - lifeRatio);
 
             int fireballCount = 5;
             int fireballReleaseRate = 36;
@@ -600,7 +596,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
                     npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
-                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
+                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 80f))
                     {
                         SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
@@ -803,6 +799,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
+
+            // Kill me.
+            npc.frameCounter += 0.15f;
+            npc.frameCounter %= Main.npcFrameCount[npc.type];
+            int frame = (int)npc.frameCounter;
+            npc.frame.Y = frame * npc.frame.Height;
 
             int afterimageCount = 7;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

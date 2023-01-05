@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-    public class DarkFlamePillar : ModProjectile
+    public class DarkFlamePillar : ModProjectile, IPixelPrimitiveDrawer
     {
         public int OwnerIndex;
 
@@ -88,28 +89,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(ref Color lightColor)
         {
-            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
-
             // Create a telegraph line upward that fades away away the pillar fades in.
             Vector2 start = Projectile.Top;
             Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
             if (Projectile.Opacity < 1f)
                 Main.spriteBatch.DrawLineBetter(start + Projectile.Size * 0.5f, end + Projectile.Size * 0.5f, Color.Cyan * (1f - Projectile.Opacity), Projectile.Opacity * 6f);
+     
+            return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
+
+            Vector2 start = Projectile.Top;
+            Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
 
             List<Vector2> points = new();
-            for (int i = 0; i <= 8; i++)
-                points.Add(Vector2.Lerp(start, end, i / 8f));
+            for (int i = 0; i <= 64; i++)
+                points.Add(Vector2.Lerp(start, end, i / 64f) + Vector2.UnitY * 20f);
 
             if (Time >= 2f)
-                FireDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 166);
+                FireDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 166);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
-            return false;
         }
 
         public override bool ShouldUpdatePosition() => false;

@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
     public class BrainIllusion : ModNPC
     {
-        public PrimitiveTrailCopy FireDrawer;
-
         public Player Target => Main.player[NPC.target];
 
         public NPC Owner => Main.npc[NPC.crimsonBoss];

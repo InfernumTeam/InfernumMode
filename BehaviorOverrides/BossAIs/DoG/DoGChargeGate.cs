@@ -36,6 +36,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float TelegraphWidth = 6400f;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
@@ -105,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Time >= Lifetime - FadeoutTime)
                 fade = Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
 
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)
@@ -123,15 +125,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
-            float yScale = 4f;
-            if (TelegraphDelay < TelegraphFadeTime)
-            {
-                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
-            }
-            if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-            {
-                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
-            }
+            float yScale = Utils.GetLerpValue(0f, 12f, TelegraphDelay, true) * Utils.GetLerpValue(TelegraphTotalTime, TelegraphTotalTime - 12f, TelegraphDelay, true) * 4f;
+
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.9f);

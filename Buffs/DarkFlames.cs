@@ -14,6 +14,6 @@ namespace InfernumMode.Buffs
             Main.buffNoSave[Type] = true;
         }
 
-        public override void Update(Player player, ref int buffIndex) => player.Infernum().DarkFlames = true;
+        public override void Update(Player player, ref int buffIndex) => player.Infernum_Debuff().DarkFlames = true;
     }
 }

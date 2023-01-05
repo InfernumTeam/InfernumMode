@@ -2,7 +2,9 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Projectiles.Magic;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,9 +15,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class BrimstoneLaserbeam : ModProjectile
+    public class BrimstoneLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
 
         public ref float LaserLength => ref Projectile.ai[1];
 
@@ -108,12 +110,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
                 (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
-            return Color.Lerp(vibrantColor, Color.White, 0.5f) * opacity * 2f;
+            return Color.Lerp(vibrantColor, Color.White, 0.3f) * opacity * 2f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            RayDrawer ??= new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
 
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
 
@@ -122,8 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 62);
-            return false;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 62);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

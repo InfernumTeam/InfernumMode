@@ -10,6 +10,7 @@ using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.World;
 using InfernumMode.Subworlds;
+using InfernumMode.Systems;
 using InfernumMode.Tiles.Relics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -229,7 +230,7 @@ namespace InfernumMode.ILEditingStuff
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
             }
-
+            
             orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
         }
 
@@ -362,14 +363,14 @@ namespace InfernumMode.ILEditingStuff
 
             // Pop original value off.
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+            c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionNormal");
 
             if (!c.TryGotoNext(MoveType.After, x => x.MatchLdstr("UI.WorldDescriptionMaster")))
                 return;
 
             // Pop original value off.
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldstr, "Mods.InfernumMode.UI.NotExpertWarning");
+            c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
         }
 
         public void Load() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;
@@ -496,13 +497,11 @@ namespace InfernumMode.ILEditingStuff
                 fire.noGravity = true;
             }
 
-            // I LOVE RANDOM ERRORS IN VANILLA METHODS THAT DISRUPT MY GODDAMN DEBUGGING ENVIRONMENT.
-            // It's so FUN!
-            try
-            {
+            // I don't know who fucked this up. I don't know if it was me.
+            // But I'm sick of my game going to 1 FPS due to hundreds of exceptions being thrown every single frame and as such will be the one
+            // to fix it.
+            if (tileCache.TileType is not TileID.LeafBlock and not TileID.LivingMahoganyLeaves)
                 orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
-            }
-            catch (IndexOutOfRangeException) { }
         }
 
         public void Load() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
@@ -643,7 +642,7 @@ namespace InfernumMode.ILEditingStuff
 
                 float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + (float)Math.Sin((double)BossRushSky.IdleTimer) * 0.01f;
                 Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter) * 0.097f + screenCenter - Main.screenPosition - Vector2.UnitY * 100f;
-                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/XerocEyeAlt").Value;
+                Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Skies/XerocEyeAlt").Value;
                 Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);
                 
                 Main.spriteBatch.Draw(eyeTexture, drawPosition, null, baseColorDraw, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);

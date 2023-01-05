@@ -9,6 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     public class DestroyerPierceLaserTelegraph : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");
@@ -21,14 +22,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Projectile.tileCollide = false;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 20;
+            Projectile.timeLeft = 45;
             CooldownSlot = 1;
         }
 
         public override void AI()
         {
             // Pulse in and out.
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 20f) * 6f;
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 45f) * 6f;
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
@@ -55,9 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int laser = Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity * 18f, ProjectileID.DeathLaser, 120, 0f);
-            if (Main.projectile.IndexInRange(laser))
-                Main.projectile[laser].tileCollide = false;
+            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity.SafeNormalize(-Vector2.UnitY), ModContent.ProjectileType<DestroyerPierceLaser>(), 120, 0f);
         }
     }
 }

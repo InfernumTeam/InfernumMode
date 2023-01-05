@@ -1,4 +1,4 @@
-using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,9 +8,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class PhotonRipperCrystal : ModProjectile
+    public class PhotonRipperCrystal : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail TrailDrawer;
+        public PrimitiveTrailCopy TrailDrawer;
 
         public override void SetStaticDefaults()
         {
@@ -53,15 +53,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return Color.Lerp(Color.White, Main.hslToRgb(hue, 0.95f, 0.55f), 0.35f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => true;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (TrailDrawer is null)
-                TrailDrawer = new PrimitiveTrail(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
+            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
 
-            GameShaders.Misc["CalamityMod:PrismaticStreak"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            GameShaders.Misc["CalamityMod:PrismaticStreak"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
 
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
-            return true;
+            TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
         }
     }
 }

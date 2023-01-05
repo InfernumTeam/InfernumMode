@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.GlobalInstances;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -13,20 +14,21 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
-    public class BlueLaserbeam : BaseLaserbeamProjectile
+    public class BlueLaserbeam : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail LaserDrawer
+        public PrimitiveTrailCopy LaserDrawer
         {
             get;
             set;
         } = null;
+
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => OrangeLaserbeam.LaserLifetime;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Cyan;
         public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamMid", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BlueLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/BlueLaserbeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/BlueLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Deathray");
@@ -53,6 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.localAI[0] = reader.ReadSingle();
             Projectile.localAI[1] = reader.ReadSingle();
         }
+
         public override void AttachToSomething()
         {
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.AstrumAureus))
@@ -68,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool? CanDamage() => Time > 35f ? null : false;
 
-        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width;
+        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * 2;
 
         public static Color LaserColorFunction(float completionRatio)
         {
@@ -76,25 +79,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             return Color.Lerp(new(109, 242, 196), new(46, 146, 143), colorInterpolant * 0.67f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
+                return;
+
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
-            Vector2[] baseDrawPoints = new Vector2[8];
+            Vector2[] baseDrawPoints = new Vector2[20];
             for (int i = 0; i < baseDrawPoints.Length; i++)
                 baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
             // Select textures to pass to the shader, along with the electricity color.
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(187, 220, 237);
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak2"));
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Misc/Perlin");
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseColor(187, 220, 237);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
 
-            return false;
         }
     }
 }

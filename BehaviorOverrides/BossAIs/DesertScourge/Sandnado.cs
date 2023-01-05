@@ -10,9 +10,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
     public class Sandnado : ModProjectile
     {
         public const int Lifetime = 300;
+
         public const float HorizontalCollisionAreaFactor = 0.2f;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float StuckTimer => ref Projectile.localAI[0];
+
+        public override string Texture => "CalamityMod/Projectiles/TornadoProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sand Tornado");

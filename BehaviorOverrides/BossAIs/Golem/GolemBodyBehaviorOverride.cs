@@ -4,7 +4,6 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
@@ -42,8 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     public class GolemBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.Golem;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static int ArenaWidth = 115;
 
@@ -115,6 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 leftHandCenterPos = GetLeftFistAttachmentPosition(npc);
             Vector2 rightHandCenterPos = GetRightFistAttachmentPosition(npc);
 
+            int maxHP = 198700;
             if (AITimer == 0f)
             {
                 npc.TargetClosest();
@@ -131,9 +129,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                     return false;
                 }
-
+                
                 // Otherwise prepare the fight
-                int maxHP = 156000;
                 npc.Infernum().AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
@@ -142,43 +139,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.Opacity = 0f;
                 AttackState = Utilities.IsAprilFirst() ? (Main.rand.NextBool() ? (float)GolemAttackState.BIGSHOT : (float)GolemAttackState.BadTime) : (float)GolemAttackState.SummonDelay;
                 PreviousAttackState = (float)GolemAttackState.LandingState;
+
+                // This contains a server-side sync.
                 CreateGolemArena(npc);
+                
                 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
-                npc.netUpdate = true;
 
-                int freeHeadInt = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
-                Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
-                Main.npc[freeHeadInt].dontTakeDamage = true;
-                Main.npc[freeHeadInt].noGravity = true;
-                Main.npc[freeHeadInt].noTileCollide = true;
-                Main.npc[freeHeadInt].lifeMax = Main.npc[freeHeadInt].life = npc.lifeMax;
-                Main.npc[freeHeadInt].ai[0] = npc.whoAmI;
-                Main.npc[freeHeadInt].netUpdate = true;
-                FreeHeadNPC = freeHeadInt;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int freeHeadInt = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree, 0, npc.whoAmI);
+                    Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
+                    Main.npc[freeHeadInt].dontTakeDamage = true;
+                    Main.npc[freeHeadInt].noGravity = true;
+                    Main.npc[freeHeadInt].noTileCollide = true;
+                    Main.npc[freeHeadInt].lifeMax = Main.npc[freeHeadInt].life = npc.lifeMax;
+                    Main.npc[freeHeadInt].netUpdate = true;
+                    FreeHeadNPC = freeHeadInt;
 
-                int attachedHeadInt = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead);
-                Main.npc[attachedHeadInt].Center = attachedHeadCenterPos;
-                Main.npc[attachedHeadInt].lifeMax = Main.npc[attachedHeadInt].life = npc.lifeMax;
-                Main.npc[attachedHeadInt].noGravity = true;
-                Main.npc[attachedHeadInt].noTileCollide = true;
-                Main.npc[attachedHeadInt].ai[0] = npc.whoAmI;
-                Main.npc[attachedHeadInt].netUpdate = true;
-                AttachedHeadNPC = attachedHeadInt;
+                    int attachedHeadInt = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead, 0, npc.whoAmI);
+                    Main.npc[attachedHeadInt].Center = attachedHeadCenterPos;
+                    Main.npc[attachedHeadInt].lifeMax = Main.npc[attachedHeadInt].life = npc.lifeMax;
+                    Main.npc[attachedHeadInt].noGravity = true;
+                    Main.npc[attachedHeadInt].noTileCollide = true;
+                    Main.npc[attachedHeadInt].netUpdate = true;
+                    AttachedHeadNPC = attachedHeadInt;
 
-                int leftHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
-                Main.npc[leftHand].ai[0] = npc.whoAmI;
-                Main.npc[leftHand].netUpdate = true;
-                LeftFistNPC = leftHand;
+                    int leftHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>(), 0, npc.whoAmI);
+                    Main.npc[leftHand].ai[0] = npc.whoAmI;
+                    Main.npc[leftHand].netUpdate = true;
+                    LeftFistNPC = leftHand;
 
-                int rightHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
-                Main.npc[rightHand].ai[0] = npc.whoAmI;
-                Main.npc[rightHand].netUpdate = true;
-                RightFistNPC = rightHand;
+                    int rightHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>(), 0, npc.whoAmI);
+                    RightFistNPC = rightHand;
+                }
 
                 AITimer++;
 
                 return false;
             }
+
+            // Desync unfuckery.
+            npc.lifeMax = maxHP;
 
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -208,9 +209,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.timeLeft = 7200;
             
             Rectangle arena = npc.Infernum().Arena;
-            
+
             // 0 is normal. 1 is enraged.
+            float oldEnrageState = EnrageState;
             EnrageState = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
+            if (EnrageState != oldEnrageState)
+                npc.netUpdate = true;
+
             npc.TargetClosest(false);
 
             // Reset telegraph interpolants.
@@ -226,14 +231,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref NPC rightFist = ref Main.npc[(int)RightFistNPC];
             ref Player target = ref Main.player[npc.target];
 
+            // Ensure that the max HP doesn't desync across the body parts.
+            freeHead.lifeMax = npc.lifeMax;
+            attachedHead.lifeMax = npc.lifeMax;
+            leftFist.lifeMax = npc.lifeMax;
+            rightFist.lifeMax = npc.lifeMax;
+
             // Reset head DR.
-            freeHead.Calamity().DR = 0.3f;
-            attachedHead.Calamity().DR = 0.3f;
+            if (freeHead.active)
+                freeHead.Calamity().DR = 0.3f;
+            else
+                return false;
+
+            if (attachedHead.active)
+                attachedHead.Calamity().DR = 0.3f;
+            else
+                return false;
 
             // Sync the heads, and end the fight if necessary
             if (Main.netMode != NetmodeID.MultiplayerClient && !attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
             {
-
                 DespawnNPC(attachedHead.whoAmI);
                 DespawnNPC(freeHead.whoAmI);
                 DespawnNPC(leftFist.whoAmI);
@@ -320,8 +337,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     leftFist.damage = 0;
                     rightFist.damage = 0;
                     freeHead.damage = 0;
+
                     attachedHead.damage = 0;
                     attachedHead.dontTakeDamage = true;
+                    attachedHead.netUpdate = true;
+                    freeHead.netUpdate = true;
 
                     npc.velocity.Y += 0.5f;
                     AITimer++;
@@ -383,7 +403,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Enter the second phase.
-            if (lifeRatio < Phase2LifeRatio && phase2TransitionTimer < Phase2TransitionAnimationTime)
+            bool waitForServerFirst = Main.netMode != NetmodeID.MultiplayerClient || phase2TransitionTimer >= 10f;
+            if (waitForServerFirst && lifeRatio < Phase2LifeRatio && phase2TransitionTimer < Phase2TransitionAnimationTime)
             {
                 // Make the head return to the body before doing anything else.
                 // This negates the enrage state.
@@ -422,6 +443,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 phase2TransitionTimer++;
+                if (Main.netMode != NetmodeID.MultiplayerClient && phase2TransitionTimer == 10f)
+                    npc.netUpdate = true;
+
                 return false;
             }
 
@@ -477,6 +501,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     SwapHeads(npc);
                     freeHead.velocity = Vector2.Zero;
                     ReturnFromEnrageState = 0f;
+                    npc.netUpdate = true;
                     return false;
                 }
                 else if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center))
@@ -568,6 +593,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.velocity.X *= 0.8f;
 
             AITimer++;
+
+            // Ensure the heads sync if the body does.
+            if (npc.netUpdate)
+            {
+                attachedHead.netUpdate = true;
+                freeHead.netUpdate = true;
+            }
+
             return false;
         }
 
@@ -858,15 +891,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 {
                     Vector2 trapSpawnPosition = npc.Infernum().Arena.TopLeft();
                     Vector2 trapVelocity = Vector2.UnitX * 8f;
-                    int spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f);
-                    if (Main.projectile.IndexInRange(spike))
-                        Main.projectile[spike].ai[1] = 1f;
+                    Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f, -1, 0f, 1f);
 
                     trapSpawnPosition = npc.Infernum().Arena.BottomRight();
                     trapVelocity = Vector2.UnitX * -8f;
-                    spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f);
-                    if (Main.projectile.IndexInRange(spike))
-                        Main.projectile[spike].ai[1] = -1f;
+                    Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f, -1, 0f, -1f);
                 }
             }
             else
@@ -966,14 +995,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     {
                         Vector2 beamSpawnPosition = freeHead.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = Vector2.UnitX * i;
-
-                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 290, 0f);
-                        if (Main.projectile.IndexInRange(beam))
-                        {
-                            Main.projectile[beam].ai[0] = i * MathHelper.PiOver2 / 120f * 0.46f;
-                            Main.projectile[beam].ai[1] = freeHead.whoAmI;
-                            Main.projectile[beam].netUpdate = true;
-                        }
+                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 290, 0f, -1, i * MathHelper.PiOver2 / 120f * 0.46f, freeHead.whoAmI);
                     }
                 }
             }
@@ -1337,7 +1359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer >= 25f && attackTimer % laserReleaseRate == laserReleaseRate - 1f)
             {
                 Vector2 laserSpawnOffsetFactors = new(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
-                Vector2 laserSpawnPosition = npc.Infernum().Arena.Center.ToVector2() + npc.Infernum().Arena.Size() * laserSpawnOffsetFactors * 0.5f;
+                Vector2 laserSpawnPosition = npc.Infernum().Arena.Center.ToVector2() + npc.Infernum().Arena.Size() * laserSpawnOffsetFactors * 0.467f;
                 SoundEngine.PlaySound(SoundID.Item12, laserSpawnPosition);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1405,24 +1427,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().Arena.Center.Y)).Floor();
 
                     if (Collision.CanHit(top, 1, 1, top + Vector2.UnitY * 100f, 1, 1))
-                    {
-                        int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f);
-                        if (Main.projectile.IndexInRange(topSpike))
-                        {
-                            Main.projectile[topSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = 1f;
-                            Main.projectile[topSpike].netUpdate = true;
-                        }
-                    }
+                        Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f, -1, 0f, 1f);
 
                     if (Collision.CanHit(bottom, 1, 1, bottom - Vector2.UnitY * 100f, 1, 1))
-                    {
-                        int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f);
-                        if (Main.projectile.IndexInRange(bottomSpike))
-                        {
-                            Main.projectile[bottomSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = -1f;
-                            Main.projectile[bottomSpike].netUpdate = true;
-                        }
-                    }
+                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f, -1, 0f, -1f);
                 }
             }
 
@@ -1610,7 +1618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
                 Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(laserRayTelegraphInterpolant * 0.5f, 2.4f);
@@ -1628,10 +1636,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         private static void CreateGolemArena(NPC npc)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             DeleteGolemArena();
 
             if (!Main.player.IndexInRange(npc.target))
-                return;
+                npc.TargetClosest();
 
             Player closest = Main.player[npc.target];
 
@@ -1665,6 +1676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 arenaArea = new(ArenaWidth, ArenaHeight);
             npc.Infernum().Arena = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
             npc.Center = npc.Infernum().Arena.Center.ToVector2();
+            npc.netUpdate = true;
 
             int padding = 4;
             int left = (int)(npc.Infernum().Arena.Center().X / 16 - arenaArea.X * 0.5f);
@@ -1690,7 +1702,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                         {
                             if (tile.TileType != TileID.LihzahrdBrick && tile.TileType != TileID.LihzahrdAltar && tile.TileType != TileID.Traps && tile.TileType != TileID.WoodenSpikes && tile.TileType != arenaTileType)
+                            {
                                 WorldGen.KillTile(i, j);
+                                NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
+                            }
                         }
                     }
 
@@ -1710,7 +1725,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
                 }
             }
-
         }
 
         private static void DeleteGolemArena()

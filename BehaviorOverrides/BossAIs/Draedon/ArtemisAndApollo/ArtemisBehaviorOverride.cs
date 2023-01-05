@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
     {
         public override int NPCOverrideType => ModContent.NPCType<Artemis>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ExoMechManagement.Phase3LifeRatio,
@@ -80,6 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.target = apollo.target;
             npc.life = apollo.life;
             npc.lifeMax = apollo.lifeMax;
+            npc.Calamity().DR = apollo.Calamity().DR;
+            npc.Calamity().unbreakableDR = apollo.Calamity().unbreakableDR;
 
             // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Artemis>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
             
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
             DrawExoTwin(npc, lightColor, npc.ModNPC<Artemis>().ChargeFlash, npc.ModNPC<Artemis>().RibbonTrail, npc.ModNPC<Artemis>().ChargeFlameTrail, npc.ModNPC<Artemis>().ChargeFlameTrailBig);
             return false;
         }

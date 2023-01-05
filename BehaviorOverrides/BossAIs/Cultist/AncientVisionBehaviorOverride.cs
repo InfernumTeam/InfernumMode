@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => NPCID.AncientCultistSquidhead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region AI
         public override bool PreAI(NPC npc)
         {

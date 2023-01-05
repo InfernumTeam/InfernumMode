@@ -225,13 +225,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     {
                         Vector2 lightningSpawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.92f) * 150f;
                         Vector2 lightningVelocity = (target.Center - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * 6.5f;
-                        int arc = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 255, 0f);
+                        int arc = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 255, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                         if (Main.projectile.IndexInRange(arc))
-                        {
-                            Main.projectile[arc].ai[0] = lightningVelocity.ToRotation();
-                            Main.projectile[arc].ai[1] = Main.rand.Next(100);
                             Main.projectile[arc].tileCollide = false;
-                        }
                     }
 
                     NPC tail = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>())];

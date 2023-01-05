@@ -142,16 +142,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
-            GameShaders.Misc["Infernum:RealityTear"].Apply();
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
+            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             // Draw the vortex.
-            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             Main.spriteBatch.EnterShaderRegion();
@@ -167,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.ExitShaderRegion();
 
             // Draw the black hole.
-            Texture2D blackHoleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WhiteHole").Value;
+            Texture2D blackHoleTexture = InfernumTextureRegistry.WhiteHole.Value;
             Vector2 blackHoleScale = Vector2.One * Radius / blackHoleTexture.Size() * 1.2f;
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 3; i++)

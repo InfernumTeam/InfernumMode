@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
         public override int NPCOverrideType => NPCID.DD2Betsy;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc) => DoAI(npc);
 
         public static bool DoAI(NPC npc)

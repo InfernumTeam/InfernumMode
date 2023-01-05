@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -14,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class DarkGodLaser : BaseLaserbeamProjectile
+    public class DarkGodLaser : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public int OwnerIndex
         {
@@ -22,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             set => Projectile.ai[0] = value;
         }
 
-        public PrimitiveTrail LaserDrawer = null;
+        public PrimitiveTrailCopy LaserDrawer = null;
 
         public const int LaserLifetime = 300;
         public override float MaxScale => 1f;
@@ -100,14 +101,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             return Color.Lerp(Color.Black, Color.Cyan, (float)Math.Pow(colorInterpolant, 3.3) * 0.25f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
+                return;
 
-            if (LaserDrawer is null)
-                LaserDrawer = new PrimitiveTrail(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["Infernum:ArtemisLaser"]);
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
 
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
@@ -115,12 +117,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
             // Select textures to pass to the shader, along with the electricity color.
-            GameShaders.Misc["Infernum:ArtemisLaser"].UseColor(Color.Turquoise);
-            GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseColor(Color.Turquoise);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 24);
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 24);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

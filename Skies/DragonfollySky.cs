@@ -71,8 +71,8 @@ namespace InfernumMode.Skies
         {
             if (maxDepth >= 0 && minDepth < 0)
             {
-                float Intensity = this.GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), InfernumMode.HiveMindSkyColor * Intensity);
+                float intensity = GetIntensity();
+                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), new Color(52, 42, 82) * intensity);
             }
         }
 

@@ -16,6 +16,7 @@ using Terraria.GameInput;
 using InfernumMode.Systems;
 using System.Reflection;
 using System;
+using InfernumMode.GlobalInstances.Players;
 
 namespace InfernumMode.ILEditingStuff
 {

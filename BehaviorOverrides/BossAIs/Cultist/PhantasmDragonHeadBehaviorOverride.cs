@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public override int NPCOverrideType => NPCID.CultistDragonHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
-
         #region AI
         public override bool PreAI(NPC npc)
         {

@@ -9,7 +9,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
-using InfernumMode.GlobalInstances;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Subworlds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -429,7 +429,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.EmitDelegate<Action>(() =>
             {
                 float fadeToBlack = 0f;
-                if (CalamityGlobalNPC.signus != -1)
+                if (CalamityGlobalNPC.signus != -1 && Main.npc[CalamityGlobalNPC.signus].active)
                     fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];
                 if (InfernumMode.BlackFade > 0f)
                     fadeToBlack = InfernumMode.BlackFade;
@@ -479,8 +479,8 @@ namespace InfernumMode.ILEditingStuff
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-                    Filters.Scene["InfernumMode:Madness"].GetShader().UseSecondaryColor(Color.DarkViolet with { A = 20 });
-                    Filters.Scene["InfernumMode:Madness"].Apply();
+                    InfernumEffectsRegistry.MadnessScreenShader.GetShader().UseSecondaryColor(Color.DarkViolet with { A = 20 });
+                    InfernumEffectsRegistry.MadnessScreenShader.Apply();
                     Main.spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/Misc/noise").Value, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), Color.White);
                     Main.spriteBatch.ExitShaderRegion();
                 }

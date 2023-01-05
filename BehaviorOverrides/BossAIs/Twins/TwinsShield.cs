@@ -12,12 +12,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
     public class TwinsShield : ModProjectile
     {
-        public ref float OwnerIndex => ref Projectile.ai[0];
-        public ref float Radius => ref Projectile.ai[1];
         public NPC Owner => Main.npc[(int)OwnerIndex];
+
+        public ref float OwnerIndex => ref Projectile.ai[0];
+        
+        public ref float Radius => ref Projectile.ai[1];
+
         public const float MaxRadius = 180f;
+
         public const int HealTime = 180;
+
         public const int Lifetime = HealTime + HealTime / 3;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public override void SetStaticDefaults()
         {

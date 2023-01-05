@@ -33,8 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.475f;
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -197,9 +195,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Focus on the boss as it spawns.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
             {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(200f, 192f, animationTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(200f, 192f, animationTimer, true);
             }
 
             npc.Opacity = Utils.GetLerpValue(0f, 45f, animationTimer, true);
@@ -631,19 +629,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
                         shootVelocity.Y += Main.rand.NextFloat(2f);
-                        int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f);
-                        if (Main.projectile.IndexInRange(fire))
-                        {
-                            Main.projectile[fire].ai[0] = offset + fuck;
-                            Main.projectile[fire].netUpdate = true;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f, -1, offset + fuck);
                     }
 
                     // Fire one skull directly at the target.
                     Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center) * 5f;
-                    int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f);
-                    if (Main.projectile.IndexInRange(skull))
-                        Main.projectile[skull].ai[0] = -9999f;
+                    Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f, -1, -9999f);
                 }
             }
 
@@ -744,9 +735,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Make the camera focus on Skeletron as he dies.
             if (groundHitTimer >= 1f)
             {
-                Main.LocalPlayer.Infernum().ScreenFocusHoldInPlaceTime = 30;
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, groundHitTimer, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusHoldInPlaceTime = 30;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, groundHitTimer, true);
 
                 // Jitter in pain.
                 if (groundHitTimer >= 60f)

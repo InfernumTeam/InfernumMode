@@ -181,7 +181,10 @@ namespace InfernumMode.Projectiles.Wayfinder
             int dustSpawnRate = (int)MathHelper.Lerp(8, 1, Time / TeleportMaxTime);
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
 
-            if (IsGateSet)
+            // Why is this a problem?
+            Owner.fallStart = (int)(Owner.position.Y / 16f);
+
+            if (IsGateSet && Main.myPlayer == Projectile.owner)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
 
             if (Time == 0)
@@ -314,7 +317,7 @@ namespace InfernumMode.Projectiles.Wayfinder
                     WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);
                 }
 
-                Owner.Infernum().CurrentScreenShakePower = 5;
+                Owner.Infernum_Camera().CurrentScreenShakePower = 5;
                 for (int i = 0; i < 60; i++)
                 {
                     CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));
@@ -463,8 +466,8 @@ namespace InfernumMode.Projectiles.Wayfinder
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(texture, Projectile.Center - Main.screenPosition, sourceRectangle, lightColor * opacity * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale * 0.75f, spriteEffects, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/WayfinderLayer"));
-            GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
+            InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/WayfinderLayer"));
+            InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
 
             drawData.Draw(Main.spriteBatch);
 

@@ -17,9 +17,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ExolaserBomb : ModProjectile
     {
         public int GrowTime;
+
         public PrimitiveTrailCopy FireDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float Radius => ref Projectile.ai[1];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Bomb");
 
         public override void SetDefaults()
@@ -44,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (Projectile.timeLeft < 60f)
             {
                 Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -77,10 +83,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override bool PreDraw(ref Color lightColor)
         {
             if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
@@ -105,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 4.75f;
-                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 

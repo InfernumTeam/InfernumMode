@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.GlobalInstances.Players;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;

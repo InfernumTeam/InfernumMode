@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Items.Accessories;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using InfernumMode.GlobalInstances.Players;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -57,7 +58,7 @@ namespace InfernumMode.Achievements.InfernumAchievements
             // Check if DoG is alive.
             if (CalamityGlobalNPC.DoGHead != -1)
             {
-                // If at any point any player has a ram, invalidate them completeling the achievement.
+                // If at any point any player has a ram, invalidate them completing the achievement.
                 if (PlayerHasRam())
                     UsedADash = true;
             }
@@ -80,8 +81,9 @@ namespace InfernumMode.Achievements.InfernumAchievements
         #endregion
 
         #region Methods
-        private bool PlayerHasRam()
+        private static bool PlayerHasRam()
         {
+            // TODO -- This isn't going to work with TML's extra accessories system. There should be a ModPlayer hook for these sorts of checks.
             Player player = Main.LocalPlayer;
             for (int i = 0; i <= 7 + player.GetAmountOfExtraAccessorySlotsToShow(); i++)
             {

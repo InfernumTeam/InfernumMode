@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             // Draw the telegraph line.
             Vector2 start = Projectile.Center - Main.screenPosition;
-            Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+            Texture2D line = InfernumTextureRegistry.BloomLine.Value;
 
             Vector2 beamOrigin = new(line.Width / 2f, line.Height);
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Main.spriteBatch.Draw(line, start, null, Color.White, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
 
             // Draw the energy focus at the start.
-            Texture2D energyFocusTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LaserCircle").Value;
+            Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
         }

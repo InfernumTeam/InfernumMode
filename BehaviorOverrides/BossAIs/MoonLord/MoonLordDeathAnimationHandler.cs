@@ -15,6 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public float AnimationTimer => Main.npc[(int)Owner].Infernum().ExtraAI[6];
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Death Animation");
 
         public override void SetDefaults()
@@ -81,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 10f;
-                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

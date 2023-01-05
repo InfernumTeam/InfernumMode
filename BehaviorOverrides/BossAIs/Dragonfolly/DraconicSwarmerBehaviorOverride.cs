@@ -15,8 +15,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
     {
         public override int NPCOverrideType => ModContent.NPCType<Bumblefuck2>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-        
         #region AI
 
         public override bool PreAI(NPC npc)

@@ -39,8 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override int NPCOverrideType => ModContent.NPCType<Anahita>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             ComboAttackManager.LeviathanSummonLifeRatio
@@ -257,9 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     for (int i = 0; i < illusionCount; i++)
                     {
                         float offsetAngle = MathHelper.TwoPi * i / illusionCount;
-                        int illusion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AnahitaWaterIllusion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(illusion))
-                            Main.projectile[illusion].ai[1] = offsetAngle;
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AnahitaWaterIllusion>(), 0, 0f, -1, 0f, offsetAngle);
                     }
                 }
                 return;

@@ -1,3 +1,4 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-    public class VortexTelegraphBeam : ModProjectile
+    public class VortexTelegraphBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -56,13 +57,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return color * Projectile.Opacity * 0.6f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();
@@ -72,9 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
-
-            return false;
+            BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)

@@ -15,6 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public ref float BombRadius => ref Projectile.localAI[0];
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()
@@ -57,7 +59,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphInterpolant = Utils.GetLerpValue(0f, Lifetime * 0.35f, Time, true);
             float telegraphWidth = MathHelper.Lerp(0.3f, 3f, CalamityUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.

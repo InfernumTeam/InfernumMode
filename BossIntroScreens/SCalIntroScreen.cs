@@ -25,7 +25,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float TextScale => MajorBossTextScale;
 
-        public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:SCalIntro"].Shader;
+        public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.SCalIntroLetterShader.Shader;
 
         public override void PrepareShader(Effect shader)
         {

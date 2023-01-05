@@ -1,4 +1,6 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -7,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class LightBeam : ModProjectile
+    public class LightBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -56,10 +58,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public Color ColorFunction(float completionRatio) => Color.White * Projectile.Opacity * Utils.GetLerpValue(0.95f, 0.725f, completionRatio, true);
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true);
 
             float length = 40f;
             length += MathHelper.Lerp(0f, 16f, Projectile.identity % 7f / 7f);
@@ -67,8 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * length, i / 12f));
 
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
-            return false;
+            BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
         }
 
         public override bool ShouldUpdatePosition() => false;

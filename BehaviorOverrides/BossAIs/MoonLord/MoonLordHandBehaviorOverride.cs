@@ -18,8 +18,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override int? NPCIDToDeferToForTips => NPCID.MoonLordCore;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override bool PreAI(NPC npc)
         {
             // Disappear if the body is not present.
@@ -177,12 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int sphere = Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, 215, 0f, npc.target);
-                        if (Main.projectile.IndexInRange(sphere))
-                        {
-                            Main.projectile[sphere].ai[1] = npc.whoAmI;
-                            Main.projectile[sphere].netUpdate = true;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, 215, 0f, -1, 0f, npc.whoAmI);
 
                         // Sync the entire moon lord's current state. This will be executed on the frame immediately after this one.
                         core.netUpdate = true;

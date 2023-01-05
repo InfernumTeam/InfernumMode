@@ -24,8 +24,8 @@ namespace InfernumMode.Particles
         
         public override List<Texture2D> BackgroundTextures => new()
         {
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow1").Value,
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Shadow2").Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.Shadow.Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.Shadow2.Value,
         };
 
         public override FusableParticle SpawnParticle(Vector2 center, float sizeStrength)

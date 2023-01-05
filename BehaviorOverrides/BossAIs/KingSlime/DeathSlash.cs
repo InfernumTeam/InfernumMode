@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -117,10 +116,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
+                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GrayscaleWater"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.GrayscaleWater);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
             return false;
         }

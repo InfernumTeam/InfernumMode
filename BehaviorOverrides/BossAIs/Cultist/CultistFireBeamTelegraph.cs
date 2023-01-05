@@ -60,12 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             float aimDirection = (MathHelper.WrapAngle(Projectile.AngleTo(Target.Center) - Projectile.velocity.ToRotation()) > 0f).ToDirectionInt();
             Vector2 beamDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-
-            int beam = Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), 235, 0f);
-            if (Main.projectile.IndexInRange(beam))
-                Main.projectile[beam].ai[1] = aimDirection * 0.0254f;
+            Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), 235, 0f, -1, 0f, aimDirection * 0.0254f);
         }
-
-        
     }
 }

@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.OverridingSystem
 {
@@ -17,60 +18,36 @@ namespace InfernumMode.OverridingSystem
         internal static void LoadAll()
         {
             BehaviorOverrides = new();
-            void getMethodBasedOnContext(Type type, NPCBehaviorOverride instance, NPCOverrideContext context)
-            {
-                string methodName = string.Empty;
-
-                methodName = context switch
-                {
-                    NPCOverrideContext.NPCAI => "PreAI",
-                    NPCOverrideContext.NPCSetDefaults => "SetDefaults",
-                    NPCOverrideContext.NPCPreDraw => "PreDraw",
-                    NPCOverrideContext.NPCFindFrame => "FindFrame",
-                    NPCOverrideContext.NPCCheckDead => "CheckDead",
-                    _ => throw new ArgumentException("The given override context is invalid."),
-                };
-                MethodInfo method = type.GetMethod(methodName, Utilities.UniversalBindingFlags);
-                List<Type> paramTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToList();
-                paramTypes.Add(method.ReturnType);
-
-                Type delegateType = Expression.GetDelegateType(paramTypes.ToArray());
-                Delegate methodAsDelegate = Delegate.CreateDelegate(delegateType, instance, method);
-
-                // Cache the delegate in question with intent for it to override the base AI.
-                switch (context)
-                {
-                    case NPCOverrideContext.NPCAI:
-                        OverridingListManager.InfernumNPCPreAIOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreAIDelegate(n => (bool)method.Invoke(instance, new object[] { n }));
-                        break;
-                    case NPCOverrideContext.NPCSetDefaults:
-                        OverridingListManager.InfernumSetDefaultsOverrideList[instance.NPCOverrideType] = methodAsDelegate;
-                        break;
-                    case NPCOverrideContext.NPCPreDraw:
-                        OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)method.Invoke(instance, new object[] { n, s, c }));
-                        break;
-                    case NPCOverrideContext.NPCFindFrame:
-                        OverridingListManager.InfernumFrameOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCFindFrameDelegate((n, h) => method.Invoke(instance, new object[] { n, h }));
-                        break;
-                    case NPCOverrideContext.NPCCheckDead:
-                        OverridingListManager.InfernumCheckDeadOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCCheckDeadDelegate(n => (bool)method.Invoke(instance, new object[] { n }));
-                        break;
-                }
-            }
-
+            
             foreach (Type type in Utilities.GetEveryMethodDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type);
-                if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCAI))
-                    getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCAI);
-                if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCSetDefaults))
-                    getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCSetDefaults);
-                if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCPreDraw))
-                    getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCPreDraw);
-                if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCFindFrame))
-                    getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCFindFrame);
-                if (instance.ContentToOverride.HasFlag(NPCOverrideContext.NPCCheckDead))
-                    getMethodBasedOnContext(type, instance, NPCOverrideContext.NPCCheckDead);
+
+                // Cache the PreAI method if it exists.
+                MethodInfo preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
+                if (preAIMethod is not null)
+                    OverridingListManager.InfernumNPCPreAIOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreAIDelegate(n => (bool)preAIMethod.Invoke(instance, new object[] { n }));
+
+                // Cache the SetDefaults method if it exists.
+                MethodInfo setDefaultsMethod = type.GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
+                if (setDefaultsMethod is not null)
+                    OverridingListManager.InfernumSetDefaultsOverrideList[instance.NPCOverrideType] = setDefaultsMethod.ConvertToDelegate(instance);
+
+                // Cache the PreDraw method if it exists.
+                MethodInfo preDrawMethod = type.GetMethod("PreDraw", Utilities.UniversalBindingFlags);
+                if (preDrawMethod is not null)
+                    OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)preDrawMethod.Invoke(instance, new object[] { n, s, c }));
+
+                // Cache the FindFrame method if it exists.
+                MethodInfo findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+                if (findFrameMethod is not null)
+                    OverridingListManager.InfernumFrameOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCFindFrameDelegate((n, h) => findFrameMethod.Invoke(instance, new object[] { n, h }));
+
+                // Cache the CheckDead method if it exists.
+                MethodInfo checkDeadMethod = type.GetMethod("CheckDead", Utilities.UniversalBindingFlags);
+                if (checkDeadMethod is not null)
+                    OverridingListManager.InfernumCheckDeadOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
+
                 BehaviorOverrides[instance.NPCOverrideType] = instance;
             }
         }
@@ -91,6 +68,10 @@ namespace InfernumMode.OverridingSystem
             }
         }
 
+        public virtual void SendExtraData(NPC npc, ModPacket writer) { }
+
+        public virtual void ReceiveExtraData(NPC npc, BinaryReader reader) { }
+
         public virtual int? NPCIDToDeferToForTips => null;
 
         public virtual float[] PhaseLifeRatioThresholds => Array.Empty<float>();
@@ -98,8 +79,6 @@ namespace InfernumMode.OverridingSystem
         public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
 
         public abstract int NPCOverrideType { get; }
-
-        public abstract NPCOverrideContext ContentToOverride { get; }
 
         public virtual void SetDefaults(NPC npc) { }
 

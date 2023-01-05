@@ -38,7 +38,7 @@ namespace InfernumMode.Projectiles
                 Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
                 Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Projectile.type], frameY: Projectile.frame);
                 Vector2 origin = texture.Size() * 0.5f;
-                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, DrawColor.Value, Projectile.rotation, origin, Projectile.scale*0.8f, 0, 0);
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, DrawColor.Value, Projectile.rotation, origin, Projectile.scale * 0.5f, 0, 0);
             }
             return false;
         }

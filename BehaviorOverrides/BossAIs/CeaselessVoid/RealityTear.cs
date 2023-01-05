@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class RealityTear : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail LightningDrawer;
 
         public List<Vector2> TrailCache = new();
 
@@ -69,9 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 int barragePointIndex = Main.rand.Next(TrailCache.Count - 1);
                 Vector2 barrageVelocity = Main.rand.NextVector2CircularEdge(8f, 8f);
                 Vector2 barrageSpawnPosition = Vector2.Lerp(TrailCache[barragePointIndex], TrailCache[barragePointIndex + 1], Main.rand.NextFloat());
-                int barrage = Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f);
-                if (Main.projectile.IndexInRange(barrage))
-                    Main.projectile[barrage].ai[1] = ScaleFactorDelta;
+                Utilities.NewProjectileBetter(barrageSpawnPosition, barrageVelocity, ModContent.ProjectileType<CelestialBarrage>(), 250, 0f, -1, 0f, ScaleFactorDelta);
             }
             
             // Fade in.
@@ -100,11 +99,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
+            LightningDrawer = new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 82);
             return false;
         }

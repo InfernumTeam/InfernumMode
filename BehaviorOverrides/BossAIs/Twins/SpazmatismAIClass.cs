@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
     {
         public override int NPCOverrideType => NPCID.Spazmatism;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         #region AI
         public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
         #endregion AI
@@ -68,11 +66,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => FlameTrailWidthFunctionBig(npc, completionRatio),
                     completionRatio => FlameTrailColorFunctionBig(npc, completionRatio),
-                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+                    null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
             }
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
-                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
+                InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
                 Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;

@@ -1,5 +1,6 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -90,7 +91,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 idealRotation += MathHelper.TwoPi;
             if (idealRotation > MathHelper.TwoPi)
                 idealRotation -= MathHelper.TwoPi;
-            npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.065f);
+
+            // Turn more sharply during the ultimate attack, to ensure that players don't get fucked due to it taking a long time for their baiting movements to actually matter.
+            bool performingUltimateAttack = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts;
+            float angularVelocity = performingUltimateAttack ? 0.156f : 0.065f;
+
+            npc.rotation = npc.rotation.AngleTowards(idealRotation, angularVelocity);
             currentDirection = npc.rotation;
             if (Math.Sin(currentDirection) < 0f)
                 currentDirection += MathHelper.Pi;
@@ -167,6 +173,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 {
                     Color color = Main.hslToRgb((i / 12f + Main.GlobalTimeWrappedHourly * 0.6f + npc.whoAmI * 0.54f) % 1f, 1f, 0.56f);
                     color.A = 0;
+
+                    if (npc.realLife >= 0 && Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
+                        color *= (float)Math.Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9);
+
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }

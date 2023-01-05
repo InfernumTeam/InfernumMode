@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class BrimstoneBurst : ModProjectile
+    public class BrimstoneBurst : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int Lifetime = 240;
@@ -85,15 +86,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 13);
-            return false;
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.7f);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            FireDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 85);
         }
     }
 }

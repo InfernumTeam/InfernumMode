@@ -11,12 +11,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public class PrimeShield : ModProjectile
     {
-        public ref float OwnerIndex => ref Projectile.ai[0];
-        public ref float Radius => ref Projectile.ai[1];
         public NPC Owner => Main.npc[(int)OwnerIndex];
+
+        public ref float OwnerIndex => ref Projectile.ai[0];
+
+        public ref float Radius => ref Projectile.ai[1];
+
         public const float MaxRadius = 100f;
+
         public const int HealTime = 180;
+
         public const int Lifetime = HealTime + HealTime / 3;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public override void SetStaticDefaults()
         {
@@ -62,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value,
+            DrawData drawData = new(InfernumTextureRegistry.CultistRayMap.Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
                 new Color(new Vector4(1f)) * 0.7f * Projectile.Opacity,

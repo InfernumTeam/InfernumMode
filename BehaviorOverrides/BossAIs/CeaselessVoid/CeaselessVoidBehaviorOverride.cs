@@ -15,7 +15,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -26,8 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     public class CeaselessVoidBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CeaselessVoidBoss>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
 
         #region Enumerations
         public enum CeaselessVoidAttackType
@@ -262,7 +259,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         darkEnergy.netUpdate = true;
                     }
                 }
-                
+
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGBeam>());
                 SelectNewAttack(npc);
             }
         }
@@ -312,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
                     // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
-                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 30f)
+                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 42f)
                     {
                         attackTimer = 0f;
                         attackState = 1f;
@@ -334,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Do the charge.
                 case 1:
                     npc.damage = npc.defDamage;
-                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection.ToRotationVector2() * chargeSpeed, 0.125f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection.ToRotationVector2() * chargeSpeed, 0.09f);
                     if (attackTimer >= chargeTime)
                     {
                         attackState = 0f;
@@ -344,7 +342,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         npc.netUpdate = true;
 
                         if (chargeCounter >= chargeCount)
+                        {
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
                             SelectNewAttack(npc);
+                        }
                         else
                             npc.velocity *= 0.3f;
                     }
@@ -439,9 +440,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
                     Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
-                    int barrage = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f);
-                    if (Main.projectile.IndexInRange(barrage))
-                        Main.projectile[barrage].ai[1] = playerShootDirection;
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f, -1, 0f, playerShootDirection);
                 }
             }
 
@@ -691,8 +690,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(voidTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
-            GameShaders.Misc["Infernum:RealityTear2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
-            GameShaders.Misc["Infernum:RealityTear2"].Apply(drawData);
+            InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
             drawData.Draw(Main.spriteBatch);
             Main.spriteBatch.ExitShaderRegion();
             return false;

@@ -2,6 +2,7 @@ using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
 using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Items
@@ -16,6 +17,14 @@ namespace InfernumMode.Items
             });
         }
 
+        public static void AddRecipeIngredient(int itemType, int ingredientType, int ingredientStack = 1)
+        {
+            Main.recipe.Where(x => x.createItem.type == itemType).ToList().ForEach(s =>
+            {
+                s.AddIngredient(ingredientType, ingredientStack);
+            });
+        }
+
         public static void RemoveRecipeIngredient(int itemType, int ingredientType)
         {
             Main.recipe.Where(x => x.createItem.type == itemType).ToList().ForEach(s =>
@@ -27,6 +36,9 @@ namespace InfernumMode.Items
         internal static void Update()
         {
             IncreaseBossSummonerYields();
+
+            // Make the sandstorm's core post-Cultist.
+            AddRecipeIngredient(ModContent.ItemType<SandstormsCore>(), ItemID.FragmentSolar);
         }
 
         internal static void IncreaseBossSummonerYields()

@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
     {
         public override int NPCOverrideType => ModContent.NPCType<EbonianSlimeGod>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             SlimeGodComboAttackManager.SummonSecondSlimeLifeRatio

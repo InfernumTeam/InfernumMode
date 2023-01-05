@@ -8,11 +8,13 @@ namespace InfernumMode.Particles
 {
     public class ExplosionRing : Particle
     {
-        public override string Texture => "InfernumMode/ExtraTextures/HollowCircleSoftEdge";
-        public override bool SetLifetime => true;
+        private readonly float Spin;
 
-        private float Spin;
-        Color originalColor;
+        private readonly Color originalColor;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/HollowCircleSoftEdge";
+
+        public override bool SetLifetime => true;
 
         public ExplosionRing(Vector2 position, Vector2 velocity, Color color, float scale, int lifeTime, float rotationSpeed = 0.2f)
         {

@@ -90,17 +90,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Main.spriteBatch.EnterShaderRegion();
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix viewMatrix, out Matrix projectionMatrix);
 
-            GameShaders.Misc["Infernum:LinearTransformation"].UseColor(Main.hslToRgb(0.95f, 0.85f, 0.5f));
-            GameShaders.Misc["Infernum:LinearTransformation"].UseOpacity(0f);
-            GameShaders.Misc["Infernum:LinearTransformation"].Shader.Parameters["uWorldViewProjection"].SetValue(viewMatrix * projectionMatrix);
-            GameShaders.Misc["Infernum:LinearTransformation"].Shader.Parameters["localMatrix"].SetValue(new Matrix()
+            InfernumEffectsRegistry.LinearTransformationVertexShader.UseColor(Main.hslToRgb(0.95f, 0.85f, 0.5f));
+            InfernumEffectsRegistry.LinearTransformationVertexShader.UseOpacity(0f);
+            InfernumEffectsRegistry.LinearTransformationVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(viewMatrix * projectionMatrix);
+            InfernumEffectsRegistry.LinearTransformationVertexShader.Shader.Parameters["localMatrix"].SetValue(new Matrix()
             {
                 M11 = BladeHorizontalFactor,
                 M12 = 0f,
                 M21 = 0f,
                 M22 = 1f,
             });
-            GameShaders.Misc["Infernum:LinearTransformation"].Apply();
+            InfernumEffectsRegistry.LinearTransformationVertexShader.Apply();
 
             CalamityUtils.DrawAfterimagesCentered(Projectile, 2, lightColor);
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;

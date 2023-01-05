@@ -1,4 +1,3 @@
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     public class PrimeCannonBehaviorOverride : PrimeHandBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.PrimeCannon;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override float PredictivenessFactor => 20f;
 

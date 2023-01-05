@@ -28,7 +28,7 @@ namespace InfernumMode.BossIntroScreens
             }
         }
 
-        public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:MechsIntro"].Shader;
+        public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.MechsIntroLetterShader.Shader;
 
         public override void PrepareShader(Effect shader)
         {

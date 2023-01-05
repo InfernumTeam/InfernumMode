@@ -1,6 +1,8 @@
 using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
+using InfernumMode.OverridingSystem;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -15,7 +17,8 @@ namespace InfernumMode
     {
         SendExtraNPCData,
         SyncInfernumActive,
-        SummonExoMech
+        SummonExoMech,
+        UpdateTwinsAttackSynchronizer
     }
 
     public class InfernumNPCSyncInformation
@@ -45,7 +48,7 @@ namespace InfernumMode
                 Main.npc[NPCIndex].Infernum().HasAssociatedAIBeenUsed[ExtraAIIndicesUsed[i]] = true;
                 Main.npc[NPCIndex].Infernum().ExtraAI[ExtraAIIndicesUsed[i]] = ExtraAIValues[i];
             }
-            if (ArenaRectangle != default)
+            if (ArenaRectangle != default && Main.npc[NPCIndex].Infernum().Arena == default)
                 Main.npc[NPCIndex].Infernum().Arena = ArenaRectangle;
 
             Main.npc[NPCIndex].Infernum().TotalPlayersAtStart = TotalPlayersAtStart;
@@ -133,6 +136,8 @@ namespace InfernumMode
 
                     if (!syncInformation.TryToApplyToNPC())
                         PendingSyncs.Add(syncInformation);
+                    else if (InfernumMode.CanUseCustomAIs)
+                        Main.npc[npcIndex].BehaviorOverride<NPCBehaviorOverride>()?.ReceiveExtraData(Main.npc[npcIndex], reader);
                     break;
 
                 case InfernumPacketType.SyncInfernumActive:
@@ -146,6 +151,9 @@ namespace InfernumMode
                     DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon = (ExoMech)reader.ReadInt32();
                     DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon = (ExoMech)reader.ReadInt32();
                     DraedonBehaviorOverride.SummonExoMech(player);                    
+                    break;
+                case InfernumPacketType.UpdateTwinsAttackSynchronizer:
+                    TwinsAttackSynchronizer.ReadFromPacket(reader);
                     break;
             }
         }

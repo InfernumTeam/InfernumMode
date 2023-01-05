@@ -38,7 +38,7 @@ namespace InfernumMode.Projectiles
             if (Time == 75f)
                 SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, Projectile.Center);
             if (Time >= 75f)
-                Main.LocalPlayer.Infernum().CreateALotOfHolyCinders = true;
+                Main.LocalPlayer.Infernum_TempleCinder().CreateALotOfHolyCinders = true;
 
             if (Time >= 210f)
             {

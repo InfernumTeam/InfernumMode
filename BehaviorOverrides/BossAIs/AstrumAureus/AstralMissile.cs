@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -10,9 +11,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
-    public class AstralMissile : ModProjectile
+    public class AstralMissile : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer = null;
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -47,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (Projectile.WithinRange(closestPlayer.Center, 30f))
                 Projectile.Kill();
 
-            if (Time >= 45f && Projectile.velocity.Length() < 28.5f)
+            if (Time >= 45f && Projectile.velocity.Length() < 24f)
                 Projectile.velocity *= 1.021f;
 
             Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
@@ -69,13 +70,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            // Initialize the flame trail drawer.
-            FlameTrailDrawer ??= new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-
-            Vector2 trailOffset = Projectile.Size * 0.5f;
-            trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;
-            FlameTrailDrawer.Draw(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
-
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask").Value;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
@@ -86,6 +80,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
             Main.EntitySpriteDraw(glowmask, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
             return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            // Initialize the flame trail drawer.
+            FlameTrailDrawer ??= new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+            Vector2 trailOffset = Projectile.Size * 0.5f;
+            trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;
+            FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
         }
 
         public override void Kill(int timeLeft)

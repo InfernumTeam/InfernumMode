@@ -9,7 +9,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class LunarFlareTelegraph : ModProjectile
     {
         public ref float Countdown => ref Projectile.ai[0];
+
         public Player Target => Main.player[Projectile.owner];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()

@@ -32,8 +32,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SepulcherHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
-
         public override void SetDefaults(NPC npc)
         {
             npc.damage = 465;

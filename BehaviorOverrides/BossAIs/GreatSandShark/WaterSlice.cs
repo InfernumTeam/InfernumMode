@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -11,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class WaterSlice : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail LightningDrawer;
 
         public List<Vector2> TrailCache = new();
 
@@ -103,12 +102,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
+            LightningDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
+            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 54);
             return false;
         }
         #endregion

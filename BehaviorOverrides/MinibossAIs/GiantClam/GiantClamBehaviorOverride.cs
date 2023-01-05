@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
         public override int NPCOverrideType => ModContent.NPCType<GiantClamNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         public override bool PreAI(NPC npc)
         {
             ref float attackState = ref npc.Infernum().ExtraAI[0];

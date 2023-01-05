@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
     {
         public override int NPCOverrideType => ModContent.NPCType<SignusBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum SignusAttackType
         {

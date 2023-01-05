@@ -18,10 +18,12 @@ using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using InfernumMode.Achievements;
+using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -32,8 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public const float Phase2LifeRatio = 0.55f;
 
         public const float Phase3LifeRatio = 0.25f;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
         public enum ProvidenceAttackType
@@ -122,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Give the taret infinite flight time.
+            // Give the target infinite flight time.
             target.wingTime = target.wingTimeMax;
             target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
 
@@ -145,6 +145,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // Use the screen saturation effect.
             npc.Infernum().ShouldUseSaturationBlur = true;
+
+            // Enable the distortion filter if it isnt active and the player's config permits it.
+            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
+            {
+                Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(4);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2);
+            }
 
             // Set the global NPC index to this NPC. Used as a means of lowering the need for loops.
             CalamityGlobalNPC.holyBoss = npc.whoAmI;
@@ -695,7 +704,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 crystalSpeed += 4f;
             }
 
-            // Use less wide fan if using a sinusoidal pattern.
+            // Use a less wide fan if using a sinusoidal pattern.
             if (useSinusoidalFan)
                 maxFanOffsetAngle *= 0.6f;
 
@@ -1006,7 +1015,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 bladeReleaseRate -= 10;
                 bladeSpeed += 3f;
             }
-            
+
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];

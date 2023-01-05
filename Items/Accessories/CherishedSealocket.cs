@@ -1,5 +1,5 @@
 ﻿using CalamityMod.Items;
-using InfernumMode.GlobalInstances;
+using InfernumMode.GlobalInstances.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +8,6 @@ namespace InfernumMode.Items.Accessories
 {
     public class CherishedSealocket : ModItem
     {
-
         public const int MaxHighDRHits = 2;
 
         public const int ForcefieldRechargeSeconds = 90;

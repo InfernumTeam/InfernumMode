@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class SpinningPrismLaserbeam : ModProjectile
+    public class SpinningPrismLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public int LaserCount;
 
@@ -21,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public float VerticalSpinDirection;
 
-        public PrimitiveTrail RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer = null;
 
         public ref float LaserLength => ref Projectile.ai[0];
 
@@ -105,21 +106,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (RayDrawer is null)
-                RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
+
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             Vector2[] basePoints = new Vector2[8];
             for (int i = 0; i < basePoints.Length; i++)
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 16);
-            return false;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 16);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

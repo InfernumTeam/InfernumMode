@@ -1,5 +1,4 @@
 using CalamityMod.Sounds;
-using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -13,8 +12,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
     public class PrimeLaserBehaviorOverride : PrimeHandBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.PrimeLaser;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override float PredictivenessFactor => 20f;
 

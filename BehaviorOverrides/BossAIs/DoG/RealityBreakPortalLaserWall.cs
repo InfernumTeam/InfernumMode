@@ -1,3 +1,4 @@
+using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class RealityBreakPortalLaserWall : ModProjectile
+    public class RealityBreakPortalLaserWall : ModProjectile, IAdditiveDrawer
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
@@ -24,12 +25,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 100;
+            Projectile.hide = true;
         }
 
         public override void AI()
         {
-            Projectile.rotation += 0.325f;
-
             Time++;
 
             // Release the laser burst a second after spawning.
@@ -55,32 +55,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 50f, Time, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
+            Projectile.rotation += Projectile.Opacity * 0.15f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
-
             Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
+            Texture2D lightTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = portalTexture.Size() * 0.5f;
             Color baseColor = Color.White;
 
             // Black portal.
-            Color color = Color.Lerp(baseColor, Color.Black, 0.55f) * Projectile.Opacity * 1.8f;
-            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, -Projectile.rotation, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            Color portalColor = baseColor * Projectile.Opacity;
 
-            // Cyan portal.
-            color = Color.Lerp(baseColor, Color.Cyan, 0.55f) * Projectile.Opacity * 1.6f;
-            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * 0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
+            for (int i = 0; i < 2; i++)
+            {
+                spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, -Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            }
 
-            // Magenta portal.
-            color = Color.Lerp(baseColor, Color.Fuchsia, 0.55f) * Projectile.Opacity * 1.6f;
-            Main.spriteBatch.Draw(portalTexture, drawPosition, null, color, Projectile.rotation * -0.6f, origin, Projectile.scale * 1.2f, SpriteEffects.None, 0f);
-
-            Main.spriteBatch.ResetBlendState();
-            return false;
+            // Point of light.
+            spriteBatch.Draw(lightTexture, drawPosition, null, baseColor * 0.8f, -Projectile.rotation, lightTexture.Size() * 0.5f, Projectile.scale * Projectile.Opacity * 0.85f, 0, 0f);
         }
     }
 }

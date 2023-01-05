@@ -29,8 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override int NPCOverrideType => NPCID.BloodNautilus;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.55f;
 
         public const float Phase3LifeRatio = 0.25f;
@@ -905,7 +903,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D gleamTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/EmpressStar").Value;
+                Texture2D gleamTexture = InfernumTextureRegistry.EmpressStar.Value;
                 Color gleamColor = new Color(0.93f, 0.03f, 0.11f) * eyeGleamInterpolant * npc.Opacity;
                 float eyeOffsetRotation = npc.rotation + MathHelper.Pi * npc.spriteDirection * 0.15f;
                 if (npc.spriteDirection == -1)

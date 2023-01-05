@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         public override int NPCOverrideType => ModContent.NPCType<DarkEnergy>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-        
         public override bool PreAI(NPC npc)
         {
             bool shouldFadeAway = npc.Infernum().ExtraAI[1] == 1f;

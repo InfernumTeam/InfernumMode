@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,8 +13,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     public class GolemHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.GolemHead;
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static Dictionary<GolemAttackState, Color> AttackEyeColorPairs => new()
         {
@@ -37,11 +36,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
                 return false;
             }
+
             NPCID.Sets.MustAlwaysDraw[NPCID.GolemHead] = true;
             npc.chaseable = !npc.dontTakeDamage;
+            npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;
+
             if (Main.npc[(int)npc.ai[0]].ai[0] > 242f)
                 npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;
+        }
+
+        public override void SendExtraData(NPC npc, ModPacket writer)
+        {
+            writer.Write(npc.Opacity);
+            writer.Write(npc.dontTakeDamage);
+        }
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader)
+        {
+            npc.Opacity = reader.ReadSingle();
+            npc.dontTakeDamage = reader.ReadBoolean();
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -67,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static void DoEyeDrawing(NPC npc)
         {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemEyeGlow").Value;
+            Texture2D texture = InfernumTextureRegistry.Gleam.Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, npc.ai[1] / 240f);
             float rotation2 = MathHelper.Lerp(MathHelper.TwoPi, 0f, npc.ai[1] / 240f);
@@ -144,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLine.Value;
                 Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(laserRayTelegraphInterpolant * 0.5f, 2.4f);

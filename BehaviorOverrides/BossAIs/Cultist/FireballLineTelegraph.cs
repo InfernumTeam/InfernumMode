@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D laserTelegraph = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Line").Value;
+            Texture2D laserTelegraph = InfernumTextureRegistry.Line.Value;
 
             float yScale = 5f;
             if (TelegraphDelay < TelegraphFadeTime)

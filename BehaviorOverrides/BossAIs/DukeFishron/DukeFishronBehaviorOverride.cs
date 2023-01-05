@@ -23,8 +23,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
     {
         public override int NPCOverrideType => NPCID.DukeFishron;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
-
         #region Enumerations
         public enum DukeAttackType
         {
@@ -1054,9 +1052,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             // Declare the trail drawer.
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes"));
+            InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(InfernumTextureRegistry.VoronoiShapes);
 
             bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[11] > 0f;
             Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask").Value;

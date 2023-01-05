@@ -62,8 +62,8 @@ namespace InfernumMode.Systems
 
             if (!LostColosseum.HasBereftVassalAppeared && inColosseum && !Main.LocalPlayer.dead)
             {
-                int x = Main.maxTilesX * 8 + 6240;
-                int y = Main.maxTilesY * 8 - 500;
+                int x = Main.maxTilesX * 8 + 8000;
+                int y = Main.maxTilesY * 8 - 100;
                 NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
                 LostColosseum.HasBereftVassalAppeared = true;
             }

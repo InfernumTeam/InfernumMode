@@ -19,8 +19,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     {
         public override int NPCOverrideType => NPCID.TheDestroyer;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region Enumerations
         public enum DestroyerAttackType
         {
@@ -86,6 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public const float Phase4LifeRatio = 0.2f;
 
+        public const float SegmentScale = 1.5f;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -99,11 +99,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.damage = npc.defDamage - 95;
             npc.dontTakeDamage = false;
 
-            if (npc.scale != 1.5f)
-            {
-                npc.Size /= npc.scale / 1.5f;
-                npc.scale = 1.5f;
-            }
+            // Reset the segment scale if necessary.
+            ResetScale(npc);
+
+            // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -177,9 +176,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 int newSegment;
                 if (i is >= 0 and < (int)(BodySegmentCount - 1f))
-                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.Center.X, (int)head.Center.Y, NPCID.TheDestroyerBody, head.whoAmI);
                 else
-                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
+                    newSegment = NPC.NewNPC(head.GetSource_FromAI(), (int)head.Center.X, (int)head.Center.Y, NPCID.TheDestroyerTail, head.whoAmI);
 
                 Main.npc[newSegment].realLife = head.whoAmI;
 
@@ -188,13 +187,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 Main.npc[previousSegmentIndex].ai[0] = newSegment;
 
                 // And the segment number.
-                Main.npc[newSegment].localAI[0] = i;
-                if (Main.npc[newSegment].scale != 1.5f)
-                {
-                    Main.npc[newSegment].Size /= Main.npc[newSegment].scale / 1.5f;
-                    Main.npc[newSegment].scale = 1.5f;
-                }
-
+                Main.npc[newSegment].Infernum().ExtraAI[0] = i;
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newSegment, 0f, 0f, 0f, 0);
 
                 previousSegmentIndex = newSegment;
@@ -318,9 +311,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
 
                 // Create shake effects for players.
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.GetLerpValue(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 2f, 7f);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower *= Utils.GetLerpValue(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
 
                 if (attackTimer == diveTime + ascendTime - 15f)
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
@@ -365,21 +358,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 npc.velocity.Y *= 0.98f;
 
-                int shootRate = lifeRatio < Phase3LifeRatio ? 48 : 60;
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 120f && attackTimer % shootRate == shootRate - 1f)
+                int shootRate = lifeRatio < Phase3LifeRatio ? 40 : 54;
+                if (attackTimer > 120f && attackTimer % shootRate == shootRate - 1f)
                 {
-                    float offset = Main.rand.NextFloat(120f);
-                    Vector2 laserDirection = -Vector2.UnitY;
+                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
 
-                    // Add some randomness to the lasers in phase 3.
-                    if (lifeRatio < Phase3LifeRatio)
-                        laserDirection = laserDirection.RotatedByRandom(0.66f);
-                    for (float dx = -1400f; dx < 1400f; dx += 120f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
-                        int telegraph = Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[0] = npc.whoAmI;
+                        float offset = Main.rand.NextFloat(120f);
+                        Vector2 laserDirection = -Vector2.UnitY;
+
+                        // Add some randomness to the lasers in phase 3.
+                        if (lifeRatio < Phase3LifeRatio)
+                            laserDirection = laserDirection.RotatedByRandom(0.66f);
+                        for (float dx = -1400f; dx < 1400f; dx += 120f)
+                        {
+                            Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
+                            Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f, -1, npc.whoAmI);
+                        }
+
+                        npc.netUpdate = true;
                     }
                 }
             }
@@ -656,6 +654,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // And reset the misc ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+        }
+
+        public static void ResetScale(NPC npc)
+        {
+            if (npc.scale != SegmentScale)
+            {
+                npc.Size /= npc.scale / SegmentScale;
+                npc.scale = SegmentScale;
+            }
         }
 
         #endregion

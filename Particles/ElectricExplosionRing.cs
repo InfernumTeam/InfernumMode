@@ -16,7 +16,7 @@ namespace InfernumMode.Particles
         public override bool UseAdditiveBlend => true;
         public override bool UseCustomDraw => true;
         public override bool SetLifetime => true;
-        public override string Texture => "InfernumMode/ExtraTextures/DistortedBloomRing";
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/DistortedBloomRing";
 
         public ElectricExplosionRing(Vector2 position, Vector2 velocity, Color[] colors, float scale, int lifeTime, float scaleExpansionFactor = 1f)
         {

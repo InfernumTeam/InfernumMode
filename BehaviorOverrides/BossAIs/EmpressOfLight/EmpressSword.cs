@@ -1,5 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,12 +13,12 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class EmpressSword : ModProjectile
+    public class EmpressSword : ModProjectile, IPixelPrimitiveDrawer
     {
         public int SwordCount;
         public int TotalSwordsThatShouldAttack;
         public float TelegraphInterpolant;
-        public PrimitiveTrail TrailDrawer;
+        public PrimitiveTrailCopy TrailDrawer;
 
         public NPC Owner
         {
@@ -250,15 +250,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+            Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
             Vector2 origin = texture.Size() * 0.5f;
-            if (TrailDrawer is null)
-                TrailDrawer = new PrimitiveTrail(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
-            GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.2f);
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
-
+            // Draw a telegraph line if necessary.
             if (TelegraphInterpolant > 0f)
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
@@ -273,14 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, Color.White * telegraphOpacity, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale * new Vector2(0.3f, 1f), 0, 0f);
                 Main.spriteBatch.ResetBlendState();
-            }
-
-            // Draw the afterimage trail.
-            Main.spriteBatch.EnterShaderRegion();
-
-            Vector2 afterimageOffset = Projectile.Size * 0.5f - Projectile.rotation.ToRotationVector2() * Projectile.width * 0.5f;
-            TrailDrawer.Draw(Projectile.oldPos, afterimageOffset - Main.screenPosition, 67);
-            Main.spriteBatch.ExitShaderRegion();
+            }           
 
             float opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
             for (int i = 0; i < 6; i++)
@@ -291,6 +279,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.spriteBatch.Draw(texture, drawPosition, null, new Color(opacity, opacity, opacity, 0f), Projectile.rotation, origin, Projectile.scale, 0, 0f);
 
             return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            // Initialize the telegraph drawer.
+            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
+
+            // Prepare trail data.
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.2f);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
+
+            // Draw the afterimage trail.
+            Main.spriteBatch.EnterShaderRegion();
+
+            Vector2 afterimageOffset = Projectile.Size * 0.5f - Projectile.rotation.ToRotationVector2() * Projectile.width * 0.5f;
+            TrailDrawer.DrawPixelated(Projectile.oldPos, afterimageOffset - Main.screenPosition, 67);
+            Main.spriteBatch.ExitShaderRegion();
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

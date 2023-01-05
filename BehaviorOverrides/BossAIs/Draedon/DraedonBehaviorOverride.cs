@@ -6,7 +6,8 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
-using InfernumMode.Achievements;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
@@ -24,8 +25,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     public class DraedonBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DraedonNPC>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         public const int IntroSoundLength = 106;
 
@@ -49,6 +48,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public const int ThanatosHeadDamageMaximumOverdrive = 960;
 
+        // Exo Mech text colors.
+        public static readonly Color ApolloTextColor = new(44, 172, 36);
+
+        public static readonly Color ArtemisTextColor = new(246, 137, 24);
+
+        public static readonly Color AresTextColor = new(197, 72, 64);
+
+        public static readonly Color ThanatosTextColor = new(72, 104, 196);
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI variable.
@@ -62,6 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float hologramEffectTimer = ref npc.localAI[1];
             ref float killReappearDelay = ref npc.localAI[3];
             ref float musicDelay = ref npc.Infernum().ExtraAI[0];
+            ref float isPissed = ref npc.Infernum().ExtraAI[1];
 
             // Decide an initial target and play a teleport sound on the first frame.
             Player playerToFollow = Main.player[npc.target];
@@ -87,6 +96,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
 
+            // Kill the player if pissed.
+            if (isPissed == 1f)
+            {
+                CalamityUtils.ModNPC<DraedonNPC>(npc).ShouldStartStandingUp = true;
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, playerToFollow.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 44f;
+                    laserSpawnPosition.X -= 180f;
+                    if (npc.spriteDirection == 1)
+                        laserSpawnPosition.X += 46f;
+
+                    Utilities.NewProjectileBetter(laserSpawnPosition, (playerToFollow.Center - laserSpawnPosition).SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<AresPrecisionBlast>(), StrongerNormalShotDamage, 0f);
+                }
+
+                // Stay within the world.
+                npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
+                npc.spriteDirection = (playerToFollow.Center.X > npc.Center.X).ToDirectionInt();
+
+                // Fly near the target.
+                Vector2 hoverDestination = playerToFollow.Center + Vector2.UnitX * (playerToFollow.Center.X < npc.Center.X).ToDirectionInt() * 325f;
+
+                // Decide sprite direction based on movement if not close enough to the desination.
+                // Not deciding this here results in Draedon using the default of looking at the target he's following.
+                if (npc.WithinRange(hoverDestination, 300f))
+                {
+                    npc.velocity *= 0.96f;
+
+                    float moveSpeed = MathHelper.Lerp(2f, 8f, Utils.GetLerpValue(45f, 275f, npc.Distance(hoverDestination), true));
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, moveSpeed);
+                }
+                else
+                {
+                    float flySpeed = 32f;
+                    Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * flySpeed;
+                    npc.SimpleFlyMovement(idealVelocity, flySpeed / 400f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.045f);
+                }
+
+                return false;
+            }
+
             if (!ExoMechIsPresent)
             {
                 npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
@@ -104,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Stay within the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
-            npc.spriteDirection = (playerToFollow.Center.X < npc.Center.X).ToDirectionInt();
+            npc.spriteDirection = (playerToFollow.Center.X > npc.Center.X).ToDirectionInt();
 
             // Handle delays when re-appearing after being killed.
             if (killReappearDelay > 0f)
@@ -474,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 frame = 0;
 
             int frameChangeDelay = 7;
-            bool shouldNotSitDown = npc.ModNPC<DraedonNPC>().DefeatTimer is > DelayBeforeDefeatStandup and < (TalkDelay * 3f + 10f);
+            bool shouldNotSitDown = npc.ModNPC<DraedonNPC>().DefeatTimer is > DelayBeforeDefeatStandup and < (TalkDelay * 3f + 10f) || npc.Infernum().ExtraAI[1] == 1f;
 
             npc.frameCounter++;
             if (npc.frameCounter >= frameChangeDelay)

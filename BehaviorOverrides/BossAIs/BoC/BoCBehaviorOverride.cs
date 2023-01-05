@@ -17,8 +17,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     {
         public override int NPCOverrideType => NPCID.BrainofCthulhu;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,

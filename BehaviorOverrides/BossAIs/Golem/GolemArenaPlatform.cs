@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Die if the platform has left Golem's arena.
-            if (!Main.npc[NPC.golemBoss].Infernum().Arena.Intersects(NPC.Hitbox))
+            if (!Main.npc[NPC.golemBoss].Infernum().Arena.Intersects(NPC.Hitbox) && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.active = false;
                 return;

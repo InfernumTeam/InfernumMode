@@ -26,6 +26,8 @@ namespace InfernumMode.Sounds
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
+        public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Sounds/Custom/CloudElementalWind");
+
         public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Sounds/Custom/DeerclopsRubbleAttackDistorted");
 
         public static readonly SoundStyle DesertScourgeSandstormWindSound = new("InfernumMode/Sounds/Custom/DesertScourgeSandstormWind");

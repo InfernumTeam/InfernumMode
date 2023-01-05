@@ -16,8 +16,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     {
         public override int NPCOverrideType => NPCID.WallofFlesh;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public const float Phase2LifeRatio = 0.45f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -354,9 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 return;
 
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
-            int fire = Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<FireBeamTelegraph>(), 0, 0f);
-            if (Main.projectile.IndexInRange(fire))
-                Main.projectile[fire].ai[1] = npc.whoAmI;
+            Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<FireBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
         }
 
         #endregion

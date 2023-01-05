@@ -1,4 +1,6 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,11 +10,16 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-    public class AcidFountainBubble : ModProjectile
+    public class AcidFountainBubble : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy WaterDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public const float Radius = 24f;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
 
         public override void SetDefaults()
@@ -55,12 +62,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (WaterDrawer is null)
-                WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:DukeTornado"].UseImage1("Images/Misc/Perlin");
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            WaterDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
+
+            InfernumEffectsRegistry.DukeTornadoVertexShader.UseImage1("Images/Misc/Perlin");
             List<Vector2> drawPoints = new();
 
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 6f)
@@ -77,9 +85,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
                 }
 
-                WaterDrawer.Draw(drawPoints, -Main.screenPosition, 42, adjustedAngle);
+                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 42, adjustedAngle);
             }
-            return false;
         }
     }
 }

@@ -50,8 +50,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHive>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -213,7 +211,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Screenshake.
             if (CalamityConfig.Instance.Screenshake)
             {
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(0,8,interpolant);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(0,8,interpolant);
             }
 
             // After a second, start releasing blood everywhere.
@@ -1511,6 +1509,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(backAfterimageColor), npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
+
             ref float deathTimer = ref npc.Infernum().ExtraAI[DeathTimerIndex];
             // If performing the death animation, use a red tint shader. This simply tints the texture to the provided color.
             if (deathTimer > 0)
@@ -1521,11 +1520,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Get the opacity interpolent.
                 float opacityInterpolent = deathTimer / DeathAnimationLength;
                 // Set the opacity of the shader.
-                GameShaders.Misc["Infernum:BasicTint"].UseOpacity(opacityInterpolent);
+                InfernumEffectsRegistry.BasicTintShader.UseOpacity(opacityInterpolent);
                 // Set the color of the shader.
-                GameShaders.Misc["Infernum:BasicTint"].UseColor(Color.Red);
+                InfernumEffectsRegistry.BasicTintShader.UseColor(Color.Red);
                 // Apply the shader.
-                GameShaders.Misc["Infernum:BasicTint"].Apply();
+                InfernumEffectsRegistry.BasicTintShader.Apply();
 
                 // And draw the texture.
                 Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, Color.White, npc.rotation, origin, npc.scale, direction, 0f);

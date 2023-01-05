@@ -160,10 +160,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
                     float sproutRotation = aimDirection.RotatedBy(offsetRotation).ToRotation();
                     Vector2 sproutPosition = drawPosition + sproutRotation.ToRotationVector2().RotatedBy(-MathHelper.PiOver2) * 10f;
-                    Main.spriteBatch.Draw(mushroomTexture, sproutPosition, null, Projectile.GetAlpha(Color.White), sproutRotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(mushroomTexture, sproutPosition, null, Projectile.GetAlpha(Color.White), sproutRotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }
 
-                Main.spriteBatch.Draw(pillarTexture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarTexture.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
+               spriteBatch.Draw(pillarTexture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarTexture.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
         }

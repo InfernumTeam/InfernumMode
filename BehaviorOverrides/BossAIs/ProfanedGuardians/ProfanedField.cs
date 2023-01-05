@@ -15,6 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const float MaxRadius = 336f;
 
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Profaned Defender Field");

@@ -1,103 +1,77 @@
+using CalamityMod;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
-    public class DestroyerPierceLaser : ModProjectile
+    public class DestroyerPierceLaser : ModProjectile, IAdditiveDrawer
     {
-        public ref float Variant => ref Projectile.ai[0];
+        public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
+
+        public const int Lifetime = 30;
+
+        public const float LaserLength = 2300f;
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laserbeam");
+            DisplayName.SetDefault("Flame Laser");
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 16;
+            Projectile.width = 26;
+            Projectile.height = 26;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.extraUpdates = 100;
-            Projectile.timeLeft = 400;
+            Projectile.timeLeft = Lifetime;
+            Projectile.hide = true;
+            Projectile.MaxUpdates = 3;
+            Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            // Create an initial burst of dust on the first frame.
-            if (Projectile.ai[1] == 0f)
-            {
-                float minDustSpeed = 2.4f;
-                float maxDustSpeed = 4.5f;
+            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 1.2f;
+            if (Projectile.scale > 1f)
+                Projectile.scale = 1f;
+            Projectile.hide = Projectile.timeLeft >= 27;
+        }
+        
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float _ = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, ref _);
+        }
 
-                for (int i = 0; i < 20; i++)
-                {
-                    float dustSpeed = Main.rand.NextFloat(minDustSpeed, maxDustSpeed);
-                    Vector2 laserVelocity = (Projectile.velocity.ToRotation() + Main.rand.NextFloat(-0.1f, 0.1f)).ToRotationVector2() * dustSpeed;
+        public override bool ShouldUpdatePosition() => false;
 
-                    Dust laser = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 182, laserVelocity.X, laserVelocity.Y, 200, default, 0.85f);
-                    laser.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
-                    laser.noGravity = true;
-                    laser.velocity *= 3f;
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-                    laser = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 182, laserVelocity.X, laserVelocity.Y, 100, default, 0.9f);
-                    laser.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * Main.rand.NextFloat() * Projectile.width / 2f;
-                    laser.velocity *= 2f;
-                    laser.noGravity = true;
-                    laser.fadeIn = 1f;
-                    laser.color = Color.Red * 0.6f;
-                }
+            // Draw the telegraph line.
+            Vector2 start = Projectile.Center - Main.screenPosition;
+            Texture2D line = InfernumTextureRegistry.BloomLine.Value;
 
-                for (int i = 0; i < 10; i++)
-                {
-                    float dustSpeed = Main.rand.NextFloat(minDustSpeed, maxDustSpeed);
-                    Vector2 laserVelocity = (Projectile.velocity.ToRotation() + Main.rand.NextFloat(-0.1f, 0.1f)).ToRotationVector2() * dustSpeed;
+            Vector2 beamOrigin = new(line.Width / 2f, line.Height);
+            Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
+            Main.spriteBatch.Draw(line, start, null, Color.Lerp(Color.Orange, Color.Red, 0.56f), Projectile.rotation, beamOrigin, beamScale, 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.Red, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.7f, 1f), 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.White, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
 
-                    Dust laser = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 182, laserVelocity.X, laserVelocity.Y, 0, default, 1.2f);
-                    laser.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
-                    laser.noGravity = true;
-                    laser.velocity *= 0.5f;
-                }
-
-                Variant = Main.rand.Next(3);
-                Projectile.netUpdate = true;
-                Projectile.ai[1] = 1f;
-                return;
-            }
-
-            // Otherwise create variable dust.
-            Vector2 offsetFactor = new(5f, 10f);
-            Vector2 spawnOffset;
-
-            switch ((int)Variant)
-            {
-                case 0:
-                    Dust laser = Dust.NewDustDirect(Projectile.Center, 0, 0, 182, 0f, 0f, 160, default, 1.15f);
-                    laser.noGravity = true;
-                    laser.position = Projectile.Center;
-                    laser.velocity = Projectile.velocity;
-                    break;
-                case 1:
-                    spawnOffset = Vector2.UnitY * offsetFactor * 0.5f;
-                    laser = Dust.NewDustDirect(Projectile.Center, 0, 0, 182, 0f, 0f, 160, default, 1.15f);
-                    laser.noGravity = true;
-                    laser.position = Projectile.Center + spawnOffset;
-                    laser.velocity = Projectile.velocity;
-                    break;
-                case 2:
-                    spawnOffset = -Vector2.UnitY * offsetFactor * 0.5f;
-                    laser = Dust.NewDustDirect(Projectile.Center, 0, 0, 182, 0f, 0f, 160, default, 1.15f);
-                    laser.noGravity = true;
-                    laser.position = Projectile.Center + spawnOffset;
-                    laser.velocity = Projectile.velocity;
-                    break;
-                default:
-                    break;
-            }
+            // Draw the energy focus at the start.
+            Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
         }
     }
 }

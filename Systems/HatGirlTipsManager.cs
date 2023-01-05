@@ -31,7 +31,7 @@ namespace InfernumMode.Systems
 
         public override void PostUpdateEverything()
         {
-            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum().HatGirlShouldGiveAdvice)
+            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum_HatGirl().HatGirlShouldGiveAdvice)
             {
                 NPC foughtBoss = Utilities.CurrentlyFoughtBoss;
                 BossBeingFought = foughtBoss is null ? null : foughtBoss.Clone() as NPC;

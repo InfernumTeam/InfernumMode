@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class CursedOrb : ModNPC
+    public class CursedOrb : ModNPC, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
@@ -108,17 +109,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
-            if (baseOldPositions.Length <= 2)
-                return true;
-
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
-
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.9f);
-            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition + NPC.velocity * 1.6f, 47);
-
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             Color afterimageColor = Color.White * 0.16f;
@@ -132,6 +122,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
 
             return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
+            if (baseOldPositions.Length <= 2)
+                return;
+
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.9f);
+            InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
+            FireDrawer.DrawPixelated(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition + NPC.velocity * 1.6f, 47);
         }
 
         public override bool CheckDead()

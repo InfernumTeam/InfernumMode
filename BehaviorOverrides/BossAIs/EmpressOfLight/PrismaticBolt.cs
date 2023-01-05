@@ -23,6 +23,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
 
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Prismatic Bolt");

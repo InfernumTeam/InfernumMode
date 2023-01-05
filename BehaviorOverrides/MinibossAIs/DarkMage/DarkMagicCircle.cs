@@ -10,7 +10,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 {
     public class DarkMagicCircle : ModProjectile
     {
-        public PrimitiveTrailCopy TrailDrawer = null;
         public ref float Time => ref Projectile.ai[0];
         public const int TotalMagicPiecesInCircle = 6;
         public override void SetStaticDefaults()

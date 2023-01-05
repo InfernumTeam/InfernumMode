@@ -47,8 +47,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const int AttackDelay = 135;
         
         public const float BaseDR = 0.325f;
@@ -883,16 +881,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Draw flame jets when hovering.
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(widthFunction, colorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(widthFunction, colorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
             // Create a telegraph line upward that fades away away the pillar fades in.
-            Vector2 start = npc.Bottom - Vector2.UnitY * 60f;
+            Vector2 start = npc.Bottom - Vector2.UnitY * 100f;
             Vector2 end = start + Vector2.UnitY * npc.localAI[1] * 420f;
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.UseSaturation(1.4f);
+            InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)

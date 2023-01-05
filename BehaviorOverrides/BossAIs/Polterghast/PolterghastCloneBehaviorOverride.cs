@@ -11,8 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterPhantom>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             npc.scale = 0.7f;

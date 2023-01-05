@@ -14,8 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     {
         public override int NPCOverrideType => ModContent.NPCType<SoulSeeker>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         public override bool PreAI(NPC npc)
         {
             // Setting this in SetDefaults will disable expert mode scaling, so put it here instead

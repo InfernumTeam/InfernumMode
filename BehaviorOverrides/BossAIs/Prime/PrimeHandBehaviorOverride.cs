@@ -4,15 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
-using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Prime.PrimeHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public abstract class PrimeHandBehaviorOverride : NPCBehaviorOverride
     {
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float Phase2LifeRatio = 0.5f;
 
         public override bool PreAI(NPC npc)
@@ -24,6 +21,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (headIndex < 0 || headIndex >= Main.maxNPCs || !Main.npc[headIndex].active)
             {
                 npc.active = false;
+                if (npc.type == NPCID.PrimeSaw)
+                    PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
+
                 return false;
             }
 
@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 Color outlineColor = Color.Lerp(TelegraphColor, Color.White, telegraphIntensity) * Utils.GetLerpValue(1f, 0.7f, telegraphIntensity, true);
                 Vector2 origin = new(line.Width / 2f, line.Height);

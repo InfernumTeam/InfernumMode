@@ -17,7 +17,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public ref float Time => ref Projectile.ai[0];
         
         public ref float Radius => ref Projectile.ai[1];
-        
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Demonic Explosion");
 
         public override void SetDefaults()
@@ -61,10 +63,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
+            InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();

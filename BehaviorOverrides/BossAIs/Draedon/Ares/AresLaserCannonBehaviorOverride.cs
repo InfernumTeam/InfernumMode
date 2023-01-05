@@ -50,9 +50,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 int lasersPerBurst = 12;
 
-                if (ExoMechManagement.CurrentAresPhase >= 5)
-                    lasersPerBurst += 2;
-
                 if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
                     lasersPerBurst = 5;
 
@@ -99,8 +96,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (totalLasersPerBurst >= 3)
                     totalLasersPerBurst += 2;
             }
-            if (ExoMechManagement.CurrentAresPhase >= 5)
-                totalLasersPerBurst += 2;
 
             // Make things a bit less chaotic during the photon ripper attack.
             if (photonRipperAttack)
@@ -118,10 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Add a small amount of randomness to laser directions.
                 laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
-
-                int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f);
-                if (Main.projectile.IndexInRange(laser))
-                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<AresCannonLaser>(), laserDamage, 0f, -1, 0f, npc.whoAmI);
             }
 
             laserShootCounter++;

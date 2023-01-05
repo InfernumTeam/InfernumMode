@@ -12,8 +12,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
     {
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const string NewName = "Taurus, the Great Sand Shark";
 
         public override bool PreAI(NPC npc)

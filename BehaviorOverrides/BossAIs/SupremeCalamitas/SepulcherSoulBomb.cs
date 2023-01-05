@@ -138,13 +138,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BrimstoneSoulLayer"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(false);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["uTimeFactor"].SetValue(3.2f);
-            GameShaders.Misc["Infernum:RealityTear"].UseSaturation(10f);
-            GameShaders.Misc["Infernum:RealityTear"].Apply();
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/BrimstoneSoulLayer"));
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uTimeFactor"].SetValue(3.2f);
+            InfernumEffectsRegistry.RealityTearVertexShader.UseSaturation(10f);
+            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

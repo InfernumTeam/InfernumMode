@@ -9,6 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class PlagueNuclearExplosion : ModProjectile
     {
+        public override string Texture => "CalamityMod/Skies/XerocLight";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()

@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
-    public class TidalWave : ModProjectile
+    public class TidalWave : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy TornadoDrawer;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -74,21 +75,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (TornadoDrawer is null)
-                TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            TornadoDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, InfernumEffectsRegistry.DukeTornadoVertexShader);
+
+            InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             for (int i = 0; i < 3; i++)
-                TornadoDrawer.Draw(Projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);
-            return false;
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
+                TornadoDrawer.DrawPixelated(Projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);
         }
     }
 }

@@ -1,16 +1,20 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class EnergyTelegraph : ModProjectile
+    public class EnergyTelegraph : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail TelegraphDrawer = null;
+        public PrimitiveTrailCopy TelegraphDrawer = null;
 
         public Vector2[] TelegraphPoints;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {
@@ -39,15 +43,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.Cyan, Color.Fuchsia, Projectile.ai[0]) with { A = 100 } * Projectile.Opacity;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             TelegraphDrawer ??= new(_ => Projectile.scale * 2f, completionRatio =>
             {
                 float opacity = Utils.GetLerpValue(0f, 0.15f, completionRatio, true);
                 return Projectile.GetAlpha(Color.White) * opacity;
             });
-            TelegraphDrawer.Draw(TelegraphPoints, -Main.screenPosition, 48);
-            return false;
+            TelegraphDrawer.DrawPixelated(TelegraphPoints, -Main.screenPosition, 20);
         }
     }
 }

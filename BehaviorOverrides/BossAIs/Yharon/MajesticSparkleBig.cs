@@ -19,9 +19,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             get => Projectile.ai[1];
             set => Projectile.ai[1] = value;
         }
+
         public const int Lifetime = 180;
+
         public const int FadeinTime = 25;
+
         public const int FadeoutTime = 25;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Majestic Sparkle");

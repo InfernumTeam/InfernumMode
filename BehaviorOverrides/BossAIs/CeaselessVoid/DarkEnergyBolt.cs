@@ -2,7 +2,9 @@ using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -12,11 +14,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class DarkEnergyBolt : ModProjectile
+    public class DarkEnergyBolt : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy TrailDrawer;
         
         public ref float Time => ref Projectile.ai[1];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {
@@ -91,14 +95,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return Color.Lerp(startingColor, Color.Transparent, MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, endFadeRatio, completionRatio, true)));
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (TrailDrawer is null)
-                TrailDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 39);
-            return false;
+        public void DrawPixelPrimitives(SpriteBatch spritebatch)
+        {
+            TrailDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
+
+            InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
+            TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 40);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -111,11 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             for (int dust = 0; dust < 4; dust++)
                 Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.BlueCosmilite, 0f, 0f);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
     }
 }

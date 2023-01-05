@@ -24,13 +24,13 @@ namespace InfernumMode.BossIntroScreens
 
         public override string TextToDisplay => "The Cosmic Engineer\nDraedon";
 
-        public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:MechsIntro"].Shader;
+        public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.MechsIntroLetterShader.Shader;
 
         public override void PrepareShader(Effect shader)
         {
             Color color = CalamityUtils.MulticolorLerp((float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
             shader.Parameters["uColor"].SetValue(color.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
+            shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Draedon>());

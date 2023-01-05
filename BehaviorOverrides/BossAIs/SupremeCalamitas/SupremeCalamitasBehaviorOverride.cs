@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -205,8 +206,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCCheckDead;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -337,8 +336,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
-            // Randomly create symbols far from the target.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(12))
+            // Randomly create symbols far from the target. This is affected by the graphics config.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(12) && !InfernumConfig.Instance.ReducedGraphicsConfig)
             {
                 Vector2 arenaEdge = npc.Infernum().Arena.Center.ToVector2();
                 Vector2 symbolSpawnPosition = arenaEdge + Main.rand.NextVector2Unit() * npc.Infernum().Arena.Size() * Main.rand.NextFloat(1.4f, 1.96f) * 0.5f;
@@ -380,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.dontTakeDamage = true;
                 npc.netUpdate = true;
             }
-
+            
             bool inBerserkPhase = berserkPhaseInterpolant > 0f;
             switch ((SCalAttackType)attackType)
             {
@@ -653,7 +652,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Spawn darts around the player that slowly converge inward in later phases, to incentivize not sitting in the same place.
-            // These darts spawn behind the player if they are moving, to prevent telegraphed, and adjust their speed so that they reach their destination
+            // These darts spawn behind the player if they are moving, to prevent telefrags, and adjust their speed so that they reach their destination
             // just before the attack concludes.
             if (dartConvergence && attackTimer == chargeupTime)
             {
@@ -663,6 +662,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
                     Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
                     Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+
                     int telegraph = Utilities.NewProjectileBetter(target.Center, dartShootVelocity * 0.001f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f);
                     if (Main.projectile.IndexInRange(telegraph))
                     {
@@ -1132,9 +1132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(lightOrb))
-                        Main.projectile[lightOrb].ai[1] = npc.whoAmI;
+                    Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlameOrb>(), 0, 0f, -1, 0f, npc.whoAmI);
                     npc.netUpdate = true;
                 }
             }
@@ -1849,31 +1847,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int flamePillarBarrageDuration = 720;
             float flamePillarHorizontalStep = 300f;
 
-            int bulletHellDuration = 1200;
-            int bulletHellBombShootRate = 90;
-            int bulletHellSkullShootRate = 23;
-            int bulletHellHellblastShootRate = 12;
-            int bulletHellGigablastShootRate = 240;
-            float bulletHellBombExplosionRadius = 1075f;
-            float bulletHellHellblastSpeed = 4f;
-
             int baseTeleportDelay = 38;
             int sitTime = 720;
+
+            int bombBulletHellDuration = 636;
+            int baseBombReleaseRate = 120;
+            int dartReleaseRate = 56;
+            int dartsPerBurst = 7;
+            float dartSpread = 0.79f;
+            float dartShootSpeed = 8.4f;
+            float bombExplosionRadius = 1050f;
+
+            int gigablastBulletHellDuration = 1200;
+            int baseGigaReleaseRate = 75;
+            int dartBulletHellReleaseRate = 60;
+            float dartBulletHellWallArea = 420f;
+            float dartBulletHellGapArea = 40f;
 
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[0];
             ref float teleportCountdown = ref npc.Infernum().ExtraAI[1];
             ref float superfastTeleportCounter = ref npc.Infernum().ExtraAI[2];
+            ref float bombReleaseCountdown = ref npc.Infernum().ExtraAI[3];
+            ref float attackState = ref npc.Infernum().ExtraAI[4];
+            ref float bombShootCounter = ref npc.Infernum().ExtraAI[7];
+            ref float dartTelegraphDirection = ref npc.Infernum().ExtraAI[9];
+            ref float dartBulletHellCounter = ref npc.Infernum().ExtraAI[10];
+            ref float gigablastReleaseCountdown = ref npc.Infernum().ExtraAI[11];
+            ref float gigablastShootCounter = ref npc.Infernum().ExtraAI[12];
 
             // Cope seethe mald and die.
             if (Enraged)
             {
-                bulletHellBombShootRate /= 5;
-                bulletHellSkullShootRate /= 5;
-                bulletHellHellblastShootRate = 1;
-                bulletHellGigablastShootRate /= 6;
-            }
+                dartReleaseRate = 11;
+                dartsPerBurst = 17;
+                dartShootSpeed = 40f;
 
-            ref float attackState = ref npc.Infernum().ExtraAI[4];
+                // Kill the player if they leave the arena during the gigablast bullet hell.
+                if (attackState == 2f)
+                    target.KillMe(PlayerDeathReason.ByNPC(npc.whoAmI), 1000000, 1);
+            }
 
             // Disable contact damage.
             npc.damage = 0;
@@ -1931,13 +1943,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (attackTimer >= flamePillarBarrageDuration)
                 {
+                    // Delete homing souls.
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<RedirectingLostSoulProj>());
+
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
                     npc.Center = target.Center - Vector2.UnitY * 400f;
                     npc.velocity = Vector2.Zero;
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 700f;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(explosion))
+                            Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 700f;
+                    }
 
                     attackState = 1f;
                     attackTimer = 0f;
@@ -1946,88 +1965,205 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
-            // Perform a long bullet hell attack.
+            // Perform a bomb-based bullet hell attack.
             if (attackState == 1f)
             {
-                frameType = (int)SCalFrameType.BlastPunchCast;
+                frameType = (int)SCalFrameType.PunchHandCast;
 
-                // Hover to the side of the target.
-                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
-                if (!npc.WithinRange(hoverDestination, 150f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 1.5f);
-
-                // Shoot exploding gigablasts from above.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellGigablastShootRate == bulletHellGigablastShootRate - 1f)
+                // Teleport to the center of the arena.
+                if (attackTimer == 1f)
                 {
-                    Vector2 gigablastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                    Utilities.NewProjectileBetter(gigablastSpawnPosition, Vector2.UnitY * 11f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 550, 0f);
-                }
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
-                // Shoot skulls that move in wave pattern.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellSkullShootRate == bulletHellSkullShootRate - 1f)
-                {
-                    float verticalOffset = Main.rand.NextFloatDirection() * 500f;
-                    Vector2 leftSkullSpawnPosition = target.Center + new Vector2(-1250f, verticalOffset);
-                    Vector2 rightSkullSpawnPosition = target.Center + new Vector2(1250f, verticalOffset);
-                    Utilities.NewProjectileBetter(leftSkullSpawnPosition, Vector2.UnitX * 11f, ModContent.ProjectileType<BrimstoneWave>(), 550, 0f);
-                    Utilities.NewProjectileBetter(rightSkullSpawnPosition, Vector2.UnitX * -11f, ModContent.ProjectileType<BrimstoneWave>(), 550, 0f);
-                }
+                    npc.Center = npc.Infernum().Arena.Center.ToVector2();
 
-                // Shoot exploding bombs.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellBombShootRate == bulletHellBombShootRate - 1f)
-                {
-                    Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 16f) * 17f;
-                    int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 500, 0f);
-                    if (Main.projectile.IndexInRange(bomb))
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Main.projectile[bomb].ai[0] = bulletHellBombExplosionRadius;
-                        Main.projectile[bomb].timeLeft = 120;
+                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(explosion))
+                            Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 1200f;
+                    }
+
+                    npc.netUpdate = true;
+                }
+
+                // Initialize the bomb countdown timer.
+                if (bombReleaseCountdown <= 0f)
+                {
+                    bombReleaseCountdown = baseBombReleaseRate;
+                    npc.netUpdate = true;
+                }
+
+                // Give the target infinite flight time.
+                target.wingTime = target.wingTimeMax;
+
+                // Make the bomb countdown effect happen.
+                if (bombReleaseCountdown >= 0f)
+                {
+                    bombReleaseCountdown--;
+
+                    // Release bombs in four cardinal directions, alternating between a plus and X shape.
+                    if (bombReleaseCountdown <= 0f)
+                    {
+                        bombShootCounter++;
+
+                        bombReleaseCountdown = baseBombReleaseRate - bombShootCounter * 6f;
+                        if (bombReleaseCountdown <= 56f)
+                            bombReleaseCountdown = 56f;
+
+                        SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
+                        
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < 4; i++)
+                            {
+                                Vector2 bombShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 16f;
+                                if (bombShootCounter % 2f == 1f)
+                                    bombShootVelocity = bombShootVelocity.RotatedBy(MathHelper.PiOver4);
+
+                                int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(bomb))
+                                {
+                                    Main.projectile[bomb].ai[0] = bombExplosionRadius;
+                                    Main.projectile[bomb].timeLeft = (int)(bombReleaseCountdown * 0.95f);
+                                }
+                            }
+                        }
                     }
                 }
 
-                // Do the bullet hell pattern.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bulletHellHellblastShootRate == bulletHellHellblastShootRate - 1f)
+                // Periodically release bursts of darts at the target.
+                float dartTimer = attackTimer % dartReleaseRate;
+                if (dartTimer == dartReleaseRate - 1f)
                 {
-                    // Blasts from above.
-                    if (attackTimer < bulletHellDuration / 3f)
-                    {
-                        Vector2 hellblastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                        Utilities.NewProjectileBetter(hellblastSpawnPosition, Vector2.UnitY * bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
-                    }
+                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, npc.Center);
 
-                    // Blasts from left and right.
-                    else if (attackTimer < bulletHellDuration * 2f / 3f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 leftSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                        Vector2 rightSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                        Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.UnitX * bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
-                        Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.UnitX * -bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
-                    }
+                        for (int i = 0; i < dartsPerBurst; i++)
+                        {
+                            float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
+                            Vector2 dartShootVelocity = (dartTelegraphDirection + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
 
-                    // Blasts from above, left, and right.
-                    else
-                    {
-                        Vector2 topSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                        Vector2 leftSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                        Vector2 rightSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                        Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.UnitX * bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
-                        Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.UnitX * -bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
-                        Utilities.NewProjectileBetter(topSpawnPosition, Vector2.UnitY * bulletHellHellblastSpeed, ModContent.ProjectileType<BrimstoneHellblast2>(), 550, 0f);
+                            dartShootVelocity *= -1f;
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                        }
                     }
                 }
 
-                if (attackTimer >= bulletHellDuration)
+                // Create a telegraph before releasing the darts.
+                if (Main.netMode != NetmodeID.MultiplayerClient && dartTimer == (int)(dartReleaseRate * 0.5f))
                 {
+                    for (int i = 0; i < dartsPerBurst; i++)
+                    {
+                        float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
+                        Vector2 telegraphDirection = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle);
+
+                        int telegraph = Utilities.NewProjectileBetter(npc.Center, telegraphDirection * 0.01f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, (int)(dartReleaseRate * 0.5f));
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].localAI[1] = 1f;
+                    }
+
+                    dartTelegraphDirection = npc.AngleTo(target.Center);
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer >= bombBulletHellDuration)
+                {
+                    // Delete any stray darts or explosions.
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
+
                     attackState = 2f;
+                    bombShootCounter = 0f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Release dart bullet hells from above.
+            if (attackState == 2f)
+            {
+                // Initialize the gigablast countdown timer.
+                if (gigablastReleaseCountdown <= 0f)
+                {
+                    gigablastReleaseCountdown = baseGigaReleaseRate;
+                    npc.netUpdate = true;
+                }
+
+                // Give the target infinite flight time.
+                target.wingTime = target.wingTimeMax;
+
+                // Release walls of darts from the top of the arena.
+                int brimstoneDartID = ModContent.ProjectileType<BrimstoneBarrage>();
+                if (attackTimer % dartBulletHellReleaseRate == dartBulletHellReleaseRate - 1f)
+                {
+                    for (float x = npc.Infernum().Arena.Left; x < npc.Infernum().Arena.Right; x += dartBulletHellWallArea * 2f)
+                    {
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                            break;
+
+                        for (float dx = 0f; dx < dartBulletHellWallArea; dx += dartBulletHellGapArea)
+                        {
+                            Vector2 dartSpawnPosition = new(x + dx, npc.Infernum().Arena.Top);
+                            if (dartSpawnPosition.X >= npc.Infernum().Arena.Right)
+                                continue;
+
+                            if (dartBulletHellCounter % 2f == 1f)
+                                dartSpawnPosition.X += dartBulletHellWallArea;
+
+                            int dart = Utilities.NewProjectileBetter(dartSpawnPosition, Vector2.UnitY * 5f, brimstoneDartID, 500, 0f);
+                            if (Main.projectile.IndexInRange(dart))
+                                Main.projectile[dart].timeLeft -= 210;
+                        }
+                    }
+
+                    dartBulletHellCounter++;
+                    npc.netUpdate = true;
+                }
+
+                // Cap the speed of all darts.
+                foreach (Projectile dart in Utilities.AllProjectilesByID(brimstoneDartID))
+                    dart.velocity = dart.velocity.ClampMagnitude(0f, 7.6f);
+
+                // Make the bomb countdown effect happen.
+                if (gigablastReleaseCountdown >= 0f)
+                {
+                    gigablastReleaseCountdown--;
+
+                    // Release bombs in four cardinal directions, alternating between a plus and X shape.
+                    if (gigablastReleaseCountdown <= 0f)
+                    {
+                        gigablastShootCounter++;
+
+                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
+                        if (gigablastReleaseCountdown <= 44f)
+                            gigablastReleaseCountdown = 44f;
+
+                        SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 12f);
+                    }
+                }
+
+                if (attackTimer >= gigablastBulletHellDuration)
+                {
+                    // Make all stray darts fade away.
+                    foreach (Projectile dart in Utilities.AllProjectilesByID(brimstoneDartID))
+                        dart.timeLeft = 50;
+
+                    // Delete stray gigablasts.
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<InfernumBrimstoneGigablast>());
+
+                    attackState = 3f;
                     teleportCountdown = baseTeleportDelay;
+                    bombShootCounter = 0f;
                     attackTimer = 0f;
                     npc.netUpdate = true;
                 }
             }
 
             // Teleport around in rapid succession before descending.
-            if (attackState == 2f)
+            if (attackState == 3f)
             {
                 frameType = (int)SCalFrameType.MagicCircle;
 
@@ -2057,7 +2193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         superfastTeleportCounter = 0f;
                         teleportCountdown = baseTeleportDelay;
-                        attackState = 3f;
+                        attackState = 4f;
                     }
 
                     npc.netUpdate = true;
@@ -2065,7 +2201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Teleport above the player and descend.
-            if (attackState == 3f)
+            if (attackState == 4f)
             {
                 // Switch from the Epiphany section of Stained, Brutal Calamity to the Acceptance section.
                 npc.ModNPC.Music = MusicID.Eerie;
@@ -2218,7 +2354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (berserkPhaseInterpolant > 0f)
             {
                 float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
-                Texture2D eyeGleam = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
+                Texture2D eyeGleam = InfernumTextureRegistry.Gleam.Value;
                 Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -14f);
                 Vector2 horizontalGleamScaleSmall = new Vector2(berserkPhaseInterpolant * 3f, 1f) * 0.36f;
                 Vector2 verticalGleamScaleSmall = new Vector2(1f, berserkPhaseInterpolant * 2f) * 0.36f;

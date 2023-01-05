@@ -7,6 +7,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
     public class ShadeFireColumn : ModProjectile
     {
         public ref float Time => ref Projectile.ai[1];
+
+        public const int BurstDelay = 67;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
@@ -30,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (Time > 7f)
             {
-                if (Time >= 67f)
+                if (Time >= BurstDelay)
                 {
                     if (Projectile.extraUpdates != 4)
                         Projectile.extraUpdates = 4;
@@ -39,20 +44,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 }
                 float scale = 1f;
                 if (Time == 8f)
-                {
                     scale = 0.25f;
-                }
                 else if (Time == 9f)
-                {
                     scale = 0.5f;
-                }
                 else if (Time == 10f)
-                {
                     scale = 0.75f;
-                }
-                if (Main.rand.NextBool(2))
+
+                if (Main.rand.NextBool())
                 {
-                    for (int i = 0; i < (Time >= 67f ? 4 : 10); i++)
+                    for (int i = 0; i < (Time >= BurstDelay ? 4 : 10); i++)
                     {
                         for (float yOffset = 0f; yOffset < (Time > 69f ? 100f : 1f); yOffset += 15f)
                         {
@@ -80,6 +80,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Time++;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 67f;
+        public override bool? CanDamage() => Time >= BurstDelay;
     }
 }

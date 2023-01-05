@@ -13,6 +13,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
     public class AresTeslaGasField : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/NebulaGas1";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Electric Cloud");
 
         public override void SetDefaults()
@@ -64,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.6f;
 
         public override bool PreDraw(ref Color lightColor)
         {

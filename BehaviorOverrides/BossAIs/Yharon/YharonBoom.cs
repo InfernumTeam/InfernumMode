@@ -25,7 +25,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             set => Projectile.ai[1] = value;
         }
         public bool ShouldDeleteProjectiles => Projectile.localAI[1] != 0f;
+
         public const int Lifetime = 120;
+
+        public override string Texture => "InfernumMode/ExtraTextures/GreyscaleObjects/Gleam";
 
         public static readonly int[] YharonProjectiles = new int[]
         {
@@ -65,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 MaxRadius = Main.rand.NextFloat(2000f, 4000f);
                 Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 10f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 10f;
 
             Lighting.AddLight(Projectile.Center, 0.2f, 0.1f, 0f);
             Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);

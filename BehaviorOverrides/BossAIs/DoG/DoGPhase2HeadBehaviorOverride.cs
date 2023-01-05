@@ -6,8 +6,8 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.Achievements;
 using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
+using InfernumMode.GlobalInstances.Players;
 using InfernumMode.Projectiles;
 using InfernumMode.Skies;
 using InfernumMode.Sounds;
@@ -954,8 +954,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 portalIndex = -1f;
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                Main.projectile[(int)chargeGatePortalIndex].ai[1] = portalTelegraphTime;
+                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
                 npc.netUpdate = true;
             }
 
@@ -996,9 +995,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (!target.dead)
                     {
                         Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
                         Main.projectile[(int)portalIndex].localAI[0] = 1f;
-                        Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
                     }
                 }
                 SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
@@ -1072,10 +1070,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 portalSpawnPosition = target.Center + (perpendicularPortalAngle + MathHelper.PiOver2).ToRotationVector2() * 700f;
                         
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
                         Main.projectile[(int)portalIndex].ModProjectile<DoGChargeGate>().Destination = target.Center;
                         Main.projectile[(int)portalIndex].ModProjectile<DoGChargeGate>().TelegraphShouldAim = false;
+                        Main.projectile[(int)portalIndex].netUpdate = true;
 
                         npc.netUpdate = true;
                     }
@@ -1172,10 +1170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     Vector2 portalSpawnPosition = target.Center - Vector2.UnitY * 500f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        specialAttackPortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)specialAttackPortalIndex].ai[1] = (int)(SpecialAttackPortalSnapDelay * 1.25f);
-                    }
+                        specialAttackPortalIndex = Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, -1, 0f, (int)(SpecialAttackPortalSnapDelay * 1.25f));
 
                     // Delete lingering laser wall things.
                     for (int i = 0; i < Main.maxProjectiles; i++)

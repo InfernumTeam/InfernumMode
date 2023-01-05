@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         #region Enumerations
         public enum DeusAttackType
         {
@@ -277,9 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[1] = 32f;
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AstralTelegraphLine>(), 0, 0f, -1, 0f, 32f);
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -469,9 +465,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 // Let the descent persist if not sufficiently far down below the target yet.
                 if (isntFarEnoughDown && attackTimer >= minDescendTime - 5f)
                     attackTimer = minDescendTime - 5f;
-                
+
                 if (attackTimer >= minDescendTime + minRiseTime + attackTransitionDelay)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AstralRubble>());
                     SelectNextAttack(npc);
+                }
 
                 npc.velocity.X *= 0.985f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + descendGravity, -16f, maxDescendSpeed);
@@ -1008,6 +1007,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                         Main.projectile[star].ai[1] = (i + 1) % starsInConstellation;
                         Main.projectile[star].ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
                         Main.projectile[star].ModProjectile<DarkStar>().AnchorPoint = new(blackHoleCenterX, blackHoleCenterY);
+                        Main.projectile[star].netUpdate = true;
                     }
                 }
                 Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
@@ -1140,12 +1140,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SoundEngine.PlaySound(SoundID.Item72, currentPoint);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<AstralConstellation>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
-                    {
-                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
-                        Main.projectile[star].ai[1] = npc.whoAmI;
-                    }
+                    int starIndex = (int)(patternCompletion * totalStarsToCreate);
+                    Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<AstralConstellation>(), 0, 0f, -1, starIndex, npc.whoAmI);
                 }
             }
 

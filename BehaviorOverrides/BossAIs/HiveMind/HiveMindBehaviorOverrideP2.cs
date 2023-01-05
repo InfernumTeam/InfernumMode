@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spawnedEnemyCount = ref npc.Infernum().ExtraAI[2];
 
-            // Delare the previous attack for later.
+            // Declare the previous attack for later.
             npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
 
             if (npc.alpha >= 0 && hasFadedInFlag == 0f)
@@ -321,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     // Spawn things if nothing is in the way of the target.
                     if (Main.netMode != NetmodeID.MultiplayerClient && Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.height))
                     {
-                        if (spawnedEnemyCount == 2 || spawnedEnemyCount == 4)
+                        if (spawnedEnemyCount is 2 or 4)
                         {
                             if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
                                 NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
@@ -587,7 +587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
 
             attackTimer++;
 

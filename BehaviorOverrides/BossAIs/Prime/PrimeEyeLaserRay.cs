@@ -1,19 +1,19 @@
 using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
-    public class PrimeEyeLaserRay : BaseLaserbeamProjectile
+    public class PrimeEyeLaserRay : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail LaserDrawer
+        public PrimitiveTrailCopy LaserDrawer
         {
             get;
             set;
@@ -25,12 +25,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public override float Lifetime => 120;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamBegin", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamMid", AssetRequestMode.ImmediateLoad).Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeBeamEnd", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamBegin", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamMid", AssetRequestMode.ImmediateLoad).Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Lasers/PrimeBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 2400f;
         public override float MaxScale => 1f;
-        public override string Texture => "InfernumMode/ExtraTextures/PrimeBeamBegin";
+        public override string Texture => "InfernumMode/ExtraTextures/Lasers/PrimeBeamBegin";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
 
         public override void SetDefaults()
@@ -77,25 +77,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             return Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
+                return;
+
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
             for (int i = 0; i < baseDrawPoints.Length; i++)
                 baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
             // Select textures to pass to the shader, along with the electricity color.
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(Color.DeepPink);
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak2"));
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Misc/Perlin");
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseColor(Color.DeepPink);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
-
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
         }
     }
 }

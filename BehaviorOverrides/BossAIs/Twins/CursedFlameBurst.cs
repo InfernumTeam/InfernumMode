@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -9,10 +11,14 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class CursedFlameBurst : ModProjectile
+    public class CursedFlameBurst : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
+
         public const int Lifetime = 240;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame");
@@ -81,15 +87,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
+        public override bool PreDraw(ref Color lightColor) => false;
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.4f);
-            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 38);
-            return false;
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+
+            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.4f);
+            InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
+            FireDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 38);
         }
     }
 }

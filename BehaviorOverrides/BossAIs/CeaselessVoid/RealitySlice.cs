@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class RealitySlice : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail LightningDrawer;
 
         public bool Cosmilite;
 
@@ -86,11 +87,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:RealityTear"]);
+            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
-            GameShaders.Misc["Infernum:RealityTear"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Stars"));
-            GameShaders.Misc["Infernum:RealityTear"].Shader.Parameters["useOutline"].SetValue(true);
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
+            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
 
             Projectile.localAI[0] = 0f;
             LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
@@ -99,7 +99,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 Projectile.localAI[0] = 1f;
                 LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
             }
-
             return false;
         }
         #endregion

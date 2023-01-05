@@ -34,8 +34,7 @@ namespace InfernumMode.Systems
         {
             get
             {
-                if (_texture == null)
-                    _texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/InfernumIcon");
+                _texture ??= ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/UI/InfernumIcon");
 
                 return _texture;
             }

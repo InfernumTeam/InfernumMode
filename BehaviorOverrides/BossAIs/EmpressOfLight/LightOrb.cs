@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -30,6 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public const int OverloadBeamLifetime = 300;
 
         public const int LaserReleaseDelay = 125;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
         {
@@ -127,11 +128,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 return false;
 
             if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, GameShaders.Misc["Infernum:PrismaticRay"]);
+                FireDrawer = new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, InfernumEffectsRegistry.PrismaticRayVertexShader);
 
-            GameShaders.Misc["Infernum:PrismaticRay"].UseOpacity(0.25f);
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.25f);
+            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();

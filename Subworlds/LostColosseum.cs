@@ -48,17 +48,17 @@ namespace InfernumMode.Subworlds
         public static Color SunlightColor =>
             Color.Lerp(Color.White, new(210, 85, 135), SunsetInterpolant * SunsetInterpolant * 0.67f);
 
-        public const int SchematicWidth = 1199;
+        public static int SchematicWidth => 1435;
 
-        public const int SchematicHeight = 251;
+        public static int SchematicHeight => 203;
 
-        public const int CaveWidth = 180;
+        public static int CaveWidth => 280;
 
-        public static readonly Point PortalPosition = new(CaveWidth + 28, 190);
+        public static Point PortalPosition => new(CaveWidth + 166, 160);
 
-        public static readonly Point CampfirePosition = new(CaveWidth + 320, 165);
+        public static Point CampfirePosition => new(CaveWidth + 464, 165);
 
-        public override int Width => SchematicWidth + CaveWidth + 36;
+        public override int Width => SchematicWidth + CaveWidth - 64;
 
         public override int Height => SchematicHeight + 32;
 
@@ -88,16 +88,26 @@ namespace InfernumMode.Subworlds
                     }
                 }
 
-                GenerateCaveSystem(new(CaveWidth, 92), new(PortalPosition.X - 25, PortalPosition.Y));
-
                 bool _ = false;
-                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 30);
+                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 20);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
-                for (int i = 0; i < CaveWidth + 48; i++)
+                for (int i = 0; i < CaveWidth + 188; i++)
                 {
                     for (int j = 0; j < Main.maxTilesY; j++)
+                    {
+                        if (j < Main.maxTilesY - 120 && i >= CaveWidth + 165)
+                            continue;
+
                         Main.tile[i, j].WallType = WallID.Sandstone;
+                    }
+                }
+
+                // Why the fuck???
+                for (int x = 585; x < 590; x++)
+                {
+                    for (int y = 154; y < 163; y++)
+                        Main.tile[x, y].Get<TileWallWireStateData>().IsActuated = false;
                 }
 
                 // Set the default spawn position.
@@ -170,7 +180,8 @@ namespace InfernumMode.Subworlds
                 }
             }
 
-            Main.LocalPlayer.Infernum().ReturnToPositionBeforeSubworld = true;
+            // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
+            Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
         }
 
         public static void ManageSandstorm()

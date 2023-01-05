@@ -39,8 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override int NPCOverrideType => NPCID.HallowBoss;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         #region Constants and Attack Patterns
 
         public static bool ShouldBeEnraged => Main.dayTime || BossRushEvent.BossRushActive;
@@ -293,12 +291,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (attackType == (int)EmpressOfLightAttackType.EnterSecondPhase)
                     screenShaderStrength = Utils.GetLerpValue(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, attackTimer, true);
 
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/noise");
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/Perlin", 2);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseColor(Color.Pink);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseOpacity(deathAnimationScreenShaderStrength);
-                Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseIntensity(screenShaderStrength);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/noise");
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/Perlin", 2);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseColor(Color.Pink);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseOpacity(deathAnimationScreenShaderStrength);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseIntensity(screenShaderStrength);
             }
 
             wingFrameCounter++;
@@ -934,15 +932,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
-                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f);
+                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)swordCount);
                         if (Main.projectile.IndexInRange(sword))
                         {
-                            Main.projectile[sword].ai[0] = npc.whoAmI;
-                            Main.projectile[sword].ai[1] = i / (float)swordCount;
                             Main.projectile[sword].ModProjectile<EmpressSword>().SwordIndex = i;
                             Main.projectile[sword].ModProjectile<EmpressSword>().SwordCount = swordCount;
                             Main.projectile[sword].ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
                             Main.projectile[sword].ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
+                            Main.projectile[sword].netUpdate = true;
                         }
                     }
                     npc.netUpdate = true;
@@ -1947,7 +1944,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (brightness > 0f)
                 {
                     float twinkleScale = brightness;
-                    Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
+                    Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
                     Vector2 drawPosition = npc.Center - Main.screenPosition;
                     float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

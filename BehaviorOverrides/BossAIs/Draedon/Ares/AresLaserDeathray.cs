@@ -1,20 +1,20 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.IO;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresLaserDeathray : BaseLaserbeamProjectile
+    public class AresLaserDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrail LaserDrawer
+        public PrimitiveTrailCopy LaserDrawer
         {
             get;
             set;
@@ -108,12 +108,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static Color LaserColorFunction(float completionRatio) => Color.Red;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
-            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["CalamityMod:ArtemisLaser"]);
+                return;
+            LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
 
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
@@ -121,12 +123,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
             // Select textures to pass to the shader, along with the electricity color.
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseColor(Color.Orange);
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage1("Images/Extra_194");
-            GameShaders.Misc["CalamityMod:ArtemisLaser"].UseImage2("Images/Extra_193");
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseColor(Color.Orange);
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage1("Images/Extra_194");
+            InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Extra_193");
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
         }
         
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

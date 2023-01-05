@@ -19,12 +19,12 @@ namespace InfernumMode.BossIntroScreens
 
         public override string TextToDisplay => "The Supreme Hunters\nArtemis and Apollo";
 
-        public override Effect ShaderToApplyToLetters => GameShaders.Misc["Infernum:MechsIntro"].Shader;
+        public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.MechsIntroLetterShader.Shader;
 
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(0.12f, 0.86f, 0.52f));
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
+            shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Apollo>());

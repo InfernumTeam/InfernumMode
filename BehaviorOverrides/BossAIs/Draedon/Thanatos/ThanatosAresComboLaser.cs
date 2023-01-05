@@ -155,11 +155,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
             {
-                // Set start of telegraph to the npc center.
-                Projectile.Center = ThingToAttachTo.Center;
-
                 // Calculate and store the velocity that will be used for laser telegraph rotation and beam firing.
-                Vector2 projectileDestination = Destination - ThingToAttachTo.Center;
+                Vector2 projectileDestination = Destination - Projectile.Center;
                 Velocity = Vector2.Normalize(projectileDestination) * InitialSpeed;
 
                 // Direction and rotation.

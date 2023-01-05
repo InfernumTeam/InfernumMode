@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-    public class HolyFireBeam : ModProjectile
+    public class HolyFireBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
 
@@ -87,13 +88,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: GameShaders.Misc["Infernum:ProviLaserShader"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: InfernumEffectsRegistry.ProviLaserVertexShader);
+
             Color color = ProvidenceBehaviorOverride.IsEnraged ? Color.Lerp(Color.CadetBlue, Color.Cyan, Time) : Color.Lerp(Color.Gold, Color.Goldenrod, Time);
-            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(color);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
+            InfernumEffectsRegistry.ProviLaserVertexShader.UseColor(color);
+            InfernumEffectsRegistry.ProviLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
 
             float oldGlobalTime = Main.GlobalTimeWrappedHourly;
             Main.GlobalTimeWrappedHourly %= 1f;
@@ -109,10 +112,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
 
             for (int i = 0; i < 2; i++)
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
             Main.instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             Main.GlobalTimeWrappedHourly = oldGlobalTime;
-            return false;
         }
     }
 }

@@ -31,9 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterghastBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCCheckDead;
-
         // These store the roar sound slot to allow for updating its position.
+        // TODO -- Why are these public fields in the behavior override class and not wrapped inside of a npc.localAI instance? These classes are singletons and this will
+        // probably fail if two or more instances of the NPC are present.
         public SlotId RoarSlot;
 
         public SlotId ShortRoarSlot;
@@ -351,13 +351,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 // Focus on the boss as it jitters and explode.
                 if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
                 {
-                    Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                    Main.LocalPlayer.Infernum().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;
                 }
 
                 // Make the polterghast jitter around a little bit.
                 Vector2 jitter = Main.rand.NextVector2Unit() * 2.25f;
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = jitter.Length() * Utils.GetLerpValue(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = jitter.Length() * Utils.GetLerpValue(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
 
                 if (initialDeathPositionX != 0f && initialDeathPositionY != 0f)
                     npc.Center = new Vector2(initialDeathPositionX, initialDeathPositionY) + jitter;
@@ -1076,6 +1076,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 240f;
+                if (npc.WithinRange(target.Center, 240f))
+                    npc.Center = Vector2.Lerp(npc.Center, destination, 0.09f);
+
                 npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * chargeSpeed) / 11f;
             }
 
@@ -1446,7 +1449,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Initialize the telegraph primitive drawer.
-            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, true, GameShaders.Misc["Infernum:SideStreak"]);
+            npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, false, InfernumEffectsRegistry.SideStreakVertexShader);
 
             bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             bool enraged = npc.ai[3] == 1f;
@@ -1509,11 +1512,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 Main.spriteBatch.EnterShaderRegion();
 
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uImageSize0"].SetValue(circleScale);
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
-                GameShaders.Misc["Infernum:CircleCutout2"].Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
-                GameShaders.Misc["Infernum:CircleCutout2"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PolterghastLayer"));
-                GameShaders.Misc["Infernum:CircleCutout2"].Apply();
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uImageSize0"].SetValue(circleScale);
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
+                InfernumEffectsRegistry.CircleCutout2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/ScrollingLayers/PolterghastLayer"));
+                InfernumEffectsRegistry.CircleCutout2Shader.Apply();
                 Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();
             }

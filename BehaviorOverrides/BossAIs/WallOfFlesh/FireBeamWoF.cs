@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-    public class FireBeamWoF : ModProjectile
+    public class FireBeamWoF : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -81,30 +82,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
+            return Projectile.width * Projectile.scale * 2;
         }
 
         public override bool ShouldUpdatePosition() => false;
 
         public Color ColorFunction(float completionRatio)
-        {
-            Color color = Color.Lerp(Color.OrangeRed, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
-            color = Color.Lerp(color, Color.Orange, 0.65f);
+        {        
+            Color color = Color.Lerp(Color.Red, Color.Orange, 0.65f);
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:ProviLaserShader"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
 
             Color middleColor = Color.Lerp(Color.White, Color.Orange, 0.6f);
             Color middleColor2 = Color.Lerp(Color.Red, Color.DarkRed, 0.5f);
-            Color finalColor = Color.Lerp(middleColor, middleColor2,  Time / 120);
+            Color finalColor = Color.Lerp(middleColor, middleColor2, Time / 120);
 
-            GameShaders.Misc["Infernum:ProviLaserShader"].UseColor(finalColor);
-            GameShaders.Misc["Infernum:ProviLaserShader"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Streak1"));
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(Color.OrangeRed);
+            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();
@@ -114,12 +114,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
+            BeamDrawer.DrawPixelated(points, - Main.screenPosition, 15);
             Main.spriteBatch.ExitShaderRegion();
-
-            return false;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 8f;
+        public override bool? CanDamage() => Time >= 8f;
     }
 }

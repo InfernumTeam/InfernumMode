@@ -75,9 +75,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (Projectile.owner == Main.myPlayer)
             {
-                for (int i = 0; i < 45; i++)
+                int barrageCount = 45;
+                if (Projectile.ai[1] >= 2f)
+                    barrageCount = (int)Projectile.ai[1];
+
+                for (int i = 0; i < barrageCount; i++)
                 {
-                    Vector2 dartVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 5f;
+                    Vector2 dartVelocity = (MathHelper.TwoPi * i / barrageCount).ToRotationVector2() * 5f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 1f);
                 }
             }

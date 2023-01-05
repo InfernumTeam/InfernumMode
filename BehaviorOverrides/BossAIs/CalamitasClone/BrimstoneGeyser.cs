@@ -1,3 +1,4 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class BrimstoneGeyser : ModProjectile
+    public class BrimstoneGeyser : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy LavaDrawer;
         internal ref float Time => ref Projectile.ai[0];
@@ -79,9 +80,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
             }
 
-            if (LavaDrawer is null)
-                LavaDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
+            return false;
+        }
 
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            LavaDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(-1f);
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Orange);
             InfernumEffectsRegistry.WoFGeyserVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
@@ -89,12 +93,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             List<Vector2> points = new();
             for (int i = 0; i < 25; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center - Vector2.UnitY * GeyserHeight, i / 24f));
-            LavaDrawer.Draw(points, Vector2.UnitX * 10f - Main.screenPosition, 35);
+            LavaDrawer.DrawPixelated(points, Vector2.UnitX * 10f - Main.screenPosition, 35);
 
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(1f);
-            LavaDrawer.Draw(points, Vector2.UnitX * -10f - Main.screenPosition, 35);
-
-            return false;
+            LavaDrawer.DrawPixelated(points, Vector2.UnitX * -10f - Main.screenPosition, 35);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

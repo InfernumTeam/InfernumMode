@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-    public class HolyFireBeam : ModProjectile
+    public class HolyFireBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
 
@@ -87,7 +88,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, specialShader: InfernumEffectsRegistry.ProviLaserVertexShader);
 
@@ -109,10 +112,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
 
             for (int i = 0; i < 2; i++)
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 32);
             Main.instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             Main.GlobalTimeWrappedHourly = oldGlobalTime;
-            return false;
         }
     }
 }

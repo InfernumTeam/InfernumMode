@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class FireBeam : ModProjectile
+    public class FireBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public ref float Time => ref Projectile.ai[0];
@@ -83,10 +85,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(1.4f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
@@ -99,9 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 80);
-
-            return false;
+            BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 80);
         }
     }
 }

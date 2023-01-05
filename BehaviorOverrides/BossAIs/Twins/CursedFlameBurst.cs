@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -9,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class CursedFlameBurst : ModProjectile
+    public class CursedFlameBurst : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
 
@@ -85,15 +87,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.4f);
             InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 38);
-            return false;
+            FireDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 38);
         }
     }
 }

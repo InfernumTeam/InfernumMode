@@ -9,7 +9,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Graphics
 {
     public class ScreenSaturationBlurSystem : ModSystem
     {
@@ -96,7 +96,7 @@ namespace InfernumMode.Systems
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             // WHAT THE FUCK NO ABORT ABORT ABORT
             if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
                 ThingsToDrawOnTopOfBlur.Clear();
@@ -124,10 +124,10 @@ namespace InfernumMode.Systems
                 TemporaryAuxillaryTarget?.Dispose();
             });
         }
-        
+
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
-            if (BloomTarget is not null && (width == BloomTarget.Width && height == BloomTarget.Height))
+            if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
             // Free GPU resources for the old targets.
@@ -155,7 +155,7 @@ namespace InfernumMode.Systems
 
             if (InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed)
                 return;
-            
+
             // Get the downscaled texture.
             Main.instance.GraphicsDevice.SetRenderTarget(DownscaledBloomTarget);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
@@ -190,7 +190,7 @@ namespace InfernumMode.Systems
                 shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
                 shader.CurrentTechnique.Passes[blurPassName].Apply();
-                
+
                 Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();
 
@@ -207,7 +207,7 @@ namespace InfernumMode.Systems
             // Update the intensity in accordance with the effect state.
             bool effectShouldBeActive = ShouldEffectBeActive && InfernumConfig.Instance.SaturationBloomIntensity > 0f;
             Intensity = MathHelper.Clamp(Intensity + effectShouldBeActive.ToDirectionInt() * 0.05f, 0f, 1f);
-            
+
             if (effectShouldBeActive)
             {
                 if (!InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.IsActive())

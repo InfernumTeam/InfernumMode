@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -11,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class RealitySlice : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail LightningDrawer;
 
         public bool Cosmilite;
 
@@ -85,8 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.RealityTearVertexShader);
+            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
             InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
@@ -98,7 +99,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 Projectile.localAI[0] = 1f;
                 LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
             }
-
             return false;
         }
         #endregion

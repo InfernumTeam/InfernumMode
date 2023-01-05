@@ -1,15 +1,16 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class LightOverloadBeam : ModProjectile
+    public class LightOverloadBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy RayDrawer = null;
         public NPC Owner => Main.npc[(int)Projectile.ai[0]];
@@ -80,10 +81,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (RayDrawer is null)
-                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             Vector2 overallOffset = -Main.screenPosition;
             Vector2[] basePoints = new Vector2[24];
@@ -95,14 +97,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
             Projectile.scale /= 0.8f;
 
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
             InfernumEffectsRegistry.PrismaticRayVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;
-            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

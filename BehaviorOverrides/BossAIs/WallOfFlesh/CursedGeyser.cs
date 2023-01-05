@@ -1,4 +1,5 @@
 using CalamityMod.DataStructures;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-    public class CursedGeyser : ModProjectile
+    public class CursedGeyser : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy TentacleDrawer;
         internal ref float Time => ref Projectile.ai[0];
@@ -112,9 +113,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Vector2 end = Projectile.Center + Vector2.UnitY * 2000f;
                 Utilities.DrawLineBetter(Main.spriteBatch, start, end, telegraphColor, telegraphWidth);
             }
+            return false;
+        }
 
-            if (TentacleDrawer is null)
-                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            TentacleDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
 
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(-1f);
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
@@ -123,17 +127,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center - Vector2.UnitY * GeyserHeight, i / 8f));
-            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
+            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
 
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(1f);
-            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
-
-            return false;
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
+            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
         }
     }
 }

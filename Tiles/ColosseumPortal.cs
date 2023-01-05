@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
+using InfernumMode.Graphics;
 using InfernumMode.Projectiles;
 using InfernumMode.Subworlds;
 using InfernumMode.Systems;
@@ -186,7 +187,7 @@ namespace InfernumMode.Tiles
             Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
 
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Water"));
+            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);

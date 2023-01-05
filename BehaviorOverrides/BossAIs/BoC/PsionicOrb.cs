@@ -1,3 +1,4 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
-    public class PsionicOrb : ModProjectile
+    public class PsionicOrb : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy OrbDrawer;
 
@@ -139,10 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (OrbDrawer is null)
-                OrbDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
-            List<Vector2> drawPoints = new();
 
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
@@ -159,9 +157,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
+            return false;
+        }
 
-            Main.spriteBatch.EnterShaderRegion();
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            OrbDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
+            List<Vector2> drawPoints = new();
+            spriteBatch.EnterShaderRegion();
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
             {
@@ -173,10 +177,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 for (int i = 0; i < 16; i++)
                     drawPoints.Add(Vector2.Lerp(center - offsetDirection * Radius * 0.925f, center + offsetDirection * Radius * 0.925f, i / 16f));
 
-                OrbDrawer.Draw(drawPoints, Projectile.Size * 0.5f - Main.screenPosition, 24);
+                OrbDrawer.DrawPixelated(drawPoints, Projectile.Size * 0.5f - Main.screenPosition, 24);
             }
-            Main.spriteBatch.ExitShaderRegion();
-            return false;
+            spriteBatch.ExitShaderRegion();
         }
     }
 }

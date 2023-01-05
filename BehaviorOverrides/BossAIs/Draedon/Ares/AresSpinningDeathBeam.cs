@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -14,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresSpinningDeathBeam : BaseLaserbeamProjectile, IAdditiveDrawer
+    public class AresSpinningDeathBeam : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -146,13 +147,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
-            color.A = 50;
+            color.A = 5; // 50
             return color * 1.32f;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
-        
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false, GameShaders.Misc["CalamityMod:Bordernado"]);
 
@@ -167,9 +168,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (float offset = 0f; offset < 6f; offset += 0.75f)
                 {
-                    BeamDrawer.Draw(points, -Main.screenPosition, 28);
-                    BeamDrawer.Draw(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
-                    BeamDrawer.Draw(points, - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
+                    BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
+                    BeamDrawer.DrawPixelated(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
+                    BeamDrawer.DrawPixelated(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
                 }
             }
         }

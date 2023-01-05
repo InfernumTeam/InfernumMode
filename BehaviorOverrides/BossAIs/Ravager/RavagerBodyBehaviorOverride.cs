@@ -884,7 +884,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(widthFunction, colorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
             // Create a telegraph line upward that fades away away the pillar fades in.
-            Vector2 start = npc.Bottom - Vector2.UnitY * 60f;
+            Vector2 start = npc.Bottom - Vector2.UnitY * 100f;
             Vector2 end = start + Vector2.UnitY * npc.localAI[1] * 420f;
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;

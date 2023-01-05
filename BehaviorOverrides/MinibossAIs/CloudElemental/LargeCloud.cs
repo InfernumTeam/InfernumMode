@@ -1,4 +1,5 @@
-﻿using InfernumMode.ILEditingStuff;
+﻿using InfernumMode.Graphics;
+using InfernumMode.ILEditingStuff;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -16,7 +17,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 {
-    public class LargeCloud : ModProjectile
+    public class LargeCloud : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy CloudDrawer { get; private set; } = null;
 
@@ -106,10 +107,14 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
         {
             // Use the lightpower to set the opacity of the color.
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
-            return Color.Lerp(Color.Gray, Color.White, 0.5f) * opacity * Projectile.Opacity;
+            Color color = Color.Lerp(Color.Gray, Color.White, 0.5f) * opacity * Projectile.Opacity;
+            color.A = 0;
+            return color;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             CloudDrawer ??= new(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.CloudVertexShader);
             Asset<Texture2D> texture = TextureAssets.Projectile[Projectile.type];
@@ -123,9 +128,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
             // Set the shader fademap.
             InfernumEffectsRegistry.CloudVertexShader.SetShaderTexture(texture);
-
-            CloudDrawer.Draw(baseDrawPoints, -Main.screenPosition, 10);
-            return false;
+            CloudDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 20);
         }
     }
 }

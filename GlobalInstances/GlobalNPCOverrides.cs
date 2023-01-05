@@ -24,6 +24,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Graphics;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
 using InfernumMode.Subworlds;

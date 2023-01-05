@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +14,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
-    public class PsionicLightningBolt : ModProjectile
+    public class PsionicLightningBolt : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
@@ -155,6 +157,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 11);
             return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            LightningDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, InfernumEffectsRegistry.AresLightningVertexShader);
+
+            InfernumEffectsRegistry.AresLightningVertexShader.UseImage1("Images/Misc/Perlin");
+            InfernumEffectsRegistry.AresLightningVertexShader.Apply();
+
+            LightningDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 20);
         }
     }
 }

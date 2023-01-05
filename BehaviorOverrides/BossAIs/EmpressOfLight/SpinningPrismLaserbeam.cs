@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class SpinningPrismLaserbeam : ModProjectile
+    public class SpinningPrismLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public int LaserCount;
 
@@ -104,10 +106,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (RayDrawer is null)
-                RayDrawer = new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
+            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
@@ -117,8 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 16);
-            return false;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 16);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

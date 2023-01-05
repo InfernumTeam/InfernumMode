@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
+using InfernumMode.Graphics;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-    public class PolterghastLeg : ModNPC, IAdditiveDrawer
+    public class PolterghastLeg : ModNPC, IPixelPrimitiveDrawer
     {
         public Vector2 IdealPosition;
 
@@ -216,10 +217,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (LimbDrawer is null)
-                LimbDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.PolterghastEctoplasmVertexShader);
+           LimbDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.PolterghastEctoplasmVertexShader);
 
             if (Polterghast.ai[2] >= 54f)
                 return;
@@ -229,6 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
+            spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 NPC.localAI[2] = 0f;
@@ -261,9 +262,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     for (int k = 0; k < 10; k++)
                         drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 9f));
 
-                    LimbDrawer.Draw(drawPositions, -Main.screenPosition, 21);
+                    LimbDrawer.DrawPixelated(drawPositions, -Main.screenPosition, 40);
                 }
             }
+            spriteBatch.ResetBlendState();
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => false;

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -15,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 {
-    public class DeerclopsEyeLaserbeam : BaseLaserbeamProjectile
+    public class DeerclopsEyeLaserbeam : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public int OwnerIndex
         {
@@ -125,11 +126,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             return Color.Lerp(Color.Red, new(249, 225, 193), colorInterpolant * 0.67f) * opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
+                return;
 
             LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
 
@@ -143,8 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 64);
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 64);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

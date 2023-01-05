@@ -114,7 +114,7 @@ namespace InfernumMode.Skies
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
                 for (int i = 0; i < 185; i++)
                 {
-                    Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
+                    Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/GreyscaleObjects/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
                     Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                     float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
                     drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;

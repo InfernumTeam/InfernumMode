@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresSpinningRedDeathray : ModProjectile
+    public class AresSpinningRedDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         public float InitialDirection = -100f;
         public PrimitiveTrailCopy BeamDrawer;
@@ -77,11 +79,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             Color color = Color.Red;
             color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
-            color.A = 50;
+            color.A = 25;
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
@@ -101,12 +105,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (float offset = 0f; offset < 5f; offset += 1.2f)
                 {
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 24);
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f + (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
-                    BeamDrawer.Draw(points, Projectile.Size * 0.5f - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
+                    BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 24);
+                    BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f + (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
+                    BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 24);
                 }
             }
-            return false;
         }
     }
 }

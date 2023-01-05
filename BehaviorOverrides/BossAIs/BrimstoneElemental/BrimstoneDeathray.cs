@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -14,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-    public class BrimstoneDeathray : BaseLaserbeamProjectile
+    public class BrimstoneDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer
         {
@@ -96,11 +97,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             return Color.Lerp(Color.Red, color1, colorInterpolant);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
+                return;
+
             LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
@@ -113,9 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(middleColor2 * 2);
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
-
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 60);
         }
 
         public override bool? CanDamage() => Time > 10f ? null : false;

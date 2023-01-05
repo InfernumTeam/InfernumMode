@@ -1,4 +1,5 @@
 using CalamityMod.DataStructures;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-    public class TileTentacle : ModProjectile
+    public class TileTentacle : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy TentacleDrawer;
         internal Vector2 RestingSpot = -Vector2.One;
@@ -100,10 +101,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (TentacleDrawer is null)
-                TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFTentacleVertexShader);
+            TentacleDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFTentacleVertexShader);
 
             InfernumEffectsRegistry.WoFTentacleVertexShader.UseColor(new Color(108, 23, 23));
             InfernumEffectsRegistry.WoFTentacleVertexShader.UseSecondaryColor(new Color(184, 78, 113));
@@ -115,14 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             };
             points.AddRange(ControlPoints);
             points.Add(Projectile.Center);
-            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
+            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
             Main.spriteBatch.ExitShaderRegion();
-            return false;
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-            
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)

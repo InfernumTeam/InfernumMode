@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class FlameOverloadBeam : ModProjectile
+    public class FlameOverloadBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy RayDrawer = null;
 
@@ -91,7 +93,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
@@ -102,17 +106,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             Projectile.scale *= 0.8f;
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFire.Value;
             Projectile.scale /= 0.8f;
 
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
             InfernumEffectsRegistry.PrismaticRayVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
-            RayDrawer.Draw(basePoints, overallOffset, 42);
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFire.Value;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;
-            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

@@ -1025,9 +1025,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Draw the downward telegraph trail as needed.
             if (currentAttack == AureusAttackType.LeapAtTarget && npc.Infernum().ExtraAI[2] > 0f)
             {
-                Vector2[] telegraphPoints = new Vector2[3]
+                Vector2[] telegraphPoints = new Vector2[4]
                 {
                     npc.Center,
+                    npc.Center + Vector2.UnitY * 1000f,
                     npc.Center + Vector2.UnitY * 2000f,
                     npc.Center + Vector2.UnitY * 4000f
                 };

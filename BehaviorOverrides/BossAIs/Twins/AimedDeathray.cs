@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class AimedDeathray : BaseLaserbeamProjectile
+    public class AimedDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer
         {
@@ -91,15 +92,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             return Color.Lerp(Color.Red, Color.White, colorInterpolant) * (1f / Projectile.localAI[1]);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
+                return;
 
             // Initialize the laser drawer.
             LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
-            
+
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
             Vector2[] baseDrawPoints = new Vector2[8];
             for (int i = 0; i < baseDrawPoints.Length; i++)
@@ -114,10 +117,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (float scaleFactor = 3f; scaleFactor >= 1f; scaleFactor -= 0.6f)
             {
                 Projectile.localAI[1] = scaleFactor;
-                LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
+                LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
             }
             Projectile.localAI[1] = oldLocalAI;
-            return false;
         }
 
         public override void DetermineScale() => Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime);

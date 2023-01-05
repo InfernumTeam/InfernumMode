@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class PhantasmalDeathray : ModProjectile
+    public class PhantasmalDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
         public int OwnerIndex;
@@ -86,10 +87,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return color * Projectile.Opacity * 1.1f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
@@ -105,9 +107,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             if (Time >= 2f)
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 26);
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 26);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
-            return false;
         }
 
         public override bool ShouldUpdatePosition() => false;

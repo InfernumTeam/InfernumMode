@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Graphics;
 using InfernumMode.Items.Weapons.Melee;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Projectiles.Melee
 {
-    public class MyrindaelBonkProjectile : ModProjectile
+    public class MyrindaelBonkProjectile : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy PierceAfterimageDrawer = null;
 
@@ -125,34 +126,31 @@ namespace InfernumMode.Projectiles.Melee
         public Color PierceColorFunction(float completionRatio) => Color.Lime * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
-        {
-            Main.spriteBatch.EnterShaderRegion();
-
-            Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
-            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
-
-            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
-            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
-
-            // Initialize the trail drawer.
-            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
-
-            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
-            GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
-            GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
-            GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
-            GameShaders.Misc["CalamityMod:ExobladePierce"].UseSecondaryColor(secondaryColor);
-            GameShaders.Misc["CalamityMod:ExobladePierce"].Apply();
-            PierceAfterimageDrawer.Draw(Projectile.oldPos.Take(12), trailOffset, 53);
-
-            Main.spriteBatch.ExitShaderRegion();
-
+        {        
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = new(0, texture.Height);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
             return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            // Initialize the trail drawer.
+            PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
+            Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+
+            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
+            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
+            GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
+            GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
+            GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
+            GameShaders.Misc["CalamityMod:ExobladePierce"].UseSecondaryColor(secondaryColor);
+            GameShaders.Misc["CalamityMod:ExobladePierce"].Apply();
+            PierceAfterimageDrawer.DrawPixelated(Projectile.oldPos.Take(12), trailOffset, 53);
         }
     }
 }

@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class BrimstoneFlamePillar : ModProjectile
+    public class BrimstoneFlamePillar : ModProjectile, IPixelPrimitiveDrawer
     {
         public int OwnerIndex;
 
@@ -96,7 +97,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DarkFlamePillarVertexShader);
 
@@ -114,9 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 points.Add(Vector2.Lerp(start, end, i / 64f) + Vector2.UnitY * 20f);
 
             if (Time >= 2f)
-                FireDrawer.Draw(points, Projectile.Size * new Vector2(0f, 0.5f) - Main.screenPosition, 166);
+                FireDrawer.DrawPixelated(points, Projectile.Size * new Vector2(0f, 0.5f) - Main.screenPosition, 166);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
-            return false;
         }
 
         public override bool ShouldUpdatePosition() => false;

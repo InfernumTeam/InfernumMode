@@ -23,6 +23,7 @@ using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using InfernumMode.GlobalInstances.Players;
+using InfernumMode.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {

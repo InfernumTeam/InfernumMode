@@ -1,4 +1,6 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -7,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class HomingCursedFlameBurst : ModProjectile
+    public class HomingCursedFlameBurst : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy FireDrawer;
 
@@ -95,14 +97,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             FireDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(Projectile.velocity.Length() / 13f);
             InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
-            return false;
+            FireDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -7,8 +8,7 @@ using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 {
-    // Not going to use the primitive lighting projectile until the lag is fixed.
-    public class CloudLightning : BaseLaserbeamProjectile
+    public class CloudLightning : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LightningDrawer { get; private set; } = null;
 
@@ -46,7 +46,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
             Vector2 basePos = Projectile.Center - Main.screenPosition;
             // Telegraphs.
             if (Time <= TelegraphTotalTime)
@@ -70,8 +69,14 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 Main.spriteBatch.Draw(InfernumTextureRegistry.TelegraphLine.Value, basePos, null, colorInner, Projectile.velocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(InfernumTextureRegistry.TelegraphLine.Value, basePos, null, colorOuter, Projectile.velocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             }
-            // Draw the lightning itself.
-            else if (Time > TelegraphTotalTime)
+            return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
+
+            if (Time > TelegraphTotalTime)
             {
                 InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.LightningStreak);
                 InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(Color.White);
@@ -81,9 +86,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.CloudElemental
                 for (int i = 0; i < baseDrawPoints.Length; i++)
                     baseDrawPoints[i] = Vector2.Lerp(Projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
-                LightningDrawer.Draw(baseDrawPoints, -Main.screenPosition, 10);
+                LightningDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 10);
             }
-            return false;
         }
 
         public float WidthFunction(float completionRatio)

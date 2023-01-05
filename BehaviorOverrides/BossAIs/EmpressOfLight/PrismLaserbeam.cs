@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -9,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-	public class PrismLaserbeam : ModProjectile
+	public class PrismLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy RayDrawer = null;
         public Projectile Prism
@@ -88,7 +90,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return c;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
@@ -100,8 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 92);
-            return false;
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 92);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

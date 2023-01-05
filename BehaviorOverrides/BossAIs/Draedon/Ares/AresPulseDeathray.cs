@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -12,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresPulseDeathray : BaseLaserbeamProjectile
+    public class AresPulseDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer
         {
@@ -112,11 +113,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return Color.Lerp(Color.BlueViolet, Color.MediumPurple, colorInterpolant * 0.67f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return false;
+                return;
             LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.ArtemisLaserVertexShader);
 
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
@@ -129,8 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage1("Images/Extra_189");
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
-            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 54);
-            return false;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
         }
         
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

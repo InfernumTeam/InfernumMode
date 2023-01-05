@@ -95,6 +95,14 @@ namespace InfernumMode
             BaseEffect.Projection = effectProjection;
         }
 
+        public void UpdatePixelatedBaseEffect(out Matrix effectProjection, out Matrix effectView)
+        {
+            effectProjection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+            effectView = Matrix.Identity;
+            BaseEffect.Projection = effectProjection;
+            BaseEffect.View = effectView;
+        }
+
         public List<Vector2> GetTrailPoints(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints)
         {
             // Don't smoothen the points unless explicitly told do so.
@@ -223,7 +231,25 @@ namespace InfernumMode
 
         public void SpecifyPerspectiveMatrix(Matrix m) => PerspectiveMatrixOverride = m;
 
-        public void Draw(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, float? directionOverride = null)
+        /// <summary>
+        /// Call this to draw primitives to the base RenderTarget.
+        /// </summary>
+        /// <param name="originalPositions"></param>
+        /// <param name="generalOffset"></param>
+        /// <param name="totalTrailPoints"></param>
+        /// <param name="directionOverride"></param>
+        public void Draw(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, float? directionOverride = null) => DrawPrims(originalPositions, generalOffset, totalTrailPoints, false, directionOverride);
+
+        /// <summary>
+        /// Call this to draw primitives to the pixelated RenderTarget. Should only be called in <see cref="Graphics.IPixelPrimitiveDrawer.DrawPixelPrimitives(SpriteBatch)"/>
+        /// </summary>
+        /// <param name="originalPositions"></param>
+        /// <param name="generalOffset"></param>
+        /// <param name="totalTrailPoints"></param>
+        /// <param name="directionOverride"></param>
+        public void DrawPixelated(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, float? directionOverride = null) => DrawPrims(originalPositions, generalOffset, totalTrailPoints, true, directionOverride);
+
+        private void DrawPrims(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, bool pixelated, float? directionOverride = null)
         {
             Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             List<Vector2> trailPoints = GetTrailPoints(originalPositions, generalOffset, totalTrailPoints);
@@ -240,7 +266,14 @@ namespace InfernumMode
             if (trailPoints.All(point => point == trailPoints[0]))
                 return;
 
-            UpdateBaseEffect(out Matrix projection, out Matrix view);
+            Matrix projection;
+            Matrix view;
+
+            if (pixelated)
+                UpdatePixelatedBaseEffect(out projection, out view);
+            else
+                UpdateBaseEffect(out projection, out view);
+
             VertexPosition2DColor[] vertices = GetVerticesFromTrailPoints(trailPoints, directionOverride);
             short[] triangleIndices = GetIndicesFromTrailPoints(trailPoints.Count);
 

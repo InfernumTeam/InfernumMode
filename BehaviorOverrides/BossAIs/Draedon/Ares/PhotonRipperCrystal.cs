@@ -1,4 +1,6 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -6,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class PhotonRipperCrystal : ModProjectile
+    public class PhotonRipperCrystal : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy TrailDrawer;
 
@@ -51,14 +53,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             return Color.Lerp(Color.White, Main.hslToRgb(hue, 0.95f, 0.55f), 0.35f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => true;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: GameShaders.Misc["CalamityMod:PrismaticStreak"]);
 
             GameShaders.Misc["CalamityMod:PrismaticStreak"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
 
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
-            return true;
+            TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 32);
         }
     }
 }

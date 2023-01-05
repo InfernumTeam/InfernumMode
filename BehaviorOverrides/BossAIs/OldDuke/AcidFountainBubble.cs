@@ -1,4 +1,6 @@
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-    public class AcidFountainBubble : ModProjectile
+    public class AcidFountainBubble : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy WaterDrawer;
 
@@ -60,10 +62,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (WaterDrawer is null)
-                WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
+            WaterDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
             InfernumEffectsRegistry.DukeTornadoVertexShader.UseImage1("Images/Misc/Perlin");
             List<Vector2> drawPoints = new();
@@ -82,9 +85,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
                 }
 
-                WaterDrawer.Draw(drawPoints, -Main.screenPosition, 42, adjustedAngle);
+                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 42, adjustedAngle);
             }
-            return false;
         }
     }
 }

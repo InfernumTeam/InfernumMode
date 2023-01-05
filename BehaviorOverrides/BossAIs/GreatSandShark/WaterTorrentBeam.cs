@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Particles;
+using InfernumMode.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
-    public class WaterTorrentBeam : ModProjectile
+    public class WaterTorrentBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
 
@@ -134,10 +135,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             return color * opacty;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
             InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
@@ -147,12 +149,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             for (int i = 0; i < 2; i++)
             {
-                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 60);
                 Projectile.localAI[0] = i;
             }
             Main.spriteBatch.ExitShaderRegion();
-
-            return false;
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 8f;

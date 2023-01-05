@@ -1076,6 +1076,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 240f;
+                if (npc.WithinRange(target.Center, 240f))
+                    npc.Center = Vector2.Lerp(npc.Center, destination, 0.09f);
+
                 npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * chargeSpeed) / 11f;
             }
 

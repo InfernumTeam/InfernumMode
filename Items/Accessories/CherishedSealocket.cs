@@ -8,7 +8,6 @@ namespace InfernumMode.Items.Accessories
 {
     public class CherishedSealocket : ModItem
     {
-
         public const int MaxHighDRHits = 2;
 
         public const int ForcefieldRechargeSeconds = 90;

@@ -240,12 +240,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Reset head DR.
             if (freeHead.active)
                 freeHead.Calamity().DR = 0.3f;
-            else
+            else if (npc.life > npc.lifeMax * 0.8f)
                 return false;
 
             if (attachedHead.active)
                 attachedHead.Calamity().DR = 0.3f;
-            else
+            else if (npc.life > npc.lifeMax * 0.8f)
                 return false;
 
             // Sync the heads, and end the fight if necessary

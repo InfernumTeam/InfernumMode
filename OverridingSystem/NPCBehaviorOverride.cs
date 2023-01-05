@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.OverridingSystem
 {
@@ -65,6 +67,10 @@ namespace InfernumMode.OverridingSystem
                 HatGirlTipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
             }
         }
+
+        public virtual void SendExtraData(NPC npc, ModPacket writer) { }
+
+        public virtual void ReceiveExtraData(NPC npc, BinaryReader reader) { }
 
         public virtual int? NPCIDToDeferToForTips => null;
 

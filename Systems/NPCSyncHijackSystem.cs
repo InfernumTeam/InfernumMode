@@ -39,6 +39,9 @@ namespace InfernumMode.Systems
                     packet.Write(npc.Infernum().ExtraAI[i]);
                 }
 
+                if (InfernumMode.CanUseCustomAIs)
+                    npc.BehaviorOverride<NPCBehaviorOverride>()?.SendExtraData(npc, packet);
+
                 packet.Send();
 
                 // Have the twins send a specialized packet to ensure that the attack synchronizer is updated.

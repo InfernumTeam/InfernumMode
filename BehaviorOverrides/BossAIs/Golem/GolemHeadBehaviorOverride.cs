@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -35,11 +36,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
                 return false;
             }
+
             NPCID.Sets.MustAlwaysDraw[NPCID.GolemHead] = true;
             npc.chaseable = !npc.dontTakeDamage;
+            npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;
+
             if (Main.npc[(int)npc.ai[0]].ai[0] > 242f)
                 npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;
+        }
+
+        public override void SendExtraData(NPC npc, ModPacket writer)
+        {
+            writer.Write(npc.Opacity);
+            writer.Write(npc.dontTakeDamage);
+        }
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader)
+        {
+            npc.Opacity = reader.ReadSingle();
+            npc.dontTakeDamage = reader.ReadBoolean();
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

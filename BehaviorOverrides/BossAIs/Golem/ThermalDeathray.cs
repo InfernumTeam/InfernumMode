@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
@@ -42,7 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             if (OwnerIndex <= 0 || !Main.npc[OwnerIndex - 1].active)
             {
-                Projectile.Kill();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.Kill();
                 return;
             }
 

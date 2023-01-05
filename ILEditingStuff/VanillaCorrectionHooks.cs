@@ -500,7 +500,7 @@ namespace InfernumMode.ILEditingStuff
             // I don't know who fucked this up. I don't know if it was me.
             // But I'm sick of my game going to 1 FPS due to hundreds of exceptions being thrown every single frame and as such will be the one
             // to fix it.
-            if (tileCache.TileType != TileID.LeafBlock)
+            if (tileCache.TileType is not TileID.LeafBlock and not TileID.LivingMahoganyLeaves)
                 orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
         }
 

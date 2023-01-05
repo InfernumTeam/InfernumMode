@@ -736,10 +736,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
         {
             int startingShootDelay = 60;
-            int endingShootDelay = 28;
+            int endingShootDelay = 36;
             int textSubstateTime = 172;
             int cannonAttackTime = 960;
-            int metalReleaseRate = 23;
+            int metalReleaseRate = 24;
 
             int laserbeamCount = 6;
             int laserbeamTelegraphTime = 60;
@@ -909,7 +909,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     // Make the laser spin.
                     float spinSpeedInterpolant = Utils.GetLerpValue(0f, 360f, attackTimer, true);
-                    laserAngularOffset += MathHelper.ToRadians(spinSpeedInterpolant * 0.93f);
+                    laserAngularOffset += MathHelper.ToRadians(spinSpeedInterpolant * 0.86f);
 
                     // Periodically release slow bursts of sparks in a spread.
                     if (attackTimer % sparkBurstReleaseRate == sparkBurstReleaseRate - 1f)

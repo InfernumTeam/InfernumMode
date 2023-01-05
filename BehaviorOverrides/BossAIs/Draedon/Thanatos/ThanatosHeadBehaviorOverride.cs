@@ -537,7 +537,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
             if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime)
+            {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ExolaserSpark>());
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_RefractionRotorRays(NPC npc, Player target, ref float attackTimer, ref float frameType)

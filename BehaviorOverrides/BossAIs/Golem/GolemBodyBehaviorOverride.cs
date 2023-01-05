@@ -170,14 +170,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     AttachedHeadNPC = attachedHeadInt;
 
                     int leftHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>(), 0, npc.whoAmI);
-                    Main.npc[leftHand].ai[0] = npc.whoAmI;
-                    Main.npc[leftHand].netUpdate = true;
                     LeftFistNPC = leftHand;
 
                     int rightHand = NPC.NewNPC(npc.GetSource_FromAI(), (int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>(), 0, npc.whoAmI);
                     RightFistNPC = rightHand;
                 }
-
+                 
                 AITimer++;
 
                 return false;
@@ -245,15 +243,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
 
             // Reset body part indices if necessary.
-            if (leftFist.type != NPCID.GolemFistLeft)
+            if (LeftFistNPC >= 0 && leftFist.active && leftFist.type != ModContent.NPCType<GolemFistLeft>())
             {
-                LeftFistNPC = NPC.FindFirstNPC(NPCID.GolemFistLeft);
-                leftFist = ref Main.npc[(int)LeftFistNPC];
+                LeftFistNPC = NPC.FindFirstNPC(ModContent.NPCType<GolemFistLeft>());
+
+                if (LeftFistNPC >= 0)
+                    leftFist = ref Main.npc[(int)LeftFistNPC];
+                else if (npc.life > npc.lifeMax * 0.8f)
+                    return false;
             }
-            if (rightFist.type != NPCID.GolemFistRight)
+            if (RightFistNPC >= 0 && rightFist.active && rightFist.type != ModContent.NPCType<GolemFistRight>())
             {
-                RightFistNPC = NPC.FindFirstNPC(NPCID.GolemFistRight);
-                rightFist = ref Main.npc[(int)RightFistNPC];
+                RightFistNPC = NPC.FindFirstNPC(ModContent.NPCType<GolemFistRight>());
+                if (RightFistNPC >= 0)
+                    rightFist = ref Main.npc[(int)RightFistNPC];
+                else if (npc.life > npc.lifeMax * 0.8f)
+                    return false;
             }
 
             // Ensure that the max HP doesn't desync across the body parts.
@@ -274,7 +279,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.HitEffect();
                 npc.checkDead();
                 npc.active = false;
-                npc.netUpdate = true;
+                if (Main.netMode == NetmodeID.Server)
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
 
                 DeleteGolemArena();
                 return false;
@@ -1122,6 +1128,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 coreLaserRayInterpolant = Utils.GetLerpValue(0f, laserTelegraphTime - 32f, attackTimer, true);
                 if (coreLaserRayInterpolant < 1f)
                     coreLaserRayDirection = npc.AngleTo(target.Center).AngleLerp(-MathHelper.PiOver2, 0.84f);
+                npc.Infernum().ExtraAI[0] = 0f;
+            }
+            // Store the angular velocity for the laser to read.
+            else if (npc.Infernum().ExtraAI[0] == 0f || Math.Abs(npc.Infernum().ExtraAI[0]) > 0.2f)
+            {
+                npc.Infernum().ExtraAI[0] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
+                if (Main.netMode == NetmodeID.Server)
+                    npc.netUpdate = true;
             }
 
             // Create platforms.
@@ -1140,13 +1154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
                     Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f, -1, 0f, laserLifetime);
-
-                    // Store the angular velocity for the laser to read.
-                    npc.Infernum().ExtraAI[0] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
-                    npc.netUpdate = true;
-                }
             }
 
             // Create lasers from the core after firing.

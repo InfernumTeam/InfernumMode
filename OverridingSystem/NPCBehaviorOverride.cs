@@ -30,22 +30,22 @@ namespace InfernumMode.OverridingSystem
 
                 // Cache the SetDefaults method if it exists.
                 MethodInfo setDefaultsMethod = type.GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
-                if (setDefaultsMethod is not null)
+                if (setDefaultsMethod is not null && setDefaultsMethod.DeclaringType != typeof(NPCBehaviorOverride))
                     OverridingListManager.InfernumSetDefaultsOverrideList[instance.NPCOverrideType] = setDefaultsMethod.ConvertToDelegate(instance);
 
                 // Cache the PreDraw method if it exists.
                 MethodInfo preDrawMethod = type.GetMethod("PreDraw", Utilities.UniversalBindingFlags);
-                if (preDrawMethod is not null)
+                if (preDrawMethod is not null && preDrawMethod.DeclaringType != typeof(NPCBehaviorOverride))
                     OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)preDrawMethod.Invoke(instance, new object[] { n, s, c }));
 
                 // Cache the FindFrame method if it exists.
                 MethodInfo findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
-                if (findFrameMethod is not null)
+                if (findFrameMethod is not null && findFrameMethod.DeclaringType != typeof(NPCBehaviorOverride))
                     OverridingListManager.InfernumFrameOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCFindFrameDelegate((n, h) => findFrameMethod.Invoke(instance, new object[] { n, h }));
 
                 // Cache the CheckDead method if it exists.
                 MethodInfo checkDeadMethod = type.GetMethod("CheckDead", Utilities.UniversalBindingFlags);
-                if (checkDeadMethod is not null)
+                if (checkDeadMethod is not null && checkDeadMethod.DeclaringType != typeof(NPCBehaviorOverride))
                     OverridingListManager.InfernumCheckDeadOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
 
                 BehaviorOverrides[instance.NPCOverrideType] = instance;

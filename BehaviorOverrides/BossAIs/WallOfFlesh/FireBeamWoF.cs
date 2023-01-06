@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
-            Projectile.Center = Owner.Center;
+            Projectile.Center = Owner.Center + Projectile.velocity * 30f;
 
             // And create bright light.
             Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3() * 1.4f);
@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public float WidthFunction(float completionRatio)
         {
-            return Projectile.width * Projectile.scale * 2;
+            return Projectile.width * Projectile.scale * 2f;
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         public Color ColorFunction(float completionRatio)
         {        
             Color color = Color.Lerp(Color.Red, Color.Orange, 0.65f);
-            return color * Projectile.Opacity;
+            return color * Projectile.Opacity * (float)Math.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 3D);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.DrawPixelated(points, - Main.screenPosition, 15);
+            BeamDrawer.DrawPixelated(points, - Main.screenPosition, 32);
             Main.spriteBatch.ExitShaderRegion();
         }
 

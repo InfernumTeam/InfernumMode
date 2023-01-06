@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Projectiles.Melee
 {
-    public class MyrindaelBonkProjectile : ModProjectile, IPixelPrimitiveDrawer
+    public class MyrindaelBonkProjectile : ModProjectile
     {
         public PrimitiveTrailCopy PierceAfterimageDrawer = null;
 
@@ -131,12 +131,6 @@ namespace InfernumMode.Projectiles.Melee
             Vector2 origin = new(0, texture.Height);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
-            return false;
-        }
-
-        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
-        {
             // Initialize the trail drawer.
             PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
             Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
@@ -150,7 +144,10 @@ namespace InfernumMode.Projectiles.Melee
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseSecondaryColor(secondaryColor);
             GameShaders.Misc["CalamityMod:ExobladePierce"].Apply();
-            PierceAfterimageDrawer.DrawPixelated(Projectile.oldPos.Take(12), trailOffset, 53);
+            PierceAfterimageDrawer.Draw(Projectile.oldPos.Take(12), trailOffset, 53);
+            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
+
+            return false;
         }
     }
 }

@@ -2,6 +2,7 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.Netcode;
 using InfernumMode.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -15,7 +16,7 @@ namespace InfernumMode.Systems
         public override void PreUpdateEntities()
         {
             InfernumMode.BlackFade = MathHelper.Clamp(InfernumMode.BlackFade - 0.025f, 0f, 1f);
-            NetcodeHandler.Update();
+            PacketHandler.Update();
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
             if (CalamityWorld.death)

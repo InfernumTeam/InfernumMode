@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Schematics;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
@@ -44,6 +45,25 @@ namespace InfernumMode.Systems
                 fuck = CalamityWorld.SunkenSeaLabCenter.ToTileCoordinates();
                 fuck.Y -= 280;
             }
+
+            // If for some reason you STILL don't have a valid placement position, just go searching for some hardened sand.
+            if (fuck.X <= 50 || fuck.Y <= 50)
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    Point p = new(Main.rand.Next(400, Main.maxTilesX - 400), Main.rand.Next(500, Main.maxTilesY - 560));
+                    Tile t = CalamityUtils.ParanoidTileRetrieval(p.X, p.Y);
+                    if (!t.HasTile || t.TileType != TileID.HardenedSand || t.HasActuator)
+                        continue;
+
+                    fuck = p;
+                    break;
+                }
+            }
+
+            // If EVEN THEN there's no valid point, you get nothing. Goodbye.
+            if (fuck.X <= 50 || fuck.Y <= 50)
+                return;
 
             // As much as I would like to do so, I will resist the urge to write juvenile venting comments about my current frustrations with this
             // requested feature inside of a code comment.

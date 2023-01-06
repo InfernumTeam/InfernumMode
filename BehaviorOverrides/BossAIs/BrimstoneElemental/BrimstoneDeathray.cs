@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-    public class BrimstoneDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
+    public class BrimstoneDeathray : BaseLaserbeamProjectile
     {
         public PrimitiveTrailCopy LaserDrawer
         {
@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/BrimstoneRayEnd", AssetRequestMode.ImmediateLoad).Value;
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
-        public Vector2 OwnerEyePosition => Main.npc[OwnerIndex].Center + new Vector2(Main.npc[OwnerIndex].spriteDirection * 20f, -72f);
+        public Vector2 OwnerEyePosition => Main.npc[OwnerIndex].Center + new Vector2(Main.npc[OwnerIndex].spriteDirection * 20f, -68f);
         public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Deathray");
 
         public override void SetDefaults()
@@ -66,7 +66,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 return;
             }
             Projectile.Center = OwnerEyePosition;
-            Projectile.Center -= Projectile.velocity * 30;
 
             if (Projectile.timeLeft == 10)
             {
@@ -93,17 +92,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public static Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -5.2f + completionRatio * 23f) * 0.5f + 0.5f;
-            Color color1 = new(255, 0, 25);
-            return Color.Lerp(Color.Red, color1, colorInterpolant);
+            return Color.Lerp(Color.Red, new(255, 0, 25), colorInterpolant) * Utils.GetLerpValue(0.02f, 0.05f, completionRatio, true);
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             // This should never happen, but just in case.
             if (Projectile.velocity == Vector2.Zero)
-                return;
+                return false;
 
             LaserDrawer ??= new(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
             Vector2 laserEnd = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
@@ -114,10 +110,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Select textures to pass to the shader, along with the electricity color.
             Color middleColor = new(252, 220, 178);
             Color middleColor2 = new(255, 162, 162);
-            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(middleColor2 * 2);
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(middleColor2 * 2f);
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
-            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 60);
+            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 60);
+            return false;
         }
 
         public override bool? CanDamage() => Time > 10f ? null : false;

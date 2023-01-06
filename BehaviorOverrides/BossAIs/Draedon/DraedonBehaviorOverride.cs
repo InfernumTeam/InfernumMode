@@ -9,6 +9,7 @@ using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.GlobalInstances.Players;
 using InfernumMode.ILEditingStuff;
+using InfernumMode.Netcode;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;
@@ -392,7 +393,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                NetcodeHandler.SyncExoMechSummon(playerToFollow);
+                PacketHandler.SyncExoMechSummon(playerToFollow);
                 return;
             }
 

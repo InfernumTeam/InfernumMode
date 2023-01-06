@@ -14,7 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     public class ThermalDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
-        public int OwnerIndex;
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -42,15 +41,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void AI()
         {
-            if (OwnerIndex <= 0 || !Main.npc[OwnerIndex - 1].active)
+            if (!Main.npc.IndexInRange(NPC.golemBoss) || !Main.npc[NPC.golemBoss].active)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
-            NPC head = Main.npc[OwnerIndex - 1];
-            Projectile.Center = head.Center + Vector2.UnitY * 20f;
+            NPC golem = Main.npc[NPC.golemBoss];
+            Projectile.Center = golem.Center + Vector2.UnitY * 20f;
 
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
@@ -58,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
-            Projectile.velocity = Projectile.velocity.RotatedBy(Utils.GetLerpValue(0f, 45f, Time, true) * AngularVelocity);
+            Projectile.velocity = Projectile.velocity.RotatedBy(Utils.GetLerpValue(0f, 45f, Time, true) * golem.Infernum().ExtraAI[0]);
             if (Time >= Lifetime)
                 Projectile.Kill();
 
@@ -76,9 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
-
         
-
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.92f, completionRatio, true);

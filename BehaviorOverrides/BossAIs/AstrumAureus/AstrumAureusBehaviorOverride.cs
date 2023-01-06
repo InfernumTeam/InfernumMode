@@ -284,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             continue;
 
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * 17f;
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), laserDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaserInfernum>(), laserDamage, 0f);
                     }
 
                     laserShootCounter = 0f;
@@ -714,7 +714,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     npc.velocity.X = 0f;
             }
             else
+            {
                 npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
+                npc.damage = 0;
+            }
 
             // Play a charge sound as a telegraph prior to firing.
             if (attackTimer == laserShootDelay - 116f)
@@ -855,7 +858,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             AureusAttackType newAttackState;
             WeightedRandom<AureusAttackType> attackSelector = new(Main.rand);
             attackSelector.Add(AureusAttackType.WalkAndShootLasers);
-            attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<AureusSpawn>()))
+                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)

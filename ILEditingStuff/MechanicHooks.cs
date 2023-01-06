@@ -257,6 +257,10 @@ namespace InfernumMode.ILEditingStuff
 
         internal static bool PlatformRequirement(Projectile projectile)
         {
+            // I don't know what the problem is. I'm sorry.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                return false;
+
             Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
             NPC[] attachedPlatforms = GetPlatforms(projectile).Where(p =>
             {
@@ -274,6 +278,10 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void AdjustHitPlatformCoords(Projectile projectile, ref int x, ref int y)
         {
+            // I don't know what the problem is. I'm sorry.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                return;
+
             if (PlatformRequirement(projectile))
             {
                 var platform = GetPlatforms(projectile)[0];

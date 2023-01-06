@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Netcode
 {
     public class NPCSyncHijackSystem : ModSystem
     {
@@ -29,7 +29,7 @@ namespace InfernumMode.Systems
                 packet.Write(npc.Infernum().Arena.Y);
                 packet.Write(npc.Infernum().Arena.Width);
                 packet.Write(npc.Infernum().Arena.Height);
-                
+
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])

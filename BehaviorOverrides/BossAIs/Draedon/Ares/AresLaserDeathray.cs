@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresLaserCannon>() && Main.npc[OwnerIndex].Opacity > 0.25f)
             {
                 NPC pulseCannon = Main.npc[OwnerIndex];
-                Projectile.Center = pulseCannon.Center + new Vector2(pulseCannon.spriteDirection * -23f, 16f).RotatedBy(pulseCannon.rotation);
+                Projectile.Center = pulseCannon.Center + new Vector2(pulseCannon.spriteDirection * -68f, 16f).RotatedBy(pulseCannon.rotation);
             }
 
             // Die of the owner is invalid in some way.
@@ -104,9 +104,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
         }
 
-        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width;
+        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width* Utils.GetLerpValue(0f, 0.1f, _, true);
 
-        public static Color LaserColorFunction(float completionRatio) => Color.Red;
+        public static Color LaserColorFunction(float completionRatio) => Color.Red * Utils.GetLerpValue(0f, 0.04f, completionRatio, true);
 
         public override bool PreDraw(ref Color lightColor) => false;
 
@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage1("Images/Extra_194");
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Extra_193");
 
-            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 96);
         }
         
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

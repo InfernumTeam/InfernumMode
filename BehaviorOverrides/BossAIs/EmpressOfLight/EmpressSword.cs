@@ -15,8 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class EmpressSword : ModProjectile, IPixelPrimitiveDrawer
     {
-        public int SwordCount;
-        public int TotalSwordsThatShouldAttack;
+        public int SwordCount = 9;
+        public int TotalSwordsThatShouldAttack = 3;
         public float TelegraphInterpolant;
         public PrimitiveTrailCopy TrailDrawer;
 
@@ -111,6 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             writer.Write(AttackTimePerSword);
             writer.Write(SwordIndex);
             writer.Write(TelegraphInterpolant);
+            writer.Write(Projectile.timeLeft);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -119,6 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             AttackTimePerSword = reader.ReadSingle();
             SwordIndex = reader.ReadSingle();
             TelegraphInterpolant = reader.ReadSingle();
+            Projectile.timeLeft = reader.ReadInt32();
         }
 
         public override void AI()

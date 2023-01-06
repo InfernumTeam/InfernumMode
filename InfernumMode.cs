@@ -1,14 +1,13 @@
 using CalamityMod.Cooldowns;
-using CalamityMod.Events;
-using InfernumMode.Balancing;
-using InfernumMode.BossBars;
-using InfernumMode.BossIntroScreens;
-using InfernumMode.BossRush;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Content.BossIntroScreens;
+using InfernumMode.Content.Items;
+using InfernumMode.Core;
+using InfernumMode.Core.Balancing;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.OverridingSystem;
 using InfernumMode.ILEditingStuff;
-using InfernumMode.Items;
-using InfernumMode.Netcode;
-using InfernumMode.OverridingSystem;
-using InfernumMode.Systems;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -29,9 +28,7 @@ namespace InfernumMode
 
         internal static Mod PhaseIndicator = null;
 
-        internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
-
-        internal static bool BossRushApplies => true;
+        internal static bool CanUseCustomAIs => WorldSaveSystem.InfernumMode;
 
         public static float BlackFade
         {
@@ -86,17 +83,14 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
             {
-                AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon", -1);
-                AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
-                AddBossHeadTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
                 InfernumEffectsRegistry.LoadEffects();
             }
 
             CooldownRegistry.RegisterModCooldowns(this);
-
-            if (BossRushApplies)
-                BossRushChanges.Load();
 
             if (Main.netMode != NetmodeID.Server)
             {

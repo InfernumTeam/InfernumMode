@@ -190,16 +190,7 @@ namespace InfernumMode.GlobalInstances
 
             return base.CanUseItem(item, player);
         }
-        public override bool? UseItem(Item item, Player player)
-        {
-            if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
-            {
-                NPC.NewNPC(player.GetSource_ItemUse(item), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
-            }
-
-            return base.UseItem(item, player);
-        }
-
+        
         public override bool OnPickup(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<DemonicChaliceOfInfernum>())

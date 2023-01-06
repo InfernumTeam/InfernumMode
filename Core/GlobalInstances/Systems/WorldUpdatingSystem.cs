@@ -20,6 +20,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             CalamityMod.CalamityMod.sharkKillCount = 0;
 
+            // Make the impending doom timer instantaneous.
+            if (NPC.MoonLordCountdown >= 10)
+                NPC.MoonLordCountdown = 10;
+
             BossRushChangesSystem.HandleTeleports();
             if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
                 CalamityGlobalNPC.draedon = -1;

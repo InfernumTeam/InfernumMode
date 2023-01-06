@@ -1,11 +1,7 @@
 using CalamityMod;
-using CalamityMod.Events;
-using CalamityMod.Items.Armor.Silva;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.Projectiles.Boss;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

@@ -1,5 +1,6 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;

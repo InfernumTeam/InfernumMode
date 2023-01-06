@@ -1,11 +1,11 @@
-﻿using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyAimedDeathrayTelegraph : FireBeamTelegraph
     {

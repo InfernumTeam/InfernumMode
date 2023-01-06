@@ -1,5 +1,6 @@
 using CalamityMod.Cooldowns;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.BossBars;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Items;
 using InfernumMode.Core;

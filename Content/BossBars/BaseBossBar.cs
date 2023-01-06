@@ -12,9 +12,9 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.UI.BossHealthBarManager;
-using static InfernumMode.BossBars.BossBarManager;
+using static InfernumMode.Content.BossBars.BossBarManager;
 
-namespace InfernumMode.BossBars
+namespace InfernumMode.Content.BossBars
 {
 	// A lot of this is yoinked from BossHPUI in base Calamity, considering they function pretty much the same internally.
     public class BaseBossBar

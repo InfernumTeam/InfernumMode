@@ -1,15 +1,12 @@
-﻿using InfernumMode.Graphics;
+﻿using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyFireWall : ModProjectile, IPixelPrimitiveDrawer
     {

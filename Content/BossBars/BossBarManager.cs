@@ -15,7 +15,7 @@ using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 
-namespace InfernumMode.BossBars
+namespace InfernumMode.Content.BossBars
 {
     public class BossBarManager : ModBossBarStyle
     {
@@ -39,9 +39,9 @@ namespace InfernumMode.BossBars
         internal static void Load(Mod mod)
         {
             ActiveBossBars = new();
-            MainBarTexture = ModContent.Request<Texture2D>("InfernumMode/BossBars/Textures/BaseBarTexture", AssetRequestMode.ImmediateLoad).Value;
-            MainBorderTexture =  ModContent.Request<Texture2D>("InfernumMode/BossBars/Textures/BarBorderMain", AssetRequestMode.ImmediateLoad).Value;
-            EdgeBorderTexture = ModContent.Request<Texture2D>("InfernumMode/BossBars/Textures/BarBorderEdge", AssetRequestMode.ImmediateLoad).Value;
+            MainBarTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BaseBarTexture", AssetRequestMode.ImmediateLoad).Value;
+            MainBorderTexture =  ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BarBorderMain", AssetRequestMode.ImmediateLoad).Value;
+            EdgeBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BarBorderEdge", AssetRequestMode.ImmediateLoad).Value;
         }
 
         #endregion

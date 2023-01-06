@@ -974,7 +974,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             {
                 portalIndex = -1f;
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
+                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, Main.myPlayer, 0f, portalTelegraphTime);
                 npc.netUpdate = true;
             }
 
@@ -1020,7 +1020,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             portal.localAI[0] = 1f;
                         });
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
+                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, Main.myPlayer, 0f, portalTelegraphTime);
                     }
                 }
                 SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);

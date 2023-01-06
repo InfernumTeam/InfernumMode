@@ -104,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 mouthPosition = npc.Center + Vector2.UnitY * 216f;
                     Vector2 leechVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 7f;
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, npc.target, npc.whoAmI + 1, npc.target);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, Main.myPlayer, npc.whoAmI + 1, npc.target);
                 }
                 leechCreationCounter = 0f;
                 npc.netUpdate = true;

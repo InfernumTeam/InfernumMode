@@ -46,9 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Vector2 missileSpawnPosition = new Vector2(Projectile.Center.X, Target.Center.Y) - Vector2.UnitY.RotatedBy(Projectile.rotation) * 1000f;
                     Vector2 missileVelocity = Vector2.UnitY.RotatedBy(Projectile.rotation) * 29f;
-                    int missile = Utilities.NewProjectileBetter(missileSpawnPosition, missileVelocity, ModContent.ProjectileType<PlagueMissile2>(), 170, 0f);
-                    if (Main.projectile.IndexInRange(missile))
-                        Main.projectile[missile].ai[0] = Target.whoAmI;
+                    Utilities.NewProjectileBetter(missileSpawnPosition, missileVelocity, ModContent.ProjectileType<PlagueMissile2>(), 170, 0f, -1, 0f, Target.whoAmI);
                 }
 
                 Projectile.Kill();

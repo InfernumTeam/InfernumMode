@@ -17,6 +17,7 @@ namespace InfernumMode.Core.Netcode
     {
         internal static List<InfernumNPCSyncInformation> PendingSyncs = new();
 
+        #region Send Methods
         public static void SyncInfernumActivity(int sender)
         {
             // Don't bother trying to send packets in singleplayer.
@@ -33,10 +34,29 @@ namespace InfernumMode.Core.Netcode
             packet.Send(-1, sender);
         }
 
+        public static void OpenLostColosseumPortalSync(int sender)
+        {
+            // Don't bother trying to send packets in singleplayer.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            BitsByte containmentFlagWrapper = new();
+            containmentFlagWrapper[0] = WorldSaveSystem.HasOpenedLostColosseumPortal;
+
+            packet.Write((short)InfernumPacketType.SyncInfernumActive);
+            packet.Write(sender);
+            packet.Write(containmentFlagWrapper);
+            packet.Write(WorldSaveSystem.LostColosseumPortalAnimationTimer);
+            packet.Send(-1, sender);
+        }
+        #endregion Send Methods
+
+        #region Receive Methods
         public static void RecieveInfernumActivitySync(BinaryReader reader)
         {
             int sender = reader.ReadInt32();
-            BitsByte flag = reader.ReadByte();
+            BitsByte flag = reader.ReadByte();            
             WorldSaveSystem.InfernumMode = flag[0];
 
             // Send the packet again to the other clients if this packet was received on the server.
@@ -45,6 +65,21 @@ namespace InfernumMode.Core.Netcode
             if (Main.netMode == NetmodeID.Server)
                 SyncInfernumActivity(sender);
         }
+
+        public static void RecieveColosseumPortalOpeningSync(BinaryReader reader)
+        {
+            int sender = reader.ReadInt32();
+            BitsByte flag = reader.ReadByte();
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = reader.ReadInt32();
+            WorldSaveSystem.HasOpenedLostColosseumPortal = flag[0];
+
+            // Send the packet again to the other clients if this packet was received on the server.
+            // Since ModPackets go solely to the server when sent by a client this is necesssary
+            // to ensure that all clients are informed of what happened.
+            if (Main.netMode == NetmodeID.Server)
+                OpenLostColosseumPortalSync(sender);
+        }
+        #endregion Receive Methods
 
         public static void SyncExoMechSummon(Player p)
         {
@@ -110,9 +145,6 @@ namespace InfernumMode.Core.Netcode
                     break;
 
                 case InfernumPacketType.SyncInfernumActive:
-                    // Send the packet again to the other clients if this packet was received on the server.
-                    // Since ModPackets go solely to the server when sent by a client this is necesssary
-                    // to ensure that all clients are informed of what happened.
                     RecieveInfernumActivitySync(reader);
                     break;
                 case InfernumPacketType.SummonExoMech:
@@ -123,6 +155,9 @@ namespace InfernumMode.Core.Netcode
                     break;
                 case InfernumPacketType.UpdateTwinsAttackSynchronizer:
                     TwinsAttackSynchronizer.ReadFromPacket(reader);
+                    break;
+                case InfernumPacketType.OpenLostColosseumPortal:
+                    RecieveColosseumPortalOpeningSync(reader);
                     break;
             }
         }

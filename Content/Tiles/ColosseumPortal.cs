@@ -7,6 +7,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -137,7 +138,7 @@ namespace InfernumMode.Content.Tiles
             WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
 
             if (Main.netMode != NetmodeID.SinglePlayer)
-                NetMessage.SendData(MessageID.WorldData);
+                PacketHandler.OpenLostColosseumPortalSync(Main.myPlayer);
 
             // Create a lens flare.
             Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);

@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -73,12 +74,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = NPC.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);
-                    int laser = Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f, -1, 0f, NPC.whoAmI);
-                    if (Main.projectile.IndexInRange(laser))
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                     {
-                        Main.projectile[laser].ModProjectile<PlagueDeathray>().LocalLifetime = 1200;
-                        Main.projectile[laser].netUpdate = true;
-                    }
+                        deathray.ModProjectile<PlagueDeathray>().LocalLifetime = 1200;
+                    });
+                    Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f, -1, 0f, NPC.whoAmI);
                 }
             }
             AttackTimer++;

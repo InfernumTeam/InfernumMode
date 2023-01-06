@@ -1438,7 +1438,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         telegraph.extraUpdates = extraUpdates;
                 });
 
-                Projectile.NewProjectile(new EntitySource_WorldEvent(), start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
+                Utilities.NewProjectileBetter(start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                 {
@@ -1446,7 +1446,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     if (extraUpdates > 0)
                         telegraph.extraUpdates = extraUpdates;
                 });
-                Projectile.NewProjectile(new EntitySource_WorldEvent(), end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
+                Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
             }
         }
 

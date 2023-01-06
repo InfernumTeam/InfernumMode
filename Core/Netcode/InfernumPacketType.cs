@@ -5,6 +5,7 @@ namespace InfernumMode.Core.Netcode
         SendExtraNPCData,
         SyncInfernumActive,
         SummonExoMech,
-        UpdateTwinsAttackSynchronizer
+        UpdateTwinsAttackSynchronizer,
+        OpenLostColosseumPortal
     }
 }

@@ -11,6 +11,7 @@ using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -551,9 +552,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
-                            int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                            });
+                            Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
 
                         // Release second spread of sand that goes higher up if necessary.
@@ -565,11 +569,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                                 // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
                                 sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
-
                                 Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed * 1.18f;
-                                int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                                if (Main.projectile.IndexInRange(blobIndex))
-                                    Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                                {
+                                    blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                                });
+                                Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                             }
                         }
 
@@ -693,9 +699,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
                             Vector2 sandSpawnPosition = NPC.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
-                            int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                            });
+                            Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
                     }
                 }
@@ -1120,9 +1129,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         Vector2 spearShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, WaterSpear.Gravity, spearShootSpeed, out _);
                         spearShootVelocity.Y -= 4.5f;
 
-                        int spearIndex = Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                        if (Main.projectile.IndexInRange(spearIndex))
-                            Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                        {
+                            spear.ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                        });
+                        Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                     }
                 }
             }
@@ -1240,9 +1251,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 spearShootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 6f)) * 13f;
-                    int spearIndex = Utilities.NewProjectileBetter(NPC.Top, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                    if (Main.projectile.IndexInRange(spearIndex))
-                        Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                    {
+                        spear.ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                    });
+                    Utilities.NewProjectileBetter(NPC.Top, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                 }
             }
 

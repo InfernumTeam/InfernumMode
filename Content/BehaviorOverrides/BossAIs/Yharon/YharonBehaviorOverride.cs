@@ -6,6 +6,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
@@ -1024,8 +1025,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 fireballShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.37f) * 28f;
-                    int fireball = Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ModContent.ProjectileType<HomingFireball>(), 450, 0f);
-                    Main.projectile[fireball].tileCollide = false;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball => fireball.tileCollide = false);
+                    Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ModContent.ProjectileType<HomingFireball>(), 450, 0f);
+
                     int numberOfParticles = 6;
                     for (int i = 0; i < numberOfParticles; i++)
                     {
@@ -1171,8 +1174,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                             burstSpeed *= Main.rand.NextFloat(1.5f, 2.7f);
 
                         Vector2 burstVelocity = npc.SafeDirectionTo(mouthPosition).RotatedBy(offsetAngle) * burstSpeed;
-                        int fire = Utilities.NewProjectileBetter(mouthPosition, burstVelocity, ModContent.ProjectileType<DragonFireball>(), 500, 0f, Main.myPlayer);
-                        Main.projectile[fire].tileCollide = false;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball => fireball.tileCollide = false);
+                        Utilities.NewProjectileBetter(mouthPosition, burstVelocity, ModContent.ProjectileType<DragonFireball>(), 500, 0f, Main.myPlayer);
                     }
                 }
                 if (attackTimer >= fireballBreathShootDelay + shotgunBurstFireRate * totalShotgunBursts - 1f)
@@ -1441,12 +1445,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 {
                     float angle = MathHelper.TwoPi * i / totalFlameVortices;
                     Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * 1780f, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), 800, 0f, Main.myPlayer);
-                    int telegraph = Utilities.NewProjectileBetter(target.Center, angle.ToRotationVector2(), ModContent.ProjectileType<VortexTelegraphBeam>(), 0, 0f, Main.myPlayer);
-                    if (Main.projectile.IndexInRange(telegraph))
-                    {
-                        Main.projectile[telegraph].velocity = angle.ToRotationVector2();
-                        Main.projectile[telegraph].ai[1] = 1780f;
-                    }
+                    Utilities.NewProjectileBetter(target.Center, angle.ToRotationVector2(), ModContent.ProjectileType<VortexTelegraphBeam>(), 0, 0f, -1, 0f, 1780f);
                 }
             }
 
@@ -1748,17 +1747,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 if (npc.life < 2000 && hasCreatedExplosionFlag == 0f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
-
-                    // Release a burst of very strong fireballs
-                    for (int i = 0; i < 45; i++)
+                    if (Main.myPlayer == target.whoAmI)
                     {
-                        Vector2 fireallVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 11f;
-                        int fireball = Utilities.NewProjectileBetter(npc.Center, fireallVelocity, ModContent.ProjectileType<FlareDust>(), 640, 0f);
-                        if (Main.projectile.IndexInRange(fireball))
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
+
+                        // Release a burst of very strong fireballs.
+                        for (int i = 0; i < 45; i++)
                         {
-                            Main.projectile[fireball].owner = target.whoAmI;
-                            Main.projectile[fireball].ai[0] = 2f;
+                            Vector2 fireallVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 11f;
+                            Utilities.NewProjectileBetter(npc.Center, fireallVelocity, ModContent.ProjectileType<FlareDust>(), 640, 0f, target.whoAmI, 2f);
                         }
                     }
 
@@ -1767,17 +1764,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Emit very strong fireballs.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > preAttackTime + 100f)
+                if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 100f)
                 {
                     for (int i = 0; i < 3; i++)
-                    {
-                        int fireball = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareDust>(), 640, 0f);
-                        if (Main.projectile.IndexInRange(fireball))
-                        {
-                            Main.projectile[fireball].owner = target.whoAmI;
-                            Main.projectile[fireball].ai[0] = 2f;
-                        }
-                    }
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareDust>(), 640, 0f, target.whoAmI, 0f, 2f);
                 }
 
                 if (npc.life <= 0)

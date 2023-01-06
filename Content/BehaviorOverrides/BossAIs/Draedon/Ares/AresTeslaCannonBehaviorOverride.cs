@@ -97,9 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 orbShootSpeed *= 1.15f;
 
             // Fire the tesla orb.
-            int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f);
-            if (Main.projectile.IndexInRange(electricOrb))
-                Main.projectile[electricOrb].ai[0] = orbCounter;
+            Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f, -1, orbCounter);
 
             orbCounter++;
         }

@@ -261,7 +261,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ApolloPlasmaFireball>(),
                 ModContent.ProjectileType<ApolloRocket>(),
                 ModContent.ProjectileType<ApolloRocketInfernum>(),
-                ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(),
                 ModContent.ProjectileType<AresBeamExplosion>(),
                 ModContent.ProjectileType<AresCannonLaser>(),
                 ModContent.ProjectileType<AresGaussNukeProjectile>(),
@@ -319,7 +318,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1500f;
             int complementMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, complementMechType, 1);
             NPC complementMech = Main.npc[complementMechIndex];
-
+            
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
             complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
             complementMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;

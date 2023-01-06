@@ -17,13 +17,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public Vector2 Destination;
 
-        public float TelegraphDelay
-        {
-            get => Projectile.ai[0];
-            set => Projectile.ai[0] = value;
-        }
+        public ref float TelegraphDelay => ref Projectile.ai[0];
 
-        public bool NoTelegraph => Projectile.localAI[0] == 1f;
+        public bool NoTelegraph
+        {
+            get => Projectile.localAI[0] == 1f;
+            set => Projectile.localAI[0] = value.ToInt();
+        }
 
         public ref float TelegraphTotalTime => ref Projectile.ai[1];
 
@@ -54,15 +54,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(NoTelegraph);
             writer.Write(Time);
+            writer.Write(Lifetime);
             writer.Write(TelegraphShouldAim);
+            writer.Write(Projectile.scale);
             writer.WriteVector2(Destination);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            NoTelegraph = reader.ReadBoolean();
             Time = reader.ReadInt32();
+            Lifetime = reader.ReadInt32();
             TelegraphShouldAim = reader.ReadBoolean();
+            Projectile.scale = reader.ReadSingle();
             Destination = reader.ReadVector2();
         }
 

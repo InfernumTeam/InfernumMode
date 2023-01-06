@@ -6,6 +6,7 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -23,6 +24,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ExoMechManagement.Phase3LifeRatio,
             ExoMechManagement.Phase4LifeRatio
         };
+
+        #region Netcode Syncs
+
+        public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader) => npc.Opacity = reader.ReadSingle();
+
+        #endregion Netcode Syncs
 
         #region AI
 

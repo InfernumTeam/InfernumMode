@@ -5,6 +5,7 @@ using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -40,6 +41,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 2;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Cosmilite);
+            writer.WriteVector2(Start);
+            writer.WriteVector2(End);
+            writer.Write(TrailCache.Count);
+            for (int i = 0; i < TrailCache.Count; i++)
+                writer.WriteVector2(TrailCache[i]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Cosmilite = reader.ReadBoolean();
+            Start = reader.ReadVector2();
+            End = reader.ReadVector2();
+            int trailCount = reader.ReadInt32();
+            for (int i = 0; i < trailCount; i++)
+                TrailCache[i] = reader.ReadVector2();
         }
 
         public override void AI()

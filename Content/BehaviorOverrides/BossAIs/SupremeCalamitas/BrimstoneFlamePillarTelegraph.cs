@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using System.Collections.Generic;
 using Terraria.ID;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -35,9 +36,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int flamePillar = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillar>(), 900, 0f);
-                    if (Main.projectile.IndexInRange(flamePillar))
-                        Main.projectile[flamePillar].BottomLeft = Projectile.Center;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar =>
+                    {
+                        pillar.BottomLeft = Projectile.Center;
+                    });
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillar>(), 900, 0f);
                 }
                 Projectile.Kill();
             }

@@ -1,5 +1,7 @@
 using CalamityMod;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -9,6 +11,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DemonicTelegraphLine : ModProjectile
     {
+        public bool DontMakeProjectile
+        {
+            get => Projectile.localAI[1] == 1f;
+            set => Projectile.localAI[1] = value.ToInt();
+        }
+
         public ref float Time => ref Projectile.ai[0];
 
         public ref float Lifetime => ref Projectile.ai[1];
@@ -28,6 +36,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.timeLeft = 900;
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(BombRadius);
+            writer.Write(DontMakeProjectile);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            BombRadius = reader.ReadSingle();
+            DontMakeProjectile = reader.ReadBoolean();
+        }
+
         public override void AI()
         {
             Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
@@ -41,19 +61,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void Kill(int timeLeft)
         {
-            if (Projectile.localAI[1] != 0f)
+            if (!DontMakeProjectile)
                 return;
 
             SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 bombShootVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 23f;
-                int bomb = Utilities.NewProjectileBetter(Projectile.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
-                if (Main.projectile.IndexInRange(bomb))
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                 {
-                    Main.projectile[bomb].ai[0] = BombRadius;
-                    Main.projectile[bomb].timeLeft = Main.rand.Next(135, 185);
-                }
+                    bomb.timeLeft = Main.rand.Next(135, 185);
+                });
+                Utilities.NewProjectileBetter(Projectile.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, BombRadius);
             }
         }
 

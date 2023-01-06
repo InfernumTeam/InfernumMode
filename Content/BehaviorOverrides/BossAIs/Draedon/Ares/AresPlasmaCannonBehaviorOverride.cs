@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -113,9 +114,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (i >= 1)
                     flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
 
-                int plasmaFireball = Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, plasmaDamage, 0f);
-                if (Main.projectile.IndexInRange(plasmaFireball))
-                    Main.projectile[plasmaFireball].ModProjectile<AresPlasmaFireball>().GasExplosionVariant = gasExplosionVariant;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(plasma =>
+                {
+                    plasma.ModProjectile<AresPlasmaFireball>().GasExplosionVariant = gasExplosionVariant;
+                });
+                Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, plasmaDamage, 0f);
             }
         }
 

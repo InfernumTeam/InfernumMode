@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -12,15 +13,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class LightRayTelegraph : ModProjectile
     {
         public int Lifetime;
+
         public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+
         public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
 
         public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
+
         public Color HueDownscaledRayColor => RayColor * 0.66f;
+
         public ref float RayHue => ref Projectile.ai[0];
+
         public ref float MaximumSpread => ref Projectile.ai[1];
+
         public ref float CurrentSpread => ref Projectile.localAI[0];
+
         public ref float Time => ref Projectile.localAI[1];
+        
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
         public override void SetStaticDefaults()
@@ -36,6 +45,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 900;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Lifetime);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Lifetime = reader.ReadInt32();
         }
 
         public override void AI()

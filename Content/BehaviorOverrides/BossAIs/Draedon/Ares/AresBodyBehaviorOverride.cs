@@ -25,6 +25,8 @@ using Terraria.GameContent.Events;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
+using System.IO;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -87,6 +89,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ExoMechManagement.Ares_EnragedIndex] == 1f;
             }
         }
+
+        #region Netcode Syncs
+
+        public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader) => npc.Opacity = reader.ReadSingle();
+
+        #endregion Netcode Syncs
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -640,12 +650,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < totalLasers; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                    int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
-                    if (Main.projectile.IndexInRange(telegraph))
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                     {
-                        Main.projectile[telegraph].localAI[0] = telegraphTime;
-                        Main.projectile[telegraph].netUpdate = true;
-                    }
+                        telegraph.localAI[0] = telegraphTime;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
                 npc.netUpdate = true;
             }
@@ -666,12 +676,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
-                        if (Main.projectile.IndexInRange(deathray))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
-                            Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
-                            Main.projectile[deathray].netUpdate = true;
-                        }
+                            deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                     }
                     npc.netUpdate = true;
                 }
@@ -856,12 +866,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         for (int i = 0; i < laserbeamCount; i++)
                         {
                             Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
-                            if (Main.projectile.IndexInRange(telegraph))
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                             {
-                                Main.projectile[telegraph].localAI[0] = laserbeamTelegraphTime;
-                                Main.projectile[telegraph].netUpdate = true;
-                            }
+                                telegraph.localAI[0] = laserbeamTelegraphTime;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                         }
                         laserAngularOffset = 0f;
                         npc.netUpdate = true;
@@ -886,12 +896,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                             for (int i = 0; i < laserbeamCount; i++)
                             {
                                 Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
-                                int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(deathray))
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                                 {
-                                    Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
-                                    Main.projectile[deathray].netUpdate = true;
-                                }
+                                    deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
+                                });
+                                Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                             }
 
                             attackTimer = 0f;

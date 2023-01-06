@@ -4,6 +4,7 @@ using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -37,6 +38,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(MaxRadius);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => MaxRadius = reader.ReadSingle();
+
         public override void AI()
         {
             Projectile.scale += 0.08f;
@@ -63,8 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");

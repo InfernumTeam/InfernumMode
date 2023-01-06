@@ -185,10 +185,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 plasma.noGravity = true;
             }
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
-        }
     }
 }

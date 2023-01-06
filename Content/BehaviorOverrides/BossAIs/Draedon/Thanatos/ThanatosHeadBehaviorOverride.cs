@@ -24,6 +24,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using InfernumMode.Core.GlobalInstances.Systems;
+using System.IO;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -62,6 +64,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             ExoMechManagement.Phase4LifeRatio
         };
+
+        #region Netcode Syncs
+
+        public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader) => npc.Opacity = reader.ReadSingle();
+
+        #endregion Netcode Syncs
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
@@ -499,9 +509,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer == initialRedirectTime + 1f)
             {
                 Vector2 bombSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
-                int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExolaserBomb>(), PowerfulShotDamage, 0f);
-                if (Main.projectile.IndexInRange(bomb))
-                    Main.projectile[bomb].ModProjectile<ExolaserBomb>().GrowTime = (int)spinTime;
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
+                {
+                    bomb.ModProjectile<ExolaserBomb>().GrowTime = (int)npc.Infernum().ExtraAI[0];
+                });
+                Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExolaserBomb>(), PowerfulShotDamage, 0f);
             }
 
             // Spin.
@@ -646,9 +659,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     {
                         NPC segmentToFireFrom = segments[Main.rand.Next(0, segments.Count / 3)];
                         Vector2 rotorShootVelocity = segmentToFireFrom.SafeDirectionTo(target.Center).RotatedByRandom(1.6f) * rotorSpeed;
-                        int rotor = Utilities.NewProjectileBetter(segmentToFireFrom.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(rotor))
-                            Main.projectile[rotor].ai[0] = lasersPerRotor;
+                        Utilities.NewProjectileBetter(segmentToFireFrom.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f, -1, lasersPerRotor);
                     }
                 }
             }
@@ -740,14 +751,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         {
                             float lightRayAngularOffset = MathHelper.Lerp(-lightRaySpread, lightRaySpread, i / (float)(totalLightRays - 1f));
 
-                            int lightRayTelegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightRayTelegraph>(), 0, 0f);
-                            if (Main.projectile.IndexInRange(lightRayTelegraph))
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lightRayTelegraph =>
                             {
-                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().RayHue = i / (float)(totalLightRays - 1f);
-                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().MaximumSpread = lightRayAngularOffset;
-                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().Lifetime = lightTelegraphTime;
-                                Main.projectile[lightRayTelegraph].netUpdate = true;
-                            }
+                                lightRayTelegraph.ModProjectile<LightRayTelegraph>().RayHue = i / (float)(totalLightRays - 1f);
+                                lightRayTelegraph.ModProjectile<LightRayTelegraph>().MaximumSpread = lightRayAngularOffset;
+                                lightRayTelegraph.ModProjectile<LightRayTelegraph>().Lifetime = lightTelegraphTime;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightRayTelegraph>(), 0, 0f);
                         }
                     }
                 }
@@ -761,10 +771,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<OverloadBoom>(), 0, 0f);
-
-                    int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), PowerfulShotDamage, 0f);
-                    if (Main.projectile.IndexInRange(light))
-                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.53f;
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), PowerfulShotDamage, 0f, -1, 0f, lightRaySpread * 0.53f);
                 }
             }
 
@@ -834,12 +841,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 for (int i = 0; i < 3; i++)
                 {
                     int type = ModContent.ProjectileType<DetatchedThanatosLaser>();
-                    float shootSpeed = 19f;
+                    float shootSpeed = 12f;
                     Vector2 projectileDestination = target.Center;
                     Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1500f, 1500f);
-                    int laser = Utilities.NewProjectileBetter(spawnPosition, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, StrongerNormalShotDamage, 0f, npc.target, 0f, npc.whoAmI);
-                    if (Main.projectile.IndexInRange(laser))
-                        Main.projectile[laser].ModProjectile<DetatchedThanatosLaser>().InitialDestination = projectileDestination;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                    {
+                        laser.ModProjectile<DetatchedThanatosLaser>().InitialDestination = projectileDestination;
+                    });
+                    Utilities.NewProjectileBetter(spawnPosition, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, StrongerNormalShotDamage, 0f, npc.target, 0f, npc.whoAmI);
                 }
             }
 

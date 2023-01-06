@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -132,9 +133,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Vector2 aimedDirection = (Projectile.SafeDirectionTo(Target.Center) + aimedOffset).SafeNormalize(Vector2.UnitY);
                     laserDirection = Vector2.Lerp(laserDirection, aimedDirection, PointAtTargetInterpolant);
                     Vector2 laserVelocity = laserDirection * laserShootSpeed;
-                    int spark = Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
-                    if (Main.projectile.IndexInRange(spark))
-                        Main.projectile[spark].MaxUpdates = 3;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spark => spark.MaxUpdates = 3);
+                    Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
                 }
             }
         }

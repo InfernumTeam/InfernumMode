@@ -11,7 +11,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
     public class ArtemisGatlingLaser : ModProjectile
     {
         public ref float TelegraphDelay => ref Projectile.ai[0];
+
+        public ref float PositionOffsetVariant => ref Projectile.localAI[0];
+
         public ref float InitialSpeed => ref Projectile.localAI[1];
+
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
 
         public Vector2 InitialDestination;
@@ -45,6 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(PositionOffsetVariant);
             writer.Write(InitialSpeed);
             writer.WriteVector2(Destination);
             writer.WriteVector2(Velocity);
@@ -53,6 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            PositionOffsetVariant = reader.ReadSingle();
             InitialSpeed = reader.ReadSingle();
             Destination = reader.ReadVector2();
             Velocity = reader.ReadVector2();
@@ -90,11 +96,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             // Fade in after telegraphs have faded.
             float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
-            if (Projectile.localAI[0] != 0f)
+            if (PositionOffsetVariant != 0f)
                 positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 58f : 30f;
             Vector2 overallOffset = (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
-            if (Projectile.localAI[0] != 0f)
-                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * Projectile.localAI[0] * 88f;
+            if (PositionOffsetVariant != 0f)
+                overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * PositionOffsetVariant * 88f;
 
             if (TelegraphDelay > TelegraphTotalTime)
             {

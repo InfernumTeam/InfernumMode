@@ -6,6 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -361,9 +362,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             Vector2 spawnOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 1650f + Main.rand.NextVector2Circular(130f, 130f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
-                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 455, 0f);
-                            if (Main.projectile.IndexInRange(laser))
-                                Main.projectile[laser].MaxUpdates = 3;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                            {
+                                laser.MaxUpdates = 3;
+                            });
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 455, 0f);
                         }
                     }
                 }
@@ -387,10 +391,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 2150f;
-                    portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
 
-                    Main.projectile[(int)portalIndex].localAI[0] = 1f;
-                    Main.projectile[(int)portalIndex].localAI[1] = DoGPhase2IntroPortalGate.Phase2AnimationTime;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                    {
+                        portal.localAI[0] = 1f;
+                        portal.localAI[1] = DoGPhase2IntroPortalGate.Phase2AnimationTime;
+                    });
+                    portalIndex = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                 }
 
                 int headType = ModContent.NPCType<DoGHead>();

@@ -11,14 +11,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public ref float TelegraphDelay => ref Projectile.ai[0];
-
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
+
+        public ref float TelegraphDelay => ref Projectile.ai[0];
 
         public ref float TelegraphLifetime => ref Projectile.localAI[0];
 
         public Vector2 OldVelocity;
+        
         public const float TelegraphFadeTime = 8f;
+
         public const float TelegraphWidth = 4000f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Overload Telegraph");

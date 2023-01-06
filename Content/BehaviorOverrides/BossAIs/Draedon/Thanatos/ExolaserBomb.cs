@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -41,6 +42,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.scale = 0.2f;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(GrowTime);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => GrowTime = reader.ReadInt32();
 
         public override void AI()
         {

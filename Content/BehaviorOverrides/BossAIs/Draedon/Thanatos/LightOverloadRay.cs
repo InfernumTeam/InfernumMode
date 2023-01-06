@@ -94,8 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             spriteBatch.SetBlendState(BlendState.Additive);
 
-            if (LaserDrawer is null)
-                LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            LaserDrawer ??= new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.14f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);

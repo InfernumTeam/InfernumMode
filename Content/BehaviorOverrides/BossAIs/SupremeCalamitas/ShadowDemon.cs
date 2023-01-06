@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -84,6 +85,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.dontTakeDamage = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Heads.Length);
+            for (int i = 0; i < Heads.Length; i++)
+            {
+                writer.Write(Heads[i].HoverOffset);
+                writer.Write(Heads[i].HoverOffsetAngle);
+                writer.WriteVector2(Heads[i].Center);
+                writer.WriteVector2(Heads[i].Velocity);
+            }
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            int headCount = reader.ReadInt32();
+            for (int i = 0; i < headCount; i++)
+            {
+                Heads[i].HoverOffset = reader.ReadSingle();
+                Heads[i].HoverOffsetAngle = reader.ReadSingle();
+                Heads[i].Center = Heads[i].Center;
+                Heads[i].Velocity = reader.ReadVector2();
+            }
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.life = 20000;

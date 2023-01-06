@@ -19,6 +19,7 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBod
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -170,13 +171,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                     {
                                         Vector2 aimDestination = npc.Center + (MathHelper.TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
                                         Vector2 laserShootVelocity = npc.SafeDirectionTo(aimDestination) * 7.25f;
-                                        int laser = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), 500, 0f);
-                                        if (Main.projectile.IndexInRange(laser))
+
+                                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                                         {
-                                            Main.projectile[laser].ModProjectile<ArtemisLaserInfernum>().InitialDestination = aimDestination + laserShootVelocity.SafeNormalize(Vector2.UnitY) * 1600f;
-                                            Main.projectile[laser].ai[1] = npc.whoAmI;
-                                            Main.projectile[laser].netUpdate = true;
-                                        }
+                                            laser.ModProjectile<ArtemisLaserInfernum>().InitialDestination = aimDestination + laserShootVelocity.SafeNormalize(Vector2.UnitY) * 1600f;
+                                        });
+                                        Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), 500, 0f, -1, 0f, npc.whoAmI);
                                     }
                                 }
                             }
@@ -306,9 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                         int type = ModContent.ProjectileType<ApolloRocketInfernum>();
                                         Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 12.5f;
                                         Vector2 rocketSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 70f;
-                                        int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, NormalShotDamage, 0f, Main.myPlayer, 0f, target.Center.Y);
-                                        if (Main.projectile.IndexInRange(rocket))
-                                            Main.projectile[rocket].tileCollide = false;
+                                        Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, NormalShotDamage, 0f, Main.myPlayer, 0f, target.Center.Y);
                                     }
                                 }
 
@@ -420,19 +418,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     {
                         for (int i = 0; i < aresLaserbeamCount; i++)
                         {
-                            int beam = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
-                            float offsetAngle = MathHelper.PiOver2 + MathHelper.TwoPi * i / aresLaserbeamCount;
-
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
-                            if (Main.projectile.IndexInRange(beam))
+                            float squishedRatio = (float)Math.Pow((float)Math.Sin(MathHelper.Pi * b / 7f), 2D);
+                            float smoothenedRatio = MathHelper.SmoothStep(0f, 1f, squishedRatio);
+                            float offsetAngle = MathHelper.PiOver2 + MathHelper.TwoPi * i / aresLaserbeamCount;
+                            float telegraphStartingAngle = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + offsetAngle;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraphBeam =>
                             {
-                                float squishedRatio = (float)Math.Pow((float)Math.Sin(MathHelper.Pi * b / 7f), 2D);
-                                float smoothenedRatio = MathHelper.SmoothStep(0f, 1f, squishedRatio);
-                                Main.projectile[beam].ai[0] = npc.whoAmI;
-                                Main.projectile[beam].localAI[0] = offsetAngle;
-                                Main.projectile[beam].ai[1] = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + Main.projectile[beam].localAI[0];
-                                Main.projectile[beam].netUpdate = true;
-                            }
+                                telegraphBeam.localAI[0] = offsetAngle;
+                            });
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, type, 0, 0f, Main.myPlayer, npc.whoAmI, telegraphStartingAngle);
                         }
                     }
                 }
@@ -557,9 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 plasmaShootVelocity = aimDirection * normalShotShootSpeed;
-                                int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
-                                if (Main.projectile.IndexInRange(plasma))
-                                    Main.projectile[plasma].ai[0] = Main.rand.NextBool().ToDirectionInt();
+                                Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f, -1, Main.rand.NextBool().ToDirectionInt());
                             }
                         }
                         else
@@ -569,13 +563,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 laserShootVelocity = aimDirection * normalShotShootSpeed;
-                                int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), NormalShotDamage, 0f);
-                                if (Main.projectile.IndexInRange(laser))
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                                 {
-                                    Main.projectile[laser].ModProjectile<ArtemisLaserInfernum>().InitialDestination = aimDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
+                                    laser.ModProjectile<ArtemisLaserInfernum>().InitialDestination = aimDestination;
+                                });
+                                Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), NormalShotDamage, 0f, -1, 0f, npc.whoAmI);
                             }
                         }
 

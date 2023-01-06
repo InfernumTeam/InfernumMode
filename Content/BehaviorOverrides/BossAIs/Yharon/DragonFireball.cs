@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -33,6 +34,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.tileCollide);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.tileCollide = reader.ReadBoolean();
 
         public override void AI()
         {

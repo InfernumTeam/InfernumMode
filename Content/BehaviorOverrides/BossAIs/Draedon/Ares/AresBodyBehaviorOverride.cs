@@ -679,7 +679,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
-                            deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
+                            deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
                         });
                         Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                     }

@@ -4,6 +4,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Netcode;
 using InfernumMode.Particles;
 using InfernumMode.Projectiles;
 using InfernumMode.Sounds;

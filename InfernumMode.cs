@@ -5,6 +5,7 @@ using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
+using InfernumMode.Netcode;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Systems;
 using System.IO;
@@ -119,7 +120,7 @@ namespace InfernumMode
             Utilities.UpdateMapIconList();
         }
 
-        public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
+        public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketHandler.ReceivePacket(this, reader, whoAmI);
 
         public override void AddRecipes() => RecipeUpdates.Update();
 

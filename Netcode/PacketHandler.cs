@@ -11,53 +11,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode
+namespace InfernumMode.Netcode
 {
-    public enum InfernumPacketType : short
-    {
-        SendExtraNPCData,
-        SyncInfernumActive,
-        SummonExoMech,
-        UpdateTwinsAttackSynchronizer
-    }
-
-    public class InfernumNPCSyncInformation
-    {
-        public int NPCIndex = -1;
-        public int CachedRealLife = -1;
-        public int TotalUniqueIndicesUsed;
-        public int TotalPlayersAtStart;
-        public int[] ExtraAIIndicesUsed;
-        public float[] ExtraAIValues;
-        public Rectangle ArenaRectangle;
-
-        public bool TryToApplyToNPC()
-        {
-            if (NPCIndex < 0)
-                return true;
-
-            // If the NPC is not active, it is possible that the packet which initialized the NPC has not been sent yet.
-            // If so, wait until that happens.
-            if (!Main.npc[NPCIndex].active)
-                return false;
-
-            if (CachedRealLife >= 0)
-                Main.npc[NPCIndex].realLife = CachedRealLife;
-            for (int i = 0; i < TotalUniqueIndicesUsed; i++)
-            {
-                Main.npc[NPCIndex].Infernum().HasAssociatedAIBeenUsed[ExtraAIIndicesUsed[i]] = true;
-                Main.npc[NPCIndex].Infernum().ExtraAI[ExtraAIIndicesUsed[i]] = ExtraAIValues[i];
-            }
-            if (ArenaRectangle != default && Main.npc[NPCIndex].Infernum().Arena == default)
-                Main.npc[NPCIndex].Infernum().Arena = ArenaRectangle;
-
-            Main.npc[NPCIndex].Infernum().TotalPlayersAtStart = TotalPlayersAtStart;
-
-            return true;
-        }
-    }
-
-    public static class NetcodeHandler
+    public static class PacketHandler
     {
         internal static List<InfernumNPCSyncInformation> PendingSyncs = new();
 
@@ -76,7 +32,7 @@ namespace InfernumMode
             packet.Write(containmentFlagWrapper);
             packet.Send(-1, sender);
         }
-
+        
         public static void RecieveInfernumActivitySync(BinaryReader reader)
         {
             int sender = reader.ReadInt32();
@@ -163,7 +119,7 @@ namespace InfernumMode
                     Player player = Main.player[reader.ReadInt16()];
                     DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon = (ExoMech)reader.ReadInt32();
                     DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon = (ExoMech)reader.ReadInt32();
-                    DraedonBehaviorOverride.SummonExoMech(player);                    
+                    DraedonBehaviorOverride.SummonExoMech(player);
                     break;
                 case InfernumPacketType.UpdateTwinsAttackSynchronizer:
                     TwinsAttackSynchronizer.ReadFromPacket(reader);

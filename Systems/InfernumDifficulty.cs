@@ -1,5 +1,6 @@
 using CalamityMod.Systems;
 using CalamityMod.World;
+using InfernumMode.Netcode;
 using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,7 +26,7 @@ namespace InfernumMode.Systems
                 if (value)
                     CalamityWorld.revenge = true;
                 if (Main.netMode != NetmodeID.SinglePlayer)
-                    NetcodeHandler.SyncInfernumActivity(Main.myPlayer);
+                    PacketHandler.SyncInfernumActivity(Main.myPlayer);
             }
         }
 

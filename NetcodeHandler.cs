@@ -137,7 +137,20 @@ namespace InfernumMode
                     if (!syncInformation.TryToApplyToNPC())
                         PendingSyncs.Add(syncInformation);
                     else if (InfernumMode.CanUseCustomAIs)
-                        Main.npc[npcIndex].BehaviorOverride<NPCBehaviorOverride>()?.ReceiveExtraData(Main.npc[npcIndex], reader);
+                    {
+                        var behaviorOverride = Main.npc[npcIndex].BehaviorOverride<NPCBehaviorOverride>();
+
+                        // If the behavior override is not registered for some reason, ensure that there aren't any leftover bytes to read by the end.
+                        if (behaviorOverride is null && Main.npc[npcIndex].active)
+                        {
+                            long remainingBytesToRead = reader.BaseStream.Length - reader.BaseStream.Position;
+                            reader.ReadBytes((int)remainingBytesToRead);
+                        }
+
+                        // Otherwise, read the data as dictatedby the behavior override.
+                        else
+                            behaviorOverride.ReceiveExtraData(Main.npc[npcIndex], reader);
+                    }
                     break;
 
                 case InfernumPacketType.SyncInfernumActive:

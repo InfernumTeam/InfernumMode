@@ -759,9 +759,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         pillarSpawnPosition.Y -= 640f;
                     }
 
-                    int pillar = Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f);
-                    if (Main.projectile.IndexInRange(pillar))
-                        Main.projectile[pillar].ai[1] = wallCreationCounter % 2f;
+                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f, -1, 0f, wallCreationCounter % 2f);
                 }
                 wallCreationCounter++;
                 npc.netUpdate = true;

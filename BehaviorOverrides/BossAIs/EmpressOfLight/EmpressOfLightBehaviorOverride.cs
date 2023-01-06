@@ -9,12 +9,13 @@ using Terraria.GameContent;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using CalamityMod;
-using Terraria.Graphics.Effects;
 using CalamityMod.Events;
 using Terraria.Audio;
 using System.Linq;
 using System.Collections.Generic;
 using Terraria.GameContent.Events;
+using System.IO;
+using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -140,6 +141,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         };
 
         #endregion Constants and Attack Patterns
+
+        #region Netcode Syncing
+
+        public override void SendExtraData(NPC npc, ModPacket writer)
+        {
+            writer.Write(npc.Opacity);
+        }
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader)
+        {
+            npc.Opacity = reader.ReadSingle();
+        }
+
+        #endregion Netcode Syncing
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
@@ -430,12 +445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     float castCompletionInterpolant = Utils.GetLerpValue(boltReleaseDelay, boltReleaseDelay + boltReleaseTime, attackTimer, true);
                     Vector2 boltVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * castCompletionInterpolant) * boltSpeed;
-                    int bolt = Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
-                    if (Main.projectile.IndexInRange(bolt))
-                    {
-                        Main.projectile[bolt].ai[0] = npc.target;
-                        Main.projectile[bolt].ai[1] = castCompletionInterpolant;
-                    }
+                    Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f, -1, npc.target, castCompletionInterpolant);
                 }
             }
 
@@ -536,9 +546,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         for (int j = 0; j < boltCount; j++)
                         {
                             Vector2 boltShootVelocity = (MathHelper.TwoPi * j / boltCount + telegraphRotation).ToRotationVector2() * boltShootSpeed;
-                            int bolt = Utilities.NewProjectileBetter(handPosition, boltShootVelocity, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), PrismaticBoltDamage, 0f);
-                            if (Main.projectile.IndexInRange(bolt))
-                                Main.projectile[bolt].ai[1] = j / boltCount;
+                            Utilities.NewProjectileBetter(handPosition, boltShootVelocity, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), PrismaticBoltDamage, 0f, -1, 0f, j / boltCount);
                         }
                         Utilities.NewProjectileBetter(handPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
 
@@ -631,12 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Main.netMode != NetmodeID.MultiplayerClient && boltReleaseRate >= 1 && attackTimer % boltReleaseRate == boltReleaseRate - 1f)
                 {
                     Vector2 boltVelocity = Main.rand.NextVector2Circular(8f, 8f);
-                    int bolt = Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
-                    if (Main.projectile.IndexInRange(bolt))
-                    {
-                        Main.projectile[bolt].ai[0] = npc.target;
-                        Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
-                    }
+                    Utilities.NewProjectileBetter(npc.Center, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f, -1, npc.target, Main.rand.NextFloat());
                 }
             }
             else
@@ -732,25 +735,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                     for (int i = 0; i < lanceCount; i++)
                     {
+                        float lanceHue = i / (float)lanceCount;
                         Vector2 orthogonalOffset = offsetOrthogonalDirection * MathHelper.Lerp(-1f, 1f, i / (float)(lanceCount - 1f));
                         Vector2 lanceDestination = target.Center + orthogonalOffset.RotatedBy(MathHelper.PiOver2) * targetCircleOffset;
                         Vector2 lanceSpawnPosition = target.Center + lanceOffset + orthogonalOffset * lanceSpawnOffset * 0.8f;
 
-                        int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                        if (Main.projectile.IndexInRange(lance))
-                        {
-                            Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
-                            Main.projectile[lance].ai[1] = i / (float)lanceCount;
-                        }
+                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
 
                         lanceSpawnPosition = target.Center + lanceOffset - orthogonalOffset * lanceSpawnOffset * 0.8f;
-
-                        lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                        if (Main.projectile.IndexInRange(lance))
-                        {
-                            Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
-                            Main.projectile[lance].ai[1] = i / (float)lanceCount;
-                        }
+                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
                     }
                     lanceBarrageCounter++;
                     if (lanceBarrageCounter >= lanceBarrageCount)
@@ -803,12 +796,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
-                        int prism = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(prism))
-                        {
-                            Main.projectile[prism].ai[0] = attackTimer - (wispFormEnterTime + spinTime) - laserReleaseDelay;
-                            Main.projectile[prism].ai[1] = npc.target;
-                        }
+
+                        float shootDelay = attackTimer - (wispFormEnterTime + spinTime) - laserReleaseDelay;
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f, -1, shootDelay, npc.target);
                     }
                 }
 
@@ -820,12 +810,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Vector2 handOffset = new(55f, -30f);
                     Vector2 handPosition = npc.Center + handOffset;
-                    int bolt = Utilities.NewProjectileBetter(handPosition, Vector2.UnitY.RotatedByRandom(0.6f) * 10f, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
+                    int bolt = Utilities.NewProjectileBetter(handPosition, Vector2.UnitY.RotatedByRandom(0.6f) * 10f, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f, -1, 0f, Main.rand.NextFloat());
                     if (Main.projectile.IndexInRange(bolt))
-                    {
-                        Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
                         Main.projectile[bolt].localAI[0] = 0.75f;
-                    }
                 }
             }
 
@@ -932,15 +919,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
-                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)swordCount);
-                        if (Main.projectile.IndexInRange(sword))
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(sword =>
                         {
-                            Main.projectile[sword].ModProjectile<EmpressSword>().SwordIndex = i;
-                            Main.projectile[sword].ModProjectile<EmpressSword>().SwordCount = swordCount;
-                            Main.projectile[sword].ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
-                            Main.projectile[sword].ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
-                            Main.projectile[sword].netUpdate = true;
-                        }
+                            sword.ModProjectile<EmpressSword>().SwordIndex = i;
+                            sword.ModProjectile<EmpressSword>().SwordCount = swordCount;
+                            sword.ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
+                            sword.ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
+                        });
+
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)swordCount);
                     }
                     npc.netUpdate = true;
                 }
@@ -984,13 +971,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 lanceDestination = target.Center + target.velocity * 20f;
                         for (int i = 0; i < lanceCount; i++)
                         {
+                            float lanceHue = i / (float)lanceCount;
                             Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, i / (float)lanceCount) * lanceWallSize;
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                            if (Main.projectile.IndexInRange(lance))
-                            {
-                                Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
-                                Main.projectile[lance].ai[1] = i / (float)lanceCount;
-                            }
+                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
                         }
                     }
                 }
@@ -1000,7 +983,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer >= swordSummonDelay + attackTimePerSword * swordAttackCount + EmpressSword.AttackDelay)
             {
                 foreach (Projectile sword in Utilities.AllProjectilesByID(ModContent.ProjectileType<EmpressSword>()))
+                {
                     sword.timeLeft = 30;
+                    sword.netUpdate = true;
+                }
 
                 SelectNextAttack(npc);
             }
@@ -1050,9 +1036,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightOrb>(), 0, 0f);
-                    if (Main.projectile.IndexInRange((int)lightOrb))
-                        Main.projectile[(int)lightOrb].ai[1] = npc.whoAmI;
+                    lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightOrb>(), 0, 0f, -1, 0f, npc.whoAmI);
                     npc.netUpdate = true;
                 }
             }
@@ -1093,7 +1077,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
 
             if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 120f)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<LightOverloadBeam>());
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_ShimmeringDiamondLanceBarrage(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
@@ -1225,14 +1212,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 baseSpawnPosition = target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset;
                         for (int j = 0; j < lanceCount; j++)
                         {
+                            float lanceHue = j / (float)lanceCount;
                             Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, j / (float)lanceCount) * lanceSpawnOffset;
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                            if (Main.projectile.IndexInRange(lance))
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                             {
-                                Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
-                                Main.projectile[lance].ai[1] = j / (float)lanceCount;
-                                Main.projectile[lance].localAI[1] = lanceSpawnOffset * 4f;
-                            }
+                                lance.localAI[1] = lanceSpawnOffset * 4f;
+                            });
+                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
                         }
                     }
 
@@ -1240,15 +1227,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     lanceCount *= 3;
                     for (int i = 0; i < lanceCount; i++)
                     {
+                        float lanceHue = i / (float)lanceCount;
                         float offsetAngle = MathHelper.TwoPi * i / lanceCount;
                         Vector2 lanceSpawnPosition = target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset * 1.414f;
-                        int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f);
-                        if (Main.projectile.IndexInRange(lance))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                         {
-                            Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
-                            Main.projectile[lance].ai[1] = i / (float)lanceCount;
-                            Main.projectile[lance].localAI[1] = lanceSpawnOffset * 4f;
-                        }
+                            lance.localAI[1] = lanceSpawnOffset * 4f;
+                        });
+                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
                     }
                 }
             }
@@ -1306,14 +1293,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         for (int j = -1; j <= 1; j += 2)
                         {
-                            int laser = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<SpinningPrismLaserbeam>(), laserDamage, 0f);
-                            if (Main.projectile.IndexInRange(laser))
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                             {
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().LaserbeamIDRatio = MathHelper.Lerp(-0.5f, 0.5f, i / (float)laserbeamCount) * laserbeamCount;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().VerticalSpinDirection = j;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().AngularOffset = MathHelper.PiOver2 - maxTelegraphTilt;
-                                Main.projectile[laser].ModProjectile<SpinningPrismLaserbeam>().LaserCount = laserbeamCount;
-                            }
+                                laser.ModProjectile<SpinningPrismLaserbeam>().LaserbeamIDRatio = MathHelper.Lerp(-0.5f, 0.5f, i / (float)laserbeamCount) * laserbeamCount;
+                                laser.ModProjectile<SpinningPrismLaserbeam>().VerticalSpinDirection = j;
+                                laser.ModProjectile<SpinningPrismLaserbeam>().AngularOffset = MathHelper.PiOver2 - maxTelegraphTilt;
+                                laser.ModProjectile<SpinningPrismLaserbeam>().LaserCount = laserbeamCount;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<SpinningPrismLaserbeam>(), laserDamage, 0f);
                         }
                     }
                 }
@@ -1339,15 +1326,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         float hueOffset = Main.rand.NextFloat();
                         for (int i = 0; i < lanceCount; i++)
                         {
+                            float lanceHue = (i / (float)lanceCount + hueOffset) % 1f;
                             Vector2 lanceDirection = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.12f, 0.12f, i / (float)(lanceCount - 1f)));
                             Vector2 lanceSpawnPosition = npc.Center + lanceDirection * 50f;
-
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                            if (Main.projectile.IndexInRange(lance))
-                            {
-                                Main.projectile[lance].ai[0] = lanceDirection.ToRotation();
-                                Main.projectile[lance].ai[1] = (i / (float)lanceCount + hueOffset) % 1f;
-                            }
+                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceDirection.ToRotation(), lanceHue);
                         }
                     }
                 }
@@ -1379,16 +1361,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootDelay && attackTimer % lanceShootRate == lanceShootRate - 1f && attackTimer < shootDelay + lanceShootTime)
             {
+                float lanceHue = (attackTimer - shootDelay) / lanceCircleTime % 1f;
                 Vector2 circleOffset = (MathHelper.TwoPi * (attackTimer - shootDelay) / lanceCircleTime).ToRotationVector2() * 700f;
                 Vector2 lanceSpawnPosition = target.Center + circleOffset;
                 float lanceShootDirection = (target.Center + target.velocity * 45f - lanceSpawnPosition).ToRotation();
-
-                int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
-                if (Main.projectile.IndexInRange(lance))
-                {
-                    Main.projectile[lance].ai[0] = lanceShootDirection;
-                    Main.projectile[lance].ai[1] = (attackTimer - shootDelay) / lanceCircleTime % 1f;
-                }
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceShootDirection, lanceHue);
             }
 
             if (attackTimer >= shootDelay + lanceShootTime + attackTransitionDelay)

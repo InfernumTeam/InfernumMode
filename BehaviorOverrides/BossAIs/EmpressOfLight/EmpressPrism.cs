@@ -46,11 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int laserbeam = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f);
-                    if (Main.projectile.IndexInRange(laserbeam))
-                        Main.projectile[laserbeam].ai[0] = Projectile.identity;
-                }
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity);
             }
             Time++;
         }

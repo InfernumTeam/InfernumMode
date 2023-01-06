@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class LightOrb : ModProjectile
     {
-        public PrimitiveTrailCopy FireDrawer;
+        public PrimitiveTrailCopy EnergyBeamDrawer;
 
         public NPC Owner => Main.npc.IndexInRange((int)Projectile.ai[1]) && Main.npc[(int)Projectile.ai[1]].active ? Main.npc[(int)Projectile.ai[1]] : null;
 
@@ -74,9 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int i = 0; i < LaserCount; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                    int laser = Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f);
-                    if (Main.projectile.IndexInRange(laser))
-                        Main.projectile[laser].ai[0] = Owner.whoAmI;
+                    Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Owner.whoAmI);
                 }
             }
 
@@ -101,13 +100,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Vector2 spiralVelocity = (MathHelper.TwoPi * (Time - LaserReleaseDelay) / 200f).ToRotationVector2() * (speedAdditive + 12f);
                 spiralVelocity = Vector2.Lerp(spiralVelocity, Projectile.SafeDirectionTo(target.Center) * spiralVelocity.Length(), aimAtTargetInterpolant * 0.95f);
 
-                int bolt = Utilities.NewProjectileBetter(Projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), EmpressOfLightBehaviorOverride.PrismaticBoltDamage, 0f);
-                if (Main.projectile.IndexInRange(bolt))
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bolt =>
                 {
-                    Main.projectile[bolt].ai[0] = target.whoAmI;
-                    Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
-                    Main.projectile[bolt].localAI[0] = speedFactor;
-                }
+                    bolt.localAI[0] = speedFactor;
+                });
+
+                Utilities.NewProjectileBetter(Projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), EmpressOfLightBehaviorOverride.PrismaticBoltDamage, 0f, -1, target.whoAmI, Main.rand.NextFloat());
             }
 
             Time++;
@@ -127,8 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (Owner is null || !Owner.active)
                 return false;
 
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, InfernumEffectsRegistry.PrismaticRayVertexShader);
+            EnergyBeamDrawer ??= new PrimitiveTrailCopy(OrbWidthFunction, OrbColorFunction, null, true, InfernumEffectsRegistry.PrismaticRayVertexShader);
 
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.25f);
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
@@ -167,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 3f));
                 }
 
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 30);
+                EnergyBeamDrawer.Draw(drawPoints, -Main.screenPosition, 30);
             }
             Main.spriteBatch.ExitShaderRegion();
             return false;

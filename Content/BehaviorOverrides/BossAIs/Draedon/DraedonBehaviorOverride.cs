@@ -311,19 +311,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                     break;
 
                 case 3:
-                    if (useMultiplayerPTJokeText)
-                    {
-                        Utilities.DisplayText("OK", TextColor);
-                        break;
-                    }
-
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
+                        if (useMultiplayerPTJokeText)
+                        {
+                            Utilities.DisplayText("OK", TextColor);
+                            break;
+                        }
                         Utilities.DisplayText("Your efforts are very intriguing.", TextColor);
                         npc.netUpdate = true;
                     }
 
-                    if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
+                    if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine && !useMultiplayerPTJokeText)
                     {
                         SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);

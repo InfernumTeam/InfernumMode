@@ -50,11 +50,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(Lifetime);
+            writer.Write(CurrentSpread);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Lifetime = reader.ReadInt32();
+            CurrentSpread = reader.ReadSingle();
         }
 
         public override void AI()

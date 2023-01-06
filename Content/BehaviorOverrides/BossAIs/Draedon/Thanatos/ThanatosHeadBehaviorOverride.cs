@@ -753,11 +753,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lightRayTelegraph =>
                             {
-                                lightRayTelegraph.ModProjectile<LightRayTelegraph>().RayHue = i / (float)(totalLightRays - 1f);
-                                lightRayTelegraph.ModProjectile<LightRayTelegraph>().MaximumSpread = lightRayAngularOffset;
                                 lightRayTelegraph.ModProjectile<LightRayTelegraph>().Lifetime = lightTelegraphTime;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightRayTelegraph>(), 0, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightRayTelegraph>(), 0, 0f, -1, i / (float)(totalLightRays - 1f), lightRayAngularOffset);
                         }
                     }
                 }

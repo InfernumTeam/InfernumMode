@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -54,6 +55,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (!NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
                 Projectile.active = false;
 
+            NPC thanatos = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+            if (thanatos.ai[0] != (int)ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ExoBomb)
+                Projectile.active = false;
+
             if (Projectile.timeLeft < 60f)
             {
                 Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);
@@ -89,8 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);

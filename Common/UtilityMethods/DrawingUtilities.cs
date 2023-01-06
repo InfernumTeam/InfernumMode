@@ -363,7 +363,7 @@ namespace InfernumMode
         {
             if (Main.netMode == NetmodeID.SinglePlayer)
                 Main.NewText(text, color ?? Color.White);
-            else
+            else if (Main.netMode == NetmodeID.Server)
                 ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
 

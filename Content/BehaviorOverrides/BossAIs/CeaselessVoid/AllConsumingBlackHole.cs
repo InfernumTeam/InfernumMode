@@ -4,6 +4,7 @@ using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -66,17 +67,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float leftOffsetAngle = MathHelper.PiOver2 - MathHelper.Pi * 0.3f;
                     float rightOffsetAngle = MathHelper.PiOver2 + MathHelper.Pi * 0.3f;
-                    int slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
-                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - leftOffsetAngle.ToRotationVector2() * 1100f;
-                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + leftOffsetAngle.ToRotationVector2() * 1100f;
 
-                    slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
-                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - rightOffsetAngle.ToRotationVector2() * 1100f;
-                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + rightOffsetAngle.ToRotationVector2() * 1100f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slice =>
+                    {
+                        slice.ModProjectile<RealitySlice>().Start = Projectile.Center - leftOffsetAngle.ToRotationVector2() * 1100f;
+                        slice.ModProjectile<RealitySlice>().End = Projectile.Center + leftOffsetAngle.ToRotationVector2() * 1100f;
+                    });
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
 
-                    slice = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
-                    Main.projectile[slice].ModProjectile<RealitySlice>().Start = Projectile.Center - Vector2.UnitY * 1400f;
-                    Main.projectile[slice].ModProjectile<RealitySlice>().End = Projectile.Center + Vector2.UnitY * 1400f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slice =>
+                    {
+                        slice.ModProjectile<RealitySlice>().Start = Projectile.Center - rightOffsetAngle.ToRotationVector2() * 1100f;
+                        slice.ModProjectile<RealitySlice>().End = Projectile.Center + rightOffsetAngle.ToRotationVector2() * 1100f;
+                    });
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slice =>
+                    {
+                        slice.ModProjectile<RealitySlice>().Start = Projectile.Center - Vector2.UnitY * 1400f;
+                        slice.ModProjectile<RealitySlice>().End = Projectile.Center + Vector2.UnitY * 1400f;
+                    });
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
                 }
             }
 

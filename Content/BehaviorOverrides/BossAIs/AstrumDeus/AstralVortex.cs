@@ -9,6 +9,7 @@ using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
@@ -46,6 +47,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.scale = 1f;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(FlameSpawnRate);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => FlameSpawnRate = reader.ReadInt32();
 
         public override void AI()
         {
@@ -93,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     Projectile.velocity *= 0.9f;
 
                 // Idly create debris crystals.
-                if (Timer % FlameSpawnRate == FlameSpawnRate - 1)
+                if (FlameSpawnRate >= 1f && Timer % FlameSpawnRate == FlameSpawnRate - 1)
                 {
                     Vector2 crystalSpawnPosition = Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 200f) * Projectile.scale;
                     if (!Main.player[Player.FindClosest(crystalSpawnPosition, 1, 1)].WithinRange(crystalSpawnPosition, 300f))

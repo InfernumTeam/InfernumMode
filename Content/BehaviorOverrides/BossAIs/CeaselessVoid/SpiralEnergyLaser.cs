@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,6 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         // Do not change these unless you are absolutely sure you know how to fix the wave math.
         private const float WaveTheta = 0.038f;
+        
         private const int WaveTwistFrames = 9;
 
         private ref float WaveFrameState => ref Projectile.localAI[1];
@@ -39,6 +41,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(WaveFrameState);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => WaveFrameState = reader.ReadSingle();
 
         public override void AI()
         {

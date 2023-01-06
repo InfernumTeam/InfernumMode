@@ -396,15 +396,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     {
                         Vector2 spawnOffset = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * 1600f + shootOffsetAngle.ToRotationVector2() * dx;
                         Vector2 maxShootVelocity = Vector2.UnitY.RotatedBy(shootOffsetAngle) * 9f;
-                        int telegraph = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[1] = maxShootVelocity.Length();
-                        int wave = Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.15f, ProjectileID.FrostWave, 260, 0f);
-                        if (Main.projectile.IndexInRange(wave))
-                        {
-                            Main.projectile[wave].ai[0] = -delayBeforeFiring;
-                            Main.projectile[wave].ai[1] = maxShootVelocity.Length();
-                        }
+                        Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f, -1, 0f, maxShootVelocity.Length());
+                        Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.15f, ProjectileID.FrostWave, 260, 0f, -1, -delayBeforeFiring, maxShootVelocity.Length());
                     }
                 }
                 lightningSkyBrightness = MaxLightningBrightness;

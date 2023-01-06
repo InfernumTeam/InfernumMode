@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -204,9 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         for (int i = 0; i < boltSpreadCount; i++)
                         {
                             Vector2 eyeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / boltSpreadCount + temporalOffsetAngle) * 8f;
-                            int eye = Utilities.NewProjectileBetter(eyeSpawnPosition, eyeVelocity, ModContent.ProjectileType<NonHomingPhantasmalEye>(), 215, 0f);
-                            if (Main.projectile.IndexInRange(eye))
-                                Main.projectile[eye].ai[1] = eyeAngularVelocity;
+                            Utilities.NewProjectileBetter(eyeSpawnPosition, eyeVelocity, ModContent.ProjectileType<NonHomingPhantasmalEye>(), 215, 0f, -1, 0f, eyeAngularVelocity);
                         }
                     }
                 }
@@ -215,9 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 asteroidSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(780f, 780f);
                     Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
-                    int asteroid = Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f);
-                    if (Main.projectile.IndexInRange(asteroid))
-                        Main.projectile[asteroid].ai[0] = core.whoAmI;
+                    Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f, -1, core.whoAmI);
                 }
             }
 
@@ -293,12 +290,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         {
                             float angularVelocity = (pressureLaserEndingAngularOffset - pressureLaserStartingAngularOffset) / laserLifetime * i * 0.5f;
                             Vector2 laserDirection = npc.SafeDirectionTo(target.Center).RotatedBy(pressureLaserStartingAngularOffset * i);
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PressurePhantasmalDeathray>(), 300, 0f, -1, 0f, npc.whoAmI);
-                            if (Main.projectile.IndexInRange(telegraph))
-                            {
-                                Main.projectile[telegraph].ModProjectile<PressurePhantasmalDeathray>().AngularVelocity = angularVelocity;
-                                Main.projectile[telegraph].netUpdate = true;
-                            }
+                            Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PressurePhantasmalDeathray>(), 300, 0f, -1, angularVelocity, npc.whoAmI);
                         }
                     }
                 }
@@ -343,12 +335,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                                     chargePositions[i + 1] = chargePositions[i] + currentVelocity * chargeRate;
                                     currentVelocity = Vector2.Reflect(currentVelocity, Vector2.UnitY) * new Vector2(1f, 0.85f);
                                 }
-                                int telegraph = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(telegraph))
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                                 {
-                                    Main.projectile[telegraph].ModProjectile<TrueEyeChargeTelegraph>().ChargePositions = chargePositions;
-                                    Main.projectile[telegraph].netUpdate = true;
-                                }
+                                    telegraph.ModProjectile<TrueEyeChargeTelegraph>().ChargePositions = chargePositions;
+                                });
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
                             }
                             npc.netUpdate = true;
                         }

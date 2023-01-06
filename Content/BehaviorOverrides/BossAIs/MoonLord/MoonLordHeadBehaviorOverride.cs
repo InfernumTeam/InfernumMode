@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -276,13 +277,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 beamDirection = (MathHelper.TwoPi * i / 10f + angularOffset).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f);
-                        if (Main.projectile.IndexInRange(deathray))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
-                            Main.projectile[deathray].ai[1] = deathrayLifetime;
-                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
-                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
-                        }
+                            deathray.ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
+                            deathray.ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f, -1, 0f, deathrayLifetime);
                     }
                 }
             }

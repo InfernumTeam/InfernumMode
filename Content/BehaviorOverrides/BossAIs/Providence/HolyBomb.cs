@@ -1,5 +1,6 @@
 using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -83,14 +84,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int explosionDamage = !ProvidenceBehaviorOverride.IsEnraged ? 350 : 600;
-                int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), explosionDamage, 0f);
-                if (Main.projectile.IndexInRange(explosion))
-                    Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = ExplosionRadius * 0.7f;
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                {
+                    explosion.ModProjectile<HolySunExplosion>().MaxRadius = ExplosionRadius * 0.7f;
+                });
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), explosionDamage, 0f);
             }
 
             // Do some some mild screen-shake effects to accomodate the explosion.
             // This effect is set instead of added to to ensure separate explosions do not together create an excessive amount of shaking.
-            float screenShakeFactor = Utilities.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 5f);
+            float screenShakeFactor = Utilities.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 8f);
             if (Main.LocalPlayer.Calamity().GeneralScreenShakePower < screenShakeFactor)
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }

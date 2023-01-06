@@ -1,5 +1,6 @@
 using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -28,6 +29,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.scale = 0.01f;
         }
 
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.rotation);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.rotation = reader.ReadSingle();
+
         public override void AI()
         {
             if (Countdown > 0f)
@@ -51,7 +56,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.05f, 0f, 1f);
         }
-
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;

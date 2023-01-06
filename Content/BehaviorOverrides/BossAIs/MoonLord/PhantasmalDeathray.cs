@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -14,6 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
         public int OwnerIndex;
 
         public ref float Time => ref Projectile.ai[0];
@@ -37,6 +39,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(OwnerIndex);
+            writer.Write(InitialRotationalOffset);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            OwnerIndex = reader.ReadInt32();
+            InitialRotationalOffset = reader.ReadSingle();
         }
 
         public override void AI()
@@ -73,8 +87,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
-
-
 
         public float WidthFunction(float completionRatio)
         {

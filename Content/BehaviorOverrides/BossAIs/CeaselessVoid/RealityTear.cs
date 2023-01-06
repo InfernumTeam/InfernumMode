@@ -5,6 +5,7 @@ using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public List<Vector2> TrailCache = new();
 
-        public float ScaleFactorDelta => Projectile.localAI[0];
+        public ref float ScaleFactorDelta => ref Projectile.localAI[0];
 
         public ref float CurrentVerticalOffset => ref Projectile.ai[0];
 
@@ -37,6 +38,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.timeLeft = Projectile.MaxUpdates * 135;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(ScaleFactorDelta);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => ScaleFactorDelta = reader.ReadSingle();
 
         public override void AI()
         {

@@ -8,6 +8,7 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -610,17 +611,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(vortex => vortex.localAI[0] = cyan.ToInt());
+                        
                         int vortex = Utilities.NewProjectileBetter(focus, Vector2.Zero, ModContent.ProjectileType<AstralVortex>(), 300, 0f);
                         if (Main.projectile.IndexInRange(vortex))
                         {
-                            Main.projectile[vortex].localAI[0] = cyan.ToInt();
                             vortices.Add(vortex);
                             cyan = false;
                         }
                     }
 
                     for (int i = 0; i < vortices.Count; i++)
+                    {
                         Main.projectile[vortices[i]].ai[1] = vortices[(i + 1) % vortices.Count];
+                        Main.projectile[vortices[i]].netUpdate = true;
+                    }
                 }
             }
 
@@ -920,9 +925,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Create the star once ready.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == repositionTimeBuffer + 1f)
             {
-                int star = Utilities.NewProjectileBetter(new(starSpawnCenterX, starSpawnCenterY), Vector2.Zero, ModContent.ProjectileType<MassiveInfectedStar>(), 300, 0f);
-                if (Main.projectile.IndexInRange(star))
-                    Main.projectile[star].ModProjectile<MassiveInfectedStar>().GrowTime = starGrowTime;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
+                {
+                    star.ModProjectile<MassiveInfectedStar>().GrowTime = starGrowTime;
+                });
+                Utilities.NewProjectileBetter(new(starSpawnCenterX, starSpawnCenterY), Vector2.Zero, ModContent.ProjectileType<MassiveInfectedStar>(), 300, 0f);
             }
 
             // Send energy bolts towards the star.
@@ -1000,18 +1007,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
                     Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
-                    int star = Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
+                    Vector2 blackHoleCenter = new(blackHoleCenterX, blackHoleCenterY);
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
                     {
-                        Main.projectile[star].ai[0] = i;
-                        Main.projectile[star].ai[1] = (i + 1) % starsInConstellation;
-                        Main.projectile[star].ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
-                        Main.projectile[star].ModProjectile<DarkStar>().AnchorPoint = new(blackHoleCenterX, blackHoleCenterY);
-                        Main.projectile[star].netUpdate = true;
-                    }
+                        star.ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
+                        star.ModProjectile<DarkStar>().AnchorPoint = blackHoleCenter;
+                    });
+                    Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f, -1, i, (i + 1f) % starsInConstellation);
                 }
                 Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
-
+                
                 npc.netUpdate = true;
 
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't panic while trying to evade the bolts!");
@@ -1065,9 +1071,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     for (int i = 0; i < chargeBlobCount; i++)
                     {
                         Vector2 blobVelocity = shootDirection * 24f + Main.rand.NextVector2Circular(4f, 4f);
-                        int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<InfectionGlob>(), 200, 0f);
-                        if (Main.projectile.IndexInRange(blob))
-                            Main.projectile[blob].ai[1] = target.Center.Y;
+                        Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<InfectionGlob>(), 200, 0f, -1, 0f, target.Center.Y);
                     }
                     blobShootTimer = 0f;
                     npc.netUpdate = true;

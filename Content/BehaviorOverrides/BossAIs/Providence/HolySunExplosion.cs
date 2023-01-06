@@ -4,6 +4,7 @@ using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -34,6 +35,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.MaxUpdates = 2;
             Projectile.scale = 1f;
             Projectile.Calamity().DealsDefenseDamage = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.MaxUpdates);
+            writer.Write(MaxRadius);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.MaxUpdates = reader.ReadInt32();
+            MaxRadius = reader.ReadSingle();
         }
 
         public override void AI()

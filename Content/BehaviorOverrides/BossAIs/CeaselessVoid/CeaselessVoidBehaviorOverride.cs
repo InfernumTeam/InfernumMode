@@ -8,6 +8,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -224,9 +225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     for (int i = 0; i < 8; i++)
                     {
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9.6f;
-                        int fuckYou = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(fuckYou))
-                            Main.projectile[fuckYou].ai[0] = 270 / 4;
+                        Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f, -1, 270f / 4f);
                     }
                 }
             }
@@ -324,9 +323,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         SoundEngine.PlaySound(YanmeisKnife.HitSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(tear =>
+                            {
+                                tear.ModProjectile<RealityTear>().ScaleFactorDelta = scaleFactorDelta;
+                            });
                             tearProjectileIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RealityTear>(), 0, 0f);
-                            if (Main.projectile.IndexInRange((int)tearProjectileIndex))
-                                Main.projectile[(int)tearProjectileIndex].localAI[0] = scaleFactorDelta;
                         }
                     }
                     break;
@@ -422,12 +423,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                             telegraphPoints.Add(linePosition);
                         }
 
-                        int shard = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(shard))
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            Main.projectile[shard].ai[0] = i / (float)barrageCount;
-                            Main.projectile[shard].ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
-                        }
+                            telegraph.ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f, -1, i / (float)barrageCount);
                     }
                     npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;
@@ -507,9 +507,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     {
                         Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
                         Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].localAI[1] = j * 0.5f;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.localAI[1] = j * 0.5f;
+                        });
+                        Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
                     }
                 }
             }
@@ -644,9 +647,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound with { Volume = 2f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<CosmicExplosion>().MaxRadius = 1250f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<CosmicExplosion>().MaxRadius = 1250f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);
                 }
 
                 npc.life = 1;

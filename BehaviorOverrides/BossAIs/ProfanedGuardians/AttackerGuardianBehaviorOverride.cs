@@ -7,6 +7,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Sounds;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,12 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public enum AttackerGuardianAttackState
         {
-            Phase1Charges,
-            Phase2Transition,
-            SpinCharge,
-            SpearBarrage,
-            MagicFingerBolts,
-            ThrowingHands,
+            SpawnEffects,
+            Phase1FireWallsAndBeam,
             DeathAnimation
         }
 
@@ -86,9 +83,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
 
-            // Don't take damage if below the second phase threshold and other guardianas are around.
+            // Don't take damage if other guardianas are around.
             npc.dontTakeDamage = false;
-            if (npc.life < npc.lifeMax * ImmortalUntilPhase2LifeRatio && TotalRemaininGuardians >= 2f)
+            if (TotalRemaininGuardians >= 2f)
                 npc.dontTakeDamage = true;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -97,37 +94,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float attackDelay = ref npc.ai[3];
             ref float shouldHandsBeInvisibleFlag = ref npc.localAI[2];
 
-            // Wait before attacking.
-            if (attackDelay < 90f)
-            {
-                attackDelay++;
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 6f, 0.025f);
-                npc.dontTakeDamage = true;
-                return false;
-            }
-
             // Draw things 
-
             shouldHandsBeInvisibleFlag = 0f;
+
+            // Do attacks.
             switch ((AttackerGuardianAttackState)attackState)
             {
-                case AttackerGuardianAttackState.Phase1Charges:
-                    DoBehavior_Phase1Charges(npc, target, ref attackTimer);
+                case AttackerGuardianAttackState.SpawnEffects:
+                    DoBehavior_SpawnEffects(npc, target, ref attackTimer);
+                    // Also spawn fire walls.
+                    DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
                     break;
-                case AttackerGuardianAttackState.Phase2Transition:
-                    DoBehavior_Phase2Transition(npc, target, ref attackTimer);
-                    break;
-                case AttackerGuardianAttackState.SpinCharge:
-                    DoBehavior_SpinCharge(npc, target, lifeRatio, ref attackTimer, ref shouldHandsBeInvisibleFlag);
-                    break;
-                case AttackerGuardianAttackState.SpearBarrage:
-                    DoBehavior_SpearBarrage(npc, target, lifeRatio, ref attackTimer);
-                    break;
-                case AttackerGuardianAttackState.MagicFingerBolts:
-                    DoBehavior_MagicFingerBolts(npc, target, lifeRatio, ref attackTimer);
-                    break;
-                case AttackerGuardianAttackState.ThrowingHands:
-                    DoBehavior_ThrowingHands(npc, target, ref attackTimer);
+                case AttackerGuardianAttackState.Phase1FireWallsAndBeam:
+                    DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
                     break;
                 case AttackerGuardianAttackState.DeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer);
@@ -138,463 +117,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public static void DoBehavior_Phase1Charges(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
         {
-            npc.spriteDirection = (npc.velocity.X > 0).ToDirectionInt();
-            npc.damage = npc.defDamage;
+            float inertia = 20f;
+            float flySpeed = 25f;
 
-            float chargeSpeed = 18f;
-            float chargeAcceleration = 1.015f;
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            Vector2 positionToGoTo = new(WorldSaveSystem.ProvidenceDoorXPosition - 1000f, npc.Center.Y);
+            // This is the ideal velocity it would have
+            Vector2 idealVelocity = npc.SafeDirectionTo(positionToGoTo) * flySpeed;
+            // And this is the actual velocity, using inertia and its existing one.
+            npc.velocity = (npc.velocity * (inertia - 1f) + idealVelocity) / inertia;
 
-            // Enter the next phase once alone.
-            if (TotalRemaininGuardians <= 1f)
+            if (npc.WithinRange(positionToGoTo, 20f))
             {
-                npc.TargetClosest();
-                npc.ai[0] = (int)AttackerGuardianAttackState.Phase2Transition;
-                npc.velocity = npc.velocity.ClampMagnitude(0f, 23f);
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Line up for the charge.
-            if (attackSubstate == 0f)
-            {
-                npc.damage = 0;
-
-                int xOffsetDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                Vector2 destination = target.Center + Vector2.UnitX * 540f * xOffsetDirection;
-
-                float distanceFromDestination = npc.Distance(destination);
-                Vector2 linearVelocityToDestination = npc.SafeDirectionTo(destination) * MathHelper.Min(11f + target.velocity.Length() * 0.4f, distanceFromDestination);
-                npc.velocity = Vector2.Lerp(linearVelocityToDestination, (destination - npc.Center) / 15f, Utils.GetLerpValue(180f, 420f, distanceFromDestination, true));
-
-                // Prepare to charge.
-                if (npc.WithinRange(destination, 12f + target.velocity.Length() * 0.5f))
-                {
-                    SoundEngine.PlaySound(SoundID.Item45, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 3.5f) * chargeSpeed;
-
-                        // Release a burst of spears outward.
-                        int spearBurstCount = 3;
-                        float spearBurstSpread = MathHelper.ToRadians(21f);
-                        if (TotalRemaininGuardians <= 2)
-                        {
-                            spearBurstCount += 4;
-                            spearBurstSpread += MathHelper.ToRadians(15f);
-                        }
-
-                        for (int i = 0; i < spearBurstCount; i++)
-                        {
-                            float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)spearBurstCount);
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 15f)).RotatedBy(offsetAngle) * 9f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
-                        }
-
-                        attackTimer = 0f;
-                        attackSubstate = 1f;
-                        npc.netUpdate = true;
-                    }
-                }
-            }
-
-            // Charge.
-            if (attackSubstate == 1f)
-            {
-                npc.velocity *= chargeAcceleration;
-                if (attackTimer >= 50f)
-                {
-                    attackSubstate = 0f;
-                    attackTimer = 0f;
-                    npc.netUpdate = true;
-                }
-            }
-        }
-
-        public static void DoBehavior_Phase2Transition(NPC npc, Player target, ref float attackTimer)
-        {
-            float phase2TransitionTime = 180f;
-            if (attackTimer < phase2TransitionTime)
-            {
-                npc.velocity *= 0.9f;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 45 == 0)
-                {
-                    float shootSpeed = BossRushEvent.BossRushActive ? 17f : 12f;
-                    for (int i = 0; i < 12; i++)
-                    {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 11f) * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
-                    }
-                }
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == phase2TransitionTime - 45)
-                {
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
-                }
-                return;
-            }
-
-            npc.TargetClosest();
-            npc.ai[0] = (int)AttackerGuardianAttackState.SpinCharge;
-            attackTimer = 0f;
-            npc.netUpdate = true;
-        }
-
-        public static void DoBehavior_SpinCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float shouldHandsBeInvisibleFlag)
-        {
-            ref float arcDirection = ref npc.ai[2];
-
-            shouldHandsBeInvisibleFlag = (attackTimer > 45f).ToInt();
-
-            // Fade out.
-            if (attackTimer <= 30f)
-                npc.velocity *= 0.96f;
-
-            // Reel back.
-            if (attackTimer == 30f)
-            {
-                npc.Center = target.Center + (MathHelper.PiOver2 * Main.rand.Next(4)).ToRotationVector2() * 600f;
-                npc.velocity = -npc.SafeDirectionTo(target.Center);
-                npc.rotation = npc.AngleTo(target.Center);
-                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
-
-                npc.netUpdate = true;
-            }
-
-            // Move back and re-appear.
-            if (attackTimer is > 30f and < 75f)
-            {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75f, attackTimer, true));
-                npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
-            }
-
-            // Charge and fire a spear.
-            if (attackTimer == 75f)
-            {
-                arcDirection = (Math.Cos(npc.AngleTo(target.Center)) > 0).ToDirectionInt();
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 18.75f;
-                if (BossRushEvent.BossRushActive)
-                    npc.velocity *= 1.5f;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 spawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.Zero) * 40f;
-                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 40f, ModContent.ProjectileType<ProfanedSpearInfernum>(), 210, 0f);
-                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 47f, ModContent.ProjectileType<ProfanedSpearInfernum>(), 200, 0f);
-                    int telegraph = Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
-                        Main.projectile[telegraph].ai[1] = 30f;
-                }
-
-                npc.netUpdate = true;
-            }
-
-            // Arc around a bit.
-            if (attackTimer is >= 75f and < 150f)
-            {
-                npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
-
-                if (!npc.WithinRange(target.Center, 180f))
-                    npc.Center += npc.SafeDirectionTo(target.Center) * (12f + target.velocity.Length() * 0.15f);
-
-                npc.rotation = npc.velocity.ToRotation();
-                if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
-
-                int lightReleaseTime = 21;
-                int spearReleaseTime = -1;
-                if (lifeRatio < Phase2LifeRatio)
-                    lightReleaseTime -= 4;
-                if (lifeRatio < Phase3LifeRatio)
-                {
-                    lightReleaseTime -= 4;
-                    spearReleaseTime = 50;
-                }
-                if (lifeRatio < Phase4LifeRatio)
-                    lightReleaseTime -= 5;
-
-                // Release crystal lights when spinning.
-                if (attackTimer % lightReleaseTime == 0)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 9f;
-                        int shot = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 220, 0f);
-                        Main.projectile[shot].ai[1] = Main.rand.NextFloat();
-                    }
-                }
-
-                if (Main.netMode != NetmodeID.MultiplayerClient && spearReleaseTime >= 1f && attackTimer % spearReleaseTime == 0f)
-                {
-                    for (int i = 0; i < 18; i++)
-                    {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 18f) * 19f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 220, 0f);
-                    }
-                }
-            }
-
-            // Slow down and fade out again.
-            if (attackTimer >= 150f)
-            {
-                npc.velocity *= 0.94f;
-                npc.alpha = Utils.Clamp(npc.alpha + 30, 0, 255);
-            }
-
-            // Prepare for the next attack.
-            if (attackTimer >= 180f)
-            {
-                attackTimer = 0f;
-                npc.Center = target.Center - Vector2.UnitY * 500f;
-
-                npc.ai[0] = (int)AttackerGuardianAttackState.SpearBarrage;
-                arcDirection = 0f;
-
-                npc.TargetClosest();
-                npc.alpha = 0;
-                npc.rotation = 0f;
                 npc.velocity = Vector2.Zero;
-                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                npc.netUpdate = true;
+                // Go to the initial attack and reset the attack timer.
+                npc.ai[0] = 1;
+                attackTimer = 0;
             }
         }
 
-        public static void DoBehavior_SpearBarrage(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public void DoBehavior_Phase1FireWallsAndBeam(NPC npc, Player target, ref float attackTimer)
         {
-            int teleportDelay = 30;
-            int reelbackTime = 38;
-            int chargeTime = 50;
-            int slowdownTime = 25;
-            int frontSpearCount = 5;
-            int spearBurstCount = 8;
-            int spearBurstShootRate = 22;
-            int totalCharges = 4;
-            float spearBurstSpread = MathHelper.ToRadians(25f);
-            float spearBurstSpeed = 5f;
-            float chargeSpeed = MathHelper.Lerp(19f, 23f, Utils.GetLerpValue(ImmortalUntilPhase2LifeRatio, 0f, lifeRatio, true));
-            float chargeAcceleration = 1.018f;
+            ref float lastCenterY = ref npc.Infernum().ExtraAI[0];
+            float wallCreationRate = 60;
 
-            if (lifeRatio < Phase2LifeRatio)
+            // Create walls of fire with a random gap in them based off of the last one.
+            if (attackTimer % wallCreationRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                reelbackTime -= 5;
-                spearBurstCount += 2;
-            }
-            if (lifeRatio < Phase3LifeRatio)
-            {
-                totalCharges--;
-                spearBurstCount += 2;
-            }
-            if (lifeRatio < Phase4LifeRatio)
-            {
-                spearBurstCount++;
-                spearBurstSpeed *= 1.25f;
-            }
-
-            ref float chargeCounter = ref npc.ai[2];
-
-            // Fade out and slow down.
-            if (attackTimer <= teleportDelay)
-            {
-                npc.Opacity = 1f - attackTimer / teleportDelay;
-                npc.velocity *= 0.92f;
-            }
-
-            // Teleport above the player in a burst of fire.
-            if (attackTimer == teleportDelay)
-            {
-                // Play the fire sound.
-                SoundEngine.PlaySound(SilvaHeadSummon.DispelSound, target.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
-
-                // And create the fire dust visuals.
-                for (int i = 0; i < 75; i++)
-                {
-                    bool fireIsHoly = Main.rand.NextBool();
-                    Dust fire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(80f, 80f), fireIsHoly ? 244 : 6);
-                    fire.velocity = -Vector2.UnitY.RotatedByRandom(0.71f) * Main.rand.NextFloat(3f, 8f) + Main.rand.NextVector2Circular(3f, 3f);
-                    fire.scale = Main.rand.NextFloat(1.25f, 1.6f);
-                    fire.noGravity = true;
-
-                    if (fireIsHoly)
-                    {
-                        fire.velocity.Y -= 3f;
-                        fire.scale *= 1.3f;
-                        fire.fadeIn = 0.3f;
-                    }
-                }
-
-                npc.Opacity = 1f;
-                npc.Center = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 700f;
-                npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
-                npc.spriteDirection = npc.direction;
-                npc.velocity = Vector2.Zero;
+                Vector2 velocity = -Vector2.UnitX * 10;
+                float yRandomOffset = Main.rand.NextFloat(-600, 200);
+                Vector2 newCenter = npc.Center + new Vector2(0, yRandomOffset);
+                lastCenterY = yRandomOffset;
+                Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), 300, 0);
                 npc.netUpdate = true;
             }
 
-            // Reel back in anticipation of a charge.
-            if (attackTimer > teleportDelay && attackTimer < teleportDelay + reelbackTime)
+            // End attack when the player is close enough to the guardian.
+            if (target.WithinRange(npc.Center, 100f))
             {
-                float reelbackInterpolant = Utils.GetLerpValue(teleportDelay, teleportDelay + reelbackTime, attackTimer, true);
-                float reelbackSpeed = Utils.GetLerpValue(0f, 0.75f, reelbackInterpolant, true) * Utils.GetLerpValue(1f, 0.75f, reelbackInterpolant, true) * 12f;
-                npc.velocity = Vector2.UnitX * npc.direction * reelbackSpeed;
-            }
-
-            // Charge and release spears.
-            if (attackTimer == teleportDelay + reelbackTime)
-            {
-                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < frontSpearCount; i++)
-                    {
-                        float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)(frontSpearCount - 1f));
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
-                    }
-
-                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 4f) * chargeSpeed;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Release bursts of spears after charging. This doesn't happen if the guardian is close to the target, to prevent cheap hits.
-            bool slowingDown = attackTimer >= teleportDelay + reelbackTime + chargeTime;
-            bool charging = attackTimer >= teleportDelay + reelbackTime && !slowingDown;
-            bool readyToShootSpearBurst = charging && attackTimer % spearBurstShootRate == spearBurstShootRate - 1f;
-            if (readyToShootSpearBurst && !npc.WithinRange(target.Center, 300f))
-            {
-                SoundEngine.PlaySound(SoundID.Item73, npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < spearBurstCount; i++)
-                    {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / spearBurstCount).ToRotationVector2() * Main.rand.NextFloat(0.6f, 1f) * spearBurstSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 225, 0f);
-                    }
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Accelerate while charging.
-            if (charging)
-                npc.velocity *= chargeAcceleration;
-
-            // Slow down to a halt after charging.
-            if (slowingDown)
-                npc.velocity = npc.velocity.ClampMagnitude(0f, 24f) * 0.9f;
-
-            // Either go to the next attack state or charge again, depending on if the charge counter has reached its limit.
-            if (attackTimer > teleportDelay + reelbackTime + chargeTime + slowdownTime)
-            {
-                if (chargeCounter < totalCharges - 1f)
-                {
-                    attackTimer = teleportDelay + 1f;
-                    chargeCounter++;
-                }
-                else
-                {
-                    npc.TargetClosest();
-                    npc.ai[0] = (int)AttackerGuardianAttackState.MagicFingerBolts;
-                    attackTimer = 0f;
-                    chargeCounter = 0f;
-                }
-                npc.netUpdate = true;
-            }
-        }
-
-        public static void DoBehavior_MagicFingerBolts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            int spearShootRate = 55;
-
-            if (lifeRatio < Phase2LifeRatio)
-                spearShootRate -= 6;
-            if (lifeRatio < Phase3LifeRatio)
-                spearShootRate -= 4;
-            if (lifeRatio < Phase4LifeRatio)
-                spearShootRate -= 6;
-
-            ref float horizontalOffset = ref npc.ai[2];
-
-            if (horizontalOffset == 0f)
-                horizontalOffset = Math.Sign((npc.Center - target.Center).X);
-
-            Vector2 destination = target.Center + new Vector2(horizontalOffset * 600f, -300f);
-            Vector2 flyVelocity = (destination - npc.Center).SafeNormalize(Vector2.UnitY) * 17f;
-
-            // Hover in place to the top left/right of the target. Firing is handled by the hand's AI.
-            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-            if (npc.Distance(destination) > 12f)
-                npc.velocity = Vector2.Lerp(npc.velocity, flyVelocity, 0.14f);
-            else
-                npc.Center = destination;
-
-            // Release spears periodically.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % spearShootRate == spearShootRate - 1f)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 6f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
-                }
-            }
-
-            if (attackTimer >= 270f)
-            {
-                attackTimer = 0f;
-                horizontalOffset = 0f;
-                npc.ai[0] = (int)AttackerGuardianAttackState.SpinCharge;
-                if (lifeRatio < Phase4LifeRatio)
-                    npc.ai[0] = (int)AttackerGuardianAttackState.ThrowingHands;
-
-                npc.TargetClosest();
-                npc.alpha = 0;
-                npc.rotation = 0f;
-                npc.velocity = Vector2.Zero;
-                npc.netUpdate = true;
-            }
-        }
-
-        public static void DoBehavior_ThrowingHands(NPC npc, Player target, ref float attackTimer)
-        {
-            Vector2 hoverDestination = target.Center + new Vector2(npc.spriteDirection * -125f, -10f);
-            Vector2 offsetToTarget = hoverDestination - npc.Center;
-            float idealMoveSpeed = MathHelper.Lerp(8f, 21f, Utils.GetLerpValue(50f, 400f, offsetToTarget.Length(), true));
-            idealMoveSpeed *= Utils.GetLerpValue(0f, 45f, attackTimer, true);
-
-            Vector2 idealVelocity = Vector2.Zero.MoveTowards(offsetToTarget, idealMoveSpeed);
-
-            if (!npc.WithinRange(hoverDestination, 375f))
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f).MoveTowards(idealVelocity, 2f);
-            else if (npc.velocity.Length() < 30f)
-                npc.velocity *= 1.02f;
-
-            // Release magic periodically.
-            if (attackTimer % 75f == 74f)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * -13f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
-                }
-            }
-
-            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-            if (attackTimer > 420f)
-            {
-                npc.TargetClosest();
-                npc.ai[0] = (int)AttackerGuardianAttackState.SpinCharge;
-                attackTimer = 0f;
-                npc.netUpdate = true;
+                // Switch to next attack.
             }
         }
 

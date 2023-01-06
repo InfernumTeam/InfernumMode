@@ -17,6 +17,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
 
+        public enum HealerAttackType
+        {
+            SpawnEffects,
+            SitAndFireCrystals,
+        }
+
+        #region AI
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
@@ -28,53 +35,58 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             NPC attacker = Main.npc[CalamityGlobalNPC.doughnutBoss];
             Player target = Main.player[attacker.target];
-            ref float attackTimer = ref npc.Infernum().ExtraAI[0];
+            ref float attackState = ref npc.ai[0];
+            ref float attackTimer = ref npc.ai[1];
 
             npc.damage = 0;
             npc.target = attacker.target;
             npc.spriteDirection = (npc.velocity.X > 0).ToDirectionInt();
 
-            // Hover near the target.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            Vector2 hoverDestination = target.Center + new Vector2(npc.spriteDirection * 600f, -300f);
-            if (!npc.WithinRange(hoverDestination, 80f))
+            switch ((HealerAttackType)attackState)
             {
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 14.5f;
-                npc.SimpleFlyMovement(idealVelocity, 0.2f);
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.15f);
-            }
-            else
-                npc.velocity *= 0.98f;
-
-            // Release a burst of crystals.
-            float wrappedAttackTimer = attackTimer % 360f;
-
-            if (Main.netMode != NetmodeID.Server && wrappedAttackTimer == 100f)
-                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 1.6f }, target.Center);
-
-            if (wrappedAttackTimer == 145f)
-            {
-                if (Main.netMode != NetmodeID.Server)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
-                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
-                }
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 projectileSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * -32f, 12f);
-                    for (int i = 0; i < 6; i++)
-                    {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 9f;
-                        Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
-                    }
-                }
+                case HealerAttackType.SpawnEffects:
+                    AttackerGuardianBehaviorOverride.DoBehavior_SpawnEffects(npc, target, ref attackTimer);
+                    break;
+                case HealerAttackType.SitAndFireCrystals:
+                    DoBehavior_SitAndFireCrystals(npc, target, ref attackTimer);
+                    break;
             }
 
             attackTimer++;
             return false;
         }
 
+        public void DoBehavior_SitAndFireCrystals(NPC npc, Player target, ref float attackTimer)
+        {
+            float crystalAmount = 3;
+            float crystalReleaseRate = 180;
+
+            // Only fire crystals if the player is close enough.
+            if (target.WithinRange(npc.Center, 1500f) && attackTimer % crystalReleaseRate == 0)
+            {
+                // Play SFX if not the server.
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
+                }
+
+                // Fire projectiles.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 projectileSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * -32f, 12f);
+                    for (int i = 0; i < crystalAmount; i++)
+                    {
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 9f;
+                        Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
@@ -103,5 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             return false;
         }
+        #endregion
     }
 }

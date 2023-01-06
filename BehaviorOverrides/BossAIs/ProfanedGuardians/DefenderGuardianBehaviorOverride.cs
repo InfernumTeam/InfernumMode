@@ -4,7 +4,6 @@ using InfernumMode.OverridingSystem;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceNPC = CalamityMod.NPCs.Providence.Providence;
@@ -20,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public enum DefenderAttackType
         {
             SpawnEffects,
-            HoverAndFireSpears,
+            HoverAndFireDeathray,
         }
 
         public override bool PreAI(NPC npc)
@@ -43,8 +42,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case DefenderAttackType.SpawnEffects:
                     AttackerGuardianBehaviorOverride.DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
-                case DefenderAttackType.HoverAndFireSpears:
-                    DoBehavior_HoverAndFireSpears(npc, target, ref attackTimer);
+                case DefenderAttackType.HoverAndFireDeathray:
+                    DoBehavior_HoverAndFireDeathray(npc, target, ref attackTimer);
                     break;
             }
 
@@ -52,27 +51,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public void DoBehavior_HoverAndFireSpears(NPC npc, Player target, ref float attackTimer)
+        public void DoBehavior_HoverAndFireDeathray(NPC npc, Player target, ref float attackTimer)
         {
-            float spearReleaseRate = 90;
+            float deathrayFireRate = 240;
             npc.velocity *= npc.DirectionTo(new(WorldSaveSystem.ProvidenceDoorXPosition - 100f, target.Center.Y)) * 5;
 
-            if (attackTimer % spearReleaseRate == 0)
+            // If time to fire, and they are close enough.
+            if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 3500f))
             {
-                // Play SFX if not the server.
-                if (Main.netMode != NetmodeID.Server)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
-                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
-                }
-
-                // Fire projectiles.
+                // Fire deathray.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 projectileSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * -32f, 12f);
-
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 9f;
-                    Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 230, 0f);
+                    Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
+                    Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<HolyAimedDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
             }
         }

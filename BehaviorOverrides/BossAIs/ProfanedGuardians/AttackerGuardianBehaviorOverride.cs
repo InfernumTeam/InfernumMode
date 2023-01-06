@@ -102,8 +102,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 case AttackerGuardianAttackState.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
-                    // Also spawn fire walls.
-                    DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
                     break;
                 case AttackerGuardianAttackState.Phase1FireWallsAndBeam:
                     DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
@@ -113,7 +111,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
             }
             attackTimer++;
-
             return false;
         }
 
@@ -139,16 +136,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DoBehavior_Phase1FireWallsAndBeam(NPC npc, Player target, ref float attackTimer)
         {
-            ref float lastCenterY = ref npc.Infernum().ExtraAI[0];
+            ref float lastOffsetY = ref npc.Infernum().ExtraAI[0];
             float wallCreationRate = 60;
+
+            // Give the player infinite flight time.
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                Player player = Main.player[i];
+                if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
+                    player.wingTime = player.wingTimeMax;
+            }
 
             // Create walls of fire with a random gap in them based off of the last one.
             if (attackTimer % wallCreationRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 velocity = -Vector2.UnitX * 10;
-                float yRandomOffset = Main.rand.NextFloat(-600, 200);
-                Vector2 newCenter = npc.Center + new Vector2(0, yRandomOffset);
-                lastCenterY = yRandomOffset;
+
+                // Create a random offset.
+                float yRandomOffset;
+                Vector2 previousCenter = npc.Center + new Vector2(0, lastOffsetY);
+                Vector2 newCenter;
+                int attempts = 0;
+                // Attempt to get one within a certain distance, but give up after 10 attempts.
+                do
+                {
+                    yRandomOffset = Main.rand.NextFloat(-600, 200);
+                    newCenter = npc.Center + new Vector2(0, yRandomOffset);
+                    attempts++;
+                }
+                while (newCenter.Distance(previousCenter) > 400 || attempts < 10);
+
+                // Set the new random offset as the last one.
+                lastOffsetY = yRandomOffset;
                 Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), 300, 0);
                 npc.netUpdate = true;
             }

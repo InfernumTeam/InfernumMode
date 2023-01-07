@@ -4,6 +4,7 @@ using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public List<Vector2> TrailCache = new();
 
-        public float ScaleFactorDelta => Projectile.localAI[0];
+        public ref float ScaleFactorDelta => ref Projectile.localAI[0];
 
         public ref float CurrentVerticalOffset => ref Projectile.ai[0];
 
@@ -39,6 +40,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ScaleFactorDelta);
+            writer.Write(TrailCache.Count);
+            for (int i = 0; i < TrailCache.Count; i++)
+                writer.WriteVector2(TrailCache[i]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            TrailCache.Clear();
+            ScaleFactorDelta = reader.ReadSingle();
+            int pointCount = reader.ReadInt32();
+            for (int i = 0; i < pointCount; i++)
+                TrailCache.Add(reader.ReadVector2());
+        }
+
         public override void AI()
         {
             // Disappear if the bereft vassal is not present.
@@ -49,13 +67,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 return;
             }
 
-            NPC ceaselessVoid = Main.npc[vassalIndex];
-            bool stickToVassal = ceaselessVoid.Infernum().ExtraAI[3] == Projectile.whoAmI;
+            NPC vassal = Main.npc[vassalIndex];
+            bool stickToVassal = vassal.Infernum().ExtraAI[3] == Projectile.whoAmI;
 
             if (stickToVassal)
             {
                 TrailCache.Add(Projectile.Center);
-                Projectile.Center = ceaselessVoid.Center + Vector2.UnitY * CurrentVerticalOffset + ceaselessVoid.velocity;
+                Projectile.Center = vassal.Center + Vector2.UnitY * CurrentVerticalOffset + vassal.velocity;
                 if (Main.rand.NextBool(4))
                 {
                     float newIdealOffset = Main.rand.NextBool().ToDirectionInt() * Main.rand.NextFloat(4f, 28f);

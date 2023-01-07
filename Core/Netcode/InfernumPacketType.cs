@@ -6,6 +6,7 @@ namespace InfernumMode.Core.Netcode
         SyncInfernumActive,
         SummonExoMech,
         UpdateTwinsAttackSynchronizer,
-        OpenLostColosseumPortal
+        OpenLostColosseumPortal,
+        OpenProfanedDoor
     }
 }

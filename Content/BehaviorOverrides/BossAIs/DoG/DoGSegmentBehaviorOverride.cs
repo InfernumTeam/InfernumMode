@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.DoG.DoGPhase1HeadBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.DoG.DoGPhase2HeadBehaviorOverride;
@@ -34,12 +35,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.Calamity().DR = BodySegmentDR;
             if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
-                npc.life = 0;
-                npc.HitEffect();
-                npc.active = false;
-                npc.netUpdate = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.active = false;
+                    npc.netUpdate = true;
+                }
                 return;
             }
+
+            // Why are you despawning? What the heck is wrong with worms?
+            npc.timeLeft = 7200;
 
             if (head.Infernum().ExtraAI[DamageImmunityCountdownIndex] > 0f)
             {
@@ -85,9 +92,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Player target = Main.player[head.target];
 
             // Handle transitions once the tail enters the transition portal.
-            if (!InPhase2 && head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex] >= 0f)
+            if (!InPhase2 && GeneralPortalIndex >= 0f)
             {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex]].Hitbox) || headOutOfWorld)
+                if (npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox) || headOutOfWorld)
                 {
                     npc.alpha += 140;
                     if (npc.alpha >= 255)
@@ -108,8 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[BodySegmentFadeTypeIndex])
                 {
                     case BodySegmentFadeType.EnteringPortal:
-                        int portalIndex = (int)head.Infernum().ExtraAI[Phase2PortalProjectileIndexIndex];
-                        if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
+                        if (GeneralPortalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
 
                         // Update the surprise portal attack state if the tail has entered the portal.

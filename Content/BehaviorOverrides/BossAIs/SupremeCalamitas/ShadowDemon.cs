@@ -92,6 +92,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             writer.Write(Heads.Length);
             for (int i = 0; i < Heads.Length; i++)
             {
+                Heads ??= new DemonHead[3];
+                Heads[i] ??= new();
+
                 writer.Write(Heads[i].HoverOffset);
                 writer.Write(Heads[i].HoverOffsetAngle);
                 writer.WriteVector2(Heads[i].Center);
@@ -102,11 +105,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             int headCount = reader.ReadInt32();
+            
+            Heads ??= new DemonHead[headCount];
             for (int i = 0; i < headCount; i++)
             {
+                Heads[i] ??= new();
+                
                 Heads[i].HoverOffset = reader.ReadSingle();
                 Heads[i].HoverOffsetAngle = reader.ReadSingle();
-                Heads[i].Center = Heads[i].Center;
+                Heads[i].Center = reader.ReadVector2();
                 Heads[i].Velocity = reader.ReadVector2();
             }
         }

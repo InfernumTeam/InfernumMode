@@ -517,14 +517,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (oldSubphase != currentSubphase)
             {
                 subphaseTransitionTimer = TransitionDRBoostTime;
-
-                // Reset the attack cycle index for subphase 4.
-                if (currentSubphase == 3f)
-                {
-                    npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
-                    SelectNextAttack(npc, ref attackType);
-                }
-
+                
                 // Clear away projectiles in subphase 9.
                 if (Main.netMode != NetmodeID.MultiplayerClient && currentSubphase == 8f)
                 {
@@ -532,14 +525,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     shouldPerformBerserkCharges = 1f;
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     ClearAllEntities();
-                    SelectNextAttack(npc, ref attackType);
                 }
 
-                if (currentSubphase == 9f)
-                {
-                    attackTimer = 0f;
-                    SelectNextAttack(npc, ref attackType);
-                }
+                // Reset the attack cycle for the next subphase.
+                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
+                SelectNextAttack(npc, ref attackType);
+
                 transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;
             }

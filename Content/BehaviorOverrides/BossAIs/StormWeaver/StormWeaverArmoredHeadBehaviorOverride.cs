@@ -18,9 +18,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverHead>();
 
-        public const float Phase2LifeRatio = 0.9f;
+        public const float Phase2LifeRatio = 0.8f;
 
-        public const float Phase3LifeRatio = 0.4f;
+        public const float Phase3LifeRatio = 0.333f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {

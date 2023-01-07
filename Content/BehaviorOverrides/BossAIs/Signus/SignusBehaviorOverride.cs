@@ -279,7 +279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
                     npc.rotation = npc.velocity.X * 0.02f;
 
-                    if (attackTimer == scytheShootDelay)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == scytheShootDelay)
                     {
                         // Create a bunch of scythes in front of Signus. The quantity of scythes and their spread is dependant on Signus' life ratio.
                         float baseShootAngle = npc.AngleTo(target.Center);
@@ -432,13 +432,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                             npc.netUpdate = true;
                         }
 
-                        Vector2 slashPosition = new(slashPositionX, slashPositionY);
-                        Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f, -1, Main.rand.NextFloat(MathHelper.TwoPi));
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 slashPosition = new(slashPositionX, slashPositionY);
+                            Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f, -1, Main.rand.NextFloat(MathHelper.TwoPi));
 
-                        // Make the slashes move.
-                        slashPosition = slashPosition.MoveTowards(target.Center, slashMovementSpeed);
-                        slashPositionX = slashPosition.X;
-                        slashPositionY = slashPosition.Y;
+                            // Make the slashes move.
+                            slashPosition = slashPosition.MoveTowards(target.Center, slashMovementSpeed);
+                            slashPositionX = slashPosition.X;
+                            slashPositionY = slashPosition.Y;
+
+                            npc.netSpam = 0;
+                            npc.netUpdate = true;
+                        }
                     }
 
                     // Teleport in front of the target and create a mine between Signus and them.

@@ -363,7 +363,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity *= 0.94f;
 
             // Create spikes throughout the arena at first. This will activate soon afterwards.
-            if (phase2AnimationTimer == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && phase2AnimationTimer == 1f)
             {
                 float startY = Utilities.GetGroundPositionFrom(Main.player[npc.target].Center).Y - 50f;
                 for (float i = -3650f; i < 3650f; i += 50f)
@@ -372,22 +372,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY)).Floor();
 
                     // Create top spikes.
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spike =>
-                    {
-                        spike.ModProjectile<GroundCrystalSpike>().SpikeDirection = MathHelper.PiOver2;
-                    });
-                    Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f);
+                    Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f, -1, 0f, MathHelper.PiOver2);
 
                     // Create bottom spikes.
                     if (!Collision.SolidCollision(bottom - new Vector2(1f, 10f), 20, 2))
-                    {
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spike =>
-                        {
-                            spike.ModProjectile<GroundCrystalSpike>().SpikeDirection = -MathHelper.PiOver2;
-                        });
-
-                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f);
-                    }
+                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f, -1, 0f, -MathHelper.PiOver2);
                 }
             }
 

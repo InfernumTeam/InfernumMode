@@ -4,6 +4,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -34,6 +35,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.timeLeft = 900;
             Projectile.Opacity = 0f;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.timeLeft = reader.ReadInt32();
 
         public override void AI()
         {

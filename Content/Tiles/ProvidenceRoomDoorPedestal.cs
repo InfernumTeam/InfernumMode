@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -10,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -115,7 +117,9 @@ namespace InfernumMode.Content.Tiles
                     shard.velocity.Y -= 5f;
                 }
                 WorldSaveSystem.HasProvidenceDoorShattered = true;
-                CalamityNetcode.SyncWorld();
+
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                    PacketHandler.SendProfanedDoorOpeningSync(Main.myPlayer);
                 shatterTimer = 0;
             }
 

@@ -39,9 +39,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.timeLeft = Projectile.MaxUpdates * 135;
         }
 
-        public override void SendExtraAI(BinaryWriter writer) => writer.Write(ScaleFactorDelta);
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ScaleFactorDelta);
+            writer.Write(TrailCache.Count);
+            for (int i = 0; i < TrailCache.Count; i++)
+                writer.WriteVector2(TrailCache[i]);
+        }
 
-        public override void ReceiveExtraAI(BinaryReader reader) => ScaleFactorDelta = reader.ReadSingle();
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            TrailCache.Clear();
+            ScaleFactorDelta = reader.ReadSingle();
+            int pointCount = reader.ReadInt32();
+            for (int i = 0; i < pointCount; i++)
+                TrailCache.Add(reader.ReadVector2());
+        }
 
         public override void AI()
         {

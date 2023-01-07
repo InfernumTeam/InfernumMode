@@ -265,13 +265,14 @@ namespace InfernumMode.Common.Graphics
 
         private void DrawPrims(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, bool pixelated, float? directionOverride = null)
         {
-            Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            if (originalPositions.Count() <= 2)
+                return;
 
             originalPositions = originalPositions.Where(p => p != Vector2.Zero);
             List<Vector2> trailPoints = GetTrailPoints(originalPositions, generalOffset, totalTrailPoints);
 
             // A trail with only one point or less has nothing to connect to, and therefore, can't make a trail.
-            if (originalPositions.Count() <= 2 || trailPoints.Count <= 2)
+            if (trailPoints.Count <= 2)
                 return;
 
             // If the trail point has any NaN positions, don't draw anything.
@@ -296,6 +297,7 @@ namespace InfernumMode.Common.Graphics
             if (triangleIndices.Length % 6 != 0 || vertices.Length <= 3)
                 return;
 
+            Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             if (SpecialShader != null)
             {
                 SpecialShader.Shader.Parameters["uWorldViewProjection"].SetValue(PerspectiveMatrixOverride ?? view * projection);

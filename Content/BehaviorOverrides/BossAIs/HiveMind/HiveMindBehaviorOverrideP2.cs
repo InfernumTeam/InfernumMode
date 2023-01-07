@@ -531,8 +531,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 if (BossRushEvent.BossRushActive)
                     wallVelocity *= 1.7f;
 
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
+                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
+                }
 
                 // Reset to the slowdown state in preparation for the next attack.
                 if (npc.ai[3] > EaterWallSlowdownTime + EaterWallSummoningTime)

@@ -753,12 +753,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul =>
                         {
-                            soul.ai[0] = Main.rand.Next(2);
-                            soul.ai[1] = soulAngle;
                             soul.localAI[0] = overallRingSpeedFactor;
                             soul.ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
                         });
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 290, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 290, 0f, -1, Main.rand.Next(2), soulAngle);
                     }
                 }
 
@@ -1223,13 +1221,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             for (int j = 0; j < 18; j++)
                             {
                                 Vector2 shootVelocity = Main.npc[i].SafeDirectionTo(npc.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
-                                int soul = Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(soul))
-                                    Main.projectile[soul].timeLeft = 20;
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul => soul.timeLeft = 20);
+                                Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
                             }
 
+                            Main.npc[i].life = 0;
+                            Main.npc[i].HitEffect(0, 10.0);
+                            Main.npc[i].checkDead();
                             Main.npc[i].active = false;
-                            Main.npc[i].netUpdate = true;
                         }
                         SoundEngine.PlaySound(SoundID.NPCHit36, Main.npc[i].Center);
                     }
@@ -1324,12 +1324,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul =>
                         {
-                            soul.ai[0] = Main.rand.Next(2);
-                            soul.ai[1] = soulAngle;
                             soul.localAI[0] = overallRingSpeedFactor;
                             soul.ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
                         });
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 300, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 300, 0f, -1, Main.rand.Next(2), soulAngle);
                     }
                 }
                 return;

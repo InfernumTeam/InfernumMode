@@ -44,10 +44,26 @@ namespace InfernumMode.Core.Netcode
             BitsByte containmentFlagWrapper = new();
             containmentFlagWrapper[0] = WorldSaveSystem.HasOpenedLostColosseumPortal;
 
-            packet.Write((short)InfernumPacketType.SyncInfernumActive);
+            packet.Write((short)InfernumPacketType.OpenLostColosseumPortal);
             packet.Write(sender);
             packet.Write(containmentFlagWrapper);
             packet.Write(WorldSaveSystem.LostColosseumPortalAnimationTimer);
+            packet.Send(-1, sender);
+        }
+
+        public static void SendProfanedDoorOpeningSync(int sender)
+        {
+            // Don't bother trying to send packets in singleplayer.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = InfernumMode.Instance.GetPacket();
+            BitsByte containmentFlagWrapper = new();
+            containmentFlagWrapper[0] = WorldSaveSystem.HasProvidenceDoorShattered;
+
+            packet.Write((short)InfernumPacketType.OpenProfanedDoor);
+            packet.Write(sender);
+            packet.Write(containmentFlagWrapper);
             packet.Send(-1, sender);
         }
         #endregion Send Methods
@@ -66,7 +82,7 @@ namespace InfernumMode.Core.Netcode
                 SyncInfernumActivity(sender);
         }
 
-        public static void RecieveColosseumPortalOpeningSync(BinaryReader reader)
+        public static void ReceiveColosseumPortalOpeningSync(BinaryReader reader)
         {
             int sender = reader.ReadInt32();
             BitsByte flag = reader.ReadByte();
@@ -78,6 +94,19 @@ namespace InfernumMode.Core.Netcode
             // to ensure that all clients are informed of what happened.
             if (Main.netMode == NetmodeID.Server)
                 OpenLostColosseumPortalSync(sender);
+        }
+
+        public static void ReceiveProfanedDoorOpeningSync(BinaryReader reader)
+        {
+            int sender = reader.ReadInt32();
+            BitsByte flag = reader.ReadByte();
+            WorldSaveSystem.HasProvidenceDoorShattered = flag[0];
+
+            // Send the packet again to the other clients if this packet was received on the server.
+            // Since ModPackets go solely to the server when sent by a client this is necesssary
+            // to ensure that all clients are informed of what happened.
+            if (Main.netMode == NetmodeID.Server)
+                SendProfanedDoorOpeningSync(sender);
         }
         #endregion Receive Methods
 
@@ -157,7 +186,10 @@ namespace InfernumMode.Core.Netcode
                     TwinsAttackSynchronizer.ReadFromPacket(reader);
                     break;
                 case InfernumPacketType.OpenLostColosseumPortal:
-                    RecieveColosseumPortalOpeningSync(reader);
+                    ReceiveColosseumPortalOpeningSync(reader);
+                    break;
+                case InfernumPacketType.OpenProfanedDoor:
+                    ReceiveProfanedDoorOpeningSync(reader);
                     break;
             }
         }

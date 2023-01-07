@@ -220,6 +220,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             LimbDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.PolterghastEctoplasmVertexShader);
 
+            if (CalamityGlobalNPC.ghostBoss <= -1)
+                return;
+
             if (Polterghast.ai[2] >= 54f)
                 return;
 

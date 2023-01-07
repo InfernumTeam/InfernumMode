@@ -134,8 +134,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 player.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
             }
 
+            // Despawn if the nearest target is incredibly far away.
+            if (!npc.WithinRange(target.Center, 9600f))
+                npc.active = false;
+
             // Keep the target within the arena.
-            if (!WorldSaveSystem.ProvidenceArena.IsEmpty)
+            if (!WorldSaveSystem.ProvidenceArena.IsEmpty && npc.WithinRange(target.Center, 9600f))
             {
                 if (target.position.X < arenaArea.Left)
                     target.position.X = arenaArea.Left;

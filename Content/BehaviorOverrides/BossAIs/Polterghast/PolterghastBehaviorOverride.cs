@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Select a new target if an old one was lost.
             // If no valid one exists, despawn.
             npc.TargetClosestIfTargetIsInvalid();
-            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
+            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 9600f))
             {
                 DoDespawnEffects(npc);
                 return false;

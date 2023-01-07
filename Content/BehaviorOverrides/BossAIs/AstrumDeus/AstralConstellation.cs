@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Vector2 initialVelocity = Vector2.UnitY * 11f;
+            Vector2 initialVelocity = Vector2.UnitY * 6f;
             if (Projectile.identity % 2f == 1f)
                 initialVelocity = initialVelocity.RotatedBy(MathHelper.PiOver2);
 

@@ -678,7 +678,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int shootTime = 420;
             int attackTransitionDelay = 105;
             int plasmaShootRate = (int)MathHelper.Lerp(54f, 28f, beaconAngerFactor);
-            int crystalShootRate = 32;
+            int crystalShootRate = 45;
             bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
             float flySpeed = 16.5f;
             float flyTurnSpeed = 0.035f;
@@ -748,7 +748,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootPosition = bodyToShootFrom.Center;
-                        Vector2 shootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                        Vector2 shootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitY) * 8f;
                         Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<AstralCrystal>(), 200, 0f);
                     }
                 }

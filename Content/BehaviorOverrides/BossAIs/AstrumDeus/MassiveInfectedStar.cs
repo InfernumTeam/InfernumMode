@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2.4f, 10f);
+                    Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 6f);
                     if (BossRushEvent.BossRushActive)
                         sparkVelocity *= 1.6f;
 

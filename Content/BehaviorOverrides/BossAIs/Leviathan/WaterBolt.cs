@@ -47,8 +47,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 }
                 Projectile.localAI[1] = 1f;
             }
-            // Frames
 
+            // Decide frames.
             Projectile.frameCounter++;
             if (Projectile.frameCounter >= 8)
             {

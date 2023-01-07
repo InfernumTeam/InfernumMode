@@ -123,9 +123,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Give the target infinite flight time.
-            target.wingTime = target.wingTimeMax;
-            target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
+            // Give targets infinite flight time.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.wingTime = player.wingTimeMax;
+                player.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
+            }
 
             // Keep the target within the arena.
             if (!WorldSaveSystem.ProvidenceArena.IsEmpty)

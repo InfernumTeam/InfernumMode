@@ -987,38 +987,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Decide the position to spawn the black hole and create the dark star constellation at on the first frame.
             if (attackTimer == 1f)
             {
-                int tries = 0;
-                do
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    tries++;
-                    if (tries >= 500)
-                        break;
-
-                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
-                    blackHoleCenterX = blackHoleCenter.X;
-                    blackHoleCenterY = blackHoleCenter.Y;
-                }
-
-                // Avoid placing the black hole near tiles. The laser spin needs to be able to be dodged by letting the target
-                // spin in tandem with the lasers. If they're blocked by tiles then they could recieve an unfair hit or two.
-                while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 600f, 1200, 1200));
-
-                for (int i = 0; i < starsInConstellation; i++)
-                {
-                    float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
-                    Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
-                    Vector2 blackHoleCenter = new(blackHoleCenterX, blackHoleCenterY);
-
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
+                    int tries = 0;
+                    do
                     {
-                        star.ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
-                        star.ModProjectile<DarkStar>().AnchorPoint = blackHoleCenter;
-                    });
-                    Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f, -1, i, (i + 1f) % starsInConstellation);
+                        tries++;
+                        if (tries >= 500)
+                            break;
+
+                        Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
+                        blackHoleCenterX = blackHoleCenter.X;
+                        blackHoleCenterY = blackHoleCenter.Y;
+                    }
+
+                    // Avoid placing the black hole near tiles. The laser spin needs to be able to be dodged by letting the target
+                    // spin in tandem with the lasers. If they're blocked by tiles then they could recieve an unfair hit or two.
+                    while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 600f, 1200, 1200));
+
+                    for (int i = 0; i < starsInConstellation; i++)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
+                        Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
+                        Vector2 blackHoleCenter = new(blackHoleCenterX, blackHoleCenterY);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
+                        {
+                            star.ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
+                            star.ModProjectile<DarkStar>().AnchorPoint = blackHoleCenter;
+                        });
+                        Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f, -1, i, (i + 1f) % starsInConstellation);
+                    }
+                    Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
+                    
+                    npc.netUpdate = true;
                 }
-                Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
-                
-                npc.netUpdate = true;
 
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't panic while trying to evade the bolts!");
             }

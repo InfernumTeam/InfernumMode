@@ -106,11 +106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 return false;
             }
 
-            // Spawn cinders
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                target.CreateCinderParticles(lifeRatio, ModContent.ProjectileType<BrimstoneCinder>());
-            }
+            // Spawn cinders.
+            target.CreateCinderParticles(lifeRatio, new BrimstoneCinder());
 
             switch ((BrimmyAttackType)(int)attackType)
             {

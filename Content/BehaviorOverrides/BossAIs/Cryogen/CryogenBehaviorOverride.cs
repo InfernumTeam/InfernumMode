@@ -174,8 +174,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Make a blizzard happen.
             CalamityUtils.StartRain();
 
-            // Spawn Snowflakes
-            target.CreateCinderParticles(lifeRatio, ModContent.ProjectileType<SnowflakeCinder>());
+            // Spawn snowflakes.
+            target.CreateCinderParticles(lifeRatio, new SnowflakeCinder());
 
             // Become invincible if the target has been outside of the snow biome for too long.
             npc.dontTakeDamage = enrageTimer >= 600f;

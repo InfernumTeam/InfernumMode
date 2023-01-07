@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             }
 
             // Spawn snow particles
-            player.CreateCinderParticles(1f, ModContent.ProjectileType<SnowflakeCinder>());
+            player.CreateCinderParticles(1f, new SnowflakeCinder());
 
             Timer++;
         }

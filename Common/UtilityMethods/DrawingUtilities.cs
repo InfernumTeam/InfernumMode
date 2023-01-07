@@ -1,8 +1,10 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
+using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
+using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
@@ -422,8 +424,11 @@ namespace InfernumMode
             }
         }
 
-        public static void CreateCinderParticles(this Player target, float lifeRatio, int cinderType, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
+        public static void CreateCinderParticles(this Player target, float lifeRatio, BaseCinderParticle cinderParticle, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             int cinderSpawnRate = (int)MathHelper.Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);
             float cinderFlySpeed = MathHelper.Lerp(maxCinderFlySpeed, minCinderFlySpeed, lifeRatio);
 
@@ -442,7 +447,11 @@ namespace InfernumMode
 
                 if (Main.rand.NextBool(6))
                     cinderVelocity.X *= -1f;
-                NewProjectileBetter(target.Center + cinderSpawnOffset, cinderVelocity, cinderType, 0, 0f);
+
+                cinderParticle.Position = target.Center + cinderSpawnOffset;
+                cinderParticle.Velocity = cinderVelocity;
+                cinderParticle.Color = Color.White;
+                GeneralParticleHandler.SpawnParticle(cinderParticle);
             }
         }
 

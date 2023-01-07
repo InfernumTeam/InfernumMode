@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            Projectile.width = 100;
+            Projectile.width = 85;
             Projectile.height = 56;
             Projectile.hostile = true;
             Projectile.alpha = 255;
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 InitialSpinDirection = Projectile.velocity.ToRotation();
 
             // Adjust the size if this is a super laser.
-            if (Projectile.width <= 102f && SuperLaser)
+            if (Projectile.width != 200 && SuperLaser)
                 Projectile.width = 200;
 
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>() && Main.npc[OwnerIndex].Opacity > 0.35f)

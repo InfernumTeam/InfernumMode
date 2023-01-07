@@ -1008,6 +1008,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 bladeSpeed += 3f;
             }
 
+            // Make the lasers slower in multiplayer.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                maxLaserAngularVelocity *= 0.65f;
+
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
@@ -1056,7 +1060,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Release crystal blades.
                 if (attackTimer % bladeReleaseRate == bladeReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.25f }, target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound with { Volume = 0.25f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int bladeDamage = !IsEnraged ? 225 : 350;

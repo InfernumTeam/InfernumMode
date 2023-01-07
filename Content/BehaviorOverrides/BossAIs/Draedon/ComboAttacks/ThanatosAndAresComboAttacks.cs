@@ -205,8 +205,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 if (attackTimer > attackDelay)
                 {
-                    float angularVelocity = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
-                    generalAngularOffset += angularVelocity;
+                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
+
+                    // Make the lasers slower in multiplayer.
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                        spinSpeed *= 0.65f;
+
+                    generalAngularOffset += spinSpeed;
                 }
 
                 // Slow down.

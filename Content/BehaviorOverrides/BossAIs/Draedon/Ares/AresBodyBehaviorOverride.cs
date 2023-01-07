@@ -718,6 +718,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 spinSpeed *= 0.84f;
             }
 
+            // Make the lasers slower in multiplayer.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                spinSpeed *= 0.65f;
+
             generalAngularOffset += spinSpeed * laserDirectionSign;
 
             // Get pissed off if the player attempts to leave the laser circle.

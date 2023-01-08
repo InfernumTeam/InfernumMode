@@ -20,7 +20,7 @@ namespace InfernumMode.Content.Backgrounds
         public override int ChooseCloseTexture(ref float scale, ref double parallax, ref float a, ref float b)
         {
             b -= 250f;
-            return BackgroundTextureLoader.GetBackgroundSlot("InfernumMode/Backgrounds/LostColosseumBGObjects");
+            return BackgroundTextureLoader.GetBackgroundSlot("InfernumMode/Content/Backgrounds/LostColosseumBGObjects");
         }
 
         public override void Load()

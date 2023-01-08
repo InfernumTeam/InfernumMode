@@ -363,7 +363,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
             float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -500f);
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, 180f);
 
             if (phase2)
             {

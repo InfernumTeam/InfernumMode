@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Reset the attack cycle for the next subphase.
-                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
+                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
                 SelectNextAttack(npc, ref attackType);
 
                 transitionDRCountdown = TransitionDRBoostTime;

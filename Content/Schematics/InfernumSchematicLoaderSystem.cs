@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Core.GlobalInstances.Systems
+namespace InfernumMode.Content.Schematics
 {
     public class InfernumSchematicLoaderSystem : ModSystem
     {
@@ -18,6 +18,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             TileMaps["Profaned Arena"] = LoadInfernumSchematic("Content/Schematics/ProfanedArena.csch");
             TileMaps["LostColosseum"] = LoadInfernumSchematic("Content/Schematics/LostColosseum.csch");
             TileMaps["LostColosseumEntrance"] = LoadInfernumSchematic("Content/Schematics/LostColosseumEntrance.csch");
+            TileMaps["LostColosseumExit"] = LoadInfernumSchematic("Content/Schematics/LostColosseumExit.csch");
         }
 
         public static SchematicMetaTile[,] LoadInfernumSchematic(string filename)

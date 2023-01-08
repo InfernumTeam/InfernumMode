@@ -111,15 +111,15 @@ namespace InfernumMode.Content.Subworlds
                 }
 
                 // Set the default spawn position.
-                Main.spawnTileX = PortalPosition.X;
+                Main.spawnTileX = PortalPosition.X + 12;
                 Main.spawnTileY = PortalPosition.Y;
+
+                // Spawn the actual entrance because re-exporting the entire schematic fucks up the rest of the worldgen code here.
+                Point exitCenter = new(PortalPosition.X, PortalPosition.Y + 6);
+                PlaceSchematic<Action<Chest>>("LostColosseumExit", exitCenter, SchematicAnchor.Center, ref _);
 
                 // Ensure that the portal is open when the player is there.
                 WorldSaveSystem.HasOpenedLostColosseumPortal = true;
-
-                Point p = PortalPosition;
-                while (!WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<ColosseumPortal>()))
-                    p.Y++;
             }
 
             public static void GenerateCaveSystem(Point start, Point end)

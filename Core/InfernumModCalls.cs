@@ -38,6 +38,8 @@ namespace InfernumMode.Core
             if (BossRushEvent.BossRushActive)
                 return false;
 
+            if (npcID == NPCID.KingSlime)
+                return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.EyeofCthulhu)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.SkeletronHead)

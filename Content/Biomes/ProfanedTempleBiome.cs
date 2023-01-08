@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Biomes
     {
         public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 
-        public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/ProfanedTemple");
+        public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/Music/ProfanedTemple");
 
         public override void SetStaticDefaults()
         {

@@ -208,6 +208,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
+            if (Limbs is null)
+                return false;
+
+            if (Limbs.Limbs is null)
+                return false;
+
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint))

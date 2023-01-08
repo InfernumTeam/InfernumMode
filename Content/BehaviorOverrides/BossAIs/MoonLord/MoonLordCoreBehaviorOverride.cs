@@ -303,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void HandleBodyPartDeathTriggers(NPC npc, double realDamage)
         {
-            int minLife = (int)(npc.lifeMax * 0.02);
+            int minLife = (int)(npc.lifeMax * 0.067) + 1;
             if (npc.life - realDamage > minLife)
                 return;
 

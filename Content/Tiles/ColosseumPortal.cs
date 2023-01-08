@@ -139,7 +139,7 @@ namespace InfernumMode.Content.Tiles
             WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
 
             if (Main.netMode != NetmodeID.SinglePlayer)
-                PacketManager.SendPacket<ColosseumPortalOpenPacket>(Main.myPlayer);
+                PacketManager.SendPacket<ColosseumPortalOpenPacket>();
 
             // Create a lens flare.
             Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);

@@ -348,7 +348,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (totalReleasedSouls >= 60f)
             {
                 // Focus on the boss as it jitters and explode.
-                if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
+                if (npc.WithinRange(Main.LocalPlayer.Center, 2700f))
                 {
                     Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                     Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;

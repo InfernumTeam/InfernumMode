@@ -159,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DeceleratingEbonianGlob>(), ModContent.ProjectileType<DeceleratingCrimulanGlob>(), ModContent.ProjectileType<GroundSlimeGlob>());
 
             // Move the camera to the core and draw in slime from outside sources.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f) && attackTimer < 150f)
+            if (npc.WithinRange(Main.LocalPlayer.Center, 2000f) && attackTimer < 150f)
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 24f, attackTimer, true);

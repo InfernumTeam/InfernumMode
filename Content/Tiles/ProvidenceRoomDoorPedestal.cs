@@ -4,6 +4,7 @@ using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -119,7 +120,7 @@ namespace InfernumMode.Content.Tiles
                 WorldSaveSystem.HasProvidenceDoorShattered = true;
 
                 if (Main.netMode != NetmodeID.SinglePlayer)
-                    PacketHandler.SendProfanedDoorOpeningSync(Main.myPlayer);
+                    PacketManager.SendPacket<ProfanedTempleDoorOpenPacket>();
                 shatterTimer = 0;
             }
 

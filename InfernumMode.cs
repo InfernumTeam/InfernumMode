@@ -115,7 +115,7 @@ namespace InfernumMode
             Utilities.UpdateMapIconList();
         }
 
-        public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketHandler.ReceivePacket(this, reader, whoAmI);
+        public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
 
         public override void AddRecipes() => RecipeUpdates.Update();
 

@@ -749,11 +749,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1050f);
-                        int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SulphurousSharkron>());
+                        int shark = NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SulphurousSharkron>(), 0, 0f, 1f);
                         if (Main.npc.IndexInRange(shark))
                         {
                             Main.npc[shark].velocity = Main.rand.NextVector2CircularEdge(8f, 8f);
-                            Main.npc[shark].ai[1] = 1f;
                             Main.npc[shark].netUpdate = true;
                         }
                     }

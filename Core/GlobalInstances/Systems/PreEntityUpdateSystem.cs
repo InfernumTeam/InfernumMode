@@ -16,7 +16,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void PreUpdateEntities()
         {
             InfernumMode.BlackFade = MathHelper.Clamp(InfernumMode.BlackFade - 0.025f, 0f, 1f);
-            PacketHandler.Update();
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
             if (CalamityWorld.death)

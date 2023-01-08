@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Core.OverridingSystem;
@@ -37,8 +38,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 SoundEngine.PlaySound(AstrumDeusHead.SpawnSound, projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int deus = NPC.NewNPC(projectile.GetSource_FromAI(), (int)projectile.Center.X, (int)projectile.Center.Y - 3300, ModContent.NPCType<AstrumDeusHead>());
-                    CalamityMod.CalamityUtils.BossAwakenMessage(deus);
+                    int deus = NPC.NewNPC(projectile.GetSource_FromAI(), (int)projectile.Center.X, (int)projectile.Center.Y - 1900, ModContent.NPCType<AstrumDeusHead>());
+                    CalamityUtils.BossAwakenMessage(deus);
                 }
             }
 

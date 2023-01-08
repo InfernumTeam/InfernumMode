@@ -1,6 +1,7 @@
 using CalamityMod.World;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;
@@ -39,7 +40,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             {
                 Utilities.DisplayText("Infernum is not allowed in Master Mode, For the Worthy, or Eternity Mode.", Color.Red);
                 if (Main.netMode == NetmodeID.Server)
-                    PacketHandler.SyncInfernumActivity(Main.myPlayer);
+                    PacketManager.SendPacket<InfernumModeActivityPacket>();
                 WorldSaveSystem.InfernumMode = false;
             }
 

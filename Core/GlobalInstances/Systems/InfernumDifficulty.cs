@@ -2,6 +2,7 @@ using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -26,7 +27,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (value)
                     CalamityWorld.revenge = true;
                 if (Main.netMode != NetmodeID.SinglePlayer)
-                    PacketHandler.SyncInfernumActivity(Main.myPlayer);
+                    PacketManager.SendPacket<InfernumModeActivityPacket>();
             }
         }
 

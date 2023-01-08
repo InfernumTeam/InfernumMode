@@ -12,6 +12,7 @@ using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -390,9 +391,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
         public static void SummonExoMech(Player playerToFollow)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer == playerToFollow.whoAmI)
             {
-                PacketHandler.SyncExoMechSummon(playerToFollow);
+                PacketManager.SendPacket<ExoMechSelectionPacket>();
                 return;
             }
 

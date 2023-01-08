@@ -603,7 +603,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Create a circle of ectoplasm wisps around Polter on the first frame.
-            if (attackTimer == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
             {
                 int ringCounter = 0;
                 bool clockwise = true;

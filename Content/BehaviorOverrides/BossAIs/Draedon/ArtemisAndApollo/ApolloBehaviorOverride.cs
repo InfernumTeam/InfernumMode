@@ -1838,6 +1838,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             npc.HitEffect();
             npc.StrikeNPC(10, 0f, 1);
             npc.checkDead();
+            npc.active = false;
         }
 
         #endregion AI

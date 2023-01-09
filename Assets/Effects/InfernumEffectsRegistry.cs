@@ -133,9 +133,6 @@ namespace InfernumMode.Assets.Effects
             ghostlyShader = new Ref<Effect>(assets.Request<Effect>("Assets/Effects/NecroplasmicRoarShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
 
-            Ref<Effect> backgroundShader = new(assets.Request<Effect>("Assets/Effects/MoonLordBGDistortionShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:MoonLordBGDistortion"] = new MiscShaderData(backgroundShader, "DistortionPass");
-
             Ref<Effect> introShader = new(assets.Request<Effect>("Assets/Effects/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");
 
@@ -208,6 +205,11 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
 
+            // Moon Lord.
+            Ref<Effect> fireBGShader = new(assets.Request<Effect>("Assets/Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:MoonLord"] = new Filter(new MLScreenShaderData(fireBGShader, "DyePass").UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:MoonLord"] = new MLSky();
+
             // Night Providence.
             Filters.Scene["InfernumMode:NightProvidence"] = new Filter(new NightProvidenceShaderData("FilterMiniTower").UseOpacity(0.67f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:NightProvidence"] = new NightProvidenceSky();
@@ -221,8 +223,7 @@ namespace InfernumMode.Assets.Effects
             SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 
             // Supreme Calamitas.
-            Ref<Effect> scalScreenShader = new(assets.Request<Effect>("Assets/Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(scalScreenShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(fireBGShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
 
             // General screen shake distortion.

@@ -42,6 +42,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> Line => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/Line");
 
+        public static Asset<Texture2D> MoonLordBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/MoonLordBGLayer");
+
         public static Asset<Texture2D> Pixel => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Pixel");
 
         public static Asset<Texture2D> Shadow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Shadow1");

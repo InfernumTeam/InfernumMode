@@ -34,7 +34,7 @@ namespace InfernumMode.Content.Skies
             uvScaledArena = new(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
 
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
-            UseImage(InfernumTextureRegistry.CultistRayMap.Value, 0, SamplerState.AnisotropicWrap);
+            UseImage(InfernumTextureRegistry.GrayscaleWater.Value, 0, SamplerState.AnisotropicWrap);
 
             UseOpacity(0.36f);
             base.Apply();

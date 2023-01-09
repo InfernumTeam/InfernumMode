@@ -7,7 +7,7 @@ namespace InfernumMode.Core.Netcode.Packets
     {
         // This determines whether a packet should be sent back to clients once on the server. This applies in cases where a client
         // needs to inform the server of a change, and the packet can't be sent from the server itself (such as if a player makes a left click).
-        // This is important it isn't enough to just send a packet and be done with it, as TML has hidden rules with its packet structure:
+        // This is important because it isn't enough to just send a packet and be done with it, as TML has hidden rules with its packet structure:
         // 1. Packets sent from clients go to the server.
         // 2. Packets sent from the server go to the clients (with the optional exception of one client if you supply a client that should not recieve the packet).
 

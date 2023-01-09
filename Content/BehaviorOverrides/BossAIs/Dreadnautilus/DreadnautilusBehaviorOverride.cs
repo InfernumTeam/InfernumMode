@@ -73,6 +73,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            // Fade away and despawn if the player dies.
+            if (!target.active || target.dead)
+            {
+                npc.TargetClosest();
+                target = Main.player[npc.target];
+                if (!target.active || target.dead)
+                {
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 16f, 0.1f);
+                    if (!npc.WithinRange(target.Center, 600f))
+                    {
+                        npc.life = 0;
+                        npc.active = false;
+                        npc.netUpdate = true;
+                    }
+
+                    if (npc.timeLeft > 240)
+                        npc.timeLeft = 240;
+                    return false;
+                }
+            }
+
             npc.ai[3] = 1f;
             npc.dontTakeDamage = false;
             npc.Calamity().KillTime = 10;
@@ -84,6 +105,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             if (target.HasBuff(ModContent.BuffType<BurningBlood>()))
                 target.ClearBuff(ModContent.BuffType<BurningBlood>());
+
+
 
             switch ((DreadnautilusAttackState)npc.ai[0])
             {

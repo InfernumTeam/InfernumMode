@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -68,6 +69,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
+            // Don't draw offscreen projectiles.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 250;
+
             // Fade away if Polter is gone or not performing the relevant attack.
             int fadeoutTime = 40;
             int polterghastIndex = NPC.FindFirstNPC(ModContent.NPCType<PolterNPC>());
@@ -96,6 +100,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool PreDraw(ref Color lightColor)
         {
+            // Simply draws a soul that is squished to be the size of the hitbox.
+            // This looks a bit funny but visual quality isn't the point when this config is enabled.
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                OptimizedDraw();
+                return false;
+            }
+
+            // Draws whispy lights. Slightly more performance intensive due to looping, but also more visually interesting.
+            DefaultDraw();
+            return false;
+        }
+
+        public void DefaultDraw()
+        {
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 1; i < Projectile.oldPos.Length; i++)
             {
@@ -113,7 +132,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Main.spriteBatch.Draw(streakTexture, drawPosition, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(streakTexture, drawPosition2, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
-            return false;
+        }
+
+        public void OptimizedDraw()
+        {
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Polterghast/SoulMedium").Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 scale = Projectile.scale * Projectile.Size / texture.Size();
+            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, texture.Size() * 0.5f, scale, 0, 0);
         }
 
         public override bool? CanDamage() => Projectile.timeLeft < 1480 ? null : false;

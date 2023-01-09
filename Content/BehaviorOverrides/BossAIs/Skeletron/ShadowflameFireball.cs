@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
@@ -25,6 +26,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         public override void AI()
         {
+            // Prevent drawing offscreen.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 250;
+
             Projectile.tileCollide = Projectile.timeLeft < 90;
             Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
 
@@ -36,11 +40,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             cursedFlame.scale = Main.rand.NextFloat(0.7f, 0.8f);
             cursedFlame.fadeIn = 0.6f;
             cursedFlame.noGravity = true;
-        }
-
-        public override void Kill(int timeLeft)
-        {
-
         }
 
         public override bool PreDraw(ref Color lightColor)

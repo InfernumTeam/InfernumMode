@@ -371,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                         // Add some randomness to the lasers in phase 3.
                         if (lifeRatio < Phase3LifeRatio)
                             laserDirection = laserDirection.RotatedByRandom(0.66f);
-                        for (float dx = -1400f; dx < 1400f; dx += 120f)
+                        for (float dx = -1080f; dx < 1080f; dx += 120f)
                         {
                             Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
                             Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f, -1, npc.whoAmI);

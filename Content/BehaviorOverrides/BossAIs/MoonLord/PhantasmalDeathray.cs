@@ -2,6 +2,7 @@ using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -120,7 +121,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             if (Time >= 2f)
-                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 26);
+            {
+                int pointCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 15 : 26;
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, pointCount);
+            }
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
         }
 

@@ -14,7 +14,7 @@ namespace InfernumMode.Core
         public static object Call(params object[] args)
         {
             if (args is null || args.Length <= 0)
-                return new ArgumentNullException("ERROR: No function name specified. First argument must be a function name.");
+                return new ArgumentException("ERROR: No function name specified. First argument must be a function name.");
             if (args[0] is not string)
                 return new ArgumentException("ERROR: First argument must be a string function name.");
 

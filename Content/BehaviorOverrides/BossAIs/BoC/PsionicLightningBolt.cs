@@ -147,17 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, InfernumEffectsRegistry.AresLightningVertexShader);
-
-            InfernumEffectsRegistry.AresLightningVertexShader.UseImage1("Images/Misc/Perlin");
-            InfernumEffectsRegistry.AresLightningVertexShader.Apply();
-
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 11);
-            return false;
-        }
+        public override bool PreDraw(ref Color lightColor) => false;
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
@@ -166,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             InfernumEffectsRegistry.AresLightningVertexShader.UseImage1("Images/Misc/Perlin");
             InfernumEffectsRegistry.AresLightningVertexShader.Apply();
 
-            LightningDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 20);
+            LightningDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 17);
         }
     }
 }

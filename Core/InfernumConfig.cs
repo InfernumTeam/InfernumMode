@@ -7,7 +7,12 @@ namespace InfernumMode.Core
     [BackgroundColor(96, 30, 53, 216)]
     public class InfernumConfig : ModConfig
     {
-        public static InfernumConfig Instance;
+        public static InfernumConfig Instance
+        {
+            get;
+            internal set;
+        }
+
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         [Label("Boss Introduction Animations")]

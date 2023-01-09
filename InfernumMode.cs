@@ -34,13 +34,13 @@ namespace InfernumMode
         {
             get;
             set;
-        } = 0f;
+        }
 
         public static float DraedonThemeTimer
         {
             get;
             set;
-        } = 0f;
+        }
 
         public static float ProvidenceArenaTimer
         {

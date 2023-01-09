@@ -1,8 +1,11 @@
 ﻿using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -103,7 +106,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override Color? GetAlpha(Color lightColor) => new Color(48, 244, 244, Projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor) => Projectile.DrawBeam(LaserLength, 2f, lightColor, curve: true);
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Draw a simple bolt if performance is preferred over visual quality.
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                OptimizedDraw();
+                return false;
+            }
+
+            return Projectile.DrawBeam(LaserLength, 2f, lightColor, curve: true);
+        }
+
+        public void OptimizedDraw()
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 scale = Projectile.scale * Projectile.Size / texture.Size() * 2f;
+            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, texture.Size() * 0.5f, scale, 0, 0);
+        }
 
         public override void Kill(int timeLeft)
         {

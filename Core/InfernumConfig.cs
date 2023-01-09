@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
 namespace InfernumMode.Core
@@ -7,11 +8,7 @@ namespace InfernumMode.Core
     [BackgroundColor(96, 30, 53, 216)]
     public class InfernumConfig : ModConfig
     {
-        public static InfernumConfig Instance
-        {
-            get;
-            internal set;
-        }
+        public static InfernumConfig Instance => ModContent.GetInstance<InfernumConfig>();
 
         public override ConfigScope Mode => ConfigScope.ClientSide;
 

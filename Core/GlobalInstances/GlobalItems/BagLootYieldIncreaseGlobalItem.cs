@@ -7,9 +7,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.GlobalInstances.GlobalItems
 {
-    public partial class GlobalItems : GlobalItem
+    public class BagLootYieldIncreaseGlobalItem : GlobalItem
     {
         public override void ModifyItemLoot(Item item, ItemLoot loot)
         {

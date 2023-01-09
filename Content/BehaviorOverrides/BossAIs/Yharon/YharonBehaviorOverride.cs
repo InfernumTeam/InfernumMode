@@ -405,6 +405,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int HasGottenNearPlayerIndex = 21;
 
+        public const int PlayerChargeMarkCenterXIndex = 22;
+
+        public const int PlayerChargeMarkCenterYIndex = 23;
+
         public const float Phase2LifeRatio = 0.5f;
 
         public const float BaseDR = 0.3f;
@@ -748,6 +752,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             return false;
         }
 
+        public static void MarkChargeZone(NPC npc, Player target)
+        {
+            npc.Infernum().ExtraAI[PlayerChargeMarkCenterXIndex] = target.Center.X;
+            npc.Infernum().ExtraAI[PlayerChargeMarkCenterYIndex] = target.Center.Y;
+            npc.netUpdate = true;
+        }
+
+        public static Vector2 GetChargeZone(NPC npc)
+        {
+            float x = npc.Infernum().ExtraAI[PlayerChargeMarkCenterXIndex];
+            float y = npc.Infernum().ExtraAI[PlayerChargeMarkCenterYIndex];
+            return new(x, y);
+        }
+
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackType, ref float attackTimer)
         {
             int spawnEffectsTime = 336;
@@ -897,10 +915,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
             {
                 hasGottenNearPlayer = 1f;
+                MarkChargeZone(npc, target);
                 npc.netUpdate = true;
             }
 
-            if (attackTimer >= chargeDelay && !teleporting && !npc.WithinRange(target.Center, slowdownRange) && hasGottenNearPlayer == 1f)
+            if (attackTimer >= chargeDelay && !teleporting && !npc.WithinRange(GetChargeZone(npc), slowdownRange) && hasGottenNearPlayer == 1f)
                 npc.velocity *= 0.95f;
         }
 
@@ -972,10 +991,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
             {
                 hasGottenNearPlayer = 1f;
+                MarkChargeZone(npc, target);
                 npc.netUpdate = true;
             }
 
-            if (attackTimer >= chargeDelay && !npc.WithinRange(target.Center, slowdownRange) && hasGottenNearPlayer == 1f)
+            if (attackTimer >= chargeDelay && !npc.WithinRange(GetChargeZone(npc), slowdownRange) && hasGottenNearPlayer == 1f)
                 npc.velocity *= 0.95f;
 
             if (attackTimer >= chargeDelay + chargeTime)
@@ -1850,6 +1870,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             bool patternExists = SubphaseTable.Any(table => table.Value(npc));
             YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
             attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
+
+            // Clear the charge zone mark for future attacks.
+            npc.Infernum().ExtraAI[PlayerChargeMarkCenterXIndex] = 0f;
+            npc.Infernum().ExtraAI[PlayerChargeMarkCenterYIndex] = 0f;
 
             // Reset the attack timer and subphase specific variables.
             npc.ai[1] = 0f;

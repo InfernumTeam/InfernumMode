@@ -216,6 +216,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 hasEnteredFinalPhaseFlag = 1f;
                 doPassiveMovement = false;
                 specialAttackTimer = SpecialAttackDelay - SpecialAttackTransitionPreparationTime - 1f;
+
+                if (performingSpecialAttack >= 1f)
+                {
+                    performingSpecialAttack = 0f;
+                    npc.Center = target.Center + Vector2.UnitX * target.direction * 3000f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 4f;
+
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGChargeGate>());
+                }
+
                 Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
                 npc.netUpdate = true;
             }

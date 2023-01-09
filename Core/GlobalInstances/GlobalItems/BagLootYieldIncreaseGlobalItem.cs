@@ -74,7 +74,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
             // The Moon Lord drops 750 extra luminite.
             if (item.type == ItemID.MoonLordBossBag)
-                addInfernumExclusiveItem(ItemID.LunarOre, 60);
+                addInfernumExclusiveItem(ItemID.LunarOre, 750);
 
             // The Dragonfolly drops 25 extra effulgent feathers.
             if (item.type == ModContent.ItemType<DragonfollyBag>())

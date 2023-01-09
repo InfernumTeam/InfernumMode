@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 if (phaseTransitionTime >= 120f)
                 {
                     phaseTransitionPhase++;
-                    aiStateIndex = 0f;
+                    aiStateIndex = -1f;
                     phaseTransitionTime = 0f;
                 }
                 return false;
@@ -264,7 +264,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
             if (hasEnteredPhase4 == 0f && inPhase4)
             {
-                npc.ai[1] = -1f;
+                aiStateIndex = -1f;
                 SelectNextAttack(npc);
                 hasEnteredPhase4 = 1f;
                 npc.netUpdate = true;

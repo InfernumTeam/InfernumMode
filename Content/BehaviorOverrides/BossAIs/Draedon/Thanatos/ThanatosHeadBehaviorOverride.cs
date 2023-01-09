@@ -817,7 +817,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 Utilities.DisplayText("THANATOS-05: EXO TURRETS BURNING AT UNSTABLE ENERGY LEVELS. SELF DESTRUCTION IMMINENT.", ThanatosTextColor);
 
             if (attackTimer == chargeDelay - 16f && firstTimeAttacking)
-                Utilities.DisplayText("THANATOS-05: PREPAREING 'MAXIMUM OVERDRIVE CHARGE' MUTUTAL DESTRUCTION PROTOCOL.", ThanatosTextColor);
+                Utilities.DisplayText("THANATOS-05: PREPARING 'MAXIMUM OVERDRIVE CHARGE' MUTUTAL DESTRUCTION PROTOCOL.", ThanatosTextColor);
 
             // Play a danger sound before the attack begins.
             if (attackTimer == chargeDelay - (firstTimeAttacking ? 90f : 12f))

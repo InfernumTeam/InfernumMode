@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.netUpdate = true;
 
             // Create segments.
-            if (Main.netMode != NetmodeID.MultiplayerClient && segmentsSpawned == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && (NPC.CountNPCS(ModContent.NPCType<ThanatosBody1>()) <= 0 || segmentsSpawned == 0f))
             {
                 int previous = npc.whoAmI;
                 for (int i = 0; i < SegmentCount; i++)

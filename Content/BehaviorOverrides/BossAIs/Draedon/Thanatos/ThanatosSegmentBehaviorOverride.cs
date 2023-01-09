@@ -39,7 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Die if necessary segments are not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active || !Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
-                npc.active = false;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.active = false;
                 return;
             }
 

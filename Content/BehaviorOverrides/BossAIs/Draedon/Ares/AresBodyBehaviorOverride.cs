@@ -992,7 +992,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Emit smoke once hot enough.
             var smokeDrawer = npc.ModNPC<AresBody>().SmokeDrawer;
             smokeDrawer.ParticleSpawnRate = int.MaxValue;
-            if (npc.localAI[3] >= 0.42f)
+            if (npc.localAI[3] >= 0.36f)
             {
                 smokeDrawer.ParticleSpawnRate = 1;
                 smokeDrawer.BaseMoveRotation = npc.rotation + MathHelper.PiOver2;

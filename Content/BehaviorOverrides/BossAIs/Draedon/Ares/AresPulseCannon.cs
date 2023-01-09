@@ -24,6 +24,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
     {
         public AresCannonChargeParticleSet EnergyDrawer = new(-1, 15, 40f, Color.Fuchsia);
 
+        public ThanatosSmokeParticleSet SmokeDrawer = new(-1, 3, 0f, 16f, 1.5f);
+
         public static NPC Ares => AresCannonBehaviorOverride.Ares;
 
         public static int TotalPulseBlastsPerBurst
@@ -96,8 +98,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return;
             }
 
-            // Update the energy drawer.
+            // Update the energy drawers.
             EnergyDrawer.Update();
+            SmokeDrawer.Update();
 
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
@@ -192,8 +195,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
             }
 
-            // Decide the state of the particle drawer.
+            // Decide the state of the particle drawers.
             EnergyDrawer.ParticleSpawnRate = int.MaxValue;
+            SmokeDrawer.ParticleSpawnRate = int.MaxValue;
             if (attackTimer > chargeDelay * 0.45f)
             {
                 shouldPrepareToFire = 1f;
@@ -204,6 +208,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (attackTimer % 15f == 14f && chargeCompletion < 1f)
                     EnergyDrawer.AddPulse(chargeCompletion * 6f);
+            }
+            if (Ares.localAI[3] >= 0.36f)
+            {
+                SmokeDrawer.ParticleSpawnRate = 1;
+                SmokeDrawer.BaseMoveRotation = MathHelper.PiOver2;
+                SmokeDrawer.SpawnAreaCompactness = 40f;
             }
 
             // Fire lasers.
@@ -369,6 +379,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 EnergyDrawer.DrawBloom(coreDrawPosition);
             EnergyDrawer.DrawPulses(coreDrawPosition);
             EnergyDrawer.DrawSet(coreDrawPosition);
+            SmokeDrawer.DrawSet(coreDrawPosition);
 
             return false;
         }

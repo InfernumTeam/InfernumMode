@@ -49,7 +49,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return false;
             }
 
-            // Update the energy drawer.
+            // Update the energy drawers.
+            ThanatosSmokeParticleSet smokeDrawer = GetSmokeDrawer(npc);
+            smokeDrawer.Update();
+
             AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
             energyDrawer.Update();
 
@@ -139,7 +142,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
                 CreateDustTelegraphs(npc, endOfCannon);
 
-            // Decide the state of the particle drawer.
+            // Decide the state of the particle drawers.
+            smokeDrawer.ParticleSpawnRate = int.MaxValue;
             energyDrawer.ParticleSpawnRate = int.MaxValue;
             if (attackTimer > chargeDelay * 0.45f)
             {
@@ -151,6 +155,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (attackTimer % 15f == 14f && chargeCompletion < 1f)
                     energyDrawer.AddPulse(chargeCompletion * 6f);
+            }
+            if (Ares.localAI[3] >= 0.36f)
+            {
+                smokeDrawer.ParticleSpawnRate = 1;
+                smokeDrawer.BaseMoveRotation = MathHelper.PiOver2;
+                smokeDrawer.SpawnAreaCompactness = 40f;
             }
 
             // Fire lasers.
@@ -286,17 +296,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
+            ThanatosSmokeParticleSet smokeDrawer = GetSmokeDrawer(npc);
             Vector2 coreDrawPosition = GetCoreSpritePosition(npc);
             if (npc.Infernum().ExtraAI[1] == 1f)
                 energyDrawer.DrawBloom(coreDrawPosition);
             energyDrawer.DrawPulses(coreDrawPosition);
             energyDrawer.DrawSet(coreDrawPosition);
+            smokeDrawer.DrawSet(coreDrawPosition);
 
             Main.spriteBatch.ResetBlendState();
             return false;
         }
 
         public abstract AresCannonChargeParticleSet GetEnergyDrawer(NPC npc);
+
+        public abstract ThanatosSmokeParticleSet GetSmokeDrawer(NPC npc);
 
         public abstract Vector2 GetCoreSpritePosition(NPC npc);
         #endregion Frames and Drawcode

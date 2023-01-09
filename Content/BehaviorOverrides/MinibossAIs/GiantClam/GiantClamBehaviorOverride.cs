@@ -105,11 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
                         if (hardmode)
                         {
                             for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
-                            {
-                                int proj = Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f);
-                                if (Main.projectile.IndexInRange(proj))
-                                    Main.projectile[proj].ai[0] = 1f;
-                            }
+                                Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f, -1, 1f);
                         }
                         npc.netUpdate = true;
                     }

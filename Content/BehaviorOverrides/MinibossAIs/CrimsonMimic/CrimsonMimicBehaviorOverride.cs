@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -219,13 +220,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            int baghnakhs = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<FetidBaghnakhs>(), 120, 0f);
-                            if (Main.projectile.IndexInRange(baghnakhs))
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(baghnakhs =>
                             {
-                                Main.projectile[baghnakhs].ai[1] = npc.whoAmI;
-                                Main.projectile[baghnakhs].ModProjectile<FetidBaghnakhs>().SpinOffsetAngle = MathHelper.TwoPi * i / 8f;
-                                Main.projectile[baghnakhs].netUpdate = true;
-                            }
+                                baghnakhs.ModProjectile<FetidBaghnakhs>().SpinOffsetAngle = MathHelper.TwoPi * i / 8f;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<FetidBaghnakhs>(), 120, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
 

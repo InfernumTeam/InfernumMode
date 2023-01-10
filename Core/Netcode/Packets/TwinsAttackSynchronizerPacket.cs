@@ -6,6 +6,9 @@ namespace InfernumMode.Core.Netcode.Packets
 {
     public class TwinsAttackSynchronizerPacket : BaseInfernumPacket
     {
+        // This packet should only ever be sent from the server to begin with.
+        public override bool ResendFromServer => false;
+
         public override void Write(ModPacket packet, params object[] context)
         {
             packet.Write(_targetIndex);

@@ -199,6 +199,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
+            // Ensure that the player receives the boss effects buff.
+            NPC.Calamity().KillTime = 1800;
+
             ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 
             // Go away if the target is dead or left the Colosseum.

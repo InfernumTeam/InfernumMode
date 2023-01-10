@@ -47,7 +47,7 @@ namespace InfernumMode.Common.Graphics
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)
         {
-            // Clear th render target from the previous frame.
+            // Clear the render target from the previous frame.
             pixelPrimDrawersList.Clear();
 
             // Check every active projectile.

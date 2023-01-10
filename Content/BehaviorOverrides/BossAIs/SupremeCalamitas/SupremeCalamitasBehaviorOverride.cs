@@ -2156,11 +2156,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         gigablastShootCounter++;
 
                         gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
-                        if (gigablastReleaseCountdown <= 44f)
-                            gigablastReleaseCountdown = 44f;
+                        if (gigablastReleaseCountdown <= 40f)
+                            gigablastReleaseCountdown = 40f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 12f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
                     }
                 }
 

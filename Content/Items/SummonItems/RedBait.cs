@@ -1,6 +1,7 @@
 using CalamityMod.Items.Materials;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -39,13 +40,14 @@ namespace InfernumMode.Content.Items.SummonItems
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.BloodNautilus) && !Main.dayTime;
 
-        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
+        public override bool? UseItem(Player player)
         {
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Vector2 spawnPosition = player.Center - Vector2.UnitY * 400f;
-                NPC.SpawnBoss((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.BloodNautilus, player.whoAmI);
-            }
+                NPC.SpawnOnPlayer(player.whoAmI, NPCID.BloodNautilus);
+            else
+                NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, NPCID.BloodNautilus);
+
             return true;
         }
     }

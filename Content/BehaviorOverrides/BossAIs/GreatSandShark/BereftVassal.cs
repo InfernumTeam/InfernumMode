@@ -1,10 +1,14 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Items.LoreItems;
+using CalamityMod.Items.Placeables.Furniture.Trophies;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.BossBags;
+using InfernumMode.Content.Items.LoreItems;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
@@ -1822,11 +1826,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            // Expert+ bag.
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
 
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
 
-            // Weapons
+            // Weapons.
             int[] weapons = new int[]
             {
                 ModContent.ItemType<AridBattlecry>(),
@@ -1834,9 +1839,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<TheGlassmaker>(),
                 ModContent.ItemType<WanderersShell>()
             };
+
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
             normalOnly.Add(ModContent.ItemType<WaterglassToken>());
             normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
+
+            // Trophy (always directly from boss, never in bag).
+            npcLoot.Add(ModContent.ItemType<BereftVassalTrophy>(), 10);
+
+            // Lore.
+            npcLoot.AddConditionalPerPlayer(() => !WorldSaveSystem.DownedBereftVassal, ModContent.ItemType<KnowledgeBereftVassal>(), desc: DropHelper.FirstKillText);
+        }
+
+        public override void OnKill()
+        {
+            // Mark the bereft vassal as defeated.
+            WorldSaveSystem.DownedBereftVassal = true;
+            CalamityNetcode.SyncWorld();
         }
 
         public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);

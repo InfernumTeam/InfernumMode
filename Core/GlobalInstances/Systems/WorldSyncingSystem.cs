@@ -17,6 +17,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             flags[4] = HasSepulcherAnimationBeenPlayed;
             flags[5] = HasGeneratedProfanedShrine;
             flags[6] = HasGeneratedColosseumEntrance;
+            flags[7] = DownedBereftVassal;
             writer.Write(flags);
 
             writer.Write(ProvidenceArena.X);
@@ -38,6 +39,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasSepulcherAnimationBeenPlayed = flags[4];
             HasGeneratedProfanedShrine = flags[5];
             HasGeneratedColosseumEntrance = flags[6];
+            DownedBereftVassal = flags[7];
 
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 

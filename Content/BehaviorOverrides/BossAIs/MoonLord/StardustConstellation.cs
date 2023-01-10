@@ -1,8 +1,7 @@
-using InfernumMode.Core.ILEditingStuff;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -11,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class StardustConstellation : ModProjectile
+    public class StardustConstellation : ModProjectile, IAdditiveDrawer
     {
         public ref float Index => ref Projectile.ai[0];
 
@@ -43,7 +42,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Projectile projectileToConnectTo = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -72,9 +73,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 float drawOffsetFactor = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.5f + 0.5f) * scaleFactor * fadeToOrange * 8f + 1f;
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * drawOffsetFactor;
-                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, 0, 0f);
             }
-            Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+            spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, 0, 0f);
 
             if (projectileToConnectTo != null)
             {
@@ -87,15 +88,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 Color drawColor = Color.White;
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
 
-                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, 0, 0f);
             }
-
-            return false;
-        }
-
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
-        {
-            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
         public override void Kill(int timeLeft)

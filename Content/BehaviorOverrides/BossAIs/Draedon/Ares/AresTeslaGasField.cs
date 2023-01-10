@@ -1,16 +1,15 @@
 using CalamityMod;
-using InfernumMode.Core.ILEditingStuff;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresTeslaGasField : ModProjectile
+    public class AresTeslaGasField : ModProjectile, IAdditiveDrawer
     {
         public ref float LightPower => ref Projectile.ai[0];
 
@@ -62,20 +61,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
-        {
-            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
-        }
-
         public override bool? CanDamage() => Projectile.Opacity > 0.6f;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
 
             if (!Projectile.Hitbox.Intersects(screenRectangle))
-                return false;
+                return;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -85,8 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
 
             for (int i = 0; i < 2; i++)
-                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
-            return false;
+                spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
         }
     }
 }

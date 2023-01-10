@@ -9,6 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalBoltBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.PhantasmalBolt;
+
         public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
 
         public override bool PreAI(Projectile projectile)

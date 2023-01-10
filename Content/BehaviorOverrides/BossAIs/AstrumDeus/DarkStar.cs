@@ -1,10 +1,9 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
@@ -12,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class DarkStar : ModProjectile
+    public class DarkStar : ModProjectile, IAdditiveDrawer
     {
         public Vector2 AnchorPoint;
 
@@ -42,6 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public static Vector2 CalculateStarPosition(Vector2 origin, float offsetAngle, float spinAngle)
         {
+            // Equations for a generalized form of an asteroid.
             int n = PointsInStar - 1;
             Vector2 starOffset = new Vector2((float)Math.Sin(offsetAngle) * n - (float)Math.Sin(offsetAngle * n), (float)Math.Cos(offsetAngle) * n + (float)Math.Cos(offsetAngle * n)) * RadiusOfConstellation;
             starOffset /= PointsInStar;
@@ -98,7 +98,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.scale = MathHelper.Lerp(0.135f, 0.175f, FadeToDarkGodColors) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
 
@@ -130,6 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 break;
             }
 
+            // Draw connection lines to the next star in the constellation.
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
             if (projectileToConnectTo != null)
             {
@@ -140,51 +143,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 lineOrigin = new(lineTexture.Width * 0.5f, 0f);
                 Color drawColor = Color.White * Utils.GetLerpValue(1f, 25f, projectileToConnectTo.timeLeft, true);
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
-                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, lineOrigin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, lineOrigin, scale, 0, 0f);
             }
 
-            Main.spriteBatch.Draw(sparkleTexture,
-                             Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
-                             null,
-                             sparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
-                             origin,
-                             orthogonalsparkleScale,
-                             SpriteEffects.None,
-                             0f);
-            Main.spriteBatch.Draw(sparkleTexture,
-                             Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
-                             null,
-                             sparkleColor,
-                             Projectile.rotation,
-                             origin,
-                             sparkleScale,
-                             SpriteEffects.None,
-                             0f);
-            Main.spriteBatch.Draw(sparkleTexture,
-                             Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
-                             null,
-                             sparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
-                             origin,
-                             orthogonalsparkleScale * 0.6f,
-                             SpriteEffects.None,
-                             0f);
-            Main.spriteBatch.Draw(sparkleTexture,
-                             Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
-                             null,
-                             sparkleColor,
-                             Projectile.rotation,
-                             origin,
-                             sparkleScale * 0.6f,
-                             SpriteEffects.None,
-                             0f);
-            return false;
-        }
-
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
+            // Draw the sparkles.
+            Vector2 drawCenter = Projectile.Center - Main.screenPosition;
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
         }
     }
 }

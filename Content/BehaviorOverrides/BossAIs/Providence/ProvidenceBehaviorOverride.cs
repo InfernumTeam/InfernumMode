@@ -1635,7 +1635,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
             float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
-            ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
 
             return false;
         }

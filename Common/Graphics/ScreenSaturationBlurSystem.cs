@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -50,12 +51,6 @@ namespace InfernumMode.Common.Graphics
             get;
             private set;
         }
-
-        public static List<DrawData> ThingsToDrawOnTopOfBlur
-        {
-            get;
-            private set;
-        } = new();
 
         public static List<DrawData> ThingsToBeManuallyBlurred
         {
@@ -112,7 +107,7 @@ namespace InfernumMode.Common.Graphics
             ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
-
+            
             Main.spriteBatch.End();
         }
 

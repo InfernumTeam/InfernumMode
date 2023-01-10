@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
+            ScreenOverlaysSystem.DrawCacheProjsOverSignusBlackening.Add(index);
         }
 
         public override bool ShouldUpdatePosition() => false;

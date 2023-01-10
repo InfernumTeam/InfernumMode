@@ -7,16 +7,16 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics
 {
-    public class RenderTargetManager : ModSystem
+    public class PixelationRenderTargetManager : ModSystem
     {
         #region Fields And Properities
-        private static RenderTarget2D PixelRenderTarget;
+        private Vector2 previousScreenSize;
 
-        private static List<IPixelPrimitiveDrawer> PixelPrimDrawersList = new();
+        private static RenderTarget2D pixelRenderTarget;
 
-        private Vector2 PreviousScreenSize;
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
         #endregion
-
+        
         #region Overrides
         public override void Load()
         {
@@ -39,51 +39,52 @@ namespace InfernumMode.Common.Graphics
         {
             orig(self);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            // Draw our RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
-            Main.spriteBatch.Draw(PixelRenderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+
+            // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
+            Main.spriteBatch.Draw(pixelRenderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             Main.spriteBatch.End();
         }
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)
         {
-            // Clear our render target from the previous frame.
-            PixelPrimDrawersList.Clear();
+            // Clear th render target from the previous frame.
+            pixelPrimDrawersList.Clear();
 
             // Check every active projectile.
             for (int i = 0; i < Main.projectile.Length; i++)
             {
                 Projectile projectile = Main.projectile[i];
-                // If the projectile is active, a mod projectile, and uses our interface,
+                
+                // If the projectile is active, a mod projectile, and uses the interface, add it to the list of prims to draw this frame.
                 if (projectile.active && projectile.ModProjectile != null && projectile.ModProjectile is IPixelPrimitiveDrawer pixelPrimitiveProjectile)
-                    // Add it to the list of prims to draw this frame.
-                    PixelPrimDrawersList.Add(pixelPrimitiveProjectile);
+                    pixelPrimDrawersList.Add(pixelPrimitiveProjectile);
             }
 
             // Check every active NPC.
             for (int i = 0; i < Main.npc.Length; i++)
             {
                 NPC npc = Main.npc[i];
-                // If the NPC is active, a mod NPC, and ues our interface,
+                
+                // If the NPC is active, a mod NPC, and uses our interface add it to the list of prims to draw this frame.
                 if (npc.active && npc.ModNPC != null && npc.ModNPC is IPixelPrimitiveDrawer pixelPrimitiveNPC)
-                    // Add it to the list of prims to draw this frame.
-                    PixelPrimDrawersList.Add(pixelPrimitiveNPC);
+                    pixelPrimDrawersList.Add(pixelPrimitiveNPC);
             }
 
             // Draw the prims. The render target gets set here.
-            DrawPrimsToRenderTarget(PixelRenderTarget, PixelPrimDrawersList);
+            DrawPrimsToRenderTarget(pixelRenderTarget, pixelPrimDrawersList);
 
             // Clear the current render target.
             Main.graphics.GraphicsDevice.SetRenderTarget(null);
 
-            // Call orig.
+            // Call the original method.
             orig();
         }
 
         private static void DrawPrimsToRenderTarget(RenderTarget2D renderTarget, List<IPixelPrimitiveDrawer> pixelPrimitives)
         {
-            // Swap to our custom render target.
+            // Swap to the custom render target to prepare things to pixelation.
             SwapToRenderTarget(renderTarget);
-            // If the list has any entries.
+            
             if (pixelPrimitives.Any())
             {
                 // Start a spritebatch, as one does not exist before the method we're detouring.
@@ -93,7 +94,7 @@ namespace InfernumMode.Common.Graphics
                 foreach (IPixelPrimitiveDrawer pixelPrimitiveDrawer in pixelPrimitives)
                     pixelPrimitiveDrawer.DrawPixelPrimitives(Main.spriteBatch);
 
-                // End the spritebatch we started.
+                // Prepare the sprite batch for the next draw cycle.
                 Main.spriteBatch.End();
             }
         }
@@ -108,37 +109,39 @@ namespace InfernumMode.Common.Graphics
             if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
                 return;
 
-            // Else, set the render target.
+            // Otherwise set the render target.
             graphicsDevice.SetRenderTarget(renderTarget);
+            
             // "Flush" the screen, removing any previous things drawn to it.
             graphicsDevice.Clear(Color.Transparent);
         }
 
         private void ResizePixelRenderTarget(bool load)
         {
-            // If not in the game menu, and we arent a dedicated server, or this is the initial setup.
+            // If not in the game menu, and not on a dedicated server, or this is the initial setup.
             if (!Main.gameMenu && !Main.dedServ || load && !Main.dedServ)
             {
                 // Get the current screen size.
                 Vector2 currentScreenSize = new(Main.screenWidth, Main.screenHeight);
-                // If it does not match the previous one, we need to update it.
-                if (currentScreenSize != PreviousScreenSize)
+                
+                // If it does not match the previous one, update it.
+                if (currentScreenSize != previousScreenSize)
                 {
                     // Render target stuff should be done on the main thread only.
                     Main.QueueMainThreadAction(() =>
                     {
                         // If it is not null, or already disposed, dispose it.
-                        if (PixelRenderTarget != null && !PixelRenderTarget.IsDisposed)
-                            PixelRenderTarget.Dispose();
+                        if (pixelRenderTarget != null && !pixelRenderTarget.IsDisposed)
+                            pixelRenderTarget.Dispose();
 
                         // Recreate the render target with the current, accurate screen dimensions.
-                        // In our case, we want to half them to downscale it, pixelating it.
-                        PixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
+                        // In this case, we want to halve them to downscale it, pixelating it.
+                        pixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     });
-
                 }
+                
                 // Set the current one to the previous one for next frame.
-                PreviousScreenSize = currentScreenSize;
+                previousScreenSize = currentScreenSize;
             }
         }
         #endregion

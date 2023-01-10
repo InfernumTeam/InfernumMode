@@ -10,6 +10,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
@@ -368,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 return;
             }
 
-            int secondaryMech = (int)DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon;
+            int secondaryMech = (int)CustomExoMechSelectionSystem.DestroyerTypeToSummon;
             if (secondaryMech == (int)ExoMech.Destroyer)
                 secondaryMech = ModContent.NPCType<ThanatosHead>();
             if (secondaryMech == (int)ExoMech.Prime)
@@ -376,7 +377,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (secondaryMech == (int)ExoMech.Twins)
                 secondaryMech = ModContent.NPCType<Apollo>();
 
-            switch (DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon)
+            switch (CustomExoMechSelectionSystem.PrimaryMechToSummon)
             {
                 // Summon Thanatos underground.
                 case ExoMech.Destroyer:

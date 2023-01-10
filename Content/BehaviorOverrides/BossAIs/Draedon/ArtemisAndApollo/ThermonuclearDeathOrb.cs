@@ -103,8 +103,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
-                for (int i = 0; i < 4; i++)
-                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 3f));
+                for (int i = 0; i < 8; i++)
+                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 7f));
 
                 FireDrawer.Draw(drawPoints, -Main.screenPosition, 30);
             }

@@ -1,4 +1,5 @@
-﻿using InfernumMode.Content.Projectiles;
+﻿using CalamityMod;
+using InfernumMode.Content.Projectiles;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,7 +11,8 @@ namespace InfernumMode.Content.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Waterglass Token");
-            Tooltip.SetDefault("Teleports you to the Lost Colosseum and back");
+            Tooltip.SetDefault("Teleports you to the Lost Colosseum and back\n" +
+                "This item cannot be used when being held and must be in the hotbar");
             SacrificeTotal = 1;
         }
 
@@ -30,6 +32,17 @@ namespace InfernumMode.Content.Items
             Item.shoot = ModContent.ProjectileType<WaterglassTokenProjectile>();
         }
 
-        public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0 && InfernumMode.CanUseCustomAIs;
+        public override bool CanUseItem(Player player)
+        {
+            if (player.ownedProjectileCounts[Item.shoot] >= 1 || !InfernumMode.CanUseCustomAIs)
+                return false;
+
+            // Entering/exiting subworlds appears to reset the mouse item for some reason, meaning that if you use this item
+            // that way it'll be functionally distroyed, which we don't want.
+            if (!Main.mouseItem.IsAir && Main.mouseItem.type == Type)
+                return false;
+
+            return true;
+        }
     }
 }

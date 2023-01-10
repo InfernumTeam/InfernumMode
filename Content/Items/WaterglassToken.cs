@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Items
         {
             DisplayName.SetDefault("Waterglass Token");
             Tooltip.SetDefault("Teleports you to the Lost Colosseum and back\n" +
-                "This item cannot be used when being held and must be in the hotbar");
+                "This item cannot be used when being held by the mouse and must be in the hotbar");
             SacrificeTotal = 1;
         }
 

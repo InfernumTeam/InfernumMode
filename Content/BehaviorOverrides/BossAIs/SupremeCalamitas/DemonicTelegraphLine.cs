@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void Kill(int timeLeft)
         {
-            if (!DontMakeProjectile)
+            if (DontMakeProjectile)
                 return;
 
             SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);

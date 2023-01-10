@@ -9,8 +9,8 @@ namespace InfernumMode
     {
         public static Vector2 GetGroundPositionFrom(Vector2 v, GenSearch search = null)
         {
-            if (search is null)
-                search = new Searches.Down(9001);
+            search ??= new Searches.Down(9001);
+            
             if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated()), out Point result))
                 return v;
             return result.ToWorldCoordinates();

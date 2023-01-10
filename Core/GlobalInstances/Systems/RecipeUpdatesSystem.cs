@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items
 {
-    public static class RecipeUpdates
+    public class RecipeUpdatesSystem : ModSystem
     {
         public static void SetRecipeResultStack(int itemType, int newStack)
         {
@@ -33,10 +33,10 @@ namespace InfernumMode.Content.Items
             });
         }
 
-        internal static void Update()
+        public override void AddRecipes()
         {
             IncreaseBossSummonerYields();
-
+            
             // Make the sandstorm's core post-Cultist.
             AddRecipeIngredient(ModContent.ItemType<SandstormsCore>(), ItemID.FragmentSolar);
         }

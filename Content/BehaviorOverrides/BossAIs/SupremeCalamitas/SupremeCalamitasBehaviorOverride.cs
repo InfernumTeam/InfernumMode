@@ -1076,7 +1076,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            telegraph.ModProjectile<DemonicTelegraphLine>().DontMakeProjectile = true;
+                            telegraph.ModProjectile<DemonicTelegraphLine>().BombRadius = bombExplosionRadius;
                         });
                         Utilities.NewProjectileBetter(bombShootPosition, telegraphDirection, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, 45f);
                     }

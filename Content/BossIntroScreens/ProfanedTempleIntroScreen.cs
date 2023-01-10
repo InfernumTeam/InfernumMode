@@ -1,4 +1,6 @@
+using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
+using SubworldLibrary;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -19,7 +21,8 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "Cleansed Site\nThe Profaned Garden";
 
-        public override bool ShouldBeActive() => Main.LocalPlayer.Infernum_Biome().ZoneProfaned && !Main.LocalPlayer.Infernum_Biome().ProfanedTempleAnimationHasPlayed;
+        public override bool ShouldBeActive() => !SubworldSystem.IsActive<LostColosseum>() &&
+            Main.LocalPlayer.Infernum_Biome().ZoneProfaned && !Main.LocalPlayer.Infernum_Biome().ProfanedTempleAnimationHasPlayed;
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
 

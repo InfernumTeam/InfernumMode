@@ -327,7 +327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_PerpendicularSandBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int sandBlastReleaseRate = 8;
+            int sandBlastReleaseRate = 10;
             int waterSpearReleaseRate = 7;
             int sandBlobCount = 20;
             int attackTransitionDelay = 160;
@@ -335,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             float hoverRedirectAcceleration = 0.96f;
             float leapVerticalSpeed = 18f;
             float hoverVerticalOffset = 250f;
-            float sandSpeed = 8.4f;
+            float sandSpeed = 14.5f;
             float sandBlobAngularArea = 0.73f;
             float sandBlobSpeed = 22f;
             ref float hasLeapedYet = ref Vassal.Infernum().ExtraAI[2];
@@ -426,6 +426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 if (npc.Center.Y < target.Center.Y - 900f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkMiscRoarSound, npc.Center);
+                    npc.Center = target.Center - Vector2.UnitY * 900f;
                     hasGoneFarUpEnough = 1f;
                     npc.netUpdate = true;
                 }
@@ -439,8 +440,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                 if (hasSlammedIntoGround == 0f)
                 {
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 11f, 0.03f);
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, -18f, 24f);
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 13f, 0.05f);
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, -18f, 31f);
                 }
 
                 if (hasSlammedIntoGround == 0f && Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
@@ -488,10 +489,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int attakCycleCount = 3;
             int attackCycleTime = 266;
-            int sharkChargeDelay = 23;
-            int sharkChargeTime = 26;
-            int vassalChargeDelay = 29;
-            float vassalChargeSpeed = 40f;
+            int sharkChargeDelay = 18;
+            int sharkChargeTime = 23;
+            int vassalChargeDelay = 24;
+            float vassalChargeSpeed = 43f;
             float wrappedAttackTimer = attackTimer % attackCycleTime;
             float hoverVerticalOffset = 240f;
             float hoverRedirectSpeed = 21f;
@@ -622,7 +623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.damage = 0;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed;
                 npc.SimpleFlyMovement(idealVelocity, hoverRedirectAcceleration);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
                 npc.rotation = npc.velocity.X * 0.01f;
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 if (sharkAttackTimer >= 12f && npc.WithinRange(hoverDestination, 66f) && wrappedAttackTimer < attackCycleTime - 54f)
@@ -651,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Accelerate after the charge has happened.
             else if (npc.velocity.Length() < sharkMaxChargeSpeed)
-                npc.velocity *= 1.03f;
+                npc.velocity *= 1.04f;
 
             // Do the charge.
             if (sharkAttackTimer == sharkChargeDelay && hasReachedChargeDestination == 1f)

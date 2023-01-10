@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.width = 30;
             NPC.height = 44;
             NPC.defense = 12;
-            NPC.LifeMaxNERB(105000, 105000, 800000);
+            NPC.LifeMaxNERB(137000, 137000, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;
@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public void DoBehavior_SandBlobSlam()
         {
             int chargeCount = 2;
-            int repositionInterpolationTime = 32;
+            int repositionInterpolationTime = 22;
             int sandBlobCount = 30;
             int sandBlobCount2 = 0;
             int slamDelay = 36;
@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (Enraged)
             {
                 chargeCount++;
-                repositionInterpolationTime -= 11;
+                repositionInterpolationTime -= 7;
                 sandBlobCount += 5;
                 sandBlobCount2 += 9;
                 slamDelay -= 14;
@@ -466,7 +466,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                 // If the attack goes on for longer than expected the vassal will interpolant towards the destination faster and faster until it's eventually reached.
                 float flySpeedInterpolant = Utils.GetLerpValue(0f, repositionInterpolationTime, AttackTimer, true);
-                float positionIncrement = MathHelper.Lerp(0.32f, 6.4f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.18f;
+                float positionIncrement = MathHelper.Lerp(0.32f, 7f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.26f;
                 float flySpeed = MathHelper.Lerp(2f, maxFlySpeed, flySpeedInterpolant);
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 275f;
 
@@ -474,7 +474,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // versus what it actually is.
                 NPC.Center = NPC.Center.MoveTowards(hoverDestination, positionIncrement);
                 if (!NPC.WithinRange(hoverDestination, 1000f))
-                    NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.04f);
+                    NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.05f);
 
                 // Perform movement calculations.
                 Vector2 idealVelocity = NPC.SafeDirectionTo(hoverDestination) * flySpeed;

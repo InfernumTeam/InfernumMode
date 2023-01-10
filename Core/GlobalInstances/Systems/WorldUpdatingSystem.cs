@@ -60,13 +60,16 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 // Get rid of clouds.
                 for (int i = 0; i < Main.maxClouds; i++)
+                {
+                    Main.cloud[i].position = Vector2.One * -10000f;
                     Main.cloud[i].active = false;
+                }
             }
 
             if (!LostColosseum.HasBereftVassalAppeared && inColosseum && !Main.LocalPlayer.dead)
             {
                 int x = Main.maxTilesX * 8 + 8000;
-                int y = Main.maxTilesY * 8 - 100;
+                int y = Main.maxTilesY * 8 - 180;
                 NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
                 LostColosseum.HasBereftVassalAppeared = true;
             }

@@ -54,9 +54,9 @@ namespace InfernumMode.Content.Subworlds
 
         public static int CaveWidth => 280;
 
-        public static Point PortalPosition => new(CaveWidth + 166, 160);
+        public static Point PortalPosition => new(CaveWidth + 166, 155);
 
-        public static Point CampfirePosition => new(CaveWidth + 464, 165);
+        public static Point CampfirePosition => new(CaveWidth + 464, 160);
 
         public override int Width => SchematicWidth + CaveWidth - 64;
 
@@ -89,7 +89,7 @@ namespace InfernumMode.Content.Subworlds
                 }
 
                 bool _ = false;
-                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 20);
+                Point bottomLeftOfWorld = new(Main.maxTilesX - 37, Main.maxTilesY - 31);
                 PlaceSchematic<Action<Chest>>("LostColosseum", bottomLeftOfWorld, SchematicAnchor.BottomRight, ref _);
 
                 for (int i = 0; i < CaveWidth + 188; i++)
@@ -103,20 +103,33 @@ namespace InfernumMode.Content.Subworlds
                     }
                 }
 
-                // Why the fuck???
-                for (int x = 585; x < 590; x++)
-                {
-                    for (int y = 154; y < 163; y++)
-                        Main.tile[x, y].Get<TileWallWireStateData>().IsActuated = false;
-                }
-
                 // Set the default spawn position.
                 Main.spawnTileX = PortalPosition.X + 12;
                 Main.spawnTileY = PortalPosition.Y;
 
                 // Spawn the actual entrance because re-exporting the entire schematic fucks up the rest of the worldgen code here.
-                Point exitCenter = new(PortalPosition.X, PortalPosition.Y + 6);
+                Point exitCenter = new(PortalPosition.X, PortalPosition.Y + 8);
+                for (int dx = -51; dx < 51; dx++)
+                {
+                    for (int dy = 0; dy < 45; dy++)
+                    {
+                        Main.tile[exitCenter.X + dx, exitCenter.Y - dy].TileType = TileID.Sandstone;
+                        Main.tile[exitCenter.X + dx, exitCenter.Y - dy].Get<TileWallWireStateData>().HasTile = true;
+                    }
+                }
                 PlaceSchematic<Action<Chest>>("LostColosseumExit", exitCenter, SchematicAnchor.Center, ref _);
+
+                // Why the fuck???
+                for (int x = 695; x < 702; x++)
+                {
+                    for (int y = 160; y < 190; y++)
+                    {
+                        Main.tile[x, y].TileType = TileID.SandstoneBrick;
+                        Main.tile[x, y].Get<TileWallWireStateData>().IsActuated = false;
+                        Main.tile[x, y].Get<TileWallWireStateData>().TileColor = PaintID.ShadowPaint;
+                        Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
+                    }
+                }
 
                 // Ensure that the portal is open when the player is there.
                 WorldSaveSystem.HasOpenedLostColosseumPortal = true;

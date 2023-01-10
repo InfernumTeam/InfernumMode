@@ -53,7 +53,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
                 }
 
-                if (Main.rand.NextBool(createALotOfHolyCinders ? 2 : 6))
+                if (Main.rand.NextBool(createALotOfHolyCinders ? 2 : 15))
                     cinderVelocity.X *= -1f;
 
                 var cinder = new ProfanedTempleCinder()

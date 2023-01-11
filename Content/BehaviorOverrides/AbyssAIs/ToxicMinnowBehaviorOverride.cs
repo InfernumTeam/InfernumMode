@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Tiles.Abyss;
+using InfernumMode.Content.Tiles.Abyss;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

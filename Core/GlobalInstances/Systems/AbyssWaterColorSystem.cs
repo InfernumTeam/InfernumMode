@@ -117,8 +117,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             {
                 return ChangeAbyssColors(initialColor, liquidType, new(x, y));
             });
-
-            ILChanges.DumpToLog(il);
         }
 
         public override void OnModLoad()

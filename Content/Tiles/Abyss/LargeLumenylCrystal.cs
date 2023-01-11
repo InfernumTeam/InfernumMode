@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace InfernumMode.Tiles.Abyss
+namespace InfernumMode.Content.Tiles.Abyss
 {
     public class LargeLumenylCrystal : ModTile
     {

@@ -1,8 +1,8 @@
-﻿using InfernumMode.Tiles.Abyss;
+﻿using InfernumMode.Content.Tiles.Abyss;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Items.Placeables
+namespace InfernumMode.Content.Items.Placeables
 {
     public class DeepwaterBasaltItem : ModItem
     {

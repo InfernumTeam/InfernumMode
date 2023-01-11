@@ -9,7 +9,7 @@ using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Tiles.Abyss
+namespace InfernumMode.Content.Tiles.Abyss
 {
     public class SulphurousPlants : ModTile
     {
@@ -40,7 +40,7 @@ namespace InfernumMode.Tiles.Abyss
             AddMapEntry(new Color(86, 135, 98));
 
             if (Main.netMode != NetmodeID.Server)
-                Glowmask = ModContent.Request<Texture2D>("InfernumMode/Tiles/Abyss/SulphurousPlantsGlow");
+                Glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/Abyss/SulphurousPlantsGlow");
         }
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)

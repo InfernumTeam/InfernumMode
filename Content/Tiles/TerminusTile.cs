@@ -9,7 +9,7 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace InfernumMode.Tiles
+namespace InfernumMode.Content.Tiles
 {
     public class TerminusTile : ModTile
     {

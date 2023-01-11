@@ -11,7 +11,7 @@ using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Tiles.Abyss
+namespace InfernumMode.Content.Tiles.Abyss
 {
     public class SulphurousGroundVines : ModTile
     {
@@ -46,7 +46,7 @@ namespace InfernumMode.Tiles.Abyss
             AddMapEntry(new Color(121, 153, 82));
 
             if (Main.netMode != NetmodeID.Server)
-                Glowmask = ModContent.Request<Texture2D>("InfernumMode/Tiles/Abyss/SulphurousGroundVinesGlow");
+                Glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/Abyss/SulphurousGroundVinesGlow");
         }
 
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)

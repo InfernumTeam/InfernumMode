@@ -1,12 +1,12 @@
 ﻿using CalamityMod;
 using CalamityMod.Tiles.Abyss;
-using InfernumMode.Items.Placeables;
+using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Tiles.Abyss
+namespace InfernumMode.Content.Tiles.Abyss
 {
     public class DeepwaterBasalt : ModTile
     {

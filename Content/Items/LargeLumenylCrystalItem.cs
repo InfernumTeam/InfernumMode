@@ -1,9 +1,9 @@
 ﻿using Terraria.ModLoader;
 using Terraria.ID;
-using InfernumMode.Tiles;
-using InfernumMode.Tiles.Abyss;
+using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Abyss;
 
-namespace InfernumMode.Items
+namespace InfernumMode.Content.Items
 {
     public class LargeLumenylCrystalItem : ModItem
     {

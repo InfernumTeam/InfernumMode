@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace InfernumMode.Tiles.Abyss
+namespace InfernumMode.Content.Tiles.Abyss
 {
     public class LumenylPolyp : ModTile
     {

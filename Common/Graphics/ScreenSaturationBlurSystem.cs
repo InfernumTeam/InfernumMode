@@ -1,6 +1,6 @@
 using CalamityMod;
-using InfernumMode.Tiles;
-using InfernumMode.Tiles.Abyss;
+using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Core;

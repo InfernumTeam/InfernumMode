@@ -1,6 +1,6 @@
 using Terraria.ModLoader;
 
-namespace InfernumMode.Waters
+namespace InfernumMode.Content.Waters
 {
     public class AbyssWaterflow : ModWaterfallStyle { }
 }

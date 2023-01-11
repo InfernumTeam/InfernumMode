@@ -43,6 +43,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             cursor.EmitDelegate(() =>
             {
+                if (Main.gameMenu)
+                    return;
+
                 for (int i = 0; i < DrawCacheBeforeBlack.Count; i++)
                 {
                     try
@@ -63,6 +66,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             cursor.EmitDelegate(() =>
             {
+                if (Main.gameMenu)
+                    return;
+
                 float fadeToBlack = 0f;
                 if (CalamityGlobalNPC.signus != -1 && Main.npc[CalamityGlobalNPC.signus].active)
                     fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];

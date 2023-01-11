@@ -12,6 +12,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using static InfernumMode.Core.GlobalInstances.Systems.AbyssWaterColorSystem;
 
 namespace InfernumMode.Core.GlobalInstances.Players
 {
@@ -128,6 +129,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Make the map turn black if in the final layer of the abyss.
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + Player.Calamity().ZoneAbyssLayer4.ToDirectionInt() * 0.008f, 0f, 1f);
+
+            OrangeAbyssWaterInterpolant = MathHelper.Clamp(OrangeAbyssWaterInterpolant + InLayer3HadalZone.ToDirectionInt() * 0.008f, 0f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.

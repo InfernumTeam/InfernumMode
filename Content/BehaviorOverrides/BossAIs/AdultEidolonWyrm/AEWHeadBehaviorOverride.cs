@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
             
             // If there still was no valid target, swim away.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || !Main.player[npc.target].WithinRange(npc.Center, 9600f))
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || !Main.player[npc.target].WithinRange(npc.Center, 18000f))
             {
                 DoBehavior_Despawn(npc);
                 return false;
@@ -417,7 +417,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Scream very, very loudly on the first frame.
             if (attackTimer == 1f)
                 SoundEngine.PlaySound(InfernumSoundRegistry.AEWThreatenRoar with { Volume = 3f });
-            
+
+            // Be fully opaque.
+            npc.Opacity = 1f;
+
             // The target must die.
             npc.damage = 25000;
             npc.dontTakeDamage = true;
@@ -535,9 +538,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (superEnrageFormAestheticInterpolant > 0f)
             {
                 Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
                     ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, npc.frame, wispFormColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
                 }
             }

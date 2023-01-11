@@ -218,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Disable contact damage.
             npc.damage = 0;
 
-            // Make the water darknesse recede away, so that the player can see the shark.
+            // Make the water darkness recede away, so that the player can see the shark.
             AbyssWaterColorSystem.WaterBlacknessInterpolant = Utils.GetLerpValue(waterBlackFadeTime, 0f, attackTimer, true);
 
             // Create a shockwave to accompany the charge.

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.ID;
 using CalamityMod;
 using System.Diagnostics;
+using ReLogic.Content;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 {
@@ -98,7 +99,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             }
         }
 
-        public static Texture2D IcicleTexture => ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Deerclops/IcicleTexture").Value;
+        private static Texture2D icicleTexture = null;
+
+        public static Texture2D IcicleTexture
+        {
+            get
+            {
+                icicleTexture ??= ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Deerclops/IcicleTexture", AssetRequestMode.ImmediateLoad).Value;
+                return icicleTexture;
+            }
+        }
 
         public int Seed;
 

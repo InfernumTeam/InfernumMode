@@ -61,7 +61,7 @@ namespace InfernumMode.Projectiles
 
             // Summon the wyrm after enough time has passed. After it is spawned it will attempt to snatch the Terminus.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time == AEWSpawnDelay)
-                CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 1600f, ModContent.NPCType<AdultEidolonWyrmHead>());
+                CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 1000f, ModContent.NPCType<AdultEidolonWyrmHead>());
         }
         
         public override bool PreDraw(ref Color lightColor)

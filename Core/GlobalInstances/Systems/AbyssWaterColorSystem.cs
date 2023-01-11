@@ -45,46 +45,40 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 Color abyssWaterColor = new(29, 15, 56);
                 Color orangeWaterColor = new(204, 58, 9);
 
-                float topLeftBrightness = initialColor.TopLeftColor.ToVector3().Length() * 0.5773f;
-                float topRightBrightness = initialColor.TopRightColor.ToVector3().Length() * 0.5773f;
-                float bottomLeftBrightness = initialColor.BottomLeftColor.ToVector3().Length() * 0.5773f;
-                float bottomRightBrightness = initialColor.BottomRightColor.ToVector3().Length() * 0.5773f;
-
-                float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * WaterBlacknessInterpolant * 0.44f;
-                float sulphuricWaterInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top - 24f, CustomAbyss.AbyssTop - 4f, p.Y, true);
+                float topLeftBrightness = (initialColor.TopLeftColor.R + initialColor.TopLeftColor.G + initialColor.TopLeftColor.B) / 765f;
+                float topRightBrightness = (initialColor.TopRightColor.R + initialColor.TopRightColor.G + initialColor.TopRightColor.B) / 765f;
+                float bottomLeftBrightness = (initialColor.BottomLeftColor.R + initialColor.BottomLeftColor.G + initialColor.BottomLeftColor.B) / 765f;
+                float bottomRightBrightness = (initialColor.BottomRightColor.R + initialColor.BottomRightColor.G + initialColor.BottomRightColor.B) / 765f;
 
                 // Conditional exists for optimization purposes.
-                if (sulphuricWaterInterpolant <= 0f)
-                {
-                    initialColor.TopLeftColor = abyssWaterColor;
-                    initialColor.TopRightColor = abyssWaterColor;
-                    initialColor.BottomLeftColor = abyssWaterColor;
-                    initialColor.BottomRightColor = abyssWaterColor;
-                }
+                if (p.Y >= CustomAbyss.Layer2Top - 24f)
+                    initialColor = new(abyssWaterColor);
                 else
                 {
-                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
-                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
-                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
-                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant);
+                    float sulphuricWaterInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top - 24f, CustomAbyss.AbyssTop - 4f, p.Y, true);
+                    initialColor = new(Color.Lerp(abyssWaterColor, acidWaterColor, sulphuricWaterInterpolant));
                 }
 
-                if (blacknessInterpolant > 0f)
+                if (p.Y >= CustomAbyss.Layer2Top && WaterBlacknessInterpolant > 0f)
                 {
-                    initialColor.TopLeftColor = Color.Lerp(initialColor.TopLeftColor, Color.Black, blacknessInterpolant);
-                    initialColor.TopRightColor = Color.Lerp(initialColor.TopRightColor, Color.Black, blacknessInterpolant);
-                    initialColor.BottomLeftColor = Color.Lerp(initialColor.BottomLeftColor, Color.Black, blacknessInterpolant);
-                    initialColor.BottomRightColor = Color.Lerp(initialColor.BottomRightColor, Color.Black, blacknessInterpolant);
+                    float blacknessInterpolant = Utils.GetLerpValue(CustomAbyss.Layer2Top, CustomAbyss.Layer4Top, p.Y, true) * WaterBlacknessInterpolant * 0.44f;
+                    initialColor.TopLeftColor *= blacknessInterpolant;
+                    initialColor.TopLeftColor.A = 255;
+
+                    initialColor.TopRightColor *= blacknessInterpolant;
+                    initialColor.TopRightColor.A = 255;
+
+                    initialColor.BottomLeftColor *= blacknessInterpolant;
+                    initialColor.BottomLeftColor.A = 255;
+
+                    initialColor.BottomRightColor *= blacknessInterpolant;
+                    initialColor.BottomRightColor.A = 255;
                 }
                 
                 float orangeWaterInterpolant = OrangeAbyssWaterInterpolant;
                 if (orangeWaterInterpolant > 0f)
-                {
-                    initialColor.TopLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
-                    initialColor.TopRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
-                    initialColor.BottomLeftColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
-                    initialColor.BottomRightColor = Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant);
-                }
+                    initialColor = new(Color.Lerp(abyssWaterColor, orangeWaterColor, orangeWaterInterpolant));
+
                 initialColor.TopLeftColor *= topLeftBrightness;
                 initialColor.TopRightColor *= topRightBrightness;
                 initialColor.BottomLeftColor *= bottomLeftBrightness;
@@ -106,14 +100,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
 
             // Pass the texture in so that the method can ensure it is not messing around with non-lava textures.
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.Emit(OpCodes.Ldfld, typeof(LiquidRenderer).GetField("_liquidTextures"));
-            cursor.Emit(OpCodes.Ldloc, 8);
-            cursor.Emit(OpCodes.Ldelem_Ref);
             cursor.Emit(OpCodes.Ldloc, 8);
             cursor.Emit(OpCodes.Ldloc, 3);
             cursor.Emit(OpCodes.Ldloc, 4);
-            cursor.EmitDelegate<Func<VertexColors, Texture2D, int, int, int, VertexColors>>((initialColor, initialTexture, liquidType, x, y) =>
+            cursor.EmitDelegate<Func<VertexColors, int, int, int, VertexColors>>((initialColor, liquidType, x, y) =>
             {
                 return ChangeAbyssColors(initialColor, liquidType, new(x, y));
             });

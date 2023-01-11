@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class ConvergingCelestialBarrage : ModProjectile
+    public class TelegraphedCelestialBarrage : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -28,6 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public static Vector2 DetermineVelocity(Vector2 old, float idealDirection)

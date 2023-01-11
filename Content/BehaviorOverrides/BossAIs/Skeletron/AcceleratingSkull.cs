@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()
@@ -50,7 +51,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             {
                 if (Projectile.velocity.Y < 2.5f)
                     Projectile.velocity.Y = 2.5f;
-                Projectile.velocity.Y *= 1.0285f;
+
+                if (Projectile.Infernum().FadeAwayTimer <= 0)
+                    Projectile.velocity.Y *= 1.0285f;
             }
 
             Projectile.rotation = Projectile.velocity.ToRotation();

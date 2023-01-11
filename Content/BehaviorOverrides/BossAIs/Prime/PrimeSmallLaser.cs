@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Metal Spike");
+            DisplayName.SetDefault("Laser");
             Main.projFrames[Type] = 4;
         }
 
@@ -23,6 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()

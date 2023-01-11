@@ -27,6 +27,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.penetrate = -1;
             Projectile.timeLeft = 420;
             Projectile.alpha = 225;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
+
             CooldownSlot = 1;
         }
 

@@ -18,6 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.hostile = true;
             Projectile.timeLeft = 300;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()

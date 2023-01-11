@@ -1,3 +1,4 @@
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -50,13 +51,24 @@ namespace InfernumMode
                 if (!Main.projectile[i].active || !projectileIDs.Contains(Main.projectile[i].type))
                     continue;
 
+                Projectile p = Main.projectile[i];
+
+                // Make the projectile fade away instead of dying if it's marked for such behavior.
+                if (p.Infernum().FadesAwayWhenManuallyKilled)
+                {
+                    p.Infernum().FadeAwayTimer = GlobalProjectileOverrides.FadeAwayTime;
+                    p.netSpam = 0;
+                    p.netUpdate = true;
+                    continue;
+                }
+
                 if (setToInactive)
                 {
-                    Main.projectile[i].active = false;
-                    Main.projectile[i].netUpdate = true;
+                    p.active = false;
+                    p.netUpdate = true;
                 }
                 else
-                    Main.projectile[i].Kill();
+                    p.Kill();
             }
         }
 

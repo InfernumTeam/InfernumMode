@@ -293,11 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<SuperheatedExofireGas>(),
                 ModContent.ProjectileType<ThanatosAresComboLaser>()
             };
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                if (projectilesToDelete.Contains(Main.projectile[i].type))
-                    Main.projectile[i].active = false;
-            }
+            Utilities.DeleteAllProjectiles(true, projectilesToDelete);
         }
 
         public static void SummonComplementMech(NPC npc)

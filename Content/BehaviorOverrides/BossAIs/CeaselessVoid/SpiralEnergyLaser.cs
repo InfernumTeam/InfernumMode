@@ -43,6 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.timeLeft = 1200;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(WaveFrameState);

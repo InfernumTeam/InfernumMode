@@ -213,12 +213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         ModContent.ProjectileType<ProfanedSpear>(),
                         ModContent.ProjectileType<HolyBlast>(),
                     };
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (!Main.projectile[i].active || !typesToDelete.Contains(Main.projectile[i].type))
-                            continue;
-                        Main.projectile[i].Kill();
-                    }
+                    Utilities.DeleteAllProjectiles(false, typesToDelete);
                 }
 
                 burnIntensity = Utils.GetLerpValue(0f, 45f, deathEffectTimer, true);

@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -36,8 +37,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.timeLeft = 420;
             Projectile.alpha = 225;
             Projectile.Calamity().DealsDefenseDamage = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(StartingVelocity);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => StartingVelocity = reader.ReadVector2();
 
         public override void AI()
         {
@@ -49,7 +55,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             if (StartingVelocity == Vector2.Zero)
+            {
                 StartingVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 2f;
+                Projectile.netUpdate = true;
+            }
 
             if (Time < 0f)
             {

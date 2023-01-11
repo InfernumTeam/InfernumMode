@@ -16,6 +16,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
+        public static MiscShaderData CartoonVertexShader => GameShaders.Misc["Infernum:CartoonShader"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
@@ -36,6 +37,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
         public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
+        public static MiscShaderData PulsatingLaserVertexShader => GameShaders.Misc["Infernum:PulsatingLaserShader"];
         public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
         public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
@@ -79,6 +81,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> pulsatingLaser = new(assets.Request<Effect>("Assets/Effects/PulsatingLaser", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:PulsatingLaserShader"] = new MiscShaderData(pulsatingLaser, "TrailPass");
+
             Ref<Effect> gaussianBlur = new(assets.Request<Effect>("Assets/Effects/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["InfernumMode:GaussianBlur"] = new MiscShaderData(gaussianBlur, "ScreenPass");
 

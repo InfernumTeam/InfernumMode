@@ -427,8 +427,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             int sandBlobCount = 30;
             int sandBlobCount2 = 0;
             int slamDelay = 36;
-            int attackTransitionDelay = 96;
-            float slamSpeed = 28f;
+            int attackTransitionDelay = 60;
+            float slamSpeed = 30f;
             float sandBlobAngularArea = 0.74f;
             float sandBlobSpeed = 22f;
             float maxFlySpeed = 22f;
@@ -440,7 +440,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 sandBlobCount += 5;
                 sandBlobCount2 += 9;
                 slamDelay -= 14;
-                attackTransitionDelay -= 54;
+                attackTransitionDelay -= 27;
                 slamSpeed += 4f;
                 maxFlySpeed += 9f;
             }

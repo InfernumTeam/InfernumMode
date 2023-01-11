@@ -120,6 +120,15 @@ namespace InfernumMode.Content.Subworlds
                 PlaceSchematic<Action<Chest>>("LostColosseumExit", exitCenter, SchematicAnchor.Center, ref _);
 
                 // Why the fuck???
+                for (int x = 586; x < 592; x++)
+                {
+                    for (int y = 140; y < 146; y++)
+                    {
+                        Main.tile[x, y].TileType = TileID.Sand;
+                        Main.tile[x, y].Get<TileWallWireStateData>().IsActuated = false;
+                        Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
+                    }
+                }
                 for (int x = 695; x < 702; x++)
                 {
                     for (int y = 160; y < 190; y++)

@@ -200,6 +200,16 @@ namespace InfernumMode.Content.Tiles
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+            // Create light.
+            for (float y = end.Y; y < start.Y; y += 16f)
+            {
+                float completionRatio = Utils.GetLerpValue(start.Y, end.Y, y, true);
+                float width = PillarWidthFunction(completionRatio);
+                Vector2 lightPosition = new(center.X, y);
+                DelegateMethods.v3_1 = Color.White.ToVector3() * 0.9f;
+                Utils.PlotTileLine(lightPosition - Vector2.UnitX * width * 0.5f, lightPosition + Vector2.UnitX * width * 0.5f, 8f, DelegateMethods.CastLight);
+            }
         }
 
         public override void MouseOver(int i, int j)

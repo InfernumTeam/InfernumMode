@@ -1,12 +1,19 @@
 using CalamityMod.ILEditing;
-using InfernumMode.WorldGeneration;
+using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using ReLogic.Content;
+using System;
+using System.Reflection;
 using Terraria;
+using Terraria.GameContent.Liquid;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class AbyssWaterColorSystem : ModSystem
     {
@@ -87,20 +94,43 @@ namespace InfernumMode.Systems
             return initialColor;
         }
 
-        public override void Load()
+        private static void ChangeWaterQuadColors(ILContext il)
         {
-            ILChanges.ExtraColorChangeConditions += ChangeAbyssColors;
-        }
+            ILCursor cursor = new(il);
+            MethodInfo textureGetValueMethod = typeof(Asset<Texture2D>).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance);
 
-        public override void Unload()
-        {
-            ILChanges.ExtraColorChangeConditions -= ChangeAbyssColors;
+            for (int i = 0; i < 2; i++)
+            {
+                if (!cursor.TryGotoNext(MoveType.After, c => c.MatchCallOrCallvirt("MonoMod.Cil.RuntimeILReferenceBag/FastDelegateInvokers", "Invoke")))
+                    return;
+            }
+
+            // Pass the texture in so that the method can ensure it is not messing around with non-lava textures.
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit(OpCodes.Ldfld, typeof(LiquidRenderer).GetField("_liquidTextures"));
+            cursor.Emit(OpCodes.Ldloc, 8);
+            cursor.Emit(OpCodes.Ldelem_Ref);
+            cursor.Emit(OpCodes.Ldloc, 8);
+            cursor.Emit(OpCodes.Ldloc, 3);
+            cursor.Emit(OpCodes.Ldloc, 4);
+            cursor.EmitDelegate<Func<VertexColors, Texture2D, int, int, int, VertexColors>>((initialColor, initialTexture, liquidType, x, y) =>
+            {
+                return ChangeAbyssColors(initialColor, liquidType, new(x, y));
+            });
+
+            ILChanges.DumpToLog(il);
         }
 
         public override void OnModLoad()
         {
             if (Main.netMode != NetmodeID.Server)
                 AbyssWaterID = ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater").Slot;
+            IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += ChangeWaterQuadColors;
+        }
+
+        public override void Unload()
+        {
+            IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= ChangeWaterQuadColors;
         }
 
         public override void PreUpdateEntities()

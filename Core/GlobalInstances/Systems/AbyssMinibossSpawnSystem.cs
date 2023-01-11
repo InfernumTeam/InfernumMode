@@ -1,14 +1,14 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Projectiles;
-using InfernumMode.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class AbyssMinibossSpawnSystem : ModSystem
     {

@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Projectiles
 {

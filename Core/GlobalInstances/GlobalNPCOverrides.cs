@@ -12,7 +12,6 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
-using InfernumMode.WorldGeneration;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements.InfernumAchievements;
@@ -22,6 +21,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Prime;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -235,7 +235,7 @@ namespace InfernumMode.GlobalInstances
                 if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine)
                 {
                     Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
-                    WorldgenSystem.GenerateProfanedArena(new(), new(new()));
+                    ProfanedGarden.Generate(new(), new(new()));
                     WorldSaveSystem.HasGeneratedProfanedShrine = true;
                 }
 
@@ -243,7 +243,7 @@ namespace InfernumMode.GlobalInstances
                 if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance)
                 {
                     Utilities.DisplayText("Mysterious ruins have materialized in the heart of the desert!", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
-                    WorldgenSystem.GenerateLostColosseumEntrance(new(), new(new()));
+                    LostColosseumEntrance.Generate(new(), new(new()));
                     WorldSaveSystem.HasGeneratedColosseumEntrance = true;
                 }
             }

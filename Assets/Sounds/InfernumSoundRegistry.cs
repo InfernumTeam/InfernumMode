@@ -13,7 +13,10 @@ namespace InfernumMode.Assets.Sounds
             return new($"CalamityMod/{path}");
         }
 
-        #region Bosses
+        #region Bosses and Enemies
+
+        public static readonly SoundStyle AEWThreatenRoar = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWThreatenRoar") with { Volume = 1.64f };
+
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresLaugh");
 
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresTeslaShot");
@@ -34,7 +37,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DesertScourgeShortRoar = new("InfernumMode/Assets/Sounds/Custom/DesertScourgeShortRoar");
 
+        public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
+
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");
+
+        public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
 
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ExoMechFinalPhaseChargeup");
 
@@ -55,6 +62,8 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle GreatSandSharkSpawnSound = new("InfernumMode/Assets/Sounds/Custom/BereftVassal/GreatSandSharkSpawnSound");
 
         public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Assets/Sounds/Custom/BereftVassal/GreatSandSharkSuddenRoar");
+
+        public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/GulperEelScream");
 
         public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Assets/Sounds/Custom/HeavyExplosion");
 
@@ -94,6 +103,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorShatter");
 
+        public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
+
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SCalBrothersSpawn");
 
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronHeadBonk");
@@ -121,7 +132,7 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/WyrmElectricCharge");
 
         public const int AresTelegraphSoundLength = 183;
-        #endregion Bosses
+        #endregion Bosses and Enemies
 
         #region Items
 

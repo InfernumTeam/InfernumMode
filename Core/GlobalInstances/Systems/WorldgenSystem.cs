@@ -1,4 +1,4 @@
-using InfernumMode.WorldGeneration;
+using InfernumMode.Content.WorldGeneration;
 using System.Collections.Generic;
 using Terraria.GameContent.Generation;
 using Terraria.ModLoader;

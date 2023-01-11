@@ -1,6 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using InfernumMode.WorldGeneration;
+using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

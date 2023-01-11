@@ -5,7 +5,7 @@ using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

@@ -1,8 +1,8 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.NormalNPCs;
-using InfernumMode.Subworlds;
-using InfernumMode.Systems;
+using InfernumMode.Content.Subworlds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using SubworldLibrary;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace InfernumMode.GlobalInstances
     {
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.Infernum().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
+            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;
@@ -49,7 +49,7 @@ namespace InfernumMode.GlobalInstances
             pool.Remove(ModContent.NPCType<DevilFish>());
             pool.Remove(ModContent.NPCType<DevilFishAlt>());
             pool.Remove(ModContent.NPCType<ToxicMinnow>());
-            if (spawnInfo.Player.Infernum().InLayer3HadalZone && spawnInfo.Water)
+            if (spawnInfo.Player.Infernum_Biome().InLayer3HadalZone && spawnInfo.Water)
                 pool[ModContent.NPCType<DevilFish>()] = 0.12f;
             if (spawnInfo.Player.Calamity().ZoneAbyssLayer1 && spawnInfo.Water)
                 pool[ModContent.NPCType<ToxicMinnow>()] = 0.1f;

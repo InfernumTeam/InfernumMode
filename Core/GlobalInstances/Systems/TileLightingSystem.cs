@@ -6,7 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class TileLightingSystem : ModSystem
     {
@@ -35,7 +35,7 @@ namespace InfernumMode.Systems
                     Texture2D texture = TextureAssets.Tile[crystalID].Value;
                     Vector2 drawPosition = new Vector2(i, j) * 16f;
                     Rectangle tileFrame = new(t.TileFrameX, t.TileFrameY, 18, 18);
-                    ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, tileFrame, Color.White * 0.75f, 0f, Vector2.Zero, 1f, 0, 0));
+                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, tileFrame, Color.White * 0.75f, 0f, Vector2.Zero, 1f, 0, 0));
                 }
             }
         }

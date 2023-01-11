@@ -11,11 +11,7 @@ using Terraria.ID;
 using CalamityMod;
 using System.Diagnostics;
 
-<<<<<<<< HEAD:Drawers/IcicleDrawer.cs
-namespace InfernumMode.Drawers
-========
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
->>>>>>>> master:Content/BehaviorOverrides/BossAIs/Deerclops/IcicleDrawer.cs
 {
     public class IcicleDrawer
     {

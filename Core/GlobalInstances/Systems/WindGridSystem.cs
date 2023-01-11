@@ -2,7 +2,7 @@ using System.Reflection;
 using Terraria.GameContent.Drawing;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WindGridSystem : ModSystem
     {

@@ -4,6 +4,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
@@ -43,6 +44,22 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool ProfanedLavaFountain
+        {
+            get;
+            set;
+        }
+
+        public float MapObscurityInterpolant
+        {
+            get;
+            set;
+        }
+
+        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !WeakReferenceSupport.InAnySubworld();
+
+        public bool InLayer3HadalZone => CustomAbyss.InsideOfLayer3HydrothermalZone(Player.Center.ToTileCoordinates());
+
         public bool InProfanedArena
         {
             get
@@ -74,14 +91,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 return Player.Hitbox.Intersects(arena) && !WeakReferenceSupport.InAnySubworld();
             }
         }
-
-        public bool ProfanedLavaFountain
-        {
-            get;
-            set;
-        }
-
-        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !WeakReferenceSupport.InAnySubworld();
 
         public override void ResetEffects()
         {
@@ -116,6 +125,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     }
                 }
             }
+
+            // Make the map turn black if in the final layer of the abyss.
+            MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + Player.Calamity().ZoneAbyssLayer4.ToDirectionInt() * 0.008f, 0f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.

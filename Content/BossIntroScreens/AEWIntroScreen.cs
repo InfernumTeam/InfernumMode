@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BossIntroScreens
+namespace InfernumMode.Content.BossIntroScreens
 {
     public class AEWIntroScreen : BaseIntroScreen
     {

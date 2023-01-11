@@ -1,6 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using InfernumMode.Systems;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

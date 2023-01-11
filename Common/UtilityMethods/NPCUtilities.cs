@@ -25,7 +25,7 @@ namespace InfernumMode
             }
 
             Player target = Main.player[npc.target];
-            bool invalidTarget = target.dead || !target.active || target.Infernum().EelSwallowIndex >= 0;
+            bool invalidTarget = target.dead || !target.active || target.Infernum_Eel().EelSwallowIndex >= 0;
             if (invalidTarget)
                 npc.TargetClosest();
 

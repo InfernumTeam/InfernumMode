@@ -1,5 +1,4 @@
 using CalamityMod;
-using InfernumMode.Drawers;
 using InfernumMode.Tiles;
 using InfernumMode.Tiles.Abyss;
 using InfernumMode.Assets.Effects;
@@ -15,6 +14,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 
 namespace InfernumMode.Common.Graphics
 {

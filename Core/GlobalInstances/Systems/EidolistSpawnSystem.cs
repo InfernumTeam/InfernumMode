@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class EidolistSpawnSystem : ModSystem
     {

@@ -1,13 +1,13 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
-using InfernumMode.WorldGeneration;
+using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Systems
+namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class AbyssSquidDenSpawnSystem : ModSystem
     {

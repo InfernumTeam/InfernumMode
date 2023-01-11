@@ -10,7 +10,6 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.World;
-using InfernumMode.WorldGeneration;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -32,6 +31,7 @@ using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
+using InfernumMode.Content.WorldGeneration;
 
 namespace InfernumMode.Core.ILEditingStuff
 {

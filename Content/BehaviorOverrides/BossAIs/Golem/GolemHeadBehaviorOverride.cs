@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -74,6 +75,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/AttachedHead").Value;
             Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/AttachedHeadGlow").Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
+            if (InfernumMode.EmodeIsActive)
+            {
+                texture = TextureAssets.Npc[npc.type].Value;
+                glowMask = InfernumTextureRegistry.Invisible.Value;
+                rect = npc.frame;
+            }
+
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             DoEyeDrawing(npc);

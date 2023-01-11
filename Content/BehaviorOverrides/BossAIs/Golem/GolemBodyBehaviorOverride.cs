@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -144,6 +145,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 npc.chaseable = false;
                 npc.Opacity = 0f;
                 AttackState = Utilities.IsAprilFirst() ? Main.rand.NextBool() ? (float)GolemAttackState.BIGSHOT : (float)GolemAttackState.BadTime : (float)GolemAttackState.SummonDelay;
+                if (InfernumMode.EmodeIsActive)
+                    AttackState = (float)GolemAttackState.BadTime;
+
                 PreviousAttackState = (float)GolemAttackState.LandingState;
 
                 // This contains a server-side sync.
@@ -1677,6 +1681,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/GolemBody").Value;
             Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/BodyGlow").Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
+            if (InfernumMode.EmodeIsActive)
+            {
+                texture = TextureAssets.Npc[npc.type].Value;
+                glowMask = InfernumTextureRegistry.Invisible.Value;
+                rect = npc.frame;
+            }
+
             Vector2 drawPos = npc.Center - Main.screenPosition;
             drawPos += new Vector2(4, -12);
 

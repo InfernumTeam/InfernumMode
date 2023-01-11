@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             SpriteEffects effect = leftFist ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Texture2D texture = TextureAssets.Projectile[ModContent.ProjectileType<FistBullet>()].Value;
+            Texture2D texture = TextureAssets.Npc[NPCID.GolemFistRight].Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, effect, 0f);
             return false;

@@ -35,13 +35,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (WorldSaveSystem.InfernumMode && !CalamityWorld.death)
                 CalamityWorld.death = true;
 
-            // Disable Infernum interactions with Eternity Mode due to horrific AI conflicts and FTW/Master because they're just not good and are undeserving of the
-            // work it'd take to make Infernum a meaningful experience alongside them.
+            // Disable Infernum interactions with FTW/Master because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
             // TODO -- Maybe just make a popup in chat warning the player that they won't actually influence anything so that people won't complain? Would need to talk with the team about that.
-            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || InfernumMode.EmodeIsActive;
+            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
             {
-                Utilities.DisplayText("Infernum is not allowed in Master Mode, For the Worthy, or Eternity Mode.", Color.Red);
+                Utilities.DisplayText("Infernum is not allowed in Master Mode or For the Worthy.", Color.Red);
                 if (Main.netMode == NetmodeID.Server)
                     PacketManager.SendPacket<InfernumModeActivityPacket>();
                 WorldSaveSystem.InfernumMode = false;
@@ -51,6 +50,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // This is necessary because difficulty states do not automatically translate over to subworlds.
             if (!stupidDifficultyIsActive && SubworldSystem.IsActive<LostColosseum>())
                 WorldSaveSystem.InfernumMode = true;
+
+            // Create some warning text about Eternity Mode if the player enables Infernum with it enabled.
+            if (Main.netMode != NetmodeID.MultiplayerClient && WorldSaveSystem.InfernumMode && InfernumMode.EmodeIsActive && !WorldSaveSystem.DisplayedEmodeWarningText)
+            {
+                Utilities.DisplayText("Eternity mode's boss AI changes are overridden by Infernum if there are conflicts.", Color.Red);
+                WorldSaveSystem.DisplayedEmodeWarningText = true;
+            }
         }
     }
 }

@@ -289,7 +289,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
             }
 
-            if (CurrentAttack != BereftVassalAttackType.IdleState)
+            if (Main.netMode != NetmodeID.SinglePlayer && CurrentAttack != BereftVassalAttackType.IdleState)
             {
                 Main.hideUI = false;
                 Main.blockInput = false;

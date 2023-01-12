@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.width = 30;
             NPC.height = 44;
             NPC.defense = 12;
-            NPC.LifeMaxNERB(137000, 137000, 800000);
+            NPC.LifeMaxNERB(124000, 124000, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;

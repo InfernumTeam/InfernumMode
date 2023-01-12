@@ -289,6 +289,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
             }
 
+            if (CurrentAttack != BereftVassalAttackType.IdleState)
+            {
+                Main.hideUI = false;
+                Main.blockInput = false;
+            }
+
             // Create a sandstorm when in the last phase.
             if (Enraged)
                 CreateSandstormParticle(Target.Center.X < NPC.Center.X);

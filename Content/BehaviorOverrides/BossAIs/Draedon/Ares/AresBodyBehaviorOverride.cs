@@ -298,6 +298,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
 
+            // Automatically transition to the ultimate attack if close to dying in the final phase.
+            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            {
+                SelectNextAttack(npc);
+                attackType = (int)AresBodyAttackType.PrecisionBlasts;
+            }
+
             if (!performingDeathAnimation)
             {
                 // Perform specific behaviors.

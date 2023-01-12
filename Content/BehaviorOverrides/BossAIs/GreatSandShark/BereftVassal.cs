@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public Player Target => Main.player[NPC.target];
 
-        public bool TargetIsOutsideOfColosseum => Target.Center.X < 14306f && SubworldSystem.IsActive<LostColosseum>();
+        public bool TargetIsOutsideOfColosseum => Target.Center.X < 18400f && SubworldSystem.IsActive<LostColosseum>();
 
         public BereftVassalAttackType CurrentAttack
         {

@@ -1,4 +1,4 @@
-using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -15,10 +15,7 @@ namespace InfernumMode.Content.BossBars
 
         public override bool PreDraw(SpriteBatch spriteBatch, NPC npc, ref BossBarDrawParams drawParams)
         {
-            if (npc.ModNPC is BereftVassal vassal)
-                return vassal.CurrentAttack != BereftVassal.BereftVassalAttackType.IdleState;
-
-            return true;
+            return !npc.dontTakeDamage && npc.Calamity().DR < 0.99f;
         }
     }
 }

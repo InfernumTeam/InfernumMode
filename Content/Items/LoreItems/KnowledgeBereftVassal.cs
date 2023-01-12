@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Items.LoreItems
         {
             DisplayName.SetDefault("The Bereft Vassal and Great Sand Shark");
             Tooltip.SetDefault("A most unusual allegiance.\n" +
-                "Once a great warrior under the Sea King, it would seem that the destruction of his home had left him despondent.\n" +
+                "Once a great warrior under the Sea King, it appears that the destruction of his home had left him despondent.\n" +
                 "And yet, it would seem that fighting you has reignited his spirits.");
             SacrificeTotal = 1;
             ItemID.Sets.ItemNoGravity[Item.type] = true;

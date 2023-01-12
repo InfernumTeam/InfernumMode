@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (lightningSpawnPosition.Y <= 640f)
                         lightningSpawnPosition.Y = 640f;
 
-                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 210, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 200, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
                 }
             }
 

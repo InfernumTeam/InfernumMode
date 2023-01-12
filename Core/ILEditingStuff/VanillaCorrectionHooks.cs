@@ -231,6 +231,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
             }
 
+            sceneArea.bgTopY -= 180;
             orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
         }
 

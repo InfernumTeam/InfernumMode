@@ -468,7 +468,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
 
-                        Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 160, 0f);
+                        Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -558,7 +558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                                     Utilities.NewProjectileBetter(npc.Bottom, -waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
                                 }
 
-                                Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                             }
                         }
                         npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * vassalChargeSpeed, 0.16f);

@@ -41,6 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             npc.HitSound = null;
 
             // Reset damage and other things.
+            npc.defDamage = 230;
             npc.damage = npc.defDamage;
 
             // Inherit attributes from the bereft vassal.

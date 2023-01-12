@@ -205,6 +205,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
+            // Disable DoTs because they're apparently overpowered enough to do damage while supposedly invulnerable.
+            if (sandSharkExists)
+                NPC.lifeRegen = 1000000;
+
             // Ensure that the player receives the boss effects buff.
             NPC.Calamity().KillTime = 1800;
 
@@ -1593,6 +1597,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.rotation = 0f;
             SpearOpacity = 0f;
             SpearRotation = 0f;
+
+            // Reset the DoT timer.
+            NPC.lifeRegen = 0;
 
             // Teleport to the surface on the first frame, and look away from the target.
             if (AttackTimer == 1f)

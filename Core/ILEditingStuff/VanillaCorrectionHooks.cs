@@ -194,6 +194,13 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
+            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
+            if (!inColosseum)
+            {
+                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+                return;
+            }
+
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
@@ -205,10 +212,8 @@ namespace InfernumMode.Core.ILEditingStuff
             Texture2D sunTexture = TextureAssets.Sun.Value;
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
-            int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + 180f + Main.sunModY);
+            int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + Main.sunModY);
             Vector2 sunPosition = new(x, y);
-
-            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
 
             // Use brighter sun colors in general in the colosseum.
             if (inColosseum)

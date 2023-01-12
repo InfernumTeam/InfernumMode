@@ -4,6 +4,7 @@ using CalamityMod.Items.LoreItems;
 using CalamityMod.Items.Placeables.Furniture.Trophies;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.BossBars;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.BossBags;
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public Player Target => Main.player[NPC.target];
 
-        public bool TargetIsOutsideOfColosseum => Target.Center.X < 14306f && SubworldSystem.IsActive<LostColosseum>();
+        public bool TargetIsOutsideOfColosseum => Target.Center.X < 18400f && SubworldSystem.IsActive<LostColosseum>();
 
         public BereftVassalAttackType CurrentAttack
         {
@@ -161,6 +162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = Item.buyPrice(6, 25, 0, 0) / 5;
             NPC.netAlways = true;
+            NPC.BossBar = ModContent.GetInstance<BereftVassalBossBar>();
 
             NPC.Calamity().ShouldCloseHPBar = true;
         }
@@ -287,6 +289,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
             }
 
+            if (Main.netMode != NetmodeID.SinglePlayer && CurrentAttack != BereftVassalAttackType.IdleState)
+            {
+                Main.hideUI = false;
+                Main.blockInput = false;
+            }
+
             // Create a sandstorm when in the last phase.
             if (Enraged)
                 CreateSandstormParticle(Target.Center.X < NPC.Center.X);
@@ -388,7 +396,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                         NPC.velocity = new Vector2((Target.Center.X > NPC.Center.X).ToDirectionInt() * 19f, -23f);
                         NPC.netUpdate = true;
                     }
@@ -586,7 +594,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             }
                         }
 
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                     }
 
                     AttackTimer = pretendFakeCollisionHappened ? attackTransitionDelay - 36f : 0f;
@@ -817,7 +825,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         float waveShootOffsetAngle = MathHelper.Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
                         Vector2 waveVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(waveShootOffsetAngle) * waveSpeed;
-                        Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 270, 0f);
                     }
 
                     aimDirection = (MathHelper.WrapAngle(NPC.AngleTo(Target.Center) - SpearRotation + MathHelper.PiOver4) > 0f).ToDirectionInt();
@@ -969,12 +977,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Create the ground slam effect.
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
 
                         // Create the wave effect.
                         for (int i = -1; i <= 1; i += 2)
                         {
                             int wave = Utilities.NewProjectileBetter(NPC.Center, Vector2.UnitX * i * waveSpeed, ModContent.ProjectileType<GroundSlamWave>(), 200, 0f);
+
+                            NPC.Bottom = Utilities.GetGroundPositionFrom(NPC.Bottom);
                             Main.projectile[wave].Bottom = NPC.Bottom;
                         }
 
@@ -1274,7 +1284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
 
                         hasHitGround = 1f;
                         NPC.velocity = Vector2.Zero;

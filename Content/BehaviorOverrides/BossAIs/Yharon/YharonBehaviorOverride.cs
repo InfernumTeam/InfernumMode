@@ -586,7 +586,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (transitionDRCountdown > 0f)
                     fireIntensity = transitionDRCountdown / TransitionDRBoostTime;
 
-                // If not, and Yharon ins't performing a heat-based attack, have the fire intensity naturally dissipate.
+                // If not, and Yharon isn't performing a heat-based attack, have the fire intensity naturally dissipate.
                 // Certain attacks may override this manually.
                 else if (nextAttackType is not YharonAttackType.PhoenixSupercharge and not YharonAttackType.HeatFlashRing)
                     fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
@@ -1799,6 +1799,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             int[] projectilesToDelete = new int[]
             {
+                ModContent.ProjectileType<DragonFireball>(),
                 ModContent.ProjectileType<HomingFireball>(),
                 ModContent.ProjectileType<YharonFireball>(),
                 ModContent.ProjectileType<YharonFireball2>(),

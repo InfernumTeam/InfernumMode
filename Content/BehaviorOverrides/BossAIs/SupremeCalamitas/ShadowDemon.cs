@@ -3,6 +3,7 @@ using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -227,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (attackTimer >= chargeDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Zombie93, NPC.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraCharge, NPC.Center);
                     attackSubstate = 2f;
                     attackTimer = 0f;
                     scal.netUpdate = true;

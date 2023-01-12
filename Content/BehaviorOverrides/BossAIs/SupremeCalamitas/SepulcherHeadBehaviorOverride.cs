@@ -113,6 +113,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
+            // Do not take damage.
+            npc.dontTakeDamage = true;
+
             float chargeInterpolant = Utils.GetLerpValue(40f, 110f, attackTimer, true);
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * new Vector2(7f, -13f);
 
@@ -122,7 +125,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
 
             if (attackTimer >= 150f)
+            {
+                npc.dontTakeDamage = false;
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_ErraticCharges(NPC npc, Player target, ref float attackTimer)

@@ -1882,7 +1882,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             int gigablastBulletHellDuration = 1200;
             int baseGigaReleaseRate = 75;
-            int dartBulletHellReleaseRate = 60;
+            int dartBulletHellReleaseRate = 54;
             float dartBulletHellWallArea = 420f;
             float dartBulletHellGapArea = 40f;
 
@@ -2159,9 +2159,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         gigablastShootCounter++;
 
-                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
-                        if (gigablastReleaseCountdown <= 40f)
-                            gigablastReleaseCountdown = 40f;
+                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 4f;
+                        if (gigablastReleaseCountdown <= 34f)
+                            gigablastReleaseCountdown = 34f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
                         Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);

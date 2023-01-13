@@ -106,10 +106,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, playerToFollow.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 44f;
-                    laserSpawnPosition.X -= 180f;
+                    Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 80f;
+                    laserSpawnPosition.X += 40f;
                     if (npc.spriteDirection == 1)
-                        laserSpawnPosition.X += 46f;
+                        laserSpawnPosition.X -= 70f;
 
                     Utilities.NewProjectileBetter(laserSpawnPosition, (playerToFollow.Center - laserSpawnPosition).SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<AresPrecisionBlast>(), StrongerNormalShotDamage, 0f);
                 }

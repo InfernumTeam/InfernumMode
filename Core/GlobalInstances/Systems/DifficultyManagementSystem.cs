@@ -27,8 +27,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PreUpdateWorld()
         {
-            Filters.Scene["CalamityMod:BossRush"].GetShader().UseOpacity(0.367f);
-
             // Ensure that Death and Revengeance Mode are always active while Infernum is.
             if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;

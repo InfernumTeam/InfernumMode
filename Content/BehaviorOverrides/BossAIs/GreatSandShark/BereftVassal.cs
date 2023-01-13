@@ -595,7 +595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Check for collision. This does not apply if current above the target's bottom.
                 bool hasHitGround = Collision.SolidCollision(NPC.BottomRight - Vector2.UnitY * 4f, NPC.width, 6, true);
                 bool ignoreTiles = NPC.Bottom.Y < startingTargetPositionY;
-                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 600f;
+                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 900f;
                 if (hasHitGround && !ignoreTiles || pretendFakeCollisionHappened)
                 {
                     // Perform ground hit effects once a collision is registered. This involves releasing sand rubble into the air and creating a damaging ground area of effect.

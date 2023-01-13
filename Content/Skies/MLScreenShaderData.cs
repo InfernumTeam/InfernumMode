@@ -14,9 +14,9 @@ namespace InfernumMode.Content.Skies
 
         public override void Apply()
         {
-            // If the moon lord is not set, or the reduced graphics config is enabled, do not draw.
+            // If the moon lord is not available do not draw.
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
-            if (moonLordIndex < 0 || InfernumConfig.Instance.ReducedGraphicsConfig)
+            if (moonLordIndex < 0)
                 return;
 
             UseTargetPosition(Main.LocalPlayer.Center);

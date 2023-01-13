@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         GeneralParticleHandler.SpawnParticle(fire);
                     }
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                     {
                         // Create darts.
                         for (int i = 0; i < dartRingCount; i++)

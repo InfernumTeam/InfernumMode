@@ -238,6 +238,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
+            // Teleport above the target if stuck and alone.
+            if (!sandSharkExists && NPC.Center.Y >= Main.maxTilesY * 16f - 500f)
+            {
+                NPC.Center = Target.Center - Vector2.UnitY * 700f;
+                NPC.netUpdate = true;
+            }
+
             // Disable DoTs because they're apparently overpowered enough to do damage while supposedly invulnerable.
             if (sandSharkExists)
                 NPC.lifeRegen = 1000000;

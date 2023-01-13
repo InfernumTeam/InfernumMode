@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader.IO;
+﻿using Terraria;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
@@ -12,15 +13,22 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             TotalCompletion = 1;
             PositionInMainList = 0;
         }
-        public override void ExtraUpdate()
+
+        public override void Update()
         {
-            CurrentCompletion++;
+            // Just auto-complete if the player is in hardcore.
+            if (Main.LocalPlayer.difficulty == 2)
+                CurrentCompletion++;
         }
+
+        public override void ExtraUpdate() => CurrentCompletion++;
+
         public override void SaveProgress(TagCompound tag)
         {
             tag["BabyCurrentCompletion"] = CurrentCompletion;
             tag["BabyDoneCompletionEffects"] = DoneCompletionEffects;
         }
+
         public override void LoadProgress(TagCompound tag)
         {
             CurrentCompletion = tag.Get<int>("BabyCurrentCompletion");

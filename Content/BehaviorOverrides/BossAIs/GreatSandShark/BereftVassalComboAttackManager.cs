@@ -706,8 +706,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
-                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -785f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 1.9f);
                             Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f, -1, i % 2f);
 
                             i++;

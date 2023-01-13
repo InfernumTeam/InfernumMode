@@ -92,7 +92,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     // Release a burst of sparks.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Player closest = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(closest.Center, 285f))
                     {
                         for (int i = 0; i < 8; i++)
                         {

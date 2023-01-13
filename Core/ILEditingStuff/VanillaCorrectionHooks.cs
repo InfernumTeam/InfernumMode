@@ -242,20 +242,26 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            On.Terraria.Main.DrawBlack += ForceDrawBlack;
-            IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
-            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
-            IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
-            On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DrawBlack += ForceDrawBlack;
+                IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
+                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+                IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
+                On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+            });
         }
 
         public void Unload()
         {
-            On.Terraria.Main.DrawBlack -= ForceDrawBlack;
-            IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
-            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
-            IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
-            On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DrawBlack -= ForceDrawBlack;
+                IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
+                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+                IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
+                On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+            });
         }
     }
 

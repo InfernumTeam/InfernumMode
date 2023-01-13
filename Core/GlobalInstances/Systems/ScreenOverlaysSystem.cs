@@ -116,14 +116,20 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            DrawCacheProjsOverSignusBlackening = new List<int>();
-            IL.Terraria.Main.DoDraw += DrawBlackout;
+            Main.QueueMainThreadAction(() =>
+            {
+                DrawCacheProjsOverSignusBlackening = new List<int>();
+                IL.Terraria.Main.DoDraw += DrawBlackout;
+            });
         }
 
         public override void Unload()
         {
-            DrawCacheProjsOverSignusBlackening = null;
-            IL.Terraria.Main.DoDraw -= DrawBlackout;
+            Main.QueueMainThreadAction(() =>
+            {
+                DrawCacheProjsOverSignusBlackening = null;
+                IL.Terraria.Main.DoDraw -= DrawBlackout;
+            });
         }
     }
 }

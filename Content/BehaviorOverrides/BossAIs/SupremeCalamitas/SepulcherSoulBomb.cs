@@ -73,27 +73,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     int dartRingCount = 3;
                     int dartsPerRing = 15;
 
-                    // Explode into a spread of darts, fire bursts, and souls.
+                    // Create a particle effect explosion.
                     for (int i = 0; i < 75; i++)
                     {
                         SquishyLightParticle fire = new(Projectile.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(6f, 20f), 1f, Color.Orange, 64, 1.4f, 2.7f);
                         GeneralParticleHandler.SpawnParticle(fire);
                     }
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && !NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        // Create darts.
-                        for (int i = 0; i < dartRingCount; i++)
+                        // Create darts if Sepulcher exists.
+                        if (NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                         {
-                            float dartSpeed = MathHelper.Lerp(8f, 3f, i / (float)(dartRingCount - 1f));
-                            for (int j = 0; j < dartsPerRing; j++)
+                            for (int i = 0; i < dartRingCount; i++)
                             {
-                                Vector2 dartVelocity = (MathHelper.TwoPi * j / dartsPerRing).ToRotationVector2() * dartSpeed;
-                                if (i % 2 == 0)
-                                    dartVelocity = dartVelocity.RotatedBy(MathHelper.Pi / dartsPerRing);
-                                Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                                float dartSpeed = MathHelper.Lerp(8f, 3f, i / (float)(dartRingCount - 1f));
+                                for (int j = 0; j < dartsPerRing; j++)
+                                {
+                                    Vector2 dartVelocity = (MathHelper.TwoPi * j / dartsPerRing).ToRotationVector2() * dartSpeed;
+                                    if (i % 2 == 0)
+                                        dartVelocity = dartVelocity.RotatedBy(MathHelper.Pi / dartsPerRing);
+                                    Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                                }
+                                dartsPerRing += 4;
                             }
-                            dartsPerRing += 4;
                         }
                         Projectile.Kill();
                     }

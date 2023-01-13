@@ -273,11 +273,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 550f, isCataclysm.ToInt() * -255f);
             if (wrappedTimer < hoverTime)
             {
-                // Slow down right before firing.
+                // Slow down right before firing. This only happens if sufficiently far away from the target.
                 if (wrappedTimer > hoverTime * 0.5f)
                 {
-                    npc.velocity *= 0.9f;
-                    npc.rotation *= 0.9f;
+                    if (!npc.WithinRange(target.Center, 320f))
+                    {
+                        npc.velocity *= 0.9f;
+                        npc.rotation *= 0.9f;
+                    }
+                    else
+                        npc.Center -= npc.SafeDirectionTo(target.Center) * 10f;
                 }
 
                 // Otherwise, do typical hover behavior, towards the upper right of the target.

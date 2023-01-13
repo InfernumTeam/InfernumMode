@@ -752,7 +752,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
             // Degrees are used here for ease of readability in the calculations below.
-            // This used to rely on raw dot normalized dot products, but this has since been changed for the sake of clarity.
+            // This used to rely on raw normalized dot products, but this has since been changed for the sake of clarity.
             float targetDirectionAngleDiscrepancy = MathHelper.ToDegrees(npc.velocity.AngleBetween(npc.SafeDirectionTo(destination)));
 
             // Adjust the speed based on how the direction towards the target compares to the direction of the

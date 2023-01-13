@@ -512,13 +512,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 195, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 180, 0f);
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % skyFireballShootRate == skyFireballShootRate - 1f)
                     {
                         Vector2 fireballSpawnPosition = target.Center - new Vector2(Main.rand.NextFloatDirection() * 600f, -850f - target.velocity.Y * 20f);
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 195, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 180, 0f);
                     }
 
                     frameType = (int)CultistFrameState.HoldArmsOut;
@@ -760,7 +760,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 185, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                                     Main.projectile[lightning].tileCollide = false;
                                 }
                             }
@@ -823,7 +823,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 225, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                 }
             }
 
@@ -905,7 +905,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
 
                     int explosionDelay = (int)(215f - adjustedTime + Main.rand.Next(20));
-                    Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 195, 0f, -1, explosionDelay);
+                    Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 180, 0f, -1, explosionDelay);
                 }
             }
 
@@ -1212,7 +1212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
-                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 190, 0f);
+                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 180, 0f);
                     }
 
                     npc.Center = teleportPosition;
@@ -1311,8 +1311,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     {
                         Vector2 left = npc.velocity.RotatedBy(-MathHelper.PiOver2) * 0.3f;
                         Vector2 right = npc.velocity.RotatedBy(MathHelper.PiOver2) * 0.3f;
-                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
                     }
                 }
 
@@ -1338,7 +1338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 {
                     SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 180, 0f);
                 }
 
                 npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();

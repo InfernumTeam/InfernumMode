@@ -747,15 +747,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
             if (distanceFromBaseDestination > 1500f && universalFightTimer > 120f)
-            {
-                idealFlyAcceleration = MathHelper.Min(6f, flyAcceleration + 1f);
                 idealFlySpeed *= 2f;
-            }
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
             // Degrees are used here for ease of readability in the calculations below.
-            // This used to rely on raw dot normalized dot products, but this has since been changed for the sake of clarity.
+            // This used to rely on raw normalized dot products, but this has since been changed for the sake of clarity.
             float targetDirectionAngleDiscrepancy = MathHelper.ToDegrees(npc.velocity.AngleBetween(npc.SafeDirectionTo(destination)));
 
             // Adjust the speed based on how the direction towards the target compares to the direction of the

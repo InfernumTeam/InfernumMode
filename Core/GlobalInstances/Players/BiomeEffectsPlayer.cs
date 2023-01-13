@@ -129,8 +129,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Make the map turn black if in the final layer of the abyss.
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + Player.Calamity().ZoneAbyssLayer4.ToDirectionInt() * 0.008f, 0f, 1f);
-
+            
             OrangeAbyssWaterInterpolant = MathHelper.Clamp(OrangeAbyssWaterInterpolant + InLayer3HadalZone.ToDirectionInt() * 0.008f, 0f, 1f);
+
+            // Disable Acid Rain in the Lost Colosseum.
+            if (SubworldSystem.IsActive<LostColosseum>())
+                Player.Calamity().noStupidNaturalARSpawns = true;
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.
@@ -201,6 +205,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Ensure that the player respawns at the campfire in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
             {
+                LostColosseum.HasBereftVassalAppeared = false;
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;
                 Main.spawnTileY = LostColosseum.CampfirePosition.Y;
             }

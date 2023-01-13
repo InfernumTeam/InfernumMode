@@ -254,6 +254,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public static void PerformSpecificAttackBehaviors(NPC npc, Player target, bool performingDeathAnimation, float attackState, float sideSwitchAttackDelay, float hoverSide, ref float enrageTimer, ref float frame, ref float attackTimer, ref float deathAnimationTimer)
         {
             bool isApollo = npc.type == ModContent.NPCType<Apollo>();
+
+            // Automatically transition to the ultimate attack if close to dying in the final phase.
+            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            {
+                SelectNextAttack(npc);
+                attackState = (int)TwinsAttackType.ThemonuclearBlitz;
+            }
+
             if (!performingDeathAnimation)
             {
                 switch ((TwinsAttackType)(int)attackState)
@@ -1498,6 +1506,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             attackTimer = ref apollo.ai[1];
 
             // Disable damage during this attack.
+            npc.dontTakeDamage = false;
             npc.Calamity().DR = 0.9999999f;
             npc.Calamity().unbreakableDR = true;
             npc.Calamity().ShouldCloseHPBar = true;
@@ -1643,8 +1652,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.damage = npc.defDamage;
 
                     float desperationInterpolant = Utils.GetLerpValue(0f, desperationAttackTime * 0.475f, attackTimer, true);
-                    int chargeRate = (int)MathHelper.Lerp(49f, 35f, desperationInterpolant);
-                    float chargeSpeed = MathHelper.Lerp(42f, 67f, desperationInterpolant);
+                    int chargeRate = (int)MathHelper.Lerp(51f, 39f, desperationInterpolant);
+                    float chargeSpeed = MathHelper.Lerp(42f, 63.67f, desperationInterpolant);
                     float chargeSpinSpeed = 0.02f;
 
                     // Go a bit easier on the player if they don't have a dash.

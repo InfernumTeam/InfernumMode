@@ -36,7 +36,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         {
             if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)
             {
-                GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
                 return false;
             }
             npc.dontTakeDamage = true;

@@ -1503,8 +1503,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
-            int fadeInTime = 96;
-            int blackScreenTime = 30;
+            int fadeInTime = 120;
+            int blackScreenTime = 50;
             int attackTransitionDelay = 100;
             int fadeOutTime = 30;
 
@@ -1524,10 +1524,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameChangeSpeed = 0.2f;
             frameType = (int)SCalFrameType.MagicCircle;
 
+            // Play the demon's spawning sound.
+            if (attackTimer == 1)
+                SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraSpawn, target.Center);
+
             // Summon the demon.
             if (attackTimer == fadeInTime + blackScreenTime)
             {
-                SoundEngine.PlaySound(BrimstoneMonster.SpawnSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraCharge, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 850, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
             }
@@ -2194,6 +2198,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
+                    // Create some screenshake.
+                    if (CalamityConfig.Instance.Screenshake)
+                        target.Infernum_Camera().CurrentScreenShakePower = 6;
+
                     npc.Center = target.Center - Main.rand.NextVector2Unit() * Main.rand.NextFloat(180f, 455f);
                     npc.velocity = Vector2.Zero;
 
@@ -2497,7 +2505,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
-            // Just die as usual if the Supreme Calamitas is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            // Just die as usual if Supreme Calamitas is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
             if (npc.Infernum().ExtraAI[7] >= 1f)
                 return true;
 

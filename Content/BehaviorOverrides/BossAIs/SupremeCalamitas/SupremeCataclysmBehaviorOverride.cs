@@ -4,6 +4,7 @@ using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -201,11 +202,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int proj = Utilities.NewProjectileBetter(projectileSpawnPosition, Vector2.UnitX * npc.spriteDirection * regularShotSpeed, type, 550, 0f);
-                    if (Main.projectile.IndexInRange(proj))
-                        Main.projectile[proj].ai[1] = firingFromRight;
-                }
+                    Utilities.NewProjectileBetter(projectileSpawnPosition, Vector2.UnitX * npc.spriteDirection * regularShotSpeed, type, 550, 0f, -1, 0f, firingFromRight);
+
                 firingFromRight = firingFromRight == 0f ? 1f : 0f;
             }
 
@@ -273,11 +271,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 550f, isCataclysm.ToInt() * -255f);
             if (wrappedTimer < hoverTime)
             {
-                // Slow down right before firing.
+                // Slow down right before firing. This only happens if sufficiently far away from the target.
                 if (wrappedTimer > hoverTime * 0.5f)
                 {
-                    npc.velocity *= 0.9f;
-                    npc.rotation *= 0.9f;
+                    if (!npc.WithinRange(target.Center, 320f))
+                    {
+                        npc.velocity *= 0.9f;
+                        npc.rotation *= 0.9f;
+                    }
+                    else
+                        npc.Center -= npc.SafeDirectionTo(target.Center) * 10f;
                 }
 
                 // Otherwise, do typical hover behavior, towards the upper right of the target.
@@ -360,9 +363,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     npc.netUpdate = true;
                 }
             }

@@ -54,13 +54,19 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> Stars => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Stars");
 
+        public static Asset<Texture2D> StreakBigBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/MegaStreakBacking");
+
+        public static Asset<Texture2D> StreakBigInner => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/MegaStreakInner");
+
         public static Asset<Texture2D> StreakBubble => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/Streak3");
 
         public static Asset<Texture2D> StreakBubbleGlow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/Streak4");
-
+        
         public static Asset<Texture2D> StreakFaded => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakFaded");
 
         public static Asset<Texture2D> StreakFire => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakFire");
+
+        public static Asset<Texture2D> StreakGeneric => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/GenericStreak");
 
         public static Asset<Texture2D> StreakSolid => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakSolid");
 

@@ -102,10 +102,14 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorSoundLoop");
 
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorShatter");
-
+        
         public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
+        
+        public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");
 
-        public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SCalBrothersSpawn");
+        public static readonly SoundStyle ShadowHydraCharge = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/HydraCharge");
+
+        public static readonly SoundStyle ShadowHydraSpawn = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/HydraSpawn");
 
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronHeadBonk");
 

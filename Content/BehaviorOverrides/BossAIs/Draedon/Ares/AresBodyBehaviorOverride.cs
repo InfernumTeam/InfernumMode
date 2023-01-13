@@ -298,6 +298,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
 
+            // Automatically transition to the ultimate attack if close to dying in the final phase.
+            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            {
+                SelectNextAttack(npc);
+                attackType = (int)AresBodyAttackType.PrecisionBlasts;
+            }
+
             if (!performingDeathAnimation)
             {
                 // Perform specific behaviors.
@@ -1343,13 +1350,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
+                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 20f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
+                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;

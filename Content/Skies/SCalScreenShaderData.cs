@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Skies
                 return;
 
             UseTargetPosition(Main.LocalPlayer.Center);
-            UseColor(new Color(100, 150, 255));
+            UseColor(new Color(231, 52, 52));
 
             // Perform various matrix calculations to transform SCal's arena to UV coordinate space.
             NPC scal = Main.npc[CalamityGlobalNPC.SCal];

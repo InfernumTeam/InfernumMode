@@ -40,7 +40,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             // Use the sunken sea lab as a reference if not in the middle of worldgen, since the underground desert location rectangle is discarded after initial world-gen, meaning
             // that it won't contain anything useful.
-            if (!WorldGen.gen)
+            if (NPC.downedGolemBoss)
             {
                 fuck = CalamityWorld.SunkenSeaLabCenter.ToTileCoordinates();
                 fuck.Y -= 280;

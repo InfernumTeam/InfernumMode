@@ -38,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
+            Projectile.timeLeft = 7200;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
@@ -144,8 +145,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) { }
-
         public override bool ShouldUpdatePosition() => false;
+
+        public override bool? CanDamage() => Projectile.timeLeft < 7198;
     }
 }

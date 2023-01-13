@@ -4,6 +4,7 @@ using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Items;
 using InfernumMode.Core;
 using InfernumMode.Core.Balancing;
+using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;

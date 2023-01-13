@@ -233,6 +233,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                                 Vector2 globVelocity = (MathHelper.TwoPi * i / globCount + shootOffsetAngle).ToRotationVector2() * globSpeed;
                                 Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
                             }
+
+                            // Shoot one glob directly at the target to prevent sitting in place.
+                            Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, 90, 0f);
                         }
 
                         SoundEngine.PlaySound(SoundID.Item167, npc.Bottom);
@@ -301,14 +304,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 // Find a place to teleport to.
                 if (attackTimer == teleportTime / 2)
                 {
-                    for (int i = 0; i < 2500; i++)
+                    for (int i = 0; i < 8000; i++)
                     {
-                        int dx = Main.rand.Next(15, i / 25 + 40) * red.ToDirectionInt();
+                        int dx = Main.rand.Next(25, i / 25 + 40) * red.ToDirectionInt();
                         int dy = Main.rand.Next(-50, 50);
                         Vector2 teleportBottom = target.Center + new Vector2(dx, dy).ToWorldCoordinates(8f, 0f);
 
                         // Ignore positions that are midair.
-                        if (!Collision.SolidCollision(teleportBottom - Vector2.UnitY * 92f, 150, 92 + 24, true))
+                        if (!Collision.SolidCollision(teleportBottom, 150, 32, true))
                             continue;
 
                         // Ignore positions that are in the ground.
@@ -359,11 +362,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         // However, to prevent weird looking angles, a clamp is performed to ensure the result stays within natural bounds.
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
                         float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
-                        float bloodShootSpeed = MathHelper.Clamp(idealShootSpeed, 7.6f, 20f);
-                        Vector2 bloodShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, GroundSlimeGlob.Gravity, bloodShootSpeed, out _);
-                        int blood = Utilities.NewProjectileBetter(shootPosition, bloodShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), 90, 0f);
-                        if (Main.projectile.IndexInRange(blood))
-                            Main.projectile[blood].ai[1] = target.Center.Y;
+                        float slimeShootSpeed = MathHelper.Clamp(idealShootSpeed, 7.6f, 20f);
+                        Vector2 slimeShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, GroundSlimeGlob.Gravity, slimeShootSpeed, out _);
+                        Utilities.NewProjectileBetter(shootPosition, slimeShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), 90, 0f, -1, 0f, target.Center.Y);
                     }
 
                     // Shoot accelerating blobs if far away enough to the target.
@@ -449,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && !npc.WithinRange(target.Center, 200f))
                         {
                             int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                             for (int i = 0; i < acceleratingGlobPerShot; i++)
@@ -464,7 +465,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                 // Spin around.
                 else if (!npc.WithinRange(flyDestination, 110f))
-                    npc.velocity = (npc.velocity * 19f + npc.SafeDirectionTo(flyDestination) * 14.5f) / 20f;
+                    npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(flyDestination) * 15f) / 16f;
             }
             else
             {

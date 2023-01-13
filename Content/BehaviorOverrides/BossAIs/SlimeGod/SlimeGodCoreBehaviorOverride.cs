@@ -226,13 +226,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 // Disable contact damage.
                 npc.damage = 0;
 
-                Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 360f;
+                Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 420f;
                 npc.Center = npc.Center.MoveTowards(destination, 32f);
 
                 spinAngleOffset += MathHelper.TwoPi * Utils.GetLerpValue(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;
 
-                if (attackTimer % burstShootRate == burstShootRate - 1f)
+                if (attackTimer % burstShootRate == burstShootRate - 1f && !npc.WithinRange(target.Center, 275f))
                 {
                     SoundEngine.PlaySound(SoundID.Item171, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -309,7 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 20f;
+                float flySpeed = 14.5f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2.15f;
@@ -332,6 +332,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             // Do the actual charge.
             if (attackSubstate == 2f)
             {
+                if (npc.velocity.Length() < 20f)
+                    npc.velocity *= 1.04f;
+
                 // Release abyss balls upward.
                 if (attackTimer % 8f == 7f)
                 {

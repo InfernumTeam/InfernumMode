@@ -740,8 +740,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             else
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
-
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
+            
+            float slitherOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.19f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
@@ -779,7 +779,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 14.333f, flySpeedFactor * 32f);
 
                 // And handle movement.
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + slitherOffsetAngle, flyAcceleration, true) * speed;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 25f);
             }
 
@@ -1232,6 +1232,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     Vector2 portalSpawnPosition = target.Center - Vector2.UnitY * 500f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                        {
+                            portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = false;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
+                            portal.netUpdate = true;
+                        }
+                        
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                         {
                             portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;

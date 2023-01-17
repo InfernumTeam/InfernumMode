@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             DisplayName.SetDefault("Lightning");
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 16;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
         }
 
@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.extraUpdates = 20;
-            Projectile.timeLeft = 60 * Projectile.extraUpdates;
+            Projectile.timeLeft = 36 * Projectile.extraUpdates;
             Projectile.Calamity().DealsDefenseDamage = true;
 
             // Readjust the velocity magnitude the moment this projectile is created
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // which allows random turning to occur.
             Projectile.frameCounter++;
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (60f * (Projectile.MaxUpdates - 1))) * 4f;
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (36f * (Projectile.MaxUpdates - 1))) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -141,9 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
-
+            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
             LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 3);
             return false;
         }

@@ -706,8 +706,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
-                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -785f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 1.9f);
                             Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f, -1, i % 2f);
 
                             i++;
@@ -727,7 +727,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     float score = p.Distance(target.Center);
                     if (score < 400f)
                         score += 9000f;
-                    if (p.Center.Y > target.Center.Y - 200f)
+                    if (p.Center.Y > target.Center.Y - 336f)
                         score += 9000f;
 
                     return score;
@@ -758,10 +758,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 return;
             }
 
-            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             // Disable contact damage.
             npc.damage = 0;
 
+            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, hoverVerticalOffset);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed, hoverRedirectAcceleration);
             npc.rotation = npc.velocity.X * 0.012f;

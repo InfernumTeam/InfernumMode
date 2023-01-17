@@ -14,8 +14,8 @@ namespace InfernumMode.Content.Skies
 
         public override void Apply()
         {
-            // If scal is not set, or the reduced graphics config is enabled, do not draw.
-            if (CalamityGlobalNPC.SCal < 0 || InfernumConfig.Instance.ReducedGraphicsConfig)
+            // If scal is not present do not draw.
+            if (CalamityGlobalNPC.SCal < 0)
                 return;
 
             UseTargetPosition(Main.LocalPlayer.Center);

@@ -114,11 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                int bomb = Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(Target.Center) * 15f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f);
-                if (Main.projectile.IndexInRange(bomb))
-                    Main.projectile[bomb].ModProjectile<DarkCosmicBomb>().ExplosionRadius = 500f;
-            }
+                Utilities.NewProjectileBetter(NPC.Center, NPC.SafeDirectionTo(Target.Center) * 15f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f, -1, 500f);
 
             DeathCountdown = 60f;
 

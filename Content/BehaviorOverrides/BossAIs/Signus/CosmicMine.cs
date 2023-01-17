@@ -60,10 +60,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
             }
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
-        }
     }
 }

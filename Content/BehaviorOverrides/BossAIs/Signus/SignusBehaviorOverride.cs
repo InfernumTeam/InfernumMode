@@ -629,14 +629,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     {
                         SoundEngine.PlaySound(SoundID.Item73, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
-                            {
-                                bomb.ModProjectile<DarkCosmicBomb>().ExplosionRadius = 700f;
-                            });
-
-                            Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f);
-                        }
+                            Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f, -1, 700f);
                     }
 
                     Vector2 idealFlyDirection = (target.Center - npc.Center).SafeNormalize(Vector2.UnitY);
@@ -733,6 +726,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             do
                 attackState = (int)attackSelector.Get();
             while (attackState == oldAttackState);
+
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CosmicKunai>());
 
             npc.TargetClosest();
             npc.ai[2] = 0f;

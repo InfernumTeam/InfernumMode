@@ -238,6 +238,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
 
+            // Teleport above the target if stuck and alone.
+            if (!sandSharkExists && NPC.Center.Y >= Main.maxTilesY * 16f - 500f)
+            {
+                NPC.Center = Target.Center - Vector2.UnitY * 700f;
+                NPC.netUpdate = true;
+            }
+
             // Disable DoTs because they're apparently overpowered enough to do damage while supposedly invulnerable.
             if (sandSharkExists)
                 NPC.lifeRegen = 1000000;
@@ -588,7 +595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Check for collision. This does not apply if current above the target's bottom.
                 bool hasHitGround = Collision.SolidCollision(NPC.BottomRight - Vector2.UnitY * 4f, NPC.width, 6, true);
                 bool ignoreTiles = NPC.Bottom.Y < startingTargetPositionY;
-                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 600f;
+                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 900f;
                 if (hasHitGround && !ignoreTiles || pretendFakeCollisionHappened)
                 {
                     // Perform ground hit effects once a collision is registered. This involves releasing sand rubble into the air and creating a damaging ground area of effect.

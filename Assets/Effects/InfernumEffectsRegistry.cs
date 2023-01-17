@@ -16,7 +16,6 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
-        public static MiscShaderData CartoonVertexShader => GameShaders.Misc["Infernum:CartoonShader"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];

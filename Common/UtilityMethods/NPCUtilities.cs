@@ -94,6 +94,15 @@ namespace InfernumMode
             return NPCLoader.GetNPC(id).FullName;
         }
 
+        public static string GetNPCFullNameFromID(int id)
+        {
+            if (id < NPCID.Count)
+                return NPC.GetFullnameByID(id);
+            ;
+
+            return NPCLoader.GetNPC(id).DisplayName.GetDefault();
+        }
+
         public static int GetNPCIDFromName(string name)
         {
             if (int.TryParse(name, out int id))

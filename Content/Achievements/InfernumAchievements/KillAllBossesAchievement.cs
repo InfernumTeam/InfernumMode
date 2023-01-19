@@ -146,6 +146,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             if (BossRushEvent.BossRushActive)
                 return;
 
+            bool updatedList = false;
             int npcID = Main.npc[npcIndex].type;
             switch (npcID)
             {
@@ -160,23 +161,53 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                     int draedonID = ModContent.NPCType<Draedon>();
                     if (npcID == leviathanID)
                     {
-                        if (!NPC.AnyNPCs(ModContent.NPCType<Anahita>()))
+                        if (!NPC.AnyNPCs(ModContent.NPCType<Anahita>()) && !BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)])
+                        {
                             BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)] = true;
+                            updatedList = true;
+                        }
                     }
                     else if (npcID == ModContent.NPCType<Anahita>())
                     {
-                        if (!NPC.AnyNPCs(leviathanID))
+                        if (!NPC.AnyNPCs(leviathanID) && !BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)])
+                        {
                             BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)] = true;
+                            updatedList = true;
+                        }
                     }
-                    else if (ExoMechManagement.ExoMechIDs.Contains(npcID))
+                    else if (ExoMechManagement.ExoMechIDs.Contains(npcID) &&!BossesCompleted[Utilities.GetNPCNameFromID(draedonID)])
                     {
                         if (ExoMechManagement.TotalMechs <= 1)
+                        {
                             BossesCompleted[Utilities.GetNPCNameFromID(draedonID)] = true;
+                            updatedList = true;
+                        }
                     }
-                    else if (BossList.Contains(npcID))
+                    else if (BossList.Contains(npcID) && !BossesCompleted[Utilities.GetNPCNameFromID(npcID)])
+                    {
                         BossesCompleted[Utilities.GetNPCNameFromID(npcID)] = true;
+                        updatedList = true;
+                    }
                     break;
             }
+            if (updatedList && BossesCompleted.Count(kv => kv.Value) != TotalCompletion)
+                AchievementsNotificationTracker.AddAchievementAsUpdated(this);
+        }
+
+        public string GetFirstUncompletedBoss()
+        {
+            foreach (var item in BossesCompleted)
+            {
+                if (!item.Value)
+                {
+                    // Due to these originally using the full name, this gets the id, and then regets the name using
+                    // a different method to avoid changing the saved names in the dict and fucking with data.
+                    // This is a bit scuffed.
+                    int id = Utilities.GetNPCIDFromName(item.Key);
+                    return Utilities.GetNPCFullNameFromID(id);
+                }
+            }
+            return string.Empty;
         }
         #endregion
     }

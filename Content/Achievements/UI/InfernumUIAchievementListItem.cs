@@ -1,7 +1,9 @@
-﻿using InfernumMode.Core.GlobalInstances.Players;
+﻿using InfernumMode.Content.Achievements.InfernumAchievements;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -15,11 +17,11 @@ namespace InfernumMode.Content.Achievements.UI
     // Copy of Terraria.GameContent.UI.Elements made to work with our achievements instead.
     public class InfernumUIAchievementListItem : UIPanel
     {
-        private Achievement _achievement;
+        private readonly Achievement _achievement;
 
-        private UIImageFramed _achievementIcon;
+        private readonly UIImageFramed _achievementIcon;
 
-        private UIImage _achievementIconBorders;
+        private readonly UIImage _achievementIconBorders;
 
         private Rectangle _iconFrame;
 
@@ -27,9 +29,9 @@ namespace InfernumMode.Content.Achievements.UI
 
         private Rectangle _iconFrameLocked;
 
-        private Asset<Texture2D> _innerPanelTopTexture;
+        private readonly Asset<Texture2D> _innerPanelTopTexture;
 
-        private Asset<Texture2D> _innerPanelBottomTexture;
+        private readonly Asset<Texture2D> _innerPanelBottomTexture;
 
         private bool _locked;
 
@@ -139,6 +141,28 @@ namespace InfernumMode.Content.Achievements.UI
                 DrawProgressBar(spriteBatch, completionRatio, drawPosition - Vector2.UnitX * barWidth * 0.7f, barWidth, progressBarColor, fillColor, fillColor.MultiplyRGBA(new Color(new Vector4(1f, 1f, 1f, 0.5f))));
                 drawPosition.X -= barWidth * 1.4f + stringSize2.X;
                 ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, percentageText, drawPosition, nameTextColor, 0f, new Vector2(0f, 0f), textScale, 90f);
+
+                if (!IsMouseHovering)
+                    return;
+
+                // Only the two boss/miniboss ones are higher than 4. Kinda scuffed but then this whole thing is so :). Feel free to improve it if you can figure out how.
+                if (_achievement.TotalCompletion > 4)
+                {
+                    List<Achievement> achievements = AchievementPlayer.GetAchievementsList();
+                    string name = string.Empty;
+                    if (_achievement.GetType() == typeof(KillAllBossesAchievement))
+                    {
+                        KillAllBossesAchievement kABA = (KillAllBossesAchievement)achievements[_achievement.PositionInMainList];
+                        name = kABA.GetFirstUncompletedBoss();
+                    }
+                    else if (_achievement.GetType() == typeof(KillAllMinibossesAchievement))
+                    {
+                        KillAllMinibossesAchievement kAMA = (KillAllMinibossesAchievement)achievements[_achievement.PositionInMainList];
+                        name = kAMA.GetFirstUncompletedMiniBoss();
+                    }
+                    string textToDraw = "Next: " + name;
+                    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.ItemStack.Value, textToDraw, drawPosition - new Vector2(FontAssets.ItemStack.Value.MeasureString(textToDraw).X * 0.85f, 0), new Color(255, 241, 51), 0f, Vector2.Zero, textScale);
+                }
             }
         }
 
@@ -156,7 +180,7 @@ namespace InfernumMode.Content.Achievements.UI
             spriteBatch.Draw(_innerPanelBottomTexture.Value, new Vector2(position.X + width - 6f, position.Y), new Rectangle(13, 0, 6, _innerPanelBottomTexture.Height()), color);
         }
 
-        private static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
+        public static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
         {
             // Initialize things if nothing valid is supplied.
             progress = MathHelper.Clamp(progress, 0f, 1f);
@@ -200,7 +224,7 @@ namespace InfernumMode.Content.Achievements.UI
         {
             base.MouseOver(evt);
             BackgroundColor = new Color(119, 46, 46);
-            BorderColor = new Color(56, 20, 20);
+            BorderColor = new Color(56, 20, 20);       
         }
 
         public override void MouseOut(UIMouseEvent evt)
@@ -208,6 +232,7 @@ namespace InfernumMode.Content.Achievements.UI
             base.MouseOut(evt);
             BackgroundColor = new Color(89, 26, 26) * 0.8f;
             BorderColor = new Color(44, 13, 13) * 0.8f;
+            Main.hoverItemName = string.Empty;
         }
     }
 }

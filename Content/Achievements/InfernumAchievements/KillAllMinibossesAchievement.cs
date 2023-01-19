@@ -89,9 +89,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             MinibossesCompleted = new Dictionary<int, bool>();
             for (int i = 0; i < TotalCompletion; i++)
-            {
                 MinibossesCompleted[i] = false;
-            }
+
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
         }

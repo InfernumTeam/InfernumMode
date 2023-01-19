@@ -10,13 +10,14 @@ namespace InfernumMode.Content.Achievements
 {
     public class AchivementsNotificationTracker
     {
-        private static List<IInGameNotification> Notifications = new();
+        private static readonly List<IInGameNotification> Notifications = new();
 
         public static void AddAchievementAsCompleted(Achievement achievement)
         {
             if (Main.netMode != NetmodeID.Server)
                 Notifications.Add(new AchivementCompletionPopup(achievement));
         }
+
         public static void Update()
         {
             for (int i = 0; i < Notifications.Count; i++)
@@ -29,43 +30,23 @@ namespace InfernumMode.Content.Achievements
                 }
             }
         }
-        public static void DrawInGame(SpriteBatch sb)
+
+        public static void DrawInGame(SpriteBatch spriteBatch)
         {
-            float num = Main.screenHeight - 40;
+            float yPosition = Main.screenHeight - 40;
             if (PlayerInput.UsingGamepad)
-            {
-                num -= 25f;
-            }
-            Vector2 positionAnchorBottom = new(Main.screenWidth / 2, num);
+                yPosition -= 25f;
+
+            Vector2 positionAnchorBottom = new(Main.screenWidth / 2, yPosition);
             foreach (IInGameNotification notification in Notifications)
             {
-                notification.DrawInGame(sb, positionAnchorBottom);
+                notification.DrawInGame(spriteBatch, positionAnchorBottom);
                 notification.PushAnchor(ref positionAnchorBottom);
                 if (positionAnchorBottom.Y < -100f)
-                {
                     break;
-                }
             }
         }
-        public static void DrawInIngameOptions(SpriteBatch spriteBatch, Rectangle area, ref int gamepadPointIdLocalIndexToUse)
-        {
-            int padding = 4;
-            int height = area.Height / 5 - padding;
-            Rectangle area2 = new(area.X, area.Y, area.Width - 6, height);
-            int i = 0;
-            foreach (IInGameNotification notification in Notifications)
-            {
-                notification.DrawInNotificationsArea(spriteBatch, area2, ref gamepadPointIdLocalIndexToUse);
-                area2.Y += height + padding;
 
-                i++;
-                if (i >= 5)
-                    break;
-            }
-        }
-        public static void Clear()
-        {
-            Notifications.Clear();
-        }
+        public static void Clear() => Notifications.Clear();
     }
 }

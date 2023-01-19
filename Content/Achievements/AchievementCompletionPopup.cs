@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Achievements
     {
         #region Fields
 
-        private string Title;
+        private readonly string Title;
 
         private int IngameDisplayTimeLeft;
 
@@ -25,13 +25,10 @@ namespace InfernumMode.Content.Achievements
             get
             {
                 if (IngameDisplayTimeLeft < 30)
-                {
                     return MathHelper.Lerp(0f, 1f, IngameDisplayTimeLeft / 30f);
-                }
                 if (IngameDisplayTimeLeft > 285)
-                {
                     return MathHelper.Lerp(1f, 0f, (IngameDisplayTimeLeft - 285f) / 15f);
-                }
+
                 return 1f;
             }
         }
@@ -42,9 +39,8 @@ namespace InfernumMode.Content.Achievements
             {
                 float scale = Scale;
                 if (scale <= 0.5f)
-                {
                     return 0f;
-                }
+
                 return (scale - 0.5f) / 0.5f;
             }
         }
@@ -55,9 +51,9 @@ namespace InfernumMode.Content.Achievements
 
         private Rectangle AchievementIconFrame;
 
-        private Asset<Texture2D> AchievementTexture;
+        private readonly Asset<Texture2D> AchievementTexture;
 
-        private Asset<Texture2D> AchievementBorderTexture;
+        private readonly Asset<Texture2D> AchievementBorderTexture;
 
         #endregion
 
@@ -79,31 +75,34 @@ namespace InfernumMode.Content.Achievements
             else
                 ShouldBeRemoved = true;
         }
+
         public void PushAnchor(ref Vector2 anchorPosition)
         {
             float offset = 50f * Opacity;
             anchorPosition.Y -= offset;
         }
+
         public void DrawInGame(SpriteBatch sb, Vector2 bottomAnchorPosition)
         {
             float opacity = Opacity;
             if (opacity > 0f)
             {
-                float num = Scale * 1.1f;
-                Vector2 size = (FontAssets.ItemStack.Value.MeasureString(Title) + new Vector2(58f, 10f)) * num;
-                Rectangle rectangle = Utils.CenteredRectangle(bottomAnchorPosition + new Vector2(0f, (0f - size.Y) * 0.5f), size);
+                float textScale = Scale * 1.1f;
+                Vector2 size = (FontAssets.ItemStack.Value.MeasureString(Title) + new Vector2(58f, 10f)) * textScale;
+                Rectangle drawRectangle = Utils.CenteredRectangle(bottomAnchorPosition + new Vector2(0f, (0f - size.Y) * 0.5f), size);
                 Vector2 mouseScreen = Main.MouseScreen;
-                bool hovering = rectangle.Contains(mouseScreen.ToPoint());
-                Utils.DrawInvBG(c: hovering ? new Color(164, 64, 64) * 0.75f : new Color(164, 64, 64) * 0.5f, sb: sb, R: rectangle);
-                float num3 = num * 0.3f;
-                Vector2 vector = rectangle.Right() - Vector2.UnitX * num * (12f + num3 * AchievementIconFrame.Width);
-                sb.Draw(AchievementTexture.Value, vector, AchievementIconFrame, Color.White * opacity, 0f, new Vector2(0f, AchievementIconFrame.Height / 2), num3, SpriteEffects.None, 0f);
-                sb.Draw(AchievementBorderTexture.Value, vector, null, Color.White * opacity, 0f, new Vector2(0f, AchievementIconFrame.Height / 2), num3, SpriteEffects.None, 0f);
-                Utils.DrawBorderString(color: new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor / 5, Main.mouseTextColor) * opacity, sb: sb, text: Title, pos: vector - Vector2.UnitX * 10f, scale: num * 0.9f, anchorx: 1f, anchory: 0.4f);
+                bool hovering = drawRectangle.Contains(mouseScreen.ToPoint());
+                Utils.DrawInvBG(c: hovering ? new Color(164, 64, 64) * 0.75f : new Color(164, 64, 64) * 0.5f, sb: sb, R: drawRectangle);
+                float drawScale = textScale * 0.3f;
+                Vector2 drawPosition = drawRectangle.Right() - Vector2.UnitX * textScale * (12f + drawScale * AchievementIconFrame.Width);
+                sb.Draw(AchievementTexture.Value, drawPosition, AchievementIconFrame, Color.White * opacity, 0f, new Vector2(0f, AchievementIconFrame.Height / 2), drawScale, SpriteEffects.None, 0f);
+                sb.Draw(AchievementBorderTexture.Value, drawPosition, null, Color.White * opacity, 0f, new Vector2(0f, AchievementIconFrame.Height / 2), drawScale, SpriteEffects.None, 0f);
+                Utils.DrawBorderString(color: new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor / 5, Main.mouseTextColor) * opacity, sb: sb, text: Title, pos: drawPosition - Vector2.UnitX * 10f, scale: textScale * 0.9f, anchorx: 1f, anchory: 0.4f);
                 if (hovering)
                     OnMouseOver();
             }
         }
+
         private void OnMouseOver()
         {
             if (!PlayerInput.IgnoreMouseInterface)
@@ -119,7 +118,11 @@ namespace InfernumMode.Content.Achievements
                 }
             }
         }
-        public void DrawInNotificationsArea(SpriteBatch spriteBatch, Rectangle area, ref int gamepadPointLocalIndexTouse) => Utils.DrawInvBG(spriteBatch, area, Color.Red);
+
+        public void DrawInNotificationsArea(SpriteBatch spriteBatch, Rectangle area, ref int gamepadPointLocalIndexTouse)
+        {
+
+        }
         #endregion
     }
 }

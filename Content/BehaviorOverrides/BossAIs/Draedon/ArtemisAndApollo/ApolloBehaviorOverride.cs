@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             bool isApollo = npc.type == ModContent.NPCType<Apollo>();
 
             // Automatically transition to the ultimate attack if close to dying in the final phase.
-            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackState != (int)TwinsAttackType.ThemonuclearBlitz)
             {
                 SelectNextAttack(npc);
                 attackState = (int)TwinsAttackType.ThemonuclearBlitz;

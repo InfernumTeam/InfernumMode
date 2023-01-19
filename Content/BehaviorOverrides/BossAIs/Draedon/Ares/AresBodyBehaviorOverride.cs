@@ -299,7 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 enraged = 1f;
 
             // Automatically transition to the ultimate attack if close to dying in the final phase.
-            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackType != (int)AresBodyAttackType.PrecisionBlasts)
             {
                 SelectNextAttack(npc);
                 attackType = (int)AresBodyAttackType.PrecisionBlasts;

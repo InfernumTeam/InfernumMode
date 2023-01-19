@@ -22,11 +22,14 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             NPCID.BigMimicCorruption,
             NPCID.BigMimicCrimson,
             NPCID.BigMimicHallow,
-            NPCID.DD2DarkMageT1,
+            NPCID.DD2DarkMageT1,          
             NPCID.DD2OgreT2,
             NPCID.SandElemental,
             ModContent.NPCType<ThiccWaifu>(),
-            ModContent.NPCType<GiantClam>()
+            ModContent.NPCType<GiantClam>(),
+            // These must be at the end.
+            NPCID.DD2DarkMageT3,
+            NPCID.DD2OgreT3
         };
         #endregion
 
@@ -80,7 +83,14 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             int npcID = Main.npc[npcIndex].type;
             if (MinibossIDs.Contains(npcID))
-                MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
+            {
+                if (npcID == NPCID.DD2DarkMageT3)
+                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)] = true;
+                else if (npcID == NPCID.DD2OgreT3)
+                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)] = true;
+                else
+                     MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
+            }
         }
         #endregion
 

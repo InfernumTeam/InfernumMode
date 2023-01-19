@@ -547,6 +547,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ref float artemisLaserCounter = ref npc.Infernum().ExtraAI[2];
             ref float artemisHasPerformedTelegraph = ref npc.Infernum().ExtraAI[3];
             ref float laserBurstCounter = ref npc.Infernum().ExtraAI[4];
+            ref float apolloAttackTimer = ref npc.Infernum().ExtraAI[20];
 
             // Provide the target infinite flight time.
             target.wingTime = target.wingTimeMax;
@@ -556,9 +557,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Do damage.
                 npc.damage = npc.defDamage;
 
-                float wrappedAttackTimer = attackTimer % apolloChargeRate;
+                float wrappedAttackTimer = apolloAttackTimer % apolloChargeRate;
                 Vector2 directionToTarget = npc.SafeDirectionTo(target.Center);
-                if (wrappedAttackTimer == 1f)
+                if (wrappedAttackTimer == 1)
                 {
                     // Play a charge and plasma sound.
                     bool shouldShootPlasma = !npc.WithinRange(target.Center, 380f);
@@ -610,6 +611,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.velocity.X *= 0.985f;
                     npc.velocity.Y -= 0.6f;
                 }
+
+                if (apolloAttackTimer == apolloChargeRate)
+                    apolloAttackTimer = 0;
+                apolloAttackTimer++;
             }
 
             if (npc.type == ModContent.NPCType<Artemis>())
@@ -688,6 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         if (laserBurstCounter >= totalLaserBurstCount)
                         {
                             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ApolloPlasmaFireball>(), ModContent.ProjectileType<AresPlasmaBolt>());
+                            apolloAttackTimer = 0f;
                             SelectNextAttack(npc);
                         }
                     }

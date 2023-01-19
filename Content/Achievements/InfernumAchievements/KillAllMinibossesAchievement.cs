@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.SunkenSea;
+﻿using CalamityMod.NPCs.NormalNPCs;
+using CalamityMod.NPCs.SunkenSea;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -24,6 +25,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             NPCID.DD2DarkMageT1,
             NPCID.DD2OgreT2,
             NPCID.SandElemental,
+            ModContent.NPCType<ThiccWaifu>(),
             ModContent.NPCType<GiantClam>()
         };
         #endregion
@@ -33,7 +35,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             Name = "Mini-Meany!";
             Description = "Defeat the various minor threats across the world!\n[c/777777:Beat every Infernum Miniboss]";
-            TotalCompletion = 8;
+            TotalCompletion = 9;
             PositionInMainList = 7;
             CreateDict();
         }

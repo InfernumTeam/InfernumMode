@@ -559,7 +559,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 float wrappedAttackTimer = apolloAttackTimer % apolloChargeRate;
                 Vector2 directionToTarget = npc.SafeDirectionTo(target.Center);
-                if (wrappedAttackTimer == 1)
+                if (wrappedAttackTimer == 1f)
                 {
                     // Play a charge and plasma sound.
                     bool shouldShootPlasma = !npc.WithinRange(target.Center, 380f);
@@ -613,7 +613,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 }
 
                 if (apolloAttackTimer == apolloChargeRate)
-                    apolloAttackTimer = 0;
+                    apolloAttackTimer = 0f;
                 apolloAttackTimer++;
             }
 

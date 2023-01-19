@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,7 +26,7 @@ namespace InfernumMode.Content.Items
             Item.noMelee = true;
 
             Item.value = 0;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;

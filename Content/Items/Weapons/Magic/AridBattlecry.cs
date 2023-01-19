@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Magic;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -30,7 +31,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             Item.knockBack = 0f;
 
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;

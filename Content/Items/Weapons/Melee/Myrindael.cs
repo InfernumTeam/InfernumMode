@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Melee;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -44,7 +45,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.shootSpeed = 12f;
 
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
 
             Item.width = Item.height = 68;
             Item.useStyle = ItemUseStyleID.Shoot;

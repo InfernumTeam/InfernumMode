@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -14,6 +15,10 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 {
     public class TooltipChangeGlobalItem : GlobalItem
     {
+        public override bool InstancePerEntity => true;
+
+        public bool DeveloperItem = false;
+
         public static Dictionary<int, string> EnrageTooltipReplacements => new()
         {
             [ModContent.ItemType<DecapoditaSprout>()] = "Enrages outside of the Mushroom biome",
@@ -118,6 +123,13 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             // Remove a bunch of "Enrages in XYZ" tooltips from base Calamity because people keep getting confused by it.
             if (InfernumMode.CanUseCustomAIs)
                 EditEnrageTooltips(item, tooltips);
+
+            if (DeveloperItem)
+            {
+                Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2);
+                TooltipLine developerLine = new(Mod, "Developer", $"[c/{devColor.Hex3()}:~ Developer Item ~]");
+                tooltips.Add(developerLine);
+            }    
         }
 
         public static void EditEnrageTooltips(Item item, List<TooltipLine> tooltips)

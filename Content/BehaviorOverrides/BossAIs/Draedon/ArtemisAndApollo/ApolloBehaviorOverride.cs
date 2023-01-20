@@ -507,7 +507,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int artemisLaserbeamCountPerBurst = 8;
             int delayBetweenLaserbeams = 5;
             int artemisFastRedirectTime = 42;
-            int apolloChargeRate = 50;
+            int apolloChargeRate = 55;
             int totalLaserBurstCount = 4;
             float apolloChargeSpeed = 32f;
             float apolloChargeSpinSpeed = 0.018f;
@@ -643,7 +643,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 int laserID = ModContent.ProjectileType<ArtemisBasicShotLaser>();
                 bool laserExists = Utilities.AnyProjectiles(laserID);
                 bool aboutToFire = attackTimer >= telegraphTime - 30f && artemisHasPerformedTelegraph == 0f;
-                float angularVelocity = 0.052f;
+                float angularVelocity = 0.042f;
                 float driftSpeed = 21f;
                 if (laserExists || aboutToFire)
                     angularVelocity *= ExoMechManagement.CurrentTwinsPhase >= 6 ? 0.36f : 0.1f;

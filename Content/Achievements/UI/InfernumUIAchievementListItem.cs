@@ -153,7 +153,13 @@ namespace InfernumMode.Content.Achievements.UI
                     if (_achievement.GetType() == typeof(KillAllBossesAchievement))
                     {
                         KillAllBossesAchievement kABA = (KillAllBossesAchievement)achievements[_achievement.PositionInMainList];
-                        name = kABA.GetFirstUncompletedBoss();
+                        name = kABA.GetFirstUncompletedBoss() switch
+                        {
+                            "Spazmatism" => "The Twins",
+                            "Moon Lord Core" => "Moon Lord",
+                            "Guardian Commander" => "Profaned Guardians",
+                            _ => kABA.GetFirstUncompletedBoss()
+                        };
                     }
                     else if (_achievement.GetType() == typeof(KillAllMinibossesAchievement))
                     {

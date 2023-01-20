@@ -635,7 +635,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Rapidly approach the target before attacking, to ensure that they see Artemis and can be aware of the impending attack.
                 if (attackTimer <= artemisFastRedirectTime && artemisHasPerformedTelegraph == 0f)
                 {
-                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.054f);
+                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.044f);
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + MathHelper.PiOver2, 0.125f);
                 }
 

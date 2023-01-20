@@ -427,10 +427,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             DoAggressiveChargeMovement(npc, target, attackTimer, 1f);
 
             // Play a sound prior to switching attacks.
-            if (attackTimer == 720f - TransitionSoundDelay)
+            if (attackTimer == 540f - TransitionSoundDelay)
                 SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
 
-            if (attackTimer > 720f)
+            if (attackTimer > 540f)
                 SelectNextAttack(npc);
         }
 
@@ -801,7 +801,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.damage = ThanatosHeadDamageMaximumOverdrive;
 
             int chargeDelay = 270;
-            int attackTime = 720;
+            int attackTime = 600;
             int cooloffTime = 360;
             bool dontAttackYet = attackTimer <= chargeDelay;
             bool firstTimeAttacking = npc.Infernum().ExtraAI[ExoMechManagement.Thanatos_FinalPhaseAttackCounter] <= 3f;
@@ -809,7 +809,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 chargeDelay = 30;
 
             float chargeSpeedInterpolant = Utils.GetLerpValue(chargeDelay - 16f, chargeDelay + 25f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - 45f, attackTimer - chargeDelay, true);
-            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.25f, chargeSpeedInterpolant);
+            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.2f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 

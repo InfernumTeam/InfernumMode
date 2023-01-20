@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return false;
             }
 
-            Texture2D laserTelegraph = Assets.ExtraTextures.InfernumTextureRegistry.BloomLine.Value;
+            Texture2D laserTelegraph = Assets.ExtraTextures.InfernumTextureRegistry.BloomLineSmall.Value;
 
             float xScale = 1f;
             if (TelegraphDelay < TelegraphFadeTime)

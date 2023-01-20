@@ -196,24 +196,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 return false;
             }
 
-            Texture2D laserTelegraph = Assets.ExtraTextures.InfernumTextureRegistry.BloomLine.Value;
+            Texture2D laserTelegraph = Assets.ExtraTextures.InfernumTextureRegistry.BloomLineSmall.Value;
 
-            float xScale = 1f;
+            float xScale = 0.75f;
             if (TelegraphDelay < TelegraphFadeTime)
                 xScale = MathHelper.Lerp(0f, xScale, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
                 xScale = MathHelper.Lerp(xScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
-            Vector2 scaleInner = new(xScale, TelegraphWidth / laserTelegraph.Height);
+            Vector2 scaleInner = new(xScale, 1750f / laserTelegraph.Height);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
-            Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
+            Vector2 scaleOuter = scaleInner * new Vector2(1.5f, 1f);
 
             Color colorOuter = Color.Lerp(Color.Red, Color.White, TelegraphDelay / TelegraphTotalTime * 0.4f);
-            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.8f);
+            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.5f);
             colorOuter.A = 0;
             colorInner.A = 0;
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
             return false;
         }
     }

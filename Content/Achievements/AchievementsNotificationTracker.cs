@@ -8,14 +8,20 @@ using Terraria.UI;
 
 namespace InfernumMode.Content.Achievements
 {
-    public class AchivementsNotificationTracker
+    public class AchievementsNotificationTracker
     {
         private static readonly List<IInGameNotification> Notifications = new();
+
+        public static void AddAchievementAsUpdated(Achievement achievement)
+        {
+            if (Main.netMode != NetmodeID.Server)
+                Notifications.Add(new AchievementUpdatePopup(achievement));
+        }
 
         public static void AddAchievementAsCompleted(Achievement achievement)
         {
             if (Main.netMode != NetmodeID.Server)
-                Notifications.Add(new AchivementCompletionPopup(achievement));
+                Notifications.Add(new AchievementCompletionPopup(achievement));
         }
 
         public static void Update()

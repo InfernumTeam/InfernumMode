@@ -23,7 +23,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, InterfaceScaleType.None));
                 layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Achievment Completion Animation", () =>
                 {
-                    AchivementsNotificationTracker.DrawInGame(Main.spriteBatch);
+                    AchievementsNotificationTracker.DrawInGame(Main.spriteBatch);
                     //AchivementsNotificationTracker.DrawInIngameOptions(Main.spriteBatch);
                     return true;
                 }, InterfaceScaleType.UI));

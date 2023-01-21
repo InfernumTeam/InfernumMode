@@ -860,7 +860,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 hellblastShootRate -= 3;
                 verticalBobAmplitude += 50f;
-                dartSpeed += 3.6f;
+                dartSpeed += 2.6f;
             }
 
             if (Enraged)
@@ -1397,7 +1397,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     magic.noGravity = true;
                 }
 
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
 
                 // Teleport to the center of the arena.
                 npc.Center = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
@@ -2164,7 +2164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                             gigablastReleaseCountdown = 34f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 9.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
                     }
                 }
 

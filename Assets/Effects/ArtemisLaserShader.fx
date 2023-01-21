@@ -65,8 +65,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 electricityColor = InverseLerp(0.4, 0.5, electricityFade * bloomFadeout) * float4(uColor, 1);
     
     // Fade out at the ends of the streak.
-    if (coords.x < 0.018)
-        opacity *= pow(coords.x / 0.018, 6);
+    if (coords.x < 0.05)
+        opacity *= pow(coords.x / 0.05, 6);
     if (coords.x > 0.95)
         opacity *= pow(1 - (coords.x - 0.95) / 0.05, 6);
     return color * opacity * 2 + electricityColor * opacity;

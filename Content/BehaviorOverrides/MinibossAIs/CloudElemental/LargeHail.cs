@@ -134,10 +134,6 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
                     if (Projectile.velocity.Length() < 1.8f)
                         trailLength = 8f;
 
-                    Color drawColor = Color.LightCyan * (1f - i / (float)Projectile.oldPos.Length);
-                    drawColor.A = 0;
-                    drawColor *= Projectile.Opacity;
-
                     drawPosition = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * -MathHelper.Lerp(8f, trailLength, i / (float)Projectile.oldPos.Length);
 
                     Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition + new Vector2(0, Projectile.gfxOffY), frame, Projectile.GetAlpha(lightColor) * Projectile.Opacity, Projectile.rotation, frame.Size() / 2f, scale, SpriteEffects.None, 0f);

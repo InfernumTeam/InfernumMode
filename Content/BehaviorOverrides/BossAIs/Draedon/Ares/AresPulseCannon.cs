@@ -15,7 +15,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using CalamityModClass = CalamityMod.CalamityMod;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
@@ -102,8 +102,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             EnergyDrawer.Update();
             SmokeDrawer.Update();
 
+            NPC.dontTakeDamage = false;
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
+
+            // Ensure this does not take damage in the desperation attack.
+            if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
+                NPC.dontTakeDamage = true;
 
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
             Player target = Main.player[NPC.target];

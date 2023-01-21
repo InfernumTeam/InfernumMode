@@ -157,9 +157,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SinusoidalBobbing(NPC npc, Player target, bool isCataclysm, ref float attackSpecificTimer, ref float currentFrame, ref float firingFromRight, ref float attackTimer)
         {
             int shootTime = 420;
-            int soulShootRate = 45;
+            int soulShootRate = 55;
             int soulCount = 9;
-            int projectileFireThreshold = isCataclysm ? 60 : 45;
+            int projectileFireThreshold = isCataclysm ? 75 : 60;
             float regularShotSpeed = 11f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float shootIncrement = MathHelper.Lerp(1.85f, 3.1f, 1f - lifeRatio);

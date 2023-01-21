@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             // Draw a brief telegraph line.
-            float telegraphInterpolant = Utils.GetLerpValue(300f, 275f, Projectile.timeLeft, true);
+            float telegraphInterpolant = Utils.GetLerpValue(300f, 265f, Projectile.timeLeft, true);
             if (telegraphInterpolant < 1f)
             {
                 Color telegraphColor = Color.Red * (float)Math.Sqrt(telegraphInterpolant);

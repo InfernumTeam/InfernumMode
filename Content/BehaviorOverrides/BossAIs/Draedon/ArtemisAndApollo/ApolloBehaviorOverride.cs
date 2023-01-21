@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             bool isApollo = npc.type == ModContent.NPCType<Apollo>();
 
             // Automatically transition to the ultimate attack if close to dying in the final phase.
-            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackState != (int)TwinsAttackType.ThemonuclearBlitz)
             {
                 SelectNextAttack(npc);
                 attackState = (int)TwinsAttackType.ThemonuclearBlitz;
@@ -507,7 +507,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int artemisLaserbeamCountPerBurst = 8;
             int delayBetweenLaserbeams = 5;
             int artemisFastRedirectTime = 42;
-            int apolloChargeRate = 50;
+            int apolloChargeRate = 55;
             int totalLaserBurstCount = 4;
             float apolloChargeSpeed = 32f;
             float apolloChargeSpinSpeed = 0.018f;
@@ -637,7 +637,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Rapidly approach the target before attacking, to ensure that they see Artemis and can be aware of the impending attack.
                 if (attackTimer <= artemisFastRedirectTime && artemisHasPerformedTelegraph == 0f)
                 {
-                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.054f);
+                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.044f);
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + MathHelper.PiOver2, 0.125f);
                 }
 
@@ -645,7 +645,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 int laserID = ModContent.ProjectileType<ArtemisBasicShotLaser>();
                 bool laserExists = Utilities.AnyProjectiles(laserID);
                 bool aboutToFire = attackTimer >= telegraphTime - 30f && artemisHasPerformedTelegraph == 0f;
-                float angularVelocity = 0.052f;
+                float angularVelocity = 0.042f;
                 float driftSpeed = 21f;
                 if (laserExists || aboutToFire)
                     angularVelocity *= ExoMechManagement.CurrentTwinsPhase >= 6 ? 0.36f : 0.1f;

@@ -612,9 +612,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.velocity.Y -= 0.6f;
                 }
 
-                if (apolloAttackTimer == apolloChargeRate)
+                if (apolloAttackTimer >= apolloChargeRate)
                     apolloAttackTimer = 0f;
-                apolloAttackTimer++;
+
+                if (npc.Opacity > 0f)
+                    apolloAttackTimer++;
             }
 
             if (npc.type == ModContent.NPCType<Artemis>())

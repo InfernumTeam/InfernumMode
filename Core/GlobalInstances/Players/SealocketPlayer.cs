@@ -63,7 +63,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
             ForcefieldOpacity = MathHelper.Clamp(ForcefieldOpacity - hasCooldown.ToDirectionInt() * 0.025f, 0f, 1f);
             ForcefieldDissipationInterpolant = MathHelper.Clamp(ForcefieldDissipationInterpolant + dissipate.ToDirectionInt() * 0.023f, 0f, 1f);
 
-            // Don't apply effects if the accessory is no longer being used.
             if (!MechanicalEffectsApply)
                 return;
 

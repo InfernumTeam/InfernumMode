@@ -766,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int laserbeamTelegraphTime = 60;
             int laserbeamSpinTime = 900;
             int sparkBurstReleaseRate = 45;
-            int circularBoltCount = 21;
+            int circularBoltCount = 17;
             int draedonIndex = NPC.FindFirstNPC(ModContent.NPCType<DraedonNPC>());
             Vector2 coreCenter = npc.Center + Vector2.UnitY * 24f;
 

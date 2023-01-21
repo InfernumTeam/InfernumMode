@@ -74,8 +74,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             }
             // Add the extra one if it doesn't exist already, I do not like how scuffed this feels. If we add another miniboss in future,
             // but someone hasnt run this code we'd need to check for that too and ugh.
-            if (MinibossesCompleted.Count == 10)
-                MinibossesCompleted.Remove(9);
+            if (MinibossesCompleted.Count is 8)
+                MinibossesCompleted.Add(8, false);
 
             CurrentCompletion = tag.Get<int>("MinibossesCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("MinibossesDoneCompletionEffects");

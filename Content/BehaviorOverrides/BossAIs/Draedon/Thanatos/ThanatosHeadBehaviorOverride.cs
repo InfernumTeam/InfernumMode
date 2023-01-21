@@ -666,7 +666,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a sound prior to switching attacks.
             if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 14f;
+                npc.netUpdate = true;
+
                 SoundEngine.PlaySound(InfernumSoundRegistry.ThanatosTransitionSound with { Volume = 2f }, target.Center);
+            }
 
             // Perform the attack again if necessary.
             if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay)
@@ -674,7 +679,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 chargeCounter++;
                 attackTimer = 0f;
                 if (chargeCounter >= chargeCount)
+                {
+                    for (int i = 0; i < 2; i++)
+                        Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<RefractionRotor>(), ModContent.ProjectileType<ExolaserSpark>());
+
                     SelectNextAttack(npc);
+                }
             }
         }
 
@@ -791,7 +801,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 hoverOffsetDirection += MathHelper.PiOver2;
                 redirectCounter++;
                 if (redirectCounter >= redirectCount)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AresBeamExplosion>(), ModContent.ProjectileType<ExoburstSpark>());
+                    }
                     SelectNextAttack(npc);
+                }
             }
         }
 

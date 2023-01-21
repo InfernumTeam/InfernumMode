@@ -1660,8 +1660,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.damage = npc.defDamage;
 
                     float desperationInterpolant = Utils.GetLerpValue(0f, desperationAttackTime * 0.475f, attackTimer, true);
-                    int chargeRate = (int)MathHelper.Lerp(51f, 39f, desperationInterpolant);
-                    float chargeSpeed = MathHelper.Lerp(42f, 63.67f, desperationInterpolant);
+                    int chargeRate = (int)MathHelper.Lerp(55f, 43f, desperationInterpolant);
+                    float chargeSpeed = MathHelper.Lerp(41f, 60f, desperationInterpolant);
                     float chargeSpinSpeed = 0.02f;
 
                     // Go a bit easier on the player if they don't have a dash.

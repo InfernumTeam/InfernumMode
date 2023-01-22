@@ -338,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             ai0 = npc.whoAmI;
                         // This tells them to set a shorter lifespan.
                         else
-                            ai0 = 1;
+                            ai0 = 1f;
                         Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f, -1, ai0);
                     }
                 }

@@ -26,13 +26,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void AI()
         {
             // Set correct lifetime.
-            if (Projectile.ai[1] == 0)
+            if (Projectile.ai[1] == 0f)
             {
                 // This is 1 if being fired during the ares cage.
-                if (Projectile.ai[0] == 1)
+                if (Projectile.ai[0] == 1f)
                     Projectile.timeLeft = 200;
 
-                Projectile.ai[1] = 1;
+                Projectile.ai[1] = 1f;
             }
 
             // Fade in and out.

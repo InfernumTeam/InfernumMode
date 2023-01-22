@@ -59,7 +59,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             // Rotation.
             Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) + MathHelper.PiOver2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 
             // Spawn effects.
             if (Projectile.localAI[0] == 0f)

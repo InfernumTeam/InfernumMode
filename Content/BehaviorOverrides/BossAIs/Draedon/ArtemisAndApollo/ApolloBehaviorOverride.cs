@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             SlowLaserRayAndPlasmaBlasts,
 
             // Ultimate attack. Only happens when in the final phase.
-            ThemonuclearBlitz
+            ThermonuclearBlitz
         }
 
         public override int NPCOverrideType => ModContent.NPCType<Apollo>();
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Handle the second phase transition.
             if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase3LifeRatio)
             {
-                if (phaseTransitionAnimationTime == 1f)
+                if (phaseTransitionAnimationTime == 0f)
                 {
                     SelectNextAttack(npc);
                     ExoMechManagement.ClearAwayTransitionProjectiles();
@@ -257,10 +257,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             bool isApollo = npc.type == ModContent.NPCType<Apollo>();
 
             // Automatically transition to the ultimate attack if close to dying in the final phase.
-            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackState != (int)TwinsAttackType.ThemonuclearBlitz)
+            if (isApollo && ExoMechManagement.CurrentTwinsPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackState != (int)TwinsAttackType.ThermonuclearBlitz)
             {
                 SelectNextAttack(npc);
-                attackState = (int)TwinsAttackType.ThemonuclearBlitz;
+                attackState = (int)TwinsAttackType.ThermonuclearBlitz;
             }
 
             if (!performingDeathAnimation)
@@ -285,7 +285,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     case TwinsAttackType.SlowLaserRayAndPlasmaBlasts:
                         DoBehavior_SlowLaserRayAndPlasmaBlasts(npc, target, ref enrageTimer, ref frame, ref attackTimer);
                         break;
-                    case TwinsAttackType.ThemonuclearBlitz:
+                    case TwinsAttackType.ThermonuclearBlitz:
                         DoBehavior_ThemonuclearBlitz(npc, target, ref enrageTimer, ref frame, ref attackTimer);
                         break;
                 }
@@ -688,7 +688,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         if (laserBurstCounter >= totalLaserBurstCount)
                         {
-                            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ApolloPlasmaFireball>(), ModContent.ProjectileType<AresPlasmaBolt>());
+                            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ApolloPlasmaFireball>(), ModContent.ProjectileType<AresPlasmaBolt>(), ModContent.ProjectileType<ExoplasmaBomb>());
                             SelectNextAttack(npc);
                         }
                     }
@@ -898,7 +898,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int waitTime = 8;
             int chargeTime = 45;
             int totalCharges = 5;
-            int sparkCount = 21;
+            int sparkCount = 17;
             float chargeSpeed = 54f;
             float chargePredictiveness = 10f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -1484,7 +1484,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 }
 
                 if (attackTimer >= laserbeamAttackTime + attackTransitionDelay)
+                {
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ApolloPlasmaFireball>(), ModContent.ProjectileType<AresPlasmaBolt>());
                     SelectNextAttack(npc);
+                }
             }
         }
 
@@ -1774,7 +1777,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     // Perform the ultimate attack if in the final phase.
                     if (ExoMechManagement.CurrentTwinsPhase >= 6)
-                        npc.ai[0] = (int)TwinsAttackType.ThemonuclearBlitz;
+                        npc.ai[0] = (int)TwinsAttackType.ThermonuclearBlitz;
                 }
             }
 
@@ -2112,7 +2115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
-            if (npc.ai[0] == (int)TwinsAttackType.ThemonuclearBlitz && ExoMechManagement.TotalMechs <= 1)
+            if (npc.ai[0] == (int)TwinsAttackType.ThermonuclearBlitz && ExoMechManagement.TotalMechs <= 1)
                 return true;
             return ExoMechManagement.HandleDeathEffects(npc);
         }

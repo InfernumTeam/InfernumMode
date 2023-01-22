@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 200;
             Projectile.Opacity = 0f;
             Projectile.hide = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;

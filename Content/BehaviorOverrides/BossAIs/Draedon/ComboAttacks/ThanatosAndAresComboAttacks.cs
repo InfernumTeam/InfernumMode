@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
-                totalLasers += 4;
+                totalLasers += 3;
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)
@@ -333,9 +333,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Ensure that specific projectiles receive NPC owner index information.
-                        float ai0 = 0f;
+                        float ai0;
                         if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
                             ai0 = npc.whoAmI;
+                        // This tells them to set a shorter lifespan.
+                        else
+                            ai0 = 1;
                         Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f, -1, ai0);
                     }
                 }

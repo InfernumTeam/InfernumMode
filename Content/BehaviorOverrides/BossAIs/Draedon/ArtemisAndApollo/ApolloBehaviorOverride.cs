@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         DoBehavior_SlowLaserRayAndPlasmaBlasts(npc, target, ref enrageTimer, ref frame, ref attackTimer);
                         break;
                     case TwinsAttackType.ThermonuclearBlitz:
-                        DoBehavior_ThemonuclearBlitz(npc, target, ref enrageTimer, ref frame, ref attackTimer);
+                        DoBehavior_ThermonuclearBlitz(npc, target, ref enrageTimer, ref frame, ref attackTimer);
                         break;
                 }
             }
@@ -1491,7 +1491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             }
         }
 
-        public static void DoBehavior_ThemonuclearBlitz(NPC npc, Player target, ref float enrageTimer, ref float frame, ref float attackTimer)
+        public static void DoBehavior_ThermonuclearBlitz(NPC npc, Player target, ref float enrageTimer, ref float frame, ref float attackTimer)
         {
             int textSubstateTime = 172;
             int orbGrowTime = 95;
@@ -1656,8 +1656,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.damage = npc.defDamage;
 
                     float desperationInterpolant = Utils.GetLerpValue(0f, desperationAttackTime * 0.475f, attackTimer, true);
-                    int chargeRate = (int)MathHelper.Lerp(55f, 43f, desperationInterpolant);
-                    float chargeSpeed = MathHelper.Lerp(41f, 60f, desperationInterpolant);
+                    int chargeRate = (int)MathHelper.Lerp(58f, 45f, desperationInterpolant);
+                    float chargeSpeed = MathHelper.Lerp(41f, 56.5f, desperationInterpolant);
                     float chargeSpinSpeed = 0.02f;
 
                     // Go a bit easier on the player if they don't have a dash.

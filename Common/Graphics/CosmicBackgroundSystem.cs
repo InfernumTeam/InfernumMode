@@ -1,10 +1,12 @@
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Terraria;
 using Terraria.GameContent;
@@ -116,12 +118,9 @@ namespace InfernumMode.Common.Graphics
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["zoom"].SetValue(0.5f);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["brightness"].SetValue(intensity);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["scrollSpeedFactor"].SetValue(0.0024f);
-            InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["frontStarColor"].SetValue(Color.DarkGreen.ToVector3() * 0.95f);
+            InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["frontStarColor"].SetValue(Color.Lerp(Color.ForestGreen, Color.Cyan, 0.4f).ToVector3() * 0.6f);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["backStarColor"].SetValue(Color.Fuchsia.ToVector3() * 0.5f);
             InfernumEffectsRegistry.CosmicBackgroundShader.Apply();
-
-            // Screen shader? What screen shader?
-            Filters.Scene["CalamityMod:DevourerofGodsHead"].GetShader().UseOpacity(0f);
 
             Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
         }

@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.Providence;
@@ -249,6 +250,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator DoGSkyDraw
+        {
+            add => HookEndpointManager.Modify(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
         }
     }
 }

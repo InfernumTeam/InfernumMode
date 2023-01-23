@@ -9,6 +9,7 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.World;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -674,6 +675,21 @@ namespace InfernumMode.Core.ILEditingStuff
                     BossRushSky.ShouldDrawRegularly = false;
             });
             cursor.Emit(OpCodes.Ret);
+        }
+    }
+
+    public class DeleteDoGsStupidScreenShaderHook : IHookEdit
+    {
+        public void Load() => On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
+
+        public void Unload() => On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
+
+        private bool NoScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
+        {
+            if (CosmicBackgroundSystem.EffectIsActive)
+                return false;
+
+            return orig(self);
         }
     }
 }

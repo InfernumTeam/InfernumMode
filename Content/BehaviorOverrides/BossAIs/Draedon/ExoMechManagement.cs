@@ -257,6 +257,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             int[] projectilesToDelete = new int[]
             {
                 ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(),
+                ModContent.ProjectileType<ApolloFallingPlasmaSpark>(),
                 ModContent.ProjectileType<ApolloFlamethrower>(),
                 ModContent.ProjectileType<ApolloPlasmaFireball>(),
                 ModContent.ProjectileType<ApolloRocket>(),

@@ -273,7 +273,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.chaseable = false;
             npc.defense = 0;
             npc.takenDamageMultiplier = 1f;
-            npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 9999999;
 
             // Become vulnerable on the map.
             typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, frameType == (int)ThanatosFrameType.Open);
@@ -315,13 +314,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 // Emit light.
                 Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
-                // Emit smoke.
                 npc.takenDamageMultiplier = 103.184f;
-                if (npc.Opacity > 0.6f)
-                {
-                    npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-                    npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
-                }
                 if (!dontResetDR)
                     npc.Calamity().DR = OpenSegmentDR - 0.125f;
                 npc.Calamity().unbreakableDR = false;
@@ -330,8 +323,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Emit light.
             else
                 Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
-
-            npc.ModNPC<ThanatosHead>().SmokeDrawer.Update();
 
             secondComboPhaseResistanceBoostFlag = 0f;
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc) && npc == complementMech)
@@ -1111,7 +1102,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosHeadGlow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            npc.ModNPC<ThanatosHead>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
         #endregion Frames and Drawcode

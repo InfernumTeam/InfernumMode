@@ -812,8 +812,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                 if (chompEffectsCountdown == 0f)
                 {
-                    CosmicBackgroundSystem.IdealExtraIntensity = 0.96f;
-
                     SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
                     timeSinceLastChomp = 0f;
                     chompEffectsCountdown = 26f;

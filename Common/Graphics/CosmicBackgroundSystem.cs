@@ -95,22 +95,22 @@ namespace InfernumMode.Common.Graphics
             // Make the intensity dissipate.
             if (IdealExtraIntensity != 0f)
             {
-                ExtraIntensity = MathHelper.Lerp(ExtraIntensity, IdealExtraIntensity, 0.125f);
+                ExtraIntensity = MathHelper.Lerp(ExtraIntensity, IdealExtraIntensity, 0.09f);
                 if (MathHelper.Distance(ExtraIntensity, IdealExtraIntensity) <= 0.01f)
                     IdealExtraIntensity = 0f;
             }
             else
-                ExtraIntensity *= 0.95f;
+                ExtraIntensity *= 0.96f;
 
             if (CalamityGlobalNPC.DoGHead == -1)
                 return;
 
             NPC dog = Main.npc[CalamityGlobalNPC.DoGHead];
-            float intensity = ExtraIntensity + (DoGPhase2HeadBehaviorOverride.InPhase2 ? 0.55f : 0.32f);
+            float intensity = ExtraIntensity + (DoGPhase2HeadBehaviorOverride.InPhase2 ? 0.55f : 0.4f);
             intensity += dog.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.DeathAnimationTimerIndex] * 0.01f;
 
-            Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
-
+            Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
+            
             Main.instance.GraphicsDevice.Textures[1] = KalisetFractal;
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["zoom"].SetValue(0.5f);
@@ -121,9 +121,9 @@ namespace InfernumMode.Common.Graphics
             InfernumEffectsRegistry.CosmicBackgroundShader.Apply();
 
             // Screen shader? What screen shader?
-            Filters.Scene["CalamityMod:DevourerofGodsHead"].GetShader().UseOpacity(0.04f);
+            Filters.Scene["CalamityMod:DevourerofGodsHead"].GetShader().UseOpacity(0f);
 
-            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale * 1.5f, 0, 0f);
+            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
         }
     }
 }

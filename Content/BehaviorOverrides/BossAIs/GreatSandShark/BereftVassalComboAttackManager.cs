@@ -732,10 +732,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                     return score;
                 }).ToArray();
+
+                // Constantly aim at the best devil.
                 if (dustDevils.Length >= 1)
                 {
                     spearDirection = CalamityUtils.CalculatePredictiveAimToTarget(npc.Center, dustDevils[0], spearShootSpeed, 8).SafeNormalize(Vector2.UnitY);
                     idealRotation = spearDirection.ToRotation() + MathHelper.PiOver4;
+                    dustDevils[0].Infernum().ExtraAI[0] = 1;
+                    for (int i = 1; i < dustDevils.Length; i++)
+                        dustDevils[i].Infernum().ExtraAI[0] = 0;
                 }
                 spearRotation = spearRotation.AngleLerp(idealRotation, 0.15f);
                 spearOpacity = MathHelper.Clamp(spearOpacity + 0.04f, 0f, 1f);

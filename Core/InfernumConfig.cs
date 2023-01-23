@@ -27,7 +27,7 @@ namespace InfernumMode.Core
         [Label("Reduced Graphical Settings")]
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(false)]
-        [Tooltip("Enables reduced graphics mode. Useful if performance is low.")]
+        [Tooltip("Enables reduced graphics mode. Use this if lag is an issue.")]
         public bool ReducedGraphicsConfig { get; set; }
 
         [Label("Saturation Bloom Intensity")]

@@ -1,5 +1,6 @@
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
@@ -97,6 +98,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }
                 DrawCacheProjsOverSignusBlackening.Clear();
 
+                DrawCulledProjectiles();
+
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -112,6 +115,24 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     Main.spriteBatch.ExitShaderRegion();
                 }
             });
+        }
+
+        internal static void DrawCulledProjectiles()
+        {
+            RasterizerState rasterizer = Main.Rasterizer;
+            rasterizer.ScissorTestEnable = true;
+            Main.instance.GraphicsDevice.ScissorRectangle = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IScreenCullDrawer drawer)
+                    continue;
+
+                drawer.CullDraw(Main.spriteBatch);
+            }
         }
 
         public override void OnModLoad()

@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
-    public class RefractionRotor : ModProjectile
+    public class RefractionRotor : ModProjectile, IScreenCullDrawer
     {
         public ref float TotalLasersToFire => ref Projectile.ai[0];
         public ref float LaserShootOffsetAngle => ref Projectile.ai[1];
@@ -59,7 +60,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.velocity *= 0.96f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask").Value;
@@ -99,9 +102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     telegraphColor *= 0.7f;
 
                     // Draw an inner and outer telegraph line.
-                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
+                    spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
                     telegraphColor.A = 0;
-                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth * 0.5f);
+                    spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth * 0.5f);
                 }
             }
 
@@ -111,10 +114,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Color color = Color.White;
             color = Color.Lerp(color, glowmaskColor, Utils.GetLerpValue(40f, 18f, Projectile.timeLeft, true) * 0.4f);
             color.A = 255;
-            Main.spriteBatch.Draw(texture, drawPosition, null, color * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
-            Main.spriteBatch.Draw(glowmask, drawPosition, null, glowmaskColor * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
-
-            return false;
+            spriteBatch.Draw(texture, drawPosition, null, color * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
+            spriteBatch.Draw(glowmask, drawPosition, null, glowmaskColor * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
         }
 
         public override void Kill(int timeLeft)
@@ -138,11 +139,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Utilities.NewProjectileBetter(Projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
                 }
             }
-        }
-
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindProjectiles.Add(index);
         }
     }
 }

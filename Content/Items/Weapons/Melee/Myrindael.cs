@@ -26,8 +26,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             DisplayName.SetDefault("Myrindael");
             Tooltip.SetDefault("Holding left click spins the spear before throwing it. After being thrown, enemy hits release lightning and sparks towards enemies\n" +
                 "Right clicks perform a powerful lunge that releases lightning from the sky on enemy hits\n" +
-                "To fight, to destroy, is to take away from the world\n" +
-                "And yet, when the world itself clashes against you, what else can you do?");
+                "[c/6fc8ff:To fight, to destroy, is to take away from the world]\n" +
+                "[c/6fc8ff:And yet, when the world itself clashes against you, what else can you do?]");
             SacrificeTotal = 1;
             ItemID.Sets.BonusAttackSpeedMultiplier[Item.type] = 0.33f;
             ItemID.Sets.Spears[Item.type] = true;

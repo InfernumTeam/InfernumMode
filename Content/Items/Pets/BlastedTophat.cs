@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -27,7 +28,7 @@ namespace InfernumMode.Content.Items.Pets
             Item.height = 30;
 
             Item.value = Item.sellPrice(copper: 69);
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ModContent.RarityType<InfernumHatgirlRarity>();
 
             Item.shoot = ModContent.ProjectileType<HatGirl>();
             Item.buffType = ModContent.BuffType<HatGirlBuff>();

@@ -1,3 +1,4 @@
+using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Content.Tiles;
 using Terraria;
 using Terraria.DataStructures;
@@ -17,7 +18,7 @@ namespace InfernumMode.Content.Items
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<InfernumRedRarity>();
             Item.width = 50;
             Item.height = 96;
             Item.maxStack = 999;

@@ -29,6 +29,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumProfanedRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumHatgirlRarity>())
+                {
+                    InfernumHatgirlRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

@@ -1,5 +1,7 @@
 ﻿using CalamityMod;
+using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -16,7 +18,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {
             // Draw the base tooltip text and glow.
-            InfernumRarityHelper.DrawBaseTooltipTextAndGlow(tooltipLine, new Color(255, 191, 73), CalamityUtils.ColorSwap(Color.Goldenrod, Color.Gold, 2));
+            InfernumRarityHelper.DrawBaseTooltipTextAndGlow(tooltipLine, new Color(255, 191, 73), CalamityUtils.ColorSwap(Color.Goldenrod, Color.Gold, 2), new(56, 19, 15));
 
             // Draw base sparkles.
             InfernumRarityHelper.SpawnAndUpdateTooltipParticles(tooltipLine, ref ProfanedRaritySparkleList, 14, SparkleType.ProfanedSparkle);

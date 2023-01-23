@@ -19,10 +19,11 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
+        public static MiscShaderData CosmicBackgroundShader => GameShaders.Misc["Infernum:CosmicBackground"];
         public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
         public static MiscShaderData CyclicHueShader => GameShaders.Misc["Infernum:CyclicHueShader"];
-        public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
+        public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
         public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
@@ -88,6 +89,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> cloudShader = new(assets.Request<Effect>("Assets/Effects/CloudShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CloudShader"] = new MiscShaderData(cloudShader, "TrailPass");
+
+            Ref<Effect> cosmicBGShader = new(assets.Request<Effect>("Assets/Effects/CosmicBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CosmicBackground"] = new MiscShaderData(cosmicBGShader, "CosmicPass");
 
             Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");

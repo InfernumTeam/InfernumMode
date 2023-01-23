@@ -7,6 +7,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Skies;
@@ -811,6 +812,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                 if (chompEffectsCountdown == 0f)
                 {
+                    CosmicBackgroundSystem.IdealExtraIntensity = 0.96f;
+
                     SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
                     timeSinceLastChomp = 0f;
                     chompEffectsCountdown = 26f;
@@ -995,6 +998,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Teleport and charge.
             if (wrappedAttackTimer == portalTelegraphTime + 20f)
             {
+                CosmicBackgroundSystem.IdealExtraIntensity = 1.3f;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = Main.projectile[ChargePortalIndex].Center;
@@ -1134,6 +1139,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
                         });
                         Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, -1, 0f, portalTelegraphTime);
+
+                        CosmicBackgroundSystem.IdealExtraIntensity = 1.35f;
 
                         npc.netUpdate = true;
                     }

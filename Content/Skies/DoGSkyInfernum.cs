@@ -1,6 +1,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -142,6 +143,17 @@ namespace InfernumMode.Content.Skies
                     float opacity = life * spaceFade / 20f;
                     Main.spriteBatch.Draw(texture, position, null, LightningBolts[i].LightningColor * opacity, 0f, Vector2.Zero, boltScale.X * 5f, SpriteEffects.None, 0f);
                 }
+            }
+
+            if (CosmicBackgroundSystem.EffectIsActive)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
+
+                CosmicBackgroundSystem.Draw();
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin();
             }
         }
 

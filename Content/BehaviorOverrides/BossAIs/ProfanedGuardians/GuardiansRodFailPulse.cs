@@ -1,10 +1,11 @@
-using InfernumMode.Common.BaseEntities;
+﻿using InfernumMode.Common.BaseEntities;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class RoDFailPulse : BaseWaveExplosionProjectile
+    public class GuardiansRodFailPulse : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 45;
 
@@ -16,6 +17,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio) * 3f;
 
-        public override Color DetermineExplosionColor(float lifetimeCompletionRatio) => Color.Lerp(Color.Cyan, Color.Fuchsia, lifetimeCompletionRatio * 2f % 1f);
+        public override Color DetermineExplosionColor(float lifetimeCompletionRatio) => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[0], lifetimeCompletionRatio * 2f % 1f);
     }
 }

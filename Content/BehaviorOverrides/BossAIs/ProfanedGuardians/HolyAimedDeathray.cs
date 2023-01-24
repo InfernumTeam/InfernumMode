@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public ref float Time => ref Projectile.ai[0];
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
         public static Color BrightFire => new(255, 255, 150);
-        public const float LaserLength = 4000f;
+        public const float LaserLength = 6500f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 60;
+            Projectile.timeLeft = 30;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
@@ -39,10 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 3f;
-            if (Projectile.scale > 1f)
-                Projectile.scale = 1f;
-
+            Projectile.scale = MathHelper.Clamp((float)Math.Sin(Time / 30f * MathHelper.Pi) * 3f, 0f, 1f);
             Projectile.Center = Owner.Center + Projectile.velocity * 30f;
 
             // And create bright light.
@@ -78,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float _ = 0f;
             float width = Projectile.width * 0.8f;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
+            Vector2 end = start + Projectile.velocity * (LaserLength - 300f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
@@ -108,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
-            BeamDrawer.DrawPixelated(points, -Main.screenPosition, 15);
+            BeamDrawer.DrawPixelated(points, -Main.screenPosition, 30);
             Main.spriteBatch.ExitShaderRegion();
         }
 

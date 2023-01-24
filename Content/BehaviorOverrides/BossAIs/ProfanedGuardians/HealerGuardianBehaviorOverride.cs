@@ -1,13 +1,20 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.AttackerGuardianBehaviorOverride;
+
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -20,7 +27,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public enum HealerAttackType
         {
             SpawnEffects,
-            SitAndFireCrystals,
+            SitAndMaintainFrontShield,
+            SitAndShieldCommander
         }
 
         #region AI
@@ -33,22 +41,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
 
-            NPC attacker = Main.npc[CalamityGlobalNPC.doughnutBoss];
-            Player target = Main.player[attacker.target];
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            Player target = Main.player[commander.target];
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
             npc.damage = 0;
-            npc.target = attacker.target;
+            npc.target = commander.target;
             npc.spriteDirection = (npc.velocity.X > 0).ToDirectionInt();
+            // Reset taking damage.
+            npc.dontTakeDamage = false;
 
             switch ((HealerAttackType)attackState)
             {
                 case HealerAttackType.SpawnEffects:
-                    AttackerGuardianBehaviorOverride.DoBehavior_SpawnEffects(npc, target, ref attackTimer);
+                    DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
-                case HealerAttackType.SitAndFireCrystals:
-                    DoBehavior_SitAndFireCrystals(npc, target, ref attackTimer);
+                case HealerAttackType.SitAndMaintainFrontShield:
+                    DoBehavior_SitAndMaintainFrontShield(npc, target, ref attackTimer, commander);
+                    break;
+                case HealerAttackType.SitAndShieldCommander:
                     break;
             }
 
@@ -56,11 +68,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public void DoBehavior_SitAndFireCrystals(NPC npc, Player target, ref float attackTimer)
+        public void DoBehavior_SitAndMaintainFrontShield(NPC npc, Player target, ref float attackTimer, NPC commander)
         {
-            float crystalAmount = 3;
-            float crystalReleaseRate = 180;
+            // Spawn the shield if this is the first frame.
+            if (attackTimer == 1f)
+                NPC.NewNPCDirect(npc.GetSource_FromAI(), npc.Center + new Vector2(-350f, 0f), ModContent.NPCType<HealerShieldCrystal>(), target: target.whoAmI);
 
+            // Bob up and down on the spot.
+            float sine = -MathF.Sin(attackTimer * 0.05f);
+            npc.velocity.Y = sine * 1.5f;
+
+            // Take no damage.
+            npc.dontTakeDamage = true;
+
+            // Check if the commander is on the next attack, if so, join it.
+            if ((AttackerGuardianAttackState)commander.ai[0] == AttackerGuardianAttackState.EmpoweringDefender)
+            {
+                attackTimer = 0f;
+                npc.ai[0] = 2f;
+            }
+        }
+
+        public void DoBehavior_SitAndShieldCommander(NPC npc, Player target, ref float attackTimer, NPC commander)
+        {
+            // The healer is placing a shield around the commander, and will continue to do so until they die. They periodically emit stars in this attack too.
+            int crystalAmount = 4;
+            float crystalReleaseRate = 240;
+
+            // Bob up and down on the spot.
+            float sine = -MathF.Sin(attackTimer * 0.05f);
+            npc.velocity.Y = sine * 1.5f;
+                
             // Only fire crystals if the player is close enough.
             if (target.WithinRange(npc.Center, 1500f) && attackTimer % crystalReleaseRate == 0)
             {
@@ -89,8 +127,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
-            float gleamInterpolant = Utils.GetLerpValue(70f, 145f, wrappedAttackTimer, true) * Utils.GetLerpValue(165f, 145f, wrappedAttackTimer, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow").Value;
             Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow2").Value;
@@ -98,22 +134,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), 0f, origin, npc.scale, direction, 0f);
-            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
-            Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
-            if (gleamInterpolant > 0f)
-            {
-                Texture2D gleamTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
-                Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;
-                Vector2 gleamDrawPosition = drawPosition + new Vector2(npc.spriteDirection * -32f, 12f);
-                Color gleamColor = Color.Lerp(Color.Transparent, new Color(0.95f, 0.95f, 0.25f, 0f), gleamInterpolant);
-                Vector2 gleamScale = new Vector2(1f, 2f) * npc.scale * gleamInterpolant * 2.8f;
-                float gleamRotation = MathHelper.Pi * Utils.GetLerpValue(100f, 165f, wrappedAttackTimer, true) * 3f;
-                Main.spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);
-                Main.spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
-            }
+            Asset<Texture2D> shaderTexture = InfernumTextureRegistry.HolyCrystalLayer;
+            Vector2 shaderScale = new Vector2(1.05f, 1.05f) * npc.scale;
 
+            // If maintaining the front shield or shielding the commander, glow.
+            if ((HealerAttackType)npc.ai[0] is HealerAttackType.SitAndMaintainFrontShield or HealerAttackType.SitAndShieldCommander)
+                DrawNPCBackglow(npc, spriteBatch, texture, direction);
+
+            // Draw the npc.
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
             return false;
+        }
+
+        public static void DrawNPCBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture, SpriteEffects direction)
+        {
+            int backglowAmount = 12;
+            for (int i = 0; i < backglowAmount; i++)
+            {
+                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Color backglowColor = MagicCrystalShot.ColorSet[0];
+                backglowColor.A = 0;
+                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+            }
         }
         #endregion
     }

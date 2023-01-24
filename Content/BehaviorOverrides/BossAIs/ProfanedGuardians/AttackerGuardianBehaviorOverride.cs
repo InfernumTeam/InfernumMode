@@ -23,6 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             SpawnEffects,
             Phase1FireWallsAndBeam,
+            EmpoweringDefender,
             DeathAnimation
         }
 
@@ -101,6 +102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case AttackerGuardianAttackState.Phase1FireWallsAndBeam:
                     DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
                     break;
+                case AttackerGuardianAttackState.EmpoweringDefender:
+                    DoBehavior_EmpowerDefender(npc, target, ref attackTimer);
+                    break;
                 case AttackerGuardianAttackState.DeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer);
                     break;
@@ -124,13 +128,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 npc.velocity = Vector2.Zero;
                 // Go to the initial attack and reset the attack timer.
-                npc.ai[0] = 1;
-                attackTimer = 0;
+                SelectNewAttack(npc, ref attackTimer);
             }
         }
 
         public void DoBehavior_Phase1FireWallsAndBeam(NPC npc, Player target, ref float attackTimer)
         {
+            // This is basically flappy bird, the attacker spawns fire walls like the pipes that move towards the entrance of the garden.
             ref float lastOffsetY = ref npc.Infernum().ExtraAI[0];
             float wallCreationRate = 60;
 
@@ -167,11 +171,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.netUpdate = true;
             }
 
-            // End attack when the player is close enough to the guardian.
-            if (target.WithinRange(npc.Center, 100f))
-            {
-                // Switch to next attack.
-            }
+            // This attack ends when the crystal wall dies, as it updates the commanders attack state on death.
+        }
+
+        public void DoBehavior_EmpowerDefender(NPC npc, Player target, ref float attackTimer)
+        {
+            // The commander doesnt directly attack here, instead visibly "empowering" the defender guardian,
+            // as it attacks you instead.
+            ref float defenderGlowScalar = ref npc.Infernum().ExtraAI[0];
+            float glowInterpolant = MathHelper.Clamp(attackTimer / 60f, 0f, 1f);
+            defenderGlowScalar = MathHelper.Lerp(0f, 1f, glowInterpolant);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
@@ -213,6 +222,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.checkDead();
                 npc.active = false;
             }
+        }
+
+        public static void SelectNewAttack(NPC npc, ref float attackTimer)
+        {
+            // Reset the first 5 extra ai slots. These are used for per attack information.
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0;
+
+            // Reset the attack timer.
+            attackTimer = 0;
+            // The attack cycle is relatively linear, so advance the current attack by one.
+            npc.ai[0]++;
         }
         #endregion AI and Behaviors
 

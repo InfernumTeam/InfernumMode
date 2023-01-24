@@ -53,8 +53,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Vector2 topCheckPos = Projectile.Center + new Vector2(0, -75);
-            return base.Colliding(projHitbox, targetHitbox);
+            Vector2 topStart = Projectile.Center - new Vector2(0, 100);
+            Vector2 topEnd = topStart - Vector2.UnitY * (2000 - 80f);
+            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), topStart, topEnd))
+                return true;
+
+            Vector2 bottomStart = Projectile.Center + new Vector2(0, 100);
+            Vector2 bottomEnd = bottomStart + Vector2.UnitY * (2000 - 80f);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), bottomStart, bottomEnd);
         }
 
         public float WidthFunction(float completionRatio) => 200 * Projectile.scale;
@@ -68,22 +74,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // The gap is determined by the projectile center, and thus controlled by the attacking guardian.
             // Draw a set distance above and below the center to give a gap in the wall.
             float laserDistance = 2000f;
-            Vector2 topBaseDrawPos = Projectile.Center + new Vector2(0f, -75f);
+            Vector2 topBaseDrawPos = Projectile.Center + new Vector2(0f, -50f);
             Vector2[] topDrawPoints = new Vector2[8];
             for (int i = 0; i < topDrawPoints.Length; i++)
                 topDrawPoints[i] = Vector2.Lerp(topBaseDrawPos, new Vector2(topBaseDrawPos.X, topBaseDrawPos.Y - laserDistance), (float)i / topDrawPoints.Length);
 
-            Vector2 bottomBaseDrawPos = Projectile.Center + new Vector2(0f, 75f);
+            Vector2 bottomBaseDrawPos = Projectile.Center + new Vector2(0f, 50f);
             Vector2[] bottomDrawPoints = new Vector2[8];
             for (int i = 0; i < bottomDrawPoints.Length; i++)
                 bottomDrawPoints[i] = Vector2.Lerp(bottomBaseDrawPos, new Vector2(bottomBaseDrawPos.X, bottomBaseDrawPos.Y + laserDistance), (float)i / bottomDrawPoints.Length);
 
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
-            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150));
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150) * Projectile.Opacity);
+            InfernumEffectsRegistry.GenericLaserVertexShader.Shader.Parameters["strongerFade"].SetValue(true);
 
-            FlameDrawer.DrawPixelated(topDrawPoints, -Main.screenPosition, 10);
+            FlameDrawer.DrawPixelated(topDrawPoints, -Main.screenPosition, 20);
 
-            FlameDrawer.DrawPixelated(bottomDrawPoints, -Main.screenPosition, 10);
+            FlameDrawer.DrawPixelated(bottomDrawPoints, -Main.screenPosition, 20);
         }
     }
 }

@@ -97,9 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 orbShootSpeed *= 1.15f;
 
             // Fire the tesla orb.
-            int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f);
-            if (Main.projectile.IndexInRange(electricOrb))
-                Main.projectile[electricOrb].ai[0] = orbCounter;
+            Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f, -1, orbCounter);
 
             orbCounter++;
         }
@@ -113,6 +111,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         }
 
         public override AresCannonChargeParticleSet GetEnergyDrawer(NPC npc) => npc.ModNPC<AresTeslaCannon>().EnergyDrawer;
+
+        public override ThanatosSmokeParticleSet GetSmokeDrawer(NPC npc) => npc.ModNPC<AresTeslaCannon>().SmokeDrawer;
 
         public override Vector2 GetCoreSpritePosition(NPC npc) => npc.ModNPC<AresTeslaCannon>().CoreSpritePosition;
     }

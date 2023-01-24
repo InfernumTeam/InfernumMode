@@ -2,9 +2,11 @@ using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -35,6 +37,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.penetrate = -1;
             Projectile.timeLeft = 900;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.timeLeft);
+            writer.Write(ExplodeIntoDarts);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.timeLeft = reader.ReadInt32();
+            ExplodeIntoDarts = reader.ReadBoolean();
         }
 
         public override void AI()
@@ -45,6 +60,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Make the bomb radius fade away if the projectile itself is fading away.
+            if (Projectile.Infernum().FadeAwayTimer >= 1)
+                ExplosionRadius *= 0.9f;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }
@@ -77,9 +96,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 660, 0f);
-                if (Main.projectile.IndexInRange(explosion))
-                    Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = ExplosionRadius * 0.7f;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                {
+                    explosion.ModProjectile<DemonicExplosion>().MaxRadius = ExplosionRadius * 0.7f;
+                });
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 660, 0f);
+
                 if (ExplodeIntoDarts)
                 {
                     for (int i = 0; i < 6; i++)
@@ -92,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Do some some mild screen-shake effects to accomodate the explosion.
             // This effect is set instead of added to to ensure separate explosions do not together create an excessive amount of shaking.
-            float screenShakeFactor = Utilities.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 5f);
+            float screenShakeFactor = Utilities.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 11f);
             if (Main.LocalPlayer.Calamity().GeneralScreenShakePower < screenShakeFactor)
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }

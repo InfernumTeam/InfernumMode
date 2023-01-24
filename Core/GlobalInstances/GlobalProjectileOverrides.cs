@@ -13,21 +13,33 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Core.GlobalInstances
 {
     public class GlobalProjectileOverrides : GlobalProjectile
     {
-        public override bool InstancePerEntity => true;
+        public bool FadesAwayWhenManuallyKilled;
+
+        public int FadeAwayTimer;
+
+        public const int FadeAwayTime = 30;
 
         public float[] ExtraAI = new float[100];
+
+        public override bool InstancePerEntity => true;
+
         public override void SetDefaults(Projectile projectile)
         {
+            // Allow Infernum projectiles to draw offscreen by default.
+            // TODO -- This is pretty far from ideal. While it may be a bit unpleasant projectiles should really be manually evaluated in terms of whether this is necessary.
+            // Applying this effect universally is just asking for edge cases that cause performance issues, such as Providence's ground/ceiling spears.
             if (projectile.ModProjectile?.Mod.Name == Mod.Name)
                 ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 20000;
 
@@ -39,8 +51,37 @@ namespace InfernumMode.Core.GlobalInstances
                 projectile.timeLeft = ProvidenceBehaviorOverride.AuraTime;
         }
 
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            if (FadesAwayWhenManuallyKilled)
+                binaryWriter.Write(FadeAwayTimer);
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            if (FadesAwayWhenManuallyKilled)
+                FadeAwayTimer = binaryReader.ReadInt32();
+        }
+
         public override bool PreAI(Projectile projectile)
         {
+            // Make projectiles fade away over time if marked as such.
+            if (FadesAwayWhenManuallyKilled)
+            {
+                // Prevent natural death when fading away, since that could result in extra projectiles that we don't want appearing.
+                if (FadeAwayTimer >= 1)
+                    projectile.timeLeft = FadeAwayTimer;
+
+                if (FadeAwayTimer >= 1 && projectile.FinalExtraUpdate())
+                {
+                    projectile.Opacity = MathHelper.Min(projectile.Opacity, FadeAwayTimer / (float)FadeAwayTime);
+
+                    FadeAwayTimer--;
+                    if (FadeAwayTimer <= 0)
+                        projectile.active = false;
+                }
+            }
+
             if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
@@ -235,6 +276,10 @@ namespace InfernumMode.Core.GlobalInstances
                 }
             }
 
+            // Prevent projectiles that are fading away from dying via natural means and potentially spawning more projectiles.
+            if (FadesAwayWhenManuallyKilled && FadeAwayTimer >= 1)
+                return false;
+
             return base.PreKill(projectile, timeLeft);
         }
 
@@ -275,6 +320,10 @@ namespace InfernumMode.Core.GlobalInstances
                 if (projectile.type == ProjectileID.PhantasmalBolt)
                     return projectile.Infernum().ExtraAI[0] > 40f;
             }
+
+            // Prevent projectiles that are fading away from doing damage.
+            if (FadesAwayWhenManuallyKilled && FadeAwayTimer >= 1)
+                return false;
 
             return base.CanHitPlayer(projectile, target);
         }

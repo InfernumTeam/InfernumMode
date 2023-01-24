@@ -8,6 +8,7 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -610,17 +611,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(vortex => vortex.localAI[0] = cyan.ToInt());
+                        
                         int vortex = Utilities.NewProjectileBetter(focus, Vector2.Zero, ModContent.ProjectileType<AstralVortex>(), 300, 0f);
                         if (Main.projectile.IndexInRange(vortex))
                         {
-                            Main.projectile[vortex].localAI[0] = cyan.ToInt();
                             vortices.Add(vortex);
                             cyan = false;
                         }
                     }
 
                     for (int i = 0; i < vortices.Count; i++)
+                    {
                         Main.projectile[vortices[i]].ai[1] = vortices[(i + 1) % vortices.Count];
+                        Main.projectile[vortices[i]].netUpdate = true;
+                    }
                 }
             }
 
@@ -673,7 +678,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int shootTime = 420;
             int attackTransitionDelay = 105;
             int plasmaShootRate = (int)MathHelper.Lerp(54f, 28f, beaconAngerFactor);
-            int crystalShootRate = 32;
+            int crystalShootRate = 45;
             bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
             float flySpeed = 16.5f;
             float flyTurnSpeed = 0.035f;
@@ -743,7 +748,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootPosition = bodyToShootFrom.Center;
-                        Vector2 shootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                        Vector2 shootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitY) * 8f;
                         Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<AstralCrystal>(), 200, 0f);
                     }
                 }
@@ -920,9 +925,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Create the star once ready.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == repositionTimeBuffer + 1f)
             {
-                int star = Utilities.NewProjectileBetter(new(starSpawnCenterX, starSpawnCenterY), Vector2.Zero, ModContent.ProjectileType<MassiveInfectedStar>(), 300, 0f);
-                if (Main.projectile.IndexInRange(star))
-                    Main.projectile[star].ModProjectile<MassiveInfectedStar>().GrowTime = starGrowTime;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
+                {
+                    star.ModProjectile<MassiveInfectedStar>().GrowTime = starGrowTime;
+                });
+                Utilities.NewProjectileBetter(new(starSpawnCenterX, starSpawnCenterY), Vector2.Zero, ModContent.ProjectileType<MassiveInfectedStar>(), 300, 0f);
             }
 
             // Send energy bolts towards the star.
@@ -980,39 +987,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Decide the position to spawn the black hole and create the dark star constellation at on the first frame.
             if (attackTimer == 1f)
             {
-                int tries = 0;
-                do
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    tries++;
-                    if (tries >= 500)
-                        break;
-
-                    Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
-                    blackHoleCenterX = blackHoleCenter.X;
-                    blackHoleCenterY = blackHoleCenter.Y;
-                }
-
-                // Avoid placing the black hole near tiles. The laser spin needs to be able to be dodged by letting the target
-                // spin in tandem with the lasers. If they're blocked by tiles then they could recieve an unfair hit or two.
-                while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 600f, 1200, 1200));
-
-                for (int i = 0; i < starsInConstellation; i++)
-                {
-                    float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
-                    Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
-                    int star = Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
+                    int tries = 0;
+                    do
                     {
-                        Main.projectile[star].ai[0] = i;
-                        Main.projectile[star].ai[1] = (i + 1) % starsInConstellation;
-                        Main.projectile[star].ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
-                        Main.projectile[star].ModProjectile<DarkStar>().AnchorPoint = new(blackHoleCenterX, blackHoleCenterY);
-                        Main.projectile[star].netUpdate = true;
-                    }
-                }
-                Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
+                        tries++;
+                        if (tries >= 500)
+                            break;
 
-                npc.netUpdate = true;
+                        Vector2 blackHoleCenter = target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
+                        blackHoleCenterX = blackHoleCenter.X;
+                        blackHoleCenterY = blackHoleCenter.Y;
+                    }
+
+                    // Avoid placing the black hole near tiles. The laser spin needs to be able to be dodged by letting the target
+                    // spin in tandem with the lasers. If they're blocked by tiles then they could recieve an unfair hit or two.
+                    while (Collision.SolidCollision(new Vector2(blackHoleCenterX, blackHoleCenterY) - Vector2.One * 600f, 1200, 1200));
+
+                    for (int i = 0; i < starsInConstellation; i++)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
+                        Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
+                        Vector2 blackHoleCenter = new(blackHoleCenterX, blackHoleCenterY);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(star =>
+                        {
+                            star.ModProjectile<DarkStar>().InitialOffsetAngle = offsetAngle;
+                            star.ModProjectile<DarkStar>().AnchorPoint = blackHoleCenter;
+                        });
+                        Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f, -1, i, (i + 1f) % starsInConstellation);
+                    }
+                    Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
+                    
+                    npc.netUpdate = true;
+                }
 
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't panic while trying to evade the bolts!");
             }
@@ -1065,9 +1074,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     for (int i = 0; i < chargeBlobCount; i++)
                     {
                         Vector2 blobVelocity = shootDirection * 24f + Main.rand.NextVector2Circular(4f, 4f);
-                        int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<InfectionGlob>(), 200, 0f);
-                        if (Main.projectile.IndexInRange(blob))
-                            Main.projectile[blob].ai[1] = target.Center.Y;
+                        Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<InfectionGlob>(), 200, 0f, -1, 0f, target.Center.Y);
                     }
                     blobShootTimer = 0f;
                     npc.netUpdate = true;

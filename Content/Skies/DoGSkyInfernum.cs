@@ -1,6 +1,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -112,12 +113,6 @@ namespace InfernumMode.Content.Skies
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            if (maxDepth >= 0 && minDepth < 0)
-            {
-                float Intensity = GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * Intensity);
-            }
-
             Texture2D flashTexture = ModContent.Request<Texture2D>("Terraria/Images/Misc/VortexSky/Flash").Value;
             Texture2D boltTexture = ModContent.Request<Texture2D>("Terraria/Images/Misc/VortexSky/Bolt").Value;
 
@@ -142,6 +137,17 @@ namespace InfernumMode.Content.Skies
                     float opacity = life * spaceFade / 20f;
                     Main.spriteBatch.Draw(texture, position, null, LightningBolts[i].LightningColor * opacity, 0f, Vector2.Zero, boltScale.X * 5f, SpriteEffects.None, 0f);
                 }
+            }
+
+            if (CosmicBackgroundSystem.EffectIsActive)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
+
+                CosmicBackgroundSystem.Draw();
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin();
             }
         }
 

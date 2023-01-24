@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Biomes
 
         public override string MapBackground => "InfernumMode/Content/Backgrounds/LostColosseumBG";
 
-        public override int Music => LostColosseum.HasBereftVassalBeenDefeated ? MusicID.Desert : MusicLoader.GetMusicSlot(Mod, "Sounds/Music/LostColosseum");
+        public override int Music => LostColosseum.HasBereftVassalBeenDefeated ? MusicID.Desert : MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/Music/LostColosseum");
 
         public override void SetStaticDefaults()
         {

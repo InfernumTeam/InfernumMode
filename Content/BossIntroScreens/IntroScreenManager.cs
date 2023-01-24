@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.ID;
 
 namespace InfernumMode.Content.BossIntroScreens
 {
@@ -14,7 +15,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public static bool ScreenIsObstructed
         {
-            get => IntroScreens.Any(s => s.ShouldCoverScreen && s.ShouldBeActive() && s.AnimationCompletion < 1f) && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed;
+            get => IntroScreens.Any(s => s.ShouldCoverScreen && s.ShouldBeActive() && s.AnimationCompletion < 1f) && InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed && Main.netMode == NetmodeID.SinglePlayer;
         }
 
         public static bool ShouldDisplayJokeIntroText

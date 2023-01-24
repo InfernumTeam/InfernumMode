@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -49,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Drawer ??= new()
             {
                 Seed = Projectile.identity * 313,
-                MaxDistanceBeforeCutoff = 1780f,
+                MaxDistanceBeforeCutoff = InfernumConfig.Instance.ReducedGraphicsConfig ? 1125f : 1780f,
                 DistanceUsedForBase = 500f,
                 BranchMaxBendFactor = 0.04f,
                 BranchTurnAngleVariance = 0.137f,

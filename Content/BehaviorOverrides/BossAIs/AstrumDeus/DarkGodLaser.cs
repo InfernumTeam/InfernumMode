@@ -5,6 +5,7 @@ using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -78,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void UpdateLaserMotion()
         {
-            float spinSpeed = Utils.GetLerpValue(0f, 60f, Time, true) * 0.016f;
+            float spinSpeed = Utils.GetLerpValue(0f, 60f, Time, true) * 0.0135f;
             if (BossRushEvent.BossRushActive)
                 spinSpeed *= 1.64f;
 
@@ -122,7 +123,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThickGlow);
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 24);
+            int pointCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 13 : 25;
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, pointCount);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             DeathAnimation
         }
 
-        private static int _targetIndex = -1;
+        internal static int _targetIndex = -1;
 
         public static int SpazmatismIndex
         {
@@ -1392,28 +1392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion
 
         #endregion
-
-        #region Netcode
-        public static void SyncState()
-        {
-            ModPacket packet = InfernumMode.Instance.GetPacket();
-            packet.Write((short)InfernumPacketType.UpdateTwinsAttackSynchronizer);
-            packet.Write(_targetIndex);
-            packet.Write(UniversalStateIndex);
-            packet.Write(UniversalAttackTimer);
-            packet.Write((int)CurrentAttackState);
-            packet.Send();
-        }
-
-        public static void ReadFromPacket(BinaryReader reader)
-        {
-            _targetIndex = reader.ReadInt32();
-            UniversalStateIndex = reader.ReadInt32();
-            UniversalAttackTimer = reader.ReadInt32();
-            CurrentAttackState = (TwinsAttackState)reader.ReadInt32();
-        }
-        #endregion Netcode
-
+        
         #region Helper Methods
         public static int GetAttackLength(TwinsAttackState state)
         {

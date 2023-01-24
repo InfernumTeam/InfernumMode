@@ -46,6 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
+            // Prevent drawing offscreen.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 250;
+
             if (Projectile.timeLeft < 1215f - Lifetime)
                 Projectile.damage = 0;
 

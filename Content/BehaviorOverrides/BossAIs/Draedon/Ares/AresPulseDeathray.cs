@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage1("Images/Extra_189");
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
-            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 96);
+            LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 49);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;

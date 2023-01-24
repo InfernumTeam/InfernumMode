@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -30,6 +31,9 @@ namespace InfernumMode.Content.Projectiles
         {
             float scaleInterpolant = (float)Math.Pow(CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime), 4.93);
             Projectile.scale = scaleInterpolant * 1.67f;
+
+            WorldSaveSystem.HasOpenedLostColosseumPortal = true;
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
         }
 
         public void AdditiveDraw(SpriteBatch spriteBatch)

@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -171,14 +172,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     {
                         chargeDirection = npc.AngleTo(target.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowDashTelegraph>(), 0, 0f);
-                            if (Main.projectile.IndexInRange(telegraph))
-                            {
-                                Main.projectile[telegraph].ai[0] = 20f;
-                                Main.projectile[telegraph].ai[1] = chargeDirection;
-                            }
-                        }
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowDashTelegraph>(), 0, 0f, -1, 20f, chargeDirection);
+
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.velocity = Vector2.Zero;
                         npc.netUpdate = true;
@@ -284,18 +279,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
                     npc.rotation = npc.velocity.X * 0.02f;
 
-                    if (attackTimer == scytheShootDelay)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == scytheShootDelay)
                     {
                         // Create a bunch of scythes in front of Signus. The quantity of scythes and their spread is dependant on Signus' life ratio.
                         float baseShootAngle = npc.AngleTo(target.Center);
                         for (int i = 0; i < totalScythesToCreate; i++)
                         {
-                            int scythe = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EldritchScythe>(), 250, 0f);
-                            if (Main.projectile.IndexInRange(scythe))
-                            {
-                                Main.projectile[scythe].ai[0] = (int)MathHelper.Lerp(70f, 25f, i / (float)(totalScythesToCreate - 1f));
-                                Main.projectile[scythe].ai[1] = baseShootAngle + MathHelper.Lerp(-scytheSpread, scytheSpread, i / (float)(totalScythesToCreate - 1f));
-                            }
+                            int scytheReleaseDelay = (int)MathHelper.Lerp(70f, 25f, i / (float)(totalScythesToCreate - 1f));
+                            float scytheShootAngle = baseShootAngle + MathHelper.Lerp(-scytheSpread, scytheSpread, i / (float)(totalScythesToCreate - 1f));
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EldritchScythe>(), 250, 0f, -1, scytheReleaseDelay, scytheShootAngle);
                         }
 
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -381,12 +373,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     {
                         Vector2 chargeDestination = target.Center;
                         float telegraphDirection = npc.AngleTo(chargeDestination);
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowDashTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                        {
-                            Main.projectile[telegraph].ai[0] = telegraphTime;
-                            Main.projectile[telegraph].ai[1] = telegraphDirection;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowDashTelegraph>(), 0, 0f, -1, telegraphTime, telegraphDirection);
 
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         attackSubstate = 1f;
@@ -445,15 +432,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                             npc.netUpdate = true;
                         }
 
-                        Vector2 slashPosition = new(slashPositionX, slashPositionY);
-                        int slash = Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f);
-                        if (Main.projectile.IndexInRange(slash))
-                            Main.projectile[slash].ai[0] = Main.rand.NextFloat(MathHelper.TwoPi);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 slashPosition = new(slashPositionX, slashPositionY);
+                            Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f, -1, Main.rand.NextFloat(MathHelper.TwoPi));
 
-                        // Make the slashes move.
-                        slashPosition = slashPosition.MoveTowards(target.Center, slashMovementSpeed);
-                        slashPositionX = slashPosition.X;
-                        slashPositionY = slashPosition.Y;
+                            // Make the slashes move.
+                            slashPosition = slashPosition.MoveTowards(target.Center, slashMovementSpeed);
+                            slashPositionX = slashPosition.X;
+                            slashPositionY = slashPosition.Y;
+
+                            npc.netSpam = 0;
+                            npc.netUpdate = true;
+                        }
                     }
 
                     // Teleport in front of the target and create a mine between Signus and them.
@@ -638,11 +629,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     {
                         SoundEngine.PlaySound(SoundID.Item73, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int bomb = Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f);
-                            if (Main.projectile.IndexInRange(bomb))
-                                Main.projectile[bomb].ModProjectile<DarkCosmicBomb>().ExplosionRadius = 700f;
-                        }
+                            Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f, -1, 700f);
                     }
 
                     Vector2 idealFlyDirection = (target.Center - npc.Center).SafeNormalize(Vector2.UnitY);
@@ -739,6 +726,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             do
                 attackState = (int)attackSelector.Get();
             while (attackState == oldAttackState);
+
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CosmicKunai>());
 
             npc.TargetClosest();
             npc.ai[2] = 0f;

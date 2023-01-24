@@ -27,6 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()
@@ -42,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.rotation += Projectile.velocity.X * 0.02f;
 
             if (Projectile.velocity.Length() < 17f)
-                Projectile.velocity *= 1.017f;
+                Projectile.velocity *= 1.0138f;
 
             Lighting.AddLight(Projectile.Center, 0f, 0f, 0.5f * Projectile.Opacity);
             Time++;

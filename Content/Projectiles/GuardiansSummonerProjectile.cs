@@ -3,6 +3,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -61,9 +62,11 @@ namespace InfernumMode.Content.Projectiles
             {
                 CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 250f, ModContent.NPCType<ProfanedGuardianCommander>());
 
-                int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
-                if (Main.projectile.IndexInRange(explosion))
-                    Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = 600f;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                {
+                    explosion.ModProjectile<HolySunExplosion>().MaxRadius = 600f;
+                });
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
             }
         }
 

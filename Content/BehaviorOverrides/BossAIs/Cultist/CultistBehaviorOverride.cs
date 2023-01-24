@@ -4,6 +4,7 @@ using CalamityMod.Events;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -316,8 +317,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
-                    Main.projectile[explosion].localAI[1] = variant;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion => explosion.localAI[1] = variant);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
                 }
             }
 
@@ -464,6 +465,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             int hoverTime = 105;
             int laserTelegraphCreationDelay = 90;
             int attackLength = hoverTime + fireballShootRate * fireballCount;
+            float telegraphPredictivenessFactor = 28f;
             if (phase2)
                 attackLength += 390;
 
@@ -510,13 +512,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 195, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 180, 0f);
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % skyFireballShootRate == skyFireballShootRate - 1f)
                     {
                         Vector2 fireballSpawnPosition = target.Center - new Vector2(Main.rand.NextFloatDirection() * 600f, -850f - target.velocity.Y * 20f);
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 195, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 180, 0f);
                     }
 
                     frameType = (int)CultistFrameState.HoldArmsOut;
@@ -553,9 +555,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
                     {
                         Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(1035f, 1185f);
-                        int telegraph = Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FireballLineTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ModProjectile<FireballLineTelegraph>().Destination = target.Center + target.velocity * 28f;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                        {
+                            telegraph.ModProjectile<FireballLineTelegraph>().Destination = target.Center + target.velocity * telegraphPredictivenessFactor;
+                        });
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FireballLineTelegraph>(), 0, 0f);
                     }
                     frameType = (int)CultistFrameState.RaiseArmsUp;
                 }
@@ -755,7 +760,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 185, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                                     Main.projectile[lightning].tileCollide = false;
                                 }
                             }
@@ -795,9 +800,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                             for (int i = 0; i < lightningCount; i++)
                             {
                                 Vector2 telegraphDirection = (MathHelper.TwoPi * i / lightningCount + nebulaLightningDirection).ToRotationVector2();
-                                int line = Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f, -1, 0f, nebulaTelegraphTime - 1f);
-                                if (Main.projectile.IndexInRange(line))
-                                    Main.projectile[line].localAI[0] = MathHelper.Lerp(1f, 0.35f, i / (float)(lightningCount - 1f));
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                                {
+                                    telegraph.localAI[0] = MathHelper.Lerp(1f, 0.35f, i / (float)(lightningCount - 1f));
+                                });
+                                Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f, -1, 0f, nebulaTelegraphTime - 1f);
                             }
                             npc.netUpdate = true;
                         }
@@ -815,7 +823,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 225, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                 }
             }
 
@@ -895,9 +903,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
                     lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
                     CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
-                    int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 195, 0f);
-                    if (Main.projectile.IndexInRange(light))
-                        Main.projectile[light].ai[0] = 215f - adjustedTime + Main.rand.Next(20);
+
+                    int explosionDelay = (int)(215f - adjustedTime + Main.rand.Next(20));
+                    Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 180, 0f, -1, explosionDelay);
                 }
             }
 
@@ -947,11 +955,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                 shootVelocity *= 1.7f;
 
                             Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
-                            int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
+                            int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt(), Target: npc.target);
                             if (Main.npc.IndexInRange(ancientLight))
                             {
                                 Main.npc[ancientLight].velocity = shootVelocity;
                                 Main.npc[ancientLight].target = npc.target;
+                                Main.npc[ancientLight].netUpdate = true;
                             }
 
                             shotCounter++;
@@ -968,11 +977,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sideLightSummonRate == sideLightSummonRate - 1f)
                 {
                     Point lightSpawnPosition = (target.Center - target.velocity.RotatedByRandom(0.5f).SafeNormalize(Main.rand.NextVector2Unit()) * 850f).ToPoint();
-                    int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, 2f);
+                    int ancientLight = NPC.NewNPC(npc.GetSource_FromAI(), lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, 2f, Target: npc.target);
                     if (Main.npc.IndexInRange(ancientLight))
                     {
                         Main.npc[ancientLight].velocity = (target.Center - lightSpawnPosition.ToVector2()).SafeNormalize(Vector2.UnitY) * 13f;
                         Main.npc[ancientLight].target = npc.target;
+                        Main.npc[ancientLight].netUpdate = true;
                     }
                 }
 
@@ -1202,7 +1212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
-                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 190, 0f);
+                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 180, 0f);
                     }
 
                     npc.Center = teleportPosition;
@@ -1301,8 +1311,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     {
                         Vector2 left = npc.velocity.RotatedBy(-MathHelper.PiOver2) * 0.3f;
                         Vector2 right = npc.velocity.RotatedBy(MathHelper.PiOver2) * 0.3f;
-                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
                     }
                 }
 
@@ -1328,7 +1338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 {
                     SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 180, 0f);
                 }
 
                 npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
@@ -1421,19 +1431,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 6; i++)
             {
-                int laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
-                Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
-                Main.projectile[laser].timeLeft -= i * 2;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                {
+                    telegraph.timeLeft -= i * 2;
+                    if (extraUpdates > 0)
+                        telegraph.extraUpdates = extraUpdates;
+                });
 
-                if (extraUpdates > 0)
-                    Main.projectile[laser].extraUpdates = extraUpdates;
+                Utilities.NewProjectileBetter(start, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
 
-                laser = Projectile.NewProjectile(new EntitySource_WorldEvent(), end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
-                Main.projectile[laser].ai[0] = (!canCreateDust).ToInt();
-                Main.projectile[laser].timeLeft -= i * 2;
-
-                if (extraUpdates > 0)
-                    Main.projectile[laser].extraUpdates = extraUpdates;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                {
+                    telegraph.timeLeft -= i * 2;
+                    if (extraUpdates > 0)
+                        telegraph.extraUpdates = extraUpdates;
+                });
+                Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f, -1, 1f - canCreateDust.ToInt());
             }
         }
 

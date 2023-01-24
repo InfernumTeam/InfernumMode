@@ -17,13 +17,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public Vector2 Destination;
 
-        public float TelegraphDelay
-        {
-            get => Projectile.ai[0];
-            set => Projectile.ai[0] = value;
-        }
+        public bool IsGeneralPortalIndex;
 
-        public bool NoTelegraph => Projectile.localAI[0] == 1f;
+        public bool IsChargePortalIndex;
+
+        public ref float TelegraphDelay => ref Projectile.ai[0];
+
+        public bool NoTelegraph
+        {
+            get => Projectile.localAI[0] == 1f;
+            set => Projectile.localAI[0] = value.ToInt();
+        }
 
         public ref float TelegraphTotalTime => ref Projectile.ai[1];
 
@@ -54,15 +58,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(NoTelegraph);
+            writer.Write(IsGeneralPortalIndex);
+            writer.Write(IsChargePortalIndex);
             writer.Write(Time);
+            writer.Write(Lifetime);
             writer.Write(TelegraphShouldAim);
+            writer.Write(Projectile.scale);
             writer.WriteVector2(Destination);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            NoTelegraph = reader.ReadBoolean();
+            IsGeneralPortalIndex = reader.ReadBoolean();
+            IsChargePortalIndex = reader.ReadBoolean();
             Time = reader.ReadInt32();
+            Lifetime = reader.ReadSingle();
             TelegraphShouldAim = reader.ReadBoolean();
+            Projectile.scale = reader.ReadSingle();
             Destination = reader.ReadVector2();
         }
 
@@ -78,6 +92,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             {
                 Projectile.Kill();
                 return;
+            }
+
+            if (Time < Lifetime - FadeoutTime)
+            {
+                if (IsGeneralPortalIndex)
+                    DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = Projectile.whoAmI;
+                if (IsChargePortalIndex)
+                    DoGPhase1HeadBehaviorOverride.ChargePortalIndex = Projectile.whoAmI;
             }
 
             if (Time >= Lifetime)
@@ -99,6 +121,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);
             }
             Time++;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            if (IsGeneralPortalIndex)
+                DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = -1;
+            if (IsChargePortalIndex)
+                DoGPhase1HeadBehaviorOverride.ChargePortalIndex = -1;
         }
 
         // TODO -- Potentially try to put the portal drawing code into a utility method of sorts?

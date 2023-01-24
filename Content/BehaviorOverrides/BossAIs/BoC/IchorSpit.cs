@@ -20,6 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()

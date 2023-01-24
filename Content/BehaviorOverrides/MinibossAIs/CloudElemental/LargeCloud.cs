@@ -2,13 +2,11 @@
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
-using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Utilities;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -50,7 +48,6 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override void AI()
         {
-
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
             float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / (float)Math.Sqrt(3D);
@@ -92,15 +89,13 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             }
 
             // Spawn snow particles
-            player.CreateCinderParticles(1f, ModContent.ProjectileType<SnowflakeCinder>());
+            player.CreateCinderParticles(1f, new SnowflakeCinder());
 
             Timer++;
         }
 
         public override bool? CanDamage() => false;
-
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI) => DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
-
+        
         public float WidthFunction(float _) => Projectile.width * Projectile.scale * 0.3f;
 
         public Color ColorFunction(float _)

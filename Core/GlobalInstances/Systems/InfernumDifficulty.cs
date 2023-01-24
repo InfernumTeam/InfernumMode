@@ -2,6 +2,7 @@ using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -26,7 +27,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (value)
                     CalamityWorld.revenge = true;
                 if (Main.netMode != NetmodeID.SinglePlayer)
-                    PacketHandler.SyncInfernumActivity(Main.myPlayer);
+                    PacketManager.SendPacket<InfernumModeActivityPacket>();
             }
         }
 
@@ -56,7 +57,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             DifficultyScale = 99999999f;
             Name = "Infernum";
             ShortDescription = "[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]\n" +
-                "[c/B32E81:This mode does not work in multiplayer, nor is it usable with Master, For the Worthy, or Fargo's Eternity Mode.]";
+                "[c/B32E81:This mode does not work with Master or the For the Worthy seed.]";
 
             ActivationTextKey = "Mods.InfernumMode.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.InfernumText2";

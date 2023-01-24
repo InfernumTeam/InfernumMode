@@ -25,6 +25,8 @@ using Terraria.GameContent.Events;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
+using System.IO;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -87,6 +89,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ExoMechManagement.Ares_EnragedIndex] == 1f;
             }
         }
+
+        #region Netcode Syncs
+
+        public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);
+
+        public override void ReceiveExtraData(NPC npc, BinaryReader reader) => npc.Opacity = reader.ReadSingle();
+
+        #endregion Netcode Syncs
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -287,6 +297,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Become enraged if the Twins are enraged.
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
+
+            // Automatically transition to the ultimate attack if close to dying in the final phase.
+            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackType != (int)AresBodyAttackType.PrecisionBlasts)
+            {
+                SelectNextAttack(npc);
+                attackType = (int)AresBodyAttackType.PrecisionBlasts;
+            }
 
             if (!performingDeathAnimation)
             {
@@ -640,12 +657,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < totalLasers; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                    int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
-                    if (Main.projectile.IndexInRange(telegraph))
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                     {
-                        Main.projectile[telegraph].localAI[0] = telegraphTime;
-                        Main.projectile[telegraph].netUpdate = true;
-                    }
+                        telegraph.localAI[0] = telegraphTime;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
                 npc.netUpdate = true;
             }
@@ -666,12 +683,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
-                        if (Main.projectile.IndexInRange(deathray))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
-                            Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
-                            Main.projectile[deathray].netUpdate = true;
-                        }
+                            deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                     }
                     npc.netUpdate = true;
                 }
@@ -707,6 +724,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     spinSpeed *= -Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
                 spinSpeed *= 0.84f;
             }
+
+            // Make the lasers slower in multiplayer.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                spinSpeed *= 0.65f;
 
             generalAngularOffset += spinSpeed * laserDirectionSign;
 
@@ -745,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int laserbeamTelegraphTime = 60;
             int laserbeamSpinTime = 900;
             int sparkBurstReleaseRate = 45;
-            int circularBoltCount = 21;
+            int circularBoltCount = 17;
             int draedonIndex = NPC.FindFirstNPC(ModContent.NPCType<DraedonNPC>());
             Vector2 coreCenter = npc.Center + Vector2.UnitY * 24f;
 
@@ -856,12 +877,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         for (int i = 0; i < laserbeamCount; i++)
                         {
                             Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
-                            int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
-                            if (Main.projectile.IndexInRange(telegraph))
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                             {
-                                Main.projectile[telegraph].localAI[0] = laserbeamTelegraphTime;
-                                Main.projectile[telegraph].netUpdate = true;
-                            }
+                                telegraph.localAI[0] = laserbeamTelegraphTime;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                         }
                         laserAngularOffset = 0f;
                         npc.netUpdate = true;
@@ -886,12 +907,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                             for (int i = 0; i < laserbeamCount; i++)
                             {
                                 Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
-                                int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(deathray))
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                                 {
-                                    Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
-                                    Main.projectile[deathray].netUpdate = true;
-                                }
+                                    deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = laserbeamSpinTime;
+                                });
+                                Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                             }
 
                             attackTimer = 0f;
@@ -978,7 +999,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Emit smoke once hot enough.
             var smokeDrawer = npc.ModNPC<AresBody>().SmokeDrawer;
             smokeDrawer.ParticleSpawnRate = int.MaxValue;
-            if (npc.localAI[3] >= 0.42f)
+            if (npc.localAI[3] >= 0.36f)
             {
                 smokeDrawer.ParticleSpawnRate = 1;
                 smokeDrawer.BaseMoveRotation = npc.rotation + MathHelper.PiOver2;
@@ -1329,13 +1350,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
+                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 20f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
+                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
@@ -1468,9 +1489,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
+                Vector2 telegraphInnerScale = telegraphScale * 0.75f;
                 Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
+                Color innerColor = Color.Lerp(telegraphColor, Color.White, 0.35f);
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, innerColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphInnerScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 

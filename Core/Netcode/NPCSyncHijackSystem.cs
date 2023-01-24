@@ -1,4 +1,4 @@
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ID;
@@ -17,36 +17,12 @@ namespace InfernumMode.Core.Netcode
                 if (!npc.active || !OverridingListManager.Registered(npc.type))
                     return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
 
-                ModPacket packet = InfernumMode.Instance.GetPacket();
-
-                int totalSlotsInUse = npc.Infernum().TotalAISlotsInUse;
-                packet.Write((short)InfernumPacketType.SendExtraNPCData);
-                packet.Write(npc.whoAmI);
-                packet.Write(npc.realLife);
-                packet.Write(totalSlotsInUse);
-                packet.Write(npc.Infernum().TotalPlayersAtStart ?? 1);
-                packet.Write(npc.Infernum().Arena.X);
-                packet.Write(npc.Infernum().Arena.Y);
-                packet.Write(npc.Infernum().Arena.Width);
-                packet.Write(npc.Infernum().Arena.Height);
-
-                for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
-                {
-                    if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
-                        continue;
-
-                    packet.Write(i);
-                    packet.Write(npc.Infernum().ExtraAI[i]);
-                }
-
-                if (InfernumMode.CanUseCustomAIs)
-                    npc.BehaviorOverride<NPCBehaviorOverride>()?.SendExtraData(npc, packet);
-
-                packet.Send();
+                // Sync extra general information about the NPC.
+                PacketManager.SendPacket<ExtraNPCDataPacket>(Main.npc[number]);
 
                 // Have the twins send a specialized packet to ensure that the attack synchronizer is updated.
                 if (npc.type is NPCID.Retinazer or NPCID.Spazmatism)
-                    TwinsAttackSynchronizer.SyncState();
+                    PacketManager.SendPacket<TwinsAttackSynchronizerPacket>();
             }
             return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
         }

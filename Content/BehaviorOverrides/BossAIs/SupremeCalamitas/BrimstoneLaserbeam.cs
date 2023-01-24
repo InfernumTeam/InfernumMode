@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
@@ -37,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
+            Projectile.timeLeft = 7200;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
@@ -57,8 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.15f, 0.05f, 2f);
 
             // Decide where to position the laserbeam.
-            Projectile jewel = Main.projectile[(int)Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[0]];
-            Vector2 circlePointDirection = jewel.rotation.ToRotationVector2();
+            Vector2 circlePointDirection = Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[2].ToRotationVector2();
             Projectile.velocity = circlePointDirection;
             Projectile.Center = Main.npc[CalamityGlobalNPC.SCal].Center;
 
@@ -82,6 +83,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public void CreateArmsOnSurfaces()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength;
             FusableParticleManager.GetParticleSetByType<RancorGroundLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 320f);
         }
@@ -141,8 +145,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) { }
-
         public override bool ShouldUpdatePosition() => false;
+
+        public override bool? CanDamage() => Projectile.timeLeft < 7198;
     }
 }

@@ -9,6 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalBoltBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.PhantasmalBolt;
+
         public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
 
         public override bool PreAI(Projectile projectile)
@@ -34,7 +35,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 return false;
             }
             NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
-            projectile.tileCollide = projectile.Hitbox.Intersects(core.Infernum().Arena);
+            Rectangle collisionArea = core.Infernum().Arena;
+            collisionArea.Inflate(-600, -600);
+
+            projectile.tileCollide = projectile.Hitbox.Intersects(collisionArea);
 
             Dust electrivity = Dust.NewDustDirect(projectile.Center, 0, 0, 229, 0f, 0f, 100, default, 1f);
             electrivity.noLight = true;

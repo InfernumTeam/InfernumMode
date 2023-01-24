@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -50,12 +51,6 @@ namespace InfernumMode.Common.Graphics
             get;
             private set;
         }
-
-        public static List<DrawData> ThingsToDrawOnTopOfBlur
-        {
-            get;
-            private set;
-        } = new();
 
         public static List<DrawData> ThingsToBeManuallyBlurred
         {
@@ -112,7 +107,7 @@ namespace InfernumMode.Common.Graphics
             ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
-
+            
             Main.spriteBatch.End();
         }
 
@@ -132,17 +127,20 @@ namespace InfernumMode.Common.Graphics
             if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
-            // Free GPU resources for the old targets.
-            BloomTarget?.Dispose();
-            FinalScreenTarget?.Dispose();
-            DownscaledBloomTarget?.Dispose();
-            TemporaryAuxillaryTarget?.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                // Free GPU resources for the old targets.
+                BloomTarget?.Dispose();
+                FinalScreenTarget?.Dispose();
+                DownscaledBloomTarget?.Dispose();
+                TemporaryAuxillaryTarget?.Dispose();
 
-            // Recreate targets.
-            BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                // Recreate targets.
+                BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            });
 
             orig(width, height, fullscreen);
         }

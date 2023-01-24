@@ -9,6 +9,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -156,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Select a new target if an old one was lost.
             // If no valid one exists, despawn.
             npc.TargetClosestIfTargetIsInvalid();
-            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
+            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 9600f))
             {
                 DoDespawnEffects(npc);
                 return false;
@@ -334,9 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 13f);
-                    int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(soul))
-                        Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
+                    Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f, -1, Main.rand.NextBool().ToDirectionInt());
 
                     totalReleasedSouls++;
 
@@ -349,7 +348,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (totalReleasedSouls >= 60f)
             {
                 // Focus on the boss as it jitters and explode.
-                if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
+                if (npc.WithinRange(Main.LocalPlayer.Center, 2700f))
                 {
                     Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                     Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = screenFocusInterpolantStart * screenFocusInterpolantEnd;
@@ -376,12 +375,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient && dyingTimer > explodeDelay - 10f)
                 {
                     Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 9f);
-                    int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(soul))
-                    {
-                        Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
-                        Main.projectile[soul].ai[1] = 1f;
-                    }
+                    Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f, -1, Main.rand.NextBool().ToDirectionInt(), 1f);
                 }
 
                 // Release a bunch of souls and transition to the final phase.
@@ -390,12 +384,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     for (int i = 0; i < 125; i++)
                     {
                         Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 23f);
-                        int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(soul))
-                        {
-                            Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
-                            Main.projectile[soul].ai[1] = 1f;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f, -1, Main.rand.NextBool().ToDirectionInt(), 1f);
                     }
 
                     ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
@@ -466,11 +455,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 for (int i = 0; i < 6; i++)
                 {
                     int lifetimeReduction = i * 2;
-                    int telegraph = Projectile.NewProjectile(new EntitySource_WorldEvent(), polterghast.Center, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
-                    Main.projectile[telegraph].timeLeft -= lifetimeReduction;
 
-                    telegraph = Projectile.NewProjectile(new EntitySource_WorldEvent(), teleportCenter, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
-                    Main.projectile[telegraph].timeLeft -= lifetimeReduction;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                    {
+                        telegraph.timeLeft -= lifetimeReduction;
+                    });
+                    Projectile.NewProjectile(new EntitySource_WorldEvent(), polterghast.Center, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                    {
+                        telegraph.timeLeft -= lifetimeReduction;
+                    });
+                    Projectile.NewProjectile(new EntitySource_WorldEvent(), teleportCenter, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0f);
                 }
             }
 
@@ -607,7 +603,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Create a circle of ectoplasm wisps around Polter on the first frame.
-            if (attackTimer == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
             {
                 int ringCounter = 0;
                 bool clockwise = true;
@@ -619,14 +615,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                     for (int i = 0; i < ectoplasmPerRing; i++)
                     {
-                        int ectoplasm = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CirclingEctoplasm>(), 300, 0f);
-                        if (Main.projectile.IndexInRange(ectoplasm))
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(ectoplasm =>
                         {
-                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitCenter = target.Center - Vector2.UnitY * 200f;
-                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitRadius = radius;
-                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitAngularVelocity = spinAngularVelocity * clockwise.ToDirectionInt();
-                            Main.projectile[ectoplasm].ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = MathHelper.TwoPi * i / ectoplasmPerRing;
-                        }
+                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitCenter = target.Center - Vector2.UnitY * 200f;
+                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitRadius = radius;
+                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitAngularVelocity = spinAngularVelocity * clockwise.ToDirectionInt();
+                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = MathHelper.TwoPi * i / ectoplasmPerRing;
+                        });
+                        
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CirclingEctoplasm>(), 300, 0f);
                     }
                     clockwise = !clockwise;
                 }
@@ -718,9 +715,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 for (int i = 0; i < actualSoulsPerRing * ringCount; i++)
                 {
                     Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(26f, 40.5f);
-                    int soul = Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(soul))
-                        Main.projectile[soul].ai[0] = Main.rand.Next(2);
+                    Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f, -1, Main.rand.Next(2));
                     totalReleasedSouls++;
                 }
                 npc.netUpdate = true;
@@ -755,15 +750,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             continue;
 
                         soulAngle += ringOffsetAngle;
-                        int soul = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 290, 0f);
-                        if (Main.projectile.IndexInRange(soul))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul =>
                         {
-                            Main.projectile[soul].ai[0] = Main.rand.Next(2);
-                            Main.projectile[soul].ai[1] = soulAngle;
-                            Main.projectile[soul].localAI[0] = overallRingSpeedFactor;
-                            Main.projectile[soul].ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
-                            Main.projectile[soul].netUpdate = true;
-                        }
+                            soul.localAI[0] = overallRingSpeedFactor;
+                            soul.ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 290, 0f, -1, Main.rand.Next(2), soulAngle);
                     }
                 }
 
@@ -882,17 +875,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     for (int i = -1; i <= 1; i += 2)
                     {
                         Vector2 ectoplasmVelocity = perpendicularDirection * i * Main.rand.NextFloat(7.5f, 23f) + Main.rand.NextVector2Circular(1.8f, 1.8f);
-                        int slowingEctoplasm = Utilities.NewProjectileBetter(npc.Center, ectoplasmVelocity, ModContent.ProjectileType<EctoplasmShot>(), 290, 0f);
-                        if (Main.projectile.IndexInRange(slowingEctoplasm))
-                            Main.projectile[slowingEctoplasm].ai[1] = 540f;
+                        Utilities.NewProjectileBetter(npc.Center, ectoplasmVelocity, ModContent.ProjectileType<EctoplasmShot>(), 290, 0f, -1, 0f, 540f);
 
                         Vector2 fallingEctoplasmVelocity = perpendicularDirection * i * 13f;
-                        int fallingEctoplasm = Utilities.NewProjectileBetter(npc.Center, fallingEctoplasmVelocity, ModContent.ProjectileType<EctoplasmShot>(), 290, 0f);
-                        if (Main.projectile.IndexInRange(fallingEctoplasm))
-                        {
-                            Main.projectile[fallingEctoplasm].ai[0] = 1f;
-                            Main.projectile[fallingEctoplasm].ai[1] = 250f;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, fallingEctoplasmVelocity, ModContent.ProjectileType<EctoplasmShot>(), 290, 0f, -1, 1f, 250f);
                     }
                 }
 
@@ -947,9 +933,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                                 float shootOffsetAngle = MathHelper.Lerp(0.13f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.00825f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
-                                int soul = Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f);
-                                if (Main.projectile.IndexInRange(soul))
-                                    Main.projectile[soul].ai[0] = soulAngularVelocity;
+                                Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f, -1, soulAngularVelocity);
                             }
                         }
                     }
@@ -1002,19 +986,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     Vector2 leftVelocity = (MathHelper.TwoPi * i / 3f - offsetAngle).ToRotationVector2() * soulSpeed;
                     Vector2 rightVelocity = (MathHelper.TwoPi * i / 3f + offsetAngle).ToRotationVector2() * soulSpeed;
 
-                    int soul = Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
-                    if (Main.projectile.IndexInRange(soul))
-                    {
-                        Main.projectile[soul].ai[0] = 1f;
-                        Main.projectile[soul].ai[1] = 1f;
-                    }
-
-                    soul = Utilities.NewProjectileBetter(baseSpawnPosition + rightVelocity * 2f, rightVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
-                    if (Main.projectile.IndexInRange(soul))
-                    {
-                        Main.projectile[soul].ai[0] = 1f;
-                        Main.projectile[soul].ai[1] = 1f;
-                    }
+                    Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f, -1, 1f, 1f);
+                    Utilities.NewProjectileBetter(baseSpawnPosition + rightVelocity * 2f, rightVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f, -1, 1f, 1f);
                     totalReleasedSouls += 2f;
                 }
             }
@@ -1248,13 +1221,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             for (int j = 0; j < 18; j++)
                             {
                                 Vector2 shootVelocity = Main.npc[i].SafeDirectionTo(npc.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
-                                int soul = Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(soul))
-                                    Main.projectile[soul].timeLeft = 20;
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul => soul.timeLeft = 20);
+                                Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
                             }
 
+                            Main.npc[i].life = 0;
+                            Main.npc[i].HitEffect(0, 10.0);
+                            Main.npc[i].checkDead();
                             Main.npc[i].active = false;
-                            Main.npc[i].netUpdate = true;
                         }
                         SoundEngine.PlaySound(SoundID.NPCHit36, Main.npc[i].Center);
                     }
@@ -1320,9 +1295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     {
                         Vector2 spiralSpawnOffset = (MathHelper.TwoPi * i / vortexSpiralCount + spiralAngle).ToRotationVector2() * 560f;
                         Vector2 spiralVelocity = -spiralSpawnOffset.SafeNormalize(Vector2.UnitY) * 3f;
-                        int vortex = Utilities.NewProjectileBetter(target.Center + spiralSpawnOffset, spiralVelocity, ModContent.ProjectileType<GhostlyVortex>(), 300, 0f);
-                        if (Main.projectile.IndexInRange(vortex))
-                            Main.projectile[vortex].ai[0] = 13.25f;
+                        Utilities.NewProjectileBetter(target.Center + spiralSpawnOffset, spiralVelocity, ModContent.ProjectileType<GhostlyVortex>(), 300, 0f, -1, 13.25f);
                     }
                 }
                 return;
@@ -1348,15 +1321,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             continue;
 
                         soulAngle += ringOffsetAngle;
-                        int soul = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 300, 0f);
-                        if (Main.projectile.IndexInRange(soul))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul =>
                         {
-                            Main.projectile[soul].ai[0] = Main.rand.Next(2);
-                            Main.projectile[soul].ai[1] = soulAngle;
-                            Main.projectile[soul].localAI[0] = overallRingSpeedFactor;
-                            Main.projectile[soul].ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
-                            Main.projectile[soul].netUpdate = true;
-                        }
+                            soul.localAI[0] = overallRingSpeedFactor;
+                            soul.ModProjectile<SpinningSoul>().CounterclockwiseSpin = counterClockwise;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), 300, 0f, -1, Main.rand.Next(2), soulAngle);
                     }
                 }
                 return;

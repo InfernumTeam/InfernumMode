@@ -67,9 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 Vector2 asteroidSpawnPosition = Target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
                 Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 9.25f;
-                int asteroid = Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f);
-                if (Main.projectile.IndexInRange(asteroid))
-                    Main.projectile[asteroid].ai[0] = core.whoAmI;
+                Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f, -1, core.whoAmI);
             }
 
             // Explode into a bunch of bolts after enough time has passed.

@@ -9,6 +9,7 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.World;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -194,6 +195,13 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
+            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
+            if (!inColosseum)
+            {
+                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+                return;
+            }
+
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
@@ -205,10 +213,8 @@ namespace InfernumMode.Core.ILEditingStuff
             Texture2D sunTexture = TextureAssets.Sun.Value;
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
-            int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + 180f + Main.sunModY);
+            int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + Main.sunModY);
             Vector2 sunPosition = new(x, y);
-
-            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
 
             // Use brighter sun colors in general in the colosseum.
             if (inColosseum)
@@ -231,25 +237,32 @@ namespace InfernumMode.Core.ILEditingStuff
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
             }
 
+            sceneArea.bgTopY -= 180;
             orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
         }
 
         public void Load()
         {
-            On.Terraria.Main.DrawBlack += ForceDrawBlack;
-            IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
-            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
-            IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
-            On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DrawBlack += ForceDrawBlack;
+                IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
+                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+                IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
+                On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+            });
         }
 
         public void Unload()
         {
-            On.Terraria.Main.DrawBlack -= ForceDrawBlack;
-            IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
-            On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
-            IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
-            On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DrawBlack -= ForceDrawBlack;
+                IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
+                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+                IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
+                On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+            });
         }
     }
 
@@ -662,6 +675,21 @@ namespace InfernumMode.Core.ILEditingStuff
                     BossRushSky.ShouldDrawRegularly = false;
             });
             cursor.Emit(OpCodes.Ret);
+        }
+    }
+
+    public class DeleteDoGsStupidScreenShaderHook : IHookEdit
+    {
+        public void Load() => On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
+
+        public void Unload() => On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
+
+        private bool NoScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
+        {
+            if (CosmicBackgroundSystem.EffectIsActive)
+                return false;
+
+            return orig(self);
         }
     }
 }

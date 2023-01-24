@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Myrndael");
+            DisplayName.SetDefault("Myrindael");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }
@@ -36,6 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.timeLeft = Lifetime;
             Projectile.penetrate = -1;
             Projectile.scale = 0.8f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()
@@ -60,8 +61,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound with { Volume = 0.3f }, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 lightningSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * 15f, -1000f);
-                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 210, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                    Vector2 lightningSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * 15f, -1700f);
+                    if (lightningSpawnPosition.Y <= 640f)
+                        lightningSpawnPosition.Y = 640f;
+
+                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 200, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -88,7 +92,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     // Release a burst of sparks.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Player closest = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(closest.Center, 285f))
                     {
                         for (int i = 0; i < 8; i++)
                         {

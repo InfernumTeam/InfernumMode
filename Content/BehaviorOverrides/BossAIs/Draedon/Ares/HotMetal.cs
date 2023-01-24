@@ -1,16 +1,24 @@
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class HotMetal : ModProjectile
+    public class HotMetal : ModProjectile, IPixelPrimitiveDrawer
     {
+        internal PrimitiveTrailCopy TrailDrawer;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Superheated Metal");
             Main.projFrames[Type] = 3;
+            ProjectileID.Sets.TrailingMode[Type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Type] = 10;
         }
 
         public override void SetDefaults()
@@ -21,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.hostile = true;
             Projectile.timeLeft = 360;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
 
@@ -51,6 +60,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = TextureAssets.Projectile[Projectile.type].Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 4f, frame);
             return false;
+        }
+
+        public float WidthFunction(float completionRatio)
+        {
+            float baseWidth = Projectile.scale * Projectile.width * 1.5f;
+            return MathHelper.SmoothStep(baseWidth, 3.5f, completionRatio);
+        }
+
+        public Color ColorFunction(float completionRatio) => Color.Lerp(Color.Lerp(Color.Red, Color.OrangeRed, 0.5f), Color.Transparent, completionRatio) * 0.7f * Projectile.Opacity;
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            TrailDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].UseImage1("Images/Extra_189");
+            TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 25);
         }
     }
 }

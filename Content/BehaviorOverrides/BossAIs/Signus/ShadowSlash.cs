@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
         {
-            DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
+            ScreenOverlaysSystem.DrawCacheProjsOverSignusBlackening.Add(index);
         }
     }
 }

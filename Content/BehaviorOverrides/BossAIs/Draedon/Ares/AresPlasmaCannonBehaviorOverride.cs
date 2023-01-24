@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -20,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             get
             {
-                float aimPredictiveness = 20f;
+                float aimPredictiveness = 25f;
 
                 if (ExoMechManagement.CurrentAresPhase >= 5)
                     aimPredictiveness += 6f;
@@ -92,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int plasmaFireballCount = 1;
             int plasmaDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
             bool gasExplosionVariant = ExoMechManagement.CurrentAresPhase >= 2;
-            float plasmaShootSpeed = 10.6f;
+            float plasmaShootSpeed = 8.25f;
 
             // Make things in general stronger based on Ares' current phase.
             if (ExoMechManagement.CurrentAresPhase >= 3)
@@ -113,9 +114,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (i >= 1)
                     flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
 
-                int plasmaFireball = Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, plasmaDamage, 0f);
-                if (Main.projectile.IndexInRange(plasmaFireball))
-                    Main.projectile[plasmaFireball].ModProjectile<AresPlasmaFireball>().GasExplosionVariant = gasExplosionVariant;
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(plasma =>
+                {
+                    plasma.ModProjectile<AresPlasmaFireball>().GasExplosionVariant = gasExplosionVariant;
+                });
+                Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, plasmaDamage, 0f);
             }
         }
 
@@ -128,6 +131,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         }
 
         public override AresCannonChargeParticleSet GetEnergyDrawer(NPC npc) => npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer;
+
+        public override ThanatosSmokeParticleSet GetSmokeDrawer(NPC npc) => npc.ModNPC<AresPlasmaFlamethrower>().SmokeDrawer;
 
         public override Vector2 GetCoreSpritePosition(NPC npc) => npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition;
     }

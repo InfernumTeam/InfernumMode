@@ -106,11 +106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 return false;
             }
 
-            // Spawn cinders
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                target.CreateCinderParticles(lifeRatio, ModContent.ProjectileType<BrimstoneCinder>());
-            }
+            // Spawn cinders.
+            target.CreateCinderParticles(lifeRatio, new BrimstoneCinder());
 
             switch ((BrimmyAttackType)(int)attackType)
             {
@@ -242,10 +239,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
+                            float shootDelay = pissedOff || BossRushEvent.BossRushActive ? -8f : (attackTimer - bombardTime) / 5f;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * skullShootSpeed;
-                            int skull = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f);
-                            if (Main.projectile.IndexInRange(skull))
-                                Main.projectile[skull].ai[0] = pissedOff || BossRushEvent.BossRushActive ? -8f : (attackTimer - bombardTime) / 5f;
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f, -1, shootDelay);
                         }
                     }
 

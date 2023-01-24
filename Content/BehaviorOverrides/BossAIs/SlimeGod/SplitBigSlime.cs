@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         public override void SetDefaults()
         {
             NPC.aiStyle = AIType = -1;
-            NPC.damage = 70;
+            NPC.damage = 0;
             NPC.width = 40;
             NPC.height = 30;
             NPC.defense = 11;

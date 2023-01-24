@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,6 +25,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.penetrate = -1;
             Projectile.timeLeft = 900;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.localAI[0]);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.localAI[0] = reader.ReadSingle();
 
         public override void AI()
         {

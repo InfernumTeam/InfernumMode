@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
@@ -37,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 30;
+            Projectile.width = Projectile.height = 40;
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
@@ -76,39 +77,62 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         }
         public float WidthFunction(float completionRatio)
         {
-            return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
+            return MathHelper.Clamp(Projectile.width * Projectile.scale * 1.7f, 0f, Projectile.width * 1.7f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
-            Color color = Color.Lerp(new(221, 1, 3), new(255, 130, 130), colorInterpolant * 0.67f);
-            color.A = 5;
-            return color * 1.32f;
+            // new(221, 1, 3), new(255, 40, 30)
+            Color color = Color.Lerp(new(221, 50, 50), new(255, 5, 1), colorInterpolant * 0.67f);
+            return color;
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
-            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
+            Texture2D glowTexture = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
+            Color glowColor = Color.Brown;
+            glowColor.A = 0;
 
-            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
-            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            Main.EntitySpriteDraw(glowTexture, Projectile.Center - Main.screenPosition, null, glowColor, 0f, glowTexture.Size() * 0.5f, 3f * Projectile.scale, SpriteEffects.None, 0);
+
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(1);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBigBackground);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(ColorFunction(0.1f));
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
 
-            if (Time >= 2f)
-            {
-                for (float offset = 0f; offset < 6f; offset += 0.75f)
-                {
-                    BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
-                    BeamDrawer.DrawPixelated(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
-                    BeamDrawer.DrawPixelated(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 28);
-                }
-            }
+            BeamDrawer.Draw(points, -Main.screenPosition, 28);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBigInner);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(ColorFunction(0.5f), Color.White, 0.5f));
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(1.5f);
+            BeamDrawer.Draw(points, -Main.screenPosition, 28);
+            return false;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
+
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(1);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBigBackground);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(ColorFunction(0.1f));
+
+            //List<Vector2> points = new();
+            //for (int i = 0; i <= 8; i++)
+            //    points.Add(Vector2.Lerp(Projectile.Center + Projectile.velocity * 80f, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
+
+            //BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBigInner);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(ColorFunction(0.5f), Color.White, 0.2f));
+            //InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(3);
+            //BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
         }
     }
 }

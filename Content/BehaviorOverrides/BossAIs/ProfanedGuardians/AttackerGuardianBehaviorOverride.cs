@@ -285,7 +285,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool CheckDead(NPC npc)
         {
             // Reset the crystal shader. This is necessary since the vanilla values are only stored once.
-            Filters.Scene["CrystalDestructionColor"].GetShader().UseColor(1f, 0f, 0.75f);
+            if (Main.netMode != NetmodeID.Server)
+                Filters.Scene["CrystalDestructionColor"].GetShader().UseColor(1f, 0f, 0.75f);
 
             // Just die as usual if the Profaned Guardian is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
             if (npc.ai[0] == (int)AttackerGuardianAttackState.DeathAnimation)

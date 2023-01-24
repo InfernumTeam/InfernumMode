@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -220,9 +221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     {
                         Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f);
                         Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(40f, 40f);
-                        int ichor = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
-                        if (Main.projectile.IndexInRange(ichor))
-                            Main.projectile[ichor].ai[1] = 1f;
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 100, 0f, -1, 0f, 1f);
                     }
                 }
                 else
@@ -414,18 +413,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     bool shouldUseUndergroundAI = target.Center.Y / 16f < Main.worldSurface || Collision.SolidCollision(npc.Center - Vector2.One * 24f, 48, 48);
                     if (lifeRatio < 0.2f)
                     {
-                        int orb = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(-0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
-                        if (Main.projectile.IndexInRange(orb))
-                            Main.projectile[orb].localAI[0] = shouldUseUndergroundAI.ToInt();
-                        orb = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
-                        if (Main.projectile.IndexInRange(orb))
-                            Main.projectile[orb].localAI[0] = shouldUseUndergroundAI.ToInt();
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(orb =>
+                        {
+                            orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
+                        });
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(-0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
+                        
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(orb =>
+                        {
+                            orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
+                        });
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
                     }
                     else
                     {
-                        int orb = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
-                        if (Main.projectile.IndexInRange(orb))
-                            Main.projectile[orb].localAI[0] = shouldUseUndergroundAI.ToInt();
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(orb =>
+                        {
+                            orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
+                        });
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
                     }
                 }
                 npc.velocity = Vector2.Zero;

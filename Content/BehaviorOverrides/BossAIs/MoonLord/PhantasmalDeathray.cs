@@ -2,10 +2,12 @@ using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -14,6 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
         public int OwnerIndex;
 
         public ref float Time => ref Projectile.ai[0];
@@ -37,6 +40,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(OwnerIndex);
+            writer.Write(InitialRotationalOffset);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            OwnerIndex = reader.ReadInt32();
+            InitialRotationalOffset = reader.ReadSingle();
         }
 
         public override void AI()
@@ -74,8 +89,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-
-
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.92f, completionRatio, true);
@@ -108,7 +121,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             if (Time >= 2f)
-                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 26);
+            {
+                int pointCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 15 : 26;
+                BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, pointCount);
+            }
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
         }
 

@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,8 +36,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             // Hacky workaround to problems with popping.
             // The system regarding ML's death is held together with duct tape, broken promises, and three daily prayers. Do not question it, for your own safety.
-            if (npc.life < npc.lifeMax * 0.02)
-                npc.life = (int)(npc.lifeMax * 0.02);
+            if (npc.life < npc.lifeMax * 0.18)
+                npc.life = (int)(npc.lifeMax * 0.18);
 
             npc.target = core.target;
             npc.dontTakeDamage = false;
@@ -103,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 mouthPosition = npc.Center + Vector2.UnitY * 216f;
                     Vector2 leechVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 7f;
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, npc.target, npc.whoAmI + 1, npc.target);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, leechVelocity, ProjectileID.MoonLeech, 0, 0f, Main.myPlayer, npc.whoAmI + 1, npc.target);
                 }
                 leechCreationCounter = 0f;
                 npc.netUpdate = true;
@@ -276,13 +277,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 beamDirection = (MathHelper.TwoPi * i / 10f + angularOffset).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f);
-                        if (Main.projectile.IndexInRange(deathray))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
-                            Main.projectile[deathray].ai[1] = deathrayLifetime;
-                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
-                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
-                        }
+                            deathray.ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
+                            deathray.ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f, -1, 0f, deathrayLifetime);
                     }
                 }
             }

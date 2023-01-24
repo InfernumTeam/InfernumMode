@@ -1,7 +1,11 @@
 ﻿using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,6 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         // Do not change these unless you are absolutely sure you know how to fix the wave math.
         private const float WaveTheta = 0.038f;
+        
         private const int WaveTwistFrames = 9;
 
         private ref float WaveFrameState => ref Projectile.localAI[1];
@@ -38,7 +43,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.timeLeft = 1200;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(WaveFrameState);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => WaveFrameState = reader.ReadSingle();
 
         public override void AI()
         {
@@ -97,7 +107,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override Color? GetAlpha(Color lightColor) => new Color(48, 244, 244, Projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor) => Projectile.DrawBeam(LaserLength, 2f, lightColor, curve: true);
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Draw a simple bolt if performance is preferred over visual quality.
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                OptimizedDraw();
+                return false;
+            }
+
+            return Projectile.DrawBeam(LaserLength, 2f, lightColor, curve: true);
+        }
+
+        public void OptimizedDraw()
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 scale = Projectile.scale * Projectile.Size / texture.Size() * 2f;
+            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, texture.Size() * 0.5f, scale, 0, 0);
+        }
 
         public override void Kill(int timeLeft)
         {

@@ -659,19 +659,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (dartConvergence && attackTimer == chargeupTime)
             {
                 SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
-                    Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
-                    Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
 
-                    int telegraph = Utilities.NewProjectileBetter(target.Center, dartShootVelocity * 0.001f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 6; i++)
                     {
-                        Main.projectile[telegraph].ai[1] = fanShootTime;
-                        Main.projectile[telegraph].localAI[0] = 0f;
-                        Main.projectile[telegraph].localAI[1] = 1f;
+                        Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
+                        Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
+                        Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                        {
+                            telegraph.ModProjectile<DemonicTelegraphLine>().DontMakeProjectile = true;
+                            telegraph.ModProjectile<DemonicTelegraphLine>().BombRadius = 0f;
+                        });
+                        Utilities.NewProjectileBetter(target.Center, dartShootVelocity * 0.001f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, fanShootTime);
                     }
+                    npc.netUpdate = true;
                 }
             }
 
@@ -784,13 +788,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Release a bomb and gigablast at the target.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        int bombLifetime = (int)(chargeDelay + chargeTime * chargeCount - attackTimer) + explosionDelay;
                         Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center) * bombShootSpeed;
-                        int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 500, 0f);
-                        if (Main.projectile.IndexInRange(bomb))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                         {
-                            Main.projectile[bomb].ai[0] = bombExplosionRadius;
-                            Main.projectile[bomb].timeLeft = (int)(chargeDelay + chargeTime * chargeCount - attackTimer) + explosionDelay;
-                        }
+                            bomb.timeLeft = bombLifetime;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 500, 0f, -1, bombExplosionRadius);
 
                         if (chargeCounter % 3f == 2f)
                             Utilities.NewProjectileBetter(npc.Center, bombShootVelocity.RotatedByRandom(0.4f) * 0.5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f);
@@ -855,7 +860,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 hellblastShootRate -= 3;
                 verticalBobAmplitude += 50f;
-                dartSpeed += 3.6f;
+                dartSpeed += 2.6f;
             }
 
             if (Enraged)
@@ -892,9 +897,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                 }
             }
 
@@ -1002,9 +1009,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                 }
             }
 
@@ -1064,12 +1073,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         float bombFireOffset = MathHelper.Lerp(-totalBombOffset, totalBombOffset, Utils.GetLerpValue(0f, telegraphTime, wrappedBombShootTimer - bombShootDelay)) * 0.5f;
                         Vector2 bombShootPosition = new Vector2(bombFirePositionX, bombFirePositionY) + (bombFireOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * bombFireOffset;
                         Vector2 telegraphDirection = bombFireOffsetAngle.ToRotationVector2() * -0.001f;
-                        int telegraph = Utilities.NewProjectileBetter(bombShootPosition, telegraphDirection, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            Main.projectile[telegraph].ai[1] = 45f;
-                            Main.projectile[telegraph].localAI[0] = bombExplosionRadius;
-                        }
+                            telegraph.ModProjectile<DemonicTelegraphLine>().BombRadius = bombExplosionRadius;
+                        });
+                        Utilities.NewProjectileBetter(bombShootPosition, telegraphDirection, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, 45f);
                     }
                 }
             }
@@ -1198,9 +1207,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SCalBoss.SpawnSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 500f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 500f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
+
+                    // The SelectNextAttack call fires a netUpdate, hence why one is not present here.
                     npc.ai[3] = 1f;
                 }
                 SelectNextAttack(npc);
@@ -1300,9 +1313,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.velocity *= 0.3f;
                         npc.Center = target.Center + new Vector2(hoverOffsetDirection * 600f, -300f);
 
-                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(explosion))
-                            Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                        {
+                            explosion.ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     }
                 }
             }
@@ -1352,6 +1367,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             ref float brimstoneJewelIndex = ref npc.Infernum().ExtraAI[0];
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
+            ref float laserDirection = ref npc.Infernum().ExtraAI[2];
 
             // Define the projectile as a convenient reference type variable, for easy manipulation of its attributes.
             Projectile jewelRef = Main.projectile[(int)brimstoneJewelIndex];
@@ -1381,7 +1397,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     magic.noGravity = true;
                 }
 
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
 
                 // Teleport to the center of the arena.
                 npc.Center = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
@@ -1389,9 +1405,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 300f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1442,6 +1460,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 jewelRef.rotation += spinArc / laserbeamLifetime * spinDirection;
                 npc.spriteDirection = (Math.Cos(jewelRef.rotation) < 0f).ToDirectionInt();
 
+                // Store the jewel's rotation.
+                laserDirection = jewelRef.rotation;
+
                 // Release darts.
                 if (attackTimer % dartReleaseRate == dartReleaseRate - 1f)
                 {
@@ -1459,12 +1480,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 35f) * dartShootSpeed * 0.7f;
-                        int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(bomb))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                         {
-                            Main.projectile[bomb].ai[0] = bombExplosionRadius;
-                            Main.projectile[bomb].timeLeft = 120;
-                        }
+                            bomb.timeLeft = 120;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, bombExplosionRadius);
                     }
                 }
 
@@ -1473,7 +1494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Utilities.NewProjectileBetter(target.Center - target.velocity * 5f, Vector2.Zero, ModContent.ProjectileType<SuicideBomberRitual>(), 0, 0f);
             }
 
-            if (attackTimer >= jewelChargeupTime + laserbeamLifetime)
+            if (attackTimer >= jewelChargeupTime + laserbeamLifetime || Main.netMode != NetmodeID.SinglePlayer)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneJewelProj>(), ModContent.ProjectileType<BrimstoneLaserbeam>());
                 SelectNextAttack(npc);
@@ -1482,8 +1503,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_SummonShadowDemon(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
-            int fadeInTime = 96;
-            int blackScreenTime = 30;
+            int fadeInTime = 120;
+            int blackScreenTime = 50;
             int attackTransitionDelay = 100;
             int fadeOutTime = 30;
 
@@ -1503,10 +1524,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameChangeSpeed = 0.2f;
             frameType = (int)SCalFrameType.MagicCircle;
 
+            // Play the demon's spawning sound.
+            if (attackTimer == 1)
+                SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraSpawn, target.Center);
+
             // Summon the demon.
             if (attackTimer == fadeInTime + blackScreenTime)
             {
-                SoundEngine.PlaySound(BrimstoneMonster.SpawnSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraCharge, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 850, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
             }
@@ -1553,13 +1578,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.Item103, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int portal = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(portal))
-                        Main.projectile[portal].ai[0] = ModContent.NPCType<SupremeCataclysm>();
-
-                    portal = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(portal))
-                        Main.projectile[portal].ai[0] = ModContent.NPCType<SupremeCatastrophe>();
+                    Utilities.NewProjectileBetter(npc.Center - Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f, -1, ModContent.NPCType<SupremeCataclysm>());
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitX * 600f, Vector2.Zero, ModContent.ProjectileType<SupremeCalamitasBrotherPortal>(), 0, 0f, -1, ModContent.NPCType<SupremeCatastrophe>());
 
                     npc.netUpdate = true;
                 }
@@ -1582,7 +1602,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Define the projectile as a convenient reference type variable, for easy manipulation of its attributes.
             Projectile vigilanceRef = Main.projectile[(int)vigilanceIndex];
             if (vigilanceRef.type != ModContent.ProjectileType<VigilanceProj>())
-                vigilanceRef = null;
+            {
+                var staffs = Utilities.AllProjectilesByID(ModContent.ProjectileType<VigilanceProj>());
+                if (staffs.Any())
+                    vigilanceRef = staffs.First();
+            }
 
             // Use the hands out casting animation.
             frameChangeSpeed = 0.27f;
@@ -1614,9 +1638,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Adjust vigilance's rotation.
             float vigilanceSpinInterpolant = Utils.GetLerpValue(vigilanceSpinTime + 10f, vigilanceSpinTime, attackTimer, true);
             if (vigilanceRef != null)
-            {
                 vigilanceRef.rotation = (-MathHelper.PiOver2).AngleLerp(spinRotation, vigilanceSpinInterpolant) + MathHelper.TwoPi * fanCompletionInterpolant - MathHelper.PiOver4 + MathHelper.Pi;
-            }
 
             // Release bursts of energy from Vigilance's tip and summon a seeker.
             if (vigilanceRef != null && fanCompletionInterpolant > 0f && attackTimer % seekerSummonRate == 0f)
@@ -1628,11 +1650,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Dust.QuickDustLine(vigilanceRef.ModProjectile<VigilanceProj>().TipPosition, seekerSpawnPosition, 40f, Color.Red);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int seekerIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 0f, -1f);
-                    NPC seeker = Main.npc[seekerIndex];
-                    seeker.ai[0] = MathHelper.ToDegrees(seekerSpawnOffset.ToRotation() + MathHelper.Pi);
-                    seeker.ai[3] = seeker.ai[0];
-                    seeker.netUpdate = true;
+                    float seekerOffsetAngle = MathHelper.ToDegrees(seekerSpawnOffset.ToRotation() + MathHelper.Pi);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, seekerOffsetAngle, 0f, 0f, seekerOffsetAngle);
                 }
             }
 
@@ -1686,11 +1705,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (adjustedAttackTimer == 1f)
             {
                 for (int i = 0; i < heartCount; i++)
-                {
-                    int heartIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, heartID, 0, 0f);
-                    if (Main.projectile.IndexInRange(heartIndex))
-                        Main.projectile[heartIndex].ai[0] = i / (float)(heartCount - 1f);
-                }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, heartID, 0, 0f, -1, i / (float)(heartCount - 1f));
+                npc.netUpdate = true;
             }
 
             // Make the hearts spin.
@@ -1749,34 +1765,38 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 SoundEngine.PlaySound(SCalBoss.SpawnSound, npc.Center);
 
-                Utilities.DeleteAllProjectiles(true,
-                    ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
-                    ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
-                    ModContent.ProjectileType<BrimstoneFlameOrb>(),
-                    ModContent.ProjectileType<BrimstoneJewelProj>(),
-                    ModContent.ProjectileType<BrimstoneLaserbeam>(),
-                    ModContent.ProjectileType<CatastropheSlash>(),
-                    ModContent.ProjectileType<CondemnationArrowSCal>(),
-                    ModContent.ProjectileType<CondemnationProj>(),
-                    ModContent.ProjectileType<DemonicBomb>(),
-                    ModContent.ProjectileType<DemonicTelegraphLine>(),
-                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
-                    ModContent.ProjectileType<FlameOverloadBeam>(),
-                    ModContent.ProjectileType<HeartSummoningDagger>(),
-                    ModContent.ProjectileType<HeresyProjSCal>(),
-                    ModContent.ProjectileType<LostSoulProj>(),
-                    ModContent.ProjectileType<RedirectingDarkSoul>(),
-                    ModContent.ProjectileType<RedirectingHellfireSCal>(),
-                    ModContent.ProjectileType<RedirectingLostSoulProj>(),
-                    ModContent.ProjectileType<SepulcherBone>(),
-                    ModContent.ProjectileType<SuicideBomberDemonHostile>(),
-                    ModContent.ProjectileType<SuicideBomberRitual>());
+                for (int i = 0; i < 4; i++)
+                {
+                    Utilities.DeleteAllProjectiles(false,
+                        ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
+                        ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
+                        ModContent.ProjectileType<BrimstoneFlameOrb>(),
+                        ModContent.ProjectileType<BrimstoneJewelProj>(),
+                        ModContent.ProjectileType<BrimstoneLaserbeam>(),
+                        ModContent.ProjectileType<CatastropheSlash>(),
+                        ModContent.ProjectileType<CondemnationArrowSCal>(),
+                        ModContent.ProjectileType<CondemnationProj>(),
+                        ModContent.ProjectileType<DemonicBomb>(),
+                        ModContent.ProjectileType<DemonicTelegraphLine>(),
+                        ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
+                        ModContent.ProjectileType<FlameOverloadBeam>(),
+                        ModContent.ProjectileType<HeresyProjSCal>(),
+                        ModContent.ProjectileType<LostSoulProj>(),
+                        ModContent.ProjectileType<RedirectingDarkSoul>(),
+                        ModContent.ProjectileType<RedirectingHellfireSCal>(),
+                        ModContent.ProjectileType<RedirectingLostSoulProj>(),
+                        ModContent.ProjectileType<SepulcherBone>(),
+                        ModContent.ProjectileType<SuicideBomberDemonHostile>(),
+                        ModContent.ProjectileType<SuicideBomberRitual>());
+                }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 600f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = 600f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
 
                     npc.Infernum().ExtraAI[5] = 0f;
                     npc.Center = target.Center - Vector2.UnitY * 450f;
@@ -1862,7 +1882,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             int gigablastBulletHellDuration = 1200;
             int baseGigaReleaseRate = 75;
-            int dartBulletHellReleaseRate = 60;
+            int dartBulletHellReleaseRate = 54;
             float dartBulletHellWallArea = 420f;
             float dartBulletHellGapArea = 40f;
 
@@ -1924,9 +1944,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         flamePillarHorizontalOffset = (flamePillarHorizontalOffset + flamePillarHorizontalStep) % npc.Infernum().Arena.Width;
                         Vector2 flamePillarSpawnPosition = npc.Infernum().Arena.BottomLeft() + new Vector2(flamePillarHorizontalOffset, -10f);
-                        int telegraph = Utilities.NewProjectileBetter(flamePillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillarTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[0] = 60f;
+                        Utilities.NewProjectileBetter(flamePillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillarTelegraph>(), 0, 0f, -1, 60f);
                     }
 
                     // Release souls.
@@ -1936,9 +1954,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.73f) * Main.rand.NextFloat(8f, 17f);
-                            int soul = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<RedirectingLostSoulProj>(), 550, 0f);
-                            if (Main.projectile.IndexInRange(soul))
-                                Main.projectile[soul].localAI[0] = 0.6f;
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<RedirectingLostSoulProj>(), 550, 0f, -1, 0f, 0.6f);
                         }
                     }
                 }
@@ -1955,9 +1971,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(explosion))
-                            Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 700f;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                        {
+                            explosion.ModProjectile<DemonicExplosion>().MaxRadius = 700f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     }
 
                     attackState = 1f;
@@ -1981,9 +1999,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(explosion))
-                            Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = 1200f;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                        {
+                            explosion.ModProjectile<DemonicExplosion>().MaxRadius = 1200f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
                     }
 
                     npc.netUpdate = true;
@@ -2023,12 +2043,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                                 if (bombShootCounter % 2f == 1f)
                                     bombShootVelocity = bombShootVelocity.RotatedBy(MathHelper.PiOver4);
 
-                                int bomb = Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(bomb))
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                                 {
-                                    Main.projectile[bomb].ai[0] = bombExplosionRadius;
-                                    Main.projectile[bomb].timeLeft = (int)(bombReleaseCountdown * 0.95f);
-                                }
+                                    bomb.timeLeft = (int)(npc.Infernum().ExtraAI[3] * 0.95f);
+                                });
+                                Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, bombExplosionRadius);
                             }
                         }
                     }
@@ -2062,9 +2081,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
                         Vector2 telegraphDirection = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle);
 
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, telegraphDirection * 0.01f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, (int)(dartReleaseRate * 0.5f));
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].localAI[1] = 1f;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                        {
+                            telegraph.ModProjectile<DemonicTelegraphLine>().DontMakeProjectile = true;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, telegraphDirection * 0.01f, ModContent.ProjectileType<DemonicTelegraphLine>(), 0, 0f, -1, 0f, (int)(dartReleaseRate * 0.5f));
                     }
 
                     dartTelegraphDirection = npc.AngleTo(target.Center);
@@ -2113,7 +2134,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                             if (dartBulletHellCounter % 2f == 1f)
                                 dartSpawnPosition.X += dartBulletHellWallArea;
-
+                            
                             int dart = Utilities.NewProjectileBetter(dartSpawnPosition, Vector2.UnitY * 5f, brimstoneDartID, 500, 0f);
                             if (Main.projectile.IndexInRange(dart))
                                 Main.projectile[dart].timeLeft -= 210;
@@ -2138,12 +2159,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         gigablastShootCounter++;
 
-                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
-                        if (gigablastReleaseCountdown <= 44f)
-                            gigablastReleaseCountdown = 44f;
+                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 4f;
+                        if (gigablastReleaseCountdown <= 34f)
+                            gigablastReleaseCountdown = 34f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 12f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 9.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
                     }
                 }
 
@@ -2177,11 +2198,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
+                    // Create some screenshake.
+                    if (CalamityConfig.Instance.Screenshake)
+                        target.Infernum_Camera().CurrentScreenShakePower = 6;
+
                     npc.Center = target.Center - Main.rand.NextVector2Unit() * Main.rand.NextFloat(180f, 455f);
                     npc.velocity = Vector2.Zero;
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<DemonicExplosion>().MaxRadius = Utils.Remap(teleportCountdown, baseTeleportDelay, 4f, 350f, 1500f);
+
+                    // Create increasingly large explosion effects until the entire screen is covered.
+                    float explosionSize = Utils.Remap(teleportCountdown, baseTeleportDelay, 4f, 350f, 1500f);
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<DemonicExplosion>().MaxRadius = explosionSize;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
 
                     teleportCountdown -= 2f;
                     attackTimer = 0f;
@@ -2475,7 +2505,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
-            // Just die as usual if the Supreme Calamitas is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
+            // Just die as usual if Supreme Calamitas is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
             if (npc.Infernum().ExtraAI[7] >= 1f)
                 return true;
 

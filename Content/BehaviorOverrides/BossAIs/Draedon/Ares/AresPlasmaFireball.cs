@@ -133,9 +133,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     totalProjectiles = 6;
                     int plasmaGasID = ModContent.ProjectileType<PlasmaGas>();
-                    for (int i = 0; i < 50; i++)
+                    for (int i = 0; i < 30; i++)
                     {
-                        Vector2 plasmaVelocity = Main.rand.NextVector2Circular(13f, 13f);
+                        Vector2 plasmaVelocity = Main.rand.NextVector2Circular(8f, 8f);
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, plasmaVelocity, plasmaGasID, Projectile.damage, 0f, Main.myPlayer);
                     }
                 }
@@ -184,11 +184,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 plasma.scale = scale;
                 plasma.noGravity = true;
             }
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
         }
     }
 }

@@ -214,7 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             bool canHover = attackTimer < hoverTime;
 
             // Focus on the boss as it spawns.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
+            if (npc.WithinRange(Main.LocalPlayer.Center, 3700f))
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);

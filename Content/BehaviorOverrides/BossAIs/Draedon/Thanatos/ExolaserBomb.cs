@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -9,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -42,11 +44,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(GrowTime);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => GrowTime = reader.ReadInt32();
+
         public override void AI()
         {
             Radius = Projectile.scale * 100f;
 
             if (!NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
+                Projectile.active = false;
+
+            NPC thanatos = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+            if (thanatos.ai[0] != (int)ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ExoBomb)
                 Projectile.active = false;
 
             if (Projectile.timeLeft < 60f)
@@ -84,8 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
+            FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);

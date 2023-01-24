@@ -1,10 +1,9 @@
+using CalamityMod.DataStructures;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
-using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -13,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class AstralConstellation : ModProjectile
+    public class AstralConstellation : ModProjectile, IAdditiveDrawer
     {
         public ref float Index => ref Projectile.ai[0];
 
@@ -45,7 +44,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Projectile projectileToConnectTo = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -69,15 +70,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Texture2D starTexture = TextureAssets.Projectile[Projectile.type].Value;
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
 
+            // Draw stars.
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             for (int i = 0; i < 16; i++)
             {
                 float drawOffsetFactor = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.5f + 0.5f) * scaleFactor * fadeToOrange * 8f + 1f;
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * drawOffsetFactor;
-                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
             }
-            Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+            spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
 
+            // Draw connection lines to the next star in the constellation.
             if (projectileToConnectTo != null)
             {
                 Texture2D lineTexture = TextureAssets.Extra[47].Value;
@@ -89,15 +92,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Color drawColor = Color.White;
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
 
-                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
             }
-
-            return false;
-        }
-
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
-        {
-            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
         public override void Kill(int timeLeft)
@@ -106,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Vector2 initialVelocity = Vector2.UnitY * 11f;
+            Vector2 initialVelocity = Vector2.UnitY * 6f;
             if (Projectile.identity % 2f == 1f)
                 initialVelocity = initialVelocity.RotatedBy(MathHelper.PiOver2);
 

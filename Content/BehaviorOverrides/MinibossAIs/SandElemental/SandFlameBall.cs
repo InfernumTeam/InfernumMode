@@ -60,8 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             for (int i = 0; i < 3; i++)
             {
                 Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
-                int fuck = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f);
-                Main.projectile[fuck].ai[0] = target.whoAmI;
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f, Main.myPlayer, target.whoAmI);
             }
         }
 

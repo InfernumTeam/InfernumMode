@@ -137,6 +137,9 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            if (Time < Myrindael.SpinTime)
+                return;
+
             // Create lightning from the sky.
             SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelHitSound, Projectile.Center);
             SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound with { Volume = 0.04f }, Projectile.Center);

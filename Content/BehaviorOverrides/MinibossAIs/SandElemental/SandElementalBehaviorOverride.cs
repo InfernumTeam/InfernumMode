@@ -117,9 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                         for (int i = -1; i <= 1; i += 2)
                         {
                             Vector2 sandnadoSpawnPosition = target.Center + Vector2.UnitX * i * -540f;
-                            int sandnado = Utilities.NewProjectileBetter(sandnadoSpawnPosition, Vector2.Zero, ModContent.ProjectileType<Sandnado2>(), 125, 0f);
-                            if (Main.projectile.IndexInRange(sandnado))
-                                Main.projectile[sandnado].ai[1] = i;
+                            Utilities.NewProjectileBetter(sandnadoSpawnPosition, Vector2.Zero, ModContent.ProjectileType<Sandnado2>(), 125, 0f, -1, 0f, i);
                         }
                     }
                 }
@@ -145,8 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                         {
                             Vector2 shootVelocity = (target.Center - handPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.81f);
                             shootVelocity = Vector2.Lerp(shootVelocity, -Vector2.UnitY, 0.45f) * 10f;
-                            int fuck = Utilities.NewProjectileBetter(handPosition, shootVelocity, ProjectileID.DesertDjinnCurse, 120, 0f);
-                            Main.projectile[fuck].ai[0] = target.whoAmI;
+                            Utilities.NewProjectileBetter(handPosition, shootVelocity, ProjectileID.DesertDjinnCurse, 120, 0f, -1, target.whoAmI);
                         }
 
                         for (int i = 0; i < dustCount; i++)
@@ -158,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                         }
                     }
                 }
-
+                
                 switch (frameIncrement)
                 {
                     case 0:

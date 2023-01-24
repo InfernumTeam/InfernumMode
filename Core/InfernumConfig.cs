@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
 namespace InfernumMode.Core
@@ -7,7 +8,8 @@ namespace InfernumMode.Core
     [BackgroundColor(96, 30, 53, 216)]
     public class InfernumConfig : ModConfig
     {
-        public static InfernumConfig Instance;
+        public static InfernumConfig Instance => ModContent.GetInstance<InfernumConfig>();
+
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         [Label("Boss Introduction Animations")]
@@ -25,7 +27,7 @@ namespace InfernumMode.Core
         [Label("Reduced Graphical Settings")]
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(false)]
-        [Tooltip("Enables reduced graphics mode. Useful if performance is low.")]
+        [Tooltip("Enables reduced graphics mode. Use this if lag is an issue.")]
         public bool ReducedGraphicsConfig { get; set; }
 
         [Label("Saturation Bloom Intensity")]

@@ -1,8 +1,10 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
+using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
+using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
@@ -29,12 +31,22 @@ namespace InfernumMode
     {
         private static readonly FieldInfo shaderTextureField = typeof(MiscShaderData).GetField("_uImage1", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        private static readonly FieldInfo shaderTextureField2 = typeof(MiscShaderData).GetField("_uImage2", BindingFlags.NonPublic | BindingFlags.Instance);
+
+
         /// <summary>
         /// Uses reflection to set the _uImage1. Its underlying data is private and the only way to change it publicly is via a method that only accepts paths to vanilla textures.
         /// </summary>
         /// <param name="shader">The shader</param>
         /// <param name="texture">The texture to use</param>
         public static void SetShaderTexture(this MiscShaderData shader, Asset<Texture2D> texture) => shaderTextureField.SetValue(shader, texture);
+
+        /// <summary>
+        /// Uses reflection to set the _uImage2. Its underlying data is private and the only way to change it publicly is via a method that only accepts paths to vanilla textures.
+        /// </summary>
+        /// <param name="shader">The shader</param>
+        /// <param name="texture">The texture to use</param>
+        public static void SetShaderTexture2(this MiscShaderData shader, Asset<Texture2D> texture) => shaderTextureField2.SetValue(shader, texture);
 
         /// <summary>
         /// Prepares a <see cref="SpriteBatch"/> for shader-based drawing.
@@ -363,7 +375,7 @@ namespace InfernumMode
         {
             if (Main.netMode == NetmodeID.SinglePlayer)
                 Main.NewText(text, color ?? Color.White);
-            else
+            else if (Main.netMode == NetmodeID.Server)
                 ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
 
@@ -422,8 +434,11 @@ namespace InfernumMode
             }
         }
 
-        public static void CreateCinderParticles(this Player target, float lifeRatio, int cinderType, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
+        public static void CreateCinderParticles(this Player target, float lifeRatio, BaseCinderParticle cinderParticle, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             int cinderSpawnRate = (int)MathHelper.Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);
             float cinderFlySpeed = MathHelper.Lerp(maxCinderFlySpeed, minCinderFlySpeed, lifeRatio);
 
@@ -442,7 +457,11 @@ namespace InfernumMode
 
                 if (Main.rand.NextBool(6))
                     cinderVelocity.X *= -1f;
-                NewProjectileBetter(target.Center + cinderSpawnOffset, cinderVelocity, cinderType, 0, 0f);
+
+                cinderParticle.Position = target.Center + cinderSpawnOffset;
+                cinderParticle.Velocity = cinderVelocity;
+                cinderParticle.Color = Color.White;
+                GeneralParticleHandler.SpawnParticle(cinderParticle);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -128,9 +129,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         Vector2 shootPosition = npc.Center + (spearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
                         Vector2 spearShootVelocity = new(npc.spriteDirection * -4f, -9f);
 
-                        int spearIndex = Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                        if (Main.projectile.IndexInRange(spearIndex))
-                            Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = target.Bottom.Y;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                        {
+                            spear.ModProjectile<WaterSpear>().StartingYPosition = target.Bottom.Y;
+                        });
+                        Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                     }
                 }
 
@@ -187,9 +190,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             Vector2 mouthPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX * -npc.spriteDirection) * 108f;
                             sandVelocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
 
-                            int blobIndex = Utilities.NewProjectileBetter(mouthPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = target.Bottom.Y + 300f;
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = target.Bottom.Y + 300f;
+                            });
+                            Utilities.NewProjectileBetter(mouthPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
                     }
 
@@ -322,7 +327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoBehavior_PerpendicularSandBursts(NPC npc, Player target, ref float attackTimer)
         {
-            int sandBlastReleaseRate = 8;
+            int sandBlastReleaseRate = 10;
             int waterSpearReleaseRate = 7;
             int sandBlobCount = 20;
             int attackTransitionDelay = 160;
@@ -330,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             float hoverRedirectAcceleration = 0.96f;
             float leapVerticalSpeed = 18f;
             float hoverVerticalOffset = 250f;
-            float sandSpeed = 8.4f;
+            float sandSpeed = 14.5f;
             float sandBlobAngularArea = 0.73f;
             float sandBlobSpeed = 22f;
             ref float hasLeapedYet = ref Vassal.Infernum().ExtraAI[2];
@@ -361,9 +366,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         Vector2 shootPosition = npc.Center + (spearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
                         Vector2 spearShootVelocity = new(npc.spriteDirection * -Main.rand.NextFloat(4f, 11f), -9f);
 
-                        int spearIndex = Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                        if (Main.projectile.IndexInRange(spearIndex))
-                            Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = target.Bottom.Y;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                        {
+                            spear.ModProjectile<WaterSpear>().StartingYPosition = target.Bottom.Y;
+                        });
+                        Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                     }
                 }
 
@@ -419,6 +426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 if (npc.Center.Y < target.Center.Y - 900f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkMiscRoarSound, npc.Center);
+                    npc.Center = target.Center - Vector2.UnitY * 900f;
                     hasGoneFarUpEnough = 1f;
                     npc.netUpdate = true;
                 }
@@ -432,8 +440,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                 if (hasSlammedIntoGround == 0f)
                 {
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 11f, 0.03f);
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, -18f, 24f);
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 13f, 0.05f);
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, -18f, 31f);
                 }
 
                 if (hasSlammedIntoGround == 0f && Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
@@ -452,12 +460,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
                             Vector2 sandSpawnPosition = npc.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
-                            int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 160, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = target.Bottom.Y;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = target.Bottom.Y;
+                            });
+                            Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
 
-                        Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 160, 0f);
+                        Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -478,10 +489,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         {
             int attakCycleCount = 3;
             int attackCycleTime = 266;
-            int sharkChargeDelay = 23;
-            int sharkChargeTime = 26;
-            int vassalChargeDelay = 29;
-            float vassalChargeSpeed = 40f;
+            int sharkChargeDelay = 18;
+            int sharkChargeTime = 23;
+            int vassalChargeDelay = 24;
+            float vassalChargeSpeed = 43f;
             float wrappedAttackTimer = attackTimer % attackCycleTime;
             float hoverVerticalOffset = 240f;
             float hoverRedirectSpeed = 21f;
@@ -547,7 +558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                                     Utilities.NewProjectileBetter(npc.Bottom, -waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
                                 }
 
-                                Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                             }
                         }
                         npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * vassalChargeSpeed, 0.16f);
@@ -612,7 +623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.damage = 0;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed;
                 npc.SimpleFlyMovement(idealVelocity, hoverRedirectAcceleration);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
                 npc.rotation = npc.velocity.X * 0.01f;
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 if (sharkAttackTimer >= 12f && npc.WithinRange(hoverDestination, 66f) && wrappedAttackTimer < attackCycleTime - 54f)
@@ -641,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Accelerate after the charge has happened.
             else if (npc.velocity.Length() < sharkMaxChargeSpeed)
-                npc.velocity *= 1.03f;
+                npc.velocity *= 1.04f;
 
             // Do the charge.
             if (sharkAttackTimer == sharkChargeDelay && hasReachedChargeDestination == 1f)
@@ -695,11 +706,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
-                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
-                            int devil = Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f);
-                            if (Main.projectile.IndexInRange(devil))
-                                Main.projectile[devil].ai[0] = i % 2f;
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -785f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 1.9f);
+                            Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f, -1, i % 2f);
 
                             i++;
                         }
@@ -718,15 +727,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     float score = p.Distance(target.Center);
                     if (score < 400f)
                         score += 9000f;
-                    if (p.Center.Y > target.Center.Y - 200f)
+                    if (p.Center.Y > target.Center.Y - 336f)
                         score += 9000f;
 
                     return score;
                 }).ToArray();
+
+                // Constantly aim at the best devil.
                 if (dustDevils.Length >= 1)
                 {
                     spearDirection = CalamityUtils.CalculatePredictiveAimToTarget(npc.Center, dustDevils[0], spearShootSpeed, 8).SafeNormalize(Vector2.UnitY);
                     idealRotation = spearDirection.ToRotation() + MathHelper.PiOver4;
+                    dustDevils[0].Infernum().ExtraAI[0] = 1;
+                    for (int i = 1; i < dustDevils.Length; i++)
+                        dustDevils[i].Infernum().ExtraAI[0] = 0;
                 }
                 spearRotation = spearRotation.AngleLerp(idealRotation, 0.15f);
                 spearOpacity = MathHelper.Clamp(spearOpacity + 0.04f, 0f, 1f);
@@ -749,10 +763,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 return;
             }
 
-            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             // Disable contact damage.
             npc.damage = 0;
 
+            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, hoverVerticalOffset);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed, hoverRedirectAcceleration);
             npc.rotation = npc.velocity.X * 0.012f;

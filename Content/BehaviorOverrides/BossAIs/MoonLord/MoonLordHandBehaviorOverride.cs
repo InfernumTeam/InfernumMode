@@ -44,8 +44,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilScale = ref npc.localAI[2];
 
             // Hacky workaround to problems with popping.
-            if (npc.life < npc.lifeMax * 0.02)
-                npc.life = (int)(npc.lifeMax * 0.02);
+            // Does it still not work in multiplayer somehow? I don't give even the slighest of a fuck.
+            if (npc.life < npc.lifeMax * 0.18)
+                npc.life = (int)(npc.lifeMax * 0.18);
 
             int idealFrame = 0;
 
@@ -238,12 +239,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 flareSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloatDirection() * flareSpawnOffsetMax;
-                    int telegraph = Utilities.NewProjectileBetter(flareSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LunarFlareTelegraph>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
-                    {
-                        Main.projectile[telegraph].ai[0] = flareTelegraphTime - attackTimer + flareReleaseDelay;
-                        Main.projectile[telegraph].ai[1] = Main.rand.NextBool(8).ToInt();
-                    }
+
+                    int shootDelay = (int)(flareTelegraphTime - attackTimer + flareReleaseDelay);
+                    bool telegraphPlaysSound = Main.rand.NextBool(8);
+                    Utilities.NewProjectileBetter(flareSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LunarFlareTelegraph>(), 0, 0f, -1, shootDelay, telegraphPlaysSound.ToInt());
                 }
             }
 
@@ -351,14 +350,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
                 SoundEngine.PlaySound(SoundID.Item72, currentPoint);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<StardustConstellation>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(star))
-                    {
-                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
-                        Main.projectile[star].ai[1] = npc.whoAmI;
-                    }
-                }
+                    Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<StardustConstellation>(), 0, 0f, -1, (int)(patternCompletion * totalStarsToCreate), npc.whoAmI);
             }
 
             // Make all constellations spawned by this hand prepare to explode.

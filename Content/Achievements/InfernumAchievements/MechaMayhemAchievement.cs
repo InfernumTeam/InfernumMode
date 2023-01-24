@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Fields
         private bool MayhemIsOccuring;
         private bool MayhemShouldEnd;
-        private List<int> Mechs => new()
+        private static List<int> Mechs => new()
         {
             NPCID.TheDestroyer,
             NPCID.SkeletronPrime,
@@ -23,7 +23,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         public override void Initialize()
         {
             Name = "Malicious Machinery";
-            Description = "Decomission the Maniacal Mechanical trio in one fell swoop!\n[c/777777:Beat Infernum Mecha-Mayhem]";
+            Description = "Decommission the Maniacal Mechanical trio in one fell swoop!\n[c/777777:Beat Infernum Mecha-Mayhem]";
             TotalCompletion = 1;
             PositionInMainList = 1;
         }

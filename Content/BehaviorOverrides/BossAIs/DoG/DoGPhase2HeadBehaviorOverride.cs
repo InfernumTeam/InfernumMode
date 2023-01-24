@@ -7,10 +7,12 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -126,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         public const float FinalPhaseLifeRatio = 0.2f;
 
         #region AI
-        public static bool Phase2AI(NPC npc, ref float phaseCycleTimer, ref float passiveAttackDelay, ref float portalIndex, ref float segmentFadeType, ref float universalFightTimer)
+        public static bool Phase2AI(NPC npc, ref float phaseCycleTimer, ref float passiveAttackDelay, ref float segmentFadeType, ref float universalFightTimer)
         {
             ref float performingSpecialAttack = ref npc.Infernum().ExtraAI[PerformingSpecialAttackFlagIndex];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[SpecialAttackTimerIndex];
@@ -172,7 +174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Center = target.Center - Vector2.UnitY * 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
                 }
 
                 npc.Opacity = 0f;
@@ -191,12 +193,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (phase2IntroductionAnimationTimer >= DoGPhase2IntroPortalGate.Phase2AnimationTime)
                 {
                     npc.Opacity = 1f;
-                    npc.Center = Main.projectile[(int)portalIndex].Center;
+                    npc.Center = Main.projectile[GeneralPortalIndex].Center;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
-
-                    // Reset the special attack portal index to -1 and re-intiialize the sentinel attack timer.
-                    portalIndex = -1f;
                     sentinelAttackTimer = 0f;
                 }
                 return false;
@@ -218,6 +217,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 hasEnteredFinalPhaseFlag = 1f;
                 doPassiveMovement = false;
                 specialAttackTimer = SpecialAttackDelay - SpecialAttackTransitionPreparationTime - 1f;
+
+                if (performingSpecialAttack >= 1f)
+                {
+                    performingSpecialAttack = 0f;
+                    npc.Center = target.Center + Vector2.UnitX * target.direction * 3000f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 4f;
+
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGChargeGate>());
+                }
+
                 Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
                 npc.netUpdate = true;
             }
@@ -257,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Handle the surprise portal attack.
             if (SurprisePortalAttackState != PerpendicularPortalAttackState.NotPerformingAttack)
             {
-                PerformPerpendicularPortalAttack(npc, target, ref portalIndex, ref segmentFadeType, ref perpendicularPortalAttackTimer, ref perpendicularPortalAngle, ref damageImmunityCountdown);
+                PerformPerpendicularPortalAttack(npc, target, ref segmentFadeType, ref perpendicularPortalAttackTimer, ref perpendicularPortalAngle, ref damageImmunityCountdown);
                 phaseCycleTimer--;
                 perpendicularPortalAttackTimer++;
                 return false;
@@ -282,8 +291,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     // Enter a portal before performing a special attack.
                     if (Main.netMode != NetmodeID.MultiplayerClient && specialAttackTimer == SpecialAttackDelay - SpecialAttackTransitionPreparationTime)
                     {
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)portalIndex].localAI[0] = 1f;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                        {
+                            portal.localAI[0] = 1f;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
+                        });
+
+                        Utilities.NewProjectileBetter(npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         npc.netUpdate = true;
                     }
 
@@ -297,8 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         specialAttackTimer = 0f;
                         performingSpecialAttack = 1f;
-                        portalIndex = -1f;
-
+                        
                         // Select a special attack type.
                         do
                             npc.Infernum().ExtraAI[SpecialAttackTypeIndex] = (int)Utils.SelectRandom(Main.rand, SpecialAttackType.LaserWalls, SpecialAttackType.CircularLaserBurst, SpecialAttackType.ChargeGates);
@@ -325,7 +338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                         // Disappear when touching the portal.
                         // This same logic applies to body/tail segments.
-                        if (Main.projectile.IndexInRange((int)portalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)portalIndex].Hitbox))
+                        if (Main.projectile.IndexInRange(GeneralPortalIndex) && npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
                             npc.Opacity = 0f;
 
                         segmentFadeType = (int)BodySegmentFadeType.EnteringPortal;
@@ -351,7 +364,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     if (!target.active || target.dead)
                         npc.active = false;
 
-                    bool doingSpecialAttacks = DoSpecialAttacks(npc, target, finalPhase, ref performingSpecialAttack, ref specialAttackTimer, ref portalIndex, ref segmentFadeType, ref damageImmunityCountdown);
+                    bool doingSpecialAttacks = DoSpecialAttacks(npc, target, finalPhase, ref performingSpecialAttack, ref specialAttackTimer, ref segmentFadeType, ref damageImmunityCountdown);
                     if (doingSpecialAttacks)
                         phaseCycleTimer = 0f;
 
@@ -368,7 +381,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (performingSpecialAttack != 0f)
                     performingSpecialAttack = 0f;
             }
-            portalIndex = -1f;
+            GeneralPortalIndex = -1;
 
             // Reset the attack type selection once the special attacks are cleared.
             if (performingSpecialAttack == 0f)
@@ -479,9 +492,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             Vector2 spawnOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 1580f + Main.rand.NextVector2Circular(105f, 105f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
-                            int laser = Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 455, 0f);
-                            if (Main.projectile.IndexInRange(laser))
-                                Main.projectile[laser].MaxUpdates = 3;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                            {
+                                laser.MaxUpdates = 3;
+                            });
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 455, 0f);
                         }
                     }
                 }
@@ -725,22 +741,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             else
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
-
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
+            
+            float slitherOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.19f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
             if (distanceFromBaseDestination > 1500f && universalFightTimer > 120f)
-            {
-                idealFlyAcceleration = MathHelper.Min(6f, flyAcceleration + 1f);
                 idealFlySpeed *= 2f;
-            }
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
             // Degrees are used here for ease of readability in the calculations below.
-            // This used to rely on raw dot normalized dot products, but this has since been changed for the sake of clarity.
+            // This used to rely on raw normalized dot products, but this has since been changed for the sake of clarity.
             float targetDirectionAngleDiscrepancy = MathHelper.ToDegrees(npc.velocity.AngleBetween(npc.SafeDirectionTo(destination)));
 
             // Adjust the speed based on how the direction towards the target compares to the direction of the
@@ -767,7 +780,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 14.333f, flySpeedFactor * 32f);
 
                 // And handle movement.
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + slitherOffsetAngle, flyAcceleration, true) * speed;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 25f);
             }
 
@@ -802,6 +815,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
                     timeSinceLastChomp = 0f;
                     chompEffectsCountdown = 26f;
+                    npc.netUpdate = true;
                 }
             }
         }
@@ -819,7 +833,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shootType = ModContent.ProjectileType<DoGDeath>();
+                    int shootType = ModContent.ProjectileType<DoGDeathInfernum>();
                     float targetY = target.position.Y + (Main.rand.NextBool(2) ? 50f : 0f);
 
                     // Sometimes use diagonal laser walls.
@@ -833,12 +847,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         Vector2 laserVelocityLeft = Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
                         Vector2 laserVelocityRight = -Vector2.UnitX.RotatedBy(laserOffsetAngle) * laserWallSpeed;
 
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 400, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].MaxUpdates = 2;
-                        laser = Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 400, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].MaxUpdates = 2;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.MaxUpdates = 2;
+                        });
+                        Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 400, 0f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.MaxUpdates = 2;
+                        });
+                        Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 400, 0f);
                     }
 
                     // Lower wall.
@@ -846,9 +865,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, 1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = -Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].MaxUpdates = 2;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.MaxUpdates = 2;
+                        });
+                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
                     }
 
                     // Upper wall.
@@ -856,9 +878,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 laserSpawnPosition = new Vector2(target.Center.X, targetY) + new Vector2(x * offsetPerLaser, -1000f).RotatedBy(laserOffsetAngle);
                         Vector2 laserVelocity = Vector2.UnitY.RotatedBy(laserOffsetAngle) * laserWallSpeed;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].MaxUpdates = 2;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.MaxUpdates = 2;
+                        });
+                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
                     }
                 }
             }
@@ -882,7 +907,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool finalPhase, ref float attackTimer, ref float portalIndex, ref float segmentFadeType)
+        public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool finalPhase, ref float attackTimer, ref float segmentFadeType)
         {
             // Transform into the antimatter form.
             FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
@@ -917,7 +942,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
 
             float chargeSpeed = finalPhase ? 85f : 60f;
-            ref float chargeGatePortalIndex = ref npc.Infernum().ExtraAI[ChargeGatePortalIndexIndex];
             ref float portalTelegraphTime = ref npc.Infernum().ExtraAI[ChargeGatePortalTelegraphTimeIndex];
 
             // Define the portal telegraph time if it is uninitialized.
@@ -952,18 +976,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Create a portal to teleport from.
             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 20f)
             {
-                portalIndex = -1f;
+                foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                {
+                    portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = false;
+                    portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
+                    portal.netUpdate = true;
+                }
+
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                chargeGatePortalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                {
+                    portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = true;
+                });
+                Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, Main.myPlayer, 0f, portalTelegraphTime);
                 npc.netUpdate = true;
             }
 
             // Teleport and charge.
             if (wrappedAttackTimer == portalTelegraphTime + 20f)
             {
+                CosmicBackgroundSystem.IdealExtraIntensity = 1.3f;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Center = Main.projectile[(int)chargeGatePortalIndex].Center;
+                    npc.Center = Main.projectile[ChargePortalIndex].Center;
 
                     int segmentCount = 0;
                     for (int i = 0; i < Main.maxNPCs; i++)
@@ -976,7 +1013,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             segmentCount++;
                         }
                     }
-                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)chargeGatePortalIndex].ModProjectile<DoGChargeGate>().Destination) * (chargeSpeed + npc.Distance(target.Center) * 0.0127f);
+                    npc.velocity = npc.SafeDirectionTo(Main.projectile[ChargePortalIndex].ModProjectile<DoGChargeGate>().Destination) * (chargeSpeed + npc.Distance(target.Center) * 0.0127f);
                     npc.Opacity = 1f;
                     npc.netUpdate = true;
 
@@ -994,9 +1031,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     // Create the portal to go through.
                     if (!target.dead)
                     {
+                        foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                        {
+                            portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = false;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
+                            portal.netUpdate = true;
+                        }
+
                         Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
-                        Main.projectile[(int)portalIndex].localAI[0] = 1f;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                        {
+                            portal.localAI[0] = 1f;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
+                        });
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, Main.myPlayer, 0f, portalTelegraphTime);
                     }
                 }
                 SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
@@ -1005,7 +1054,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             {
                 // Disappear when touching the portal.
                 // This same logic applies to body/tail segments.
-                if (Main.projectile.IndexInRange((int)portalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)portalIndex].Hitbox))
+                if (Main.projectile.IndexInRange(GeneralPortalIndex) && npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
                     npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.2f, 0f, 1f);
 
                 if (wrappedAttackTimer > portalTelegraphTime + 20f)
@@ -1015,7 +1064,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void PerformPerpendicularPortalAttack(NPC npc, Player target, ref float portalIndex, ref float segmentFadeType, ref float perpendicularPortalAttackTimer, ref float perpendicularPortalAngle, ref float damageImmunityCountdown)
+        public static void PerformPerpendicularPortalAttack(NPC npc, Player target, ref float segmentFadeType, ref float perpendicularPortalAttackTimer, ref float perpendicularPortalAngle, ref float damageImmunityCountdown)
         {
             int portalTelegraphTime = 55;
             int waitBeforeSnappingAgain = 16;
@@ -1030,17 +1079,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.dontTakeDamage = true;
 
                     // Create the portal and define the charge angle if it does not exist yet.
-                    if (portalIndex == -1f)
+                    if (GeneralPortalIndex == -1)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float scaleFactor = 1.6f;
                             perpendicularPortalAngle = MathHelper.PiOver2 * (float)Math.Round(npc.Infernum().ExtraAI[PreviousSnapAngleIndex] / MathHelper.PiOver2);
 
-                            portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 64f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                            Main.projectile[(int)portalIndex].localAI[0] = 1f;
-                            Main.projectile[(int)portalIndex].scale *= scaleFactor;
-                            Main.projectile[(int)portalIndex].Size *= scaleFactor;
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                            {
+                                portal.localAI[0] = 1f;
+                                portal.scale *= scaleFactor;
+                                portal.Size *= scaleFactor;
+                                portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
+                            });
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 64f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                             npc.netUpdate = true;
                         }
                         return;
@@ -1051,10 +1104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     if (npc.Opacity <= 0f)
                         npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * flySpeed;
                     else
-                        npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)portalIndex].Center) * flySpeed;
+                        npc.velocity = npc.SafeDirectionTo(Main.projectile[GeneralPortalIndex].Center) * flySpeed;
 
                     // Dissapear once entering the portal.
-                    if (Main.projectile.IndexInRange((int)portalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)portalIndex].Hitbox))
+                    if (Main.projectile.IndexInRange(GeneralPortalIndex) && npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
                         npc.Opacity = 0f;
 
                     perpendicularPortalAttackTimer = 0f;
@@ -1070,10 +1123,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         Vector2 portalSpawnPosition = target.Center + (perpendicularPortalAngle + MathHelper.PiOver2).ToRotationVector2() * 700f;
 
-                        portalIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, 0, 0f, portalTelegraphTime);
-                        Main.projectile[(int)portalIndex].ModProjectile<DoGChargeGate>().Destination = target.Center;
-                        Main.projectile[(int)portalIndex].ModProjectile<DoGChargeGate>().TelegraphShouldAim = false;
-                        Main.projectile[(int)portalIndex].netUpdate = true;
+                        foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                        {
+                            portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = false;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
+                            portal.netUpdate = true;
+                        }
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                        {
+                            portal.ModProjectile<DoGChargeGate>().Destination = target.Center;
+                            portal.ModProjectile<DoGChargeGate>().TelegraphShouldAim = false;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
+                        });
+                        Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, -1, 0f, portalTelegraphTime);
+
+                        CosmicBackgroundSystem.IdealExtraIntensity = 1.35f;
 
                         npc.netUpdate = true;
                     }
@@ -1083,16 +1148,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 portalPosition = Main.projectile[(int)portalIndex].Center;
-                            int cosmicTear = Utilities.NewProjectileBetter(portalPosition, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
+                            Vector2 portalPosition = Main.projectile[GeneralPortalIndex].Center;
                             Vector2 offset = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * (perpendicularPortalAttackTimer - 1f) / 9f) * 950f;
-                            if (Main.projectile.IndexInRange(cosmicTear))
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(tear =>
                             {
-                                Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Start = portalPosition - offset;
-                                Main.projectile[cosmicTear].ModProjectile<RealitySlice>().End = portalPosition + offset;
-                                Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Cosmilite = true;
-                                Main.projectile[cosmicTear].timeLeft = Main.projectile[cosmicTear].ModProjectile<RealitySlice>().Lifetime;
-                            }
+                                tear.ModProjectile<RealitySlice>().Start = portalPosition - offset;
+                                tear.ModProjectile<RealitySlice>().End = portalPosition + offset;
+                                tear.ModProjectile<RealitySlice>().Cosmilite = true;
+                                tear.timeLeft = tear.ModProjectile<RealitySlice>().Lifetime;
+                            });
+                            Utilities.NewProjectileBetter(portalPosition, Vector2.Zero, ModContent.ProjectileType<RealitySlice>(), 0, 0f);
                         }
 
                         if (perpendicularPortalAttackTimer == 10f)
@@ -1108,10 +1174,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         npc.Center = target.Center - Vector2.UnitY * 1200f;
                         Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
-                        if (Main.projectile.IndexInRange((int)portalIndex))
+                        if (Main.projectile.IndexInRange(GeneralPortalIndex))
                         {
-                            npc.Center = Main.projectile[(int)portalIndex].Center;
-                            aimDirection = npc.SafeDirectionTo(Main.projectile[(int)portalIndex].ModProjectile<DoGChargeGate>().Destination);
+                            npc.Center = Main.projectile[GeneralPortalIndex].Center;
+                            aimDirection = npc.SafeDirectionTo(Main.projectile[GeneralPortalIndex].ModProjectile<DoGChargeGate>().Destination);
                         }
 
                         // Bring all segments along with.
@@ -1153,7 +1219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static bool DoSpecialAttacks(NPC npc, Player target, bool finalPhase, ref float performingSpecialAttack, ref float specialAttackTimer, ref float specialAttackPortalIndex, ref float segmentFadeType, ref float damageImmunityCountdown)
+        public static bool DoSpecialAttacks(NPC npc, Player target, bool finalPhase, ref float performingSpecialAttack, ref float specialAttackTimer, ref float segmentFadeType, ref float damageImmunityCountdown)
         {
             SpecialAttackType specialAttackType = (SpecialAttackType)npc.Infernum().ExtraAI[SpecialAttackTypeIndex];
 
@@ -1170,25 +1236,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 {
                     Vector2 portalSpawnPosition = target.Center - Vector2.UnitY * 500f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        specialAttackPortalIndex = Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, -1, 0f, (int)(SpecialAttackPortalSnapDelay * 1.25f));
+                    {
+                        foreach (Projectile portal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DoGChargeGate>()))
+                        {
+                            portal.ModProjectile<DoGChargeGate>().IsChargePortalIndex = false;
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
+                            portal.netUpdate = true;
+                        }
+                        
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
+                        {
+                            portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
+                        });
+                        Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f, -1, 0f, (int)(SpecialAttackPortalSnapDelay * 1.25f));
+                    }
 
                     // Delete lingering laser wall things.
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (Main.projectile[i].type == ModContent.ProjectileType<DoGDeath>())
-                            Main.projectile[i].Kill();
-                    }
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGDeathInfernum>());
                 }
 
                 // Move to the portal and snap at the target after a brief period of time.
                 if (specialAttackTimer >= SpecialAttackDuration + SpecialAttackPortalCreationDelay + SpecialAttackPortalSnapDelay)
                 {
-                    if (specialAttackPortalIndex >= 0f)
+                    if (GeneralPortalIndex >= 0f)
                     {
                         SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, target.Center);
 
-                        npc.Center = Main.projectile[(int)specialAttackPortalIndex].Center;
-                        npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)specialAttackPortalIndex].ModProjectile<DoGChargeGate>().Destination) * 45f;
+                        npc.Center = Main.projectile[GeneralPortalIndex].Center;
+                        npc.velocity = npc.SafeDirectionTo(Main.projectile[GeneralPortalIndex].ModProjectile<DoGChargeGate>().Destination) * 45f;
                         for (int i = 0; i < Main.maxNPCs; i++)
                         {
                             if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
@@ -1197,7 +1272,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                                 Main.npc[i].netUpdate = true;
                             }
                         }
-                        Main.projectile[(int)specialAttackPortalIndex].Kill();
+                        Main.projectile[GeneralPortalIndex].Kill();
                     }
 
                     FadeToAntimatterForm = 0f;
@@ -1207,8 +1282,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                     if (!finalPhase)
                         npc.Infernum().ExtraAI[AnimationMoveDelayIndex] = 0f;
-
-                    specialAttackPortalIndex = -1f;
+                    
                     performingSpecialAttack = 0f;
                     specialAttackTimer = 0f;
                     damageImmunityCountdown = 60f;
@@ -1243,7 +1317,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             DoSpecialAttack_CircularLaserBurst(npc, target, ref specialAttackTimer, ref segmentFadeType);
                             break;
                         case SpecialAttackType.ChargeGates:
-                            DoSpecialAttack_ChargeGates(npc, target, finalPhase, ref specialAttackTimer, ref specialAttackPortalIndex, ref segmentFadeType);
+                            DoSpecialAttack_ChargeGates(npc, target, finalPhase, ref specialAttackTimer, ref segmentFadeType);
                             return false;
                     }
 

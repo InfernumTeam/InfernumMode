@@ -123,12 +123,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Give the target infinite flight time.
-            target.wingTime = target.wingTimeMax;
-            target.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
+            // Give targets infinite flight time.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.wingTime = player.wingTimeMax;
+                player.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
+            }
+
+            // Despawn if the nearest target is incredibly far away.
+            if (!npc.WithinRange(target.Center, 9600f))
+                npc.active = false;
 
             // Keep the target within the arena.
-            if (!WorldSaveSystem.ProvidenceArena.IsEmpty)
+            if (!WorldSaveSystem.ProvidenceArena.IsEmpty && npc.WithinRange(target.Center, 9600f))
             {
                 if (target.position.X < arenaArea.Left)
                     target.position.X = arenaArea.Left;
@@ -202,12 +213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         ModContent.ProjectileType<ProfanedSpear>(),
                         ModContent.ProjectileType<HolyBlast>(),
                     };
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (!Main.projectile[i].active || !typesToDelete.Contains(Main.projectile[i].type))
-                            continue;
-                        Main.projectile[i].Kill();
-                    }
+                    Utilities.DeleteAllProjectiles(false, typesToDelete);
                 }
 
                 burnIntensity = Utils.GetLerpValue(0f, 45f, deathEffectTimer, true);
@@ -363,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity *= 0.94f;
 
             // Create spikes throughout the arena at first. This will activate soon afterwards.
-            if (phase2AnimationTimer == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && phase2AnimationTimer == 1f)
             {
                 float startY = Utilities.GetGroundPositionFrom(Main.player[npc.target].Center).Y - 50f;
                 for (float i = -3650f; i < 3650f; i += 50f)
@@ -371,22 +377,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Vector2 top = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY), new Searches.Up(9001)).Floor();
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY)).Floor();
 
-                    int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f);
-                    if (Main.projectile.IndexInRange(topSpike))
-                    {
-                        Main.projectile[topSpike].ModProjectile<GroundCrystalSpike>().SpikeDirection = MathHelper.PiOver2;
-                        Main.projectile[topSpike].netUpdate = true;
-                    }
+                    // Create top spikes.
+                    Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f, -1, 0f, MathHelper.PiOver2);
 
+                    // Create bottom spikes.
                     if (!Collision.SolidCollision(bottom - new Vector2(1f, 10f), 20, 2))
-                    {
-                        int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f);
-                        if (Main.projectile.IndexInRange(bottomSpike))
-                        {
-                            Main.projectile[bottomSpike].ModProjectile<GroundCrystalSpike>().SpikeDirection = -MathHelper.PiOver2;
-                            Main.projectile[bottomSpike].netUpdate = true;
-                        }
-                    }
+                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f, -1, 0f, -MathHelper.PiOver2);
                 }
             }
 
@@ -512,9 +508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     int blastDamage = !IsEnraged ? 225 : 350;
                     Vector2 moltenBlastSpawnPosition = npc.Center + npc.velocity * 7f;
                     Vector2 moltenBlastVelocity = npc.SafeDirectionTo(target.Center) * moltenBlastSpeed;
-                    int blast = Utilities.NewProjectileBetter(moltenBlastSpawnPosition, moltenBlastVelocity, ModContent.ProjectileType<MoltenBlast>(), blastDamage, 0f);
-                    if (Main.projectile.IndexInRange(blast))
-                        Main.projectile[blast].ai[0] = totalBlobsFromBlasts;
+                    Utilities.NewProjectileBetter(moltenBlastSpawnPosition, moltenBlastVelocity, ModContent.ProjectileType<MoltenBlast>(), blastDamage, 0f, -1, totalBlobsFromBlasts);
 
                     attackTimer = 0f;
                     blastShootCounter++;
@@ -648,12 +642,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         float bombSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
                         Vector2 bombSpawnPosition = npc.Center + npc.velocity * 7f;
                         Vector2 bombVelocity = npc.SafeDirectionTo(target.Center) * bombSpeed;
-                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, bombVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(bomb))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                         {
-                            Main.projectile[bomb].ai[0] = bombExplosionRadius;
-                            Main.projectile[bomb].timeLeft = explosionCountdown;
-                        }
+                            bomb.timeLeft = explosionCountdown;
+                        });
+                        Utilities.NewProjectileBetter(bombSpawnPosition, bombVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
 
                         // Release molten bolts.
                         int fireBoltDamage = !IsEnraged ? 220 : 335;
@@ -777,9 +771,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                         Vector2 shootVelocity = (initialDirection + offsetAngle).ToRotationVector2() * crystalSpeed;
                         Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<AcceleratingCrystalShard>(), crystalShardDamage, 0f);
-                        int telegraph = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[1] = 30f;
+                        Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f, -1, 0f, 30f);
                     }
                 }
 
@@ -864,9 +856,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     for (int i = 0; i < circularCinderCount; i++)
                     {
                         Vector2 cinderShootVelocity = (MathHelper.TwoPi * i / circularCinderCount).ToRotationVector2() * circularCinderSpeed;
-                        int cinder = Utilities.NewProjectileBetter(npc.Center, cinderShootVelocity, ModContent.ProjectileType<HolyCinder>(), cinderDamage, 0f);
-                        if (Main.projectile.IndexInRange(cinder))
-                            Main.projectile[cinder].ai[0] = 45f;
+                        Utilities.NewProjectileBetter(npc.Center, cinderShootVelocity, ModContent.ProjectileType<HolyCinder>(), cinderDamage, 0f, -1, 0f, 45f);
                     }
                 }
             }
@@ -962,12 +952,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     // Explode violently into a burst of flames before reverting back to normal.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(explosion))
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
                         {
-                            Main.projectile[explosion].MaxUpdates = 2;
-                            Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = 600f;
-                        }
+                            explosion.MaxUpdates = 2;
+                            explosion.ModProjectile<HolySunExplosion>().MaxRadius = 600f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
                     }
 
                     SelectNextAttack(npc);
@@ -1017,6 +1007,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 bladeSpeed += 3f;
             }
 
+            // Make the lasers slower in multiplayer.
+            if (Main.netMode != NetmodeID.SinglePlayer)
+                maxLaserAngularVelocity *= 0.65f;
+
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
@@ -1065,7 +1059,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Release crystal blades.
                 if (attackTimer % bladeReleaseRate == bladeReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.25f }, target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound with { Volume = 0.25f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int bladeDamage = !IsEnraged ? 225 : 350;
@@ -1089,9 +1083,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     for (int i = 0; i < laserCount; i++)
                     {
                         float offsetAngleInterpolant = i / laserCount;
-                        int fireBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolyFireBeam>(), beamDamage, 0f);
-                        if (Main.projectile.IndexInRange(fireBeam))
-                            Main.projectile[fireBeam].ai[1] = offsetAngleInterpolant;
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolyFireBeam>(), beamDamage, 0f, -1, 0f, offsetAngleInterpolant);
                     }
                 }
             }
@@ -1138,12 +1130,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(explosion))
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
                         {
-                            Main.projectile[explosion].MaxUpdates = 2;
-                            Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = 540f;
-                        }
+                            explosion.MaxUpdates = 2;
+                            explosion.ModProjectile<HolySunExplosion>().MaxRadius = 540f;
+                        });
+
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
                     }
                 }
 
@@ -1152,10 +1145,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 {
                     int crystalShardDamage = !IsEnraged ? 225 : 375;
                     Vector2 spiralVelocity = ((attackTimer - shootDelay) * MathHelper.TwoPi / 105f).ToRotationVector2() * crystalShootSpeed;
+
                     Utilities.NewProjectileBetter(crystalCenter, spiralVelocity, ModContent.ProjectileType<AcceleratingCrystalShard>(), crystalShardDamage, 0f);
-                    int telegraph = Utilities.NewProjectileBetter(crystalCenter, spiralVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
-                        Main.projectile[telegraph].ai[1] = 30f;
+                    Utilities.NewProjectileBetter(crystalCenter, spiralVelocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f, -1, 0f, 30f);
                 }
 
                 // Release bursts of spears.
@@ -1638,7 +1630,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
             float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
-            ScreenSaturationBlurSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
 
             return false;
         }

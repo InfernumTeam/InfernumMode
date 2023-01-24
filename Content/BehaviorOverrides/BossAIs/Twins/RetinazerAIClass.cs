@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                 Color colorOuter = Color.Lerp(Color.Red, Color.White, 0.32f);
                 Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
-                Vector2 telegraphStart = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 36f;
+                Vector2 telegraphStart = npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 64f;
 
                 Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorOuter, telegraphDirection - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorInner, telegraphDirection - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0);

@@ -63,7 +63,12 @@ namespace InfernumMode.Content.Items.BossBags
             itemLoot.Add(ModContent.ItemType<WaterglassToken>());
 
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
-            itemLoot.Add(DropHelper.CalamityStyle(DropHelper.BagWeaponDropRateFraction, ModContent.ItemType<Myrindael>(), ModContent.ItemType<TheGlassmaker>(), ModContent.ItemType<AridBattlecry>(), ModContent.ItemType<WanderersShell>()));
+
+            // Fine. Have all of the weapon drops.
+            itemLoot.Add(ModContent.ItemType<Myrindael>());
+            itemLoot.Add(ModContent.ItemType<TheGlassmaker>());
+            itemLoot.Add(ModContent.ItemType<AridBattlecry>());
+            itemLoot.Add(ModContent.ItemType<WanderersShell>());
 
             itemLoot.AddRevBagAccessories();
 

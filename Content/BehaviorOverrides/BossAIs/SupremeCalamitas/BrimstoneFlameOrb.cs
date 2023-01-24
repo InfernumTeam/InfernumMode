@@ -136,13 +136,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 3f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     rotationPoints.Add(adjustedAngle);
-                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 3f));
+                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 7f));
                 }
 
-                FireDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 30);
+                FireDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 39);
             }
             spriteBatch.ExitShaderRegion();
         }

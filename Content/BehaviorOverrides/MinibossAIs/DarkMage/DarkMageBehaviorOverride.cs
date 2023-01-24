@@ -281,9 +281,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                     int flameDamage = isBuffed ? 180 : 90;
                     Vector2 flameShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
                     flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
-                    int flame = Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<RedirectingWeakDarkMagicFlame>(), flameDamage, 0f);
-                    if (Main.projectile.IndexInRange(flame))
-                        Main.projectile[flame].ai[1] = isBuffed.ToInt();
+                    Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<RedirectingWeakDarkMagicFlame>(), flameDamage, 0f, -1, 0f, isBuffed.ToInt());
                 }
             }
 

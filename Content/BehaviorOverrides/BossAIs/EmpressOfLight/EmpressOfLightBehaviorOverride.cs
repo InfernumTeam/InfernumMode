@@ -1465,10 +1465,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 ModContent.ProjectileType<SpinningPrismLaserbeam>(),
             };
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            for (int j = 0; j < 2; j++)
             {
-                if (projectilesToClearAway.Contains(Main.projectile[i].type) && Main.projectile[i].active)
-                    Main.projectile[i].active = false;
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (projectilesToClearAway.Contains(Main.projectile[i].type) && Main.projectile[i].active)
+                        Main.projectile[i].Kill();
+                }
             }
         }
 

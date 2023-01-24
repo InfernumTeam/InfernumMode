@@ -20,9 +20,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             float jumpDelay = MathHelper.Lerp(48f, 26f, 1f - lifeRatio);
             if (alone)
             {
-                globCount += 3;
-                globSpeed += 2.1f;
-                jumpDelay -= 10f;
+                globSpeed += 1.4f;
+                jumpDelay -= 9f;
             }
 
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
@@ -101,17 +100,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         {
             int maxHoverTime = 210;
             int maxSlamTime = 150;
-            int sitTime = 42;
+            int sitTime = 48;
             int groundBlobCount = 15;
             int blobCount = 5;
             float globSpeed = 14f;
 
             if (alone)
             {
-                sitTime -= 10;
+                sitTime -= 9;
                 groundBlobCount += 3;
-                blobCount += 2;
-                globSpeed += 5.2f;
+                globSpeed += 2.8f;
             }
 
             ref float hasSlammed = ref npc.Infernum().ExtraAI[0];

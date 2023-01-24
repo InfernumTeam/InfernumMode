@@ -208,6 +208,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
+            if (Limbs is null)
+                return false;
+
+            if (Limbs.Limbs is null)
+                return false;
+
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint))
@@ -219,6 +225,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             LimbDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.PolterghastEctoplasmVertexShader);
+
+            if (CalamityGlobalNPC.ghostBoss <= -1)
+                return;
 
             if (Polterghast.ai[2] >= 54f)
                 return;

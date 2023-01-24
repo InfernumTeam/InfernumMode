@@ -2,6 +2,7 @@
 using CalamityMod.Items;
 using CalamityMod.Items.Weapons.Rogue;
 using InfernumMode.Content.Projectiles.Rogue;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -41,7 +42,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             Item.DamageType = RogueDamageClass.Instance;
 
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

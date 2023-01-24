@@ -14,12 +14,12 @@ namespace InfernumMode.Content.Skies
 
         public override void Apply()
         {
-            // If scal is not set, or the reduced graphics config is enabled, do not draw.
-            if (CalamityGlobalNPC.SCal < 0 || InfernumConfig.Instance.ReducedGraphicsConfig)
+            // If scal is not present do not draw.
+            if (CalamityGlobalNPC.SCal < 0)
                 return;
 
             UseTargetPosition(Main.LocalPlayer.Center);
-            UseColor(new Color(100, 150, 255));
+            UseColor(new Color(231, 52, 52));
 
             // Perform various matrix calculations to transform SCal's arena to UV coordinate space.
             NPC scal = Main.npc[CalamityGlobalNPC.SCal];
@@ -34,9 +34,10 @@ namespace InfernumMode.Content.Skies
             uvScaledArena = new(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
 
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
-            UseImage(InfernumTextureRegistry.CultistRayMap.Value, 0, SamplerState.AnisotropicWrap);
+            UseImage(InfernumTextureRegistry.GrayscaleWater.Value, 0, SamplerState.AnisotropicWrap);
 
             UseOpacity(0.36f);
+            UseIntensity(1f);
             base.Apply();
         }
     }

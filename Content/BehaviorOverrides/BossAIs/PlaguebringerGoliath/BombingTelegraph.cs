@@ -1,5 +1,6 @@
 using CalamityMod.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -28,6 +29,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.scale = 0.01f;
         }
 
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.rotation);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.rotation = reader.ReadSingle();
+
         public override void AI()
         {
             if (Countdown > 0f)
@@ -41,9 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Vector2 missileSpawnPosition = new Vector2(Projectile.Center.X, Target.Center.Y) - Vector2.UnitY.RotatedBy(Projectile.rotation) * 1000f;
                     Vector2 missileVelocity = Vector2.UnitY.RotatedBy(Projectile.rotation) * 29f;
-                    int missile = Utilities.NewProjectileBetter(missileSpawnPosition, missileVelocity, ModContent.ProjectileType<PlagueMissile2>(), 170, 0f);
-                    if (Main.projectile.IndexInRange(missile))
-                        Main.projectile[missile].ai[0] = Target.whoAmI;
+                    Utilities.NewProjectileBetter(missileSpawnPosition, missileVelocity, ModContent.ProjectileType<PlagueMissile2>(), 170, 0f, -1, 0f, Target.whoAmI);
                 }
 
                 Projectile.Kill();
@@ -51,7 +54,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.05f, 0f, 1f);
         }
-
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;

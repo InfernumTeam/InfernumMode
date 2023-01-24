@@ -5,6 +5,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -543,9 +544,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge && nearTarget)
                 {
                     Vector2 cloudSpawnPosition = npc.Center - npc.velocity * 2f;
-                    int cloud = Projectile.NewProjectile(npc.GetSource_FromAI(), cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(cloud))
-                        Main.projectile[cloud].ModProjectile<LightningCloud>().AngularOffset = cloudOffsetAngle;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(cloud =>
+                    {
+                        cloud.ModProjectile<LightningCloud>().AngularOffset = cloudOffsetAngle;
+                    });
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
 
                 if (hasDoneFakeoutFlag == 0f && chargeType == DragonfollyAttackType.FakeoutCharge)
@@ -652,9 +656,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         // Ensure that the spawn position is not near the target, to prevent potentially unfair hits.
                         if (!target.WithinRange(potentialSpawnPosition, 160f))
                         {
-                            int swarmer = NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI);
-                            Main.npc[swarmer].ai[3] = phase2.ToInt() + phase3.ToInt();
+                            int swarmer = NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI, 0f, 0f, 0f, phase2.ToInt() + phase3.ToInt());
                             Main.npc[swarmer].velocity = Vector2.UnitY * -12f;
+                            Main.npc[swarmer].netUpdate = true;
                         }
                     }
                 }
@@ -815,7 +819,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     int plasmaBall = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedPlasmaEnergy>());
                     if (Main.npc.IndexInRange(plasmaBall))
+                    {
                         Main.npc[plasmaBall].velocity = Vector2.UnitX.RotatedByRandom(0.4f) * npc.direction * 7f;
+                        Main.npc[plasmaBall].netUpdate = true;
+                    }
                 }
             }
 
@@ -926,13 +933,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.velocity *= 0.99f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudReleaseRate == cloudReleaseRate - 1f)
                 {
+                    int cloudExplosionDelay = 180 - (int)attackTimer;
                     Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 500f) * Main.rand.NextBool().ToDirectionInt();
-                    int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(cloud))
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(cloud =>
                     {
-                        Main.projectile[cloud].timeLeft = 10 + (170 - (int)attackTimer);
-                        Main.projectile[cloud].netUpdate = true;
-                    }
+                        cloud.timeLeft = cloudExplosionDelay;
+                    });
+                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
                 }
 
                 // Send sparks towards the target periodically.
@@ -1142,16 +1150,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     chargeDirection = npc.AngleTo(target.Center);
 
-                    int telegraph = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningSuperchargeTelegraph>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                     {
-                        Main.projectile[telegraph].ModProjectile<LightningSuperchargeTelegraph>().ChargePositions = new[]
+                        telegraph.ModProjectile<LightningSuperchargeTelegraph>().ChargePositions = new[]
                         {
                             npc.Center,
-                            npc.Center + chargeDirection.ToRotationVector2() * 1200f
+                            npc.Center + npc.SafeDirectionTo(target.Center) * 1200f
                         };
-                        Main.projectile[telegraph].netUpdate = true;
-                    }
+                    });
+
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningSuperchargeTelegraph>(), 0, 0f);
                     hasCreatedTelegraph = 1f;
                     npc.netUpdate = true;
                 }

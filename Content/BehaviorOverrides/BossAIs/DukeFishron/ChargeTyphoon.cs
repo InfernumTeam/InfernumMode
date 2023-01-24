@@ -23,6 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 90;
             Projectile.penetrate = -1;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
 

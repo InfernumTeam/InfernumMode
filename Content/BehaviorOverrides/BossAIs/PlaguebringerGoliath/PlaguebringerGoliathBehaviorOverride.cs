@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -730,13 +731,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.16f;
                     for (float horizontalOffset = -1900f; horizontalOffset < 1900f; horizontalOffset += 90f)
                     {
-                        int telegraph = Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                        {
-                            Main.projectile[telegraph].ai[0] = bombingDelay;
-                            Main.projectile[telegraph].owner = target.whoAmI;
-                            Main.projectile[telegraph].rotation = bombRotation;
-                        }
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph => telegraph.rotation = bombRotation);
+                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f, target.whoAmI, bombingDelay);
                     }
                 }
 
@@ -849,14 +845,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.14f;
                     float horizontalOffset = Main.rand.NextFloatDirection() * 580f;
-                    int telegraph = Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(telegraph))
-                    {
-                        Main.projectile[telegraph].ai[0] = 40f;
-                        Main.projectile[telegraph].ai[1] = 1f;
-                        Main.projectile[telegraph].owner = target.whoAmI;
-                        Main.projectile[telegraph].rotation = bombRotation;
-                    }
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph => telegraph.rotation = bombRotation);
+                    Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f, target.whoAmI, 40f, 1f);
                 }
             }
         }

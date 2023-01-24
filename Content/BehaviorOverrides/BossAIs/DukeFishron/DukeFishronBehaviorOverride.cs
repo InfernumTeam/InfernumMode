@@ -195,6 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             ref float hasEyes01Flag = ref npc.Infernum().ExtraAI[9];
             ref float attackDelay = ref npc.Infernum().ExtraAI[10];
             ref float eyeGlowmaskOpacity = ref npc.Infernum().ExtraAI[11];
+            ref float hasEnteredPhase4 = ref npc.Infernum().ExtraAI[12];
 
             bool enraged = target.position.Y < 300f || target.position.Y > Main.worldSurface * 16.0 ||
                            target.position.X > 6000f && target.position.X < Main.maxTilesX * 16 - 6000;
@@ -255,9 +256,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 if (phaseTransitionTime >= 120f)
                 {
                     phaseTransitionPhase++;
-                    aiStateIndex = 0f;
+                    aiStateIndex = -1f;
                     phaseTransitionTime = 0f;
                 }
+                return false;
+            }
+
+            if (hasEnteredPhase4 == 0f && inPhase4)
+            {
+                aiStateIndex = -1f;
+                SelectNextAttack(npc);
+                hasEnteredPhase4 = 1f;
+                npc.netUpdate = true;
+
+                // Clear leftover projectiles.
+                for (int i = 0; i < 3; i++)
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ChargeTyphoon>(), ModContent.ProjectileType<SmallWave>(), ModContent.ProjectileType<TidalWave>(), ModContent.ProjectileType<Tornado>(), ModContent.ProjectileType<TyphoonBlade>());
+
                 return false;
             }
 
@@ -318,7 +333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
             DukeAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;
             DukeAttackType nextAttackType = patternToUse[(int)(npc.ai[1] % patternToUse.Length)];
-
+            
             // Go to the next attack state.
             npc.Infernum().ExtraAI[5] = (int)nextAttackType;
 

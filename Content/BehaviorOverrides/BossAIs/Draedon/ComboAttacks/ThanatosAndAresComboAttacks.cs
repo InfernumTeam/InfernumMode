@@ -19,6 +19,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -96,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
-                totalLasers += 4;
+                totalLasers += 3;
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.
             if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)
@@ -170,13 +171,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            Main.projectile[telegraph].ai[1] = npc.whoAmI;
-                            Main.projectile[telegraph].localAI[0] = telegraphTime;
-                            Main.projectile[telegraph].netUpdate = true;
-                        }
+                            telegraph.localAI[0] = telegraphTime;
+                        });                            
+                        Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                     }
                     npc.netUpdate = true;
                 }
@@ -191,13 +191,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         for (int i = 0; i < totalLasers; i++)
                         {
                             Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f);
-                            if (Main.projectile.IndexInRange(deathray))
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                             {
-                                Main.projectile[deathray].ai[1] = npc.whoAmI;
-                                Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
-                                Main.projectile[deathray].netUpdate = true;
-                            }
+                                deathray.ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
                         }
                         generalAngularOffset = 0f;
                         npc.netUpdate = true;
@@ -206,8 +205,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 if (attackTimer > attackDelay)
                 {
-                    float angularVelocity = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
-                    generalAngularOffset += angularVelocity;
+                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
+
+                    // Make the lasers slower in multiplayer.
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                        spinSpeed *= 0.65f;
+
+                    generalAngularOffset += spinSpeed;
                 }
 
                 // Slow down.
@@ -328,15 +332,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         SoundEngine.PlaySound(shootSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int shot = Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(shot))
-                        {
-                            if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
-                            {
-                                Main.projectile[shot].ai[0] = npc.whoAmI;
-                                Main.projectile[shot].netUpdate = true;
-                            }
-                        }
+                        // Ensure that specific projectiles receive NPC owner index information.
+                        float ai0;
+                        if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
+                            ai0 = npc.whoAmI;
+                        // This tells them to set a shorter lifespan.
+                        else
+                            ai0 = 1f;
+                        Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f, -1, ai0);
                     }
                 }
             }
@@ -457,10 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     Vector2 rotorShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rotorSpeed;
                     for (int i = 0; i < 5; i++)
                     {
-                        int rotor = Utilities.NewProjectileBetter(npc.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(rotor))
-                            Main.projectile[rotor].ai[0] = lasersPerRotor;
-
+                        Utilities.NewProjectileBetter(npc.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f, -1, lasersPerRotor);
                         rotorShootVelocity = rotorShootVelocity.RotatedBy(MathHelper.TwoPi / 5f);
                     }
                 }

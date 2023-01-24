@@ -1,6 +1,7 @@
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -27,6 +28,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.tileCollide = true;
             Projectile.timeLeft = 60;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.timeLeft = reader.ReadInt32();
 
         public override void AI()
         {

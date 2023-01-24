@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -23,11 +24,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 200;
             Projectile.Opacity = 0f;
             Projectile.hide = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.MaxUpdates);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.MaxUpdates = reader.ReadInt32();
 
         public override void AI()
         {

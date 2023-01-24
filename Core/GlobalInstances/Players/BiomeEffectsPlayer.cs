@@ -116,6 +116,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     }
                 }
             }
+
+            // Disable Acid Rain in the Lost Colosseum.
+            if (SubworldSystem.IsActive<LostColosseum>())
+                Player.Calamity().noStupidNaturalARSpawns = true;
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.
@@ -186,6 +190,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Ensure that the player respawns at the campfire in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
             {
+                LostColosseum.HasBereftVassalAppeared = false;
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;
                 Main.spawnTileY = LostColosseum.CampfirePosition.Y;
             }

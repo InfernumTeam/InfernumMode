@@ -1,6 +1,7 @@
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -15,6 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         public float AngularOffset;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning");
@@ -28,6 +30,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.tileCollide = true;
             Projectile.timeLeft = 45;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(AngularOffset);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => AngularOffset = reader.ReadSingle();
 
         public override void AI()
         {

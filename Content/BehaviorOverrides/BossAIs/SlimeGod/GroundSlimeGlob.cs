@@ -30,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

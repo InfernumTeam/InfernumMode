@@ -5,6 +5,7 @@ using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Items;
 using InfernumMode.Core;
 using InfernumMode.Core.Balancing;
+using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
@@ -35,13 +36,13 @@ namespace InfernumMode
         {
             get;
             set;
-        } = 0f;
+        }
 
         public static float DraedonThemeTimer
         {
             get;
             set;
-        } = 0f;
+        }
 
         public static float ProvidenceArenaTimer
         {
@@ -117,10 +118,8 @@ namespace InfernumMode
             Utilities.UpdateMapIconList();
         }
 
-        public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketHandler.ReceivePacket(this, reader, whoAmI);
-
-        public override void AddRecipes() => RecipeUpdates.Update();
-
+        public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
+        
         public override object Call(params object[] args)
         {
             return InfernumModCalls.Call(args);

@@ -257,11 +257,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             int[] projectilesToDelete = new int[]
             {
                 ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(),
+                ModContent.ProjectileType<ApolloFallingPlasmaSpark>(),
                 ModContent.ProjectileType<ApolloFlamethrower>(),
                 ModContent.ProjectileType<ApolloPlasmaFireball>(),
                 ModContent.ProjectileType<ApolloRocket>(),
                 ModContent.ProjectileType<ApolloRocketInfernum>(),
-                ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(),
                 ModContent.ProjectileType<AresBeamExplosion>(),
                 ModContent.ProjectileType<AresCannonLaser>(),
                 ModContent.ProjectileType<AresGaussNukeProjectile>(),
@@ -294,11 +294,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<SuperheatedExofireGas>(),
                 ModContent.ProjectileType<ThanatosAresComboLaser>()
             };
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                if (projectilesToDelete.Contains(Main.projectile[i].type))
-                    Main.projectile[i].active = false;
-            }
+            Utilities.DeleteAllProjectiles(true, projectilesToDelete);
         }
 
         public static void SummonComplementMech(NPC npc)
@@ -319,7 +315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1500f;
             int complementMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, complementMechType, 1);
             NPC complementMech = Main.npc[complementMechIndex];
-
+            
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
             complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
             complementMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;

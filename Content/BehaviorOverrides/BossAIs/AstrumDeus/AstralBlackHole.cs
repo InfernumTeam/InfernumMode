@@ -15,6 +15,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Core;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -116,17 +117,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
             }
 
-            Main.spriteBatch.EnterShaderRegion();
+            // Draw a vortex blackglow effect if the reduced graphics config is not enabled.
+            if (!InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                Main.spriteBatch.EnterShaderRegion();
 
-            Vector2 diskScale = Projectile.scale * new Vector2(0.925f, 0.85f);
-            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(Projectile.Opacity);
-            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Turquoise);
-            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Turquoise);
-            GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+                Vector2 diskScale = Projectile.scale * new Vector2(0.925f, 0.85f);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(Projectile.Opacity);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Turquoise);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Turquoise);
+                GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            for (int i = 0; i < 2; i++)
-                Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
-            Main.spriteBatch.ExitShaderRegion();
+                for (int i = 0; i < 2; i++)
+                    Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.ExitShaderRegion();
+            }
 
             Vector2 blackHoleScale = Projectile.Size / blackHoleTexture.Size() * Projectile.scale;
             for (int i = 0; i < 2; i++)

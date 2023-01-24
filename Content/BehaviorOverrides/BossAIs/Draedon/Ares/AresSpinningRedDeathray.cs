@@ -78,9 +78,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Red;
+            Color color = Color.Lerp(Color.OrangeRed, Color.LawnGreen, (float)(1f + Math.Sin(Main.GlobalTimeWrappedHourly)) / 2f);
             color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
-            color.A = 25;
+            color.A = 20;
             return color * Projectile.Opacity;
         }
 

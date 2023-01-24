@@ -3,11 +3,13 @@ using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -86,6 +88,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             NPC.dontTakeDamage = true;
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Heads.Length);
+            for (int i = 0; i < Heads.Length; i++)
+            {
+                Heads ??= new DemonHead[3];
+                Heads[i] ??= new();
+
+                writer.Write(Heads[i].HoverOffset);
+                writer.Write(Heads[i].HoverOffsetAngle);
+                writer.WriteVector2(Heads[i].Center);
+                writer.WriteVector2(Heads[i].Velocity);
+            }
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            int headCount = reader.ReadInt32();
+            
+            Heads ??= new DemonHead[headCount];
+            for (int i = 0; i < headCount; i++)
+            {
+                Heads[i] ??= new();
+                
+                Heads[i].HoverOffset = reader.ReadSingle();
+                Heads[i].HoverOffsetAngle = reader.ReadSingle();
+                Heads[i].Center = reader.ReadVector2();
+                Heads[i].Velocity = reader.ReadVector2();
+            }
+        }
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.life = 20000;
 
         public override void AI()
@@ -159,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 else
                     NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 11f, 0.2f);
 
-                int transitionDelay = shootCounter == 0f ? 150 : 85;
+                int transitionDelay = shootCounter == 0f ? 150 : 105;
                 if (attackTimer >= transitionDelay)
                 {
                     attackSubstate = 1f;
@@ -195,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (attackTimer >= chargeDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Zombie93, NPC.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ShadowHydraCharge, NPC.Center);
                     attackSubstate = 2f;
                     attackTimer = 0f;
                     scal.netUpdate = true;

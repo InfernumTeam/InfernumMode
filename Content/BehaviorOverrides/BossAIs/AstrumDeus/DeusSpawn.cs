@@ -130,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Create a spread of homing astral plasma.
             for (int i = 0; i < 8; i++)
             {
-                Vector2 cinderVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 9.6f;
+                Vector2 cinderVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 5.5f;
                 Utilities.NewProjectileBetter(NPC.Center, cinderVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), 180, 0f);
             }
             return false;

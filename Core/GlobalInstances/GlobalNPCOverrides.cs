@@ -122,7 +122,7 @@ namespace InfernumMode.GlobalInstances
             {
                 for (int i = 1; i < (TotalPlayersAtStart ?? 1); i++)
                 {
-                    hpMultiplier += accumulatedFactor;
+                    hpMultiplier += accumulatedFactor * 0.5f;
                     accumulatedFactor += (1f - accumulatedFactor) / 3f;
                 }
             }

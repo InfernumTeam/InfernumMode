@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             // Frequently sync.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 12 == 11)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 3 == 2)
             {
                 Projectile.netUpdate = true;
                 Projectile.netSpam = 0;

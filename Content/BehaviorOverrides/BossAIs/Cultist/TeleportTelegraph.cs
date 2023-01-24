@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -22,6 +23,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.hide = true;
             Projectile.timeLeft = 45;
             Projectile.penetrate = -1;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.timeLeft);
+            writer.Write(Projectile.extraUpdates);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.timeLeft = reader.ReadInt32();
+            Projectile.extraUpdates = reader.ReadInt32();
         }
 
         public override void AI()

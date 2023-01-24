@@ -2,6 +2,7 @@ using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -48,9 +49,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < laserCount; i++)
                     {
                         Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
-                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ModContent.ProjectileType<DoGDeath>(), 96, 0f, Projectile.owner);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].MaxUpdates = 2;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.MaxUpdates = 2;
+                        });
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 96, 0f, Projectile.owner);
                     }
                 }
             }

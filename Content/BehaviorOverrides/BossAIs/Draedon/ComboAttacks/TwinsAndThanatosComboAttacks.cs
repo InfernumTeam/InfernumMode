@@ -18,6 +18,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -99,9 +100,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int blastID = isApollo ? ModContent.ProjectileType<ApolloPlasmaFireball>() : ModContent.ProjectileType<ArtemisGasFireballBlast>();
-                        int shotIndex = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * exoTwinsBlastShootSpeed, blastID, StrongerNormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(shotIndex) && isApollo)
-                            Main.projectile[shotIndex].ModProjectile<ApolloPlasmaFireball>().GasExplosionVariant = true;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball =>
+                        {
+                            if (!isApollo)
+                                return;
+
+                            fireball.ModProjectile<ApolloPlasmaFireball>().GasExplosionVariant = true;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * exoTwinsBlastShootSpeed, blastID, StrongerNormalShotDamage, 0f);
                     }
                 }
             }
@@ -281,9 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     {
                         Vector2 plasmaShootCenter = npc.Center + npc.SafeDirectionTo(target.Center) * 70f;
                         Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * plasmaBlastShootSpeed;
-                        int plasma = Utilities.NewProjectileBetter(plasmaShootCenter, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
-                        if (Main.projectile.IndexInRange(plasma))
-                            Main.projectile[plasma].ai[0] = Main.rand.NextBool().ToDirectionInt();
+                        Utilities.NewProjectileBetter(plasmaShootCenter, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f, -1, Main.rand.NextBool().ToDirectionInt());
                     }
                 }
 

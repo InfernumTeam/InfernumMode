@@ -1,3 +1,4 @@
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 
 namespace InfernumMode
 {
@@ -49,13 +51,24 @@ namespace InfernumMode
                 if (!Main.projectile[i].active || !projectileIDs.Contains(Main.projectile[i].type))
                     continue;
 
+                Projectile p = Main.projectile[i];
+
+                // Make the projectile fade away instead of dying if it's marked for such behavior.
+                if (p.Infernum().FadesAwayWhenManuallyKilled)
+                {
+                    p.Infernum().FadeAwayTimer = GlobalProjectileOverrides.FadeAwayTime;
+                    p.netSpam = 0;
+                    p.netUpdate = true;
+                    continue;
+                }
+
                 if (setToInactive)
                 {
-                    Main.projectile[i].active = false;
-                    Main.projectile[i].netUpdate = true;
+                    p.active = false;
+                    p.netUpdate = true;
                 }
                 else
-                    Main.projectile[i].Kill();
+                    p.Kill();
             }
         }
 
@@ -131,6 +144,24 @@ namespace InfernumMode
 
             DrawBackglow(projectile, backglowColor, backglowArea, frame);
             Main.spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, 0, 0f);
+        }
+
+        public static Projectile FindProjectileByIdentity(int identity, int ownerIndex)
+        {
+            // If in singleplayer, simply return the projectile at the designated index, as singleplayer will never have mismatching indices.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                return identity is <= (-1) or >= Main.maxProjectiles ? null : Main.projectile[identity];
+            }
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].identity != identity || Main.projectile[i].owner != ownerIndex || !Main.projectile[i].active)
+                    continue;
+
+                return Main.projectile[i];
+            }
+            return null;
         }
     }
 }

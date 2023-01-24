@@ -27,6 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.hostile = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 

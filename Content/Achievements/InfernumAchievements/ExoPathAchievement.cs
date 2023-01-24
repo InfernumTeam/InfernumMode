@@ -56,7 +56,10 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 (string, string) reverseCombination = new(combination.Item2, combination.Item1);
 
                 if (!CompletedExoMechCombinations.Contains(combination) && !CompletedExoMechCombinations.Contains(reverseCombination))
+                {
                     CompletedExoMechCombinations.Add(combination);
+                    AchievementsNotificationTracker.AddAchievementAsUpdated(this);
+                }
             }
         }
 

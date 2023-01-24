@@ -1,20 +1,28 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Items.Placeables.Furniture.DevPaintings;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.BossBars;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.BossBags;
+using InfernumMode.Content.Items.LoreItems;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Content.Subworlds;
+using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -28,7 +36,7 @@ using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     [AutoloadBossHead]
-    public class BereftVassal : ModNPC
+    public class BereftVassal : ModNPC, IBossChecklistHandler
     {
         public enum BereftVassalAttackType
         {
@@ -63,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public Player Target => Main.player[NPC.target];
 
-        public bool TargetIsOutsideOfColosseum => Target.Center.X < 14306f && SubworldSystem.IsActive<LostColosseum>();
+        public bool TargetIsOutsideOfColosseum => Target.Center.X < 18400f && SubworldSystem.IsActive<LostColosseum>();
 
         public BereftVassalAttackType CurrentAttack
         {
@@ -122,6 +130,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public const float Phase2LifeRatio = 0.6f;
 
+        // Boss Checklist things.
+        public string BossTitle => "Bereft Vassal";
+
+        // A little bit after Astrum Deus.
+        public float ProgressionValue => 17.75f;
+
+        public List<int> CollectibleItems => new()
+        {
+            ModContent.ItemType<BereftVassalTrophy>(),
+            ModContent.ItemType<KnowledgeBereftVassal>(),
+            ModContent.ItemType<WaterglassToken>(),
+            ModContent.ItemType<ThankYouPainting>(),
+        };
+
+        public int? SpawnItem => ModContent.ItemType<SandstormsCore>();
+
+        public string SpawnRequirement => $"Use a [i:{SpawnItem.Value}] at the pedestal in the heart of the desert.";
+
+        public string DespawnMessage => CalamityUtils.ColorMessage("Argus returns to quiet solitude at the center of the Colosseum.", new(28, 175, 189));
+
+        public bool AvailabilityCondition => NPC.downedAncientCultist;
+
+        public bool DefeatCondition => WorldSaveSystem.DownedBereftVassal;
+
+        public string HeadIconPath => "InfernumMode/Content/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassal_Head_Boss";
+
+        public List<int> ExtraNPCIDs => new()
+        {
+            ModContent.NPCType<GreatSandSharkNPC>()
+        };
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Argus, the Bereft Vassal");
@@ -138,7 +177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.width = 30;
             NPC.height = 44;
             NPC.defense = 12;
-            NPC.LifeMaxNERB(105000, 105000, 800000);
+            NPC.LifeMaxNERB(124000, 124000, 800000);
 
             // Fuck arbitrary Expert boosts.
             NPC.lifeMax /= 2;
@@ -156,6 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = Item.buyPrice(6, 25, 0, 0) / 5;
             NPC.netAlways = true;
+            NPC.BossBar = ModContent.GetInstance<BereftVassalBossBar>();
 
             NPC.Calamity().ShouldCloseHPBar = true;
         }
@@ -197,6 +237,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.chaseable = !sandSharkExists;
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
+
+            // Teleport above the target if stuck and alone.
+            if (!sandSharkExists && NPC.Center.Y >= Main.maxTilesY * 16f - 500f)
+            {
+                NPC.Center = Target.Center - Vector2.UnitY * 700f;
+                NPC.netUpdate = true;
+            }
+
+            // Disable DoTs because they're apparently overpowered enough to do damage while supposedly invulnerable.
+            if (sandSharkExists)
+                NPC.lifeRegen = 1000000;
+
+            // Ensure that the player receives the boss effects buff.
+            NPC.Calamity().KillTime = 1800;
 
             ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 
@@ -277,6 +331,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 case BereftVassalAttackType.RetreatAnimation:
                     DoBehavior_RetreatAnimation();
                     break;
+            }
+
+            if (Main.netMode != NetmodeID.SinglePlayer && CurrentAttack != BereftVassalAttackType.IdleState)
+            {
+                Main.hideUI = false;
+                Main.blockInput = false;
             }
 
             // Create a sandstorm when in the last phase.
@@ -380,7 +440,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                         NPC.velocity = new Vector2((Target.Center.X > NPC.Center.X).ToDirectionInt() * 19f, -23f);
                         NPC.netUpdate = true;
                     }
@@ -415,12 +475,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public void DoBehavior_SandBlobSlam()
         {
             int chargeCount = 2;
-            int repositionInterpolationTime = 32;
+            int repositionInterpolationTime = 22;
             int sandBlobCount = 30;
             int sandBlobCount2 = 0;
             int slamDelay = 36;
-            int attackTransitionDelay = 96;
-            float slamSpeed = 28f;
+            int attackTransitionDelay = 60;
+            float slamSpeed = 30f;
             float sandBlobAngularArea = 0.74f;
             float sandBlobSpeed = 22f;
             float maxFlySpeed = 22f;
@@ -428,11 +488,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (Enraged)
             {
                 chargeCount++;
-                repositionInterpolationTime -= 11;
+                repositionInterpolationTime -= 7;
                 sandBlobCount += 5;
                 sandBlobCount2 += 9;
                 slamDelay -= 14;
-                attackTransitionDelay -= 54;
+                attackTransitionDelay -= 27;
                 slamSpeed += 4f;
                 maxFlySpeed += 9f;
             }
@@ -458,7 +518,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                 // If the attack goes on for longer than expected the vassal will interpolant towards the destination faster and faster until it's eventually reached.
                 float flySpeedInterpolant = Utils.GetLerpValue(0f, repositionInterpolationTime, AttackTimer, true);
-                float positionIncrement = MathHelper.Lerp(0.32f, 6.4f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.18f;
+                float positionIncrement = MathHelper.Lerp(0.32f, 7f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.26f;
                 float flySpeed = MathHelper.Lerp(2f, maxFlySpeed, flySpeedInterpolant);
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 275f;
 
@@ -466,7 +526,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // versus what it actually is.
                 NPC.Center = NPC.Center.MoveTowards(hoverDestination, positionIncrement);
                 if (!NPC.WithinRange(hoverDestination, 1000f))
-                    NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.04f);
+                    NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.05f);
 
                 // Perform movement calculations.
                 Vector2 idealVelocity = NPC.SafeDirectionTo(hoverDestination) * flySpeed;
@@ -535,7 +595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Check for collision. This does not apply if current above the target's bottom.
                 bool hasHitGround = Collision.SolidCollision(NPC.BottomRight - Vector2.UnitY * 4f, NPC.width, 6, true);
                 bool ignoreTiles = NPC.Bottom.Y < startingTargetPositionY;
-                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 600f;
+                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 900f;
                 if (hasHitGround && !ignoreTiles || pretendFakeCollisionHappened)
                 {
                     // Perform ground hit effects once a collision is registered. This involves releasing sand rubble into the air and creating a damaging ground area of effect.
@@ -551,9 +611,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
-                            int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                            });
+                            Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
 
                         // Release second spread of sand that goes higher up if necessary.
@@ -565,15 +628,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                                 // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
                                 sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
-
                                 Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed * 1.18f;
-                                int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                                if (Main.projectile.IndexInRange(blobIndex))
-                                    Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                                {
+                                    blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                                });
+                                Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                             }
                         }
 
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
                     }
 
                     AttackTimer = pretendFakeCollisionHappened ? attackTransitionDelay - 36f : 0f;
@@ -693,9 +758,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                             Vector2 sandVelocity = -Vector2.UnitY.RotatedBy(sandVelocityOffsetAngle) * sandBlobSpeed;
                             Vector2 sandSpawnPosition = NPC.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
-                            int blobIndex = Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
-                            if (Main.projectile.IndexInRange(blobIndex))
-                                Main.projectile[blobIndex].ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(blob =>
+                            {
+                                blob.ModProjectile<SandBlob>().StartingYPosition = Target.Bottom.Y;
+                            });
+                            Utilities.NewProjectileBetter(sandSpawnPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), 190, 0f);
                         }
                     }
                 }
@@ -801,7 +869,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         float waveShootOffsetAngle = MathHelper.Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
                         Vector2 waveVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(waveShootOffsetAngle) * waveSpeed;
-                        Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), 270, 0f);
                     }
 
                     aimDirection = (MathHelper.WrapAngle(NPC.AngleTo(Target.Center) - SpearRotation + MathHelper.PiOver4) > 0f).ToDirectionInt();
@@ -953,12 +1021,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Create the ground slam effect.
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
 
                         // Create the wave effect.
                         for (int i = -1; i <= 1; i += 2)
                         {
                             int wave = Utilities.NewProjectileBetter(NPC.Center, Vector2.UnitX * i * waveSpeed, ModContent.ProjectileType<GroundSlamWave>(), 200, 0f);
+
+                            NPC.Bottom = Utilities.GetGroundPositionFrom(NPC.Bottom);
                             Main.projectile[wave].Bottom = NPC.Bottom;
                         }
 
@@ -1120,9 +1190,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         Vector2 spearShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, WaterSpear.Gravity, spearShootSpeed, out _);
                         spearShootVelocity.Y -= 4.5f;
 
-                        int spearIndex = Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                        if (Main.projectile.IndexInRange(spearIndex))
-                            Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                        {
+                            spear.ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                        });
+                        Utilities.NewProjectileBetter(shootPosition, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                     }
                 }
             }
@@ -1240,9 +1312,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 spearShootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 6f)) * 13f;
-                    int spearIndex = Utilities.NewProjectileBetter(NPC.Top, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
-                    if (Main.projectile.IndexInRange(spearIndex))
-                        Main.projectile[spearIndex].ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
+                    {
+                        spear.ModProjectile<WaterSpear>().StartingYPosition = Target.Bottom.Y;
+                    });
+                    Utilities.NewProjectileBetter(NPC.Top, spearShootVelocity, ModContent.ProjectileType<WaterSpear>(), 190, 0f);
                 }
             }
 
@@ -1253,7 +1328,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 190, 0f);
+                        Utilities.NewProjectileBetter(NPC.Bottom, Vector2.UnitX * NPC.spriteDirection * 8f, ProjectileID.DD2OgreSmash, 0, 0f);
 
                         hasHitGround = 1f;
                         NPC.velocity = Vector2.Zero;
@@ -1563,6 +1638,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             SpearOpacity = 0f;
             SpearRotation = 0f;
 
+            // Reset the DoT timer.
+            NPC.lifeRegen = 0;
+
             // Teleport to the surface on the first frame, and look away from the target.
             if (AttackTimer == 1f)
             {
@@ -1805,11 +1883,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            // Expert+ bag.
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BereftVassalBossBag>()));
 
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
 
-            // Weapons
+            // Weapons.
             int[] weapons = new int[]
             {
                 ModContent.ItemType<AridBattlecry>(),
@@ -1817,9 +1896,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<TheGlassmaker>(),
                 ModContent.ItemType<WanderersShell>()
             };
+
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
             normalOnly.Add(ModContent.ItemType<WaterglassToken>());
             normalOnly.Add(DropHelper.CalamityStyle(DropHelper.NormalWeaponDropRateFraction, weapons));
+
+            // Trophy (always directly from boss, never in bag).
+            npcLoot.Add(ModContent.ItemType<BereftVassalTrophy>(), 10);
+
+            // Lore.
+            npcLoot.AddConditionalPerPlayer(() => !WorldSaveSystem.DownedBereftVassal, ModContent.ItemType<KnowledgeBereftVassal>(), desc: DropHelper.FirstKillText);
+        }
+
+        public override void OnKill()
+        {
+            // Mark the bereft vassal as defeated.
+            WorldSaveSystem.DownedBereftVassal = true;
+            CalamityNetcode.SyncWorld();
         }
 
         public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);

@@ -3,6 +3,7 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -112,6 +113,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
+            // Do not take damage.
+            npc.dontTakeDamage = true;
+
             float chargeInterpolant = Utils.GetLerpValue(40f, 110f, attackTimer, true);
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * new Vector2(7f, -13f);
 
@@ -121,7 +125,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
 
             if (attackTimer >= 150f)
+            {
+                npc.dontTakeDamage = false;
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_ErraticCharges(NPC npc, Player target, ref float attackTimer)
@@ -166,13 +173,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
 
                     Vector2 bombSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-maxBombOffset, maxBombOffset, bombOffsetInterpolant % 1f), -maxBombOffset).RotatedBy(bombSpawnOffsetAngle);
-                    int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY.RotatedBy(bombSpawnOffsetAngle) * 17f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(bomb))
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                     {
-                        Main.projectile[bomb].timeLeft = 180;
-                        Main.projectile[bomb].ModProjectile<DemonicBomb>().ExplosionRadius = bombRadius;
-                        Main.projectile[bomb].ModProjectile<DemonicBomb>().ExplodeIntoDarts = true;
-                    }
+                        bomb.timeLeft = 180;
+                        bomb.ModProjectile<DemonicBomb>().ExplodeIntoDarts = true;
+                    });
+                    Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY.RotatedBy(bombSpawnOffsetAngle) * 17f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, bombRadius);
                 }
             }
 

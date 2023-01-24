@@ -45,6 +45,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 Projectile.localAI[1] = 1f;
             }
 
+            DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = Projectile.whoAmI;
+
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
             // Play idle sounds.
@@ -55,6 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             Time++;
         }
+        
         public override bool PreDraw(ref Color lightColor)
         {
             float leftCleaveAngularOffset = MathHelper.Pi * -0.18f;
@@ -113,6 +116,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override void Kill(int timeLeft)
         {
+            DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = -1;
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < Main.maxPlayers; i++)

@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 GeneralParticleHandler.SpawnParticle(slimeParticle);
 
             }
-            if (deathTimer >= deathAnimationLength)
+            if (deathTimer >= deathAnimationLength || BossRushEvent.BossRushActive)
             {
                 // Die
                 KillKingSlime(npc, target);

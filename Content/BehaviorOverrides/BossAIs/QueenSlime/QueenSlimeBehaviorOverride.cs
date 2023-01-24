@@ -246,7 +246,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int crystalCreationCount = 5;
             int crystalCount = 9;
             int jumpDelay = 15;
-            int crystalShatterTime = 40;
+            int crystalShatterTime = 80;
             float fallSpeed = 0.8f;
 
             if (InPhase2(npc))
@@ -289,9 +289,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     for (int i = 0; i < crystalCount; i++)
                     {
                         Vector2 crystalSpawnOffset = (MathHelper.TwoPi * i / crystalCount).ToRotationVector2() * 450f;
-                        int crystal = Utilities.NewProjectileBetter(target.Center + crystalSpawnOffset, Vector2.Zero, ModContent.ProjectileType<ShatteringCrystal>(), 125, 0f);
-                        if (Main.projectile.IndexInRange(crystal))
-                            Main.projectile[crystal].ai[1] = MathHelper.TwoPi * i / crystalCount;
+                        Utilities.NewProjectileBetter(target.Center + crystalSpawnOffset, Vector2.Zero, ModContent.ProjectileType<ShatteringCrystal>(), 125, 0f, -1, 0f, MathHelper.TwoPi * i / crystalCount);
                     }
                 }
 
@@ -485,7 +483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_CrownLasers(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float crownIsAttached)
         {
-            int gelReleaseRate = 75;
+            int gelReleaseRate = 90;
             int gelReleaseCount = 8;
             ref float crownShouldReturn = ref npc.Infernum().ExtraAI[0];
             ref float hasSummonedCrown = ref npc.Infernum().ExtraAI[1];

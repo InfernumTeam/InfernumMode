@@ -24,6 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 360;
             Projectile.penetrate = -1;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()

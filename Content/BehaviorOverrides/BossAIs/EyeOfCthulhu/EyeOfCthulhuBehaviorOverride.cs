@@ -717,7 +717,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         int bloodShotCount = Main.rand.Next(3, 6);
                         for (int i = 0; i < bloodShotCount; i++)
                         {
-                            Vector2 velocity = shootDirection * 10f + Main.rand.NextVector2Square(-5f, 5f);
+                            Vector2 velocity = shootDirection * 6.4f + Main.rand.NextVector2Square(-3f, 3f);
                             Utilities.NewProjectileBetter(shootCenter - shootDirection * 5f, velocity, ModContent.ProjectileType<BloodShot>(), 80, 0f);
                             int bloodParticleCount = phase3 ? 7 : 4;
                             for (int j = 0; j < bloodParticleCount; j++)

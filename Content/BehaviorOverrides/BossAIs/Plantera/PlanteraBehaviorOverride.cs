@@ -671,7 +671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             bulbHueInterpolant = Utils.GetLerpValue(105f, 30f, transitionCountdown, true);
 
             // Focus on the boss as it transforms.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
+            if (npc.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
@@ -689,7 +689,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             // Focus on the boss as it transforms.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2850f))
+            if (npc.WithinRange(Main.LocalPlayer.Center, 2850f))
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);

@@ -461,6 +461,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, sourceRectangle, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale * 0.75f, spriteEffects, 0f);
             }
         }
+
         public void DrawShaderOverlay(Texture2D texture, Texture2D glowTexture, Rectangle sourceRectangle, Color lightColor, float opacity, Vector2 origin, SpriteEffects spriteEffects)
         {
             Main.spriteBatch.EnterShaderRegion();
@@ -473,6 +474,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             Main.spriteBatch.ExitShaderRegion();
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;

@@ -7,6 +7,8 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -137,7 +139,7 @@ namespace InfernumMode.Content.Tiles
             WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
 
             if (Main.netMode != NetmodeID.SinglePlayer)
-                NetMessage.SendData(MessageID.WorldData);
+                PacketManager.SendPacket<ColosseumPortalOpenPacket>();
 
             // Create a lens flare.
             Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
@@ -198,6 +200,16 @@ namespace InfernumMode.Content.Tiles
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+            // Create light.
+            for (float y = end.Y; y < start.Y; y += 16f)
+            {
+                float completionRatio = Utils.GetLerpValue(start.Y, end.Y, y, true);
+                float width = PillarWidthFunction(completionRatio);
+                Vector2 lightPosition = new(center.X, y);
+                DelegateMethods.v3_1 = Color.White.ToVector3() * 0.9f;
+                Utils.PlotTileLine(lightPosition - Vector2.UnitX * width * 0.5f, lightPosition + Vector2.UnitX * width * 0.5f, 8f, DelegateMethods.CastLight);
+            }
         }
 
         public override void MouseOver(int i, int j)

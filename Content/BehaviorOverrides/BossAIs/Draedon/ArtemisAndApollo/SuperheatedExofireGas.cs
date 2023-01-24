@@ -1,9 +1,8 @@
 using CalamityMod;
-using InfernumMode.Core.ILEditingStuff;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -11,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class SuperheatedExofireGas : ModProjectile
+    public class SuperheatedExofireGas : ModProjectile, IAdditiveDrawer
     {
         public ref float LightPower => ref Projectile.ai[0];
 
@@ -52,21 +51,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.velocity *= 0.985f;
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)
-        {
-            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
-        }
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
 
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 20;
             if (!Projectile.Hitbox.Intersects(screenRectangle))
-                return false;
+                return;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -74,8 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
             Color drawColor = new Color(255, 188, 89) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
-            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
-            return false;
+            spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
         }
     }
 }

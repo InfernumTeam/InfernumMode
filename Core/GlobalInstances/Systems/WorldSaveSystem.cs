@@ -35,7 +35,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             set;
-        } = false;
+        }
 
         public static Rectangle ProvidenceArena
         {
@@ -73,6 +73,18 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        public static bool DownedBereftVassal
+        {
+            get;
+            set;
+        }
+
+        public static bool DisplayedEmodeWarningText
+        {
+            get;
+            set;
+        }
+
         public static int LostColosseumPortalAnimationTimer
         {
             get;
@@ -100,6 +112,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("HasSepulcherAnimationBeenPlayed");
             if (HasOpenedLostColosseumPortal)
                 downed.Add("HasOpenedLostColosseumPortal");
+            if (DownedBereftVassal)
+                downed.Add("DownedBereftVassal");
+            if (DisplayedEmodeWarningText)
+                downed.Add("DisplayedEmodeWarningText");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -122,6 +138,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             HasOpenedLostColosseumPortal = downed.Contains("HasOpenedLostColosseumPortal");
+            DownedBereftVassal = downed.Contains("DownedBereftVassal");
+            DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
@@ -138,6 +156,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasProvidenceDoorShattered = false;
             HasSepulcherAnimationBeenPlayed = false;
             HasOpenedLostColosseumPortal = false;
+            DownedBereftVassal = false;
 
             ProvidenceArena = Rectangle.Empty;
             ProvidenceDoorXPosition = 0;

@@ -39,7 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Die if necessary segments are not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active || !Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
-                npc.active = false;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.active = false;
                 return;
             }
 
@@ -175,37 +176,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.defense = 0;
             npc.takenDamageMultiplier = 5.6f;
 
-            if (npc.type == ModContent.NPCType<ThanatosBody1>())
-                npc.ModNPC<ThanatosBody1>().SmokeDrawer.ParticleSpawnRate = 9999999;
-            if (npc.type == ModContent.NPCType<ThanatosBody2>())
-                npc.ModNPC<ThanatosBody2>().SmokeDrawer.ParticleSpawnRate = 9999999;
-            if (npc.type == ModContent.NPCType<ThanatosTail>())
-                npc.ModNPC<ThanatosTail>().SmokeDrawer.ParticleSpawnRate = 9999999;
             if (frameType == (int)ThanatosFrameType.Open)
             {
                 // Emit light.
                 Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
-                // Emit smoke.
                 npc.takenDamageMultiplier = 242f;
-                if (npc.Opacity > 0.6f)
-                {
-                    if (npc.type == ModContent.NPCType<ThanatosBody1>())
-                    {
-                        npc.ModNPC<ThanatosBody1>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-                        npc.ModNPC<ThanatosBody1>().SmokeDrawer.ParticleSpawnRate = 5;
-                    }
-                    if (npc.type == ModContent.NPCType<ThanatosBody2>())
-                    {
-                        npc.ModNPC<ThanatosBody2>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-                        npc.ModNPC<ThanatosBody2>().SmokeDrawer.ParticleSpawnRate = 5;
-                    }
-                    if (npc.type == ModContent.NPCType<ThanatosTail>())
-                    {
-                        npc.ModNPC<ThanatosTail>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-                        npc.ModNPC<ThanatosTail>().SmokeDrawer.ParticleSpawnRate = 5;
-                    }
-                }
                 npc.Calamity().DR = OpenSegmentDR;
                 if (head.ai[0] >= 100f)
                     npc.takenDamageMultiplier *= 2f;
@@ -225,14 +201,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (head.Infernum().ExtraAI[17] >= 1f)
                 npc.takenDamageMultiplier *= 0.5f;
-
-            // Handle smoke updating.
-            if (npc.type == ModContent.NPCType<ThanatosBody1>())
-                npc.ModNPC<ThanatosBody1>().SmokeDrawer.Update();
-            if (npc.type == ModContent.NPCType<ThanatosBody2>())
-                npc.ModNPC<ThanatosBody2>().SmokeDrawer.Update();
-            if (npc.type == ModContent.NPCType<ThanatosTail>())
-                npc.ModNPC<ThanatosTail>().SmokeDrawer.Update();
 
             // Become vulnerable on the map.
             npc.ModNPC.GetType().GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, frameType == (int)ThanatosFrameType.Open);
@@ -259,7 +227,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            npc.ModNPC<ThanatosBody1>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
 

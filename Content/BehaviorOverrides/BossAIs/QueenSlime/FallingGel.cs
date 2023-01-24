@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             Projectile.Opacity = Utils.GetLerpValue(360f, 354f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
             Projectile.velocity.X *= 0.99f;
-            if (Projectile.velocity.Y < 8f)
+            if (Projectile.velocity.Y < 7f)
                 Projectile.velocity.Y += 0.3f;
         }
 

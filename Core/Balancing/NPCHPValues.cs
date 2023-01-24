@@ -100,7 +100,7 @@ namespace InfernumMode.Core.Balancing
             [NPCID.GolemFistLeft] = BossRushEvent.BossRushActive ? 1250000 : 198700,
             [NPCID.GolemFistRight] = BossRushEvent.BossRushActive ? 1250000 : 198700,
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 136031,
-            [ModContent.NPCType<GreatSandShark>()] = 95000,
+            [ModContent.NPCType<GreatSandShark>()] = 107400,
             [NPCID.DukeFishron] = BossRushEvent.BossRushActive ? 1330000 : 100250,
             [NPCID.HallowBoss] = BossRushEvent.BossRushActive ? 2960000 : 192000,
             [ModContent.NPCType<RavagerHead>()] = BossRushEvent.BossRushActive ? -1 : 18000,

@@ -193,7 +193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         public static void DoSpawnAnimationStuff(NPC npc, Player target, float animationTimer, ref float animationChargeTimer)
         {
             // Focus on the boss as it spawns.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
+            if (npc.WithinRange(Main.LocalPlayer.Center, 2000f))
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);

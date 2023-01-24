@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -29,6 +30,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.timeLeft = Lifetime;
             Projectile.penetrate = 1;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.tileCollide);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.tileCollide = reader.ReadBoolean();
+
         public override void AI()
         {
             // Get a player to home to.

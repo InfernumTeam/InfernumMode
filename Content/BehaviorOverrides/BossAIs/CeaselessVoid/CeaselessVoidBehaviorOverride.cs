@@ -8,6 +8,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -126,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
             if (currentPhase == 1f && phase3)
             {
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<CelestialBarrage>(), ModContent.ProjectileType<ConvergingCelestialBarrage>(), ModContent.ProjectileType<DarkEnergyBolt>(),
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<CelestialBarrage>(), ModContent.ProjectileType<TelegraphedCelestialBarrage>(), ModContent.ProjectileType<DarkEnergyBolt>(),
                     ModContent.ProjectileType<EnergyTelegraph>(), ModContent.ProjectileType<SpiralEnergyLaser>());
                 currentPhase = 2f;
                 SelectNewAttack(npc);
@@ -224,9 +225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     for (int i = 0; i < 8; i++)
                     {
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9.6f;
-                        int fuckYou = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(fuckYou))
-                            Main.projectile[fuckYou].ai[0] = 270 / 4;
+                        Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<DoGBeam>(), 0, 0f, -1, 270f / 4f);
                     }
                 }
             }
@@ -269,11 +268,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
-            int chargeTime = 37;
+            int chargeTime = 39;
             int repositionTime = 210;
             int chargeCount = 3;
             float hoverOffset = 640f;
-            float chargeDistance = hoverOffset + 975f;
+            float chargeDistance = hoverOffset + 800f;
             float scaleFactorDelta = 0f;
             if (phase2)
             {
@@ -285,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 chargeTime -= 8;
                 scaleFactorDelta += 0.8f;
-                chargeDistance += 900f;
+                chargeDistance += 500f;
             }
             if (BossRushEvent.BossRushActive)
                 scaleFactorDelta += 0.6f;
@@ -312,7 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
                     // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
-                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 42f)
+                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 60f)
                     {
                         attackTimer = 0f;
                         attackState = 1f;
@@ -324,9 +323,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         SoundEngine.PlaySound(YanmeisKnife.HitSound, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(tear =>
+                            {
+                                tear.ModProjectile<RealityTear>().ScaleFactorDelta = scaleFactorDelta;
+                            });
                             tearProjectileIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RealityTear>(), 0, 0f);
-                            if (Main.projectile.IndexInRange((int)tearProjectileIndex))
-                                Main.projectile[(int)tearProjectileIndex].localAI[0] = scaleFactorDelta;
                         }
                     }
                     break;
@@ -345,7 +346,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                         if (chargeCounter >= chargeCount)
                         {
-                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
+                            for (int i = 0; i < 3; i++)
+                            {
+                                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<RealityTear>());
+                                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
+                            }
                             SelectNewAttack(npc);
                         }
                         else
@@ -418,16 +423,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         List<Vector2> telegraphPoints = new();
                         for (int frames = 1; frames < 84; frames += 4)
                         {
-                            Vector2 linePosition = ConvergingCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
+                            Vector2 linePosition = TelegraphedCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
                             telegraphPoints.Add(linePosition);
                         }
-
-                        int shard = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(shard))
+                        
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            Main.projectile[shard].ai[0] = i / (float)barrageCount;
-                            Main.projectile[shard].ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
-                        }
+                            telegraph.ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f, -1, i / (float)barrageCount);
                     }
                     npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;
@@ -442,7 +446,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
                     Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ConvergingCelestialBarrage>(), 250, 0f, -1, 0f, playerShootDirection);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<TelegraphedCelestialBarrage>(), 250, 0f, -1, 0f, playerShootDirection);
                 }
             }
 
@@ -500,16 +504,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer % burstShootRate == burstShootRate - 1f && attackTimer >= shootDelay && attackTimer < 400f)
             {
                 SoundEngine.PlaySound(SoundID.Item28, npc.Center);
-                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                for (int i = 0; i < laserBurstCount; i++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int j = -1; j <= 1; j += 2)
+                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < laserBurstCount; i++)
                     {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
-                        Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
-                        int laser = Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
-                        if (Main.projectile.IndexInRange(laser))
-                            Main.projectile[laser].localAI[1] = j * 0.5f;
+                        for (int j = -1; j <= 1; j += 2)
+                        {
+                            Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
+                            Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                            {
+                                laser.localAI[1] = j * 0.5f;
+                            });
+                            Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
+                        }
                     }
                 }
             }
@@ -590,7 +600,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create the black hole on the first frame.
             if (hasCreatedBlackHole == 0f)
             {
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ConvergingCelestialBarrage>(), ModContent.ProjectileType<SpiralEnergyLaser>(), ModContent.ProjectileType<CelestialBarrage>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<TelegraphedCelestialBarrage>(), ModContent.ProjectileType<SpiralEnergyLaser>(), ModContent.ProjectileType<CelestialBarrage>());
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AllConsumingBlackHole>(), blackHoleDamage, 0f);
@@ -644,9 +654,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound with { Volume = 2f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<CosmicExplosion>().MaxRadius = 1250f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<CosmicExplosion>().MaxRadius = 1250f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 0, 0f);
                 }
 
                 npc.life = 1;

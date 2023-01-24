@@ -1,7 +1,9 @@
 using CalamityMod.CalPlayer;
+using CalamityMod.Particles;
 using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Players
@@ -24,7 +26,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // This hook is called for all players. As such, a Main.myPlayer check is necessary to ensure that only one client sends packets to
             // spawn the cinder projectiles.
             // Furthermore, cinders are only spawned if the player is in the profaned temple and at a sufficient depth as to be considered within the underworld.
-            if (Main.myPlayer != Player.whoAmI || !inProfanedTemple || !Player.ZoneUnderworldHeight)
+            if (Main.myPlayer != Player.whoAmI || !inProfanedTemple || !Player.ZoneUnderworldHeight || Main.netMode == NetmodeID.Server)
                 return;
 
             bool createALotOfHolyCinders = CreateALotOfHolyCinders;
@@ -51,10 +53,15 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
                 }
 
-                if (Main.rand.NextBool(createALotOfHolyCinders ? 2 : 6))
+                if (Main.rand.NextBool(createALotOfHolyCinders ? 2 : 15))
                     cinderVelocity.X *= -1f;
 
-                Utilities.NewProjectileBetter(Player.Center + cinderSpawnOffset, cinderVelocity, ModContent.ProjectileType<ProfanedTempleCinder>(), 0, 0f);
+                var cinder = new ProfanedTempleCinder()
+                {
+                    Position = Player.Center + cinderSpawnOffset,
+                    Velocity = cinderVelocity
+                };
+                GeneralParticleHandler.SpawnParticle(cinder);
             }
         }
     }

@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            Projectile.width = 100;
+            Projectile.width = 85;
             Projectile.height = 56;
             Projectile.hostile = true;
             Projectile.alpha = 255;
@@ -80,8 +80,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 InitialSpinDirection = Projectile.velocity.ToRotation();
 
             // Adjust the size if this is a super laser.
-            if (Projectile.width <= 102f && SuperLaser)
-                Projectile.width = 200;
+            if (Projectile.width != 160 && SuperLaser)
+                Projectile.width = 160;
 
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>() && Main.npc[OwnerIndex].Opacity > 0.35f)
             {
@@ -169,8 +169,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (float offset = 0f; offset < 6f; offset += 0.75f)
                 {
                     BeamDrawer.DrawPixelated(points, -Main.screenPosition, 28);
-                    BeamDrawer.DrawPixelated(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
-                    BeamDrawer.DrawPixelated(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 11);
+                    BeamDrawer.DrawPixelated(points, (Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 9);
+                    BeamDrawer.DrawPixelated(points, -(Main.GlobalTimeWrappedHourly * 1.8f).ToRotationVector2() * offset - Main.screenPosition, 9);
                 }
             }
         }

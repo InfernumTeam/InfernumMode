@@ -828,9 +828,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f);
-                            if (Main.projectile.IndexInRange(blob))
-                                Main.projectile[blob].ai[1] = target.Center.Y;
+                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f, -1, 0f, target.Center.Y);
+
                             for (int i = 0; i < 10; i++)
                                 CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
                         }
@@ -850,9 +849,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < chargeBlobCount; i++)
                         {
                             Vector2 blobVelocity = (shootDirection * 14.5f + Main.rand.NextVector2Circular(4f, 4f)) * Math.Abs(blobSpeedFactor);
-                            int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f);
-                            if (Main.projectile.IndexInRange(blob))
-                                Main.projectile[blob].ai[1] = target.Center.Y;
+                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f, -1, 0f, target.Center.Y);
+
                             for (int j = 0; j < chargeBlobCount * 2; j++)
                                 CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
 
@@ -1189,9 +1187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     {
                         Vector2 ichorVelocity = -Vector2.UnitY.RotatedByRandom(0.2f) * 7f;
                         ichorVelocity.X += npc.velocity.X * 0.02f;
-                        int blob = Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f);
-                        if (Main.projectile.IndexInRange(blob))
-                            Main.projectile[blob].ai[1] = target.Center.Y;
+                        Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f, -1, 0f, target.Center.Y);
                     }
                 }
 
@@ -1279,9 +1275,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                                     float projectileShootInterpolant = i / (float)(ichorBlobCount - 1f);
                                     float horizontalShootSpeed = MathHelper.Lerp(-10f, 10f, projectileShootInterpolant) + Main.rand.NextFloatDirection() * 0.64f;
                                     Vector2 blobVelocity = new(horizontalShootSpeed, -7f);
-                                    int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f);
-                                    if (Main.projectile.IndexInRange(blob))
-                                        Main.projectile[blob].ai[1] = target.Center.Y;
+                                    Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f, -1, 0f, target.Center.Y);
                                 }
                             }
 

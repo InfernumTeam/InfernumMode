@@ -29,10 +29,17 @@ namespace InfernumMode.Core.ILEditingStuff
                 bool result = true;
                 foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
-                    if (g != null && g is CalamityGlobalNPC && OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
+                    Type t = g.GetType().BaseType;
+                    bool overridableNPC = g is null or CalamityGlobalNPC;
+                    if (InfernumMode.EmodeIsActive)
                     {
-                        continue;
+                        Type emodeGlobalNPCType = InfernumMode.FargowiltasSouls.Code.GetType("FargowiltasSouls.EternityMode.EModeNPCBehaviour");
+                        overridableNPC |= g.GetType().IsSubclassOf(emodeGlobalNPCType);
                     }
+
+                    if (overridableNPC && OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
+                        continue;
+
                     result &= g.PreAI(npc);
                 }
                 if (result && npc.ModNPC != null)
@@ -73,6 +80,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 var globalNPCs = (Instanced<GlobalNPC>[])typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).GetValue(npc);
                 HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
+
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                     return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
@@ -158,10 +166,10 @@ namespace InfernumMode.Core.ILEditingStuff
                 bool result = true;
                 foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
-                    if (g != null && g is CalamityGlobalProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
-                    {
+                    bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
+                    if (overridableProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                         continue;
-                    }
+
                     result &= g.PreAI(projectile);
                 }
                 if (result && projectile.ModProjectile != null)
@@ -183,7 +191,8 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
-                    if (g is not null and CalamityGlobalProjectile)
+                    bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
+                    if (overridableProjectile)
                         continue;
 
                     result &= g.PreDraw(projectile, ref lightColor);

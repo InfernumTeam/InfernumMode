@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (target.HasBuff(ModContent.BuffType<Nightwither>()))
                 target.ClearBuff(ModContent.BuffType<Nightwither>());
 
-            // Play an introductio
+            // Play an introduction.
             if (introSoundTimer < IntroSoundLength)
             {
                 if (introSoundTimer == 0f)
@@ -148,7 +148,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             npc.dontTakeDamage = NPC.CountNPCS(NPCID.MoonLordFreeEye) < 3;
 
             // Start the AI and create the arena.
-            if (npc.localAI[3] == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 Player closest = Main.player[Player.FindClosest(npc.Center, 1, 1)];
                 Point closestTileCoords = closest.Center.ToTileCoordinates();
@@ -169,7 +169,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         }
                     }
                 }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int[] bodyPartIndices = new int[3];
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int handIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, 0, 0f, 0f, i, npc.whoAmI);
+                        bodyPartIndices[i] = handIndex;
+                    }
+
+                    int headIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, 0, 0f, 0f, 0f, npc.whoAmI);
+                    Main.npc[headIndex].netUpdate = true;
+                    bodyPartIndices[2] = headIndex;
+
+                    for (int i = 0; i < 3; i++)
+                        npc.localAI[i] = bodyPartIndices[i];
+
+                    // Reset hand AIs.
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].active)
+                        {
+                            Main.npc[i].ai[0] = 0f;
+                            Main.npc[i].netUpdate = true;
+                        }
+                    }
+                }
+
                 npc.localAI[3] = 1f;
+                attackTimer = 0f;
                 attackState = (int)MoonLordAttackState.SpawnEffects;
                 npc.netUpdate = true;
             }
@@ -211,6 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             despawnTimer = 0f;
 
             MoonLordAttackState currentAttack = (MoonLordAttackState)(int)attackState;
+            
             switch (currentAttack)
             {
                 case MoonLordAttackState.SpawnEffects:
@@ -273,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void HandleBodyPartDeathTriggers(NPC npc, double realDamage)
         {
-            int minLife = (int)(npc.lifeMax * 0.02);
+            int minLife = (int)(npc.lifeMax * 0.18) + 1;
             if (npc.life - realDamage > minLife)
                 return;
 
@@ -290,52 +320,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Roar after a bit of time has passed.
             if (attackTimer == 30f)
                 SoundEngine.PlaySound(SoundID.Zombie92, npc.Center);
-
-            if (Main.netMode != NetmodeID.Server && !IntroScreenManager.ScreenIsObstructed)
-            {
-                attackTimer = 35f;
-                npc.netUpdate = true;
-            }
-
-            // Create arms/head and go to the next attack state.
+            
             if (attackTimer >= 35f)
-            {
                 SelectNextAttack(npc);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int[] bodyPartIndices = new int[3];
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int handIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, npc.whoAmI);
-                        Main.npc[handIndex].ai[2] = i;
-                        Main.npc[handIndex].netUpdate = true;
-                        bodyPartIndices[i] = handIndex;
-                    }
-
-                    int headIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, npc.whoAmI);
-                    Main.npc[headIndex].netUpdate = true;
-                    bodyPartIndices[2] = headIndex;
-
-                    // Mark the owner of the body parts.
-                    for (int i = 0; i < 3; i++)
-                        Main.npc[bodyPartIndices[i]].ai[3] = npc.whoAmI;
-
-                    for (int i = 0; i < 3; i++)
-                        npc.localAI[i] = bodyPartIndices[i];
-
-                    // Reset hand AIs.
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].active)
-                        {
-                            Main.npc[i].ai[0] = 0f;
-                            Main.npc[i].netUpdate = true;
-                        }
-                    }
-                }
-            }
-            npc.netSpam = 0;
-            npc.netUpdate = true;
         }
 
         public static void DoBehavior_DeathEffects(NPC npc, ref float attackTimer)
@@ -511,7 +498,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 ModContent.ProjectileType<LunarFlare>(),
                 ModContent.ProjectileType<LunarFlareTelegraph>(),
                 ModContent.ProjectileType<NebulaCloud>(),
-                ModContent.ProjectileType<NebulaVortex>(),
                 ModContent.ProjectileType<PhantasmalDeathray>(),
                 ModContent.ProjectileType<PhantasmalOrb>(),
                 ModContent.ProjectileType<StardustConstellation>(),

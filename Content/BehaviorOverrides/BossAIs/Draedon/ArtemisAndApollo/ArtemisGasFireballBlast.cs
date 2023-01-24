@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.Opacity = 0f;
             Projectile.timeLeft = 105;
             Projectile.Calamity().DealsDefenseDamage = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
 

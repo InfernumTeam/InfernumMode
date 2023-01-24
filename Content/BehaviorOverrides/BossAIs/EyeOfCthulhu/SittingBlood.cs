@@ -65,9 +65,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 9; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(Color.Red) * 0.65f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
@@ -81,9 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 return;
 
             for (int i = 0; i < 2; i++)
-            {
                 Utilities.NewProjectileBetter(Projectile.Center, -Vector2.UnitY.RotatedByRandom(0.92f) * Main.rand.NextFloat(21f, 31f), ModContent.ProjectileType<EoCTooth2>(), 75, 0f);
-            }
         }
     }
 }

@@ -10,8 +10,10 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -104,10 +106,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, playerToFollow.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 44f;
-                    laserSpawnPosition.X -= 180f;
+                    Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 80f;
+                    laserSpawnPosition.X += 40f;
                     if (npc.spriteDirection == 1)
-                        laserSpawnPosition.X += 46f;
+                        laserSpawnPosition.X -= 70f;
 
                     Utilities.NewProjectileBetter(laserSpawnPosition, (playerToFollow.Center - laserSpawnPosition).SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<AresPrecisionBlast>(), StrongerNormalShotDamage, 0f);
                 }
@@ -189,34 +191,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 talkTimer = TalkDelay * 4f - 25f;
                 npc.netUpdate = true;
             }
-
-            // Please don't tell the rest of the multiplayer server about this Toasty I want it to be a funny moment.
-            bool useMultiplayerPTJokeText = Main.netMode != NetmodeID.SinglePlayer;
-
+            
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay)
             {
-                if (useMultiplayerPTJokeText)
-                    Utilities.DisplayText("You absolute FOOLS!", TextColor);
-                else
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText1", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText1", TextColor);
                 npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine)
             {
-                if (useMultiplayerPTJokeText)
-                    Utilities.DisplayText("You thought my stupid server dialog gag would go away just like THAT?!", TextColor);
-                else
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText2", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText2", TextColor);
                 npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine * 2f)
             {
-                if (useMultiplayerPTJokeText)
-                    Utilities.DisplayText("You are going to fight my robots NOW", TextColor);
-                else
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText3", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText3", TextColor);
                 npc.netUpdate = true;
             }
 
@@ -292,31 +282,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        if (useMultiplayerPTJokeText)
-                            Utilities.DisplayText("I wanted to summon the prime mechs-", TextColor);
-                        else
-                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase1Text1", TextColor);
+                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase1Text1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        if (useMultiplayerPTJokeText)
-                            Utilities.DisplayText("Unfortunately, Dominic, that stupid mf, wouldn't let me", TextColor);
-                        else
-                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase1Text2", TextColor);
+                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase1Text2", TextColor);
                         npc.netUpdate = true;
                     }
 
                     break;
 
                 case 3:
-                    if (useMultiplayerPTJokeText)
-                    {
-                        Utilities.DisplayText("OK", TextColor);
-                        break;
-                    }
-
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
                         Utilities.DisplayText("Your efforts are very intriguing.", TextColor);
@@ -332,9 +310,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                     break;
 
                 case 4:
-                    if (useMultiplayerPTJokeText)
-                        break;
-
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
                         CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase5Text1", TextColor);
@@ -353,10 +328,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        if (useMultiplayerPTJokeText)
-                            Utilities.DisplayText("OK this joke is dumb I'm going to use my regular dialog now", TextColorEdgy);
-                        else
-                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase6Text1", TextColor);
+                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase6Text1", TextColor);
                         npc.netUpdate = true;
                     }
 
@@ -391,13 +363,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
         public static void SummonExoMech(Player playerToFollow)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer == playerToFollow.whoAmI)
             {
-                PacketHandler.SyncExoMechSummon(playerToFollow);
+                PacketManager.SendPacket<ExoMechSelectionPacket>();
                 return;
             }
 
-            int secondaryMech = (int)DrawDraedonSelectionUIWithAthena.DestroyerTypeToSummon;
+            int secondaryMech = (int)CustomExoMechSelectionSystem.DestroyerTypeToSummon;
             if (secondaryMech == (int)ExoMech.Destroyer)
                 secondaryMech = ModContent.NPCType<ThanatosHead>();
             if (secondaryMech == (int)ExoMech.Prime)
@@ -405,7 +377,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (secondaryMech == (int)ExoMech.Twins)
                 secondaryMech = ModContent.NPCType<Apollo>();
 
-            switch (DrawDraedonSelectionUIWithAthena.PrimaryMechToSummon)
+            switch (CustomExoMechSelectionSystem.PrimaryMechToSummon)
             {
                 // Summon Thanatos underground.
                 case ExoMech.Destroyer:

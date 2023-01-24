@@ -131,6 +131,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override AresCannonChargeParticleSet GetEnergyDrawer(NPC npc) => npc.ModNPC<AresLaserCannon>().EnergyDrawer;
 
+        public override ThanatosSmokeParticleSet GetSmokeDrawer(NPC npc) => npc.ModNPC<AresLaserCannon>().SmokeDrawer;
+
         public override Vector2 GetCoreSpritePosition(NPC npc) => npc.ModNPC<AresLaserCannon>().CoreSpritePosition;
     }
 }

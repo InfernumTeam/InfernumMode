@@ -1005,160 +1005,74 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_DanceOfSwords(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
-            int swordCount = 9;
-            int totalSwordsThatShouldAttack = 3;
-            int swordSummonDelay = 50;
-            int attackTimePerSword = 115;
-            int lanceReleaseRate = 125;
-            int lanceCount = 15;
-            float lanceSpawnOffset = 1000f;
-            float lanceWallSize = 900f;
+            int swordCount = 4;
+            int swordID = ModContent.ProjectileType<EmpressSword>();
+            int attackDelay = 50;
+            ref float swordIndexToUse = ref npc.Infernum().ExtraAI[0];
+            ref float swordHoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
-            if (InPhase3(npc) || ShouldBeEnraged)
+            // Teleport above the target and create a bunch of swords on the first frame.
+            if (attackTimer == 1f)
             {
-                swordCount += 3;
-                totalSwordsThatShouldAttack++;
-                lanceCount += 5;
-                lanceWallSize += 120f;
-            }
+                TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
 
-            if (InPhase4(npc) || ShouldBeEnraged && InPhase3(npc))
-            {
-                totalSwordsThatShouldAttack += 2;
-                lanceReleaseRate -= 35;
-                lanceCount += 3;
-            }
-
-            if (ShouldBeEnraged)
-            {
-                attackTimePerSword -= 24;
-                lanceWallSize += 210f;
-            }
-
-            if (BossRushEvent.BossRushActive)
-                lanceWallSize += 250f;
-
-            int swordAttackCount = swordCount / totalSwordsThatShouldAttack;
-
-            // Define the adjusted attack timer.
-            npc.Infernum().ExtraAI[0] = attackTimer - swordSummonDelay;
-
-            // Hover to the top left/right of the target.
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 150f, -300f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13.5f;
-            if (!npc.WithinRange(hoverDestination, 40f))
-                npc.SimpleFlyMovement(idealVelocity, 0.75f);
-            else
-                npc.velocity *= 0.95f;
-
-            // Perform a cast animation and release swords.
-            if (attackTimer < swordSummonDelay)
-            {
-                // Press hands together at first.
-                if (attackTimer < swordSummonDelay)
-                    leftArmFrame = rightArmFrame = 1f;
-
-                // And then raise hands upwards.
-                // Raise magic from the hands as well.
-                else
-                {
-                    leftArmFrame = rightArmFrame = 3f;
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int handDirection = (i == 0).ToDirectionInt();
-                        Vector2 handOffset = new(55f, -30f);
-                        Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
-
-                        // Create magic dust.
-                        for (int j = 0; j < 4; j++)
-                        {
-                            Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
-                            rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                            rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
-                            rainbowMagic.scale *= 0.9f;
-                            rainbowMagic.noGravity = true;
-                        }
-                    }
-                }
-            }
-
-            // Summon swords.
-            if (attackTimer == swordSummonDelay)
-            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
+                        float swordHue = i / (float)swordCount;                        
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(sword =>
                         {
                             sword.ModProjectile<EmpressSword>().SwordIndex = i;
                             sword.ModProjectile<EmpressSword>().SwordCount = swordCount;
-                            sword.ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
-                            sword.ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
                         });
-
-                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)swordCount);
+                        Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 50f, Vector2.UnitY * -4f, swordID, SwordDamage, 0f, -1, npc.whoAmI, swordHue);
                     }
-                    npc.netUpdate = true;
                 }
+                return;
             }
 
-            // Summon lance walls.
-            if (attackTimer >= swordSummonDelay)
+            // Try to hover near the player so that they can use true melee against the empress.
+            float hoverSpeed = 16f;
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 250f, -175f);
+            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero.MoveTowards(hoverDestination - npc.Center, hoverSpeed), 0.25f);
+
+            // Wait before attacking.
+            if (attackTimer < attackDelay)
+                return;
+
+            // Choose a hover offset angle for the blade once done waiting.
+            if (attackTimer == attackDelay)
             {
-                float adjustedattackTimer = attackTimer % lanceReleaseRate;
+                // The sword should pick the side which is between the empress and the player, and then randomly pick a place on the semicircle that forms from it.
+                swordHoverOffsetAngle = Main.rand.NextFloat(-MathHelper.PiOver2, MathHelper.PiOver2);
+                if (target.Center.X < npc.Center.X)
+                    swordHoverOffsetAngle += MathHelper.Pi;
 
-                // Raise hands and cast magic before summoning lances.
-                if (adjustedattackTimer >= lanceReleaseRate - 50f)
-                {
-                    leftArmFrame = rightArmFrame = 3f;
-                    for (int i = 0; i < 2; i++)
-                    {
-                        int handDirection = (i == 0).ToDirectionInt();
-                        Vector2 handOffset = new(55f, -30f);
-                        Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
-
-                        // Create magic dust.
-                        for (int j = 0; j < 4; j++)
-                        {
-                            Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
-                            rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                            rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
-                            rainbowMagic.scale *= 0.9f;
-                            rainbowMagic.noGravity = true;
-                        }
-                    }
-                }
-
-                // Summon lances.
-                if (adjustedattackTimer == lanceReleaseRate - 1f)
-                {
-                    SoundEngine.PlaySound(SoundID.Item162, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        float offsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
-                        Vector2 baseSpawnPosition = target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset;
-                        Vector2 lanceDestination = target.Center + target.velocity * 20f;
-                        for (int i = 0; i < lanceCount; i++)
-                        {
-                            float lanceHue = i / (float)lanceCount;
-                            Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, i / (float)lanceCount) * lanceWallSize;
-                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
-                        }
-                    }
-                }
+                npc.netUpdate = true;
             }
 
-            // Make swords fade away.
-            if (attackTimer >= swordSummonDelay + attackTimePerSword * swordAttackCount + EmpressSword.AttackDelay)
+            // Find the sword that the empress wishes to use.
+            // Most of the behavior beyond this point is handled by attacking the sword itself, while the empress simply hovers.
+            Projectile swordToUse = null;
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                foreach (Projectile sword in Utilities.AllProjectilesByID(ModContent.ProjectileType<EmpressSword>()))
-                {
-                    sword.timeLeft = 30;
-                    sword.netUpdate = true;
-                }
+                if (Main.projectile[i].type != swordID || !Main.projectile[i].active || Main.projectile[i].ModProjectile<EmpressSword>().SwordIndex != (int)swordIndexToUse)
+                    continue;
 
-                SelectNextAttack(npc);
+                swordToUse = Main.projectile[i];
+                swordToUse.ModProjectile<EmpressSword>().ShouldAttack = true;
+                swordToUse.ModProjectile<EmpressSword>().Time = (int)(attackTimer - attackDelay);
+                break;
+            }
+
+            // Check to see if the sword is done being used.
+            if (npc.Infernum().ExtraAI[3] == 1f)
+            {
+                swordIndexToUse = (swordIndexToUse + 1f) % swordCount;
+                attackTimer = attackDelay - 1f;
+                npc.Infernum().ExtraAI[3] = 0f;
+                npc.netUpdate = true;
             }
         }
 
@@ -1275,7 +1189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
 
-            npc.ai[0] = (int)EmpressOfLightAttackType.MajesticPierce;
+            npc.ai[0] = (int)EmpressOfLightAttackType.DanceOfSwords;
             npc.Infernum().ExtraAI[5]++;
 
             for (int i = 0; i < 5; i++)

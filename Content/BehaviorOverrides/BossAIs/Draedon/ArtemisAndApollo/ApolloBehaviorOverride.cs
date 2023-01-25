@@ -1658,7 +1658,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     float desperationInterpolant = Utils.GetLerpValue(0f, desperationAttackTime * 0.475f, attackTimer, true);
                     int chargeRate = 56;
                     float chargeSpeed = 45f;
-                    float chargeSpinSpeed = 0.02f;
 
                     // Go a bit easier on the player if they don't have a dash.
                     if (!target.HasDash())
@@ -1700,21 +1699,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         npc.netUpdate = true;
                     }
 
-                    // Perform spin motion shortly after the charge to make the motion look more fluid.
                     else if (localAttackTimer >= 12f)
-                    {
-                        Vector2 left = npc.velocity.RotatedBy(-chargeSpinSpeed);
-                        Vector2 right = npc.velocity.RotatedBy(chargeSpinSpeed);
-                        if (left.AngleBetween(directionToTarget) < right.AngleBetween(directionToTarget))
-                            npc.velocity = left;
-                        else
-                            npc.velocity = right;
-
-                        // Slow down gradually while rising upward.
                         npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                        npc.velocity.X *= 0.985f;
-                        npc.velocity.Y -= 0.6f;
-                    }
 
                     localAttackTimer++;
                     if (localAttackTimer >= chargeRate)

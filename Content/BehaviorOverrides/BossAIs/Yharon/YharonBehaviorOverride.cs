@@ -1057,7 +1057,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_FlamethrowerAndMeteors(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
-            int totalFlamethrowerBursts = 2;
+            int totalFlamethrowerBursts = 1;
             int flamethrowerHoverTime = 75;
             float flamethrowerFlySpeed = 55.5f;
             float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f);
@@ -1766,8 +1766,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         // Release a burst of very strong fireballs.
                         for (int i = 0; i < 45; i++)
                         {
-                            Vector2 fireallVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 11f;
-                            Utilities.NewProjectileBetter(npc.Center, fireallVelocity, ModContent.ProjectileType<FlareDust>(), 640, 0f, target.whoAmI, 2f);
+                            Vector2 fireballVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 11f;
+                            Utilities.NewProjectileBetter(npc.Center, fireballVelocity, ModContent.ProjectileType<FlareDust>(), 640, 0f, target.whoAmI, 0f, 2f);
                         }
                     }
 
@@ -1799,6 +1799,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             int[] projectilesToDelete = new int[]
             {
+                ProjectileID.CultistBossFireBall,
                 ModContent.ProjectileType<DragonFireball>(),
                 ModContent.ProjectileType<HomingFireball>(),
                 ModContent.ProjectileType<YharonFireball>(),

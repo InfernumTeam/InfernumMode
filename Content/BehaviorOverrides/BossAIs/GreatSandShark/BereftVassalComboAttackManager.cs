@@ -758,7 +758,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 if (attackTimer >= shootTime)
+                {
+                    Utilities.DeleteAllProjectiles(false, dustDevilID);
                     SelectNextComboAttack(npc);
+                }
 
                 return;
             }

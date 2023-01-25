@@ -1746,7 +1746,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 {
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
+                    for (int i = 0; i < 2; i++)
+                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
                     if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
                     {
                         WorldSaveSystem.HasSepulcherAnimationBeenPlayed = true;

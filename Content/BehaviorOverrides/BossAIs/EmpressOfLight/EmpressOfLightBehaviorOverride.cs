@@ -27,16 +27,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             SpawnAnimation,
             PrismaticBoltCircle,
+            BackstabbingLances,
             MesmerizingMagic,
             HorizontalCharge,
-            LanceOctagon,
             EnterSecondPhase,
             RainbowWispForm,
             DanceOfSwords,
-            LightOverload,
-            ShimmeringDiamondLanceBarrage,
-            InfiniteBrilliance,
-            ContinuousLanceBarrages,
+            MajesticPierce,
+            LanceWallBarrage,
+
             DeathAnimation
         }
 
@@ -73,11 +72,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static EmpressOfLightAttackType[] Phase1AttackCycle => new EmpressOfLightAttackType[]
         {
             EmpressOfLightAttackType.PrismaticBoltCircle,
-            EmpressOfLightAttackType.LanceOctagon,
             EmpressOfLightAttackType.MesmerizingMagic,
             EmpressOfLightAttackType.HorizontalCharge,
             EmpressOfLightAttackType.PrismaticBoltCircle,
-            EmpressOfLightAttackType.LanceOctagon,
             EmpressOfLightAttackType.HorizontalCharge,
             EmpressOfLightAttackType.MesmerizingMagic,
         };
@@ -99,39 +96,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static EmpressOfLightAttackType[] Phase3AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.LightOverload,
-            EmpressOfLightAttackType.LanceOctagon,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
             EmpressOfLightAttackType.RainbowWispForm,
-            EmpressOfLightAttackType.HorizontalCharge,
-            EmpressOfLightAttackType.PrismaticBoltCircle,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage,
-            EmpressOfLightAttackType.LightOverload,
-            EmpressOfLightAttackType.RainbowWispForm,
-            EmpressOfLightAttackType.LanceOctagon,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage,
-            EmpressOfLightAttackType.PrismaticBoltCircle,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.HorizontalCharge,
         };
 
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.InfiniteBrilliance,
-            EmpressOfLightAttackType.LightOverload,
-            EmpressOfLightAttackType.InfiniteBrilliance,
-            EmpressOfLightAttackType.DanceOfSwords,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.InfiniteBrilliance,
-            EmpressOfLightAttackType.LightOverload,
             EmpressOfLightAttackType.HorizontalCharge,
-            EmpressOfLightAttackType.ContinuousLanceBarrages,
-            EmpressOfLightAttackType.InfiniteBrilliance,
             EmpressOfLightAttackType.DanceOfSwords,
         };
 
@@ -211,7 +181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
                 ClearAwayEntities();
                 npc.Infernum().ExtraAI[5] = 0f;
-                attackType = (int)EmpressOfLightAttackType.LightOverload;
+                attackType = (int)EmpressOfLightAttackType.RainbowWispForm;
                 npc.netUpdate = true;
             }
 
@@ -225,36 +195,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.netUpdate = true;
             }
 
-            // Restrict the player's position.
-            float initialXPosition = npc.Infernum().ExtraAI[6];
-
-            if (initialXPosition != 0f)
-            {
-                float left = initialXPosition - BorderWidth * 0.5f + 30f;
-                float right = initialXPosition + BorderWidth * 0.5f - 30f;
-                target.Center = Vector2.Clamp(target.Center, new Vector2(left + target.width * 0.5f, -100f), new Vector2(right - target.width * 0.5f, Main.maxTilesY * 16f + 100f));
-                if (target.Center.X < left + 160f)
-                {
-                    Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 261);
-                    magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
-                    magic.velocity.X = Math.Abs(magic.velocity.X);
-                    magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.72f);
-                    magic.scale = 1.1f;
-                    magic.fadeIn = 1.4f;
-                    magic.noGravity = true;
-                }
-                if (target.Center.X > right - 160f)
-                {
-                    Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), 261);
-                    magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
-                    magic.velocity.X = -Math.Abs(magic.velocity.X);
-                    magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.72f);
-                    magic.scale = 1.1f;
-                    magic.fadeIn = 1.4f;
-                    magic.noGravity = true;
-                }
-            }
-
             if (ShouldBeEnraged)
                 npc.Calamity().CurrentlyEnraged = true;
 
@@ -266,6 +206,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 case EmpressOfLightAttackType.PrismaticBoltCircle:
                     DoBehavior_PrismaticBoltCircle(npc, target, ref attackTimer, ref leftArmFrame);
                     break;
+                case EmpressOfLightAttackType.BackstabbingLances:
+                    DoBehavior_BackstabbingLances(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
+                    break;
                 case EmpressOfLightAttackType.MesmerizingMagic:
                     DoBehavior_MesmerizingMagic(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
@@ -275,29 +218,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 case EmpressOfLightAttackType.EnterSecondPhase:
                     DoBehavior_EnterSecondPhase(npc, target, ref attackTimer);
                     break;
-                case EmpressOfLightAttackType.LanceOctagon:
-                    DoBehavior_LanceOctagon(npc, target, ref attackTimer);
-                    break;
                 case EmpressOfLightAttackType.RainbowWispForm:
                     DoBehavior_RainbowWispForm(npc, target, ref attackTimer, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.DanceOfSwords:
                     DoBehavior_DanceOfSwords(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
-                case EmpressOfLightAttackType.LightOverload:
-                    DoBehavior_LightOverload(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
-                    break;
-                case EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage:
-                    DoBehavior_ShimmeringDiamondLanceBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
-                    break;
-                case EmpressOfLightAttackType.InfiniteBrilliance:
-                    DoBehavior_InfiniteBrilliance(npc, target, initialXPosition, ref attackTimer);
-                    break;
-                case EmpressOfLightAttackType.ContinuousLanceBarrages:
-                    DoBehavior_ContinuousLanceBarrages(npc, target, ref attackTimer);
-                    break;
                 case EmpressOfLightAttackType.DeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref deathAnimationScreenShaderStrength);
+                    break;
+
+                case EmpressOfLightAttackType.MajesticPierce:
+                    DoBehavior_MajesticPierce(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
+                    break;
+                case EmpressOfLightAttackType.LanceWallBarrage:
+                    DoBehavior_LanceWallBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
             }
 
@@ -321,6 +256,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             return false;
         }
 
+        public static void TeleportTo(NPC npc, Vector2 destination)
+        {
+            npc.Center = destination;
+
+            // Cease all movement.
+            npc.velocity = Vector2.Zero;
+
+            SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+            SoundEngine.PlaySound(SoundID.Item161, npc.Center);
+
+            Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
+
+            npc.netUpdate = true;
+        }
+
         public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
             int spawnAnimationTime = EmpressAurora.Lifetime - 30;
@@ -334,7 +286,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Summon auroras and descend.
             if (attackTimer == 1f)
             {
-                npc.Infernum().ExtraAI[6] = target.Center.X;
                 npc.velocity = Vector2.UnitY * 5f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -452,6 +403,288 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             if (attackTimer >= boltReleaseDelay + boltReleaseTime + attackSwitchDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_MajesticPierce(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
+        {
+            int terraprismaCount = 2;
+            int terraprismaAttackDelay = 32;
+            int shootDelay = 156;
+            int attackCycleCount = 3;
+
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Grant the target infinite flight time.
+            target.wingTime = target.wingTimeMax;
+
+            // Summon swords and clap on the first frame.
+            if (attackTimer == 1f)
+            {
+                TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < terraprismaCount; i++)
+                    {
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(sword =>
+                        {
+                            sword.ModProjectile<LanceCreatingSword>().SwordIndex = i;
+                            sword.ModProjectile<LanceCreatingSword>().SwordCount = terraprismaCount;
+                            sword.ModProjectile<LanceCreatingSword>().AttackDelay = terraprismaAttackDelay;
+                        });
+
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<LanceCreatingSword>(), SwordDamage, 0f, -1, npc.whoAmI, i / (float)terraprismaCount);
+                    }
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= shootDelay)
+            {
+                attackTimer = 0f;
+
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<LanceCreatingSword>());
+                attackCycleCounter++;
+                if (attackCycleCounter >= attackCycleCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_LanceWallBarrage(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
+        {
+            int hoverRedirectTime = 40;
+            int startingWallShootCountdown = 67;
+            int endingWallShootCountdown = 27;
+            int horizontalShootTime = 480;
+            int horizontalLanceTransitionDelay = 50;
+            int verticalLanceCount = 36;
+            int verticalLanceTransitionDelay = 75;
+            float horizontalLanceSpacing = 168f;
+            float wallHorizontalOffset = 876f;
+            float verticalLanceArea = 270f;
+            ref float horizontalWallDirection = ref npc.Infernum().ExtraAI[0];
+            ref float wallShootCountdown = ref npc.Infernum().ExtraAI[1];
+            ref float wallShootDelay = ref npc.Infernum().ExtraAI[2];
+            ref float wallShootCounter = ref npc.Infernum().ExtraAI[3];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[4];
+
+            bool goingAgainstWalls = Math.Abs(target.velocity.X) >= 6f && Math.Sign(target.velocity.X) != horizontalWallDirection;
+
+            // Grant the target infinite flight time.
+            target.wingTime = target.wingTimeMax;
+
+            switch ((int)attackSubstate)
+            {
+                case 0:
+                    // Decide the wall direction on the first frame.
+                    // If the player has a lot of momentum in a certain direction, it will be chosen in such a way that the player can simply retain their current direction, so as to
+                    // not require sudden, jarring turns.
+                    // Otherwise, it'll simply be randomized.
+                    if (attackTimer == 1f)
+                    {
+                        horizontalWallDirection = Main.rand.NextBool().ToDirectionInt();
+                        if (Math.Abs(target.velocity.X) >= 10f)
+                            horizontalWallDirection = Math.Sign(target.velocity.X);
+
+                        wallShootDelay = startingWallShootCountdown;
+                        wallShootCountdown = wallShootDelay;
+                        npc.netUpdate = true;
+                    }
+
+                    // Redirect above the target.
+                    Vector2 hoverDestination = target.Center + new Vector2(horizontalWallDirection * -270f, -196f);
+                    npc.velocity *= 0.8f;
+                    npc.Center = Vector2.SmoothStep(npc.Center, hoverDestination, 0.16f);
+                    if (attackTimer < hoverRedirectTime)
+                        break;
+
+                    // Shoot lance walls.
+                    wallShootCountdown--;
+
+                    // Prepare for the next wall and fire.
+                    if (wallShootCountdown <= 0f && attackTimer < hoverRedirectTime + horizontalShootTime)
+                    {
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                            break;
+
+                        wallShootDelay = MathHelper.Clamp(wallShootDelay - 8f, endingWallShootCountdown, startingWallShootCountdown);
+                        wallShootCountdown = wallShootDelay;
+                        if (goingAgainstWalls)
+                            wallShootCountdown *= 0.6f;
+
+                        float lanceDirection = (Vector2.UnitX * horizontalWallDirection).ToRotation();
+                        for (int i = -16; i < 16; i++)
+                        {
+                            float lanceHue = ((i + 16f) / 32f) * 4f % 1f;
+                            Vector2 lanceSpawnPosition = target.Center + new Vector2(-horizontalWallDirection * wallHorizontalOffset, horizontalLanceSpacing * i);
+                            if (wallShootCounter % 2f == 1f)
+                            {
+                                lanceSpawnPosition += Vector2.UnitY * horizontalLanceSpacing * 0.5f;
+                                lanceHue = 1f - lanceHue;
+                            }
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                            {
+                                lance.MaxUpdates = 1;
+                                lance.ModProjectile<EtherealLance>().Time = 20;
+                                lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = i == 0;
+                                lance.ModProjectile<EtherealLance>().SoundPitch = (npc.ai[1] - hoverRedirectTime) / horizontalShootTime * 0.35f;
+                            });
+                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceDirection, lanceHue);
+                        }
+
+                        wallShootCounter++;
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackTimer >= hoverRedirectTime + horizontalShootTime + horizontalLanceTransitionDelay)
+                    {
+                        Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EtherealLance>());
+
+                        attackTimer = 0f;
+                        attackSubstate = 1f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Suddenly summon a bunch of lances above the target.
+                case 1:
+                    if (attackTimer == 1f)
+                    {
+                        TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
+
+                        for (int i = 0; i < verticalLanceCount; i++)
+                        {
+                            float verticalLanceOffset = MathHelper.Lerp(-verticalLanceArea, verticalLanceArea, i / 35f);
+                            float lanceHue = i / (float)verticalLanceCount * 2f % 1f;
+                            Vector2 lanceSpawnPosition = target.Center + new Vector2(target.direction * 950f + target.velocity.X * 40f, verticalLanceOffset + target.velocity.Y * 18f);
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                            {
+                                lance.ModProjectile<EtherealLance>().Time = -70;
+                            });
+                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (Vector2.UnitX * -target.direction).ToRotation(), lanceHue);
+                        }
+                    }
+
+                    if (attackTimer >= verticalLanceTransitionDelay)
+                        SelectNextAttack(npc);
+
+                    break;
+            }
+        }
+
+        public static void DoBehavior_BackstabbingLances(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
+        {
+            int backstabbingLanceTime = 104;
+            int lanceReleaseRate = 3;
+            int hoverRedirectTime = 30;
+            int semicircleLanceShootTime = 30;
+            float backstabbingLanceOffset = 700f;
+            float semicircleLanceOffset = 950f;
+            float idleHoverSpeed = 7f;
+            float idleHoverAcceleration = 0.36f;
+            float maxPerpendicularOffset = 450f;
+
+            if (ShouldBeEnraged)
+            {
+                backstabbingLanceTime -= 12;
+                lanceReleaseRate--;
+                semicircleLanceShootTime -= 4;
+                maxPerpendicularOffset += 72f;
+            }
+
+            ref float lanceSemicircleSpawnCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float lanceSemicircleSpawnCenterY = ref npc.Infernum().ExtraAI[1];
+            ref float lanceSemicircleDirection = ref npc.Infernum().ExtraAI[2];
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Release lances from behind the player.
+            if (attackTimer < backstabbingLanceTime)
+            {
+                // Play the lance sound on the first frame.
+                if (attackTimer == 1f)
+                    SoundEngine.PlaySound(SoundID.Item162, npc.Center);
+
+                // Slow down.
+                npc.velocity *= 0.95f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lanceReleaseRate == lanceReleaseRate - 1f)
+                {
+                    float lanceHue = attackTimer / backstabbingLanceTime;
+                    Vector2 lanceSpawnPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * backstabbingLanceOffset;
+                    Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, target.AngleFrom(lanceSpawnPosition), lanceHue);
+                }
+
+                return;
+            }
+
+            // Move towards the target.
+            if (attackTimer <= backstabbingLanceTime + hoverRedirectTime)
+            {
+                // Clap hands on the first frame.
+                leftArmFrame = rightArmFrame = 1f;
+                if (attackTimer == backstabbingLanceTime + 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item161, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
+                        npc.netUpdate = true;
+                    }
+                }
+
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 350f, -225f);
+                npc.velocity *= 0.8f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.12f);
+
+                return;
+            }
+
+            // Hover near the target.
+            if (npc.WithinRange(target.Center, 275f))
+                npc.velocity *= 0.96f;
+            else
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * idleHoverSpeed, idleHoverAcceleration);
+
+            // Summon the lance semicircle.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer <= backstabbingLanceTime + hoverRedirectTime + semicircleLanceShootTime)
+            {
+                // Initialize the lance direction.
+                if (lanceSemicircleDirection == 0f)
+                {
+                    lanceSemicircleDirection = target.velocity.ToRotation() + MathHelper.Pi;
+                    lanceSemicircleSpawnCenterX = target.Center.X;
+                    lanceSemicircleSpawnCenterY = target.Center.Y;
+                    npc.netUpdate = true;
+                }
+
+                int delayUntilLanceFires = (int)(attackTimer - backstabbingLanceTime - hoverRedirectTime - semicircleLanceShootTime) * 2 - 24;
+                if (ShouldBeEnraged)
+                    delayUntilLanceFires += 10;
+
+                float lanceHue = 1f - Utils.GetLerpValue(0f, semicircleLanceShootTime, attackTimer - backstabbingLanceTime - hoverRedirectTime, true);
+                float semicirclePerpendicularOffset = Utils.Remap(attackTimer - backstabbingLanceTime - hoverRedirectTime, 0f, semicircleLanceShootTime, -maxPerpendicularOffset, maxPerpendicularOffset);
+                Vector2 semicircleOffset = lanceSemicircleDirection.ToRotationVector2() * semicircleLanceOffset + (lanceSemicircleDirection + MathHelper.PiOver2).ToRotationVector2() * semicirclePerpendicularOffset;
+                Vector2 lanceSpawnPosition = new Vector2(lanceSemicircleSpawnCenterX, lanceSemicircleSpawnCenterY) + semicircleOffset;
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                {
+                    lance.ModProjectile<EtherealLance>().Time = delayUntilLanceFires;
+                });
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSemicircleDirection + MathHelper.Pi, lanceHue);
+            }
+
+            if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + semicircleLanceShootTime + 120f)
                 SelectNextAttack(npc);
         }
 
@@ -690,72 +923,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer >= SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime)
                 SelectNextAttack(npc);
         }
-
-        public static void DoBehavior_LanceOctagon(NPC npc, Player target, ref float attackTimer)
-        {
-            int lanceCount = 10;
-            int lanceCreationRate = 50;
-            int lanceBarrageCount = 8;
-            int attackTransitionDelay = 135;
-            float lanceSpawnOffset = 1000f;
-            float targetCircleOffset = 350f;
-            ref float lanceBarrageCounter = ref npc.Infernum().ExtraAI[0];
-
-            if (InPhase2(npc))
-                lanceCreationRate -= 7;
-
-            if (InPhase3(npc))
-                lanceCreationRate -= 12;
-
-            if (ShouldBeEnraged)
-                lanceCreationRate = Utils.Clamp(lanceCreationRate - 12, 24, 150);
-
-            // Hover above the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 310f;
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 7f;
-            if (!npc.WithinRange(hoverDestination, 40f))
-                npc.SimpleFlyMovement(idealVelocity, 0.75f);
-            else
-                npc.velocity *= 0.96f;
-
-            if (lanceBarrageCounter >= lanceBarrageCount)
-            {
-                if (attackTimer >= attackTransitionDelay)
-                    SelectNextAttack(npc);
-                return;
-            }
-
-            // Release lance telegraphs at the target. They will fire short afterward.
-            if (attackTimer % lanceCreationRate == lanceCreationRate - 1f)
-            {
-                SoundEngine.PlaySound(SoundID.Item162, npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 lanceOffset = (MathHelper.TwoPi * lanceBarrageCounter / lanceBarrageCount).ToRotationVector2() * lanceSpawnOffset;
-                    Vector2 offsetOrthogonalDirection = lanceOffset.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
-
-                    for (int i = 0; i < lanceCount; i++)
-                    {
-                        float lanceHue = i / (float)lanceCount;
-                        Vector2 orthogonalOffset = offsetOrthogonalDirection * MathHelper.Lerp(-1f, 1f, i / (float)(lanceCount - 1f));
-                        Vector2 lanceDestination = target.Center + orthogonalOffset.RotatedBy(MathHelper.PiOver2) * targetCircleOffset;
-                        Vector2 lanceSpawnPosition = target.Center + lanceOffset + orthogonalOffset * lanceSpawnOffset * 0.8f;
-
-                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
-
-                        lanceSpawnPosition = target.Center + lanceOffset - orthogonalOffset * lanceSpawnOffset * 0.8f;
-                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
-                    }
-                    lanceBarrageCounter++;
-                    if (lanceBarrageCounter >= lanceBarrageCount)
-                        attackTimer = 0f;
-
-                    npc.netUpdate = true;
-                }
-            }
-        }
-
+        
         public static void DoBehavior_RainbowWispForm(NPC npc, Player target, ref float attackTimer, ref float rightArmFrame)
         {
             int wispFormEnterTime = 60;
@@ -994,386 +1162,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
 
-        public static void DoBehavior_LightOverload(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
-        {
-            int hoverTime = 120;
-            int orbCastDelay = 45;
-            int orbGrowDelay = 25;
-            int orbGrowTime = 45;
-            int orbAttackTime = 240;
-            float smallOrbSize = 12f;
-            float bigOrbSize = 400f;
-            Vector2 orbSummonSpawnPosition = npc.Center + Vector2.UnitY * 8f;
-            ref float orbSize = ref npc.Infernum().ExtraAI[0];
-            ref float lightOrb = ref npc.Infernum().ExtraAI[1];
-            ref float fadeAwayInterpolant = ref npc.Infernum().ExtraAI[2];
-
-            // Hover in place at first before slowing down.
-            if (attackTimer < hoverTime && !npc.WithinRange(target.Center, 200f))
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 15f, 0.1f);
-            else
-                npc.velocity *= 0.92f;
-
-            // Cast magic prior to creating the orb.
-            if (attackTimer >= hoverTime && attackTimer <= hoverTime + orbCastDelay)
-            {
-                // Hold hands together.
-                leftArmFrame = rightArmFrame = 1f;
-                orbSize = smallOrbSize;
-
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 dustOffsetDirection = Main.rand.NextVector2Unit();
-                    Dust rainbowMagic = Dust.NewDustPerfect(orbSummonSpawnPosition + dustOffsetDirection * Main.rand.NextFloat(smallOrbSize), 267);
-                    rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.7f);
-                    rainbowMagic.velocity = dustOffsetDirection.RotatedBy(Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2) * Main.rand.NextFloat(0.8f, 4f);
-                    rainbowMagic.noGravity = true;
-                    rainbowMagic.scale = 1.2f;
-                }
-            }
-
-            // Create the orb.
-            if (attackTimer == hoverTime + orbCastDelay)
-            {
-                SoundEngine.PlaySound(SoundID.Item163, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightOrb>(), 0, 0f, -1, 0f, npc.whoAmI);
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Rise upward.
-            if (attackTimer == hoverTime + orbCastDelay + orbGrowDelay + 10f)
-                npc.velocity = -Vector2.UnitY * 27f;
-
-            // Make the orb grow and cast magic towards it.
-            if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay)
-            {
-                orbSize = MathHelper.SmoothStep(smallOrbSize, bigOrbSize, Utils.GetLerpValue(0f, orbGrowTime, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
-
-                leftArmFrame = rightArmFrame = 2f;
-
-                Projectile lightOrbProj = Main.projectile[(int)lightOrb];
-                for (int i = 0; i < 2; i++)
-                {
-                    int handDirection = (i == 0).ToDirectionInt();
-                    Vector2 handOffset = new(handDirection * 60f, 4f);
-                    Vector2 handPosition = npc.Center + handOffset;
-
-                    for (int j = 0; j < 4; j++)
-                    {
-                        Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
-                        rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
-                        rainbowMagic.velocity = (lightOrbProj.Center + Main.rand.NextVector2Circular(85f, 85f) - handPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(5f, 15f);
-                        rainbowMagic.scale = 1.1f;
-                        rainbowMagic.noGravity = true;
-                    }
-                }
-            }
-
-            // Provide the target infinite flight time.
-            target.wingTime = target.wingTimeMax;
-
-            // Eventually make the light orb fade away.
-            fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
-
-            if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 120f)
-            {
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<LightOverloadBeam>());
-                SelectNextAttack(npc);
-            }
-        }
-
-        public static void DoBehavior_ShimmeringDiamondLanceBarrage(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
-        {
-            int dissapearTime = 45;
-            int handClapDelay = 60;
-            int lanceCount = 4;
-            int lanceBurstReleaseRate = 64;
-            int lanceBurstCount = 6;
-            float lanceSpawnOffset = 850f;
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 360f;
-
-            if (ShouldBeEnraged)
-                lanceBurstReleaseRate -= 15;
-
-            if (BossRushEvent.BossRushActive)
-            {
-                lanceBurstReleaseRate -= 14;
-                lanceSpawnOffset += 300f;
-            }
-
-            // Disappear before doing anything else.
-            if (attackTimer <= dissapearTime)
-            {
-                npc.Opacity = 1f - attackTimer / dissapearTime;
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 5f, 0.15f);
-
-                // Hold hands together while disappearing.
-                leftArmFrame = rightArmFrame = 1f;
-
-                int dustCount = (int)MathHelper.Lerp(2f, 8f, 1f - npc.Opacity);
-                for (int i = 0; i < dustCount; i++)
-                {
-                    Dust rainbowShimmer = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(150f, 150f), 261);
-                    rainbowShimmer.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
-                    rainbowShimmer.scale = 1.05f;
-                    rainbowShimmer.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 6f);
-                    rainbowShimmer.noGravity = true;
-                }
-            }
-
-            // Teleport above the target.
-            if (attackTimer == dissapearTime)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    npc.Center = hoverDestination;
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
-
-                    npc.netUpdate = true;
-                }
-
-                // Create a ring of rainbow dust.
-                for (int i = 0; i < 24; i++)
-                {
-                    Dust rainbowDust = Dust.NewDustPerfect(npc.Center, 267);
-                    rainbowDust.color = Main.hslToRgb(i / 24f, 1f, 0.6f);
-                    rainbowDust.velocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 4f;
-                    rainbowDust.scale = 1.25f;
-                    rainbowDust.fadeIn = 1.2f;
-                    rainbowDust.noLight = true;
-                    rainbowDust.noGravity = true;
-                }
-
-                // Scream after teleporting.
-                SoundEngine.PlaySound(SoundID.Item160, npc.Center);
-            }
-
-            // Hover above the target after teleporting.
-            if (attackTimer > dissapearTime)
-            {
-                // Fade back in.
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
-
-                if (!npc.WithinRange(hoverDestination, 35f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 16f, 0.85f);
-
-                // Raise hands and create magic before clapping.
-                leftArmFrame = rightArmFrame = 3f;
-                for (int i = 0; i < 2; i++)
-                {
-                    if (attackTimer >= dissapearTime + handClapDelay)
-                        break;
-
-                    int handDirection = (i == 0).ToDirectionInt();
-                    Vector2 handOffset = new(55f, -30f);
-                    Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
-
-                    // Create magic dust.
-                    for (int j = 0; j < 4; j++)
-                    {
-                        Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
-                        rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                        rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(0.4f, 4.2f);
-                        rainbowMagic.scale *= 0.9f;
-                        rainbowMagic.noGravity = true;
-                    }
-                }
-
-                // Clap hands.
-                if (attackTimer >= dissapearTime + handClapDelay)
-                {
-                    if (attackTimer == dissapearTime + handClapDelay)
-                    {
-                        SoundEngine.PlaySound(SoundID.Item122, npc.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
-                            npc.netUpdate = true;
-                        }
-                    }
-                    leftArmFrame = rightArmFrame = 1f;
-                }
-            }
-
-            // Summon lances.
-            if (attackTimer > dissapearTime + handClapDelay && attackTimer % lanceBurstReleaseRate == lanceBurstReleaseRate - 1f)
-            {
-                SoundEngine.PlaySound(SoundID.Item162, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float universalOffsetAngle = Main.rand.NextBool() ? MathHelper.PiOver4 : 0f;
-                    Vector2 lanceDestination = target.Center + target.velocity * 20f;
-
-                    // Diamond lances.
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float offsetAngle = MathHelper.TwoPi * i / 4f + universalOffsetAngle;
-                        Vector2 baseSpawnPosition = target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset;
-                        for (int j = 0; j < lanceCount; j++)
-                        {
-                            float lanceHue = j / (float)lanceCount;
-                            Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, j / (float)lanceCount) * lanceSpawnOffset;
-
-                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
-                            {
-                                lance.localAI[1] = lanceSpawnOffset * 4f;
-                            });
-                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
-                        }
-                    }
-
-                    // Circular lances.
-                    lanceCount *= 3;
-                    for (int i = 0; i < lanceCount; i++)
-                    {
-                        float lanceHue = i / (float)lanceCount;
-                        float offsetAngle = MathHelper.TwoPi * i / lanceCount;
-                        Vector2 lanceSpawnPosition = target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset * 1.414f;
-
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
-                        {
-                            lance.localAI[1] = lanceSpawnOffset * 4f;
-                        });
-                        Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f, -1, (lanceDestination - lanceSpawnPosition).ToRotation(), lanceHue);
-                    }
-                }
-            }
-
-            if (attackTimer >= dissapearTime + handClapDelay + lanceBurstReleaseRate * lanceBurstCount)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_InfiniteBrilliance(NPC npc, Player target, float horizontalArenaCenter, ref float attackTimer)
-        {
-            int telegraphTime = 175;
-            int laserbeamCount = 30;
-            int lanceReleaseRate = 56;
-            int lanceCount = 6;
-            float maxTelegraphTilt = 0.253f;
-            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
-            ref float telegraphRotation = ref npc.Infernum().ExtraAI[1];
-            ref float lanceShootTimer = ref npc.Infernum().ExtraAI[2];
-
-            if (ShouldBeEnraged)
-                lanceReleaseRate -= 12;
-
-            // Make the lances appear more infrequently if the player is near the borders.
-            float distanceToLeftBorder = MathHelper.Distance(target.Center.X, horizontalArenaCenter - BorderWidth * 0.5f);
-            float distanceToRightBorder = MathHelper.Distance(target.Center.X, horizontalArenaCenter + BorderWidth * 0.5f);
-            float distanceToClosestBorderInterpolant = 1f - MathHelper.Min(distanceToLeftBorder, distanceToRightBorder) / BorderWidth * 2f;
-            if (distanceToClosestBorderInterpolant > 0f)
-                lanceReleaseRate = (int)(lanceReleaseRate + Utils.Remap(distanceToClosestBorderInterpolant, 0.6f, 0.9f, 0f, 24f));
-
-            // Reset the telegraph interpolant.
-            telegraphInterpolant = 0f;
-
-            // Hover into position very quickly and create telegraphs.
-            if (attackTimer < telegraphTime)
-            {
-                telegraphInterpolant = MathHelper.Clamp(attackTimer / telegraphTime, 0f, 1f);
-                telegraphRotation = MathHelper.Lerp(MathHelper.PiOver2, maxTelegraphTilt, Utils.GetLerpValue(0f, 0.4f, attackTimer / telegraphTime, true));
-
-                float slowdownFactor = Utils.GetLerpValue(telegraphTime - 24f, telegraphTime - 70f, attackTimer, true);
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, -120f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, slowdownFactor * 6f);
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * slowdownFactor * 16f, 1f);
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero.MoveTowards(hoverDestination - npc.Center, slowdownFactor * 16f), 0.1f);
-            }
-
-            // Release lasers.
-            if (attackTimer == telegraphTime)
-            {
-                SoundEngine.PlaySound(SoundID.Item160, npc.Center);
-
-                int laserDamage = (int)(LaserbeamDamage * 0.7f);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < laserbeamCount; i++)
-                    {
-                        for (int j = -1; j <= 1; j += 2)
-                        {
-                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
-                            {
-                                laser.ModProjectile<SpinningPrismLaserbeam>().LaserbeamIDRatio = MathHelper.Lerp(-0.5f, 0.5f, i / (float)laserbeamCount) * laserbeamCount;
-                                laser.ModProjectile<SpinningPrismLaserbeam>().VerticalSpinDirection = j;
-                                laser.ModProjectile<SpinningPrismLaserbeam>().AngularOffset = MathHelper.PiOver2 - maxTelegraphTilt;
-                                laser.ModProjectile<SpinningPrismLaserbeam>().LaserCount = laserbeamCount;
-                            });
-                            Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<SpinningPrismLaserbeam>(), laserDamage, 0f);
-                        }
-                    }
-                }
-
-                npc.velocity = Vector2.Zero;
-                npc.netUpdate = true;
-            }
-
-            // Summon various things after the lasers have been fired.
-            if (attackTimer >= telegraphTime)
-            {
-                // Release bursts of lances.
-                lanceShootTimer++;
-                if (lanceShootTimer >= lanceReleaseRate)
-                {
-                    SoundEngine.PlaySound(SoundID.Item162, target.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        lanceShootTimer = 0f;
-                        npc.netUpdate = true;
-
-                        float hueOffset = Main.rand.NextFloat();
-                        for (int i = 0; i < lanceCount; i++)
-                        {
-                            float lanceHue = (i / (float)lanceCount + hueOffset) % 1f;
-                            Vector2 lanceDirection = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.12f, 0.12f, i / (float)(lanceCount - 1f)));
-                            Vector2 lanceSpawnPosition = npc.Center + lanceDirection * 50f;
-                            Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceDirection.ToRotation(), lanceHue);
-                        }
-                    }
-                }
-            }
-
-            if (attackTimer >= telegraphTime + SpinningPrismLaserbeam.Lifetime)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_ContinuousLanceBarrages(NPC npc, Player target, ref float attackTimer)
-        {
-            int shootDelay = 90;
-            int lanceCircleTime = 70;
-            int lanceShootRate = ShouldBeEnraged ? 5 : 7;
-            int lanceShootTime = 270;
-            int attackTransitionDelay = 95;
-
-            // Hover in place.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 310f;
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 11f;
-            if (!npc.WithinRange(hoverDestination, 40f))
-                npc.SimpleFlyMovement(idealVelocity, 0.75f);
-            else
-                npc.velocity *= 0.96f;
-
-            // Play a shoot sound.
-            if (attackTimer == shootDelay)
-                SoundEngine.PlaySound(SoundID.Item162, npc.Center);
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootDelay && attackTimer % lanceShootRate == lanceShootRate - 1f && attackTimer < shootDelay + lanceShootTime)
-            {
-                float lanceHue = (attackTimer - shootDelay) / lanceCircleTime % 1f;
-                Vector2 circleOffset = (MathHelper.TwoPi * (attackTimer - shootDelay) / lanceCircleTime).ToRotationVector2() * 700f;
-                Vector2 lanceSpawnPosition = target.Center + circleOffset;
-                float lanceShootDirection = (target.Center + target.velocity * 45f - lanceSpawnPosition).ToRotation();
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceShootDirection, lanceHue);
-            }
-
-            if (attackTimer >= shootDelay + lanceShootTime + attackTransitionDelay)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float deathAnimationScreenShaderStrength)
         {
             int fadeInTime = 40;
@@ -1487,6 +1275,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
 
+            npc.ai[0] = (int)EmpressOfLightAttackType.MajesticPierce;
             npc.Infernum().ExtraAI[5]++;
 
             for (int i = 0; i < 5; i++)
@@ -1503,63 +1292,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.graphics.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value;
         }
 
-        public static void DrawBorder(NPC npc, SpriteBatch spriteBatch)
-        {
-            Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Cultist/Border").Value;
-            float initialXPosition = npc.Infernum().ExtraAI[6];
-            float left = initialXPosition - BorderWidth * 0.5f;
-            float right = initialXPosition + BorderWidth * 0.5f;
-            float leftBorderOpacity = Utils.GetLerpValue(left + 1000f, left + 360f, Main.LocalPlayer.Center.X, true);
-            float rightBorderOpacity = Utils.GetLerpValue(right - 1000f, right - 360f, Main.LocalPlayer.Center.X, true);
-            Color startingBorderColor = Color.HotPink;
-            Color endingBorderColor = Main.hslToRgb(Main.GlobalTimeWrappedHourly % 1f, 1f, 0.5f);
-            if (ShouldBeEnraged)
-                endingBorderColor = GetDaytimeColor(Main.GlobalTimeWrappedHourly * 0.84f);
-
-            spriteBatch.SetBlendState(BlendState.Additive);
-            if (leftBorderOpacity > 0f)
-            {
-                Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
-                Color borderColor = Color.Lerp(Color.Transparent, startingBorderColor, leftBorderOpacity);
-
-                for (int i = 0; i < 80; i++)
-                {
-                    float fade = 1f - Math.Abs(i - 40f) / 40f;
-                    Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
-                    spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, endingBorderColor, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
-                }
-                spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, endingBorderColor, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
-            }
-
-            if (rightBorderOpacity > 0f)
-            {
-                Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
-                Color borderColor = Color.Lerp(Color.Transparent, startingBorderColor, rightBorderOpacity);
-
-                for (int i = 0; i < 80; i++)
-                {
-                    float fade = 1f - Math.Abs(i - 40f) / 40f;
-                    Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
-                    spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, endingBorderColor, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
-                }
-                spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, endingBorderColor, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
-            }
-
-            spriteBatch.SetBlendState(BlendState.AlphaBlend);
-        }
-
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
-
             EmpressOfLightAttackType attackType = (EmpressOfLightAttackType)npc.ai[0];
             float attackTimer = npc.ai[1];
             float WingFrameCounter = npc.localAI[0];
-
-            // Draw the border.
-            DrawBorder(npc, spriteBatch);
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
@@ -1618,11 +1355,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 baseDuplicateCount = 4;
             }
 
-            if (attackType is EmpressOfLightAttackType.RainbowWispForm or EmpressOfLightAttackType.InfiniteBrilliance or EmpressOfLightAttackType.DeathAnimation)
+            if (attackType is EmpressOfLightAttackType.RainbowWispForm or EmpressOfLightAttackType.DeathAnimation)
             {
                 float brightness = npc.Infernum().ExtraAI[0] * (npc.Infernum().ExtraAI[ScreenShaderIntensityIndex] + 1f);
-                if (attackType == EmpressOfLightAttackType.InfiniteBrilliance && brightness <= 0f && npc.ai[1] >= 1f)
-                    brightness = 1f;
 
                 afterimageOffsetFactor = opacity = brightness;
 
@@ -1632,11 +1367,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 baseColor = Color.Lerp(baseColor, new Color(1f, 1f, 1f, 0f), baseColorOpacity);
                 baseDuplicateCount = 2;
                 laggingAfterimageCount = 4;
-                if (attackType is EmpressOfLightAttackType.InfiniteBrilliance)
-                {
-                    baseDuplicateCount = 6;
-                    laggingAfterimageCount = 0;
-                }
             }
 
             if (baseDuplicateCount + laggingAfterimageCount > 0)
@@ -1854,26 +1584,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 DrawInstance(baseDrawPosition, baseInstanceColor);
             }
             else
-            {
-                if (attackType == EmpressOfLightAttackType.InfiniteBrilliance)
-                {
-                    float telegraphInterpolant = npc.Infernum().ExtraAI[0];
-                    if (telegraphInterpolant <= 0f && npc.ai[1] >= 1f)
-                        telegraphInterpolant = 1f;
-
-                    for (int i = 0; i < 8; i++)
-                    {
-                        Color wispColor = Main.hslToRgb((Main.GlobalTimeWrappedHourly * 0.6f + 0.2f + i / 8f) % 1f, 1f, 0.8f) * baseColorOpacity * 0.2f;
-                        wispColor = Color.Lerp(baseColor, wispColor, telegraphInterpolant);
-                        wispColor.A = 0;
-
-                        Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * telegraphInterpolant * 20f;
-                        DrawInstance(baseDrawPosition + drawOffset, wispColor, wispColor);
-                    }
-                }
-
                 DrawInstance(baseDrawPosition, baseColor);
-            }
 
             // Draw telegraphs.
             if (attackType == EmpressOfLightAttackType.MesmerizingMagic)
@@ -1908,65 +1619,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 start = handPosition;
                         Vector2 end = start + telegraphDirection * 4500f;
                         spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
-                    }
-                }
-            }
-
-            if (attackType == EmpressOfLightAttackType.InfiniteBrilliance)
-            {
-                float telegraphRotation = npc.Infernum().ExtraAI[1];
-                float telegraphInterpolant = npc.Infernum().ExtraAI[0];
-                float telegraphSlope = (float)Math.Tan(telegraphRotation);
-                float telegraphWidth = MathHelper.Lerp(2f, 6f, telegraphInterpolant);
-                float brightness = (float)Math.Pow(telegraphInterpolant, 0.48);
-
-                if (brightness <= 0f && npc.ai[1] >= 1f)
-                    brightness = 1f;
-
-                if (brightness > 0f)
-                {
-                    float twinkleScale = brightness;
-                    Texture2D twinkleTexture = InfernumTextureRegistry.LargeStar.Value;
-                    Vector2 drawPosition = npc.Center - Main.screenPosition;
-                    float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
-
-                    spriteBatch.SetBlendState(BlendState.Additive);
-
-                    for (int i = 0; i < 2; i++)
-                    {
-                        spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
-                        spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
-                    }
-                    spriteBatch.ResetBlendState();
-                }
-
-                // Stop early if the telegraphs are not able to be drawn.
-                if (telegraphInterpolant <= 0f)
-                    return false;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    float hue = (i / 4f + Main.GlobalTimeWrappedHourly * 0.67f) % 1f;
-                    Color telegraphColor = Main.hslToRgb(hue, 1f, 0.7f);
-                    if (ShouldBeEnraged)
-                        telegraphColor = GetDaytimeColor(hue);
-
-                    Vector2 telegraphDirection = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, telegraphSlope);
-                    Vector2 start = npc.Center + Vector2.UnitY * 8f;
-                    Vector2 end = start + telegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam.MaxLaserLength;
-                    spriteBatch.DrawLineBetter(start, end, Main.hslToRgb(hue, 1f, 0.7f), telegraphWidth);
-                    spriteBatch.DrawLineBetter(start, end, Color.White, telegraphWidth * 0.5f);
-
-                    if (i % 2 == 0)
-                    {
-                        Vector2 aheadDirection = (MathHelper.TwoPi * (i + 1f) / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, telegraphSlope);
-                        for (int j = 0; j < 18; j++)
-                        {
-                            Vector2 currentTelegraphDirection = Vector2.Lerp(telegraphDirection, aheadDirection, j / 17f);
-                            end = start + currentTelegraphDirection.SafeNormalize(Vector2.UnitY) * SpinningPrismLaserbeam.MaxLaserLength;
-                            spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
-                            spriteBatch.DrawLineBetter(start, end, Color.White, telegraphWidth * 0.5f);
-                        }
                     }
                 }
             }

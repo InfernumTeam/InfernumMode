@@ -1,7 +1,12 @@
+using CalamityMod;
+using CalamityMod.FluidSimulation;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
+using InfernumMode.Core;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Effects;
@@ -78,8 +83,11 @@ namespace InfernumMode.Content.Skies
 
         public bool isActive = false;
         public float Intensity = 0f;
+        public float AuroraOpacity;
         public List<Fairy> Fairies = new();
         public List<Light> Lights = new();
+
+        public FluidField AuroraField = null;
 
         public override void Update(GameTime gameTime)
         {
@@ -107,8 +115,13 @@ namespace InfernumMode.Content.Skies
             }
 
             NPC eolNPC = Main.npc[eol];
+
+            AuroraOpacity = MathHelper.Clamp(AuroraOpacity - InfernumConfig.Instance.ReducedGraphicsConfig.ToDirectionInt() * 0.02f, 0f, 1f);
             if (!EmpressOfLightBehaviorOverride.InPhase3(eolNPC))
+            {
+                AuroraOpacity = 0f;
                 Lights.Clear();
+            }
 
             int maxFairies = (int)MathHelper.Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
             int maxLights = maxFairies + 65;
@@ -142,6 +155,18 @@ namespace InfernumMode.Content.Skies
                     Hue = Main.rand.NextFloat(),
                     Depth = Main.rand.NextFloat(0.85f, 3f)
                 });
+            }
+
+            // Draw an aurora in the background.
+            if (AuroraOpacity > 0f)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.Default, RasterizerState.CullClockwise);
+
+                DrawAurora();
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin();
             }
 
             // Draw all fairies.
@@ -189,6 +214,43 @@ namespace InfernumMode.Content.Skies
                     }
                 }
             }
+        }
+
+        public void DrawAurora()
+        {
+            int screenWidth = Main.instance.GraphicsDevice.Viewport.Width;
+
+            int size = 180;
+            FluidFieldManager.AdjustSizeRelativeToGraphicsQuality(ref size);
+            if (AuroraField is null || AuroraField.Size != size)
+            {
+                float auroraScale = MathHelper.Max(screenWidth, Main.screenHeight) / size;
+                AuroraField = FluidFieldManager.CreateField(size, auroraScale, 0.1f, 0.1f, 0.98f);
+            }
+
+            AuroraField.ShouldUpdate = true;
+            AuroraField.UpdateAction = () =>
+            {
+                for (int i = 0; i < AuroraField.Size; i += 6)
+                {
+                    float xInterpolant = i / (float)AuroraField.Size;
+                    Color auroraColor = Main.hslToRgb((xInterpolant * 0.5f + Main.GlobalTimeWrappedHourly * 0.09f) % 1f, 1f, Main.rand.NextFloat(0.56f, 0.95f));
+                    Vector2 fluidVelocity = Vector2.UnitY;
+                    fluidVelocity *= MathHelper.Lerp(0.4f, 0.75f, (float)Math.Sin(xInterpolant * 23.3f + Main.GlobalTimeWrappedHourly * 0.8f) * 0.5f + 0.5f);
+                    fluidVelocity += Main.rand.NextVector2Circular(2f, 0.2f);
+                    fluidVelocity *= (float)Math.Pow(CalamityUtils.Convert01To010(xInterpolant), 0.15);
+
+                    if (Main.rand.NextBool(180))
+                        fluidVelocity.Y *= 10f;
+
+                    AuroraField.CreateSource(i, 1, 1f, auroraColor, fluidVelocity);
+                }
+            };
+
+            typeof(FluidField).GetMethod("Draw").Invoke(AuroraField, new object[]
+            {
+                new Vector2(screenWidth * 0.5f, screenWidth * 0.4f), true, Matrix.Identity, Matrix.Identity
+            });
         }
 
         public override float GetCloudAlpha()

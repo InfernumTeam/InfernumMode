@@ -1,24 +1,28 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class EmpressSword : ModProjectile, IPixelPrimitiveDrawer
+    public class LanceCreatingSword : ModProjectile, IPixelPrimitiveDrawer
     {
-        public int SwordCount = 9;
-        public int TotalSwordsThatShouldAttack = 3;
+        public int SwordCount = 2;
+
+        public int AttackDelay = 36;
+
         public float TelegraphInterpolant;
+
         public PrimitiveTrailCopy TrailDrawer;
 
         public NPC Owner
@@ -28,20 +32,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (!Main.npc.IndexInRange((int)Projectile.ai[0]) || Main.npc[(int)Projectile.ai[0]].type != NPCID.HallowBoss || !Main.npc[(int)Projectile.ai[0]].active)
                     return null;
 
-                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.DanceOfSwords)
+                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.MajesticPierce)
                     return null;
 
                 return Main.npc[(int)Projectile.ai[0]];
             }
         }
 
+        public float HueOffset => (Projectile.ai[1] + Main.GlobalTimeWrappedHourly * 0.84f) % 1f;
+
         public Color MyColor
         {
             get
             {
-                Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 0.95f, 0.54f);
+                float hue = HueOffset;
+                Color color = Main.hslToRgb(hue, 0.95f, 0.54f);
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f);
+                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hue);
 
                 color.A /= 8;
                 return color;
@@ -52,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.94f, 0.94f, SwordIndex / (SwordCount - 1f))) * new Vector2(200f, 100f);
+                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.94f, 0.94f, SwordIndex / (SwordCount - 1f))) * new Vector2(500f, 100f);
                 hoverDestination.Y += (float)Math.Sin(MathHelper.TwoPi * Timer / 60f + MathHelper.PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
                 return hoverDestination;
             }
@@ -60,27 +67,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public Player Target => Main.player[Owner.target];
 
-        public float Timer => Owner is null ? -AttackDelay : Owner.Infernum().ExtraAI[0] - AttackDelay;
-
-        public bool ShouldAttack
-        {
-            get
-            {
-                if (Timer <= 0f || Projectile.timeLeft <= 30)
-                    return false;
-
-                int attackCycle = (int)(Timer / AttackTimePerSword);
-                float cycleCompletion = (attackCycle + SwordIndex) / SwordCount % 1f;
-                float swordRatio = 1f / TotalSwordsThatShouldAttack;
-                return cycleCompletion % swordRatio < 0.01f;
-            }
-        }
-
-        public ref float AttackTimePerSword => ref Projectile.localAI[0];
+        public float Timer => Owner is null ? -AttackDelay : Owner.ai[1] - AttackDelay;
 
         public ref float SwordIndex => ref Projectile.localAI[1];
-
-        public const int AttackDelay = 45;
 
         public const float TelegraphLength = 3600f;
 
@@ -108,8 +97,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(AttackDelay);
             writer.Write(SwordCount);
-            writer.Write(AttackTimePerSword);
             writer.Write(SwordIndex);
             writer.Write(TelegraphInterpolant);
             writer.Write(Projectile.timeLeft);
@@ -117,8 +106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            AttackDelay = reader.ReadInt32();
             SwordCount = reader.ReadInt32();
-            AttackTimePerSword = reader.ReadSingle();
             SwordIndex = reader.ReadSingle();
             TelegraphInterpolant = reader.ReadSingle();
             Projectile.timeLeft = reader.ReadInt32();
@@ -135,46 +124,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Reset things.
             TelegraphInterpolant = 0f;
-
-            if (!ShouldAttack)
-            {
-                HoverAboveOwner();
-                return;
-            }
             AttackTarget();
         }
-
-        public void HoverAboveOwner()
-        {
-            float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
-            float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
-
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.1f);
-            Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.03f);
-        }
-
+        
         public void AttackTarget()
         {
             int lungeDelay = 35;
-            float lungeSpeed = 24.25f;
-            float lungeAcceleration = 1.02f;
-            float wrappedAttackTimer = Timer % AttackTimePerSword;
+            float lungeSpeed = 60f;
 
             if (BossRushEvent.BossRushActive)
-            {
                 lungeSpeed += 10f;
-                lungeAcceleration *= 1.25f;
-            }
 
             // Aim at the target in anticipation of a lunge.
-            if (wrappedAttackTimer < lungeDelay)
+            if (Timer < lungeDelay)
             {
-                float idealRotation = Projectile.AngleTo(Target.Center + Target.velocity * 27f);
+                float idealRotation = (Target.Center.Y > Projectile.Center.Y).ToDirectionInt() * MathHelper.PiOver2;
                 Projectile.velocity = Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, 30f);
-                Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.15f).AngleTowards(idealRotation, 0.15f);
+                Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.3f).AngleTowards(idealRotation, 0.3f);
 
                 // Calculate the telegraph interpolant.
-                TelegraphInterpolant = Utils.GetLerpValue(0f, lungeDelay - 6f, wrappedAttackTimer, true);
+                TelegraphInterpolant = Utils.GetLerpValue(0f, lungeDelay - 6f, Timer, true);
 
                 // Create dust along the telegraph line.
                 for (int i = 0; i < 6; i++)
@@ -193,25 +162,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Lunge at the target.
-            if (wrappedAttackTimer == lungeDelay)
+            if (Timer == lungeDelay)
             {
-                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
-                SoundEngine.PlaySound(SoundID.Item28, Projectile.Center);
                 Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
                 Projectile.velocity = Projectile.rotation.ToRotationVector2() * lungeSpeed;
                 Projectile.netUpdate = true;
             }
 
-            // Define rotation.
-            if (wrappedAttackTimer >= lungeDelay)
+            // Define rotation and release lances.
+            if (Timer >= lungeDelay)
+            {
                 Projectile.rotation = Projectile.velocity.ToRotation();
 
-            // Accelerate after lunging.
-            if (wrappedAttackTimer > lungeDelay && wrappedAttackTimer <= AttackTimePerSword * 0.5f)
-                Projectile.velocity *= lungeAcceleration;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float offsetAngle = MathHelper.TwoPi * Timer / 32f + 1.14f;
+                    if (SwordIndex / (SwordCount - 1f) < 0.5f)
+                        offsetAngle = -offsetAngle + MathHelper.Pi;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                    {
+                        lance.MaxUpdates = 1;
+                    });
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), EmpressOfLightBehaviorOverride.LanceDamage, 0f, -1, offsetAngle, (Timer - lungeDelay) / 75f % 1f);
+                }
+            }
         }
 
-        public override bool? CanDamage() => ShouldAttack ? null : false;
+        public override bool? CanDamage() => Timer >= AttackDelay ? null : false;
 
         public Color ColorFunction(float completionRatio)
         {

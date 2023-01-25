@@ -23,6 +23,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Prime;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
@@ -58,6 +59,7 @@ namespace InfernumMode.GlobalInstances
 
         internal static int Cryogen = -1;
         internal static int AstrumAureus = -1;
+        internal static int ProfanedCrystal = -1;
         internal static int Yharon = -1;
 
         #endregion
@@ -88,6 +90,7 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
+            ResetSavedIndex(ref ProfanedCrystal, ModContent.NPCType<HealerShieldCrystal>());
             ResetSavedIndex(ref Yharon, ModContent.NPCType<Yharon>());
         }
         #endregion Reset Effects

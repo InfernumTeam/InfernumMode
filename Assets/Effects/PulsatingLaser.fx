@@ -18,6 +18,7 @@ matrix uWorldViewProjection;
 float4 uShaderSpecificData;
 
 bool usePulsing;
+bool reverseDirection;
 
 struct VertexShaderInput
 {
@@ -50,6 +51,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
     
+    float time = reverseDirection ? uTime : -uTime;
+
     if (usePulsing)
     {
         // Equation of a travelling oscillating wave:
@@ -61,15 +64,14 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         // x = Displacement
         // a = Amplitude
 
-        float y = sin(30 * uTime - 54.2 * coords.x) * 0.08;
+        float y = sin(30 * -time - 54.2 * coords.x) * 0.08;
 
         float widthScale = float((coords.x + (1 - y * 1)) / 2);
         
         coords.y = ((coords.y - 0.5) * clamp(widthScale, 0, 2)) + 0.5;
     }
-    
     // Get the pixel from the provided streak/fade map.
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 - uTime * 2.6), coords.y));
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 + time * 2.6), coords.y));
     
     // Calcuate the grayscale version of the pixel and use it as the opacity.
     float opacity = fadeMapColor.r;

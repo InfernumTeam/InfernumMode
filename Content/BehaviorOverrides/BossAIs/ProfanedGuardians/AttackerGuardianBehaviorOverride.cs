@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public enum AttackerGuardianAttackState
         {
             SpawnEffects,
-            Phase1FireWallsAndBeam,
+            HoverAndFireDeathray,
             EmpoweringDefender,
             DeathAnimation
         }
@@ -99,8 +99,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case AttackerGuardianAttackState.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
-                case AttackerGuardianAttackState.Phase1FireWallsAndBeam:
-                    DoBehavior_Phase1FireWallsAndBeam(npc, target, ref attackTimer);
+                case AttackerGuardianAttackState.HoverAndFireDeathray:
+                    DoBehavior_HoverAndFireDeathray(npc, target, ref attackTimer);
                     break;
                 case AttackerGuardianAttackState.EmpoweringDefender:
                     DoBehavior_EmpowerDefender(npc, target, ref attackTimer);
@@ -124,6 +124,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // And this is the actual velocity, using inertia and its existing one.
             npc.velocity = (npc.velocity * (inertia - 1f) + idealVelocity) / inertia;
 
+            // If we are the commander, spawn in the pushback fire wall.
+            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+            {
+                if (attackTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 spawnPosition = new(target.Center.X + 800f, npc.Center.Y);
+                    Vector2 finalPosition = new(WorldSaveSystem.ProvidenceDoorXPosition - 7104f, target.Center.Y);
+                    float distance = (spawnPosition - finalPosition).Length();
+                    float x = distance / HolyPushbackWall.Lifetime;
+                    Vector2 velocity = new(-x, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), 300, 0f);
+                }
+            }
+
             if (npc.WithinRange(positionToGoTo, 20f))
             {
                 npc.velocity = Vector2.Zero;
@@ -132,46 +146,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public void DoBehavior_Phase1FireWallsAndBeam(NPC npc, Player target, ref float attackTimer)
+        public void DoBehavior_HoverAndFireDeathray(NPC npc, Player target, ref float attackTimer)
         {
-            // This is basically flappy bird, the attacker spawns fire walls like the pipes that move towards the entrance of the garden.
-            ref float lastOffsetY = ref npc.Infernum().ExtraAI[0];
-            float wallCreationRate = 60;
+            float deathrayFireRate = 120;
+            float initialDelay = 400;
 
-            // Give the player infinite flight time.
-            for (int i = 0; i < Main.player.Length; i++)
+            // Do not take damage.
+            npc.dontTakeDamage = true;
+
+            // If time to fire, the target is close enough and the pushback wall is not present.
+            if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 6200f) && attackTimer >= initialDelay)
             {
-                Player player = Main.player[i];
-                if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
-                    player.wingTime = player.wingTimeMax;
-            }
-
-            // Create walls of fire with a random gap in them based off of the last one.
-            if (attackTimer % wallCreationRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Vector2 velocity = -Vector2.UnitX * 10;
-
-                // Create a random offset.
-                float yRandomOffset;
-                Vector2 previousCenter = npc.Center + new Vector2(0, lastOffsetY);
-                Vector2 newCenter;
-                int attempts = 0;
-                // Attempt to get one within a certain distance, but give up after 10 attempts.
-                do
+                // Fire deathray.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    yRandomOffset = Main.rand.NextFloat(-600, 200);
-                    newCenter = npc.Center + new Vector2(0, yRandomOffset);
-                    attempts++;
+                    Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
+                    Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<HolyAimedDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
-                while (newCenter.Distance(previousCenter) > 400 || attempts < 10);
-
-                // Set the new random offset as the last one.
-                lastOffsetY = yRandomOffset;
-                Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), 300, 0);
-                npc.netUpdate = true;
-            }
-
-            // This attack ends when the crystal wall dies, as it updates the commanders attack state on death.
+            }           
         }
 
         public void DoBehavior_EmpowerDefender(NPC npc, Player target, ref float attackTimer)
@@ -245,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float fadeToBlack = Utils.GetLerpValue(1.84f, 2.66f, brightnessWidthFactor, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianCommanderGlow").Value;
-            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects direction = npc.rotation is < MathHelper.PiOver2 or > MathHelper.Pi + MathHelper.PiOver2 ? SpriteEffects.None : SpriteEffects.FlipVertically;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             // Draw the pillar of light behind the guardian when ready.

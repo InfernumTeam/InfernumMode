@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -44,6 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC.noGravity = true;
             NPC.HitSound = SoundID.NPCHit52;
             NPC.DeathSound = SoundID.NPCDeath55;
+            NPC.Opacity = 0;
         }
 
         public override void OnSpawn(IEntitySource source) => InitialPosition = NPC.Center;
@@ -57,8 +59,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
+            // Declare this as the active crystal.
+            GlobalNPCOverrides.ProfanedCrystal = NPC.whoAmI;
+
             // Do not take damage by default.
             NPC.dontTakeDamage = true;
+
+            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.05f, 0f, 1f);
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
@@ -79,19 +86,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DoBehavior_SitStill(Player target)
         {
             // If the target is close enough, take damage.
-            if (target.WithinRange(NPC.Center, 800))
+            if (target.WithinRange(NPC.Center * NPC.Opacity, 800))
                 NPC.dontTakeDamage = false;
         }
 
         public void DoBehavior_Shatter(Player target)
         {
             float attackLength = 180;
-            float offsetAmount = MathHelper.Lerp(0, 15, ShatteringTimer / attackLength);
+            float offsetAmount = MathHelper.Lerp(0, 15, ShatteringTimer / attackLength * NPC.Opacity);
             NPC.Center = InitialPosition + Main.rand.NextVector2Circular(offsetAmount, offsetAmount);
             NPC.netUpdate = true;
 
             if (ShatteringTimer == 0)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 3.0f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 3.0f }, target.Center * NPC.Opacity);
 
             if (ShatteringTimer >= attackLength)
             {
@@ -118,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             DrawWall(spriteBatch, drawPosition);
             DrawBackglow(spriteBatch, mainTexture, drawPosition, NPC.frame);
-            spriteBatch.Draw(mainTexture, drawPosition, null, Color.White, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTexture, drawPosition, null, Color.White * NPC.Opacity, NPC.rotation * NPC.Opacity, origin, NPC.scale * NPC.Opacity, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -131,13 +138,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Draw the initial wall.
             DrawBackglow(spriteBatch, wallTexture, drawPosition, frame);
-            spriteBatch.Draw(wallTexture, drawPosition, frame, Color.White, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(wallTexture, drawPosition, frame, Color.White * NPC.Opacity, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // More variables
             spriteBatch.EnterShaderRegion();
             float lifeRatio = (float)NPC.life / NPC.lifeMax;
-            float opacity = MathHelper.Lerp(0f, 0.075f, lifeRatio);
-            float interpolant = ShatteringTimer / 30f;
+            float opacity = MathHelper.Lerp(0f, 0.125f, lifeRatio);
+            float interpolant = ShatteringTimer / 120f;
             float shaderWallOpacity = MathHelper.Lerp(0.02f, 0f, interpolant);
 
             // Initialize the shader.
@@ -149,12 +156,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Texture2D magicPixel = TextureAssets.MagicPixel.Value;
             Vector2 scale = new Vector2(53.6f, 2010f) / TextureAssets.MagicPixel.Value.Size();
             Rectangle overlayFrame = new(0, 0, (int)(magicPixel.Width * scale.X), (int)(magicPixel.Height * scale.Y));
-            DrawData overlay = new(magicPixel, centerPosition + new Vector2(1290, 0), overlayFrame, Color.White * shaderWallOpacity, 0f, overlayFrame.Size() * 0.5f, scale, SpriteEffects.None, 0);
+            DrawData overlay = new(magicPixel, centerPosition + new Vector2(1290, 0), overlayFrame, Color.White * shaderWallOpacity * NPC.Opacity, 0f, overlayFrame.Size() * 0.5f, scale, SpriteEffects.None, 0);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(overlay);
             overlay.Draw(spriteBatch);
 
             // Draw the wall overlay.
-            DrawData wall = new(wallTexture, drawPosition, frame, Color.White * opacity, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            DrawData wall = new(wallTexture, drawPosition, frame, Color.White * opacity * 0.5f * NPC.Opacity, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(wall);
             wall.Draw(spriteBatch);
 
@@ -169,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Color backglowColor = MagicCrystalShot.ColorSet[0];
                 backglowColor.A = 0;
-                spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+                spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor * NPC.Opacity, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
         }
 

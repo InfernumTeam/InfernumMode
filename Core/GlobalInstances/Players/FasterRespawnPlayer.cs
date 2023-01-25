@@ -11,6 +11,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             if (WorldSaveSystem.InfernumMode && !CalamityPlayer.areThereAnyDamnBosses)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
+
         }
     }
 }

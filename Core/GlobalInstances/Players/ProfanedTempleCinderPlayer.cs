@@ -21,6 +21,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void PostUpdate()
         {
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+                return;
+
             bool inProfanedTemple = Player.GetModPlayer<BiomeEffectsPlayer>().ZoneProfaned;
 
             // This hook is called for all players. As such, a Main.myPlayer check is necessary to ensure that only one client sends packets to

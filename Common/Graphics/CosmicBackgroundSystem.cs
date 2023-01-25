@@ -45,8 +45,14 @@ namespace InfernumMode.Common.Graphics
 
         internal static void PrepareTarget()
         {
-            int width = 4096;
-            int height = 4096;
+            int width = 2048;
+            int height = 2048;
+            if (Main.gfxQuality >= 0.5f)
+            {
+                width *= 2;
+                height *= 2;
+            }
+
             int iterations = 14;
 
             // This is stored as a render target and not a PNG in the mod's source because the fractal needs to contain information that exceeds the traditional range of 0-1 color values.

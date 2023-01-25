@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Waters;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -15,7 +16,7 @@ namespace InfernumMode.Content.Waters
 
         public override string SlopeTexturePath => LavaTexturePath + "_Slope";
 
-        public override bool ChooseLavaStyle() => Main.LocalPlayer.Infernum_Biome().ZoneProfaned || Main.LocalPlayer.Infernum_Biome().ProfanedLavaFountain;
+        public override bool ChooseLavaStyle() => (Main.LocalPlayer.Infernum_Biome().ZoneProfaned || Main.LocalPlayer.Infernum_Biome().ProfanedLavaFountain) && !InfernumConfig.Instance.ReducedGraphicsConfig;
 
         public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("InfernumMode/ProfanedLavaflow").Slot;
 

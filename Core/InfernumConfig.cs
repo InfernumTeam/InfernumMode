@@ -34,7 +34,7 @@ namespace InfernumMode.Core
         [BackgroundColor(224, 127, 180, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0f, 1f)]
-        [DefaultValue(0.75f)]
+        [DefaultValue(0f)]
         [Tooltip("How intense color saturation bloom effects should be. Such effects are disabled when this value is zero.")]
         public float SaturationBloomIntensity { get; set; }
 

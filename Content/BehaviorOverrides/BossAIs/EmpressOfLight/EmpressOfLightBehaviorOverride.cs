@@ -1011,6 +1011,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float swordIndexToUse = ref npc.Infernum().ExtraAI[0];
             ref float swordHoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
+            // Grant the player infinite flight time.
+            target.wingTime = target.wingTimeMax;
+
             // Teleport above the target and create a bunch of swords on the first frame.
             if (attackTimer == 1f)
             {
@@ -1069,10 +1072,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Check to see if the sword is done being used.
             if (npc.Infernum().ExtraAI[3] == 1f)
             {
-                swordIndexToUse = (swordIndexToUse + 1f) % swordCount;
+                swordIndexToUse++;
                 attackTimer = attackDelay - 1f;
                 npc.Infernum().ExtraAI[3] = 0f;
                 npc.netUpdate = true;
+
+                if (swordIndexToUse >= swordCount)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EtherealLance>(), ModContent.ProjectileType<EmpressSword>());
+                    SelectNextAttack(npc);
+                }
             }
         }
 

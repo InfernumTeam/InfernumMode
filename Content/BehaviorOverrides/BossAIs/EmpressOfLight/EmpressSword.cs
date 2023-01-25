@@ -173,14 +173,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public void PerformAttackBehaviors()
         {
             int hoverRedirectTime = 20;
-            int chargeAnticipationTime = 20;
+            int chargeAnticipationTime = 27;
             int lanceShootDelay = 40;
-            int perpendicularChargeAnticipationTime = 36;
+            int perpendicularChargeAnticipationTime = 42;
             int perpendicularChargeTime = 42;
             float hoverOffsetAngle = Owner.Infernum().ExtraAI[1];
-            float hoverOffset = 384f;
-            float chargeSpeed = 40f;
-            float lanceSpacing = 166f;
+            float hoverOffset = 445f;
+            float chargeSpeed = 64f;
+            float lanceSpacing = 196f;
             Vector2 hoverDestination = Target.Center + hoverOffsetAngle.ToRotationVector2() * hoverOffset;
             Vector2 hoverDestinationPerpendicular = Target.Center + (hoverOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * hoverOffset;
 
@@ -245,7 +245,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 CreateLancePatterns(lanceSpacing, perpendicularChargeTime - 10, Projectile.SafeDirectionTo(Target.Center));
 
                 Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
-                Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * chargeSpeed * 0.4f;
+                Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * chargeSpeed * 0.5f;
                 Projectile.netUpdate = true;
 
                 SoundEngine.PlaySound(SoundID.Item72, Projectile.Center);

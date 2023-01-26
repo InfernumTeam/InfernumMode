@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (!Main.npc.IndexInRange((int)Projectile.ai[0]) || Main.npc[(int)Projectile.ai[0]].type != NPCID.HallowBoss || !Main.npc[(int)Projectile.ai[0]].active)
                     return null;
 
-                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.DanceOfSwords)
+                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightAttackType.DanceOfSwords)
                     return null;
 
                 return Main.npc[(int)Projectile.ai[0]];
@@ -73,8 +73,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             get
             {
                 Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 0.95f, 0.54f);
-                if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f);
+                if (ShouldBeEnraged)
+                    color = GetDaytimeColor(Projectile.ai[1] % 1f);
 
                 color.A /= 8;
                 return color;
@@ -107,8 +107,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetDefaults()
         {
-            Projectile.width = 94;
-            Projectile.height = 30;
+            Projectile.width = 86;
+            Projectile.height = 24;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.friendly = false;
@@ -150,6 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (!ShouldAttack)
             {
                 HoverAboveEmpress();
+                DontDealDamage = true;
                 Time++;
             }
             else
@@ -181,6 +182,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float hoverOffset = 445f;
             float chargeSpeed = 64f;
             float lanceSpacing = 196f;
+
+            if (ShouldBeEnraged)
+            {
+                hoverRedirectTime -= 9;
+                chargeAnticipationTime -= 8;
+                lanceShootDelay -= 10;
+                perpendicularChargeAnticipationTime -= 8;
+                perpendicularChargeTime -= 9;
+                chargeSpeed += 33f;
+                lanceSpacing -= 36f;
+            }
+
             Vector2 hoverDestination = Target.Center + hoverOffsetAngle.ToRotationVector2() * hoverOffset;
             Vector2 hoverDestinationPerpendicular = Target.Center + (hoverOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * hoverOffset;
 
@@ -273,6 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             for (int i = 0; i < 10; i++)
             {
+                float lanceHue = ((i + 5f) / 10f + Projectile.ai[1]) % 1f;
                 float lanceOffsetDistance = (i - 5f) * lanceSpacing;
                 Vector2 lanceOffset = aimDirection.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * lanceOffsetDistance - aimDirection * 876f;
                 Vector2 lanceSpawnPosition = Target.Center + lanceOffset;
@@ -283,7 +297,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     lance.ModProjectile<EtherealLance>().Time = EtherealLance.FireDelay - lanceShootDelay * 2;
                     lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = i == 5;
                 });
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, aimDirection.ToRotation(), i / 10f);
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, aimDirection.ToRotation(), lanceHue);
             }
         }
 

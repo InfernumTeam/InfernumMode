@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "Prismatic Fae\nThe Empress of Light";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.HallowBoss);
+        public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.HallowBoss) && !NPC.AnyNPCs(NPCID.EmpressButterfly);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
     }

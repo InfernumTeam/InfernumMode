@@ -1,4 +1,6 @@
-﻿using InfernumMode.Assets.Sounds;
+﻿using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,10 +14,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class EmpressPrism : ModProjectile
     {
+        public PrimitiveTrailCopy LightRayDrawer
+        {
+            get;
+            set;
+        }
+
         public ref float Time => ref Projectile.ai[0];
 
-        public ref float AimDirection => ref Projectile.localAI[0];
+        public static float MaxLaserbeamCoverage => 0.23f;
 
+        public static int Lifetime => 120;
+        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Prism");
@@ -30,25 +40,46 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 510;
+            Projectile.timeLeft = Lifetime;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
 
         public override void AI()
         {
-            if (Time < -20f)
-                AimDirection = Projectile.AngleTo(Main.player[(int)Projectile.ai[1]].Center);
-
             if (Time == 0f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Projectile.Center);
-                SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity);
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float laserOffsetAngle = MathHelper.PiOver2 + MathHelper.Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 5f);
+                        Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity, i / 5f);
+                    }
+                }
             }
+
+            // Release light sparkles.
+            if (Main.rand.NextBool(3) && Time >= -20f)
+            {
+                Vector2 sparkleSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * Projectile.width * 0.5f, -Main.rand.NextFloat(500f));
+                Dust light = Dust.NewDustPerfect(sparkleSpawnPosition, 264);
+                light.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, Main.rand.NextFloat(0.8f, 1f));
+                light.noGravity = true;
+                light.velocity = -Vector2.UnitY;
+                light.noLight = true;
+            }
+
             Time++;
+        }
+
+        public float LightRayWidthFunction(float _) => Projectile.width * 0.95f;
+
+        public Color LightRayColorFunction(float completionRatio)
+        {
+            float endFadeOpacity = Utils.GetLerpValue(0f, 0.2f, completionRatio, true) * Utils.GetLerpValue(1f, 0.8f, completionRatio, true);
+            float glowOpacity = Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(6f, 30f, Projectile.timeLeft, true);
+            return Color.LightCyan * endFadeOpacity * glowOpacity * 0.2f;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -58,28 +89,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = texture.Size() * 0.5f;
 
             // Draw telegraphs.
-            float telegraphInterpolant = Utils.GetLerpValue(-72f, -30f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(-40f, -8f, Time, true);
             if (telegraphInterpolant > 0f && Time < 0f)
             {
-                float maxOffsetAngle = MathHelper.Lerp(0.24f, 0.0012f, telegraphInterpolant);
-                float telegraphWidth = MathHelper.Lerp(3f, 10f, telegraphInterpolant);
-                for (int i = -3; i <= 3; i++)
+                float maxOffsetAngle = MathHelper.Lerp(0.0012f, MaxLaserbeamCoverage, telegraphInterpolant);
+                float telegraphWidth = MathHelper.Lerp(2f, 9f, telegraphInterpolant);
+                for (int i = 0; i < 6; i++)
                 {
-                    // Don't draw the middle beam. Doing so would lead to a single line being drawn when others should converge.
-                    if (i == 0)
-                        continue;
-
-                    Color telegraphColor = Main.hslToRgb(((i + 3f) / 6f + Main.GlobalTimeWrappedHourly * 0.2f) % 1f, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant) * 0.5f;
+                    Color telegraphColor = Main.hslToRgb(i / 5f, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant) * 0.5f;
                     telegraphColor.A = 0;
 
-                    Vector2 aimDirection = (AimDirection + maxOffsetAngle * i / 3f).ToRotationVector2();
+                    Vector2 aimDirection = (MathHelper.PiOver2 + MathHelper.Lerp(-maxOffsetAngle, maxOffsetAngle, i / 5f)).ToRotationVector2();
                     Vector2 start = Projectile.Center;
-                    Vector2 end = start + aimDirection * 3600f;
+                    Vector2 end = start + aimDirection * 2500f;
                     Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
+                    Main.spriteBatch.DrawLineBetter(start, end, Color.Lerp(telegraphColor, Color.White with { A = 0 }, 0.4f), telegraphWidth * 0.5f);
+                    Main.spriteBatch.DrawLineBetter(start, end, Color.Lerp(telegraphColor, Color.White with { A = 0 }, 0.8f), telegraphWidth * 0.25f);
                 }
             }
 
-            float fadeInInterpolant = Utils.GetLerpValue(900f, 855f, Projectile.timeLeft, true);
+            // Draw the light ray line. This is done to indicate that the laser rays are from the light being "split".
+            Vector2 telegraphStart = Projectile.Center;
+            Vector2 telegraphEnd = Projectile.Center - Vector2.UnitY * 1000f;
+            Vector2[] telegraphPoints = new Vector2[]
+            {
+                telegraphStart,
+                Vector2.Lerp(telegraphStart, telegraphEnd, 0.25f),
+                Vector2.Lerp(telegraphStart, telegraphEnd, 0.5f),
+                Vector2.Lerp(telegraphStart, telegraphEnd, 0.75f),
+                telegraphEnd
+            };
+            LightRayDrawer ??= new(LightRayWidthFunction, LightRayColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
+            LightRayDrawer.Draw(telegraphPoints, -Main.screenPosition, 40);
+
+            // Draw the prism itself. It will converge as a bunch of transparent "copies" before becoming the complete prism.
+            float fadeInInterpolant = Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true);
             float fadeOffset = MathHelper.Lerp(45f, 6f, fadeInInterpolant);
             for (int i = 0; i < 8; i++)
             {
@@ -87,7 +131,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Color color = Main.hslToRgb(hue, 1f, 0.5f);
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
                     color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hue);
-                color *= Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * (float)Math.Sqrt(fadeInInterpolant);
+
+                color *= Utils.GetLerpValue(0f, 30f, Lifetime, true) * (float)Math.Sqrt(fadeInInterpolant);
                 color.A = 0;
 
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTimeWrappedHourly * 1.5f).ToRotationVector2() * fadeOffset;

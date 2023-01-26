@@ -72,31 +72,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.MesmerizingMagic,
             EmpressOfLightAttackType.HorizontalCharge,
+            EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.HorizontalCharge,
             EmpressOfLightAttackType.MesmerizingMagic,
         };
 
         public static EmpressOfLightAttackType[] Phase2AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.MesmerizingMagic,
-            EmpressOfLightAttackType.DanceOfSwords,
-            EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.HorizontalCharge,
-            EmpressOfLightAttackType.DanceOfSwords,
-            EmpressOfLightAttackType.MesmerizingMagic,
+            EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.LightPrisms,
-            EmpressOfLightAttackType.HorizontalCharge,
-            EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.BackstabbingLances,
+            EmpressOfLightAttackType.LanceWallBarrage
         };
 
         public static EmpressOfLightAttackType[] Phase3AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.LightPrisms,
+            EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.MajesticPierce,
+            EmpressOfLightAttackType.LanceBarrages,
+            EmpressOfLightAttackType.LanceWallBarrage,
+            EmpressOfLightAttackType.MesmerizingMagic,
+            EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.DanceOfSwords,
         };
 
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
@@ -291,7 +297,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
-            int appearDelay = 480;
+            int appearDelay = 420;
             bool attackingPlayer = attackTimer < appearDelay;
             ref float lightBoltReleaseDelay = ref npc.Infernum().ExtraAI[0];
             ref float lightBoltReleaseCountdown = ref npc.Infernum().ExtraAI[1];
@@ -397,6 +403,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float barrageCounter = ref npc.Infernum().ExtraAI[2];
 
+            if (barrageCounter == 0f)
+                attackDelay += 24;
+
+            if (InPhase2(npc))
+            {
+                attackDelay -= 2;
+                lanceReleaseRate = 1;
+                hoverTime -= 2;
+            }
+            if (InPhase3(npc))
+            {
+                attackDelay -= 2;
+                hoverTime -= 2;
+            }
+
             // Teleport above the target on the first frame.
             if (attackTimer == 1f)
             {
@@ -429,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeed);
 
             // Release lances rapid-fire towards the target.
-            if (attackTimer % lanceReleaseRate == 1f)
+            if (attackTimer % lanceReleaseRate == 0f)
             {
                 float lanceHue = (attackTimer - attackDelay) / hoverTime % 1f;
                 if (Math.Sign(hoverOffsetX) == -1f)
@@ -579,7 +600,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int hoverRedirectTime = 40;
             int startingWallShootCountdown = 67;
             int endingWallShootCountdown = 27;
-            int horizontalShootTime = 480;
+            int horizontalShootTime = 540;
             int horizontalLanceTransitionDelay = 50;
             int verticalLanceCount = 36;
             int verticalLanceTransitionDelay = 75;
@@ -647,7 +668,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                             {
                                 lance.MaxUpdates = 1;
-                                lance.ModProjectile<EtherealLance>().Time = 20;
+                                lance.ModProjectile<EtherealLance>().Time = 10;
                                 lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = i == 0;
                                 lance.ModProjectile<EtherealLance>().SoundPitch = (npc.ai[1] - hoverRedirectTime) / horizontalShootTime * 0.35f;
                             });
@@ -826,13 +847,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Initialize things.
             if (totalHandsToShootFrom == 0f)
             {
-                boltCount = 25f;
-                totalHandsToShootFrom = 1f;
-                if (InPhase2(npc))
-                {
-                    boltCount = 18f;
-                    totalHandsToShootFrom = 2f;
-                }
+                boltCount = 18f;
+                totalHandsToShootFrom = 2f;
 
                 if (ShouldBeEnraged)
                 {
@@ -1050,7 +1066,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int lightBoltTime = 120;
             int prismReleaseRate = 5;
-            int attackCycleCount = 3;
+            int attackCycleCount = 2;
             float chargeSpeed = 65f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
@@ -1120,7 +1136,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
+                        {
+                            npc.Center = target.Center - Vector2.UnitY * 600f;
                             SelectNextAttack(npc);
+                        }
 
                         attackTimer = 0f;
                         attackSubstate = 0f;

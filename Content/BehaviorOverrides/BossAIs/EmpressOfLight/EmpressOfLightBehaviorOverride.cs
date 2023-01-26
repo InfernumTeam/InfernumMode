@@ -239,7 +239,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     DoBehavior_EnterSecondPhase(npc, target, ref attackTimer);
                     break;
                 case EmpressOfLightAttackType.LightPrisms:
-                    DoBehavior_LightPrisms(npc, target, ref attackTimer, ref rightArmFrame);
+                    DoBehavior_LightPrisms(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.DanceOfSwords:
                     DoBehavior_DanceOfSwords(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
@@ -314,6 +314,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int lacewingIndex = NPC.FindFirstNPC(NPCID.EmpressButterfly);
             if (lacewingIndex == -1)
             {
+                npc.Opacity = 1f;
                 SelectNextAttack(npc);
                 return;
             }
@@ -403,6 +404,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float barrageCounter = ref npc.Infernum().ExtraAI[2];
 
+            // Have the arm pointed towards the player aim downward, while the other hand points upward.
+            leftArmFrame = 4f;
+            rightArmFrame = 2f;
+            if (target.Center.X < npc.Center.X)
+                Utils.Swap(ref leftArmFrame, ref rightArmFrame);
+
             if (barrageCounter == 0f)
                 attackDelay += 24;
 
@@ -449,6 +456,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetX, hoverOffsetY);
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeed);
 
+            Vector2 fingerCenter = npc.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 70f, -60f).RotatedBy(npc.rotation) + npc.velocity;
+
+            // Make the pointer finger release a lot of rainbow dust.
+            Dust rainbow = Dust.NewDustPerfect(fingerCenter, 267);
+            rainbow.velocity = -Vector2.UnitY.RotatedBy(npc.spriteDirection * npc.rotation).RotatedByRandom(0.5f) * 0.96f;
+            rainbow.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+            rainbow.scale = 2f;
+            rainbow.noGravity = true;
+
             // Release lances rapid-fire towards the target.
             if (attackTimer % lanceReleaseRate == 0f)
             {
@@ -461,7 +477,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     lance.MaxUpdates = 1;
                     lance.ModProjectile<EtherealLance>().Time = 40;
                 });
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, npc.AngleTo(target.Center + target.velocity * 10f), lanceHue);
+                Vector2 lanceSpawnPosition = npc.Center - Vector2.UnitY * npc.scale * 20f;
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSpawnPosition.AngleTo(target.Center + target.velocity * 10f), lanceHue);
             }
 
             if (flySpeedInterpolant >= 1f && npc.WithinRange(hoverDestination, 100f))
@@ -583,6 +600,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
+            // Hold hands up.
+            leftArmFrame = 3f;
+            rightArmFrame = 3f;
+
             if (attackTimer >= shootDelay)
             {
                 attackTimer = 0f;
@@ -614,6 +635,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float attackSubstate = ref npc.Infernum().ExtraAI[4];
 
             bool goingAgainstWalls = Math.Abs(target.velocity.X) >= 6f && Math.Sign(target.velocity.X) != horizontalWallDirection;
+
+            // Have the arm pointed towards the player aim downward, while the other hand points upward.
+            leftArmFrame = 4f;
+            rightArmFrame = 2f;
+            if (target.Center.X < npc.Center.X)
+                Utils.Swap(ref leftArmFrame, ref rightArmFrame);
 
             switch ((int)attackSubstate)
             {
@@ -657,7 +684,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         float lanceDirection = (Vector2.UnitX * horizontalWallDirection).ToRotation();
                         for (int i = -16; i < 16; i++)
                         {
-                            float lanceHue = ((i + 16f) / 32f) * 4f % 1f;
+                            float lanceHue = (i + 16f) / 32f * 4f % 1f;
                             Vector2 lanceSpawnPosition = target.Center + new Vector2(-horizontalWallDirection * wallHorizontalOffset, horizontalLanceSpacing * i);
                             if (wallShootCounter % 2f == 1f)
                             {
@@ -792,6 +819,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 return;
             }
+
+            // Extend arms outward in anticipation of the lance wall.
+            leftArmFrame = 2f;
+            rightArmFrame = 2f;
 
             // Hover near the target.
             if (npc.WithinRange(target.Center, 275f))
@@ -1062,7 +1093,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack(npc);
         }
         
-        public static void DoBehavior_LightPrisms(NPC npc, Player target, ref float attackTimer, ref float rightArmFrame)
+        public static void DoBehavior_LightPrisms(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
             int lightBoltTime = 120;
             int prismReleaseRate = 5;
@@ -1070,6 +1101,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float chargeSpeed = 65f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Have both arms face downward with an open palm.leftArmFrame
+            leftArmFrame = 2f;
+            rightArmFrame = 2f;
 
             switch ((int)attackSubstate)
             {
@@ -1156,6 +1191,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int attackDelay = 50;
             ref float swordIndexToUse = ref npc.Infernum().ExtraAI[0];
             ref float swordHoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
+
+            // Have both hands point upward with the index finger.
+            leftArmFrame = 4f;
+            rightArmFrame = 4f;
 
             // Teleport above the target and create a bunch of swords on the first frame.
             if (attackTimer == 1f)

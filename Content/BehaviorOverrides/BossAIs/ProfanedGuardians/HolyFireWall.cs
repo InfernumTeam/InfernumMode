@@ -12,6 +12,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
 
+        public int Lifetime => 570;
+
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults()
@@ -29,13 +31,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.ignoreWater = false;
             Projectile.Opacity = 0;
             Projectile.scale = 0;
-            Projectile.timeLeft = 600;
+            Projectile.timeLeft = Lifetime;
         }
 
         public override void AI()
         {
             // Rapidly fade in.
-            if (Projectile.timeLeft >= 500)
+            if (Projectile.timeLeft >= Lifetime - 100)
             {
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
                 Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);

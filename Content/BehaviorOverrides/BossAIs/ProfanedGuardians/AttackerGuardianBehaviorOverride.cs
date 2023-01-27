@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -14,6 +15,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -23,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             SpawnEffects,
             HoverAndFireDeathray,
-            EmpoweringDefender,
+            SpinningHolyLightBeams,
             DeathAnimation
         }
 
@@ -87,92 +89,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
-            ref float attackDelay = ref npc.ai[3];
-            ref float shouldHandsBeInvisibleFlag = ref npc.localAI[2];
-
-            // Draw things 
-            shouldHandsBeInvisibleFlag = 0f;
 
             // Do attacks.
-            switch ((AttackerGuardianAttackState)attackState)
+            switch ((GuardiansAttackType)attackState)
             {
-                case AttackerGuardianAttackState.SpawnEffects:
+                case GuardiansAttackType.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
-                case AttackerGuardianAttackState.HoverAndFireDeathray:
-                    DoBehavior_HoverAndFireDeathray(npc, target, ref attackTimer);
+                case GuardiansAttackType.FlappyBird:
+                    DoBehavior_FlappyBird(npc, target, ref attackTimer, npc);
                     break;
-                case AttackerGuardianAttackState.EmpoweringDefender:
-                    DoBehavior_EmpowerDefender(npc, target, ref attackTimer);
+                case GuardiansAttackType.SoloHealer:
+                    DoBehavior_SoloHealer(npc, target, ref attackTimer);
                     break;
-                case AttackerGuardianAttackState.DeathAnimation:
+                case GuardiansAttackType.SoloDefender:
+                    DoBehavior_SoloDefender(npc, target, ref attackTimer);
+                    break;
+                case GuardiansAttackType.HealerAndDefender:
+                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer);
+                    break;
+                case GuardiansAttackType.CommanderDeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
             return false;
-        }
-
-        public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
-        {
-            float inertia = 20f;
-            float flySpeed = 25f;
-
-            Vector2 positionToGoTo = new(WorldSaveSystem.ProvidenceDoorXPosition - 1000f, npc.Center.Y);
-            // This is the ideal velocity it would have
-            Vector2 idealVelocity = npc.SafeDirectionTo(positionToGoTo) * flySpeed;
-            // And this is the actual velocity, using inertia and its existing one.
-            npc.velocity = (npc.velocity * (inertia - 1f) + idealVelocity) / inertia;
-
-            // If we are the commander, spawn in the pushback fire wall.
-            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
-            {
-                if (attackTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 spawnPosition = new(target.Center.X + 800f, npc.Center.Y);
-                    Vector2 finalPosition = new(WorldSaveSystem.ProvidenceDoorXPosition - 7104f, target.Center.Y);
-                    float distance = (spawnPosition - finalPosition).Length();
-                    float x = distance / HolyPushbackWall.Lifetime;
-                    Vector2 velocity = new(-x, 0f);
-                    Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), 300, 0f);
-                }
-            }
-
-            if (npc.WithinRange(positionToGoTo, 20f))
-            {
-                npc.velocity = Vector2.Zero;
-                // Go to the initial attack and reset the attack timer.
-                SelectNewAttack(npc, ref attackTimer);
-            }
-        }
-
-        public void DoBehavior_HoverAndFireDeathray(NPC npc, Player target, ref float attackTimer)
-        {
-            float deathrayFireRate = 120;
-            float initialDelay = 400;
-
-            // Do not take damage.
-            npc.dontTakeDamage = true;
-
-            // If time to fire, the target is close enough and the pushback wall is not present.
-            if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 6200f) && attackTimer >= initialDelay)
-            {
-                // Fire deathray.
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
-                    Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<HolyAimedDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
-                }
-            }           
-        }
-
-        public void DoBehavior_EmpowerDefender(NPC npc, Player target, ref float attackTimer)
-        {
-            // The commander doesnt directly attack here, instead visibly "empowering" the defender guardian,
-            // as it attacks you instead.
-            ref float defenderGlowScalar = ref npc.Infernum().ExtraAI[0];
-            float glowInterpolant = MathHelper.Clamp(attackTimer / 60f, 0f, 1f);
-            defenderGlowScalar = MathHelper.Lerp(0f, 1f, glowInterpolant);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
@@ -214,19 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.checkDead();
                 npc.active = false;
             }
-        }
-
-        public static void SelectNewAttack(NPC npc, ref float attackTimer)
-        {
-            // Reset the first 5 extra ai slots. These are used for per attack information.
-            for (int i = 0; i < 5; i++)
-                npc.Infernum().ExtraAI[i] = 0;
-
-            // Reset the attack timer.
-            attackTimer = 0;
-            // The attack cycle is relatively linear, so advance the current attack by one.
-            npc.ai[0]++;
-        }
+        }     
         #endregion AI and Behaviors
 
         #region Draw Effects
@@ -302,10 +231,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Filters.Scene["CrystalDestructionColor"].GetShader().UseColor(1f, 0f, 0.75f);
 
             // Just die as usual if the Profaned Guardian is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
-            if (npc.ai[0] == (int)AttackerGuardianAttackState.DeathAnimation)
+            if (npc.ai[0] == (int)GuardiansAttackType.CommanderDeathAnimation)
                 return true;
 
-            npc.ai[0] = (int)AttackerGuardianAttackState.DeathAnimation;
+            npc.ai[0] = (int)GuardiansAttackType.CommanderDeathAnimation;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

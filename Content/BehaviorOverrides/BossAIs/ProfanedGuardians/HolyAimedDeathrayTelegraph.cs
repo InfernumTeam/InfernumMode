@@ -11,6 +11,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyAimedDeathrayTelegraph : FireBeamTelegraph, IScreenCullDrawer
     {
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.timeLeft = 72;
+        }
         public override bool PreDraw(ref Color lightColor) => false;
 
         public override void Kill(int timeLeft)

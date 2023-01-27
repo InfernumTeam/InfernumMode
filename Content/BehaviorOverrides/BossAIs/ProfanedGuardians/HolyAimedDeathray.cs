@@ -14,11 +14,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     public class HolyAimedDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
+
         public static Color BrightFire => new(255, 255, 150);
+
         public const float LaserLength = 6500f;
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
         public override void SetDefaults()
@@ -73,18 +79,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = Projectile.width * 0.8f;
+            float width = Projectile.width * Projectile.scale * 2f;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * (LaserLength - 300f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
+        public override bool ShouldUpdatePosition() => false;
+        
         public float WidthFunction(float completionRatio)
         {
             return Projectile.width * Projectile.scale * 2f;
         }
-
-        public override bool ShouldUpdatePosition() => false;
 
         public Color ColorFunction(float completionRatio) => new Color(255, 191, 73) * Projectile.Opacity;
 

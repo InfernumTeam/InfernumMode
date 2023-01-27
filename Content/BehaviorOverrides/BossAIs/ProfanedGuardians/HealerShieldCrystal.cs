@@ -31,7 +31,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Vector2 InitialPosition;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Shield");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Holy Shield");
+            this.HideFromBestiary();
+        }
 
         public override void SetDefaults()
         {
@@ -108,8 +112,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     return;
 
                 NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
-                // Tell the commander to swap attacks.
-                commander.ai[0] = (float)AttackerGuardianAttackState.EmpoweringDefender;
+                // Tell the commander to swap attacks. The other guardians check for this automatically.
+                commander.ai[0] = (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer;
+                // Reset the first 5 extra ai slots. These are used for per attack information.
+                for (int i = 0; i < 5; i++)
+                    commander.Infernum().ExtraAI[i] = 0f;
+
+                // Reset the attack timer.
+                commander.ai[1] = 0f;
             }
             ShatteringTimer++;
         }

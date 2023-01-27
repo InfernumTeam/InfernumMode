@@ -18,9 +18,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const float LaserDistance = 6000;
 
-        public static int Lifetime => 720;
+        public static int Lifetime => 660;
 
-        public int SpearReleaseRate => 10;
+        public int SpearReleaseRate => 15;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

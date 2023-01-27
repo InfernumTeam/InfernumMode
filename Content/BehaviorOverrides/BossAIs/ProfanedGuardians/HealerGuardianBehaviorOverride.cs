@@ -16,8 +16,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.AttackerGuardianBehaviorOverride;
-
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -35,8 +34,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         internal PrimitiveTrailCopy ShieldEnergyDrawer;
-
-        public const int ConnectionsWidthScaleIndex = 0;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -56,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float drawShieldConnections = ref npc.ai[2];
-            ref float connectionsWidthScale = ref npc.Infernum().ExtraAI[ConnectionsWidthScaleIndex];
+            ref float connectionsWidthScale = ref npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
 
             npc.damage = 0;
             npc.target = commander.target;
@@ -65,69 +62,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset taking damage.
             npc.dontTakeDamage = false;
 
-            switch ((HealerAttackType)attackState)
+            switch ((GuardiansAttackType)attackState)
             {
-                case HealerAttackType.SpawnEffects:
+                case GuardiansAttackType.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
-                case HealerAttackType.SitAndMaintainFrontShield:
-                    DoBehavior_SitAndMaintainFrontShield(npc, target, ref attackTimer, commander, ref drawShieldConnections, ref connectionsWidthScale);
+                case GuardiansAttackType.FlappyBird:
+                    DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
-                case HealerAttackType.SitAndShieldCommander:
-                    DoBehavior_SitAndShieldCommander(npc, target, ref attackTimer, commander);
+                case GuardiansAttackType.SoloHealer:
+                    DoBehavior_SoloHealer(npc, target, ref attackTimer);
+                    break;
+                case GuardiansAttackType.SoloDefender:
+                    DoBehavior_SoloDefender(npc, target, ref attackTimer);
+                    break;
+                case GuardiansAttackType.HealerAndDefender:
+                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer);
                     break;
             }
 
             attackTimer++;
             return false;
-        }
-
-        public void DoBehavior_SitAndMaintainFrontShield(NPC npc, Player target, ref float attackTimer, NPC commander, ref float drawShieldConnections, ref float connectionsWidthScale)
-        {
-            // Take no damage.
-            npc.dontTakeDamage = true;
-
-            // Spawn the shield if this is the first frame.
-            if (attackTimer == 1f)
-            {
-                Vector2 crystalCenter = new(WorldSaveSystem.ProvidenceDoorXPosition - 1490, npc.Center.Y);
-
-                NPC.NewNPCDirect(npc.GetSource_FromAI(), crystalCenter, ModContent.NPCType<HealerShieldCrystal>(), target: target.whoAmI);
-            }
-
-            if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
-            {
-                if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
-                {
-                    // Draw the shield connections.
-                    drawShieldConnections = 1f;
-                    NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
-
-                    Vector2 hoverPosition = crystal.Center + new Vector2(200f, -15f);
-                    // Sit still behind the crystal.
-                    if (npc.Distance(hoverPosition) > 7f && crystal.ai[0] == 0)
-                        npc.velocity = npc.SafeDirectionTo(hoverPosition, Vector2.UnitY) * 5f;
-                    else
-                    {
-                        npc.velocity *= 0.5f;
-                        npc.spriteDirection = 1;
-                    }
-
-                    // If the crystal is shattering, decrease the scale, else increase it.
-                    if (crystal.ai[0] == 1)
-                        connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
-                    else
-                        connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
-                }
-            }
-
-            // Check if the commander is on the next attack, if so, join it.
-            if ((AttackerGuardianAttackState)commander.ai[0] == AttackerGuardianAttackState.EmpoweringDefender)
-            {
-                drawShieldConnections = 0f;
-                attackTimer = 0f;
-                npc.ai[0] = 2f;
-            }
         }
 
         public void DoBehavior_SitAndShieldCommander(NPC npc, Player target, ref float attackTimer, NPC commander)
@@ -208,7 +163,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawShieldConnections(NPC npc)
         {
-            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => npc.Infernum().ExtraAI[ConnectionsWidthScaleIndex] * 20f, EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
+            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] * 20f, EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
 
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal) && !Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
                 return;
@@ -241,7 +196,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 glowOrigin = glowTexture.Size() * 0.5f;
             Color baseColor = MagicCrystalShot.ColorSet[0];
             baseColor.A = 0;
-            Color modifiedColor = Color.Lerp(Color.Transparent, baseColor, npc.Infernum().ExtraAI[ConnectionsWidthScaleIndex]);
+            Color modifiedColor = Color.Lerp(Color.Transparent, baseColor, npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex]);
             float scaleSine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly)) / 2f;
             float glowScale = MathHelper.Lerp(1.1f, 1.15f, scaleSine);
             Color finalColor = Color.Lerp(modifiedColor, new(1f, 1f, 1f, 0f), scaleSine);

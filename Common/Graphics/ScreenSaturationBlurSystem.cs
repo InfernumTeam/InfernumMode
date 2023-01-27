@@ -113,13 +113,10 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModUnload()
         {
-            Main.QueueMainThreadAction(() =>
-            {
-                BloomTarget?.Dispose();
-                FinalScreenTarget?.Dispose();
-                DownscaledBloomTarget?.Dispose();
-                TemporaryAuxillaryTarget?.Dispose();
-            });
+            BloomTarget?.Dispose();
+            FinalScreenTarget?.Dispose();
+            DownscaledBloomTarget?.Dispose();
+            TemporaryAuxillaryTarget?.Dispose();
         }
 
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
@@ -127,20 +124,17 @@ namespace InfernumMode.Common.Graphics
             if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
-            Main.QueueMainThreadAction(() =>
-            {
-                // Free GPU resources for the old targets.
-                BloomTarget?.Dispose();
-                FinalScreenTarget?.Dispose();
-                DownscaledBloomTarget?.Dispose();
-                TemporaryAuxillaryTarget?.Dispose();
+            // Free GPU resources for the old targets.
+            BloomTarget?.Dispose();
+            FinalScreenTarget?.Dispose();
+            DownscaledBloomTarget?.Dispose();
+            TemporaryAuxillaryTarget?.Dispose();
 
-                // Recreate targets.
-                BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            });
+            // Recreate targets.
+            BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
 
             orig(width, height, fullscreen);
         }

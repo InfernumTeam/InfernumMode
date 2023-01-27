@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Player player = Main.player[i];
                 if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
                     continue;
-                
+
                 player.wingTime = player.wingTimeMax;
                 player.AddBuff(ModContent.BuffType<GlimmeringWings>(), 10);
             }
@@ -634,6 +634,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_LargeRainbowStar(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
+            int starBurstCount = 4;
+            ref float starBurstCounter = ref npc.Infernum().ExtraAI[0];
+
             // Teleport above the player and release a bunch of stars.
             if (attackTimer == 1f)
             {
@@ -653,10 +656,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackTimer >= 96f)
+            if (attackTimer >= 92f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<StarBolt>());
+                starBurstCounter++;
                 attackTimer = 0f;
+
+                if (starBurstCounter >= starBurstCount)
+                    SelectNextAttack(npc);
             }
         }
 
@@ -1136,7 +1143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer >= SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime)
                 SelectNextAttack(npc);
         }
-        
+
         public static void DoBehavior_LightPrisms(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
             int lightBoltTime = 120;
@@ -1249,7 +1256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
-                        float swordHue = i / (float)swordCount;                        
+                        float swordHue = i / (float)swordCount;
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(sword =>
                         {
                             sword.ModProjectile<EmpressSword>().SwordIndex = i;
@@ -1422,7 +1429,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
-            npc.ai[0] = (int)EmpressOfLightAttackType.LargeRainbowStar;
+            npc.ai[0] = (int)EmpressOfLightAttackType.LanceBarrages;
 
             npc.Infernum().ExtraAI[5]++;
 

@@ -4,6 +4,7 @@ using InfernumMode.Content.Tiles;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -16,6 +17,8 @@ namespace InfernumMode.Common.Graphics
 {
     public class ScreenSaturationBlurSystem : ModSystem
     {
+        internal static Queue<Action> DrawActionQueue = new();
+
         public static bool ShouldEffectBeActive
         {
             get;
@@ -74,9 +77,18 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
+            On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
             Main.OnPreDraw += PrepareBlurEffects;
+        }
+
+        private void HandleDrawMainThreadQueue(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
+        {
+            while (DrawActionQueue.TryDequeue(out Action a))
+                a();
+            
+            orig(self, gameTime);
         }
 
         private void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
@@ -111,30 +123,25 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
         }
 
-        public override void OnModUnload()
-        {
-            BloomTarget?.Dispose();
-            FinalScreenTarget?.Dispose();
-            DownscaledBloomTarget?.Dispose();
-            TemporaryAuxillaryTarget?.Dispose();
-        }
-
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
             if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
             // Free GPU resources for the old targets.
-            BloomTarget?.Dispose();
-            FinalScreenTarget?.Dispose();
-            DownscaledBloomTarget?.Dispose();
-            TemporaryAuxillaryTarget?.Dispose();
+            DrawActionQueue.Enqueue(() =>
+            {
+                BloomTarget?.Dispose();
+                FinalScreenTarget?.Dispose();
+                DownscaledBloomTarget?.Dispose();
+                TemporaryAuxillaryTarget?.Dispose();
 
-            // Recreate targets.
-            BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                // Recreate targets.
+                BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            });
 
             orig(width, height, fullscreen);
         }

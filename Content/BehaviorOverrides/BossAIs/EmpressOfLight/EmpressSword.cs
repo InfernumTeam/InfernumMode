@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int hoverRedirectTime = 20;
             int chargeAnticipationTime = 27;
-            int lanceShootDelay = 40;
+            int lanceShootDelay = 32;
             int perpendicularChargeAnticipationTime = 42;
             int perpendicularChargeTime = 42;
             float hoverOffsetAngle = Owner.Infernum().ExtraAI[1];
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 hoverRedirectTime -= 9;
                 chargeAnticipationTime -= 8;
-                lanceShootDelay -= 10;
+                lanceShootDelay -= 8;
                 perpendicularChargeAnticipationTime -= 8;
                 perpendicularChargeTime -= 9;
                 chargeSpeed += 33f;

@@ -19,6 +19,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Buffs;
+using static Humanizer.In;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -37,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             DanceOfSwords,
             MajesticPierce,
             LanceWallBarrage,
+            LargeRainbowStar,
             DeathAnimation
         }
 
@@ -68,6 +70,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static int LaserbeamDamage => ShouldBeEnraged ? 700 : 300;
 
+        public static int LacewingDamage => ShouldBeEnraged ? 400 : 195;
+
         public static EmpressOfLightAttackType[] Phase1AttackCycle => new EmpressOfLightAttackType[]
         {
             EmpressOfLightAttackType.LanceBarrages,
@@ -97,12 +101,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static EmpressOfLightAttackType[] Phase3AttackCycle => new EmpressOfLightAttackType[]
         {
             EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.LanceWallBarrage,
+            EmpressOfLightAttackType.LargeRainbowStar,
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceBarrages,
-            EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.MesmerizingMagic,
-            EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.LargeRainbowStar,
+            EmpressOfLightAttackType.PrismaticBoltCircle,
+            EmpressOfLightAttackType.MajesticPierce,
         };
 
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
@@ -250,6 +258,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 case EmpressOfLightAttackType.MajesticPierce:
                     DoBehavior_MajesticPierce(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
+                case EmpressOfLightAttackType.LargeRainbowStar:
+                    DoBehavior_LargeRainbowStar(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
+                    break;
                 case EmpressOfLightAttackType.LanceWallBarrage:
                     DoBehavior_LanceWallBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
@@ -280,18 +291,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void TeleportTo(NPC npc, Vector2 destination)
         {
+            bool wasFarAway = !npc.WithinRange(destination, 200f);
             npc.Center = destination;
 
             // Cease all movement.
             npc.velocity = Vector2.Zero;
 
-            SoundEngine.PlaySound(SoundID.Item122, npc.Center);
-            SoundEngine.PlaySound(SoundID.Item161, npc.Center);
-
-            Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
-
+            if (wasFarAway)
+            {
+                SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item160, npc.Center);
+                Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
+            }
             npc.netUpdate = true;
         }
 
@@ -478,7 +491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     lance.ModProjectile<EtherealLance>().Time = 40;
                 });
                 Vector2 lanceSpawnPosition = npc.Center - Vector2.UnitY * npc.scale * 20f;
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSpawnPosition.AngleTo(target.Center + target.velocity * 10f), lanceHue);
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSpawnPosition.AngleTo(target.Center + target.velocity * 13.6f), lanceHue);
             }
 
             if (flySpeedInterpolant >= 1f && npc.WithinRange(hoverDestination, 100f))
@@ -600,6 +613,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
+            if (attackTimer == terraprismaAttackDelay)
+                SoundEngine.PlaySound(SoundID.Item162 with { Volume = 2f }, target.Center);
+
             // Hold hands up.
             leftArmFrame = 3f;
             rightArmFrame = 3f;
@@ -613,6 +629,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (attackCycleCounter >= attackCycleCount)
                     SelectNextAttack(npc);
                 npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_LargeRainbowStar(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
+        {
+            // Teleport above the player and release a bunch of stars.
+            if (attackTimer == 1f)
+            {
+                TeleportTo(npc, target.Center - Vector2.UnitY * 100f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int starCount = 24;
+                    for (int i = 0; i < starCount; i++)
+                    {
+                        Vector2 starVelocity = StarBolt.StarPolarEquation(5, MathHelper.TwoPi * i / starCount) * 9.6f - Vector2.UnitY * 8f;
+                        Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, starVelocity, ModContent.ProjectileType<StarBolt>(), PrismaticBoltDamage, 0f, -1, 0f, i / (float)starCount);
+
+                        starVelocity = StarBolt.StarPolarEquation(5, MathHelper.TwoPi * (1f - (i + 0.5f) / starCount)) * 3f - Vector2.UnitY * 8f;
+                        Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, starVelocity, ModContent.ProjectileType<StarBolt>(), PrismaticBoltDamage, 0f, -1, 0f, 1f - (i + 0.5f) / starCount);
+                    }
+                }
+            }
+
+            if (attackTimer >= 96f)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<StarBolt>());
+                attackTimer = 0f;
             }
         }
 
@@ -679,7 +723,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         wallShootDelay = MathHelper.Clamp(wallShootDelay - 8f, endingWallShootCountdown, startingWallShootCountdown);
                         wallShootCountdown = wallShootDelay;
                         if (goingAgainstWalls)
-                            wallShootCountdown *= 0.6f;
+                            wallShootCountdown *= 0.7f;
 
                         float lanceDirection = (Vector2.UnitX * horizontalWallDirection).ToRotation();
                         for (int i = -16; i < 16; i++)
@@ -1351,7 +1395,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 ModContent.ProjectileType<EmpressSword>(),
                 ModContent.ProjectileType<EtherealLance>(),
                 ModContent.ProjectileType<ArcingLightBolt>(),
-                ModContent.ProjectileType<LightOrb>(),
                 ModContent.ProjectileType<LightOverloadBeam>(),
                 ModContent.ProjectileType<PrismaticBolt>(),
                 ModContent.ProjectileType<PrismLaserbeam>(),
@@ -1379,6 +1422,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
+            npc.ai[0] = (int)EmpressOfLightAttackType.LargeRainbowStar;
 
             npc.Infernum().ExtraAI[5]++;
 

@@ -13,6 +13,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class EtherealLance : ModProjectile, IScreenCullDrawer
     {
+        public float FlySpeedFactor
+        {
+            get;
+            set;
+        } = 1f;
+
         public bool PlaySoundOnFiring
         {
             get;
@@ -69,6 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             writer.Write(PlaySoundOnFiring);
             writer.Write(Time);
+            writer.Write(FlySpeedFactor);
             writer.Write(Projectile.MaxUpdates);
             writer.Write(Projectile.localAI[1]);
         }
@@ -77,6 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             PlaySoundOnFiring = reader.ReadBoolean();
             Time = reader.ReadSingle();
+            FlySpeedFactor = reader.ReadSingle();
             Projectile.MaxUpdates = reader.ReadInt32();
             Projectile.localAI[1] = reader.ReadSingle();
         }
@@ -85,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             if (Time >= FireDelay)
             {
-                Projectile.velocity = Projectile.ai[0].ToRotationVector2() * 40f;
+                Projectile.velocity = Projectile.ai[0].ToRotationVector2() * FlySpeedFactor * 40f;
                 if (Main.rand.NextBool(3))
                 {
                     Dust rainbowMagic = Dust.NewDustPerfect(Projectile.Center, 267);

@@ -1,15 +1,18 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using CalamityMod;
+using CalamityMod.DataStructures;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class ArcingLightBolt : ModProjectile
+    public class StarBolt : ModProjectile, IAdditiveDrawer
     {
         public PrimitiveTrailCopy TrailDrawer
         {
@@ -21,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 1f, 0.56f) * Projectile.Opacity * 1.3f;
+                Color color = Main.hslToRgb(Projectile.ai[1] * 4f % 1f, 1f, 0.53f) * Projectile.Opacity * 1.3f;
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
                     color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f) * Projectile.Opacity;
 
@@ -30,11 +33,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
 
+        public ref float Time => ref Projectile.ai[0];
+
+        public static int FireDelay => 80;
+
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam";
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Light Bolt");
+            DisplayName.SetDefault("Star Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
@@ -42,54 +49,52 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 18;
+            Projectile.width = 30;
+            Projectile.height = 30;
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 900;
             Projectile.Opacity = 0f;
             Projectile.tileCollide = false;
+            Projectile.MaxUpdates = 2;
             Projectile.ignoreWater = true;
+        }
+
+        public static Vector2 StarPolarEquation(int pointCount, float angle)
+        {
+            float spacedAngle = angle;
+
+            // There should be a star point that looks directly upward. However, that isn't the case for non-even star counts.
+            // To address this, a -90 degree rotation is performed.
+            if (pointCount % 2 != 0)
+                spacedAngle -= MathHelper.PiOver2;
+
+            // Refer to desmos to view the resulting shape this creates. It's basically a black box of trig otherwise.
+            float numerator = (float)Math.Cos(MathHelper.Pi * (pointCount + 1f) / pointCount);
+            float starAdjustedAngle = (float)Math.Asin(Math.Cos(pointCount * spacedAngle)) * 2f;
+            float denominator = (float)Math.Cos((starAdjustedAngle + MathHelper.PiOver2 * pointCount) / (pointCount * 2f));
+            Vector2 result = angle.ToRotationVector2() * numerator / denominator / 1.732051f;
+            return result;
         }
 
         public override void AI()
         {
-            if (Projectile.timeLeft > 30)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            else
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+
+            // Decelerate over time.
+            if (Time >= 30f && Time < FireDelay)
+                Projectile.velocity *= 0.94f;
+
+            if (Time >= FireDelay && Projectile.velocity.Length() < 40f)
             {
-                Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
-                Projectile.velocity *= 0.95f;
+                if (Projectile.velocity.Length() < 7f)
+                    Projectile.velocity = StarPolarEquation(5, MathHelper.TwoPi * Projectile.ai[1]) * 13f;
+
+                Projectile.velocity *= 1.018f;
             }
 
-            // Dissipate if close to a lacewing.
-            int empressIndex = NPC.FindFirstNPC(NPCID.HallowBoss);
-            NPC lacewing = null;
-            float distanceToLacewing = float.MaxValue;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i].type != NPCID.EmpressButterfly || !Main.npc[i].active)
-                    continue;
-
-                distanceToLacewing = MathHelper.Min(distanceToLacewing, Projectile.Distance(Main.npc[i].Center));
-                lacewing = Main.npc[i];
-            }
-
-            bool moveToEmpress = lacewing is not null && empressIndex >= 0 && Main.npc[empressIndex].Opacity > 0.4f;
-            if (distanceToLacewing <= 250f && Projectile.velocity.AngleBetween(Projectile.SafeDirectionTo(lacewing.Center)) < 0.3f && Projectile.timeLeft > 30 && !moveToEmpress)
-                Projectile.timeLeft = 30;
-
-            // Spin and accelerate over time.
-            if (Projectile.timeLeft >= 270 && !moveToEmpress)
-                Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[0] * MathHelper.TwoPi / 420f) * 1.0175f;
-
-            if (moveToEmpress)
-            {
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Main.npc[empressIndex].Center) * 70f, 0.07f);
-                if (Projectile.WithinRange(Main.npc[empressIndex].Center, 400f) && Projectile.timeLeft > 30)
-                    Projectile.timeLeft = 30;
-            }
+            Time++;
         }
 
         public override void Kill(int timeLeft)
@@ -128,7 +133,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             Color rainbow = Main.hslToRgb((completionRatio - Main.GlobalTimeWrappedHourly * 1.4f) % 1f, 1f, 0.5f);
             Color c = Color.Lerp(MyColor with { A = 255 }, rainbow, completionRatio) * (1f - completionRatio) * Projectile.Opacity;
-            return c;
+            return c * Utils.GetLerpValue(4.5f, 10.5f, Projectile.velocity.Length(), true);
         }
 
         public float WidthFunction(float completionRatio)
@@ -139,6 +144,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Projectile.velocity.Length() < 4.5f || Time < FireDelay)
+                return false;
+
             // Initialize the telegraph drawer.
             TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
@@ -148,24 +156,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             // Draw the afterimage trail.
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Rectangle cutoffRegion = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+            Main.spriteBatch.EnforceCutoffRegion(cutoffRegion, Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
+            
+            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 23);
 
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 25);
+            Main.spriteBatch.ExitShaderRegion();
+            
+            return false;
+        }
 
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
             // Draw the gleam.
             Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
             Color sparkleColor = Color.Lerp(MyColor, Color.White, 0.4f) with { A = 255 };
             Vector2 drawCenter = Projectile.Center - Main.screenPosition;
             Vector2 origin = sparkleTexture.Size() * 0.5f;
-            Vector2 sparkleScale = new Vector2(0.3f, 1f) * Projectile.Opacity * Projectile.scale * 0.12f;
-            Vector2 orthogonalsparkleScale = new Vector2(0.3f, 1.6f) * Projectile.Opacity * Projectile.scale * 0.12f;
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
-
-            return false;
+            Vector2 sparkleScale = new Vector2(0.5f, 1f) * Projectile.Opacity * Projectile.scale * 0.18f;
+            Vector2 orthogonalsparkleScale = new Vector2(0.5f, 1.6f) * Projectile.Opacity * Projectile.scale * 0.18f;
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
         }
     }
 }

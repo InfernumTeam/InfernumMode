@@ -122,8 +122,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            for (int i = 0; i < 6; i++)
-                DrawSpear((MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f);
             DrawSpear(Vector2.Zero);
             return false;
         }

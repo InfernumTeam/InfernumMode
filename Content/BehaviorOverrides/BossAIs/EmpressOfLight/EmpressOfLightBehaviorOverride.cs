@@ -1,25 +1,23 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using CalamityMod.Events;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Core.OverridingSystem;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Content.Buffs;
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent;
+using Terraria.GameContent.Events;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using CalamityMod;
-using CalamityMod.Events;
-using Terraria.Audio;
-using System.Linq;
-using System.Collections.Generic;
-using Terraria.GameContent.Events;
-using System.IO;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Content.Buffs;
-using static Humanizer.In;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -39,6 +37,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             MajesticPierce,
             LanceWallBarrage,
             LargeRainbowStar,
+
+            UltimateRainbow,
+
             DeathAnimation
         }
 
@@ -102,21 +103,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage,
-            EmpressOfLightAttackType.LargeRainbowStar,
+            EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.MesmerizingMagic,
             EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.DanceOfSwords,
-            EmpressOfLightAttackType.LargeRainbowStar,
+            EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.MajesticPierce,
         };
 
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.HorizontalCharge,
+            EmpressOfLightAttackType.LargeRainbowStar,
             EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.LanceWallBarrage,
+            EmpressOfLightAttackType.MajesticPierce,
+            EmpressOfLightAttackType.LightPrisms,
+            EmpressOfLightAttackType.BackstabbingLances,
+            EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.LargeRainbowStar,
+            EmpressOfLightAttackType.MajesticPierce,
+            EmpressOfLightAttackType.LanceWallBarrage,
         };
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -164,6 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             leftArmFrame = 0f;
             rightArmFrame = 0f;
             deathAnimationScreenShaderStrength = 0f;
+            Color animationBackgroundColor = Color.Pink;
 
             // Disappear if the target is dead.
             if (!target.active || target.dead)
@@ -252,17 +262,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 case EmpressOfLightAttackType.DanceOfSwords:
                     DoBehavior_DanceOfSwords(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
-                case EmpressOfLightAttackType.DeathAnimation:
-                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref deathAnimationScreenShaderStrength);
-                    break;
                 case EmpressOfLightAttackType.MajesticPierce:
                     DoBehavior_MajesticPierce(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
+                    break;
+                case EmpressOfLightAttackType.LanceWallBarrage:
+                    DoBehavior_LanceWallBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
                 case EmpressOfLightAttackType.LargeRainbowStar:
                     DoBehavior_LargeRainbowStar(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
                     break;
-                case EmpressOfLightAttackType.LanceWallBarrage:
-                    DoBehavior_LanceWallBarrage(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame);
+
+                case EmpressOfLightAttackType.UltimateRainbow:
+                    DoBehavior_UltimateRainbow(npc, target, ref attackTimer, ref leftArmFrame, ref rightArmFrame, ref animationBackgroundColor, ref deathAnimationScreenShaderStrength);
+                    break;
+
+                case EmpressOfLightAttackType.DeathAnimation:
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref deathAnimationScreenShaderStrength);
                     break;
             }
 
@@ -279,7 +294,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/noise");
                 InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value, 1);
                 InfernumEffectsRegistry.EoLScreenShader.GetShader().UseImage("Images/Misc/Perlin", 2);
-                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseColor(Color.Pink);
+                InfernumEffectsRegistry.EoLScreenShader.GetShader().UseColor(animationBackgroundColor);
                 InfernumEffectsRegistry.EoLScreenShader.GetShader().UseOpacity(deathAnimationScreenShaderStrength);
                 InfernumEffectsRegistry.EoLScreenShader.GetShader().UseIntensity(screenShaderStrength);
             }
@@ -585,6 +600,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int shootDelay = 156;
             int attackCycleCount = 3;
 
+            if (InPhase4(npc))
+            {
+                terraprismaAttackDelay -= 10;
+                shootDelay -= 16;
+            }
+
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
 
             // Disable contact damage.
@@ -637,6 +658,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int starBurstCount = 4;
             ref float starBurstCounter = ref npc.Infernum().ExtraAI[0];
 
+            // Hold hands up.
+            leftArmFrame = 3f;
+            rightArmFrame = 3f;
+
             // Teleport above the player and release a bunch of stars.
             if (attackTimer == 1f)
             {
@@ -656,7 +681,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackTimer >= 92f)
+            if (attackTimer >= 87f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<StarBolt>());
                 starBurstCounter++;
@@ -671,14 +696,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int hoverRedirectTime = 40;
             int startingWallShootCountdown = 67;
-            int endingWallShootCountdown = 27;
-            int horizontalShootTime = 540;
+            int endingWallShootCountdown = 35;
+            int horizontalShootTime = 480;
             int horizontalLanceTransitionDelay = 50;
             int verticalLanceCount = 36;
             int verticalLanceTransitionDelay = 75;
-            float horizontalLanceSpacing = 168f;
+            float horizontalLanceSpacing = 172f;
             float wallHorizontalOffset = 876f;
             float verticalLanceArea = 270f;
+
+            if (InPhase3(npc))
+            {
+                endingWallShootCountdown -= 5;
+                horizontalShootTime += 60;
+            }
+            if (InPhase4(npc))
+            {
+                endingWallShootCountdown -= 5;
+                horizontalLanceSpacing -= 12f;
+            }
+            if (ShouldBeEnraged)
+            {
+                startingWallShootCountdown -= 14;
+                endingWallShootCountdown -= 3;
+                horizontalLanceSpacing -= 8f;
+            }
+
             ref float horizontalWallDirection = ref npc.Infernum().ExtraAI[0];
             ref float wallShootCountdown = ref npc.Infernum().ExtraAI[1];
             ref float wallShootDelay = ref npc.Infernum().ExtraAI[2];
@@ -799,26 +842,43 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int backstabbingLanceTime = 104;
             int lanceReleaseRate = 3;
             int hoverRedirectTime = 30;
-            int semicircleLanceShootTime = 30;
+            int wallLanceShootTime = 30;
             int lanceFireSpeedBoost = 0;
             float backstabbingLanceOffset = 700f;
-            float semicircleLanceOffset = 950f;
+            float wallLanceOffset = 950f;
             float idleHoverSpeed = 7f;
             float idleHoverAcceleration = 0.36f;
             float maxPerpendicularOffset = 450f;
-
+            
+            if (InPhase2(npc))
+            {
+                lanceReleaseRate--;
+                lanceFireSpeedBoost += 9;
+                idleHoverSpeed += 1.8f;
+            }
+            if (InPhase3(npc))
+            {
+                lanceFireSpeedBoost += 9;
+                backstabbingLanceOffset -= 80f;
+            }
+            if (InPhase4(npc))
+            {
+                hoverRedirectTime -= 7;
+                lanceFireSpeedBoost += 9;
+                backstabbingLanceTime += 20;
+            }
             if (ShouldBeEnraged)
             {
                 lanceFireSpeedBoost += 24;
                 backstabbingLanceTime += 12;
                 lanceReleaseRate--;
-                semicircleLanceShootTime -= 4;
+                wallLanceShootTime -= 4;
                 maxPerpendicularOffset += 72f;
             }
 
-            ref float lanceSemicircleSpawnCenterX = ref npc.Infernum().ExtraAI[0];
-            ref float lanceSemicircleSpawnCenterY = ref npc.Infernum().ExtraAI[1];
-            ref float lanceSemicircleDirection = ref npc.Infernum().ExtraAI[2];
+            ref float lanceWallSpawnCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float lanceWallSpawnCenterY = ref npc.Infernum().ExtraAI[1];
+            ref float lanceWallDirection = ref npc.Infernum().ExtraAI[2];
 
             // Disable contact damage.
             npc.damage = 0;
@@ -881,35 +941,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             else
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * idleHoverSpeed, idleHoverAcceleration);
 
-            // Summon the lance semicircle.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer <= backstabbingLanceTime + hoverRedirectTime + semicircleLanceShootTime)
+            // Summon the lance wall.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer <= backstabbingLanceTime + hoverRedirectTime + wallLanceShootTime)
             {
                 // Initialize the lance direction.
-                if (lanceSemicircleDirection == 0f)
+                if (lanceWallDirection == 0f)
                 {
-                    lanceSemicircleDirection = target.velocity.ToRotation() + MathHelper.Pi;
-                    lanceSemicircleSpawnCenterX = target.Center.X;
-                    lanceSemicircleSpawnCenterY = target.Center.Y;
+                    lanceWallDirection = target.velocity.ToRotation() + MathHelper.Pi;
+                    lanceWallSpawnCenterX = target.Center.X;
+                    lanceWallSpawnCenterY = target.Center.Y;
                     npc.netUpdate = true;
                 }
 
-                int delayUntilLanceFires = (int)(attackTimer - backstabbingLanceTime - hoverRedirectTime - semicircleLanceShootTime) * 2 - 24;
+                int delayUntilLanceFires = (int)(attackTimer - backstabbingLanceTime - hoverRedirectTime - wallLanceShootTime) * 2 - 24;
                 if (ShouldBeEnraged)
                     delayUntilLanceFires += 10;
 
-                float lanceHue = 1f - Utils.GetLerpValue(0f, semicircleLanceShootTime, attackTimer - backstabbingLanceTime - hoverRedirectTime, true);
-                float semicirclePerpendicularOffset = Utils.Remap(attackTimer - backstabbingLanceTime - hoverRedirectTime, 0f, semicircleLanceShootTime, -maxPerpendicularOffset, maxPerpendicularOffset);
-                Vector2 semicircleOffset = lanceSemicircleDirection.ToRotationVector2() * semicircleLanceOffset + (lanceSemicircleDirection + MathHelper.PiOver2).ToRotationVector2() * semicirclePerpendicularOffset;
-                Vector2 lanceSpawnPosition = new Vector2(lanceSemicircleSpawnCenterX, lanceSemicircleSpawnCenterY) + semicircleOffset;
+                float lanceHue = 1f - Utils.GetLerpValue(0f, wallLanceShootTime, attackTimer - backstabbingLanceTime - hoverRedirectTime, true);
+                float wallPerpendicularOffset = Utils.Remap(attackTimer - backstabbingLanceTime - hoverRedirectTime, 0f, wallLanceShootTime, -maxPerpendicularOffset, maxPerpendicularOffset);
+                Vector2 wallOffset = lanceWallDirection.ToRotationVector2() * wallLanceOffset + (lanceWallDirection + MathHelper.PiOver2).ToRotationVector2() * wallPerpendicularOffset;
+                Vector2 lanceSpawnPosition = new Vector2(lanceWallSpawnCenterX, lanceWallSpawnCenterY) + wallOffset;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                 {
                     lance.ModProjectile<EtherealLance>().Time = delayUntilLanceFires;
                 });
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSemicircleDirection + MathHelper.Pi, lanceHue);
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceWallDirection + MathHelper.Pi, lanceHue);
             }
 
-            if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + semicircleLanceShootTime + 120f)
+            if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + wallLanceShootTime + 120f)
                 SelectNextAttack(npc);
         }
 
@@ -1150,6 +1210,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int prismReleaseRate = 5;
             int attackCycleCount = 2;
             float chargeSpeed = 65f;
+
+            if (InPhase3(npc))
+            {
+                lightBoltTime -= 20;
+                chargeSpeed += 6.7f;
+            }
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -1280,7 +1347,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Choose a hover offset angle for the blade once done waiting.
             if (attackTimer == attackDelay)
             {
-                // The sword should pick the side which is between the empress and the player, and then randomly pick a place on the semicircle that forms from it.
+                // The sword should pick the side which is between the empress and the player, and then randomly pick a place on the wall that forms from it.
                 swordHoverOffsetAngle = Main.rand.NextFloat(-MathHelper.PiOver2, MathHelper.PiOver2);
                 if (target.Center.X < npc.Center.X)
                     swordHoverOffsetAngle += MathHelper.Pi;
@@ -1316,6 +1383,93 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     SelectNextAttack(npc);
                 }
             }
+        }
+
+        public static void DoBehavior_UltimateRainbow(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame, ref Color animationBackgroundColor, ref float animationScreenShaderStrength)
+        {
+            int chargeUpTime = 300;
+            int disappearIntoMoonTime = 60;
+            int rainbowReleaseRate = 35;
+            int rainbowShootCount = 16;
+            ref float wispInterpolant = ref npc.Infernum().ExtraAI[0];
+            ref float rainbowShootCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Do a charge-up effect for a little bit. This is emphasized by drawcode elsewhere.
+            animationBackgroundColor = Color.LightPink;
+            if (attackTimer < chargeUpTime)
+            {
+                int arcingBoltReleaseRate = 16;
+                if (attackTimer >= 60f)
+                    arcingBoltReleaseRate = 8;
+                if (attackTimer >= 150f)
+                    arcingBoltReleaseRate = 3;
+
+                // Move quickly above the target.
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -225f);
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.1f).MoveTowards(hoverDestination, 6f);
+                npc.velocity *= 0.84f;
+
+                // Release bolts that accelerate towards the empress.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % arcingBoltReleaseRate == arcingBoltReleaseRate - 1f)
+                {
+                    Vector2 boltSpawnPosition;
+                    Vector2 boltSpawnVelocity;
+                    Vector2 boltDirectionToTarget;
+                    do
+                    {
+                        boltSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(680f, 680f);
+                        boltSpawnVelocity = (npc.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * 0.16f;
+                        boltDirectionToTarget = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.Zero);
+                    }
+                    while (boltSpawnVelocity.AngleBetween(boltDirectionToTarget) < 0.24f);
+
+                    Utilities.NewProjectileBetter(boltSpawnPosition, boltSpawnVelocity, ModContent.ProjectileType<ArcingLightBolt>(), 0, 0f, -1, 0f, Main.rand.NextFloat());
+                }
+
+                animationScreenShaderStrength = Utils.GetLerpValue(0f, chargeUpTime - 90f, attackTimer, true);
+                wispInterpolant = (float)Math.Pow(animationScreenShaderStrength, 3D);
+                return;
+            }
+
+            // Summon the moon from the sky.
+            if (attackTimer == chargeUpTime)
+            {
+                TeleportTo(npc, target.Center - Vector2.UnitY * 450f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 480f, Vector2.Zero, ModContent.ProjectileType<TheMoon>(), 350, 0f);
+            }
+
+            // Periodically release rainbows.
+            if (attackTimer % rainbowReleaseRate == rainbowReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item163, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float rainbowAngularVelocity = (rainbowShootCounter % 2f == 0f).ToDirectionInt() * 0.56f;
+                    for (int i = 0; i < rainbowShootCount; i++)
+                    {
+                        float rainbowHue = i / (float)rainbowShootCount;
+                        Vector2 rainbowShootVelocity = (MathHelper.TwoPi * i / rainbowShootCount).ToRotationVector2() * 12f;
+                        Utilities.NewProjectileBetter(npc.Center, rainbowShootVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, rainbowAngularVelocity, rainbowHue);
+                    }
+                    rainbowShootCounter++;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Disappear.
+            npc.Opacity = Utils.GetLerpValue(disappearIntoMoonTime, 0f, attackTimer - chargeUpTime, true);
+            npc.dontTakeDamage = true;
+
+            // Stick to the moon once completely invisible.
+            List<Projectile> moons = Utilities.AllProjectilesByID(ModContent.ProjectileType<TheMoon>()).ToList();
+            if (npc.Opacity <= 0f && moons.Any())
+                npc.Center = moons.First().Center;
+
+            wispInterpolant = 1f;
+            animationScreenShaderStrength = 1f;
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float deathAnimationScreenShaderStrength)
@@ -1429,7 +1583,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
-            npc.ai[0] = (int)EmpressOfLightAttackType.LanceBarrages;
 
             npc.Infernum().ExtraAI[5]++;
 
@@ -1699,14 +1852,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackType == EmpressOfLightAttackType.DeathAnimation)
+            if (attackType is EmpressOfLightAttackType.DeathAnimation or EmpressOfLightAttackType.UltimateRainbow)
             {
-                int instanceCount = 10;
+                int instanceCount = 6;
                 float wispInterpolant = npc.Infernum().ExtraAI[0];
                 float wispOffset = 20f;
                 List<float> wispOffsetFactors = new() { 1f };
                 if (attackType == EmpressOfLightAttackType.DeathAnimation)
                 {
+                    instanceCount = 10;
                     wispInterpolant = npc.Infernum().ExtraAI[ScreenShaderIntensityIndex];
                     wispOffset += wispInterpolant * 350f + npc.Infernum().ExtraAI[1] * 900f;
 
@@ -1737,7 +1891,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
 
                 Color baseInstanceColor = baseColor;
-                baseInstanceColor.A /= 5;
+                if (attackType == EmpressOfLightAttackType.DeathAnimation)
+                    baseInstanceColor.A /= 5;
+                else
+                    baseInstanceColor.A -= (byte)(wispInterpolant * 192f);
                 DrawInstance(baseDrawPosition, baseInstanceColor);
             }
             else

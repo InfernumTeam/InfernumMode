@@ -183,6 +183,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float chargeSpeed = 64f;
             float lanceSpacing = 196f;
 
+            if (InPhase3(Owner))
+            {
+                chargeSpeed += 6f;
+                lanceSpacing -= 20f;
+            }
+            if (InPhase4(Owner))
+            {
+                hoverRedirectTime -= 5;
+                chargeAnticipationTime -= 6;
+                lanceShootDelay -= 6;
+                perpendicularChargeAnticipationTime -= 8;
+                perpendicularChargeTime -= 6;
+            }
+
             if (ShouldBeEnraged)
             {
                 hoverRedirectTime -= 9;

@@ -1,12 +1,7 @@
-using CalamityMod;
-using CalamityMod.FluidSimulation;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
-using InfernumMode.Core;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Effects;

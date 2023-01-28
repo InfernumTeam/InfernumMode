@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class ArcingLightBolt : ModProjectile
+    public class ArcingLightBolt : ModProjectile, ISpecializedDrawRegion
     {
         public PrimitiveTrailCopy TrailDrawer
         {
@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Projectile.velocity *= 0.95f;
             }
 
-            // Dissipate if close to a lacewing.
+            // Find relevant entities.
             int empressIndex = NPC.FindFirstNPC(NPCID.HallowBoss);
             NPC lacewing = null;
             float distanceToLacewing = float.MaxValue;
@@ -76,7 +76,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 lacewing = Main.npc[i];
             }
 
+            // Move towards the empress if performing the lacewing animation or a charge-up for certain attacks.
             bool moveToEmpress = lacewing is not null && empressIndex >= 0 && Main.npc[empressIndex].Opacity > 0.4f;
+            float empressFlySpeed = 70f;
+            float empressFlyAcceleration = 0.07f;
+            bool bigProjectileIsPresent = Utilities.AnyProjectiles(ModContent.ProjectileType<TheMoon>());
+            if (empressIndex >= 0 && Main.npc[empressIndex].ai[0] == (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.UltimateRainbow && !bigProjectileIsPresent)
+            {
+                empressFlySpeed = 30f;
+                empressFlyAcceleration = 0.046f;
+                moveToEmpress = true;
+            }
+
+            // Dissipate if close to a lacewing.
             if (distanceToLacewing <= 250f && Projectile.velocity.AngleBetween(Projectile.SafeDirectionTo(lacewing.Center)) < 0.3f && Projectile.timeLeft > 30 && !moveToEmpress)
                 Projectile.timeLeft = 30;
 
@@ -86,9 +98,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (moveToEmpress)
             {
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Main.npc[empressIndex].Center) * 70f, 0.07f);
-                if (Projectile.WithinRange(Main.npc[empressIndex].Center, 400f) && Projectile.timeLeft > 30)
-                    Projectile.timeLeft = 30;
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Main.npc[empressIndex].Center) * empressFlySpeed, empressFlyAcceleration);
+                if (Projectile.WithinRange(Main.npc[empressIndex].Center, 400f) && Projectile.timeLeft > 24)
+                    Projectile.timeLeft = 24;
             }
         }
 
@@ -137,7 +149,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             return MathHelper.SmoothStep(0f, 1f, fade) * Projectile.Opacity * 10f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void SpecialDraw(SpriteBatch spriteBatch)
         {
             // Initialize the telegraph drawer.
             TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
@@ -148,9 +162,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
             // Draw the afterimage trail.
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 25);
 
             // Draw the gleam.
@@ -164,9 +175,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
             Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
             Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
-            Main.spriteBatch.ExitShaderRegion();
+        }
 
-            return false;
+        public void PrepareSpriteBatch(SpriteBatch spriteBatch)
+        {
+            Main.spriteBatch.EnforceCutoffRegion(new(0, 0, Main.screenWidth, Main.screenHeight), Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
         }
     }
 }

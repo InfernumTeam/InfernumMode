@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void SetDefaults()
         {
             Projectile.width = 94;
-            Projectile.height = 30;
+            Projectile.height = 20;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.friendly = false;

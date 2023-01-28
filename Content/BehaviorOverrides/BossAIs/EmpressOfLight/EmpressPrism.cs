@@ -1,11 +1,9 @@
 ﻿using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public ref float Time => ref Projectile.ai[0];
 
-        public static float MaxLaserbeamCoverage => 0.23f;
+        public static float MaxLaserbeamCoverage => 0.21f;
 
         public static int Lifetime => 120;
         
@@ -51,10 +49,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 5; i++)
                     {
-                        float laserOffsetAngle = MathHelper.PiOver2 + MathHelper.Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 5f);
-                        Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity, i / 5f);
+                        float laserOffsetAngle = MathHelper.PiOver2 + MathHelper.Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 4f);
+                        Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity, i / 4f);
                     }
                 }
             }
@@ -94,9 +92,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 float maxOffsetAngle = MathHelper.Lerp(0.0012f, MaxLaserbeamCoverage, telegraphInterpolant);
                 float telegraphWidth = MathHelper.Lerp(2f, 9f, telegraphInterpolant);
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    Color telegraphColor = Main.hslToRgb(i / 5f, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant) * 0.5f;
+                    Color telegraphColor = Main.hslToRgb(i / 4f, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant) * 0.5f;
                     telegraphColor.A = 0;
 
                     Vector2 aimDirection = (MathHelper.PiOver2 + MathHelper.Lerp(-maxOffsetAngle, maxOffsetAngle, i / 5f)).ToRotationVector2();

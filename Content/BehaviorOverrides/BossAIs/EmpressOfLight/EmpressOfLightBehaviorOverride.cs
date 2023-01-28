@@ -18,6 +18,9 @@ using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
+using CalamityMod.Buffs.DamageOverTime;
+using InfernumMode.Core;
+using static InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental.CloudElementalBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -92,10 +95,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.MesmerizingMagic,
             EmpressOfLightAttackType.HorizontalCharge,
+            EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage,
-            EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.LightPrisms,
+            EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.BackstabbingLances,
+            EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage
         };
 
@@ -166,6 +171,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float screenShaderStrength = ref npc.localAI[3];
             ref float deathAnimationScreenShaderStrength = ref npc.Infernum().ExtraAI[ScreenShaderIntensityIndex];
 
+            // Why does Cal give this debuff to this boss?
+            if (target.HasBuff(ModContent.BuffType<HolyFlames>()))
+                target.ClearBuff(ModContent.BuffType<HolyFlames>());
+
             // Reset things every frame.
             npc.damage = 0;
             npc.spriteDirection = 1;
@@ -196,39 +205,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Use the bloom shader at night.
             if (!Main.dayTime && currentPhase >= 1f)
                 npc.Infernum().ShouldUseSaturationBlur = true;
-
-            // Enter new phases.
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)
-            {
-                SelectNextAttack(npc);
-                ClearAwayEntities();
-                npc.Infernum().ExtraAI[5] = 0f;
-                attackType = (int)EmpressOfLightAttackType.EnterSecondPhase;
-                currentPhase = 1f;
-                npc.netUpdate = true;
-            }
-
-            if (currentPhase == 1f && lifeRatio < Phase3LifeRatio)
-            {
-                currentPhase = 2f;
-                npc.Opacity = 1f;
-                SelectNextAttack(npc);
-                ClearAwayEntities();
-                npc.Infernum().ExtraAI[5] = 0f;
-                attackType = (int)EmpressOfLightAttackType.LightPrisms;
-                npc.netUpdate = true;
-            }
-
-            if (currentPhase == 2f && lifeRatio < Phase4LifeRatio)
-            {
-                currentPhase = 3f;
-                npc.Opacity = 1f;
-                npc.Infernum().ExtraAI[5] = 0f;
-                SelectNextAttack(npc);
-                ClearAwayEntities();
-                npc.netUpdate = true;
-            }
 
             if (ShouldBeEnraged)
                 npc.Calamity().CurrentlyEnraged = true;
@@ -487,8 +463,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
 
                 float oldHoverOffset = hoverOffsetY;
-                hoverOffsetX = Main.rand.NextFloat(250f, 330f) * (barrageCounter % 2f == 1f).ToDirectionInt();
-                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 250f, 330f, -280f, -340f);
+                hoverOffsetX = Main.rand.NextFloat(320f, 432f) * (barrageCounter % 2f == 1f).ToDirectionInt() + target.velocity.X * 40f;
+                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 320f, 432f, -292f, -360f);
                 if (MathHelper.Distance(hoverOffsetY, oldHoverOffset) < 72f)
                     hoverOffsetY -= 56f;
 
@@ -695,7 +671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Teleport above the player and release a bunch of stars.
             if (attackTimer == 1f)
             {
-                TeleportTo(npc, target.Center - Vector2.UnitY * 100f);
+                TeleportTo(npc, target.Center - Vector2.UnitY * 280f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -711,7 +687,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (attackTimer >= 87f)
+            if (attackTimer >= 104f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<StarBolt>());
                 starBurstCounter++;
@@ -789,7 +765,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     npc.velocity *= 0.8f;
                     npc.Center = Vector2.SmoothStep(npc.Center, hoverDestination, 0.16f);
                     if (attackTimer < hoverRedirectTime)
+                    {
+                        ClearAwayEntities();
                         break;
+                    }
 
                     // Shoot lance walls.
                     wallShootCountdown--;
@@ -821,6 +800,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                                 lance.MaxUpdates = 1;
                                 lance.ModProjectile<EtherealLance>().Time = 10;
                                 lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = i == 0;
+                                lance.ModProjectile<EtherealLance>().FlySpeedFactor = 1.1f;
                                 lance.ModProjectile<EtherealLance>().SoundPitch = (npc.ai[1] - hoverRedirectTime) / horizontalShootTime * 0.35f;
                             });
                             Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceDirection, lanceHue);
@@ -1237,8 +1217,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static void DoBehavior_LightPrisms(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
             int lightBoltTime = 120;
-            int prismReleaseRate = 5;
-            int attackCycleCount = 2;
+            int prismReleaseRate = 7;
+            int attackCycleCount = 1;
+            int prismFireDelay = 54;
             float chargeSpeed = 65f;
 
             if (InPhase3(npc))
@@ -1266,12 +1247,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                             for (int i = 0; i < 8; i++)
                             {
                                 Vector2 lightBoltVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 5f;
-                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, 1f, i / 10f);
-                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, -1f, i / 10f);
+                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, 1f, i / 8f);
+                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, -1f, i / 8f);
 
                                 lightBoltVelocity *= 0.6f;
-                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, 1f, 1f - i / 10f);
-                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, -1f, 1f - i / 10f);
+                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, 1f, 1f - i / 8f);
+                                Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, -1f, 1f - i / 8f);
                             }
                         }
                     }
@@ -1310,12 +1291,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * (npc.velocity.X > 0f).ToDirectionInt() * chargeSpeed, 0.07f);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % prismReleaseRate == prismReleaseRate - 1f)
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f, -1, -36f);
-
-                    if (attackTimer == 36f)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f, -1, -prismFireDelay);
+                    
+                    if (attackTimer == prismFireDelay)
                         SoundEngine.PlaySound(SoundID.Item163, target.Center);
 
-                    if (attackTimer >= EmpressPrism.Lifetime + 36)
+                    if (attackTimer >= EmpressPrism.Lifetime + prismFireDelay)
                     {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
@@ -1339,10 +1320,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int attackDelay = 50;
             ref float swordIndexToUse = ref npc.Infernum().ExtraAI[0];
             ref float swordHoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
+            ref float postAttackTransitionDelay = ref npc.Infernum().ExtraAI[4];
 
             // Have both hands point upward with the index finger.
             leftArmFrame = 4f;
             rightArmFrame = 4f;
+
+            // Wait a little bit before transitioning to the next attack for the lances to go away naturally.
+            if (postAttackTransitionDelay > 0f)
+            {
+                postAttackTransitionDelay--;
+                attackTimer = 2f;
+
+                if (postAttackTransitionDelay <= 0f)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EtherealLance>(), ModContent.ProjectileType<EmpressSword>());
+                    SelectNextAttack(npc);
+                }
+            }
 
             // Teleport above the target and create a bunch of swords on the first frame.
             if (attackTimer == 1f)
@@ -1402,16 +1397,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Check to see if the sword is done being used.
             if (npc.Infernum().ExtraAI[3] == 1f)
             {
-                swordIndexToUse++;
+                swordIndexToUse += 2f;
                 attackTimer = attackDelay - 1f;
                 npc.Infernum().ExtraAI[3] = 0f;
                 npc.netUpdate = true;
 
                 if (swordIndexToUse >= swordCount)
-                {
-                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EtherealLance>(), ModContent.ProjectileType<EmpressSword>());
-                    SelectNextAttack(npc);
-                }
+                    postAttackTransitionDelay = 60f;
             }
         }
 
@@ -1605,6 +1597,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static void SelectNextAttack(NPC npc)
         {
             int phaseCycleIndex = (int)npc.Infernum().ExtraAI[5];
+            ref float currentPhase = ref npc.ai[2];
+            float oldPhase = currentPhase;
+
+            // Enter new phases if necessary.
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)
+            {
+                ClearAwayEntities();
+                npc.Infernum().ExtraAI[5] = 0f;
+                npc.ai[0] = (int)EmpressOfLightAttackType.EnterSecondPhase;
+                currentPhase = 1f;
+                npc.netUpdate = true;
+            }
+
+            if (currentPhase == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                currentPhase = 2f;
+                npc.Opacity = 1f;
+                ClearAwayEntities();
+                npc.Infernum().ExtraAI[5] = 0f;
+                npc.netUpdate = true;
+            }
+
+            if (currentPhase == 2f && lifeRatio < Phase4LifeRatio)
+            {
+                currentPhase = 3f;
+                npc.Opacity = 1f;
+                npc.Infernum().ExtraAI[5] = 0f;
+                ClearAwayEntities();
+                npc.netUpdate = true;
+            }
 
             npc.ai[0] = (int)Phase1AttackCycle[phaseCycleIndex % Phase1AttackCycle.Length];
             if (InPhase2(npc))
@@ -1615,6 +1638,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
 
             npc.Infernum().ExtraAI[5]++;
+            if (oldPhase != currentPhase && oldPhase <= 0f)
+            {
+                npc.ai[0] = (int)EmpressOfLightAttackType.EnterSecondPhase;
+                npc.Infernum().ExtraAI[5] = 0f;
+            }
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -1890,11 +1918,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 List<float> wispOffsetFactors = new() { 1f };
                 if (attackType == EmpressOfLightAttackType.DeathAnimation)
                 {
-                    instanceCount = 10;
+                    instanceCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 7 : 10;
                     wispInterpolant = npc.Infernum().ExtraAI[ScreenShaderIntensityIndex];
                     wispOffset += wispInterpolant * 350f + npc.Infernum().ExtraAI[1] * 900f;
 
-                    int offsetCount = 30;
+                    int offsetCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 15 : 30;
                     for (int i = 0; i < offsetCount; i++)
                         wispOffsetFactors.Insert(0, i / (float)(offsetCount - 1f));
                 }

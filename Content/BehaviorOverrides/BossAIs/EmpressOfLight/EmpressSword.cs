@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void SetDefaults()
         {
             Projectile.width = 86;
-            Projectile.height = 24;
+            Projectile.height = 20;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.friendly = false;
@@ -181,7 +181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float hoverOffsetAngle = Owner.Infernum().ExtraAI[1];
             float hoverOffset = 445f;
             float chargeSpeed = 64f;
-            float lanceSpacing = 196f;
+            float lanceSpacing = 220f;
 
             if (InPhase3(Owner))
             {
@@ -204,8 +204,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 lanceShootDelay -= 8;
                 perpendicularChargeAnticipationTime -= 8;
                 perpendicularChargeTime -= 9;
-                chargeSpeed += 33f;
-                lanceSpacing -= 36f;
+                chargeSpeed += 23f;
+                lanceSpacing -= 30f;
             }
 
             Vector2 hoverDestination = Target.Center + hoverOffsetAngle.ToRotationVector2() * hoverOffset;
@@ -297,6 +297,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
+
+            // Make lances that are mostly horizontal in direction take a bit longer to fire.
+            if (Math.Abs(Vector2.Dot(aimDirection, Vector2.UnitX)) > 0.74f)
+                lanceShootDelay += 15;
 
             for (int i = 0; i < 10; i++)
             {

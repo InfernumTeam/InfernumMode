@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public ref float Time => ref Projectile.ai[0];
 
-        public static int FireDelay => 80;
+        public static int FireDelay => 96;
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam";
 
@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Projectile.velocity.Length() < 7f)
                     Projectile.velocity = StarPolarEquation(5, MathHelper.TwoPi * Projectile.ai[1]) * 13f;
 
-                Projectile.velocity *= 1.016f;
+                Projectile.velocity *= 1.0132f;
             }
 
             Time++;

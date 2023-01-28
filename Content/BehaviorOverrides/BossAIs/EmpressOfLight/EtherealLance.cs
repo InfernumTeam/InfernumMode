@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D telegraphTex = InfernumTextureRegistry.Line.Value;
             Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
 
-            int telegraphSize = 3600;
+            int telegraphSize = 3400;
             if (Projectile.localAI[1] > 0f)
                 telegraphSize = (int)Projectile.localAI[1];
 

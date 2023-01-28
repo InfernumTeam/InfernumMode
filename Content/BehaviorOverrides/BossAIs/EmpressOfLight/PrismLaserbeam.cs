@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * MaxLaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.DrawPixelated(basePoints, overallOffset, 17);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 13);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

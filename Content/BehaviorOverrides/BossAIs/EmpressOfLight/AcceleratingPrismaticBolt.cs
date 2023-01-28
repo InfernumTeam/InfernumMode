@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -43,6 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.timeLeft = 230;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

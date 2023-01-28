@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(false);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["reverseDirection"].SetValue(true);
 
-            FireDrawer.Draw(drawPositions, -Main.screenPosition, 30);
+            FireDrawer.Draw(drawPositions, -Main.screenPosition, 40);
         }
 
         public void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

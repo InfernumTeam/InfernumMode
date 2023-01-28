@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const int Lifetime = 360;
 
-        public const float LaserLength = 7800f;
+        public const float LaserLength = 8300f;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.1f, 0f, 1f);
 
             // Rotate.
-            Projectile.rotation += 0.01f;
+            Projectile.rotation += 0.013f;
             Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + Projectile.rotation).ToRotationVector2();
             Projectile.Center = owner.Center + Projectile.velocity;
         }
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = Projectile.width * Projectile.scale * 2f;
+            float width = Projectile.width * Projectile.scale * 1.75f;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
@@ -92,17 +92,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.OrangeRed, Color.Gold, 0.5f) * Projectile.Opacity;
+            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float colorInterpolant = MathHelper.Lerp(0.3f, 0.5f, interpolant);
+            Color orange = new(1f, 0.45f, 0f, 1f);
+            Color yellow = new(1f, 1, 0f, 1f);
+            return Color.Lerp(Color.OrangeRed, Color.Gold, colorInterpolant) * Projectile.Opacity;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GuardiansLaserVertexShader);
 
-            InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
-            InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture2(InfernumTextureRegistry.StreakThinGlow);
-            InfernumEffectsRegistry.GuardiansLaserVertexShader.UseColor(WayfinderSymbol.Colors[0]);
-            Vector2 startPos = Projectile.Center;
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture2(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.UseColor(new Color(255, 221, 135));
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["flipY"].SetValue(Projectile.ai[1] == 0.5f);
+            Vector2 startPos = Projectile.Center - Projectile.velocity * 2f;
             Vector2 endPos = Projectile.Center + Projectile.velocity * LaserLength;
 
             Vector2[] drawPoints = new Vector2[8];

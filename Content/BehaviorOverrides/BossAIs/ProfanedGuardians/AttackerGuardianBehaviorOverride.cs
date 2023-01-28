@@ -16,6 +16,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
+using InfernumMode.Assets.ExtraTextures;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -33,6 +34,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianDefender>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianHealer>()).ToInt();
+
+        public static float BorderPosition => WorldSaveSystem.ProvidenceArena.X * 16f + 300f;
 
         public const int BrightnessWidthFactorIndex = 5;
 
@@ -71,13 +74,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Despawn if no valid target exists.
             npc.timeLeft = 3600;
             Player target = Main.player[npc.target];
-            if (!target.active || target.dead)
+            if ((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16)
             {
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
                 if (npc.timeLeft < 180)
                     npc.timeLeft = 180;
                 if (!npc.WithinRange(target.Center, 2000f) || target.dead)
                     npc.active = false;
+
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFireWall>());
                 return false;
             }
 
@@ -219,7 +224,52 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             spriteBatch.Draw(texture, drawPosition, npc.frame, Color.Lerp(npc.GetAlpha(lightColor), Color.Black * npc.Opacity, fadeToBlack), npc.rotation, origin, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
+
+            if ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.SoloHealer)
+                DrawHealerShield(npc, spriteBatch, 2.3f, 1f);
+
+            DrawBorder(npc, spriteBatch);
             return false;
+        }
+
+        public void DrawBorder(NPC npc, SpriteBatch spriteBatch)
+        {
+        }
+
+        public void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)
+        {
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+
+            float scale = MathHelper.Lerp(0.15f, 0.155f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
+            float noiseScale = MathHelper.Lerp(0.4f, 0.8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
+
+            Effect shieldEffect = Filters.Scene["RoverDriveShield"].GetShader().Shader;
+            shieldEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.24f);
+            shieldEffect.Parameters["blowUpPower"].SetValue(2.5f);
+            shieldEffect.Parameters["blowUpSize"].SetValue(0.5f);
+            shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
+
+            // Prepare the forcefield opacity.
+            float baseShieldOpacity = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2f);
+            shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (opacity * 0.9f + 0.1f));
+            shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
+
+            Color edgeColor = Color.DeepPink;
+            Color shieldColor = Color.LightPink;
+
+            // Prepare the forcefield colors.
+            shieldEffect.Parameters["shieldColor"].SetValue(shieldColor.ToVector3());
+            shieldEffect.Parameters["shieldEdgeColor"].SetValue(edgeColor.ToVector3());
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, shieldEffect, Main.GameViewMatrix.TransformationMatrix);
+
+            // Draw the forcefield. This doesn't happen if the lighting behind the vassal is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
+            Texture2D noise = InfernumTextureRegistry.CultistRayMap.Value;
+            if (shieldColor.ToVector4().Length() > 0.02f)
+                spriteBatch.Draw(noise, drawPosition, null, Color.White * opacity, 0, noise.Size() / 2f, scale * 2f, 0, 0);
+
+            spriteBatch.ExitShaderRegion();
         }
         #endregion Draw Effects
 

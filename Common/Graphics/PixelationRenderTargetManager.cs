@@ -36,13 +36,13 @@ namespace InfernumMode.Common.Graphics
 
         #region Methods
         private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
-        {
-            orig(self);
+        {         
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
             Main.spriteBatch.Draw(pixelRenderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             Main.spriteBatch.End();
+            orig(self);
         }
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)

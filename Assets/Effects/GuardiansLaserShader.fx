@@ -17,6 +17,8 @@ float2 uImageSize2;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
 
+bool flipY;
+
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
@@ -48,24 +50,19 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
     
-    // Get the pixel from the image wanted to draw.
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 5 - uTime * 2.6), coords.y));
-   // float4 fadeMapColor2 = tex2D(uImage2, float2(frac(coords.x * 5 - uTime * 2.6), coords.y));
+    if (flipY)
+        coords.y = 1 - coords.y;
+    
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 3 - uTime * 1.8), coords.y));    
+    float bloomFadeout = pow(sin(coords.y * 3.141), 3);
+    float opacity = (fadeMapColor.r + 1) * bloomFadeout;
+    float bloomFadeout2 = pow(sin(coords.y * 3.141), 18);
+    
+    float4 fadeMapColor2 = tex2D(uImage2, float2(frac(coords.x * 5 - uTime * 2.2), coords.y));
+    float opacity2 = saturate(fadeMapColor2.r - 0.5) * bloomFadeout2;
+    float4 colorCorrected = float4(uColor, fadeMapColor2.r * bloomFadeout * 3);
 
-    //float bigOpacity = max(fadeMapColor.r, fadeMapColor2.r);
-    
-    float bloomFadeout = pow(sin(coords.y * 3.141), 2);
-    // Calcuate the grayscale version of the pixel and use it as the opacity.
-    float opacity = (fadeMapColor.r) * bloomFadeout;
-    float4 colorCorrected = lerp(color, float4(uColor, 1), opacity * 0.8);
-        
-    // Fade out at the top and bottom of the streak.
-    if (coords.x < 0.05)
-        opacity *= pow(coords.x / 0.05, 6);
-    if (coords.x > 0.95)
-        opacity *= pow(1 - (coords.x - 0.95) / 0.05, 6);
-    
-    return colorCorrected * opacity;
+    return color * opacity + colorCorrected * 5 * opacity2;
 }
 
 technique Technique1

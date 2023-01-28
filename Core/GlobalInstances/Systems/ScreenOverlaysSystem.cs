@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -99,9 +100,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 DrawCacheProjsOverSignusBlackening.Clear();
 
                 DrawCulledProjectiles();
-
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                DrawSpecializedProjectileGroups();
 
                 // Draw the madness effect.
                 if (InfernumMode.CanUseCustomAIs && NPC.AnyNPCs(NPCID.Deerclops))
@@ -133,6 +132,27 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 drawer.CullDraw(Main.spriteBatch);
             }
+
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
+        internal static void DrawSpecializedProjectileGroups()
+        {
+            List<Projectile> specialProjectiles = Main.projectile.Take(Main.maxProjectiles).Where(p => p.active && p.ModProjectile is not null and ISpecializedDrawRegion).ToList();
+
+            // Don't mess with the spritebatch if there are no specialized projectiles.
+            if (!specialProjectiles.Any())
+                return;
+
+            foreach (var projectileGroup in specialProjectiles.GroupBy(p => p.type))
+            {
+                ISpecializedDrawRegion regionProperties = projectileGroup.First().ModProjectile as ISpecializedDrawRegion;
+                regionProperties.PrepareSpriteBatch(Main.spriteBatch);
+
+                foreach (var proj in projectileGroup)
+                    ((ISpecializedDrawRegion)proj.ModProjectile).SpecialDraw(Main.spriteBatch);
+            }
+            Main.spriteBatch.ExitShaderRegion();
         }
 
         public override void OnModLoad()

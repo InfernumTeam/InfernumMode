@@ -870,7 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int lanceReleaseRate = 3;
             int hoverRedirectTime = 30;
             int wallLanceShootTime = 30;
-            int lanceFireSpeedBoost = 0;
+            int lanceFireSpeedBoost = -12;
             float backstabbingLanceOffset = 700f;
             float wallLanceOffset = 950f;
             float idleHoverSpeed = 7f;
@@ -880,23 +880,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase2(npc))
             {
                 lanceReleaseRate--;
-                lanceFireSpeedBoost += 9;
+                lanceFireSpeedBoost += 7;
                 idleHoverSpeed += 1.8f;
             }
             if (InPhase3(npc))
             {
-                lanceFireSpeedBoost += 9;
+                lanceFireSpeedBoost += 7;
                 backstabbingLanceOffset -= 80f;
             }
             if (InPhase4(npc))
             {
                 hoverRedirectTime -= 7;
-                lanceFireSpeedBoost += 9;
+                lanceFireSpeedBoost += 6;
                 backstabbingLanceTime += 20;
             }
             if (ShouldBeEnraged)
             {
-                lanceFireSpeedBoost += 24;
+                lanceFireSpeedBoost += 12;
                 backstabbingLanceTime += 12;
                 lanceReleaseRate--;
                 wallLanceShootTime -= 4;

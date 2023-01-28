@@ -1441,6 +1441,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(HolyBlast.ImpactSound, npc.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, npc.Center);
 
+                // Store the jewel's rotation.
+                laserDirection = jewelRef.rotation;
+
                 Vector2 aimDirection = (jewelRef.rotation + MathHelper.PiOver2).ToRotationVector2();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<BrimstoneLaserbeam>(), 900, 0f);
@@ -1608,6 +1611,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     vigilanceRef = staffs.First();
             }
 
+            // Despawn leftover projectiles.
+            if (attackTimer == 1)
+            {
+                Utilities.DeleteAllProjectiles(false,
+                    ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
+                    ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
+                    ModContent.ProjectileType<BrimstoneFlameOrb>(),
+                    ModContent.ProjectileType<BrimstoneJewelProj>(),
+                    ModContent.ProjectileType<BrimstoneLaserbeam>(),
+                    ModContent.ProjectileType<CatastropheSlash>(),
+                    ModContent.ProjectileType<CondemnationArrowSCal>(),
+                    ModContent.ProjectileType<CondemnationProj>(),
+                    ModContent.ProjectileType<DemonicBomb>(),
+                    ModContent.ProjectileType<DemonicTelegraphLine>(),
+                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
+                    ModContent.ProjectileType<FlameOverloadBeam>(),
+                    ModContent.ProjectileType<HeresyProjSCal>(),
+                    ModContent.ProjectileType<LostSoulProj>(),
+                    ModContent.ProjectileType<RedirectingDarkSoul>(),
+                    ModContent.ProjectileType<RedirectingHellfireSCal>(),
+                    ModContent.ProjectileType<RedirectingLostSoulProj>(),
+                    ModContent.ProjectileType<SepulcherBone>(),
+                    ModContent.ProjectileType<SuicideBomberDemonHostile>(),
+                    ModContent.ProjectileType<SuicideBomberRitual>());
+            }
+
             // Use the hands out casting animation.
             frameChangeSpeed = 0.27f;
             frameType = (int)SCalFrameType.BlastCast;
@@ -1746,7 +1775,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 {
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
+                    for (int i = 0; i < 2; i++)
+                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
                     if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
                     {
                         WorldSaveSystem.HasSepulcherAnimationBeenPlayed = true;

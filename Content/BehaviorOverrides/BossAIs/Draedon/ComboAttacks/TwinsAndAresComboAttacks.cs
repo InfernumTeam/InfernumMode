@@ -297,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 2f, -42f, 42f);
 
                                 // Release rockets.
-                                if (adjustedTimer % 15f == 14f && !npc.WithinRange(target.Center, 250f))
+                                if (adjustedTimer % 15f == 14f && !npc.WithinRange(target.Center, 342f))
                                 {
                                     SoundEngine.PlaySound(SoundID.Item36, target.Center);
 

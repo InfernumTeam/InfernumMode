@@ -31,6 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             NPC owner = Main.npc[NPC.crimsonBoss];
             npc.target = owner.target;
 
+            // Disable contact damage.
             npc.damage = 0;
 
             Player target = Main.player[npc.target];
@@ -75,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             {
                 bool eligableToFire = npc.Top.Y < target.Center.Y;
                 int shootRate = BossRushEvent.BossRushActive ? 10 : 35;
-                if (attackTimer > 135f && eligableToFire && attackTimer % shootRate == shootRate - 1f && npc.alpha <= 80)
+                if (attackTimer > 135f && eligableToFire && attackTimer % shootRate == shootRate - 1f && npc.alpha <= 80 && !npc.WithinRange(target.Center, 270f))
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

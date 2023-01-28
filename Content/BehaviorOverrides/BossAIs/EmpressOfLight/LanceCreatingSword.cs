@@ -176,7 +176,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float offsetAngle = MathHelper.TwoPi * Timer / 32f + 1.14f;
+                    float offsetAngle = MathHelper.TwoPi * Timer / (EmpressOfLightBehaviorOverride.ShouldBeEnraged ? 40f : 32f);
+                    offsetAngle += 1.14f;
                     if (SwordIndex / (SwordCount - 1f) < 0.5f)
                         offsetAngle = -offsetAngle + MathHelper.Pi;
 

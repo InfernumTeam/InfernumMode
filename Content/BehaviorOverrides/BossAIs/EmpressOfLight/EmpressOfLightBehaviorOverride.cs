@@ -342,6 +342,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int lacewingIndex = NPC.FindFirstNPC(NPCID.EmpressButterfly);
             if (lacewingIndex == -1)
             {
+                if (WorldSaveSystem.PerformedLacewingAnimation)
+                {
+                    npc.Opacity = Utils.GetLerpValue(0f, 96f, attackTimer, true);
+                    npc.velocity = Vector2.UnitY * (1f - npc.Opacity) * 5f;
+
+                    SoundEngine.PlaySound(SoundID.Item161, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+                    {
+                        Vector2 auroraSpawnPosition = npc.Center - Vector2.UnitY * 80f;
+                        Utilities.NewProjectileBetter(auroraSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EmpressAurora>(), 0, 0f);
+                        npc.velocity = Vector2.UnitY * 0.7f;
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackTimer >= 150f)
+                        SelectNextAttack(npc);
+
+                    return;
+                }
+
                 npc.Opacity = 1f;
                 SelectNextAttack(npc);
                 return;
@@ -418,6 +438,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     lacewing.active = false;
                     lacewing.UpdateNPC(lacewingIndex);
                     SelectNextAttack(npc);
+
+                    // Make the next animation quicker.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.PerformedLacewingAnimation)
+                    {
+                        WorldSaveSystem.PerformedLacewingAnimation = true;
+                        CalamityNetcode.SyncWorld();
+                    }
                 }
             }
         }
@@ -702,7 +729,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int verticalLanceCount = 36;
             int verticalLanceTransitionDelay = 75;
             float horizontalLanceSpacing = 172f;
-            float wallHorizontalOffset = 876f;
             float verticalLanceArea = 270f;
 
             if (InPhase3(npc))
@@ -729,6 +755,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float attackSubstate = ref npc.Infernum().ExtraAI[4];
 
             bool goingAgainstWalls = Math.Abs(target.velocity.X) >= 6f && Math.Sign(target.velocity.X) != horizontalWallDirection;
+            float wallHorizontalOffset = goingAgainstWalls ? 1254f : 876f;
 
             // Have the arm pointed towards the player aim downward, while the other hand points upward.
             leftArmFrame = 4f;
@@ -1961,7 +1988,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static Color GetDaytimeColor(float colorInterpolant)
         {
-            Color pink = Color.HotPink;
+            Color pink = Color.DeepPink;
             Color cyan = Color.Cyan;
             return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));
         }

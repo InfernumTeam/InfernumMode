@@ -4,6 +4,7 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.Audio;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -192,6 +193,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
+            if (WorldSaveSystem.PerformedLacewingAnimation)
+                return true;
+
             if (npc.Infernum().ExtraAI[0] >= 1f)
                 return false;
 

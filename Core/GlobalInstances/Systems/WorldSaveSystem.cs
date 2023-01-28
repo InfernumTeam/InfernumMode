@@ -91,6 +91,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         } = LostColosseumPortalAnimationTime;
 
+        public static bool PerformedLacewingAnimation
+        {
+            get;
+            set;
+        }
+
         public const int LostColosseumPortalAnimationTime = 150;
 
         public override void SaveWorldData(TagCompound tag)
@@ -116,6 +122,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("DownedBereftVassal");
             if (DisplayedEmodeWarningText)
                 downed.Add("DisplayedEmodeWarningText");
+            if (PerformedLacewingAnimation)
+                downed.Add("PerformedLacewingAnimation");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -140,6 +148,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasOpenedLostColosseumPortal = downed.Contains("HasOpenedLostColosseumPortal");
             DownedBereftVassal = downed.Contains("DownedBereftVassal");
             DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
+            PerformedLacewingAnimation = downed.Contains("PerformedLacewingAnimation");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
@@ -157,6 +166,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasSepulcherAnimationBeenPlayed = false;
             HasOpenedLostColosseumPortal = false;
             DownedBereftVassal = false;
+            DisplayedEmodeWarningText = false;
+            PerformedLacewingAnimation = false;
 
             ProvidenceArena = Rectangle.Empty;
             ProvidenceDoorXPosition = 0;

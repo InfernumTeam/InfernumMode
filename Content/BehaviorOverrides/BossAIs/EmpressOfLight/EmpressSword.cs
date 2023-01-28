@@ -174,7 +174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public void PerformAttackBehaviors()
         {
             int hoverRedirectTime = 20;
-            int chargeAnticipationTime = 27;
+            int chargeAnticipationTime = 33;
             int lanceShootDelay = 32;
             int perpendicularChargeAnticipationTime = 42;
             int perpendicularChargeTime = 42;

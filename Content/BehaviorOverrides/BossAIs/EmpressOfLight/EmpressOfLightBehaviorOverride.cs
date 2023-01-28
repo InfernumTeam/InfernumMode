@@ -617,7 +617,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             if (attackTimer >= boltReleaseDelay + boltReleaseTime + attackSwitchDelay)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EmpressExplosion>());
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_MajesticPierce(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)

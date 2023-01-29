@@ -192,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 else
                     NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 11f, 0.2f);
 
-                int transitionDelay = shootCounter == 0f ? 150 : 85;
+                int transitionDelay = shootCounter == 0f ? 150 : 105;
                 if (attackTimer >= transitionDelay)
                 {
                     attackSubstate = 1f;

@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.UI.DraedonSummoning;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
@@ -276,7 +277,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void PrepareShaderForBG(On.Terraria.Main.orig_DrawSurfaceBG orig, Main self)
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
-            bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
+            bool useMoonLordShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
 
             FixWeirdDivisionBy0Bug();
 
@@ -287,7 +288,7 @@ namespace InfernumMode.Core.ILEditingStuff
             catch (IndexOutOfRangeException) { }
             catch (KeyNotFoundException) { }
 
-            if (useShader)
+            if (useMoonLordShader)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);

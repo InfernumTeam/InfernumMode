@@ -298,6 +298,9 @@ namespace InfernumMode.Common.Graphics
                 return;
 
             Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            Main.instance.GraphicsDevice.RasterizerState.ScissorTestEnable = true;
+            Main.instance.GraphicsDevice.ScissorRectangle = new(0, 0, Main.screenWidth, Main.screenHeight);
+
             if (SpecialShader != null)
             {
                 SpecialShader.Shader.Parameters["uWorldViewProjection"].SetValue(PerspectiveMatrixOverride ?? view * projection);

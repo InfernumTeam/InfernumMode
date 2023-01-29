@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
 
             // Stay away from the target if the screen is being obstructed by the intro animation.
-            if (IntroScreenManager.ScreenIsObstructed)
+            if (IntroScreenManager.ScreenIsObstructed && universalFightTimer == 1f)
             {
                 npc.dontTakeDamage = true;
                 npc.Center = target.Center - Vector2.UnitX * target.direction * 3200f;

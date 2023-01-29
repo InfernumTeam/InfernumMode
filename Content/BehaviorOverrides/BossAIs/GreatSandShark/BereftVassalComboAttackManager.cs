@@ -706,8 +706,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         int i = 0;
                         for (float dx = -700f; dx < 700f; dx += 174f)
                         {
-                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -650f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
-                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 2f);
+                            Vector2 dustDevilSpawnPosition = target.Center + new Vector2(dx, -785f - (dx + 700f) * (dustDevilDirection == 1f).ToDirectionInt() * 0.1f);
+                            Vector2 dustDevilVelocity = new((dustDevilDirection == 0f).ToDirectionInt() * 1.1f, 1.9f);
                             Utilities.NewProjectileBetter(dustDevilSpawnPosition, dustDevilVelocity, dustDevilID, 190, 0f, -1, i % 2f);
 
                             i++;
@@ -727,15 +727,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     float score = p.Distance(target.Center);
                     if (score < 400f)
                         score += 9000f;
-                    if (p.Center.Y > target.Center.Y - 200f)
+                    if (p.Center.Y > target.Center.Y - 336f)
                         score += 9000f;
 
                     return score;
                 }).ToArray();
+
+                // Constantly aim at the best devil.
                 if (dustDevils.Length >= 1)
                 {
                     spearDirection = CalamityUtils.CalculatePredictiveAimToTarget(npc.Center, dustDevils[0], spearShootSpeed, 8).SafeNormalize(Vector2.UnitY);
                     idealRotation = spearDirection.ToRotation() + MathHelper.PiOver4;
+                    dustDevils[0].Infernum().ExtraAI[0] = 1;
+                    for (int i = 1; i < dustDevils.Length; i++)
+                        dustDevils[i].Infernum().ExtraAI[0] = 0;
                 }
                 spearRotation = spearRotation.AngleLerp(idealRotation, 0.15f);
                 spearOpacity = MathHelper.Clamp(spearOpacity + 0.04f, 0f, 1f);
@@ -753,15 +758,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 if (attackTimer >= shootTime)
+                {
+                    Utilities.DeleteAllProjectiles(false, dustDevilID);
                     SelectNextComboAttack(npc);
+                }
 
                 return;
             }
 
-            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             // Disable contact damage.
             npc.damage = 0;
 
+            // The great sand shark hovers to the sides of the target with a slight vertical offset.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, hoverVerticalOffset);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverRedirectSpeed, hoverRedirectAcceleration);
             npc.rotation = npc.velocity.X * 0.012f;

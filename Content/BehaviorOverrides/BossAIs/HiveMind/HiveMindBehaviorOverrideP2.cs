@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
         }
 
         internal const float HiveMindFadeoutTime = 25f;
-        public const float SpinRadius = 360f;
+        public const float SpinRadius = 390f;
         public const float NPCSpawnArcSpinTime = 25f;
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
         public const float LungeSpinTotalRotations = 2f;
@@ -393,7 +393,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < MaxSlowdownTime)
                 {
-                    Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 4f;
+                    Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 2.1f;
                     int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);
                     Main.projectile[fuck].tileCollide = false;
                 }
@@ -590,7 +590,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -9.75f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
 
             attackTimer++;
 

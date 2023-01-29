@@ -860,7 +860,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 hellblastShootRate -= 3;
                 verticalBobAmplitude += 50f;
-                dartSpeed += 3.6f;
+                dartSpeed += 2.6f;
             }
 
             if (Enraged)
@@ -1397,7 +1397,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     magic.noGravity = true;
                 }
 
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
 
                 // Teleport to the center of the arena.
                 npc.Center = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
@@ -1440,6 +1440,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
                 SoundEngine.PlaySound(HolyBlast.ImpactSound, npc.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, npc.Center);
+
+                // Store the jewel's rotation.
+                laserDirection = jewelRef.rotation;
 
                 Vector2 aimDirection = (jewelRef.rotation + MathHelper.PiOver2).ToRotationVector2();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1608,6 +1611,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     vigilanceRef = staffs.First();
             }
 
+            // Despawn leftover projectiles.
+            if (attackTimer == 1)
+            {
+                Utilities.DeleteAllProjectiles(false,
+                    ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
+                    ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
+                    ModContent.ProjectileType<BrimstoneFlameOrb>(),
+                    ModContent.ProjectileType<BrimstoneJewelProj>(),
+                    ModContent.ProjectileType<BrimstoneLaserbeam>(),
+                    ModContent.ProjectileType<CatastropheSlash>(),
+                    ModContent.ProjectileType<CondemnationArrowSCal>(),
+                    ModContent.ProjectileType<CondemnationProj>(),
+                    ModContent.ProjectileType<DemonicBomb>(),
+                    ModContent.ProjectileType<DemonicTelegraphLine>(),
+                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
+                    ModContent.ProjectileType<FlameOverloadBeam>(),
+                    ModContent.ProjectileType<HeresyProjSCal>(),
+                    ModContent.ProjectileType<LostSoulProj>(),
+                    ModContent.ProjectileType<RedirectingDarkSoul>(),
+                    ModContent.ProjectileType<RedirectingHellfireSCal>(),
+                    ModContent.ProjectileType<RedirectingLostSoulProj>(),
+                    ModContent.ProjectileType<SepulcherBone>(),
+                    ModContent.ProjectileType<SuicideBomberDemonHostile>(),
+                    ModContent.ProjectileType<SuicideBomberRitual>());
+            }
+
             // Use the hands out casting animation.
             frameChangeSpeed = 0.27f;
             frameType = (int)SCalFrameType.BlastCast;
@@ -1746,7 +1775,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 {
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
+                    for (int i = 0; i < 2; i++)
+                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
                     if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
                     {
                         WorldSaveSystem.HasSepulcherAnimationBeenPlayed = true;
@@ -1882,7 +1912,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             int gigablastBulletHellDuration = 1200;
             int baseGigaReleaseRate = 75;
-            int dartBulletHellReleaseRate = 60;
+            int dartBulletHellReleaseRate = 54;
             float dartBulletHellWallArea = 420f;
             float dartBulletHellGapArea = 40f;
 
@@ -2159,12 +2189,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         gigablastShootCounter++;
 
-                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 3f;
-                        if (gigablastReleaseCountdown <= 40f)
-                            gigablastReleaseCountdown = 40f;
+                        gigablastReleaseCountdown = baseGigaReleaseRate - gigablastShootCounter * 4f;
+                        if (gigablastReleaseCountdown <= 34f)
+                            gigablastReleaseCountdown = 34f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 9.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
                     }
                 }
 

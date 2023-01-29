@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Content.Skies;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -16,14 +17,14 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
-        public static MiscShaderData CartoonVertexShader => GameShaders.Misc["Infernum:CartoonShader"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
+        public static MiscShaderData CosmicBackgroundShader => GameShaders.Misc["Infernum:CosmicBackground"];
         public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
         public static MiscShaderData CyclicHueShader => GameShaders.Misc["Infernum:CyclicHueShader"];
-        public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
+        public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
         public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
@@ -43,6 +44,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
+        public static MiscShaderData WaterVertexShader => InfernumConfig.Instance.ReducedGraphicsConfig ? DukeTornadoVertexShader : GameShaders.Misc["Infernum:WaterShader"];
         public static MiscShaderData WoFGeyserVertexShader => GameShaders.Misc["Infernum:WoFGeyserTexture"];
         public static MiscShaderData WoFTentacleVertexShader => GameShaders.Misc["Infernum:WoFTentacleTexture"];
         public static MiscShaderData YharonBurnShader => GameShaders.Misc["Infernum:YharonBurn"];
@@ -76,11 +78,14 @@ namespace InfernumMode.Assets.Effects
             LoadScreenShaders(assets);
 
             // Significantly dampen the effects of Boss Rush's color-muting shader.
-            Filters.Scene["CalamityMod:BossRush"].GetShader().UseOpacity(0.2f);
+            Filters.Scene["CalamityMod:BossRush"].GetShader().UseOpacity(0.367f);
         }
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> waterShader = new(assets.Request<Effect>("Assets/Effects/WaterShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:WaterShader"] = new MiscShaderData(waterShader, "WaterPass");
+
             Ref<Effect> pulsatingLaser = new(assets.Request<Effect>("Assets/Effects/PulsatingLaser", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:PulsatingLaserShader"] = new MiscShaderData(pulsatingLaser, "TrailPass");
 
@@ -89,6 +94,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> cloudShader = new(assets.Request<Effect>("Assets/Effects/CloudShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CloudShader"] = new MiscShaderData(cloudShader, "TrailPass");
+
+            Ref<Effect> cosmicBGShader = new(assets.Request<Effect>("Assets/Effects/CosmicBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CosmicBackground"] = new MiscShaderData(cosmicBGShader, "CosmicPass");
 
             Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");

@@ -7,7 +7,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Core
+namespace InfernumMode.Core.CrossCompatibility
 {
     public class InfernumModCalls
     {

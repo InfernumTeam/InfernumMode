@@ -1,7 +1,9 @@
-﻿using InfernumMode.Core.GlobalInstances.Players;
+﻿using InfernumMode.Content.Achievements.InfernumAchievements;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -15,13 +17,11 @@ namespace InfernumMode.Content.Achievements.UI
     // Copy of Terraria.GameContent.UI.Elements made to work with our achievements instead.
     public class InfernumUIAchievementListItem : UIPanel
     {
-        private Achievement _achievement;
+        private readonly Achievement _achievement;
 
-        private UIImageFramed _achievementIcon;
+        private readonly UIImageFramed _achievementIcon;
 
-        private UIImage _achievementIconBorders;
-
-        private int _iconIndex;
+        private readonly UIImage _achievementIconBorders;
 
         private Rectangle _iconFrame;
 
@@ -29,13 +29,13 @@ namespace InfernumMode.Content.Achievements.UI
 
         private Rectangle _iconFrameLocked;
 
-        private Asset<Texture2D> _innerPanelTopTexture;
+        private readonly Asset<Texture2D> _innerPanelTopTexture;
 
-        private Asset<Texture2D> _innerPanelBottomTexture;
+        private readonly Asset<Texture2D> _innerPanelBottomTexture;
 
         private bool _locked;
 
-        private bool _large;
+        private readonly bool _large;
 
         public InfernumUIAchievementListItem(Achievement achievement, bool largeForOtherLanguages)
         {
@@ -43,14 +43,14 @@ namespace InfernumMode.Content.Achievements.UI
             BackgroundColor = new Color(89, 26, 26) * 0.8f;
             BorderColor = new Color(44, 13, 13) * 0.8f;
             _large = largeForOtherLanguages;
-            float num = 16 + _large.ToInt() * 20;
-            float num2 = _large.ToInt() * 6;
-            float num3 = _large.ToInt() * 12;
-            Height.Set(66f + num, 0f);
+            float heightOffset = 16 + _large.ToInt() * 20;
+            float iconBorderLeftOffset = _large.ToInt() * 6;
+            float iconBorderTopOffset = _large.ToInt() * 12;
+            Height.Set(66f + heightOffset, 0f);
             Width.Set(0f, 1f);
             PaddingTop = 8f;
             PaddingLeft = 9f;
-            int iconIndex = _iconIndex = AchievementPlayer.GetIconIndex(achievement);
+            int iconIndex = AchievementPlayer.GetIconIndex(achievement);
 
             _iconFrameUnlocked = new Rectangle(0, iconIndex * 66, 64, 64);
             _iconFrameLocked = _iconFrameUnlocked;
@@ -59,25 +59,20 @@ namespace InfernumMode.Content.Achievements.UI
             UpdateIconFrame();
 
             _achievementIcon = new UIImageFramed(ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad), _iconFrame);
-            _achievementIcon.Left.Set(num2, 0f);
-            _achievementIcon.Top.Set(num3, 0f);
+            _achievementIcon.Left.Set(iconBorderLeftOffset, 0f);
+            _achievementIcon.Top.Set(iconBorderTopOffset, 0f);
             Append(_achievementIcon);
 
             _achievementIconBorders = new UIImage(ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad));
-            _achievementIconBorders.Left.Set(-4f + num2, 0f);
-            _achievementIconBorders.Top.Set(-4f + num3, 0f);
+            _achievementIconBorders.Left.Set(-4f + iconBorderLeftOffset, 0f);
+            _achievementIconBorders.Top.Set(-4f + iconBorderTopOffset, 0f);
             Append(_achievementIconBorders);
 
             _innerPanelTopTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_InnerPanelTop", AssetRequestMode.ImmediateLoad);
             if (_large)
-            {
                 _innerPanelBottomTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_InnerPanelBottom_Large", AssetRequestMode.ImmediateLoad);
-            }
             else
-            {
                 _innerPanelBottomTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_InnerPanelBottom", AssetRequestMode.ImmediateLoad);
-            }
-
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -91,7 +86,7 @@ namespace InfernumMode.Content.Achievements.UI
             UpdateIconFrame();
             CalculatedStyle innerDimensions = GetInnerDimensions();
             CalculatedStyle dimensions = _achievementIconBorders.GetDimensions();
-            Vector2 vector2 = new(dimensions.X + dimensions.Width + 7f, innerDimensions.Y);
+            Vector2 positionOffset = new(dimensions.X + dimensions.Width + 7f, innerDimensions.Y);
             float completionRatio = _achievement.CompletionRatio;
             bool canDrawProgress = _achievement.TotalCompletion > 1 && _locked;
 
@@ -107,7 +102,7 @@ namespace InfernumMode.Content.Achievements.UI
             descriptionTextColor = Color.Lerp(descriptionTextColor, Color.White, IsMouseHovering ? 1f : 0f);
 
             Color panelColor = IsMouseHovering ? Color.White : Color.Gray;
-            Vector2 panelDrawPosition = vector2 - Vector2.UnitY * 2f + Vector2.UnitX * largeOffset;
+            Vector2 panelDrawPosition = positionOffset - Vector2.UnitY * 2f + Vector2.UnitX * largeOffset;
 
             // Draw the top of the panel.
             DrawPanelTop(spriteBatch, panelDrawPosition, panelWidth, panelColor);
@@ -118,7 +113,7 @@ namespace InfernumMode.Content.Achievements.UI
             // Draw the bottom of the panel.
             panelDrawPosition.X -= 17f;
 
-            Vector2 position = vector2 + Vector2.UnitY * 27f + Vector2.UnitX * largeOffset;
+            Vector2 position = positionOffset + Vector2.UnitY * 27f + Vector2.UnitX * largeOffset;
             DrawPanelBottom(spriteBatch, position, panelWidth, panelColor);
             position.X += 8f;
             position.Y += 4f;
@@ -146,6 +141,34 @@ namespace InfernumMode.Content.Achievements.UI
                 DrawProgressBar(spriteBatch, completionRatio, drawPosition - Vector2.UnitX * barWidth * 0.7f, barWidth, progressBarColor, fillColor, fillColor.MultiplyRGBA(new Color(new Vector4(1f, 1f, 1f, 0.5f))));
                 drawPosition.X -= barWidth * 1.4f + stringSize2.X;
                 ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, percentageText, drawPosition, nameTextColor, 0f, new Vector2(0f, 0f), textScale, 90f);
+
+                if (!IsMouseHovering)
+                    return;
+
+                // Only the two boss/miniboss ones are higher than 4. Kinda scuffed but then this whole thing is so :). Feel free to improve it if you can figure out how.
+                if (_achievement.TotalCompletion > 4)
+                {
+                    List<Achievement> achievements = AchievementPlayer.GetAchievementsList();
+                    string name = string.Empty;
+                    if (_achievement.GetType() == typeof(KillAllBossesAchievement))
+                    {
+                        KillAllBossesAchievement kABA = (KillAllBossesAchievement)achievements[_achievement.PositionInMainList];
+                        name = kABA.GetFirstUncompletedBoss() switch
+                        {
+                            "Spazmatism" => "The Twins",
+                            "Moon Lord Core" => "Moon Lord",
+                            "Guardian Commander" => "Profaned Guardians",
+                            _ => kABA.GetFirstUncompletedBoss()
+                        };
+                    }
+                    else if (_achievement.GetType() == typeof(KillAllMinibossesAchievement))
+                    {
+                        KillAllMinibossesAchievement kAMA = (KillAllMinibossesAchievement)achievements[_achievement.PositionInMainList];
+                        name = kAMA.GetFirstUncompletedMiniBoss();
+                    }
+                    string textToDraw = "Next: " + name;
+                    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.ItemStack.Value, textToDraw, drawPosition - new Vector2(FontAssets.ItemStack.Value.MeasureString(textToDraw).X * 0.85f, 0), new Color(255, 241, 51), 0f, Vector2.Zero, textScale);
+                }
             }
         }
 
@@ -163,7 +186,7 @@ namespace InfernumMode.Content.Achievements.UI
             spriteBatch.Draw(_innerPanelBottomTexture.Value, new Vector2(position.X + width - 6f, position.Y), new Rectangle(13, 0, 6, _innerPanelBottomTexture.Height()), color);
         }
 
-        private static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
+        public static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
         {
             // Initialize things if nothing valid is supplied.
             progress = MathHelper.Clamp(progress, 0f, 1f);
@@ -196,24 +219,18 @@ namespace InfernumMode.Content.Achievements.UI
         private void UpdateIconFrame()
         {
             if (!_locked)
-            {
                 _iconFrame = _iconFrameUnlocked;
-            }
             else
-            {
                 _iconFrame = _iconFrameLocked;
-            }
 
             if (_achievementIcon != null)
-            {
                 _achievementIcon.SetFrame(_iconFrame);
-            }
         }
         public override void MouseOver(UIMouseEvent evt)
         {
             base.MouseOver(evt);
             BackgroundColor = new Color(119, 46, 46);
-            BorderColor = new Color(56, 20, 20);
+            BorderColor = new Color(56, 20, 20);       
         }
 
         public override void MouseOut(UIMouseEvent evt)
@@ -221,6 +238,7 @@ namespace InfernumMode.Content.Achievements.UI
             base.MouseOut(evt);
             BackgroundColor = new Color(89, 26, 26) * 0.8f;
             BorderColor = new Color(44, 13, 13) * 0.8f;
+            Main.hoverItemName = string.Empty;
         }
     }
 }

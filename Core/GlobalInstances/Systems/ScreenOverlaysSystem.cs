@@ -1,10 +1,12 @@
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -97,8 +99,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }
                 DrawCacheProjsOverSignusBlackening.Clear();
 
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                DrawCulledProjectiles();
+                DrawSpecializedProjectileGroups();
 
                 // Draw the madness effect.
                 if (InfernumMode.CanUseCustomAIs && NPC.AnyNPCs(NPCID.Deerclops))
@@ -114,16 +116,61 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             });
         }
 
+        internal static void DrawCulledProjectiles()
+        {
+            RasterizerState rasterizer = Main.Rasterizer;
+            rasterizer.ScissorTestEnable = true;
+            Main.instance.GraphicsDevice.ScissorRectangle = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IScreenCullDrawer drawer)
+                    continue;
+
+                drawer.CullDraw(Main.spriteBatch);
+            }
+
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
+        internal static void DrawSpecializedProjectileGroups()
+        {
+            List<Projectile> specialProjectiles = Main.projectile.Take(Main.maxProjectiles).Where(p => p.active && p.ModProjectile is not null and ISpecializedDrawRegion).ToList();
+
+            // Don't mess with the spritebatch if there are no specialized projectiles.
+            if (!specialProjectiles.Any())
+                return;
+
+            foreach (var projectileGroup in specialProjectiles.GroupBy(p => p.type))
+            {
+                ISpecializedDrawRegion regionProperties = projectileGroup.First().ModProjectile as ISpecializedDrawRegion;
+                regionProperties.PrepareSpriteBatch(Main.spriteBatch);
+
+                foreach (var proj in projectileGroup)
+                    ((ISpecializedDrawRegion)proj.ModProjectile).SpecialDraw(Main.spriteBatch);
+            }
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
         public override void OnModLoad()
         {
-            DrawCacheProjsOverSignusBlackening = new List<int>();
-            IL.Terraria.Main.DoDraw += DrawBlackout;
+            Main.QueueMainThreadAction(() =>
+            {
+                DrawCacheProjsOverSignusBlackening = new List<int>();
+                IL.Terraria.Main.DoDraw += DrawBlackout;
+            });
         }
 
         public override void Unload()
         {
-            DrawCacheProjsOverSignusBlackening = null;
-            IL.Terraria.Main.DoDraw -= DrawBlackout;
+            Main.QueueMainThreadAction(() =>
+            {
+                DrawCacheProjsOverSignusBlackening = null;
+                IL.Terraria.Main.DoDraw -= DrawBlackout;
+            });
         }
     }
 }

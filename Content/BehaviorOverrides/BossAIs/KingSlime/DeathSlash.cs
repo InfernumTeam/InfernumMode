@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class DeathSlash : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
+        internal PrimitiveTrail SlashDrawer;
 
         public List<Vector2> TrailCache = new();
 
@@ -117,12 +117,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.RealityTearVertexShader);
+            if (SlashDrawer is null)
+                SlashDrawer = new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
             InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.GrayscaleWater);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
+            SlashDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
             return false;
         }
     }

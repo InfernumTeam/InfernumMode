@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Content.Rarities.InfernumRarities;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -37,7 +38,7 @@ namespace InfernumMode.Content.Items.Relics
             Item.width = 30;
             Item.height = 44;
             Item.maxStack = 999;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<InfernumRedRarity>();
             Item.value = Item.buyPrice(0, 5, 0, 0);
         }
     }

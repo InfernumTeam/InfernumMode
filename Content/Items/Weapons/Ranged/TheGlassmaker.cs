@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Ranged;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -38,7 +39,7 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
         }
 
         public override Vector2? HoldoutOffset() => -Vector2.UnitX * 4f;

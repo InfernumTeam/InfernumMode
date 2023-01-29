@@ -22,6 +22,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             flags2[0] = HasGeneratedProfanedShrine;
             flags2[1] = HasGeneratedColosseumEntrance;
+            flags2[2] = PerformedLacewingAnimation;
 
             writer.Write(flags);
             writer.Write(flags2);
@@ -57,11 +58,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             HasGeneratedProfanedShrine = flags2[0];
             HasGeneratedColosseumEntrance = flags2[1];
+            PerformedLacewingAnimation = flags2[2];
 
             AbyssLayer1ForestSeed = reader.ReadInt32();
             AbyssLayer3CavernSeed = reader.ReadInt32();
             SquidDenCenter = new(reader.ReadInt32(), reader.ReadInt32());
             EidolistWorshipPedestalCenter = new(reader.ReadInt32(), reader.ReadInt32());
+
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
             WayfinderGateLocation = new(reader.ReadSingle(), reader.ReadSingle());

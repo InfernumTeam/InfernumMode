@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
-            float flySpeed = MathHelper.SmoothStep(-3f, 20f, Utils.GetLerpValue(15f, 72f, Time, true));
+            float flySpeed = MathHelper.SmoothStep(-3f, 17f, Utils.GetLerpValue(15f, 72f, Time, true));
             Vector2 directionToCenter = -AngularOffset.ToRotationVector2();
             Projectile.velocity = directionToCenter * flySpeed;
             Projectile.rotation = directionToCenter.ToRotation() + MathHelper.PiOver2;
@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
             for (int i = 0; i < 18; i++)
             {
-                Vector2 shardVelocity = (MathHelper.TwoPi * i / 18f + shootOffsetAngle).ToRotationVector2() * Main.rand.NextFloat(6f, 8f);
+                Vector2 shardVelocity = (MathHelper.TwoPi * i / 18f + shootOffsetAngle).ToRotationVector2() * Main.rand.NextFloat(5f, 7f);
                 Utilities.NewProjectileBetter(Projectile.Center, shardVelocity, ModContent.ProjectileType<CrystalShard>(), 125, 0f);
             }
         }

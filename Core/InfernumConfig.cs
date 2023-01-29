@@ -27,14 +27,14 @@ namespace InfernumMode.Core
         [Label("Reduced Graphical Settings")]
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(false)]
-        [Tooltip("Enables reduced graphics mode. Useful if performance is low.")]
+        [Tooltip("Enables reduced graphics mode. Use this if lag is an issue.")]
         public bool ReducedGraphicsConfig { get; set; }
 
         [Label("Saturation Bloom Intensity")]
         [BackgroundColor(224, 127, 180, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0f, 1f)]
-        [DefaultValue(0.75f)]
+        [DefaultValue(0f)]
         [Tooltip("How intense color saturation bloom effects should be. Such effects are disabled when this value is zero.")]
         public float SaturationBloomIntensity { get; set; }
 

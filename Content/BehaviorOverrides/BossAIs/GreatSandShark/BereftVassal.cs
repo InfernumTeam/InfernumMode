@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Items.LoreItems;
-using CalamityMod.Items.Placeables.Furniture.Trophies;
+using CalamityMod.Items.Placeables.Furniture.DevPaintings;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BossBars;
@@ -15,12 +15,14 @@ using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Content.Subworlds;
+using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -34,7 +36,7 @@ using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     [AutoloadBossHead]
-    public class BereftVassal : ModNPC
+    public class BereftVassal : ModNPC, IBossChecklistHandler
     {
         public enum BereftVassalAttackType
         {
@@ -128,6 +130,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public const float Phase2LifeRatio = 0.6f;
 
+        // Boss Checklist things.
+        public string BossTitle => "Bereft Vassal";
+
+        // A little bit after Astrum Deus.
+        public float ProgressionValue => 17.75f;
+
+        public List<int> CollectibleItems => new()
+        {
+            ModContent.ItemType<BereftVassalTrophy>(),
+            ModContent.ItemType<KnowledgeBereftVassal>(),
+            ModContent.ItemType<WaterglassToken>(),
+            ModContent.ItemType<ThankYouPainting>(),
+        };
+
+        public int? SpawnItem => ModContent.ItemType<SandstormsCore>();
+
+        public string SpawnRequirement => $"Use a [i:{SpawnItem.Value}] at the pedestal in the heart of the desert.";
+
+        public string DespawnMessage => CalamityUtils.ColorMessage("Argus returns to quiet solitude at the center of the Colosseum.", new(28, 175, 189));
+
+        public bool AvailabilityCondition => NPC.downedAncientCultist;
+
+        public bool DefeatCondition => WorldSaveSystem.DownedBereftVassal;
+
+        public string HeadIconPath => "InfernumMode/Content/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassal_Head_Boss";
+
+        public List<int> ExtraNPCIDs => new()
+        {
+            ModContent.NPCType<GreatSandSharkNPC>()
+        };
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Argus, the Bereft Vassal");
@@ -204,6 +237,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.chaseable = !sandSharkExists;
             NPC.Calamity().DR = sandSharkExists ? 0.999999f : 0f;
             NPC.Calamity().ShouldCloseHPBar = CurrentAttack == BereftVassalAttackType.IdleState || sandSharkExists;
+
+            // Teleport above the target if stuck and alone.
+            if (!sandSharkExists && NPC.Center.Y >= Main.maxTilesY * 16f - 500f)
+            {
+                NPC.Center = Target.Center - Vector2.UnitY * 700f;
+                NPC.netUpdate = true;
+            }
 
             // Disable DoTs because they're apparently overpowered enough to do damage while supposedly invulnerable.
             if (sandSharkExists)
@@ -555,7 +595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Check for collision. This does not apply if current above the target's bottom.
                 bool hasHitGround = Collision.SolidCollision(NPC.BottomRight - Vector2.UnitY * 4f, NPC.width, 6, true);
                 bool ignoreTiles = NPC.Bottom.Y < startingTargetPositionY;
-                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 600f;
+                bool pretendFakeCollisionHappened = NPC.Bottom.Y >= Target.Bottom.Y + 900f;
                 if (hasHitGround && !ignoreTiles || pretendFakeCollisionHappened)
                 {
                     // Perform ground hit effects once a collision is registered. This involves releasing sand rubble into the air and creating a damaging ground area of effect.

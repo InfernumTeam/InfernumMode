@@ -177,10 +177,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                     {
                         bomb.timeLeft = 180;
-                        bomb.ModProjectile<DemonicBomb>().ExplosionRadius = bombRadius;
                         bomb.ModProjectile<DemonicBomb>().ExplodeIntoDarts = true;
                     });
-                    Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY.RotatedBy(bombSpawnOffsetAngle) * 17f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f);
+                    Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY.RotatedBy(bombSpawnOffsetAngle) * 17f, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, bombRadius);
                 }
             }
 

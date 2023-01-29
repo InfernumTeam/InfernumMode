@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Time, true) * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true);
 
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Time < 20f)
+            if (Time < 26f)
             {
                 float spinSlowdown = Utils.GetLerpValue(18f, 5f, Time, true);
                 Projectile.velocity *= 0.7f;
@@ -43,14 +43,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
             }
 
-            if (Time == 20f)
+            if (Time == 26f)
             {
                 Projectile.velocity = Projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
                 if (BossRushEvent.BossRushActive)
                     Projectile.velocity *= 1.75f;
                 SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
             }
-            if (Time > 20f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
+            if (Time > 26f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 26f))
                 Projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.021f;
 
             Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.4f);
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.GetLerpValue(8f, 24f, Time, true)) * Projectile.Opacity;
+            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.GetLerpValue(8f, 30f, Time, true)) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)

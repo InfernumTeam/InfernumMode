@@ -299,7 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 enraged = 1f;
 
             // Automatically transition to the ultimate attack if close to dying in the final phase.
-            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f)
+            if (ExoMechManagement.CurrentAresPhase >= 6 && npc.life < npc.lifeMax * 0.075f && attackType != (int)AresBodyAttackType.PrecisionBlasts)
             {
                 SelectNextAttack(npc);
                 attackType = (int)AresBodyAttackType.PrecisionBlasts;
@@ -766,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int laserbeamTelegraphTime = 60;
             int laserbeamSpinTime = 900;
             int sparkBurstReleaseRate = 45;
-            int circularBoltCount = 21;
+            int circularBoltCount = 17;
             int draedonIndex = NPC.FindFirstNPC(ModContent.NPCType<DraedonNPC>());
             Vector2 coreCenter = npc.Center + Vector2.UnitY * 24f;
 
@@ -1489,9 +1489,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
+                Vector2 telegraphInnerScale = telegraphScale * 0.75f;
                 Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
+                Color innerColor = Color.Lerp(telegraphColor, Color.White, 0.35f);
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, innerColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphInnerScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 

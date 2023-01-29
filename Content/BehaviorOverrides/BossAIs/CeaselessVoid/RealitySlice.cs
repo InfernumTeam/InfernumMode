@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Projectile.Kill();
                 return;
+            }
+
+            if (DoGPhase1HeadBehaviorOverride.GeneralPortalIndex != -1 && Time <= 2f)
+            {
+                Vector2 oldCenter = Projectile.Center;
+                Projectile.Center = Main.projectile[DoGPhase1HeadBehaviorOverride.GeneralPortalIndex].Center;
+
+                Start += Projectile.Center - oldCenter;
+                End += Projectile.Center - oldCenter;
             }
 
             float sliceInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 27f, Time, true), 1.6);

@@ -11,6 +11,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
     {
         public bool FastAcceleration => Projectile.ai[0] == 1f;
 
+        public bool GlowBlue => Projectile.Infernum().ExtraAI[0] == 1f;
+
+        // Not sure this the best way to do this?
+        public bool ResetGlowingBlue;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dust Devil");
@@ -57,11 +62,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f;
-                Color backlightColor = Projectile.GetAlpha(new Color(1f, 1f, 1f, 0f)) * Lighting.Brightness((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f)) * 0.65f;
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * (GlowBlue ? 5f : 3f);
+                Color mainBackColor = GlowBlue ? new Color(0f, 0.9f, 1f, 0f) : new Color(1f, 1f, 1f, 0f);
+                Color backlightColor = Projectile.GetAlpha(mainBackColor) * Lighting.Brightness((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f)) * 0.65f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, backlightColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha((GlowBlue ? Color.Cyan: lightColor)), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

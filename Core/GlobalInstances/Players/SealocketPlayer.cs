@@ -63,14 +63,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
             ForcefieldOpacity = MathHelper.Clamp(ForcefieldOpacity - hasCooldown.ToDirectionInt() * 0.025f, 0f, 1f);
             ForcefieldDissipationInterpolant = MathHelper.Clamp(ForcefieldDissipationInterpolant + dissipate.ToDirectionInt() * 0.023f, 0f, 1f);
 
-            // Reset cooldowns and hit counters if the accessory is no longer being used.
             if (!MechanicalEffectsApply)
-            {
-                if (Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out var cdDurability))
-                    cdDurability.timeLeft = 0;
-                RemainingHits = MaxHighDRHits;
                 return;
-            }
 
             // Apply the recharge cooldown if all hits have been exhausted.
             if (RemainingHits <= 0 && !hasCooldown)

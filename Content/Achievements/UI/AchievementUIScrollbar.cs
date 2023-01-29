@@ -15,9 +15,9 @@ namespace InfernumMode.Content.Achievements.UI
     // Custom UIScrollbar that lets you change the texture easily.
     public class AchievementUIScrollbar : UIScrollbar
     {
-        public Asset<Texture2D> _texture;
+        public readonly Asset<Texture2D> _texture;
 
-        public Asset<Texture2D> _innerTexture;
+        public readonly Asset<Texture2D> _innerTexture;
 
         public AchievementUIScrollbar()
         {
@@ -28,14 +28,15 @@ namespace InfernumMode.Content.Achievements.UI
             PaddingTop = 5f;
             PaddingBottom = 5f;
         }
+
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             CalculatedStyle dimensions = GetDimensions();
             CalculatedStyle innerDimensions = GetInnerDimensions();
             if ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1))
             {
-                float num = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1);
-                ViewPosition = MathHelper.Clamp(num / innerDimensions.Height * (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1), 0f, (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) - (float)typeof(UIScrollbar).GetField("_viewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1));
+                float offset = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1);
+                ViewPosition = MathHelper.Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1), 0f, (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) - (float)typeof(UIScrollbar).GetField("_viewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1));
             }
 
             Rectangle handleRectangle = (Rectangle)typeof(UIScrollbar).GetMethod("GetHandleRectangle", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(UIRenderingSystem.achievementUIManager.uIScrollbar1, null);
@@ -51,6 +52,7 @@ namespace InfernumMode.Content.Achievements.UI
             DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), Color.White);
             DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, Color.White * ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) || (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) ? 1f : 0.85f));
         }
+
         internal static void DrawBar(SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions, Color color)
         {
             spriteBatch.Draw(texture, new Rectangle(dimensions.X, dimensions.Y - 6, dimensions.Width, 6), new Rectangle(0, 0, texture.Width, 6), color);

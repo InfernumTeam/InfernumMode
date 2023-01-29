@@ -268,11 +268,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
         {
-            int chargeTime = 37;
+            int chargeTime = 39;
             int repositionTime = 210;
             int chargeCount = 3;
             float hoverOffset = 640f;
-            float chargeDistance = hoverOffset + 975f;
+            float chargeDistance = hoverOffset + 800f;
             float scaleFactorDelta = 0f;
             if (phase2)
             {
@@ -284,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 chargeTime -= 8;
                 scaleFactorDelta += 0.8f;
-                chargeDistance += 900f;
+                chargeDistance += 500f;
             }
             if (BossRushEvent.BossRushActive)
                 scaleFactorDelta += 0.6f;
@@ -311,7 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 23f, 0.9f);
 
                     // Begin the charge if either enough time has passed or within sufficient range of the hover destination.
-                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 42f)
+                    if ((attackTimer >= repositionTime || npc.WithinRange(hoverDestination, 85f)) && attackTimer >= 60f)
                     {
                         attackTimer = 0f;
                         attackState = 1f;
@@ -346,7 +346,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                         if (chargeCounter >= chargeCount)
                         {
-                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
+                            for (int i = 0; i < 3; i++)
+                            {
+                                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<RealityTear>());
+                                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CelestialBarrage>());
+                            }
                             SelectNewAttack(npc);
                         }
                         else
@@ -500,19 +504,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer % burstShootRate == burstShootRate - 1f && attackTimer >= shootDelay && attackTimer < 400f)
             {
                 SoundEngine.PlaySound(SoundID.Item28, npc.Center);
-                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                for (int i = 0; i < laserBurstCount; i++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int j = -1; j <= 1; j += 2)
+                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < laserBurstCount; i++)
                     {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
-                        Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
-
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        for (int j = -1; j <= 1; j += 2)
                         {
-                            laser.localAI[1] = j * 0.5f;
-                        });
-                        Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
+                            Vector2 shootVelocity = (MathHelper.TwoPi * i / laserBurstCount + shootOffsetAngle).ToRotationVector2() * burstShootSpeed;
+                            Vector2 laserSpawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * j * 8f;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                            {
+                                laser.localAI[1] = j * 0.5f;
+                            });
+                            Utilities.NewProjectileBetter(laserSpawnPosition, shootVelocity, ModContent.ProjectileType<SpiralEnergyLaser>(), 250, 0f);
+                        }
                     }
                 }
             }

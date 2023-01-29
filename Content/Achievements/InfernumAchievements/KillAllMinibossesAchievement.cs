@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.SunkenSea;
+﻿using CalamityMod.NPCs.NormalNPCs;
+using CalamityMod.NPCs.SunkenSea;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -12,6 +13,21 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
     {
         #region Fields
         private Dictionary<int, bool> MinibossesCompleted;
+
+        // Should have ordered them previously, seeing as the above dict is based on the list order changing it now will
+        // change peoples progress :).
+        private Dictionary<int, bool> OrderedMinibossesComplete => new()
+        {
+            [ModContent.NPCType<GiantClam>()] = MinibossesCompleted[8],
+            [NPCID.DD2DarkMageT1] = MinibossesCompleted[4],
+            [NPCID.SandElemental] = MinibossesCompleted[6],
+            [ModContent.NPCType<ThiccWaifu>()] = MinibossesCompleted[7],
+            [NPCID.BigMimicCorruption] = MinibossesCompleted[1],
+            [NPCID.BigMimicCrimson] = MinibossesCompleted[2],
+            [NPCID.BigMimicHallow] = MinibossesCompleted[3],
+            [NPCID.DD2OgreT2] = MinibossesCompleted[5],
+            [NPCID.DD2Betsy] = MinibossesCompleted[0]
+        };
         #endregion
 
         #region Statics
@@ -24,7 +40,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             NPCID.DD2DarkMageT1,
             NPCID.DD2OgreT2,
             NPCID.SandElemental,
-            ModContent.NPCType<GiantClam>()
+            ModContent.NPCType<ThiccWaifu>(),
+            ModContent.NPCType<GiantClam>(),
+            // These must be at the end.
+            NPCID.DD2DarkMageT3,
+            NPCID.DD2OgreT3
         };
         #endregion
 
@@ -33,7 +53,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             Name = "Mini-Meany!";
             Description = "Defeat the various minor threats across the world!\n[c/777777:Beat every Infernum Miniboss]";
-            TotalCompletion = 8;
+            TotalCompletion = 9;
             PositionInMainList = 7;
             CreateDict();
         }
@@ -52,6 +72,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                     Value = v
                 }).ToDictionary(k => k.Key, v => v.Value);
             }
+            // Add the extra one if it doesn't exist already, I do not like how scuffed this feels. If we add another miniboss in future,
+            // but someone hasnt run this code we'd need to check for that too and ugh.
+            if (MinibossesCompleted.Count is 8 && !MinibossesCompleted.ContainsKey(8))
+                MinibossesCompleted.Add(8, false);
+
             CurrentCompletion = tag.Get<int>("MinibossesCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("MinibossesDoneCompletionEffects");
         }
@@ -68,17 +93,34 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             for (int i = 0; i < MinibossesCompleted.Count; i++)
             {
                 if (MinibossesCompleted[i])
-                {
                     currentCompletion++;
-                }
             }
             CurrentCompletion = currentCompletion;
         }
         public override void ExtraUpdateNPC(int npcIndex)
         {
+            bool updatedList = false;
             int npcID = Main.npc[npcIndex].type;
             if (MinibossIDs.Contains(npcID))
-                MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
+            {
+                if (npcID == NPCID.DD2DarkMageT3 && !MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)])
+                {
+                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)] = true;
+                    updatedList = true;
+                }
+                else if (npcID == NPCID.DD2OgreT3 && !MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)])
+                {
+                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)] = true;
+                    updatedList = true;
+                }
+                else if (!MinibossesCompleted[MinibossIDs.IndexOf(npcID)])
+                {
+                    MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
+                    updatedList = true;
+                }
+            }
+            if (updatedList && MinibossesCompleted.Count(kv => kv.Value) != TotalCompletion)
+                AchievementsNotificationTracker.AddAchievementAsUpdated(this);
         }
         #endregion
 
@@ -87,11 +129,22 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             MinibossesCompleted = new Dictionary<int, bool>();
             for (int i = 0; i < TotalCompletion; i++)
-            {
                 MinibossesCompleted[i] = false;
-            }
+
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
+        }
+
+        public string GetFirstUncompletedMiniBoss()
+        {
+            foreach (var item in OrderedMinibossesComplete)
+            {
+                if (!item.Value)
+                {
+                    return Utilities.GetNPCFullNameFromID(item.Key);
+                }
+            }
+            return string.Empty;
         }
         #endregion
     }

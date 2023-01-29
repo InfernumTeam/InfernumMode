@@ -134,7 +134,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         }
         public override void OnEnterWorld(Player player)
         {
-            AchivementsNotificationTracker.Clear();
+            AchievementsNotificationTracker.Clear();
         }
 
         public override void PostUpdate()
@@ -152,7 +152,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 else if (!achievement.IsCompleted)
                     achievement.Update();
             }
-            AchivementsNotificationTracker.Update();
+            AchievementsNotificationTracker.Update();
         }
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)

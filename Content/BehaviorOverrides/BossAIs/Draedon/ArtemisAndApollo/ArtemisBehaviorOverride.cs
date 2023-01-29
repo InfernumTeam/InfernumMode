@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             }
 
             // Perform specific attack behaviors.
-            PerformSpecificAttackBehaviors(npc, target, performingDeathAnimation, attackState, sideSwitchAttackDelay, hoverSide, ref apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex], ref frame, ref attackTimer, ref deathAnimationTimer);
+            PerformSpecificAttackBehaviors(npc, target, performingDeathAnimation, attackState, hoverSide, ref apollo.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex], ref frame, ref attackTimer, ref deathAnimationTimer);
             return false;
         }
 

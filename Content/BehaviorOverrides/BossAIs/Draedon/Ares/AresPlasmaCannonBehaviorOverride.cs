@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             get
             {
-                float aimPredictiveness = 20f;
+                float aimPredictiveness = 25f;
 
                 if (ExoMechManagement.CurrentAresPhase >= 5)
                     aimPredictiveness += 6f;
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int plasmaFireballCount = 1;
             int plasmaDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
             bool gasExplosionVariant = ExoMechManagement.CurrentAresPhase >= 2;
-            float plasmaShootSpeed = 10.6f;
+            float plasmaShootSpeed = 8.25f;
 
             // Make things in general stronger based on Ares' current phase.
             if (ExoMechManagement.CurrentAresPhase >= 3)

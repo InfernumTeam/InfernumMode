@@ -7,6 +7,7 @@ using InfernumMode.Common;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -437,6 +438,9 @@ namespace InfernumMode
         public static void CreateCinderParticles(this Player target, float lifeRatio, BaseCinderParticle cinderParticle, float maxCinderSpawnRate = 3.5f, float minCinderSpawnRate = 12f, float maxCinderFlySpeed = 12f, float minCinderFlySpeed = 6f)
         {
             if (Main.netMode == NetmodeID.Server)
+                return;
+
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
             int cinderSpawnRate = (int)MathHelper.Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);

@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Achievements
         /// </summary>
         public virtual void OnCompletion()
         {
-            AchivementsNotificationTracker.AddAchievementAsCompleted(this);
+            AchievementsNotificationTracker.AddAchievementAsCompleted(this);
             Main.NewText($"Achievement Completed! [c/ff884d:{Name}]");
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
         }

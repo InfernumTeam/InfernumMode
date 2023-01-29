@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
             Main.spriteBatch.Draw(line, start, null, Color.Orange, Projectile.rotation, beamOrigin, beamScale, 0, 0f);
             Main.spriteBatch.Draw(line, start, null, Color.Red, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.7f, 1f), 0, 0f);
-            Main.spriteBatch.Draw(line, start, null, Color.White, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.Lerp(Color.OrangeRed, Color.White, 0.6f), Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
 
             // Draw the energy focus at the start.
             Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;

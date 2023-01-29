@@ -14,6 +14,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -56,8 +57,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
             energyDrawer.Update();
 
+            npc.dontTakeDamage = false;
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
+
+            // Ensure this does not take damage during the desperation attack.
+            if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
+                npc.dontTakeDamage = true;
 
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             Player target = Main.player[npc.target];

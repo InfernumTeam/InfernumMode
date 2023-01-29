@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Rarities.InfernumRarities;
 
 namespace InfernumMode.Content.Items
 {
@@ -36,7 +37,7 @@ namespace InfernumMode.Content.Items
             Item.width = 56;
             Item.height = 60;
             Item.value = Item.sellPrice(0, 5, 0, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ModContent.RarityType<InfernumProfanedRarity>();
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.noUseGraphic = true;

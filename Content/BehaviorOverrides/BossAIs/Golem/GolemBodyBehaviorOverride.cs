@@ -1190,17 +1190,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             int fistSlamTime = 15;
             int bodyReelTime = 25;
             int shootTime = 150;
-            int slingshotCount = 2;
+            int slingshotCount = 1;
             int fistShootRate = 16;
             int platformReleaseRate = 90;
             float armSlamInterpolant = 0f;
             float bodySlamInterpolant = 0f;
 
-            if (inPhase2)
-                fistShootRate -= 3;
             if (inPhase3)
             {
-                fistShootRate -= 4;
+                fistShootRate -= 3;
                 shootTime += 15;
             }
 
@@ -1567,6 +1565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             // Otherwise accelerate towards the proper position
+            FreeHeadNPC.Center = Vector2.Lerp(FreeHeadNPC.Center, AttachedHeadNPC.Center, 0.04f);
             FreeHeadNPC.velocity += FreeHeadNPC.SafeDirectionTo(AttachedHeadNPC.Center) * 0.35f;
         }
 

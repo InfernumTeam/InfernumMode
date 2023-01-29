@@ -711,12 +711,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 Vector2 clawDrawPosition = drawPosition + new Vector2(npc.Infernum().ExtraAI[DetachedHandOffsetXIndex] + npc.scale * 0f, npc.Infernum().ExtraAI[DetachedHandOffsetYIndex]) + GetBaseClawOffset(npc, false);
                 float leftClawRotation = (clawDrawPosition - drawPosition).ToRotation() - 0.33f;
 
+                drawPosition.X += npc.scale * 84f;
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(new List<Vector2>()
                 {
-                    drawPosition + Vector2.UnitX * npc.scale * 84f,
-                    (drawPosition + Vector2.UnitX * npc.scale * 84f + clawDrawPosition) * 0.5f,
+                    drawPosition,
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.25f),
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.5f),
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.75f),
                     clawDrawPosition
                 }, Vector2.Zero, 50);
+                drawPosition.X -= npc.scale * 84f;
+
                 spriteBatch.Draw(leftArm, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation + leftClawRotation, leftArm.Size() * 0.5f, npc.scale, 0, 0f);
                 spriteBatch.Draw(leftArmGlow, clawDrawPosition, null, glowColor, npc.rotation + leftClawRotation, leftArm.Size() * 0.5f, npc.scale, 0, 0f);
 
@@ -724,12 +729,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 clawDrawPosition = drawPosition + new Vector2(-npc.Infernum().ExtraAI[DetachedHandOffsetXIndex], npc.Infernum().ExtraAI[DetachedHandOffsetYIndex]) + GetBaseClawOffset(npc, true);
                 float rightClawRotation = (clawDrawPosition - drawPosition).ToRotation() + MathHelper.Pi + 0.33f;
 
+                drawPosition.X -= npc.scale * 84f;
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(new List<Vector2>()
                 {
-                    drawPosition - Vector2.UnitX * npc.scale * 84f,
-                    (drawPosition - Vector2.UnitX * npc.scale * 84f + clawDrawPosition) * 0.5f,
+                    drawPosition,
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.25f),
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.5f),
+                    Vector2.Lerp(drawPosition, clawDrawPosition, 0.75f),
                     clawDrawPosition
                 }, Vector2.Zero, 50);
+                drawPosition.X += npc.scale * 84f;
+
                 spriteBatch.Draw(rightArm, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation + rightClawRotation, rightArm.Size() * 0.5f, npc.scale, 0, 0f);
                 spriteBatch.Draw(rightArmGlow, clawDrawPosition, null, glowColor, npc.rotation + rightClawRotation, rightArm.Size() * 0.5f, npc.scale, 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();

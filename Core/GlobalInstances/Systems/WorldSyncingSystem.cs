@@ -20,6 +20,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             flags[7] = DownedBereftVassal;
             writer.Write(flags);
 
+            BitsByte flags2 = new();
+            flags2[0] = PerformedLacewingAnimation;
+
             writer.Write(ProvidenceArena.X);
             writer.Write(ProvidenceArena.Y);
             writer.Write(ProvidenceArena.Width);
@@ -40,6 +43,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasGeneratedProfanedShrine = flags[5];
             HasGeneratedColosseumEntrance = flags[6];
             DownedBereftVassal = flags[7];
+
+            BitsByte flags2 = reader.ReadByte();
+            PerformedLacewingAnimation = flags2[0];
 
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 

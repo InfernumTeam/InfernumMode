@@ -474,12 +474,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.netUpdate = true;
             }
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             // Attempt to get into position for a charge.
             if (attackTimer < initialRedirectTime)
             {
-                // Disable contact damage.
-                npc.damage = 0;
-
                 float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
                 idealHoverSpeed *= Utils.GetLerpValue(35f, 300f, npc.Distance(target.Center), true);
 
@@ -531,6 +531,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Charge.
             if (attackTimer >= initialRedirectTime + spinBufferTime)
             {
+                npc.damage = npc.defDamage;
                 npc.velocity *= npc.velocity.Length() > chargeSpeed * 0.56f ? 0.98f : 1.02f;
                 if (!npc.WithinRange(target.Center, 1200f))
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f);

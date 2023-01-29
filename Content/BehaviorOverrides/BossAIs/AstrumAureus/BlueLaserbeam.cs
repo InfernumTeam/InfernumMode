@@ -101,7 +101,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
 
             LaserDrawer.DrawPixelated(baseDrawPoints, -Main.screenPosition, 54);
-
         }
     }
 }

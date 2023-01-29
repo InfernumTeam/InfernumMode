@@ -107,6 +107,7 @@ namespace InfernumMode.Content.Skies
             }
 
             NPC eolNPC = Main.npc[eol];
+
             if (!EmpressOfLightBehaviorOverride.InPhase3(eolNPC))
                 Lights.Clear();
 

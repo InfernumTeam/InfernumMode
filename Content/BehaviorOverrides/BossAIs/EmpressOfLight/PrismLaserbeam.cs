@@ -15,6 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
     public class PrismLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy RayDrawer = null;
+
         public Projectile Prism
         {
             get
@@ -30,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 return null;
             }
         }
-        public ref float LaserLength => ref Projectile.ai[1];
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public const float MaxLaserLength = 3330f;
@@ -43,13 +44,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
+            Projectile.width = Projectile.height = 20;
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
             Projectile.netImportant = true;
+            Projectile.scale = 0.4f;
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
@@ -64,28 +66,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Grow bigger up to a point.
             float maxScale = MathHelper.Lerp(0.051f, 1.5f, Utils.GetLerpValue(0f, 30f, Prism.timeLeft, true));
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.02f, 0.05f, maxScale);
+            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.04f, 0.05f, maxScale);
 
             // Decide where to position the laserbeam.
-            Projectile.velocity = Prism.localAI[0].ToRotationVector2();
-            Projectile.Center = Prism.Center;
-
-            // Update the laser length.
-            LaserLength = MaxLaserLength;
+            Projectile.Center = Prism.Top;
 
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.
             DelegateMethods.v3_1 = Color.White.ToVector3() * Projectile.scale * 0.6f;
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * MaxLaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
         }
 
         internal float PrimitiveWidthFunction(float completionRatio) => Projectile.scale * 20f;
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
-                Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
-            Color c = Main.hslToRgb((completionRatio * 3f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
+            float hue = (Projectile.ai[1] + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 12.2f) * 0.04f) % 1f;
+            float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true);
+            Color c = Main.hslToRgb(hue, 1f, 0.7f) * opacity;
             c.A /= 16;
 
             return c;
@@ -102,16 +99,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             Vector2[] basePoints = new Vector2[24];
             for (int i = 0; i < basePoints.Length; i++)
-                basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
+                basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * MaxLaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.DrawPixelated(basePoints, overallOffset, 92);
+            RayDrawer.DrawPixelated(basePoints, overallOffset, 13);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.scale * 25f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * MaxLaserLength, Projectile.scale * 25f, ref _);
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)

@@ -1,7 +1,8 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,15 +12,47 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight.EmpressOfLightBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class EmpressSword : ModProjectile, IPixelPrimitiveDrawer
     {
-        public int SwordCount = 9;
-        public int TotalSwordsThatShouldAttack = 3;
-        public float TelegraphInterpolant;
-        public PrimitiveTrailCopy TrailDrawer;
+        public PrimitiveTrailCopy TrailDrawer
+        {
+            get;
+            set;
+        }
+
+        public int SwordCount
+        {
+            get;
+            set;
+        } = 4;
+
+        public float TelegraphInterpolant
+        {
+            get;
+            set;
+        }
+
+        public float Time
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldAttack
+        {
+            get;
+            set;
+        }
+
+        public bool DontDealDamage
+        {
+            get;
+            set;
+        }
 
         public NPC Owner
         {
@@ -28,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (!Main.npc.IndexInRange((int)Projectile.ai[0]) || Main.npc[(int)Projectile.ai[0]].type != NPCID.HallowBoss || !Main.npc[(int)Projectile.ai[0]].active)
                     return null;
 
-                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.DanceOfSwords)
+                if (Main.npc[(int)Projectile.ai[0]].ai[0] != (int)EmpressOfLightAttackType.DanceOfSwords)
                     return null;
 
                 return Main.npc[(int)Projectile.ai[0]];
@@ -40,8 +73,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             get
             {
                 Color color = Main.hslToRgb(Projectile.ai[1] % 1f, 0.95f, 0.54f);
-                if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
-                    color = EmpressOfLightBehaviorOverride.GetDaytimeColor(Projectile.ai[1] % 1f);
+                if (ShouldBeEnraged)
+                    color = GetDaytimeColor(Projectile.ai[1] % 1f);
 
                 color.A /= 8;
                 return color;
@@ -52,37 +85,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.94f, 0.94f, SwordIndex / (SwordCount - 1f))) * new Vector2(200f, 100f);
-                hoverDestination.Y += (float)Math.Sin(MathHelper.TwoPi * Timer / 60f + MathHelper.PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
+                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, SwordIndex / (SwordCount - 1f))) * new Vector2(165f, 100f);
+                hoverDestination.Y += (float)Math.Sin(MathHelper.TwoPi * Time / 60f + MathHelper.PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
                 return hoverDestination;
             }
         }
 
         public Player Target => Main.player[Owner.target];
 
-        public float Timer => Owner is null ? -AttackDelay : Owner.Infernum().ExtraAI[0] - AttackDelay;
+        public ref float SwordIndex => ref Projectile.localAI[0];
 
-        public bool ShouldAttack
-        {
-            get
-            {
-                if (Timer <= 0f || Projectile.timeLeft <= 30)
-                    return false;
-
-                int attackCycle = (int)(Timer / AttackTimePerSword);
-                float cycleCompletion = (attackCycle + SwordIndex) / SwordCount % 1f;
-                float swordRatio = 1f / TotalSwordsThatShouldAttack;
-                return cycleCompletion % swordRatio < 0.01f;
-            }
-        }
-
-        public ref float AttackTimePerSword => ref Projectile.localAI[0];
-
-        public ref float SwordIndex => ref Projectile.localAI[1];
-
-        public const int AttackDelay = 45;
-
-        public const float TelegraphWidth = 3600f;
+        public const float TelegraphLength = 3600f;
 
         public override void SetStaticDefaults()
         {
@@ -94,13 +107,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetDefaults()
         {
-            Projectile.width = 94;
-            Projectile.height = 30;
+            Projectile.width = 86;
+            Projectile.height = 20;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 900;
+            Projectile.timeLeft = 7200;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
@@ -108,19 +121,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(Time);
             writer.Write(SwordCount);
-            writer.Write(AttackTimePerSword);
             writer.Write(SwordIndex);
-            writer.Write(TelegraphInterpolant);
             writer.Write(Projectile.timeLeft);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            Time = reader.ReadInt32();
             SwordCount = reader.ReadInt32();
-            AttackTimePerSword = reader.ReadSingle();
             SwordIndex = reader.ReadSingle();
-            TelegraphInterpolant = reader.ReadSingle();
             Projectile.timeLeft = reader.ReadInt32();
         }
 
@@ -133,110 +144,190 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 return;
             }
 
-            // Reset things.
-            TelegraphInterpolant = 0f;
+            TelegraphInterpolant = MathHelper.Clamp(TelegraphInterpolant - 0.05f, 0f, 1f);
+            DontDealDamage = false;
 
             if (!ShouldAttack)
             {
-                HoverAboveOwner();
-                return;
+                HoverAboveEmpress();
+                DontDealDamage = true;
+                Time++;
             }
-            AttackTarget();
+            else
+                PerformAttackBehaviors();
+
+            // Constantly reset whether this blade should attack, in expectation that the empress will update this value herself.
+            ShouldAttack = false;
         }
 
-        public void HoverAboveOwner()
+        public void HoverAboveEmpress()
         {
-            float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
-            float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
+            Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
 
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.1f);
+            float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
+            float hoverSpeed = MathHelper.Lerp(40f, 95f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
+            
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.32f);
             Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.03f);
         }
-
-        public void AttackTarget()
+        
+        public void PerformAttackBehaviors()
         {
-            int lungeDelay = 35;
-            float lungeSpeed = 24.25f;
-            float lungeAcceleration = 1.01f;
-            float wrappedAttackTimer = Timer % AttackTimePerSword;
+            int hoverRedirectTime = 20;
+            int chargeAnticipationTime = 33;
+            int lanceShootDelay = 32;
+            int perpendicularChargeAnticipationTime = 42;
+            int perpendicularChargeTime = 42;
+            float hoverOffsetAngle = Owner.Infernum().ExtraAI[1];
+            float hoverOffset = 445f;
+            float chargeSpeed = 64f;
+            float lanceSpacing = 220f;
 
-            if (BossRushEvent.BossRushActive)
+            if (InPhase3(Owner))
             {
-                lungeSpeed += 10f;
-                lungeAcceleration *= 1.25f;
+                chargeSpeed += 6f;
+                lanceSpacing -= 20f;
+            }
+            if (InPhase4(Owner))
+            {
+                hoverRedirectTime -= 5;
+                chargeAnticipationTime -= 6;
+                lanceShootDelay -= 6;
+                perpendicularChargeAnticipationTime -= 8;
+                perpendicularChargeTime -= 6;
             }
 
-            // Aim at the target in anticipation of a lunge.
-            if (wrappedAttackTimer < lungeDelay)
+            if (ShouldBeEnraged)
             {
-                float idealRotation = Projectile.AngleTo(Target.Center + Target.velocity * 27f);
-                Projectile.velocity = Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, 30f);
-                Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.15f).AngleTowards(idealRotation, 0.15f);
-
-                // Calculate the telegraph interpolant.
-                TelegraphInterpolant = Utils.GetLerpValue(0f, lungeDelay - 6f, wrappedAttackTimer, true);
-
-                // Create dust along the telegraph line.
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 dustSpawnPosition = Projectile.Center + Projectile.rotation.ToRotationVector2() * Main.rand.NextFloat(TelegraphWidth * 0.9f);
-                    dustSpawnPosition += (Projectile.rotation + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2).ToRotationVector2() * 30f;
-
-                    Dust rainbowSparkle = Dust.NewDustPerfect(dustSpawnPosition, 267);
-                    rainbowSparkle.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
-                    rainbowSparkle.color.A /= 3;
-                    rainbowSparkle.velocity = Projectile.rotation.ToRotationVector2() * Main.rand.NextFloat(4f);
-                    rainbowSparkle.scale = 0.8f;
-                    rainbowSparkle.fadeIn = 0.8f;
-                    rainbowSparkle.noGravity = true;
-                }
+                hoverRedirectTime -= 9;
+                chargeAnticipationTime -= 8;
+                lanceShootDelay -= 8;
+                perpendicularChargeAnticipationTime -= 8;
+                perpendicularChargeTime -= 9;
+                chargeSpeed += 23f;
+                lanceSpacing -= 30f;
             }
 
-            // Lunge at the target.
-            if (wrappedAttackTimer == lungeDelay)
+            Vector2 hoverDestination = Target.Center + hoverOffsetAngle.ToRotationVector2() * hoverOffset;
+            Vector2 hoverDestinationPerpendicular = Target.Center + (hoverOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * hoverOffset;
+
+            // Fly into position near the target.
+            if (Time < hoverRedirectTime)
             {
-                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
-                SoundEngine.PlaySound(SoundID.Item28, Projectile.Center);
+                float hoverSpeedInterpolant = MathHelper.Lerp(0.03f, 0.25f, Time / hoverRedirectTime);
+                Projectile.velocity *= 0.7f;
+                Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, hoverSpeedInterpolant);
+                Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), hoverSpeedInterpolant * 2f);
+                DontDealDamage = true;
+                return;
+            }
+            
+            // Move backwards in anticipation.
+            if (Time < hoverRedirectTime + chargeAnticipationTime)
+            {
+                float anticipationInterpolant = Utils.GetLerpValue(hoverRedirectTime, hoverRedirectTime + chargeAnticipationTime, Time, true);
+                Vector2 anticipationOffset = hoverOffsetAngle.ToRotationVector2() * (float)Math.Pow(anticipationInterpolant, 2D) * hoverOffset * 0.4f;
+
+                Projectile.Center = hoverDestination + anticipationOffset;
+                Projectile.velocity = Vector2.Zero;
+                Projectile.rotation = Projectile.AngleTo(Target.Center);
+                TelegraphInterpolant = Utils.GetLerpValue(0f, 0.7f, anticipationInterpolant, true) * Utils.GetLerpValue(1f, 0.85f, anticipationInterpolant, true);
+                DontDealDamage = true;
+                return;
+            }
+
+            // Charge at the target and release a wall of lances from behind.
+            if (Time == hoverRedirectTime + chargeAnticipationTime)
+            {
+                Vector2 aimDirection = Projectile.SafeDirectionTo(Target.Center);
+
+                CreateLancePatterns(lanceSpacing, lanceShootDelay, aimDirection);
+
                 Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
-                Projectile.velocity = Projectile.rotation.ToRotationVector2() * lungeSpeed;
+                Projectile.velocity = aimDirection * chargeSpeed;
                 Projectile.netUpdate = true;
+
+                SoundEngine.PlaySound(SoundID.Item72, Projectile.Center);
             }
 
-            // Define rotation.
-            if (wrappedAttackTimer >= lungeDelay)
-                Projectile.rotation = Projectile.velocity.ToRotation();
+            // Wait for the charge to end.
+            if (Time < hoverRedirectTime + chargeAnticipationTime + lanceShootDelay)
+                return;
 
-            // Accelerate after lunging.
-            if (wrappedAttackTimer > lungeDelay && wrappedAttackTimer <= AttackTimePerSword * 0.5f)
-                Projectile.velocity *= lungeAcceleration;
-
-            // Arc towards the target after lunging for a sufficient amount of time.
-            if (wrappedAttackTimer > AttackTimePerSword * 0.5f)
+            // Hover perpendicularly to the original direction.
+            if (Time < hoverRedirectTime + chargeAnticipationTime + lanceShootDelay + perpendicularChargeAnticipationTime)
             {
-                float angularTurnSpeed = 0.092f;
+                float hoverInterpolant = Utils.GetLerpValue(0f, perpendicularChargeAnticipationTime, Time - hoverRedirectTime - chargeAnticipationTime - lanceShootDelay, true);
+                float hoverSpeedInterpolant = MathHelper.Lerp(0.03f, 0.25f, hoverInterpolant);
+                Projectile.velocity *= 0.7f;
+                Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestinationPerpendicular, hoverSpeedInterpolant);
+                Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), hoverSpeedInterpolant * 3f);
+                DontDealDamage = true;
+                return;
+            }
 
-                // Rotate back towards the target if sufficiently far away from them.
-                if (!Projectile.WithinRange(Target.Center, 270f))
-                    Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(Target.Center), angularTurnSpeed);
+            // Charge one last time.
+            if (Time == hoverRedirectTime + chargeAnticipationTime + lanceShootDelay + perpendicularChargeAnticipationTime)
+            {
+                CreateLancePatterns(lanceSpacing, perpendicularChargeTime - 10, Projectile.SafeDirectionTo(Target.Center));
 
-                // Slow down if very fast.
-                if (Projectile.velocity.Length() > 20f)
-                    Projectile.velocity *= 0.95f;
+                Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
+                Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * chargeSpeed * 0.5f;
+                Projectile.netUpdate = true;
 
-                // If not super close to the target but the target is very much in the line of sight of the summon, charge.
-                if (!Projectile.WithinRange(Target.Center, 150f) && Projectile.velocity.AngleBetween(Projectile.SafeDirectionTo(Target.Center)) < 0.21f && Projectile.velocity.Length() < 23f)
-                {
-                    Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * lungeSpeed;
-                    Projectile.netUpdate = true;
-                }
+                SoundEngine.PlaySound(SoundID.Item72, Projectile.Center);
+            }
+            if (Projectile.velocity.Length() < chargeSpeed)
+            {
+                Projectile.velocity *= 1.03f;
+                Projectile.rotation = Projectile.velocity.ToRotation();
+            }
+
+            // Inform the empress that this blade is done being used once done charging.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time >= hoverRedirectTime + chargeAnticipationTime + lanceShootDelay + perpendicularChargeAnticipationTime + perpendicularChargeTime)
+            {
+                Owner.ai[1] = 40f;
+                Owner.Infernum().ExtraAI[3] = 1f;
+                ShouldAttack = false;
+                Time = 0f;
             }
         }
 
-        public override bool? CanDamage() => ShouldAttack ? null : false;
+        public void CreateLancePatterns(float lanceSpacing, int lanceShootDelay, Vector2 aimDirection)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            // Make lances that are mostly horizontal in direction take a bit longer to fire.
+            if (Math.Abs(Vector2.Dot(aimDirection, Vector2.UnitX)) > 0.74f)
+                lanceShootDelay += 15;
+
+            for (int i = 0; i < 10; i++)
+            {
+                float lanceHue = ((i + 5f) / 10f + Projectile.ai[1]) % 1f;
+                float lanceOffsetDistance = (i - 5f) * lanceSpacing;
+                Vector2 lanceOffset = aimDirection.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * lanceOffsetDistance - aimDirection * 876f;
+                Vector2 lanceSpawnPosition = Target.Center + lanceOffset;
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                {
+                    lance.MaxUpdates = 2;
+                    lance.ModProjectile<EtherealLance>().Time = EtherealLance.FireDelay - lanceShootDelay * 2;
+                    lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = i == 5;
+                });
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, aimDirection.ToRotation(), lanceHue);
+            }
+        }
+
+        public override bool? CanDamage() => Owner.Infernum().ExtraAI[0] == SwordIndex && !DontDealDamage ? null : false;
 
         public Color ColorFunction(float completionRatio)
         {
-            float opacity = Utils.GetLerpValue(17.5f, 23f, Projectile.velocity.Length(), true) * Utils.GetLerpValue(20f, 30f, Projectile.timeLeft, true);
+            if (Owner.Infernum().ExtraAI[0] != SwordIndex)
+                return Color.Transparent;
+
+            float speed = Vector2.Distance(Projectile.position, Projectile.oldPosition);
+            float opacity = Utils.GetLerpValue(17.5f, 23f, speed, true) * Utils.GetLerpValue(20f, 30f, Projectile.timeLeft, true);
             Color rainbow = Main.hslToRgb((completionRatio - Main.GlobalTimeWrappedHourly * 0.7f) % 1f, 1f, 0.5f);
             Color c = Color.Lerp(MyColor, rainbow, completionRatio) * (1f - completionRatio) * opacity;
             c.A = 0;
@@ -264,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 float telegraphHue = (float)Math.Cos(MathHelper.TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
                 float telegraphWidth = MathHelper.Lerp(0.2f, 1.2f, TelegraphInterpolant);
                 float telegraphOpacity = (float)Math.Pow(TelegraphInterpolant, 1.7) * 0.7f;
-                Vector2 telegraphScale = new(telegraphWidth, TelegraphWidth / telegraphTexture.Height);
+                Vector2 telegraphScale = new(telegraphWidth, TelegraphLength / telegraphTexture.Height);
                 Color telegraphColor = Main.hslToRgb(telegraphHue, 1f, 0.8f) * telegraphOpacity;
                 Vector2 telegraphOrigin = telegraphTexture.Size() * new Vector2(0.5f, 0f);
 

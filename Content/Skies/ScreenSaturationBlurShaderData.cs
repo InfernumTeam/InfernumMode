@@ -4,6 +4,7 @@ using InfernumMode.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
@@ -23,6 +24,8 @@ namespace InfernumMode.Content.Skies
             float brightness = effectiveIntensity * ScreenSaturationBlurSystem.BlurBrightnessFactor;
             if (NPC.AnyNPCs(ModContent.NPCType<Providence>()))
                 saturationBias *= Main.dayTime ? 0.4f : 0.05f;
+            if (NPC.AnyNPCs(NPCID.HallowBoss))
+                brightness *= 1.5f;
 
             Shader.Parameters["blurAdditiveBrightness"].SetValue(brightness);
             Shader.Parameters["blurSaturationBiasInterpolant"].SetValue(saturationBias);

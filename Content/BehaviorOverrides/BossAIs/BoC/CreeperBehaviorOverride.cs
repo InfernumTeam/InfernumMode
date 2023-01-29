@@ -31,6 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             NPC owner = Main.npc[NPC.crimsonBoss];
             npc.target = owner.target;
 
+            // Disable contact damage.
             npc.damage = 0;
 
             Player target = Main.player[npc.target];
@@ -75,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             {
                 bool eligableToFire = npc.Top.Y < target.Center.Y;
                 int shootRate = BossRushEvent.BossRushActive ? 10 : 35;
-                if (attackTimer > 135f && eligableToFire && attackTimer % shootRate == shootRate - 1f && npc.alpha <= 80)
+                if (attackTimer > 135f && eligableToFire && attackTimer % shootRate == shootRate - 1f && npc.alpha <= 80 && !npc.WithinRange(target.Center, 270f))
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -89,8 +90,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             // Otherwise, if a target is close, release ichor at them, assuming no tiles are in the way.
             else if (npc.alpha <= 10)
             {
-                bool obstanceInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
-                if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 45f == 44f && Main.rand.NextBool(3))
+                bool obstacleInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
+                if (Main.netMode != NetmodeID.MultiplayerClient && !obstacleInWayOfTarget && attackTimer % 45f == 44f && Main.rand.NextBool(3) && !npc.WithinRange(target.Center, 270f))
                 {
                     float aimAwayAngle = Utils.GetLerpValue(300f, 150f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
                     Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 100, 0f);

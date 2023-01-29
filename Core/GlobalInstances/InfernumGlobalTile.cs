@@ -9,6 +9,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Content.Tiles.Abyss;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -21,6 +22,8 @@ namespace InfernumMode.Core.GlobalInstances
                 ModContent.TileType<ColosseumPortal>(),
                 ModContent.TileType<ProvidenceSummoner>(),
                 ModContent.TileType<ProvidenceRoomDoorPedestal>(),
+                ModContent.TileType<IronBootsSkeleton>(),
+                ModContent.TileType<StrangeOrbTile>(),
             };
 
             Tile checkTile = CalamityUtils.ParanoidTileRetrieval(x, y);
@@ -48,6 +51,9 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
+
+            if (CalamityUtils.ParanoidTileRetrieval(i, j - 1).TileType == ModContent.TileType<AbyssalKelp>())
+                WorldGen.KillTile(i, j - 1);
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
         }

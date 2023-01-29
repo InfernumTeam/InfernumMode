@@ -37,4 +37,5 @@ namespace InfernumMode.Content.WorldGeneration
                 new Actions.ClearTile(),
                 new Actions.PlaceWall(dungeonWallID)));
         }
+    }
 }

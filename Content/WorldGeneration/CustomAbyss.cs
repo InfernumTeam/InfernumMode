@@ -181,7 +181,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public static void GenerateLayer1()
         {
-            int topOfLayer1 = AbyssTop - 4;
+            int topOfLayer1 = AbyssTop;
             int bottomOfLayer1 = Layer2Top;
             int entireAbyssTop = AbyssTop;
             int entireAbyssBottom = AbyssBottom;
@@ -229,6 +229,8 @@ namespace InfernumMode.Content.WorldGeneration
             // Generate sulphurous gravel on the cave walls.
             GenerateLayer1SulphurousGravel(layer1Area);
 
+            // Generate scenic tiles.
+            GeneratePostSkeletronTiles(layer1Area);
             GenerateAbyssalKelp(layer1Area);
         }
 
@@ -362,6 +364,62 @@ namespace InfernumMode.Content.WorldGeneration
                         }
                     }
                 }
+            }
+        }
+
+        public static void GeneratePostSkeletronTiles(Rectangle layer1Area)
+        {
+            Dictionary<int, Point> tilesLeft = new()
+            {
+                [ModContent.TileType<IronBootsSkeleton>()] = new(3, 2),
+                [ModContent.TileType<StrangeOrbTile>()] = new(2, 2)
+            };
+
+            for (int i = 0; i < 72000; i++)
+            {
+                if (tilesLeft.Count <= 0)
+                    break;
+
+                int x = GetActualX(WorldGen.genRand.Next(layer1Area.Left + 72, layer1Area.Right - 72));
+                int y = WorldGen.genRand.Next(layer1Area.Top + 48, layer1Area.Bottom - 40);
+
+                bool areaIsOccupied = false;
+                bool solidGround = true;
+
+                // Check if the area where the kelp would be created is occupied.
+                for (int dx = 0; dx < 5; dx++)
+                {
+                    for (int dy = 0; dy < 3; dy++)
+                    {
+                        if (CalamityUtils.ParanoidTileRetrieval(x + dx, y - dy).HasTile)
+                        {
+                            areaIsOccupied = true;
+                            break;
+                        }
+                    }
+
+                    if (!WorldGen.SolidTile(CalamityUtils.ParanoidTileRetrieval(x + dx, y + 1)) || !CalamityUtils.ParanoidTileRetrieval(x + dx, y + 1).HasTile)
+                        solidGround = false;
+                }
+
+                if (areaIsOccupied || !solidGround)
+                    continue;
+
+                int tileID = tilesLeft.Last().Key;
+                for (int dx = 0; dx < tilesLeft[tileID].X; dx++)
+                {
+                    for (int dy = 0; dy < tilesLeft[tileID].Y; dy++)
+                    {
+                        Main.tile[x + dx, y - dy].TileType = (ushort)tileID;
+                        Main.tile[x + dx, y - dy].Get<TileWallWireStateData>().TileFrameX = (short)(dx * 18);
+                        Main.tile[x + dx, y - dy].Get<TileWallWireStateData>().TileFrameY = (short)((tilesLeft[tileID].Y - dy) * 18 - 18);
+                        Main.tile[x + dx, y - dy].Get<TileWallWireStateData>().IsHalfBlock = false;
+                        Main.tile[x + dx, y - dy].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                        Main.tile[x + dx, y - dy].Get<TileWallWireStateData>().HasTile = true;
+                    }
+                }
+
+                tilesLeft.Remove(tileID);
             }
         }
 

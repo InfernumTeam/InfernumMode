@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -26,7 +25,6 @@ namespace InfernumMode.Content.Tiles.Abyss
             Main.tileWaterDeath[Type] = false;
             Main.tileFrameImportant[Type] = true;
             TileID.Sets.ReplaceTileBreakUp[Type] = true;
-            TileID.Sets.VineThreads[Type] = true;
             TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
             DustType = (int)CalamityDusts.SulfurousSeaAcid;

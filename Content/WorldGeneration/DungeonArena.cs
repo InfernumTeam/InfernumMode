@@ -29,7 +29,7 @@ namespace InfernumMode.Content.WorldGeneration
                     break;
             }
 
-            int index = WorldGen.numDungeonPlatforms / 2;
+            int index = WorldGen.numDungeonPlatforms / 2 + 1;
             Point dungeonCenter = new(WorldGen.dungeonPlatformX[index], WorldGen.dungeonPlatformY[index]);
             WorldUtils.Gen(dungeonCenter, new Shapes.Rectangle(boxArea, boxArea), Actions.Chain(
                 new Actions.SetTile(dungeonTileID, true)));
@@ -37,5 +37,4 @@ namespace InfernumMode.Content.WorldGeneration
                 new Actions.ClearTile(),
                 new Actions.PlaceWall(dungeonWallID)));
         }
-    }
 }

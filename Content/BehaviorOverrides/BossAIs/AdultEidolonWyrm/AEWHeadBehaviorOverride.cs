@@ -531,6 +531,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Reset the texture frame for drawing.
             npc.frame = texture.Frame();
+
+            if (drawPosition.X <= -300f || drawPosition.X >= Main.screenWidth + 300f || drawPosition.Y <= -300f || drawPosition.Y >= Main.screenHeight + 300f)
+                return;
             
             // Draw the segment.
             Main.EntitySpriteDraw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);

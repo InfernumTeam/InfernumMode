@@ -704,7 +704,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             ILCursor cursor = new(il);
 
-            cursor.EmitDelegate(() => !WorldSaveSystem.InPostAEWUpdateWorld ? ModContent.Find<ModWaterStyle>("CalamityMod/AbyssWater") : ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater"));
+            cursor.EmitDelegate(() => !WorldSaveSystem.InPostAEWUpdateWorld || InfernumConfig.Instance.ReducedGraphicsConfig ? ModContent.Find<ModWaterStyle>("CalamityMod/AbyssWater") : ModContent.Find<ModWaterStyle>("InfernumMode/AbyssWater"));
             cursor.Emit(OpCodes.Ret);
         }
 

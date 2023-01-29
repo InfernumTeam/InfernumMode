@@ -1,4 +1,3 @@
-using CalamityMod.ILEditing;
 using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +7,6 @@ using ReLogic.Content;
 using System;
 using System.Reflection;
 using Terraria;
-using Terraria.GameContent.Liquid;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;

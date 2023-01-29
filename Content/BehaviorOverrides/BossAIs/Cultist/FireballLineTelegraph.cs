@@ -62,9 +62,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 Projectile.frame = 0;
             TelegraphDelay++;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && TelegraphDelay >= 38f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && TelegraphDelay >= 45f)
             {
-                Vector2 fireballShootVelocity = Projectile.SafeDirectionTo(Destination, Vector2.UnitY) * 7f;
+                Vector2 fireballShootVelocity = Projectile.SafeDirectionTo(Destination, Vector2.UnitY) * 4.5f;
 
                 int fireball = Utilities.NewProjectileBetter(Projectile.Center, fireballShootVelocity, ProjectileID.CultistBossFireBall, 195, 0f);
                 if (Main.projectile.IndexInRange(fireball))
@@ -80,14 +80,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             float yScale = 5f;
             if (TelegraphDelay < TelegraphFadeTime)
                 yScale = MathHelper.Lerp(0f, yScale, TelegraphDelay / 15f);
-            if (TelegraphDelay > 38f - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (38f - TelegraphFadeTime)) / 15f);
+            if (TelegraphDelay > 45f - TelegraphFadeTime)
+                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (45f - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
 
-            Color colorOuter = Color.Lerp(Color.Orange, Color.Yellow, TelegraphDelay / 38f * 0.4f);
+            Color colorOuter = Color.Lerp(Color.Orange, Color.Yellow, TelegraphDelay / 45f * 0.4f);
             Vector2 direction = Projectile.SafeDirectionTo(Destination);
             Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, direction.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             return false;

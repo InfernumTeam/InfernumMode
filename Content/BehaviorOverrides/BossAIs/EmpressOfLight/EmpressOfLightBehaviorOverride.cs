@@ -427,6 +427,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_LanceBarrages(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
+            // WHY ARE THERE STILL BOLTS????????
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), ModContent.ProjectileType<PrismaticBolt>());
+
             int attackDelay = 18;
             int hoverTime = 25;
             int lanceReleaseRate = 2;
@@ -463,8 +466,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
 
                 float oldHoverOffset = hoverOffsetY;
-                hoverOffsetX = Main.rand.NextFloat(320f, 432f) * (barrageCounter % 2f == 1f).ToDirectionInt() + target.direction * 650f;
-                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 320f, 432f, -270f, -384f);
+                hoverOffsetX = Main.rand.NextFloat(760f, 975f) * (barrageCounter % 2f == 1f).ToDirectionInt();
+                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 760f, 975f, -270f, -384f);
                 if (MathHelper.Distance(hoverOffsetY, oldHoverOffset) < 72f)
                     hoverOffsetY -= 56f;
 
@@ -604,7 +607,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int terraprismaCount = 2;
             int terraprismaAttackDelay = 32;
             int shootDelay = 156;
-            int attackCycleCount = 3;
+            int attackCycleCount = 2;
 
             if (InPhase4(npc))
             {
@@ -701,8 +704,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static void DoBehavior_LanceWallBarrage(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
             int hoverRedirectTime = 40;
-            int startingWallShootCountdown = 67;
-            int endingWallShootCountdown = 35;
+            int startingWallShootCountdown = 72;
+            int endingWallShootCountdown = 46;
             int horizontalShootTime = 480;
             int horizontalLanceTransitionDelay = 50;
             int verticalLanceCount = 36;

@@ -41,6 +41,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, 4f);
+            return false;
+        }
+
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.DarkGreen, Utils.GetLerpValue(45f, 0f, Projectile.timeLeft, true)) * Projectile.Opacity;
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.8f;

@@ -37,9 +37,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         internal static VertexColors ChangeAbyssColors(VertexColors initialColor, int liquidType, Point p)
         {
-            bool isAbyssWater = liquidType == AbyssWaterID;
-
-            if (WorldSaveSystem.InPostAEWUpdateWorld && isAbyssWater)
+            if (WorldSaveSystem.InPostAEWUpdateWorld && !InfernumConfig.Instance.ReducedGraphicsConfig && liquidType == AbyssWaterID)
             {
                 Color acidWaterColor = new(62, 217, 145);
                 Color abyssWaterColor = new(29, 15, 56);

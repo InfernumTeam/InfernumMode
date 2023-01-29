@@ -463,8 +463,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
 
                 float oldHoverOffset = hoverOffsetY;
-                hoverOffsetX = Main.rand.NextFloat(320f, 432f) * (barrageCounter % 2f == 1f).ToDirectionInt() + target.velocity.X * 40f;
-                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 320f, 432f, -292f, -360f);
+                hoverOffsetX = Main.rand.NextFloat(320f, 432f) * (barrageCounter % 2f == 1f).ToDirectionInt() + target.direction * 650f;
+                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 320f, 432f, -270f, -384f);
                 if (MathHelper.Distance(hoverOffsetY, oldHoverOffset) < 72f)
                     hoverOffsetY -= 56f;
 

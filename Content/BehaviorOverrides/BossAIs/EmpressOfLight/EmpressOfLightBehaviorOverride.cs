@@ -787,7 +787,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         wallShootDelay = MathHelper.Clamp(wallShootDelay - 8f, endingWallShootCountdown, startingWallShootCountdown);
                         wallShootCountdown = wallShootDelay;
                         if (goingAgainstWalls)
-                            wallShootCountdown *= 0.7f;
+                            wallShootCountdown *= 0.6f;
 
                         float lanceDirection = (Vector2.UnitX * horizontalWallDirection).ToRotation();
                         for (int i = -16; i < 16; i++)
@@ -1429,13 +1429,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float rainbowState = ref npc.Infernum().ExtraAI[2];
             ref float rainbowStateTransitionDelay = ref npc.Infernum().ExtraAI[3];
 
-            // Don't do the attack during the day.
+            // Get really, really angry if it's daytime.
             if (Main.dayTime)
             {
-                npc.Opacity = 1f;
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<TheMoon>(), ModContent.ProjectileType<LightOverloadBeam>());
-                SelectNextAttack(npc);
-                return;
+                rainbowReleaseRate -= 10;
+                lanceReleaseRate -= 20;
+                backstabbingLanceOffset -= 120f;
             }
 
             // Reset arm frames.
@@ -1498,7 +1497,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 TeleportTo(npc, target.Center - Vector2.UnitY * 450f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 480f, Vector2.Zero, ModContent.ProjectileType<TheMoon>(), 350, 0f);
+                    Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 480f, Vector2.Zero, ModContent.ProjectileType<StolenCelestialObject>(), 350, 0f);
             }
 
             // Periodically release rainbow beams at the target.
@@ -1557,7 +1556,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
 
-                    foreach (Projectile moon in Utilities.AllProjectilesByID(ModContent.ProjectileType<TheMoon>()))
+                    foreach (Projectile moon in Utilities.AllProjectilesByID(ModContent.ProjectileType<StolenCelestialObject>()))
                     {
                         moon.timeLeft = 90;
                         moon.velocity = -Vector2.UnitY * 54f;
@@ -1574,7 +1573,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.dontTakeDamage = true;
 
             // Stick to the moon once completely invisible.
-            List<Projectile> moons = Utilities.AllProjectilesByID(ModContent.ProjectileType<TheMoon>()).ToList();
+            List<Projectile> moons = Utilities.AllProjectilesByID(ModContent.ProjectileType<StolenCelestialObject>()).ToList();
             if (npc.Opacity <= 0f && moons.Any())
                 npc.Center = moons.First().Center;
 
@@ -1593,7 +1592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Keep the moon up in the air until it descends back to its rightful location.
-            EmpressUltimateAttackLightSystem.VerticalMoonOffset = 750f;
+            EmpressUltimateAttackLightSystem.VerticalSunMoonOffset = 750f;
 
             if (rainbowState >= 1f && rainbowState != 3f && !Utilities.AnyProjectiles(ModContent.ProjectileType<LightOverloadBeam>()))
             {

@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             bool moveToEmpress = lacewing is not null && empressIndex >= 0 && Main.npc[empressIndex].Opacity > 0.4f;
             float empressFlySpeed = 70f;
             float empressFlyAcceleration = 0.07f;
-            bool bigProjectileIsPresent = Utilities.AnyProjectiles(ModContent.ProjectileType<TheMoon>());
+            bool bigProjectileIsPresent = Utilities.AnyProjectiles(ModContent.ProjectileType<StolenCelestialObject>());
             if (empressIndex >= 0 && Main.npc[empressIndex].ai[0] == (int)EmpressOfLightBehaviorOverride.EmpressOfLightAttackType.UltimateRainbow && !bigProjectileIsPresent)
             {
                 empressFlySpeed = 30f;

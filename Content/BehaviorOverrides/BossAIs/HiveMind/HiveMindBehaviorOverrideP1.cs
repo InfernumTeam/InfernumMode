@@ -44,7 +44,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             ref float summonThresholdByLife = ref npc.ai[3];
             ref float hasSummonedInitialBlobsFlag = ref npc.localAI[0];
-            ref float hiveBlobSummonTimer = ref npc.localAI[1];
             ref float digTime = ref npc.localAI[3];
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             ref float phase2 = ref npc.Infernum().ExtraAI[20];
@@ -99,23 +98,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             npc.noGravity = false;
             npc.noTileCollide = false;
 
-            // Idly summon blobs.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                hiveBlobSummonTimer++;
-                if (hiveBlobSummonTimer >= 540f)
-                {
-                    hiveBlobSummonTimer = 0f;
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
-                }
-                if (hasSummonedInitialBlobsFlag == 0f)
-                {
-                    hasSummonedInitialBlobsFlag = 1f;
-                    for (int i = 0; i < 7; i++)
-                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
-                }
-            }
-
             // Gain a massive defense boost if a dank meme is alive.
             npc.defense = NPC.AnyNPCs(ModContent.NPCType<DankCreeper>()) ? 45 : -5;
 
@@ -129,21 +111,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                     if (npc.life + (int)(npc.lifeMax * 0.2) < summonThresholdByLife)
                     {
                         summonThresholdByLife = npc.life;
-                        int enemySummonCount = Main.rand.Next(3, 6);
-                        for (int i = 0; i < enemySummonCount; i++)
-                        {
-                            int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
-                            int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
-                            int thingToSummon = ModContent.NPCType<HiveBlob>();
-                            if (Main.rand.NextBool(3))
-                                thingToSummon = ModContent.NPCType<DankCreeper>();
+                        int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
+                        int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
+                        int thingToSummon = ModContent.NPCType<DankCreeper>();
 
-                            int summonedThing = NPC.NewNPC(npc.GetSource_FromAI(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
-                            Main.npc[summonedThing].SetDefaults(thingToSummon);
-                            Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
-                            if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, summonedThing, 0f, 0f, 0f, 0, 0, 0);
-                        }
+                        int summonedThing = NPC.NewNPC(npc.GetSource_FromAI(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
+                        Main.npc[summonedThing].SetDefaults(thingToSummon);
+                        Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
+                        if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, summonedThing, 0f, 0f, 0f, 0, 0, 0);
+                        
                         npc.netUpdate = true;
                         return false;
                     }

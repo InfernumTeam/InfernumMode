@@ -5,6 +5,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
@@ -15,7 +16,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     {
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Lionfish");
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.UsesNewTargetting[Type] = true;
@@ -38,6 +38,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type };
             NPC.Infernum().IsAbyssPredator = true;
             NPC.RemoveWaterSlowness();
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                new FlavorTextBestiaryInfoElement("These rugged fish are seldom hunted in their natural habitats, relying heavily on their venomous spines for both offense and defense.")
+            });
         }
 
         public override void AI()

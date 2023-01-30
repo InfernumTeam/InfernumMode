@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Grow bigger up to a point.
             Projectile.scale = Utils.GetLerpValue(TelegraphTime, TelegraphTime + FadeInTime, Time, true) * Utils.GetLerpValue(0f, -FadeOutTime, Time - Lifetime, true);
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.06f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
 
             // Stick near the owner.
             Projectile.Center = Owner.Center + Projectile.velocity * 350f;

@@ -122,12 +122,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
         {
             EmpressOfLightAttackType.LargeRainbowStar,
+            EmpressOfLightAttackType.UltimateRainbow,
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.UltimateRainbow,
             EmpressOfLightAttackType.LargeRainbowStar,
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceWallBarrage,
@@ -203,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Use the bloom shader at night.
-            if (!Main.dayTime && currentPhase >= 1f)
+            if (!Main.dayTime && currentPhase >= 1f && attackType != (int)EmpressOfLightAttackType.UltimateRainbow)
                 npc.Infernum().ShouldUseSaturationBlur = true;
 
             if (ShouldBeEnraged)
@@ -1318,6 +1320,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_DanceOfSwords(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
+            // WHY ARE THERE STILL BOLTS????????
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), ModContent.ProjectileType<PrismaticBolt>());
+
             int swordCount = 4;
             int swordID = ModContent.ProjectileType<EmpressSword>();
             int attackDelay = 50;
@@ -1414,14 +1419,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int chargeUpTime = 300;
             int disappearIntoMoonTime = 60;
-            int rainbowReleaseRate = 35;
-            int rainbowShootCount = 16;
+            int rainbowReleaseRate = 37;
+            int rainbowShootCount = 10;
+            int laserSweepDelay = 48;
+            int lanceReleaseRate = 36;
+            float backstabbingLanceOffset = 850f;
             ref float wispInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float rainbowShootCounter = ref npc.Infernum().ExtraAI[1];
+            ref float rainbowState = ref npc.Infernum().ExtraAI[2];
+            ref float rainbowStateTransitionDelay = ref npc.Infernum().ExtraAI[3];
+
+            // Don't do the attack during the day.
+            if (Main.dayTime)
+            {
+                npc.Opacity = 1f;
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<TheMoon>(), ModContent.ProjectileType<LightOverloadBeam>());
+                SelectNextAttack(npc);
+                return;
+            }
+
+            // Reset arm frames.
+            leftArmFrame = 0f;
+            rightArmFrame = 0f;
 
             // Do a charge-up effect for a little bit. This is emphasized by drawcode elsewhere.
-            animationBackgroundColor = Color.LightPink;
-            if (attackTimer < chargeUpTime)
+            if (attackTimer < chargeUpTime && rainbowState == 0f)
             {
                 int arcingBoltReleaseRate = 16;
                 if (attackTimer >= 60f)
@@ -1456,8 +1478,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 return;
             }
 
+            // Release lances from behind the player.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lanceReleaseRate == lanceReleaseRate - 1f && rainbowState <= 2f)
+            {
+                float lanceHue = attackTimer / 300f % 1f;
+                Vector2 lanceSpawnPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * backstabbingLanceOffset;
+
+                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                {
+                    lance.ModProjectile<EtherealLance>().Time = -6;
+                    lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = true;
+                });
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, target.AngleFrom(lanceSpawnPosition), lanceHue);
+            }
+
             // Summon the moon from the sky.
-            if (attackTimer == chargeUpTime)
+            if (attackTimer == chargeUpTime && rainbowState == 0f)
             {
                 TeleportTo(npc, target.Center - Vector2.UnitY * 450f);
 
@@ -1465,27 +1501,76 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 480f, Vector2.Zero, ModContent.ProjectileType<TheMoon>(), 350, 0f);
             }
 
-            // Periodically release rainbows.
-            if (attackTimer % rainbowReleaseRate == rainbowReleaseRate - 1f)
+            // Periodically release rainbow beams at the target.
+            if (attackTimer % rainbowReleaseRate == rainbowReleaseRate - 1f && rainbowShootCounter <= rainbowShootCount)
             {
-                SoundEngine.PlaySound(SoundID.Item163, target.Center);
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float rainbowAngularVelocity = (rainbowShootCounter % 2f == 0f).ToDirectionInt() * 0.56f;
-                    for (int i = 0; i < rainbowShootCount; i++)
+                    float hue = rainbowShootCounter / rainbowShootCount;
+                    Vector2 laserDirection = npc.SafeDirectionTo(target.Center);
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                     {
-                        float rainbowHue = i / (float)rainbowShootCount;
-                        Vector2 rainbowShootVelocity = (MathHelper.TwoPi * i / rainbowShootCount).ToRotationVector2() * 12f;
-                        Utilities.NewProjectileBetter(npc.Center, rainbowShootVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, rainbowAngularVelocity, rainbowHue);
-                    }
+                        laser.ModProjectile<LightOverloadBeam>().Hue = hue;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center + laserDirection * 300f, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), LaserbeamDamage, 0f, -1, npc.whoAmI);
+
+                    rainbowStateTransitionDelay = 1f;
                     rainbowShootCounter++;
                     npc.netUpdate = true;
                 }
             }
 
+            // Make the lasers converge once all of them have been casted.
+            if (rainbowState == 0f && rainbowShootCounter >= rainbowShootCount)
+            {
+                rainbowStateTransitionDelay++;
+                if (rainbowStateTransitionDelay >= 50f)
+                {
+                    foreach (Projectile rainbow in Utilities.AllProjectilesByID(ModContent.ProjectileType<LightOverloadBeam>()))
+                    {
+                        rainbow.ModProjectile<LightOverloadBeam>().ConvergingState = 1;
+                        rainbow.netUpdate = true;
+                    }
+
+                    rainbowState = 1f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
             // Disappear.
-            npc.Opacity = Utils.GetLerpValue(disappearIntoMoonTime, 0f, attackTimer - chargeUpTime, true);
+            wispInterpolant = 1f;
+            if (rainbowState == 0f)
+                npc.Opacity = Utils.GetLerpValue(disappearIntoMoonTime, 0f, attackTimer - chargeUpTime, true);
+            if (rainbowState >= 3f)
+            {
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.04f, 0f, 1f);
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 5.6f, 0.06f);
+                wispInterpolant = 0f;
+
+                if (attackTimer == 180f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item160, npc.Center);
+                    Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
+
+                    foreach (Projectile moon in Utilities.AllProjectilesByID(ModContent.ProjectileType<TheMoon>()))
+                    {
+                        moon.timeLeft = 90;
+                        moon.velocity = -Vector2.UnitY * 54f;
+                        moon.netUpdate = true;
+                    }
+                }
+                if (attackTimer >= 180f)
+                {
+                    npc.velocity = Vector2.Zero;
+                    leftArmFrame = 4f;
+                }
+            }
+
             npc.dontTakeDamage = true;
 
             // Stick to the moon once completely invisible.
@@ -1493,8 +1578,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (npc.Opacity <= 0f && moons.Any())
                 npc.Center = moons.First().Center;
 
-            wispInterpolant = 1f;
-            animationScreenShaderStrength = 1f;
+            // Sweep the laser.
+            if (attackTimer == laserSweepDelay && rainbowState == 1f)
+            {
+                Utilities.CreateShockwave(npc.Center);
+                SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.HolyRaySound);
+                foreach (Projectile rainbow in Utilities.AllProjectilesByID(ModContent.ProjectileType<LightOverloadBeam>()))
+                {
+                    rainbow.ModProjectile<LightOverloadBeam>().ConvergingState = 2;
+                    rainbow.velocity = -npc.SafeDirectionTo(target.Center);
+                    rainbow.netUpdate = true;
+                }
+                rainbowState = 2f;
+            }
+
+            // Keep the moon up in the air until it descends back to its rightful location.
+            EmpressUltimateAttackLightSystem.VerticalMoonOffset = 750f;
+
+            if (rainbowState >= 1f && rainbowState != 3f && !Utilities.AnyProjectiles(ModContent.ProjectileType<LightOverloadBeam>()))
+            {
+                rainbowState = 3f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            animationScreenShaderStrength = 0f;
+            animationBackgroundColor = Color.Transparent;
+
+            // Transition to the next attack if the moon is gone.
+            if (!moons.Any() && rainbowState >= 3f)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float deathAnimationScreenShaderStrength)

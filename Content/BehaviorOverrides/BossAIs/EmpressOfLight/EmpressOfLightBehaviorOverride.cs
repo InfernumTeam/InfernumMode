@@ -20,7 +20,6 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Core;
-using static InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental.CloudElementalBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {

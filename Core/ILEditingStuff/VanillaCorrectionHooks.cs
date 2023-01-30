@@ -228,7 +228,7 @@ namespace InfernumMode.Core.ILEditingStuff
             if (!inColosseum)
             {
                 // Draw a vibrant glow effect behind the sun if fighting the empress during the day.
-                bool empressIsPresent = NPC.AnyNPCs(NPCID.HallowBoss) && InfernumMode.CanUseCustomAIs;
+                bool empressIsPresent = NPC.AnyNPCs(NPCID.HallowBoss) && InfernumMode.CanUseCustomAIs && Main.dayTime;
                 if (empressIsPresent)
                 {
                     // Use additive drawing.

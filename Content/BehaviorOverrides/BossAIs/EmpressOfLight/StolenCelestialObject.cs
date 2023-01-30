@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.25f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
-            float radius = Projectile.width * 0.5f;
+            float radius = Projectile.width * 0.36f;
             for (float offsetAngle = MathHelper.PiOver2; offsetAngle >= -MathHelper.PiOver2; offsetAngle -= MathHelper.Pi / 32f)
             {
                 float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 0.6f;

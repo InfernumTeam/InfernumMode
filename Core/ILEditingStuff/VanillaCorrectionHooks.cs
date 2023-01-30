@@ -200,22 +200,21 @@ namespace InfernumMode.Core.ILEditingStuff
         private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
             // Don't draw the moon if it's in use.
-            if (!Main.dayTime && TheMoon.MoonIsNotInSky)
+            if (!Main.dayTime && StolenCelestialObject.MoonIsNotInSky)
                 return;
 
-            if (EmpressUltimateAttackLightSystem.VerticalMoonOffset >= 0f)
+            // Don't draw the sun if it's in use.
+            if (Main.dayTime && StolenCelestialObject.SunIsNotInSky)
+                return;
+
+            if (EmpressUltimateAttackLightSystem.VerticalSunMoonOffset >= 0f)
             {
-                sceneArea.bgTopY -= (int)EmpressUltimateAttackLightSystem.VerticalMoonOffset;
-                EmpressUltimateAttackLightSystem.VerticalMoonOffset *= 0.96f;
+                sceneArea.bgTopY -= (int)EmpressUltimateAttackLightSystem.VerticalSunMoonOffset;
+                EmpressUltimateAttackLightSystem.VerticalSunMoonOffset *= 0.96f;
             }
 
             bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
-            if (!inColosseum)
-            {
-                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
-                return;
-            }
-
+            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
@@ -225,10 +224,46 @@ namespace InfernumMode.Core.ILEditingStuff
 
             // Calculate the position of the sun.
             Texture2D sunTexture = TextureAssets.Sun.Value;
-            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
             int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + Main.sunModY);
-            Vector2 sunPosition = new(x, y);
+            Vector2 sunPosition = new(x - 108f, y + 180f);
+
+            if (!inColosseum)
+            {
+                // Draw a vibrant glow effect behind the sun if fighting the empress during the day.
+                bool empressIsPresent = NPC.AnyNPCs(NPCID.HallowBoss) && InfernumMode.CanUseCustomAIs && Main.dayTime;
+                if (empressIsPresent)
+                {
+                    // Use additive drawing.
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
+                    Vector2 origin = backglowTexture.Size() * 0.5f;
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Cyan * 0.56f, 0f, origin, 4f, 0, 0f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.HotPink * 0.5f, 0f, origin, 8f, 0, 0f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Lerp(Color.IndianRed, Color.Pink, 0.7f) * 0.4f, 0f, origin, 15f, 0, 0f);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+                }
+
+                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+
+                if (empressIsPresent)
+                {
+                    // Use additive drawing.
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
+                    Vector2 origin = backglowTexture.Size() * 0.5f;
+                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, transColor, 0f, origin, 0.74f, 0, 0f);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+                }
+
+                return;
+            }
 
             // Use brighter sun colors in general in the colosseum.
             if (inColosseum)

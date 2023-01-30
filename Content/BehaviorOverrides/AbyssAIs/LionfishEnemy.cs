@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.BiomeManagers;
 using CalamityMod.Items.Weapons.Rogue;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -34,6 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.value = Item.buyPrice(0, 0, 5, 0);
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
+            SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type };
             NPC.Infernum().IsAbyssPredator = true;
             NPC.RemoveWaterSlowness();
         }

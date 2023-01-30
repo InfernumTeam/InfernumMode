@@ -86,12 +86,6 @@ namespace InfernumMode.Content.Items
                 AddIngredient<AbyssGravel>(10).
                 AddTile(TileID.Anvils).
                 Register();
-
-            Recipe.Create(ModContent.ItemType<HerringStaff>()).
-                AddIngredient(ItemID.Bone, 15).
-                AddIngredient<AbyssGravel>(10).
-                AddTile(TileID.Anvils).
-                Register();
         }
 
         internal static void IncreaseBossSummonerYields()

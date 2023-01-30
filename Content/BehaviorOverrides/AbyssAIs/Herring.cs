@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.BiomeManagers;
 using CalamityMod.Items.Weapons.Summon;
+using CalamityMod.Projectiles.Summon;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -262,6 +263,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (inFirst3Layers && spawnInfo.Water)
                 return SpawnCondition.CaveJellyfish.Chance * 0.5f;
             return 0f;
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if (projectile.type == ModContent.ProjectileType<HerringMinion>())
+                return false;
+
+            return null;
         }
     }
 }

@@ -203,6 +203,12 @@ namespace InfernumMode.Core.ILEditingStuff
             if (!Main.dayTime && TheMoon.MoonIsNotInSky)
                 return;
 
+            if (EmpressUltimateAttackLightSystem.VerticalMoonOffset >= 0f)
+            {
+                sceneArea.bgTopY -= (int)EmpressUltimateAttackLightSystem.VerticalMoonOffset;
+                EmpressUltimateAttackLightSystem.VerticalMoonOffset *= 0.96f;
+            }
+
             bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
             if (!inColosseum)
             {

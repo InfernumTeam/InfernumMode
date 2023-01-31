@@ -710,7 +710,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int horizontalShootTime = 480;
             int horizontalLanceTransitionDelay = 50;
             int verticalLanceCount = 36;
-            int verticalLanceTransitionDelay = 75;
+            int verticalLanceTransitionDelay = 120;
             float horizontalLanceSpacing = 172f;
             float verticalLanceArea = 270f;
 

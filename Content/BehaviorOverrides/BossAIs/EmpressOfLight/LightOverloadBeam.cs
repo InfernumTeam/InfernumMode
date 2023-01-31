@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Sweep.
             if (ConvergingState == 2)
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * 0.0085f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * 0.0075f);
 
             if (ConvergingState >= 1)
                 Projectile.Center += Projectile.velocity.RotatedBy(MathHelper.PiOver2) * MathHelper.Lerp(-156f, 156f, Hue);

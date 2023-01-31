@@ -435,6 +435,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int hoverTime = 25;
             int lanceReleaseRate = 2;
             int lanceBarrageCount = 9;
+            int backstabbingLanceReleaseRate = 72;
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float barrageCounter = ref npc.Infernum().ExtraAI[2];
@@ -487,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Fly around and release lances at the target.
             float flySpeedInterpolant = Utils.GetLerpValue(attackDelay, attackDelay + hoverTime, attackTimer, true);
-            float flySpeed = MathHelper.Lerp(8f, 45f, (float)Math.Pow(flySpeedInterpolant, 1.5));
+            float flySpeed = MathHelper.Lerp(10f, 56f, (float)Math.Pow(flySpeedInterpolant, 1.5));
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetX, hoverOffsetY);
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeed);
 
@@ -513,7 +514,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     lance.ModProjectile<EtherealLance>().Time = 40;
                 });
                 Vector2 lanceSpawnPosition = npc.Center - Vector2.UnitY * npc.scale * 20f;
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSpawnPosition.AngleTo(target.Center + target.velocity * 13.6f), lanceHue);
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceSpawnPosition.AngleTo(target.Center + target.velocity * 16f), lanceHue);
+            }
+
+            // Summon lances from behind the target from time to time to prevent rungod strats.
+            if (attackTimer % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
+            {
+                for (float dy = -150f; dy < 150f; dy += 12f)
+                {
+                    float lanceHue = (attackTimer - attackDelay) / hoverTime % 1f;
+                    if (Math.Sign(hoverOffsetX) == -1f)
+                        lanceHue = 1f - lanceHue;
+                    lanceHue = (lanceHue + (dy + 150f) / 300f) % 1f;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                    {
+                        lance.ModProjectile<EtherealLance>().Time = -6;
+                    });
+                    Vector2 lanceSpawnPosition = target.Center - Vector2.UnitX * target.direction * 880f;
+                    float lanceAimDirection = lanceSpawnPosition.AngleTo(target.Center);
+                    lanceSpawnPosition.Y += dy;
+                    Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceAimDirection, lanceHue);
+                }
             }
 
             if (flySpeedInterpolant >= 1f && npc.WithinRange(hoverDestination, 100f))
@@ -1754,6 +1776,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
+            npc.ai[0] = (int)EmpressOfLightAttackType.LanceBarrages;
 
             npc.Infernum().ExtraAI[5]++;
             if (oldPhase != currentPhase && oldPhase <= 0f)

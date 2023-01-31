@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
 using System;
@@ -17,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
-            float baseShakePower = MathHelper.Lerp(2f, 9f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
+            float baseShakePower = MathHelper.Lerp(2f, 9f, CalamityUtils.Convert01To010(lifetimeCompletionRatio));
             return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 

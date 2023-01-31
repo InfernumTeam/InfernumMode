@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             Projectile.frameCounter++;
             Projectile.oldPos[1] = Projectile.oldPos[0];
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (Lifetime * Projectile.MaxUpdates)) * 2f;
+            Projectile.scale = (float)CalamityUtils.Convert01To010(Projectile.timeLeft / (float)(Lifetime * Projectile.MaxUpdates)) * 2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 

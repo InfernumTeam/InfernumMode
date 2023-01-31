@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +13,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
     public class LightBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
+        public const int Lifetime = 60;
+
         public ref float Time => ref Projectile.ai[0];
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Beam");
 
         public override void SetDefaults()
@@ -23,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.tileCollide = false;
             Projectile.hide = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 60;
+            Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
         }
 
@@ -39,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi / 90f * (Projectile.identity % 2f == 0f).ToDirectionInt());
 
             // Fade effects.
-            float cyclicFade = (float)Math.Sin(MathHelper.Pi * Time / 60f);
+            float cyclicFade = CalamityUtils.Convert01To010(Time / Lifetime);
             Projectile.Opacity = cyclicFade * 1.8f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;

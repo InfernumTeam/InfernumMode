@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Sounds;
@@ -73,12 +74,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Make line telegraphs.
             if (Projectile.timeLeft < 36f)
             {
+                float widthInterpolant = Utils.GetLerpValue(0f, 36f, Projectile.timeLeft, true);
+                float lineWidth = CalamityUtils.Convert01To010(widthInterpolant) * 2f;
                 for (int i = 0; i < 9; i++)
                 {
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                     if (Projectile.localAI[1] == 1f)
                         beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 36f, Projectile.timeLeft, true)) * 2f);
+
+                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, lineWidth);
                 }
             }
 

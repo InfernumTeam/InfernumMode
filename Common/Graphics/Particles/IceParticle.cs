@@ -41,7 +41,7 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             Velocity += Gravity;
-            opacity = (float)Math.Sin((double)(LifetimeCompletion * ((float)Math.PI / 2f) + (float)Math.PI / 2f));
+            opacity = (float)Math.Cos(MathHelper.PiOver2 * LifetimeCompletion);
             Velocity *= 0.95f;
             Rotation += Spin * (Velocity.X > 0f ? 1f : -1f);
             Scale *= 0.98f;

@@ -1021,20 +1021,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[0];
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
             ref float boltCount = ref npc.Infernum().ExtraAI[2];
-            ref float totalHandsToShootFrom = ref npc.Infernum().ExtraAI[3];
             ref float shootCounter = ref npc.Infernum().ExtraAI[4];
 
             // Initialize things.
-            if (totalHandsToShootFrom == 0f)
+            if (attackTimer == 1f || boltCount <= 0f)
             {
                 boltCount = 18f;
-                totalHandsToShootFrom = 2f;
-
                 if (ShouldBeEnraged)
-                {
                     boltCount = 28f;
-                    totalHandsToShootFrom = 2f;
-                }
 
                 npc.netUpdate = true;
             }
@@ -1068,9 +1062,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int magicDustCount = (int)Math.Round(MathHelper.Lerp(1f, 5f, telegraphInterpolant));
             for (int i = 0; i < 2; i++)
             {
-                if (i >= totalHandsToShootFrom)
-                    break;
-
                 int handDirection = (i == 0).ToDirectionInt();
                 Vector2 handOffset = new(55f, -30f);
                 Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
@@ -2107,7 +2098,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 float telegraphRotation = npc.Infernum().ExtraAI[0];
                 float telegraphInterpolant = npc.Infernum().ExtraAI[1];
                 float boltCount = npc.Infernum().ExtraAI[2];
-                float totalHandsToShootFrom = npc.Infernum().ExtraAI[3];
 
                 // Stop early if the telegraphs are not able to be drawn.
                 if (telegraphInterpolant <= 0f)
@@ -2115,9 +2105,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 for (int i = 0; i < 2; i++)
                 {
-                    if (i >= totalHandsToShootFrom)
-                        break;
-
                     int handDirection = (i == 0).ToDirectionInt();
                     float telegraphWidth = MathHelper.Lerp(0.5f, 4f, telegraphInterpolant);
                     Vector2 handOffset = new(55f, -30f);

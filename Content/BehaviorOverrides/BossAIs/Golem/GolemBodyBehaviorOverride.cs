@@ -556,6 +556,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                             break;
                         }
                         DoBehavior_FloorFire(npc, target, inPhase2, inPhase3, ref AttackTimer, ref AttackCooldown, ref jumpState, ref attackCounter, ref slamTelegraphInterpolant);
+
+                        freeHead.damage = 0;
+                        leftFist.damage = 0;
+                        rightFist.damage = 0;
+                        attachedHead.damage = 0;
+                        freeHead.damage = 0;
                         break;
                     case GolemAttackState.FistSpin:
                         if (headIsFree)
@@ -821,7 +827,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().Arena.Bottom - 16f);
                 CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
-
 
             attackTimer++;
         }

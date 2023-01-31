@@ -40,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             NPCID.Sets.MustAlwaysDraw[NPCID.GolemHead] = true;
+            npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             npc.chaseable = !npc.dontTakeDamage;
             npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;
 

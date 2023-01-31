@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -32,6 +33,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int DefenderFireSuckupWidthIndex = 10;
         public const int HealerConnectionsWidthScaleIndex = 11;
 
+        public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
+        public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
+        public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
+
+
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
         {
             float inertia = 20f;
@@ -43,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Vector2 positionToMoveTo = CrystalPosition;
             // If we are the commander, spawn in the pushback fire wall.
-            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+            if (npc.type == CommanderType)
             {
                 positionToMoveTo += new Vector2(400, 0);
                 if (attackTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -77,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // guardians check for and advance with it.
 
             // The commander bobs on the spot, pausing to aim and fire a fire beam at the player from afar.
-            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+            if (npc.type == CommanderType)
             {
                 float deathrayFireRate = 150;
                 float initialDelay = 460;
@@ -85,15 +91,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Do not take damage.
                 npc.dontTakeDamage = true;
+                npc.spriteDirection = 1;
 
-                // If time to fire, the target is close enough and the pushback wall is not present.
-                if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 6200f) && attackTimer >= initialDelay)
+                // Safely get the crystal. The commander should not attack if it is not present.
+                if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
                 {
-                    // Fire deathray.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
                     {
-                        Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
-                        Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<HolyAimedDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
+                        NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
+
+                        // If time to fire, the target is close enough and the pushback wall is not present.
+                        if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 6200f) && attackTimer >= initialDelay && crystal.ai[0] == 0f)
+                        {
+                            // Fire deathray.
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Vector2 aimDirection = npc.SafeDirectionTo(target.Center);
+                                Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<HolyAimedDeathrayTelegraph>(), 0, 0f, -1, 0f, npc.whoAmI);
+                            }
+                        }
                     }
                 }
 
@@ -109,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // The defender summons fire walls that force you to go inbetween the gap.
-            else if (npc.type == ModContent.NPCType<ProfanedGuardianDefender>())
+            else if (npc.type == DefenderType)
             {
                 // This is basically flappy bird, the attacker spawns fire walls like the pipes that move towards the entrance of the garden.
                 ref float lastOffsetY = ref npc.Infernum().ExtraAI[0];
@@ -150,7 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
 
                         // Create walls of fire with a random gap in them based off of the last one.
-                        if (attackTimer % wallCreationRate == 0f && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (attackTimer % wallCreationRate == 0f && Main.netMode != NetmodeID.MultiplayerClient && crystal.ai[0] == 0f)
                         {
                             Vector2 velocity = -Vector2.UnitX * 10f;
                             Vector2 baseCenter = CrystalPosition + new Vector2(20f, 0f);
@@ -195,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // The healer sits behind the shield and visibly pours energy into it.
-            else if (npc.type == ModContent.NPCType<ProfanedGuardianHealer>())
+            else if (npc.type == HealerType)
             {
                 ref float drawShieldConnections = ref npc.ai[2];
                 ref float connectionsWidthScale = ref npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
@@ -242,10 +258,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public static void DoBehavior_SoloHealer(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SoloHealer(NPC npc, Player target, ref float attackTimer, NPC commander)
         {
             // The commander remains in the center firing its two spinning fire beams.
-            if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+            if (npc.type == CommanderType)
             {
                 ref float movedToPosition = ref npc.Infernum().ExtraAI[0];
                 ref float spawnedLasers = ref npc.Infernum().ExtraAI[1];
@@ -254,14 +270,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Sit still in the middle of the area.
                 if (npc.Distance(hoverPosition) > 7f && movedToPosition == 0f)
+                {
+                    // Do not increase until the lasers are present.
+                    attackTimer = 0;
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                }
                 else
                 {
                     npc.velocity.X *= 0.9f;
                     movedToPosition = 1f;
                     float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.velocity.Y = sine * 0.5f;
-                    npc.spriteDirection = -1;
+                    npc.spriteDirection = 1;
 
                     if (spawnedLasers == 0)
                     {
@@ -270,12 +290,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             float offsetAngleInterpolant = (float)i / 2;
                             Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), 400, 0f, -1, 0f, offsetAngleInterpolant);
+
+                            // Screenshake
+                            if (CalamityConfig.Instance.Screenshake)
+                                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 3f;
                         }
                     }
                 }
             }
             // The defender hovers to your top left, not dealing contact damage and occasionally firing rocks at you.
-            if (npc.type == ModContent.NPCType<ProfanedGuardianDefender>())
+            else if (npc.type == DefenderType)
             {
                 float flySpeed = 19f;
                 float rockChuckRate = 180;
@@ -292,17 +316,103 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Vector2 rockVelocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY);
                     Utilities.NewProjectileBetter(npc.Center, rockVelocity * 70f, ModContent.ProjectileType<ProfanedRock>(), 120, 0f, Main.myPlayer, 0, npc.whoAmI);
                 }
+
+                // Do not increase until the lasers are present.
+                if (commander.Infernum().ExtraAI[0] == 0)
+                    attackTimer = 0;
+
+                if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloDefender)
+                    SelectNewAttack(npc, ref attackTimer);
+            }
+
+            // The healer sits to the right of the commander and empowers its shield. This causes spirals of projectiles to shoot out from it.
+            else if (npc.type == HealerType)
+            {
+                ref float movedToPosition = ref npc.Infernum().ExtraAI[0];
+                ref float crystalsFired = ref npc.Infernum().ExtraAI[1];
+                float crystalReleaseRate = 120;
+                float crystalAmount = 10;
+                float maxCrystalsFired = 4;
+
+                Vector2 hoverPosition = CrystalPosition;
+                // Sit still behind the commander
+                if (npc.Distance(hoverPosition) > 7f && movedToPosition == 0f)
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                else
+                {
+                    npc.velocity.X *= 0.9f;
+                    movedToPosition = 1f;
+                    float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                    npc.velocity.Y = sine * 0.5f;
+                    npc.spriteDirection = 1;
+                }
+
+                if (attackTimer % crystalReleaseRate == crystalReleaseRate - 1)
+                {
+                    if (Main.netMode != NetmodeID.Server)
+                    {
+                        SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 4.6f }, target.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 4.6f }, target.Center);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projectileSpawnPosition = commander.Center;
+                        for (int i = 0; i < crystalAmount; i++)
+                        {
+                            Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 12f;
+                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
+                            crystalsFired++;
+                        }
+                    }
+
+                    if (crystalsFired == maxCrystalsFired)
+                    {
+                        // The attack should end.
+                        SelectNewAttack(commander, ref attackTimer);
+                        SelectNewAttack(npc, ref attackTimer);
+                    }
+                }
+
+                // Do not increase until the lasers are present.
+                if (commander.Infernum().ExtraAI[0] == 0)
+                    attackTimer = 0;
             }
         }
-
         public static void DoBehavior_SoloDefender(NPC npc, Player target, ref float attackTimer)
         {
+            if (npc.type == CommanderType)
+            {
 
+            }
+
+            else if (npc.type == DefenderType)
+            {
+
+            }
+
+            else if (npc.type == HealerType)
+            {
+
+            }
         }
 
         public static void DoBehavior_HealerAndDefender(NPC npc, Player target, ref float attackTimer)
         {
+            if (npc.type == CommanderType)
+            {
 
+            }
+
+            else if (npc.type == DefenderType)
+            {
+
+            }
+
+            else if (npc.type == HealerType)
+            {
+
+            }
         }
 
         public static void SelectNewAttack(NPC npc, ref float attackTimer)
@@ -316,6 +426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // If not the final combo attack, advance the current attack.
             if (npc.ai[0] < 4)
                 npc.ai[0]++;
+
             // Else, reset it back to the first combo attack.
             else if (npc.ai[0] == 4)
                 npc.ai[0] = 2;

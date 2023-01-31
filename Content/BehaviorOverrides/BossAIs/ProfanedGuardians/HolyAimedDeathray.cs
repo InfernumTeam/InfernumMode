@@ -54,10 +54,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (!Owner.active || Owner.Infernum().ExtraAI[2] == 1f)
                 Projectile.Kill();
 
-            Owner.rotation = Projectile.velocity.ToRotation();
-            if (Owner.direction < 0)
-                Owner.rotation += MathHelper.Pi;
-
             CreateDustAtBeginning();
 
             Time++;

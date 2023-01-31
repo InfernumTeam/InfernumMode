@@ -17,6 +17,7 @@ using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.Projectiles.Wayfinder;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -105,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_FlappyBird(npc, target, ref attackTimer, npc);
                     break;
                 case GuardiansAttackType.SoloHealer:
-                    DoBehavior_SoloHealer(npc, target, ref attackTimer);
+                    DoBehavior_SoloHealer(npc, target, ref attackTimer, npc);
                     break;
                 case GuardiansAttackType.SoloDefender:
                     DoBehavior_SoloDefender(npc, target, ref attackTimer);
@@ -171,9 +172,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float fadeToBlack = Utils.GetLerpValue(1.84f, 2.66f, brightnessWidthFactor, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianCommanderGlow").Value;
-            SpriteEffects direction = npc.rotation is < MathHelper.PiOver2 or > MathHelper.Pi + MathHelper.PiOver2 ? SpriteEffects.None : SpriteEffects.FlipVertically;
+            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
+            bool shouldDrawShield = (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.SoloHealer or GuardiansAttackType.SoloDefender or GuardiansAttackType.HealerAndDefender;
+            float shieldOpacity = (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.SoloHealer ? 1f : 0.5f;
             // Draw the pillar of light behind the guardian when ready.
             if (brightnessWidthFactor > 0f)
             {
@@ -222,11 +225,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
 
+            if (shouldDrawShield)
+                DrawBackglowEffects(npc, spriteBatch, texture);
+
             spriteBatch.Draw(texture, drawPosition, npc.frame, Color.Lerp(npc.GetAlpha(lightColor), Color.Black * npc.Opacity, fadeToBlack), npc.rotation, origin, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
-            if ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.SoloHealer)
-                DrawHealerShield(npc, spriteBatch, 2.3f, 1f);
+
+            if (shouldDrawShield)
+                DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);              
 
             DrawBorder(npc, spriteBatch);
             return false;
@@ -234,6 +241,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawBorder(NPC npc, SpriteBatch spriteBatch)
         {
+        }
+
+        public void DrawBackglowEffects(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
+        {
+            // Glow effect.
+            Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Color drawColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f);
+            drawColor.A = 0;
+            Vector2 origin = glow.Size() * 0.5f;
+            spriteBatch.Draw(glow, drawPosition, null, drawColor, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+
+            // Backglow
+            int backglowAmount = 12;
+            float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float backglowDistance = MathHelper.Lerp(4.5f, 6.5f, sine);
+            for (int i = 0; i < backglowAmount; i++)
+            {
+                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * backglowDistance;
+                Color backglowColor = WayfinderSymbol.Colors[1];
+                backglowColor.A = 0;
+                SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+            }
         }
 
         public void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)
@@ -264,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, shieldEffect, Main.GameViewMatrix.TransformationMatrix);
 
-            // Draw the forcefield. This doesn't happen if the lighting behind the vassal is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
+            // Draw the forcefield. This doesn't happen if the lighting behind is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
             Texture2D noise = InfernumTextureRegistry.CultistRayMap.Value;
             if (shieldColor.ToVector4().Length() > 0.02f)
                 spriteBatch.Draw(noise, drawPosition, null, Color.White * opacity, 0, noise.Size() / 2f, scale * 2f, 0, 0);

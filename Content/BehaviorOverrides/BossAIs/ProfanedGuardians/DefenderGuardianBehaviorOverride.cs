@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloHealer:
-                    DoBehavior_SoloHealer(npc, target, ref attackTimer);
+                    DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloDefender:
                     DoBehavior_SoloDefender(npc, target, ref attackTimer);
@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Draw the lava absorbing.
             if (npc.ai[2] == 1f)
             {
-                DrawFireSuckup(npc, spriteBatch);
+                DrawFireSuckup(npc);
                 DrawBackglow(npc, spriteBatch, texture);
             }
 
@@ -110,9 +110,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public Color FireColorFunction(float _) => WayfinderSymbol.Colors[1];
+        public static Color FireColorFunction(float _) => WayfinderSymbol.Colors[1];
 
-        public void DrawFireSuckup(NPC npc, SpriteBatch spriteBatch)
+        public void DrawFireSuckup(NPC npc)
         {
             FireDrawer ??= new PrimitiveTrailCopy((float completionRatio) => npc.Infernum().ExtraAI[DefenderFireSuckupWidthIndex] * 50f,
                 FireColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             FireDrawer.Draw(drawPositions, -Main.screenPosition, 40);
         }
 
-        public void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
+        public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
             int backglowAmount = 12;
             float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
@@ -147,7 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public void DrawDefenseOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
+        public static void DrawDefenseOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
             spriteBatch.EnterShaderRegion();
 

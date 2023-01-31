@@ -18,6 +18,7 @@ matrix uWorldViewProjection;
 float4 uShaderSpecificData;
 
 bool flipY;
+float stretchAmount;
 
 struct VertexShaderInput
 {
@@ -53,14 +54,20 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (flipY)
         coords.y = 1 - coords.y;
     
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 3 - uTime * 1.8), coords.y));    
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * stretchAmount - uTime * 1.8), coords.y));
     float bloomFadeout = pow(sin(coords.y * 3.141), 3);
     float opacity = (fadeMapColor.r + 1) * bloomFadeout;
     float bloomFadeout2 = pow(sin(coords.y * 3.141), 18);
     
-    float4 fadeMapColor2 = tex2D(uImage2, float2(frac(coords.x * 5 - uTime * 2.2), coords.y));
+    float4 fadeMapColor2 = tex2D(uImage2, float2(frac(coords.x * (stretchAmount * 1.66666666) - uTime * 2.2), coords.y));
     float opacity2 = saturate(fadeMapColor2.r - 0.5) * bloomFadeout2;
     float4 colorCorrected = float4(uColor, fadeMapColor2.r * bloomFadeout * 3);
+    
+    if (coords.x > 0.87)
+    {
+        opacity *= pow(1 - (coords.x - 0.87) / 0.13, 7);
+        opacity2 *= pow(1 - (coords.x - 0.87) / 0.13, 7);
+    }
 
     return color * opacity + colorCorrected * 5 * opacity2;
 }

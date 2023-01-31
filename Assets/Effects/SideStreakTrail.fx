@@ -15,6 +15,8 @@ float2 uImageSize1;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
 
+bool flipY;
+
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
@@ -46,6 +48,10 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float innerBrightnessIntensity = 2.7;
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
+    
+    if (flipY)
+        coords.y = 1 - coords.y;
+    
     float bloomOpacity = pow(cos(coords.y * 4.8 - 0.8), 55 + pow(coords.x, 4) * 700);
     
     // Create some noisy opaque blotches in the inner part of the trail.
@@ -59,7 +65,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (coords.x < 0.5)
         bloomOpacity *= (1 - coords.x * 2) * innerBrightnessIntensity + 1;
     
-    return color * lerp(0, 3.6, bloomOpacity * pow(coords.x, 0.1)) * pow(1 - coords.x, 1.1);
+    return color * lerp(0, 3.6, bloomOpacity * pow(coords.x, 0.1)) * pow(1 - coords.x, 1.1) * uOpacity;
 }
 
 technique Technique1

@@ -4,7 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

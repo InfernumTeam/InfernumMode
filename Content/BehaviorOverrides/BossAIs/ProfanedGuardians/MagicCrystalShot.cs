@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -23,9 +24,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             new Color(255, 194, 161),
         };
 
-        public NPC Target => Main.npc[(int)Projectile.ai[0]];
-        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet);
-        public ref float HealAmount => ref Projectile.localAI[0];
+        public ref float Timer => ref Projectile.ai[0];
+        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, ColorSet);
+        public ref float Direction => ref Projectile.ai[1];
+
+        public Vector2 InitialVelocity;
+        public Vector2 InitialCenter;
+        public float RotationAmount => MathHelper.Lerp(0.034f, 0.001f, Timer / 300f);
+
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
         public override void SetStaticDefaults()
@@ -49,31 +55,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
-            if (Projectile.timeLeft > 140f)
+            if (Timer == 0)
             {
-                float offsetScale = (float)Math.Cos(Projectile.identity % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
-
-                if (Projectile.velocity.Length() < 43f)
-                    Projectile.velocity *= 1.008f;
-                Projectile.velocity = Projectile.velocity.RotatedBy(offsetScale * MathHelper.TwoPi / 360f);
+                InitialVelocity = Projectile.velocity;
+                InitialCenter = Projectile.Center;
             }
 
-            if (Projectile.timeLeft > 30f)
-            {
-                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Vector2 idealVelocity = Projectile.SafeDirectionTo(target.Center) * 16f;
-                Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, MathHelper.Lerp(0.045f, 0.1f, Utils.GetLerpValue(140f, 30f, Projectile.timeLeft, true)));
-            }
+            Projectile.velocity = Projectile.velocity.RotatedBy(Direction * RotationAmount);
+
+            Projectile.velocity *= 1.01f;
 
             if (Projectile.timeLeft < 15)
                 Projectile.damage = 0;
 
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Timer++;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Timer < 30)
+                DrawLines(Main.spriteBatch);
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 1; i < Projectile.oldPos.Length; i++)
             {
@@ -95,6 +98,54 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
+        // TODO: Optimize this to need to draw less things.
+        public void DrawLines(SpriteBatch spriteBatch)
+        {
+            // The total number of lines to draw.
+            int totalDrawPoints = 100;
+
+            Texture2D lineTexture = InfernumTextureRegistry.Pixel.Value;
+            // Initialize the previous point + velocity with the projectiles initial ones.
+            Vector2 previousDrawPoint = InitialCenter;
+            Vector2 previousDrawVelocity = InitialVelocity;
+
+            float lineOpacityScalar = (float)Math.Sin(Timer / 30 * MathHelper.Pi);
+
+            // Loop through the total number of draw points.
+            for (int i = 0; i < totalDrawPoints; i++)
+            {
+                // Get the rotation amount. This is the same as used by the projectiles movement.
+                float rotationAmount = MathHelper.Lerp(0.034f, 0.001f, i / 300f);
+                // Get a velocity, from rotating the last one by the rotation amount. This is how the projectile moves.
+                Vector2 drawVelocity = previousDrawVelocity.RotatedBy(Direction * rotationAmount);
+                // And also scale it.
+                drawVelocity *= 1.01f;
+                // Create a "center" to draw at by adding the current velocity to the previous position.
+                Vector2 drawPoint = previousDrawPoint + drawVelocity;
+                // Get the direction between the two points.
+                Vector2 direction = previousDrawPoint - drawPoint;
+                // Get the length of this. This doesn't fully connect normally so adding 0.5 to the length is a shitty
+                // hack to make them work. However, this means you cannot use additive drawing due to the overlap being visible.
+                float length = direction.Length() + 0.5f;
+                // Use this to create a rectangle.
+                Rectangle rectangle = new(0, 0, (int)length, 4);
+                // Set the color of the line.
+                Color lineColor = StreakBaseColor;
+                // Make it fade out for the last bit.
+                if (totalDrawPoints - i <= 50)
+                {
+                    float interpolant = ((float)i - (totalDrawPoints - 50)) / (totalDrawPoints - (totalDrawPoints - 50));
+                    lineColor = Color.Lerp(lineColor, Color.Transparent, interpolant);
+                }
+                lineColor *= lineOpacityScalar;
+                // Draw the line.
+                spriteBatch.Draw(lineTexture, previousDrawPoint - Main.screenPosition, rectangle, lineColor, direction.ToRotation(), rectangle.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                // Update the previous points.
+                previousDrawPoint = drawPoint;
+                previousDrawVelocity = drawVelocity;
+            }          
+        }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             for (int i = 0; i < 3; i++)
@@ -107,8 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Projectile.timeLeft > 15)
-                Projectile.timeLeft = 15;
+
         }
     }
 }

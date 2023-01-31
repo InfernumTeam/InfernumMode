@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
 
-        public int Lifetime => 570;
+        public const int Lifetime = 570;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

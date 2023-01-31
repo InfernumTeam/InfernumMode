@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloHealer:
-                    DoBehavior_SoloHealer(npc, target, ref attackTimer);
+                    DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloDefender:
                     DoBehavior_SoloDefender(npc, target, ref attackTimer);
@@ -84,40 +84,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             attackTimer++;
             return false;
         }
-
-        public void DoBehavior_SitAndShieldCommander(NPC npc, Player target, ref float attackTimer, NPC commander)
-        {
-            // The healer is placing a shield around the commander, and will continue to do so until they die. They periodically emit stars in this attack too.
-            int crystalAmount = 5;
-            float crystalReleaseRate = 240;
-
-            // Bob up and down on the spot.
-            float sine = -MathF.Sin(attackTimer * 0.05f);
-            npc.velocity.Y = sine * 1.5f;
-                
-            // Only fire crystals if the player is close enough.
-            if (target.WithinRange(npc.Center, 1500f) && attackTimer % crystalReleaseRate == 0)
-            {
-                // Play SFX if not the server.
-                if (Main.netMode != NetmodeID.Server)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
-                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
-                }
-
-                // Fire projectiles.
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 projectileSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * -32f, 12f);
-                    for (int i = 0; i < crystalAmount; i++)
-                    {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 9f;
-                        Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Drawing
@@ -156,10 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public Color EnergyColorFunction(float completionRatio)
-        {
-            return MagicCrystalShot.ColorSet[0];
-        }
+        public static Color EnergyColorFunction(float completionRatio) => MagicCrystalShot.ColorSet[0];
 
         public void DrawShieldConnections(NPC npc)
         {

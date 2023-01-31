@@ -85,6 +85,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_Shatter(target);
                     break;
             }
+
+            // Force anyone close to it to be to the left.
+            foreach (Player player in Main.player)
+                if (player.active && !player.dead && player.Center.WithinRange(NPC.Center, 6000f))
+                    if (player.Center.X > NPC.Center.X)
+                        player.Center = new(NPC.Center.X, player.Center.Y);
         }
 
         public void DoBehavior_SitStill(Player target)
@@ -120,6 +126,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Reset the attack timer.
                 commander.ai[1] = 0f;
+
+                // Despawn all the fire walls.
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFireWall>());
             }
             ShatteringTimer++;
         }

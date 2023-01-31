@@ -38,6 +38,12 @@ namespace InfernumMode.Core
         [Tooltip("How intense color saturation bloom effects should be. Such effects are disabled when this value is zero.")]
         public float SaturationBloomIntensity { get; set; }
 
+        [Label("Screen Overlays")]
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(true)]
+        [Tooltip("Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.")]
+        public bool FlashbangOverlays { get; set; }
+
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
 }

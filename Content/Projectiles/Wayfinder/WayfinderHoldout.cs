@@ -3,6 +3,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -184,7 +185,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             // Why is this a problem?
             Owner.fallStart = (int)(Owner.position.Y / 16f);
 
-            if (IsGateSet && Main.myPlayer == Projectile.owner)
+            if (IsGateSet && Main.myPlayer == Projectile.owner && InfernumConfig.Instance.FlashbangOverlays)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
 
             if (Time == 0)

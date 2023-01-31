@@ -27,6 +27,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using System.IO;
+using InfernumMode.Core;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -974,7 +975,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Explode violently.
                 case 4:
-                    MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
+
+                    if (InfernumConfig.Instance.FlashbangOverlays)
+                        MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
 
                     if (attackTimer == 60f)
                     {

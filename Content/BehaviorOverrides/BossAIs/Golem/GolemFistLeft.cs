@@ -40,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
                 return false;
             }
+            npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             npc.dontTakeDamage = true;
             npc.chaseable = false;
             return false;

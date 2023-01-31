@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BossIntroScreens
             }
 
             // Draw the screen cover if it's enabled.
-            if (ShouldCoverScreen)
+            if (ShouldCoverScreen && InfernumConfig.Instance.FlashbangOverlays)
             {
                 bool isBright = ScreenCoverColor.ToVector3().Length() / 1.414f > 0.8f;
                 if (isBright)

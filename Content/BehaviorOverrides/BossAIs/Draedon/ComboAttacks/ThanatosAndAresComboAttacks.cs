@@ -18,8 +18,8 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos.Tha
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {

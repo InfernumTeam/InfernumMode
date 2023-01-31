@@ -4,6 +4,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Tiles;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -225,7 +226,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (!target.active || target.dead)
             {
                 npc.velocity *= 0.9f;
-                MoonlordDeathDrama.RequestLight(despawnTimer / 45f, npc.Center);
+                if (InfernumConfig.Instance.FlashbangOverlays)
+                    MoonlordDeathDrama.RequestLight(despawnTimer / 45f, npc.Center);
                 despawnTimer++;
 
                 attackState = -1f;
@@ -337,7 +339,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (attackTimer == 4f)
                     SoundEngine.PlaySound(SoundID.NPCDeath61, npc.Center);
-                MoonlordDeathDrama.RequestLight(attackTimer / 60f, npc.Center);
+                if (InfernumConfig.Instance.FlashbangOverlays)
+                    MoonlordDeathDrama.RequestLight(attackTimer / 60f, npc.Center);
             }
             else
             {

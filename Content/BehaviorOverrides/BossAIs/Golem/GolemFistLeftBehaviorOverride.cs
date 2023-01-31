@@ -17,6 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             npc.dontTakeDamage = true;
             npc.chaseable = false;
             npc.Opacity = 1f;
+            npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             return false;
         }
 

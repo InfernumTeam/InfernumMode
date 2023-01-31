@@ -439,6 +439,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float barrageCounter = ref npc.Infernum().ExtraAI[2];
+            ref float timeSinceAttackBegun = ref npc.Infernum().ExtraAI[3];
 
             // Have the arm pointed towards the player aim downward, while the other hand points upward.
             leftArmFrame = 4f;
@@ -518,18 +519,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Summon lances from behind the target from time to time to prevent rungod strats.
-            if (attackTimer % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
+            if (timeSinceAttackBegun % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
             {
-                for (float dy = -150f; dy < 150f; dy += 12f)
+                for (float dy = -120f; dy < 120f; dy += 12f)
                 {
                     float lanceHue = (attackTimer - attackDelay) / hoverTime % 1f;
                     if (Math.Sign(hoverOffsetX) == -1f)
                         lanceHue = 1f - lanceHue;
-                    lanceHue = (lanceHue + (dy + 150f) / 300f) % 1f;
+                    lanceHue = (lanceHue + (dy + 120f) / 240f) % 1f;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                     {
-                        lance.ModProjectile<EtherealLance>().Time = -6;
+                        lance.ModProjectile<EtherealLance>().Time = -30;
                     });
                     Vector2 lanceSpawnPosition = target.Center - Vector2.UnitX * target.direction * 880f;
                     float lanceAimDirection = lanceSpawnPosition.AngleTo(target.Center);
@@ -548,6 +549,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.velocity *= 0.1f;
                 npc.netUpdate = true;
             }
+            timeSinceAttackBegun++;
         }
 
         public static void DoBehavior_PrismaticBoltCircle(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame)
@@ -1664,7 +1666,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 outwardExpandFactor = Utils.GetLerpValue(-fadeOutTime, 0f, attackTimer - deathAnimationTime, true);
                 npc.Opacity = (float)Math.Pow(deathAnimationScreenShaderStrength, 3D) * (1f - outwardExpandFactor);
 
-                MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
+                if (InfernumConfig.Instance.FlashbangOverlays)
+                    MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
             }
 
             // Create sparkles everywhere.
@@ -1776,7 +1779,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
             if (InPhase4(npc))
                 npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
-            npc.ai[0] = (int)EmpressOfLightAttackType.LanceBarrages;
 
             npc.Infernum().ExtraAI[5]++;
             if (oldPhase != currentPhase && oldPhase <= 0f)

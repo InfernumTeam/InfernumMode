@@ -24,8 +24,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             [GolemAttackState.FloorFire] = Color.AntiqueWhite,
             [GolemAttackState.FistSpin] = Color.Orange,
-            [GolemAttackState.HeatRay] = Color.Aquamarine,
-            [GolemAttackState.SpikeTrapWaves] = Color.LightBlue,
+            [GolemAttackState.HeatRay] = Color.Magenta,
+            [GolemAttackState.SpikeTrapWaves] = Color.DeepSkyBlue,
             [GolemAttackState.SpinLaser] = Color.Firebrick,
             [GolemAttackState.Slingshot] = Color.MediumPurple,
             [GolemAttackState.SpikeRush] = Color.Green
@@ -40,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             NPCID.Sets.MustAlwaysDraw[NPCID.GolemHead] = true;
+            npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             npc.chaseable = !npc.dontTakeDamage;
             npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;
 

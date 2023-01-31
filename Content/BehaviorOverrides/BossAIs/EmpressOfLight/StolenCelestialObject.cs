@@ -106,10 +106,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             Texture2D bloomFlare = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/BloomFlare").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Color bloomFlareColor = Color.Lerp(Color.Wheat, Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.2f % 1f, 1f, 0.7f), 0.1f);
+            Color bloomFlareColor = Color.Lerp(Color.Wheat, Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.2f % 1f, 1f, 0.55f), 0.7f);
             float bloomFlareRotation = Main.GlobalTimeWrappedHourly * 0.93f;
             float bloomFlareScale = Projectile.scale * 3f;
             Main.spriteBatch.Draw(bloomFlare, drawPosition, null, bloomFlareColor, -bloomFlareRotation, bloomFlare.Size() * 0.5f, bloomFlareScale, 0, 0f);
+
+            bloomFlareColor = Color.Lerp(Color.Wheat, Main.hslToRgb((Main.GlobalTimeWrappedHourly * 0.2f + 0.5f) % 1f, 1f, 0.55f), 0.7f);
             Main.spriteBatch.Draw(bloomFlare, drawPosition, null, bloomFlareColor, bloomFlareRotation, bloomFlare.Size() * 0.5f, bloomFlareScale, 0, 0f);
         }
 

@@ -71,9 +71,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static int SwordDamage => ShouldBeEnraged ? 400 : 200;
 
-        public static int LaserbeamDamage => ShouldBeEnraged ? 700 : 300;
+        public static int SmallLaserbeamDamage => ShouldBeEnraged ? 600 : 250;
 
-        public static int LacewingDamage => ShouldBeEnraged ? 400 : 195;
+        public static int LaserbeamDamage => ShouldBeEnraged ? 800 : 400;
 
         public static EmpressOfLightAttackType[] Phase1AttackCycle => new EmpressOfLightAttackType[]
         {
@@ -92,11 +92,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static EmpressOfLightAttackType[] Phase2AttackCycle => new EmpressOfLightAttackType[]
         {
             EmpressOfLightAttackType.BackstabbingLances,
-            EmpressOfLightAttackType.MesmerizingMagic,
+            EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.HorizontalCharge,
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage,
-            EmpressOfLightAttackType.LightPrisms,
+            EmpressOfLightAttackType.MesmerizingMagic,
             EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.DanceOfSwords,
@@ -105,17 +105,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static EmpressOfLightAttackType[] Phase3AttackCycle => new EmpressOfLightAttackType[]
         {
-            EmpressOfLightAttackType.DanceOfSwords,
+            EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.LightPrisms,
-            EmpressOfLightAttackType.MajesticPierce,
+            EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.MesmerizingMagic,
+            EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.PrismaticBoltCircle,
-            EmpressOfLightAttackType.MajesticPierce,
         };
 
         public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
@@ -469,8 +469,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
 
                 float oldHoverOffset = hoverOffsetY;
-                hoverOffsetX = Main.rand.NextFloat(760f, 975f) * (barrageCounter % 2f == 1f).ToDirectionInt();
-                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 760f, 975f, -270f, -384f);
+                hoverOffsetX = Main.rand.NextFloat(730f, 945f) * (barrageCounter % 2f == 1f).ToDirectionInt();
+                hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 730f, 945f, -270f, -384f);
                 if (MathHelper.Distance(hoverOffsetY, oldHoverOffset) < 72f)
                     hoverOffsetY -= 56f;
 
@@ -521,12 +521,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Summon lances from behind the target from time to time to prevent rungod strats.
             if (timeSinceAttackBegun % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
             {
-                for (float dy = -120f; dy < 120f; dy += 12f)
+                for (float dy = -100f; dy < 100f; dy += 12f)
                 {
                     float lanceHue = (attackTimer - attackDelay) / hoverTime % 1f;
                     if (Math.Sign(hoverOffsetX) == -1f)
                         lanceHue = 1f - lanceHue;
-                    lanceHue = (lanceHue + (dy + 120f) / 240f) % 1f;
+                    lanceHue = (lanceHue + (dy + 100f) / 200f) % 1f;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                     {
@@ -642,6 +642,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
 
+            if (attackCycleCounter == 0f)
+                terraprismaAttackDelay += 40;
+
             // Disable contact damage.
             npc.damage = 0;
 
@@ -682,7 +685,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<LanceCreatingSword>());
                 attackCycleCounter++;
                 if (attackCycleCounter >= attackCycleCount)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EtherealLance>());
                     SelectNextAttack(npc);
+                }
                 npc.netUpdate = true;
             }
         }
@@ -877,6 +883,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void DoBehavior_BackstabbingLances(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
+            int barrageCount = 1;
             int backstabbingLanceTime = 104;
             int lanceReleaseRate = 3;
             int hoverRedirectTime = 30;
@@ -890,6 +897,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             
             if (InPhase2(npc))
             {
+                barrageCount++;
+                backstabbingLanceTime -= 25;
                 lanceReleaseRate--;
                 lanceFireSpeedBoost += 7;
                 idleHoverSpeed += 1.8f;
@@ -917,6 +926,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float lanceWallSpawnCenterX = ref npc.Infernum().ExtraAI[0];
             ref float lanceWallSpawnCenterY = ref npc.Infernum().ExtraAI[1];
             ref float lanceWallDirection = ref npc.Infernum().ExtraAI[2];
+            ref float barrageCounter = ref npc.Infernum().ExtraAI[3];
 
             // Disable contact damage.
             npc.damage = 0;
@@ -1007,13 +1017,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceWallDirection + MathHelper.Pi, lanceHue);
             }
 
-            if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + wallLanceShootTime + 120f)
-                SelectNextAttack(npc);
+            if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + wallLanceShootTime + 84f)
+            {
+                barrageCounter++;
+                lanceWallDirection = 0f;
+                lanceWallSpawnCenterX = 0f;
+                lanceWallSpawnCenterY = 0f;
+                attackTimer = 0f;
+                if (barrageCounter >= barrageCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_MesmerizingMagic(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame, ref float rightArmFrame)
         {
-            int shootRate = 75;
+            int shootRate = 64;
             int shootCount = 6;
             float wrappedAttackTimer = attackTimer % shootRate;
             float slowdownFactor = Utils.GetLerpValue(shootRate - 8f, shootRate - 24f, wrappedAttackTimer, true);
@@ -1034,11 +1053,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Calculate the telegraph interpolant.
-            telegraphInterpolant = Utils.GetLerpValue(24f, shootRate - 18f, wrappedAttackTimer);
+            telegraphInterpolant = Utils.GetLerpValue(16f, shootRate - 18f, wrappedAttackTimer);
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 120f, -300f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 8f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 9.6f;
             if (!npc.WithinRange(hoverDestination, 40f))
                 npc.SimpleFlyMovement(idealVelocity * slowdownFactor, slowdownFactor * 0.7f);
             else
@@ -1048,8 +1067,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (wrappedAttackTimer == 4f)
             {
                 // Teleport near the target if very far away.
-                if (!npc.WithinRange(target.Center, 1040f))
-                    TeleportTo(npc, target.Center + Main.rand.NextVector2CircularEdge(320f, 320f));
+                if (!npc.WithinRange(target.Center, 1280f))
+                    TeleportTo(npc, target.Center + Main.rand.NextVector2CircularEdge(500f, 500f));
 
                 telegraphRotation = Main.rand.NextFloat(MathHelper.TwoPi);
                 npc.netUpdate = true;
@@ -1241,7 +1260,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int lightBoltTime = 120;
             int prismReleaseRate = 7;
-            int attackCycleCount = 1;
+            int attackCycleCount = 2;
             int prismFireDelay = 54;
             float chargeSpeed = 65f;
 
@@ -1441,6 +1460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int rainbowShootCount = 10;
             int laserSweepDelay = 48;
             int lanceReleaseRate = 36;
+            int backstabbingLanceCount = 2;
             float backstabbingLanceOffset = 850f;
             ref float wispInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float rainbowShootCounter = ref npc.Infernum().ExtraAI[1];
@@ -1454,6 +1474,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 lanceReleaseRate -= 20;
                 backstabbingLanceOffset -= 120f;
             }
+
+            if (rainbowState >= 2f)
+                backstabbingLanceCount++;
 
             // Reset arm frames.
             leftArmFrame = 0f;
@@ -1498,15 +1521,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release lances from behind the player.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lanceReleaseRate == lanceReleaseRate - 1f && rainbowState <= 2f)
             {
-                float lanceHue = attackTimer / 300f % 1f;
-                Vector2 lanceSpawnPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * backstabbingLanceOffset;
-
-                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                for (int i = 0; i < backstabbingLanceCount; i++)
                 {
-                    lance.ModProjectile<EtherealLance>().Time = -6;
-                    lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = true;
-                });
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, target.AngleFrom(lanceSpawnPosition), lanceHue);
+                    float lanceHue = (attackTimer / 300f + i / (float)backstabbingLanceCount) % 1f;
+                    float lancePerpendicularAngle = MathHelper.Lerp(-MathHelper.PiOver2, MathHelper.PiOver2, i / (float)(backstabbingLanceCount - 1f));
+                    Vector2 lanceSpawnPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * backstabbingLanceOffset;
+                    lanceSpawnPosition -= target.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(lancePerpendicularAngle) * backstabbingLanceOffset * 0.3f;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
+                    {
+                        lance.ModProjectile<EtherealLance>().Time = -6;
+                        lance.ModProjectile<EtherealLance>().PlaySoundOnFiring = true;
+                    });
+                    Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, target.AngleFrom(lanceSpawnPosition), lanceHue);
+                }
             }
 
             // Summon the moon from the sky.
@@ -1730,7 +1758,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static void SelectNextAttack(NPC npc)
         {
-            int phaseCycleIndex = (int)npc.Infernum().ExtraAI[5];
             ref float currentPhase = ref npc.ai[2];
             float oldPhase = currentPhase;
 
@@ -1763,6 +1790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.netUpdate = true;
             }
 
+            int phaseCycleIndex = (int)npc.Infernum().ExtraAI[5];
             npc.ai[0] = (int)Phase1AttackCycle[phaseCycleIndex % Phase1AttackCycle.Length];
             if (InPhase2(npc))
                 npc.ai[0] = (int)Phase2AttackCycle[phaseCycleIndex % Phase2AttackCycle.Length];

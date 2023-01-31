@@ -991,8 +991,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int shootRate = 75;
             int shootCount = 6;
-            float wrappedattackTimer = attackTimer % shootRate;
-            float slowdownFactor = Utils.GetLerpValue(shootRate - 8f, shootRate - 24f, wrappedattackTimer, true);
+            float wrappedAttackTimer = attackTimer % shootRate;
+            float slowdownFactor = Utils.GetLerpValue(shootRate - 8f, shootRate - 24f, wrappedAttackTimer, true);
             float boltShootSpeed = 17f;
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[0];
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
@@ -1016,7 +1016,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Calculate the telegraph interpolant.
-            telegraphInterpolant = Utils.GetLerpValue(24f, shootRate - 18f, wrappedattackTimer);
+            telegraphInterpolant = Utils.GetLerpValue(24f, shootRate - 18f, wrappedAttackTimer);
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 120f, -300f);
@@ -1027,8 +1027,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.velocity *= 0.93f;
 
             // Determinine the initial rotation of the telegraphs.
-            if (wrappedattackTimer == 4f)
+            if (wrappedAttackTimer == 4f)
             {
+                // Teleport near the target if very far away.
+                if (!npc.WithinRange(target.Center, 1040f))
+                    TeleportTo(npc, target.Center + Main.rand.NextVector2CircularEdge(320f, 320f));
+
                 telegraphRotation = Main.rand.NextFloat(MathHelper.TwoPi);
                 npc.netUpdate = true;
             }
@@ -1065,7 +1069,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     leftArmFrame = 3;
 
                 // Release bolts outward and create hand explosions.
-                if (wrappedattackTimer == shootRate - 1f)
+                if (wrappedAttackTimer == shootRate - 1f)
                 {
                     if (i == 0)
                         SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 2.6f }, npc.Center);

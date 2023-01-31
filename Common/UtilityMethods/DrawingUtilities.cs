@@ -485,7 +485,7 @@ namespace InfernumMode
         {
             get
             {
-                float colorInterpolant = (float)(Math.Sin(MathHelper.Pi * Main.GlobalTimeWrappedHourly + 1.0) * 0.5) + 0.5f;
+                float colorInterpolant = (float)(Math.Sin(MathHelper.Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
                 Color c = CalamityUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
                 return CalamityUtils.ColorMessage("Imbued with the infernal flames of a defeated foe", c);
             }

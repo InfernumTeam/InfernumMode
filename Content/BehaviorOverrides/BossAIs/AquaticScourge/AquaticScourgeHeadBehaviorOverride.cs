@@ -252,7 +252,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 toothVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.48f, 0.48f, i / 2f)) * 7.2f;
-                        toothVelocity *= 1f + (float)Math.Sin(MathHelper.Pi * i / 3f) * 0.2f + enrageFactor * 0.135f;
+                        toothVelocity *= 1f + (float)CalamityUtils.Convert01To010(i / 3f) * 0.2f + enrageFactor * 0.135f;
                         Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 125, 0f);
                     }
 

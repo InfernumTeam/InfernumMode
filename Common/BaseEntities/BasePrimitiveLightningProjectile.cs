@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using System;
@@ -66,7 +67,7 @@ namespace InfernumMode.Common.BaseEntities
             // which allows random turning to occur.
             Projectile.frameCounter++;
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (Lifetime * (Projectile.MaxUpdates - 1))) * 4f;
+            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)(Lifetime * (Projectile.MaxUpdates - 1))) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 

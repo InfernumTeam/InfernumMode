@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -52,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (Time < 30f)
             {
                 Vector2 lineDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-                float lineWidth = (float)Math.Sin(MathHelper.Pi * Time / 30f) * 4f + 1f;
+                float lineWidth = CalamityUtils.Convert01To010(Time / 30f) * 4f + 1f;
                 Main.spriteBatch.DrawLineBetter(Projectile.Center - lineDirection * 3400f, Projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
                 return false;
             }

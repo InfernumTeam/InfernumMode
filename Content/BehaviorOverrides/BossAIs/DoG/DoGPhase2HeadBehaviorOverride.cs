@@ -315,7 +315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         
                         // Select a special attack type.
                         do
-                            npc.Infernum().ExtraAI[SpecialAttackTypeIndex] = (int)Utils.SelectRandom(Main.rand, SpecialAttackType.LaserWalls, SpecialAttackType.CircularLaserBurst, SpecialAttackType.ChargeGates);
+                            npc.Infernum().ExtraAI[SpecialAttackTypeIndex] = (int)Utils.SelectRandom(Main.rand, SpecialAttackType.LaserWalls, SpecialAttackType.CircularLaserBurst);
                         while (npc.Infernum().ExtraAI[SpecialAttackTypeIndex] == npc.Infernum().ExtraAI[PreviousSpecialAttackTypeIndex]);
                         npc.netUpdate = true;
                     }

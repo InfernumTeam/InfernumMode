@@ -790,6 +790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                         }
 
                         npc.velocity.X = 0f;
+                        npc.position.Y -= 42f;
                         npc.netUpdate = true;
                         jumpState = 2f;
                     }

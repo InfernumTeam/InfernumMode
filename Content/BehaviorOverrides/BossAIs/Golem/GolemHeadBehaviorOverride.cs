@@ -24,8 +24,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             [GolemAttackState.FloorFire] = Color.AntiqueWhite,
             [GolemAttackState.FistSpin] = Color.Orange,
-            [GolemAttackState.HeatRay] = Color.Aquamarine,
-            [GolemAttackState.SpikeTrapWaves] = Color.LightBlue,
+            [GolemAttackState.HeatRay] = Color.Magenta,
+            [GolemAttackState.SpikeTrapWaves] = Color.DeepSkyBlue,
             [GolemAttackState.SpinLaser] = Color.Firebrick,
             [GolemAttackState.Slingshot] = Color.MediumPurple,
             [GolemAttackState.SpikeRush] = Color.Green

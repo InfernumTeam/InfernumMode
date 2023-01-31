@@ -439,6 +439,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float barrageCounter = ref npc.Infernum().ExtraAI[2];
+            ref float timeSinceAttackBegun = ref npc.Infernum().ExtraAI[3];
 
             // Have the arm pointed towards the player aim downward, while the other hand points upward.
             leftArmFrame = 4f;
@@ -518,7 +519,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Summon lances from behind the target from time to time to prevent rungod strats.
-            if (attackTimer % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
+            if (timeSinceAttackBegun % backstabbingLanceReleaseRate == backstabbingLanceReleaseRate - 1f)
             {
                 for (float dy = -120f; dy < 120f; dy += 12f)
                 {
@@ -548,6 +549,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.velocity *= 0.1f;
                 npc.netUpdate = true;
             }
+            timeSinceAttackBegun++;
         }
 
         public static void DoBehavior_PrismaticBoltCircle(NPC npc, Player target, ref float attackTimer, ref float leftArmFrame)

@@ -11,6 +11,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Skies;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -613,8 +614,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
 
             // Cover the screen in a white light before DoG's head explodes.
-            float light = Utils.GetLerpValue(20f, 55f, finalSegmentDestructionTimer, true);
-            MoonlordDeathDrama.RequestLight(light, Main.LocalPlayer.Center);
+            if (InfernumConfig.Instance.FlashbangOverlays)
+            {
+                float light = Utils.GetLerpValue(20f, 55f, finalSegmentDestructionTimer, true);
+                MoonlordDeathDrama.RequestLight(light, Main.LocalPlayer.Center);
+            }
 
             if (finalSegmentDestructionTimer >= 75f)
             {

@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Content.Subworlds;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;
@@ -50,7 +51,7 @@ namespace InfernumMode.Content.Projectiles
             // Fade out before teleporting the player.
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
 
-            if (Main.myPlayer == Projectile.owner)
+            if (Main.myPlayer == Projectile.owner && InfernumConfig.Instance.FlashbangOverlays)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(60f, 20f, Projectile.timeLeft, true), Owner.Center);
             Time++;
         }

@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Projectile.velocity.Length() < 7f)
                     Projectile.velocity = StarPolarEquation(5, MathHelper.TwoPi * Projectile.ai[1]) * 13f;
 
-                Projectile.velocity *= 1.0132f;
+                Projectile.velocity *= 1.0126f;
             }
 
             Time++;

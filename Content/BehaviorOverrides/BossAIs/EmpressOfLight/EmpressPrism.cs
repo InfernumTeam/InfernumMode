@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     for (int i = 0; i < 5; i++)
                     {
                         float laserOffsetAngle = MathHelper.PiOver2 + MathHelper.Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 4f);
-                        Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.LaserbeamDamage, 0f, -1, Projectile.identity, i / 4f);
+                        Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.SmallLaserbeamDamage, 0f, -1, Projectile.identity, i / 4f);
                     }
                 }
             }

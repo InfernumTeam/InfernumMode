@@ -23,12 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.UI.Chat;
 using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff

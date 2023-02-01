@@ -8,6 +8,8 @@ namespace InfernumMode.Assets.ExtraTextures
 {
     public static class InfernumTextureRegistry
     {
+        public static Asset<Texture2D> Arrow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/ArrowBlack");
+
         public static Asset<Texture2D> BinaryLine => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/BinaryLine");
 
         public static Asset<Texture2D> BloomLine => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/BloomLine");
@@ -29,6 +31,8 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> Gleam => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam");
 
         public static Asset<Texture2D> GrayscaleWater => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/GrayscaleWater");
+
+        public static Asset<Texture2D> GuardianWarning => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/GuardianWarningBlack");
 
         public static Asset<Texture2D> HollowCircleSoftEdge => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/HollowCircleSoftEdge");
 

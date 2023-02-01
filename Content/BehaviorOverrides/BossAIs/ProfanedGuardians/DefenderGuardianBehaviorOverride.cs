@@ -19,6 +19,7 @@ using InfernumMode.Assets.ExtraTextures;
 using Terraria.DataStructures;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using ReLogic.Content;
+using CalamityMod;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -29,6 +30,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
 
         internal PrimitiveTrailCopy FireDrawer;
+
+        internal PrimitiveTrailCopy DashTelegraphDrawer;
 
         public enum DefenderAttackType
         {
@@ -47,12 +50,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.netUpdate = true;
                 return false;
             }
-            ref float attackState = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
+
+            CalamityGlobalNPC.doughnutBossDefender = npc.whoAmI;
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             Player target = Main.player[commander.target];
             npc.target = commander.target;
+
+            // These are inherited from the commander.
+            ref float attackState = ref commander.ai[0];
+            ref float attackTimer = ref commander.ai[1];
+            ref float drawFireSuckup = ref npc.ai[2];
+            drawFireSuckup = 0;
 
             // Reset taking damage.
             npc.dontTakeDamage = false;
@@ -69,14 +78,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloDefender:
-                    DoBehavior_SoloDefender(npc, target, ref attackTimer);
+                    DoBehavior_SoloDefender(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.HealerAndDefender:
-                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer);
+                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
             }
-
-            attackTimer++;
             return false;
         }      
 
@@ -95,14 +102,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 DrawBackglow(npc, spriteBatch, texture);
             }
 
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+
+            // Draw a dash telegraph when needed.
+            if (commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1)
+                DrawDashTelegraph(npc, spriteBatch, commander);
+
             // Glow during the healer solo.
-            if ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.SoloHealer)
+            if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
                 DrawBackglow(npc, spriteBatch, texture);
             // Draw the npc.
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
             // Have an overlay to show the high dr.
-            if ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.SoloHealer)
+            if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer)
                 DrawDefenseOverlay(npc, spriteBatch, texture);
 
             // Draw the glowmask over everything
@@ -114,7 +127,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawFireSuckup(NPC npc)
         {
-            FireDrawer ??= new PrimitiveTrailCopy((float completionRatio) => npc.Infernum().ExtraAI[DefenderFireSuckupWidthIndex] * 50f,
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            FireDrawer ??= new PrimitiveTrailCopy((float completionRatio) => commander.Infernum().ExtraAI[DefenderFireSuckupWidthIndex] * 50f,
                 FireColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
 
             Vector2 startPos = npc.Center;
@@ -147,6 +161,49 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
+        public void DrawDashTelegraph(NPC npc, SpriteBatch spriteBatch, NPC commander)
+        {
+            float opacityScalar = commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
+
+            // Don't bother drawing anything if it would not be visible.
+            if (opacityScalar == 0)
+                return;
+
+            DashTelegraphDrawer ??= new PrimitiveTrailCopy((float completionRatio) => 65f,
+                (float completionRatio) => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f) * commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex],
+                null, true, InfernumEffectsRegistry.SideStreakVertexShader);
+
+            InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.3f);
+
+            Vector2 startPos = npc.Center;
+            float distance = 1000f;
+            Vector2 direction = npc.DirectionTo(Main.player[npc.target].Center);
+            Vector2 endPos = npc.Center + direction * distance;
+            Vector2[] drawPositions = new Vector2[8];
+            for (int i = 0; i < drawPositions.Length; i++)
+                drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
+
+            DashTelegraphDrawer.Draw(drawPositions, -Main.screenPosition, 30);
+
+            // Draw arrows.
+            Texture2D arrowTexture = InfernumTextureRegistry.Arrow.Value;
+
+            Color drawColor = Color.Orange * opacityScalar;
+            drawColor.A = 0;
+            Vector2 drawPosition = (startPos + direction * 120f) - Main.screenPosition;
+            for (int i = 1; i < 8; i++)
+            {
+                Vector2 arrowOrigin = arrowTexture.Size() * 0.5f;
+                float arrowRotation = direction.ToRotation() + MathHelper.PiOver2;
+                float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
+                float finalOpacity = CalamityUtils.SineInOutEasing(sineValue, 1);
+                spriteBatch.Draw(arrowTexture, drawPosition, null, drawColor * finalOpacity, arrowRotation, arrowOrigin, 0.75f, SpriteEffects.None, 0f);
+                drawPosition += direction * 75f;
+            }
+
+        }
+
         public static void DrawDefenseOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
             spriteBatch.EnterShaderRegion();
@@ -160,9 +217,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float opacity = MathHelper.Lerp(0.01f, 0.12f, sine);
 
             // Draw the wall overlay.
-            DrawData wall = new(npcTexture, npc.Center - Main.screenPosition, npc.frame, Color.White * opacity, 0f, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
-            InfernumEffectsRegistry.RealityTear2Shader.Apply(wall);
-            wall.Draw(spriteBatch);
+            DrawData overlay = new(npcTexture, npc.Center - Main.screenPosition, npc.frame, Color.White * opacity, 0f, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            InfernumEffectsRegistry.RealityTear2Shader.Apply(overlay);
+            overlay.Draw(spriteBatch);
 
             spriteBatch.ExitShaderRegion();
         }

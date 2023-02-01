@@ -59,7 +59,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 InitialVelocity = Projectile.velocity;
                 InitialCenter = Projectile.Center;
+                Projectile.velocity = Vector2.Zero;
             }
+
+            if (Timer < 20)
+            {
+                Projectile.Center = InitialCenter;
+                Timer++;
+                return;
+            }
+            if (Timer == 20)
+                Projectile.velocity = InitialVelocity;
 
             Projectile.velocity = Projectile.velocity.RotatedBy(Direction * RotationAmount);
 
@@ -68,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Projectile.timeLeft < 15)
                 Projectile.damage = 0;
 
-            Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Timer++;
         }
@@ -102,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DrawLines(SpriteBatch spriteBatch)
         {
             // The total number of lines to draw.
-            int totalDrawPoints = 100;
+            int totalDrawPoints = 80;
 
             Texture2D lineTexture = InfernumTextureRegistry.Pixel.Value;
             // Initialize the previous point + velocity with the projectiles initial ones.
@@ -143,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Update the previous points.
                 previousDrawPoint = drawPoint;
                 previousDrawVelocity = drawVelocity;
-            }          
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

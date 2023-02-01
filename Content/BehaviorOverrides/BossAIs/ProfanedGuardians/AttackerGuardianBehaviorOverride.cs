@@ -87,10 +87,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
 
-            // Don't take damage if other guardianas are around.
+            // Don't take damage if other guardians are around.
             npc.dontTakeDamage = false;
             if (TotalRemaininGuardians >= 2f)
                 npc.dontTakeDamage = true;
+
+            // Reset fields.
+            npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0; 
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
@@ -109,10 +112,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_SoloHealer(npc, target, ref attackTimer, npc);
                     break;
                 case GuardiansAttackType.SoloDefender:
-                    DoBehavior_SoloDefender(npc, target, ref attackTimer);
+                    DoBehavior_SoloDefender(npc, target, ref attackTimer, npc);
                     break;
                 case GuardiansAttackType.HealerAndDefender:
-                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer);
+                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer, npc);
                     break;
                 case GuardiansAttackType.CommanderDeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer);

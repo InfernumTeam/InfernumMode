@@ -44,6 +44,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
+        public static MiscShaderData TelegraphVertexShader => GameShaders.Misc["Infernum:TelegraphShader"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
         public static MiscShaderData WaterVertexShader => InfernumConfig.Instance.ReducedGraphicsConfig ? DukeTornadoVertexShader : GameShaders.Misc["Infernum:WaterShader"];
         public static MiscShaderData WoFGeyserVertexShader => GameShaders.Misc["Infernum:WoFGeyserTexture"];
@@ -84,6 +85,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> telegraphShader = new(assets.Request<Effect>("Assets/Effects/TelegraphShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:TelegraphShader"] = new MiscShaderData(telegraphShader, "TrailPass");
+
             Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
 

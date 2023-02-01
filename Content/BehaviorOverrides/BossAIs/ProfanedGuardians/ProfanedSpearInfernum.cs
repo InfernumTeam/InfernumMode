@@ -50,13 +50,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Projectile.tileCollide = Timer - TelegraphDuration > 90;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             if (Timer > TelegraphDuration)
             {
                 // Accelerate.
                 if (Projectile.velocity.Length() < 36f)
                     Projectile.velocity *= 1.028f;
+                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
             }
             else
             {
@@ -95,8 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
             else
             {
-                float alpha = 1f - (float)Projectile.alpha / 255;
-                CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
+                CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * Projectile.Opacity, 1);
                 Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
             }
             return false;

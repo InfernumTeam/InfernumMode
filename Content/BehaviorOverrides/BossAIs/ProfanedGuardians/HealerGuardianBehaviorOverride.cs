@@ -26,13 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
 
-        public enum HealerAttackType
-        {
-            SpawnEffects,
-            SitAndMaintainFrontShield,
-            SitAndShieldCommander
-        }
-
         internal PrimitiveTrailCopy ShieldEnergyDrawer;
 
         #region AI
@@ -50,10 +43,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             Player target = Main.player[commander.target];
-            ref float attackState = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
+            ref float attackState = ref commander.ai[0];
+            ref float attackTimer = ref commander.ai[1];
             ref float drawShieldConnections = ref npc.ai[2];
-            ref float connectionsWidthScale = ref npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
+            drawShieldConnections = 0f;
+            ref float connectionsWidthScale = ref commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
 
             npc.damage = 0;
             npc.target = commander.target;
@@ -74,14 +68,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.SoloDefender:
-                    DoBehavior_SoloDefender(npc, target, ref attackTimer);
+                    DoBehavior_SoloDefender(npc, target, ref attackTimer, commander);
                     break;
                 case GuardiansAttackType.HealerAndDefender:
-                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer);
+                    DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
             }
-
-            attackTimer++;
+            if (drawShieldConnections == 1)
+                connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
+            else
+                connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
             return false;
         }
         #endregion
@@ -94,10 +90,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow2").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
-            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             // If maintaining the front shield or shielding the commander, glow.
-            if ((HealerAttackType)npc.ai[0] is HealerAttackType.SitAndMaintainFrontShield or HealerAttackType.SitAndShieldCommander)
+            if ((GuardiansAttackType)commander.ai[0] is GuardiansAttackType.FlappyBird or GuardiansAttackType.SoloHealer)
                 DrawNPCBackglow(npc, spriteBatch, texture, direction);
 
             // Draw the npc.
@@ -126,15 +123,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawShieldConnections(NPC npc)
         {
-            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] * 20f, EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
-
-            if (!Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal) && !Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] * 20f,
+                EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
+            NPC npcToConnectTo = default;
+            if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
+            {
+                if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
+                    npcToConnectTo = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
+                else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
+                {
+                    if (Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+                        npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
+                }
+            }
+            else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
+            {
+                if (Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+                    npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            }
+            else
                 return;
 
-            NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
-
             Vector2 startPos = npc.TopLeft + new Vector2(16f, 60f);
-            Vector2 endPos = crystal.Top;
+            Vector2 endPos = npcToConnectTo.Top;
 
             InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBubbleGlow);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(MagicCrystalShot.ColorSet[0], Color.White, 0.1f));
@@ -148,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
 
             ShieldEnergyDrawer.Draw(drawPositions, -Main.screenPosition, 30);
-            endPos = crystal.Bottom;
+            endPos = npcToConnectTo.Bottom;
             for (int i = 0; i < drawPositions.Length; i++)
                 drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
             ShieldEnergyDrawer.Draw(drawPositions, -Main.screenPosition, 30);

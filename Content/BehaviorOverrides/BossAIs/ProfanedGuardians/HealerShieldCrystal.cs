@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     return;
 
                 NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
-                // Tell the commander to swap attacks. The other guardians check for this automatically.
+                // Tell the commander to swap attacks. The other guardians use this.
                 commander.ai[0] = (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer;
                 // Reset the first 5 extra ai slots. These are used for per attack information.
                 for (int i = 0; i < 5; i++)

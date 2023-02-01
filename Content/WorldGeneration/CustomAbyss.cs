@@ -152,7 +152,8 @@ namespace InfernumMode.Content.WorldGeneration
                     Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
                     Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
                     Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
-                    Main.tile[x, y].LiquidAmount = 0;
+                    Main.tile[x, y].Get<LiquidData>().LiquidType = LiquidID.Water;
+                    Main.tile[x, y].LiquidAmount = 255;
                 }
             }
         }
@@ -431,6 +432,7 @@ namespace InfernumMode.Content.WorldGeneration
             int maxWidth = MaxAbyssWidth - WallThickness;
 
             // Initialize the trench list.
+            List<Point> trenchTops = new();
             trenchBottoms = new();
 
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
@@ -438,8 +440,12 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 int trenchX = (int)MathHelper.Lerp(104f, maxWidth * 0.7f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(25, 35);
+                trenchTops.Add(new(GetActualX(trenchX), trenchY));
                 trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
             }
+
+            // Create a connecting cavern between the left and rightmost trenches.
+            GenerateLayer2ConnectingCavern(trenchTops.First(), trenchBottoms.Last());
 
             Rectangle layer2Area = new(1, Layer2Top, maxWidth, Layer3Top - Layer2Top);
             GenerateLayer2Wildlife(layer2Area);
@@ -497,6 +503,35 @@ namespace InfernumMode.Content.WorldGeneration
 
             // Return the end position of the trench. This is used by the layer 3 gen to determine where caves should begin being carved out.
             return currentPoint;
+        }
+
+        public static void GenerateLayer2ConnectingCavern(Point topLeft, Point bottomRight)
+        {
+            topLeft.Y += 24;
+            bottomRight.Y -= 24;
+
+            // Maintain coordinate consistency such that the top left point is actually to the left.
+            if (topLeft.X > bottomRight.X)
+                Utils.Swap(ref topLeft, ref bottomRight);
+
+            // Generate a ragged cavern between the trenches.
+            int width = WorldGen.genRand.Next(MinEndingTrenchWidth, MaxEndingTrenchWidth) / 3;
+            int offsetSeed = WorldGen.genRand.Next();
+            Point currentPoint = topLeft;
+
+            while (!currentPoint.ToVector2().WithinRange(bottomRight.ToVector2(), 18f))
+            {
+                // Calculate the horizontal offset of the current trench.
+                int currentOffset = (int)(FractalBrownianMotion(currentPoint.X * TrenchOffsetNoiseMagnificationFactor * 3f, currentPoint.Y * TrenchOffsetNoiseMagnificationFactor * 3f, offsetSeed, 5) * MaxTrenchOffset * 0.67f);
+                
+                for (int dx = -width / 2; dx < width / 2; dx++)
+                {
+                    for (int dy = 0; dy < 3; dy++)
+                        ResetToWater(new(currentPoint.X + dx + currentOffset, currentPoint.Y + dy));
+                }
+
+                currentPoint = (currentPoint.ToVector2() + (bottomRight.ToVector2() - currentPoint.ToVector2()).SafeNormalize(Vector2.UnitY) * 2f).ToPoint();
+            }
         }
 
         public static void GenerateLayer2Wildlife(Rectangle area)
@@ -842,7 +877,7 @@ namespace InfernumMode.Content.WorldGeneration
             ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
             FastRandom rng = new(WorldGen.genRand.Next());
 
-            for (int i = area.Left; i < area.Right; i++)
+            for (int i = area.Left; i < area.Right + 36; i++)
             {
                 int x = GetActualX(i);
                 for (int y = area.Top; y < area.Bottom; y++)

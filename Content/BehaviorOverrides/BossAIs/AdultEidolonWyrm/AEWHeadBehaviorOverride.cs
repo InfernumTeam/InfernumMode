@@ -102,7 +102,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             target.breath = target.breathMax;
             target.ignoreWater = true;
             target.wingTime = target.wingTimeMax;
-            AbyssWaterColorSystem.WaterBlacknessInterpolant = 0f;
 
             // Reset various things every frame.
             npc.dontTakeDamage = false;

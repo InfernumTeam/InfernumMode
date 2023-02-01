@@ -80,11 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
                 return false;
             }
-
-            // Disable the blackness effect when attacking.
-            if (currentAttack is not ReaperSharkAttackState.StalkTarget and not ReaperSharkAttackState.RoarAnimation)
-                AbyssWaterColorSystem.WaterBlacknessInterpolant = 0f;
-
+            
             switch (currentAttack)
             {
                 case ReaperSharkAttackState.StalkTarget:
@@ -217,9 +213,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Disable contact damage.
             npc.damage = 0;
-
-            // Make the water darkness recede away, so that the player can see the shark.
-            AbyssWaterColorSystem.WaterBlacknessInterpolant = Utils.GetLerpValue(waterBlackFadeTime, 0f, attackTimer, true);
 
             // Create a shockwave to accompany the charge.
             if (attackTimer == fadeInTime - 8f)

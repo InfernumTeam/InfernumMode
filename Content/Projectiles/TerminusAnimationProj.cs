@@ -45,6 +45,13 @@ namespace InfernumMode.Projectiles
 
         public override void AI()
         {
+            // Die if Infernum is not active.
+            if (!InfernumMode.CanUseCustomAIs)
+            {
+                Projectile.Kill();
+                return;
+            }
+
             // Play the charge sound if it has not been started yet.
             if (!ChargeSound.IsValid)
                 ChargeSound = SoundEngine.PlaySound(BossRushEvent.TerminusActivationSound with { IsLooped = true }, Projectile.Center);

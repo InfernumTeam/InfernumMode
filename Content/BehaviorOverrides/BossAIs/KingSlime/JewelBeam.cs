@@ -6,13 +6,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class JewelBeam : ModProjectile
     {
-        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Beam");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Beam");
+            Main.projFrames[Type] = 4;
+        }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 8;
+            Projectile.width = Projectile.height = 12;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
@@ -21,6 +23,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public override void AI()
         {
+            // Decide frames.
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+
             if (Main.dedServ)
                 return;
 
@@ -43,15 +50,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             Dust gleamingRed = Dust.NewDustPerfect(Projectile.Center, 182);
             gleamingRed.velocity = Vector2.Zero;
             gleamingRed.noGravity = true;
-            gleamingRed.scale = 1.05f;
+            gleamingRed.scale = 0.5f;
 
             for (int direction = -1; direction <= 1; direction += 2)
             {
                 gleamingRed = Dust.NewDustPerfect(Projectile.Center, 182);
                 gleamingRed.velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
                 gleamingRed.noGravity = true;
-                gleamingRed.scale = Main.rand.NextFloat(1.3f, 1.45f);
+                gleamingRed.scale = Main.rand.NextFloat(0.8f, 0.96f);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, 2f);
+            return false;
         }
     }
 }

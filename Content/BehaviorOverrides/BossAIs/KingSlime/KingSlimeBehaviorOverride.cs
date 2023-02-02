@@ -163,10 +163,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 return false;
             }
 
-            if (npc.position.WithinRange(npc.oldPosition, 5f))
+            if (npc.position.WithinRange(npc.oldPosition, 2f))
             {
                 stuckTimer++;
-                if (stuckTimer >= 240f)
+                if (stuckTimer >= 300f)
                 {
                     npc.ai[1] = (int)KingSlimeAttackType.Teleport;
                     stuckTimer = 0f;
@@ -271,6 +271,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             // Perform a large jump.
             DoBehavior_LargeJump(npc, ref target, ref deathTimer, true);
+
+            // Stay above ground.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height, true))
+            {
+                npc.velocity.Y = 0f;
+                npc.position.Y -= 12f;
+            }
 
             // Check if the ninja has initialized their local timer, which happens after they create the projectile, plus the length which is ~30.
             if (deathTimer > 70)

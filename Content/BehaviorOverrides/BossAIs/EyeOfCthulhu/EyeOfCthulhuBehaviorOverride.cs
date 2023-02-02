@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public static void DoBehavior_HorizontalBloodCharge(NPC npc, Player target, bool enraged, bool phase2, bool phase4, ref float attackTimer, ref bool drawAfterimages)
         {
-            int bloodBallReleaseRate = 15;
+            int bloodBallReleaseRate = 13;
             int chargeTime = 75;
             if (phase2)
             {
@@ -359,7 +359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 npc.damage = 0;
 
                 float redirectSpeed = attackTimer / 15f + 14f;
-                Vector2 destination = target.Center + new Vector2(-chargeDirection * 1100f, -300f);
+                Vector2 destination = target.Center + new Vector2(-chargeDirection * 720f, -300f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * redirectSpeed, 0.06f);
                 npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
                 if (npc.WithinRange(destination, 32f))
@@ -399,8 +399,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 60, 0f);
                 }
 
-                if (attackTimer >= chargeTime || Math.Abs(npc.Center.X - target.Center.X) > 1200f)
+                if (attackTimer >= chargeTime || Math.Abs(npc.Center.X - target.Center.X) > 920f)
+                {
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.35f);
                     SelectNextAttack(npc);
+                }
             }
         }
 
@@ -548,8 +551,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (redirectSpeed < 30f)
                     redirectSpeed *= 1.015f;
 
+                float inertia = Utils.Remap(attackTimer, 0f, 42f, 36f, 5f);
                 Vector2 destination = target.Center + spinAngle.ToRotationVector2() * spinRadius;
-                npc.velocity = (npc.velocity * 3f + npc.SafeDirectionTo(destination) * redirectSpeed) / 4f;
+                npc.velocity = (npc.velocity * (inertia - 1f) + npc.SafeDirectionTo(destination) * redirectSpeed) / inertia;
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 if (npc.WithinRange(destination, redirectSpeed + 8f))

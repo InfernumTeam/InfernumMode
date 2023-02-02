@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             NPC.noGravity = true;
             NPC.lavaImmune = true;
             NPC.noTileCollide = true;
-            NPC.damage = 48;
+            NPC.damage = 40;
             NPC.height = NPC.width = 28;
             NPC.defense = 2;
             NPC.lifeMax = BossRushEvent.BossRushActive ? 6500 : 24;

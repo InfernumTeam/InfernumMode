@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (shootRate >= 1 && attackTimer % shootRate == shootRate - 1f)
             {
                 MakeJewelFire();
-                SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
+                SoundEngine.PlaySound(SoundID.Item28, target.Center);
             }
 
             attackTimer++;

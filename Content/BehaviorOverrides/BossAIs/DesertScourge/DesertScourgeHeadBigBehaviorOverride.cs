@@ -71,8 +71,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 720f);
-            bool enraged = enrageTimer > 660f;
+            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
+            bool enraged = enrageTimer > 360f;
 
             npc.defense = npc.defDefense;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
@@ -400,12 +400,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         }
 
                         // Create the tornadoes.
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(6f, 14.75f, i / 4f);
-                            Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
-                            Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
-                        }
+                        Vector2 tornadoVelocity = Vector2.UnitX * 4f;
+                        Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
 
                         npc.netUpdate = true;
                     }

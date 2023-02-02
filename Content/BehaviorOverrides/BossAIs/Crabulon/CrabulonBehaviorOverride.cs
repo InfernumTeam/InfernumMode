@@ -18,6 +18,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Common;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics;
+using Terraria.DataStructures;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -478,12 +479,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(clawCenter, Vector2.UnitX * i * -6f, ProjectileID.DD2OgreSmash, 0, 0f);
 
+                        if (target.WithinRange(clawCenter, 100f))
+                            target.Hurt(PlayerDeathReason.ByNPC(npc.whoAmI), npc.damage, i);
+
                         // Release a bunch of falling crab shrooms into the air from both arms.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int j = 0; j < (enraged ? 25 : 12); j++)
                             {
+                                float pointToCrabulonInterpolant = Utils.GetLerpValue(5f, 0f, j, true);
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
+                                shroomVelocity.X = MathHelper.Lerp(shroomVelocity.X, (npc.Center - clawCenter).SafeNormalize(Vector2.Zero).X * 4f, pointToCrabulonInterpolant);
+
+                                // Make mushrooms go higher up if the target is quite a bit above Crabulon.
+                                if (target.Center.Y < npc.Center.Y - 400f)
+                                    shroomVelocity.Y *= 1.5f;
+
                                 Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
                             }
                         }

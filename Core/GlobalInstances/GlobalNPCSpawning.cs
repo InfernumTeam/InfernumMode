@@ -5,7 +5,6 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using SubworldLibrary;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -34,9 +33,17 @@ namespace InfernumMode.GlobalInstances
             if (!WorldSaveSystem.InPostAEWUpdateWorld)
                 return;
 
-            // Don't spawn anything naturally in layer 4. The miniboss spawns will be handled manually. The only exception to this is bobbit worms.
+            // Don't spawn anything naturally in layer 4. The miniboss spawns will be handled manually.
             if (spawnInfo.Player.Calamity().ZoneAbyssLayer4)
-                pool = pool.Where(p => p.Key == ModContent.NPCType<BobbitWormHead>()).ToDictionary(kv => kv.Key, kv => kv.Value);
+            {
+                pool.Clear();
+
+                if (!AbyssMinibossSpawnSystem.MajorAbyssEnemyExists)
+                {
+                    pool[ModContent.NPCType<Bloatfish>()] = 0.1f;
+                    pool[ModContent.NPCType<BobbitWormHead>()] = 0.08f;
+                }
+            }
 
             // Clear abyss miniboss spawns from the pool. They are always spawned manually, since traditional enemy spawns have a
             // tendency to be limited to spawning on solid ground.

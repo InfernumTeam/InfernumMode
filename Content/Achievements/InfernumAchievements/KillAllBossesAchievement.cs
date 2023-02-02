@@ -175,7 +175,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                             updatedList = true;
                         }
                     }
-                    else if (ExoMechManagement.ExoMechIDs.Contains(npcID) &&!BossesCompleted[Utilities.GetNPCNameFromID(draedonID)])
+                    else if (ExoMechManagement.ExoMechIDs.Contains(npcID) && !BossesCompleted[Utilities.GetNPCNameFromID(draedonID)])
                     {
                         if (ExoMechManagement.TotalMechs <= 1)
                         {

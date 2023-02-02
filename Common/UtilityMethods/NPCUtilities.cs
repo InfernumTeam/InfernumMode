@@ -92,7 +92,6 @@ namespace InfernumMode
         {
             if (id < NPCID.Count)
                 return NPC.GetFullnameByID(id);
-            ;
 
             return NPCLoader.GetNPC(id).DisplayName.GetDefault();
         }

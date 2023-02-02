@@ -27,7 +27,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
         }
 
-        public const int MinibossSpawnRate = 1380;
+        public const int MinibossSpawnRate = 2400;
         
         public override void PreUpdateWorld()
         {
@@ -57,7 +57,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Spawn a miniboss a preset distance away from the target.
             int minibossID = ModContent.NPCType<ReaperShark>();
             Vector2 minibossSpawnPosition = player.Center + Main.rand.NextVector2CircularEdge(1080f, 1080f);
-            NPC.NewNPC(new EntitySource_WorldEvent(), (int)minibossSpawnPosition.X, (int)minibossSpawnPosition.Y, minibossID, 1);
+            
+            int miniboss = NPC.NewNPC(new EntitySource_WorldEvent(), (int)minibossSpawnPosition.X, (int)minibossSpawnPosition.Y, minibossID, 1);
+            if (Main.npc.IndexInRange(miniboss))
+                Main.npc[miniboss].netUpdate = true;
         }
     }
 }

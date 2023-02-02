@@ -19,12 +19,6 @@ namespace InfernumMode.GlobalInstances
                 spawnRate *= 40000;
                 maxSpawns = 0;
             }
-
-            if (player.Calamity().ZoneAbyssLayer4 && WorldSaveSystem.InPostAEWUpdateWorld)
-            {
-                spawnRate *= 40000;
-                maxSpawns = 0;
-            }
         }
 
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)

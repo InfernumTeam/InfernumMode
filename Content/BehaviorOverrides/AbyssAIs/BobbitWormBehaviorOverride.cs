@@ -3,6 +3,7 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,6 +35,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.Infernum().IsAbyssPredator = true;
             NPCID.Sets.UsesNewTargetting[npc.type] = true;
 
+            // Emit faint light.
+            if (npc.Opacity >= 1f)
+                Lighting.AddLight(npc.Center, Color.Cyan.ToVector3() * 0.3f);
+
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float groundBottomX = ref npc.Infernum().ExtraAI[1];
@@ -54,6 +59,22 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 npc.localAI[0] = 1f;
                 npc.RemoveWaterSlowness();
                 npc.netUpdate = true;
+            }
+
+            // Hide if there's an abyss miniboss.
+            if (AbyssMinibossSpawnSystem.MajorAbyssEnemyExists)
+            {
+                attackState = (int)BobbitWormAttackState.WaitForTarget;
+                groundBottomY += 6f;
+                npc.behindTiles = true;
+                npc.Opacity -= 0.03f;
+                if (npc.Opacity <= 0f)
+                    npc.active = false;
+            }
+            else
+            {
+                npc.Opacity = 1f;
+                npc.behindTiles = false;
             }
 
             // Disable knockback and go through tiles.

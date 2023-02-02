@@ -485,7 +485,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                         // Release a bunch of falling crab shrooms into the air from both arms.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int j = 0; j < (enraged ? 25 : 12); j++)
+                            for (int j = 0; j < (enraged ? 28 : 16); j++)
                             {
                                 float pointToCrabulonInterpolant = Utils.GetLerpValue(5f, 0f, j, true);
                                 Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);

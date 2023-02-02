@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 HasCreatedSlimeExplosion = true;
             }
 
-            NPC.damage = KatanaUseTimer > 0 ? 115 : 0;
+            NPC.damage = 0;
             NPC.noTileCollide = NPC.Bottom.Y < Target.Top.Y;
             AttackDelayFuckYou++;
 
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                         for (int i = 0; i < shurikenCount; i++)
                         {
                             Vector2 shurikenVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * shurikenSpeed;
-                            Utilities.NewProjectileBetter(NPC.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
+                            Utilities.NewProjectileBetter(NPC.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 60, 0f);
                         }
                     }
 
@@ -195,19 +195,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (NPC.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f && onSolidGround)
-            {
-                NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
-                NPC.velocity = NPC.SafeDirectionTo(Target.Center) * 8f;
-                NPC.velocity.Y -= 4f;
-                KatanaRotation = 0f;
-                KatanaUseTimer = KatanaUseLength = 54f;
-                ShurikenShootCountdown = 0f;
-                NPC.netUpdate = true;
-
-                SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
-            }
-
             if (Main.netMode != NetmodeID.MultiplayerClient && canDashTeleport)
             {
                 StuckTimer = 0f;
@@ -232,39 +219,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public void DoBehaviorDeathAnimation()
         {
-            // Variables.
+            // Variables
             float kingSlimeCenterX = NPC.Infernum().ExtraAI[8];
             float kingSlimeCenterY = NPC.Infernum().ExtraAI[9];
             ref float localDeathTimer = ref NPC.Infernum().ExtraAI[10];
             ref float tearProjectileIndex = ref NPC.Infernum().ExtraAI[11];
-            float chargeSpeed = 25f;
-            float extraEndSlashDelay = 20f;
+            float chargeSpeed = 25;
+            float extraEndSlashDelay = 20;
             Vector2 kingSlimeCenter = new(kingSlimeCenterX, kingSlimeCenterY);
-            Vector2 teleportOffset = new(375f, -100f);
+            Vector2 teleportOffset = new(375, -100);
 
             // Calclate the length of the Vector, using pythagarus theorum.
             float teleportOffsetDifference = teleportOffset.Length();
-            
+
             // Then the length in time it will take to move two of them at the charge speed.
             int dashLength = (int)(teleportOffsetDifference / chargeSpeed * 2);
-            
-            // Teleport if king slime has set a landing position.
+
+            // If king slime has set us a landing position.
             if (kingSlimeCenterX > 0 && localDeathTimer == 0)
             {
-                // Ensures that the teleport only happens once by saving the current timer time.
+                // Stops us running this again. Also save the current timer time.
                 localDeathTimer = SyncedDeathTimer;
-                
                 // Teleport to the initial position.
-                NPC.Center = kingSlimeCenter + teleportOffset;
-
-                // Reset a bunch of variables and become invisible.
+                NPC.Center = kingSlimeCenter + new Vector2(375, -100);
+                // Reset a bunch of variables, and make us invisible.
                 NPC.velocity = Vector2.Zero;
                 NPC.Opacity = 0;
                 NPC.rotation = 0;
                 NPC.noGravity = true;
                 NPC.spriteDirection = -1;
-
-                // Create disappearance dust.
+                // Create dust
                 for (int i = 0; i < 6; i++)
                 {
                     Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
@@ -278,15 +262,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     }
                 }
             }
-            
+            // If we've teleported, and our local timer has been set.
             else if (localDeathTimer > 0)
             {
-                // Move through tiles after the teleport.
+                // Allow us to go through tiles.
                 NPC.noTileCollide = true;
-                
-                if (SyncedDeathTimer == localDeathTimer + 1f)
+
+                // If the synced timer is equal to the saved one plus 1
+                if (SyncedDeathTimer == localDeathTimer + 1)
                 {
-                    // Create reappearance dust.
+                    // Spawn dust
                     for (int i = 0; i < 6; i++)
                     {
                         Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
@@ -299,10 +284,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                             ninjaDodgeDust.noGravity = true;
                         }
                     }
-                    
-                    // Re-appear.
-                    NPC.Opacity = 1f;
-
+                    // Re-appear
+                    NPC.Opacity = 1;
                     // Play a sound, and begin moving through king slime.
                     SoundEngine.PlaySound(InfernumSoundRegistry.VassalSlashSound, NPC.Center);
                     NPC.velocity = NPC.SafeDirectionTo(kingSlimeCenter) * chargeSpeed;
@@ -312,26 +295,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         tearProjectileIndex = Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<DeathSlash>(), 200, 0f);
                 }
-
-                // After the slash can concluded.
+                // If we have reached the end of the time we want to spend slashing.
                 if (SyncedDeathTimer > localDeathTimer + dashLength)
                 {
-                    // If the Ninja should vanish, this extraEndSlashDelay is the amount of time it takes for the slash to catch up to it.
+                    // If we should vanish, this extraEndSlashDelay is the amount of time it takes for the slash to catch up to us,
                     if (SyncedDeathTimer > localDeathTimer + dashLength + extraEndSlashDelay)
                     {
-                        // Reset the tear projectile index.
+                        // Clear this
                         tearProjectileIndex = -1f;
 
-                        // Delete the tear projectile.
-                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DeathSlash>());
+                        // Kill the slash projectile.
+                        for (int i = 0; i < Main.projectile.Length; i++)
+                        {
+                            if (Main.projectile[i].type == ModContent.ProjectileType<DeathSlash>())
+                            {
+                                Main.projectile[i].active = false;
+                                break;
+                            }
+                        }
                     }
-                    
                     // Freeze in place.
                     NPC.velocity = Vector2.Zero;
-
-                    // If fadeout effects have not finished, spawn dust. this is to prevent looping.
+                    // If we havent faded out, spawn dust. this is to prevent looping.
                     if (NPC.Opacity > 0)
-                    {
                         for (int i = 0; i < 6; i++)
                         {
                             Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
@@ -344,23 +330,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                                 ninjaDodgeDust.noGravity = true;
                             }
                         }
-                    }
-
-                    // Disappear.
-                    NPC.Opacity = 0f;
+                    // Fade out.
+                    NPC.Opacity = 0;
                 }
             }
-
-            // Otherwise, go invisible and await being told where to teleport to.
+            // Else, go invisible and await being told where to TP to.
             else
-            {           
-                // Reset the rotation such that it points forward, and disable natural gravity.
-                NPC.rotation = 0f;
+            {
+                // Reset our rotation, and make sure we dont fall anywhere.
+                NPC.rotation = 0;
                 NPC.noGravity = true;
-
-                // If fadeout effects have not finished, spawn dust. this is to prevent looping.
-                if (NPC.Opacity > 0f)
-                {
+                // If we havent faded out, spawn dust. this is to prevent looping.
+                if (NPC.Opacity > 0)
                     for (int i = 0; i < 6; i++)
                     {
                         Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
@@ -373,10 +354,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                             ninjaDodgeDust.noGravity = true;
                         }
                     }
-                }
-                
-                // Disappear.
-                NPC.Opacity = 0f;
+                // Fade out
+                NPC.Opacity = 0;
             }
         }
 

@@ -13,6 +13,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 {
@@ -229,14 +230,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         SoundEngine.PlaySound(DesertScourgeHead.RoarSound, npc.Center);
 
                     // Release sand upward.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
+                    if (attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
-                        Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(8f, 11f);
-                        Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(8f, 11f);
+                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
 
-                        for (int i = 0; i < 5; i++)
-                            CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
+                            for (int i = 0; i < 5; i++)
+                                CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
+                        }
+
+                        // Emit strong dust bursts upward.
+                        for (int i = 0; i < 80; i++)
+                        {
+                            if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 900f)
+                                break;
+
+                            Vector2 air = Utilities.GetGroundPositionFrom(npc.Center, new Searches.Up(9000)) - Vector2.UnitY * 32f;
+                            Dust sand = Dust.NewDustPerfect(air, 32);
+                            sand.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * (i * 0.85f + 4f);
+                            sand.scale = Main.rand.NextFloat(0.8f, 1f) + i * 0.024f;
+                            sand.fadeIn = -1f;
+                            sand.noGravity = true;
+                        }
+
                         SoundEngine.PlaySound(SoundID.Item21, npc.Center);
                     }
 
@@ -252,9 +271,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(22f, 16f, 1f - lifeRatio));
+            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(19f, 14f, 1f - lifeRatio));
             float sandParticleSpeed = 9.5f;
-            float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
+            float idealFlySpeed = MathHelper.Lerp(4f, 7f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.011f;
             if (enraged)
             {
                 sandParticleReleaseRate /= 2;
@@ -292,11 +311,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Create the sandstorm.
-            Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
+            Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-1020f, 850f));
             Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandParticleReleaseRate == sandParticleReleaseRate - 1f)
             {
-
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
 
                 for (int i = 0; i < 2; i++)

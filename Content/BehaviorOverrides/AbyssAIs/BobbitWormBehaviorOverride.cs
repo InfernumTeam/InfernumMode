@@ -2,7 +2,9 @@ using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Particles;
+using CalamityMod.Projectiles.Melee;
 using CalamityMod.Sounds;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -53,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Initialize the ground position.
             if (npc.localAI[0] == 0f)
             {
-                npc.Bottom = Utilities.GetGroundPositionFrom(npc.Bottom.ToTileCoordinates()).ToWorldCoordinates(8f, -20f);
+                npc.Center = Utilities.GetGroundPositionFrom(npc.Center.ToTileCoordinates()).ToWorldCoordinates(8f, -36f);
                 groundBottomX = npc.Bottom.X;
                 groundBottomY = npc.Bottom.Y;
                 npc.localAI[0] = 1f;
@@ -136,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public static void DoBehavior_SnatchTarget(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float frame)
         {
-            int maxSnatchTime = 56;
+            int maxSnatchTime = 40;
             float maxSpeed = 33f;
             float acceleration = 1.15f;
 
@@ -191,7 +193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             frame = 3f;
 
             // Wobble around in place erratically while approaching the resting position.
-            float wobbleRotation = CalamityUtils.AperiodicSin(attackTimer / 42f) * 0.98f;
+            float wobbleRotation = CalamityUtils.AperiodicSin(attackTimer / 30f) * 0.98f;
             Vector2 restingPosition = new(npc.Infernum().ExtraAI[1], npc.Infernum().ExtraAI[2]);
             npc.Center = npc.Center.MoveTowards(restingPosition + (npc.Center - restingPosition).SafeNormalize(Vector2.Zero) * 90f, 18f);
 
@@ -209,7 +211,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
             if (target.Type == NPCTargetType.NPC)
             {
-                Main.npc[npc.TranslatedTargetIndex].StrikeNPC(200, 0f, 0);
+                Main.npc[npc.TranslatedTargetIndex].HitSound = Main.npc[npc.TranslatedTargetIndex].HitSound.Value with
+                {
+                    Volume = 0f
+                };
+                Main.npc[npc.TranslatedTargetIndex].StrikeNPCNoInteraction(Main.rand.Next(200, 225), 0f, 0);
                 Main.npc[npc.TranslatedTargetIndex].Center = npc.Center - Vector2.UnitY * 16f;
             }
 
@@ -231,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             if (TargetIsOrganic(npc, target))
             {
-                SoundEngine.PlaySound(SoundID.NPCHit1, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
                 for (int i = 0; i < (initialImpact ? 13 : 4); i++)
                 {
                     int bloodLifetime = Main.rand.Next(22, 36);
@@ -255,21 +261,24 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     BloodParticle2 blood = new(target.Center, bloodVelocity, 20, bloodScale, bloodColor);
                     GeneralParticleHandler.SpawnParticle(blood);
                 }
+
+                BloodCloudParticle bloodCloud = new(target.Center, Main.rand.NextVector2Circular(12f, 12f), 270, Main.rand.NextFloat(1.9f, 2.12f));
+                GeneralParticleHandler.SpawnParticle(bloodCloud);
                 return;
             }
 
-            for (int i = 0; i < (initialImpact ? 12 : 6); i++)
+            for (int i = 0; i < (initialImpact ? 12 : 3); i++)
             {
                 int sparkLifetime = Main.rand.Next(22, 36);
-                float sparkScale = Main.rand.NextFloat(1.2f, 1.5f);
+                float sparkScale = Main.rand.NextFloat(0.7f, 0.8f);
                 Color sparkColor = Color.Lerp(Color.Silver, Color.Gold, Main.rand.NextFloat(0.7f));
                 sparkColor = Color.Lerp(sparkColor, Color.Orange, Main.rand.NextFloat());
 
                 if (Main.rand.NextBool(6))
                     sparkScale *= 2f;
 
-                Vector2 sparkVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.6f) * Main.rand.NextFloat(12f, 25f);
-                sparkVelocity.Y -= 6f;
+                Vector2 sparkVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * Main.rand.NextFloat(9f, 14f);
+                sparkVelocity.Y -= 4f;
                 SparkParticle spark = new(target.Center, sparkVelocity, true, sparkLifetime, sparkScale, sparkColor);
                 GeneralParticleHandler.SpawnParticle(spark);
             }

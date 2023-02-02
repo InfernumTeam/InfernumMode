@@ -15,6 +15,8 @@ namespace InfernumMode
 
         public static DebuffEffectsPlayer Infernum_Debuff(this Player player) => player.GetModPlayer<DebuffEffectsPlayer>();
 
+        public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
+
         public static HatGirlTipsPlayer Infernum_HatGirl(this Player player) => player.GetModPlayer<HatGirlTipsPlayer>();
 
         public static GlobalNPCOverrides Infernum(this NPC npc) => npc.GetGlobalNPC<GlobalNPCOverrides>();

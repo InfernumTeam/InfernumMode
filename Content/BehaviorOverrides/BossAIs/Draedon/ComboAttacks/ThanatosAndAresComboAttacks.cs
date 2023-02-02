@@ -21,7 +21,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {

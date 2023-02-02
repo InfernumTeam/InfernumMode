@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.Utilities;
 
 namespace InfernumMode
 {
@@ -28,7 +27,7 @@ namespace InfernumMode
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
         public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * ((float)Math.Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
-
+        
         /// <summary>
         /// Determines the angular distance between two vectors based on dot product comparisons. This method ensures underlying normalization is performed safely.
         /// </summary>
@@ -50,7 +49,7 @@ namespace InfernumMode
             gravity = -Math.Abs(gravity);
 
             float horizontalRange = MathHelper.Distance(shootingPosition.X, destination.X);
-            float fireAngleSine = gravity * horizontalRange / (float)Math.Pow(shootSpeed, 2);
+            float fireAngleSine = gravity * horizontalRange / (float)Math.Pow(shootSpeed, 2D);
 
             // Clamp the sine if no fallback is provided.
             if (nanFallback is null)
@@ -127,73 +126,6 @@ namespace InfernumMode
                 return targetPosition;
 
             return currentPosition + v.SafeNormalize(Vector2.Zero) * maxAmountAllowedToMove;
-        }
-
-        /// <summary>
-        /// Gives an approximation of a derivative of a function at a given point based on the limit (f(x+h) - f(x)) / h, with an extremely small value for h.
-        /// </summary>
-        /// <param name="fx">The function to derive.</param>
-        /// <param name="x">The input.</param>
-        public static double ApproximateDerivative(this Func<double, double> fx, double x)
-        {
-            double h = 1e-7;
-            return (float)((fx(x + h) - fx(x)) / h);
-        }
-
-        /// <summary>
-        /// Approximates the partial derivative of a function at a given input for a specific variable.
-        /// </summary>
-        /// <param name="fxy">The function.</param>
-        /// <param name="x">The function input.</param>
-        public static double ApproximatePartialDerivative(this Func<double, double, double> fxy, double x, double y, int term)
-        {
-            switch (term)
-            {
-                case 0:
-                    return (fxy(x + 1e-7, y) - fxy(x, y)) * 1e7;
-                case 1:
-                    return (fxy(x, y + 1e-7) - fxy(x, y)) * 1e7;
-            }
-            return 0D;
-        }
-
-        /// <summary>
-        /// Returns a number between a minimum and maximum range.
-        /// </summary>
-        /// <param name="rng">The random number generator.</param>
-        /// <param name="min">The lower bound for randomness.</param>
-        /// <param name="max">The upper bound for randomness.</param>
-        public static double NextRange(this UnifiedRandom rng, double min, double max) => rng.NextDouble() * (max - min) + min;
-
-        /// <summary>
-        /// Performs a logistic sigmoid function on an input.
-        /// </summary>
-        /// <param name="x">The input.</param>
-        public static double Sigmoid(double x) => 1D / (1D + Math.Exp(-x));
-
-        /// <summary>
-        /// Gets the index of the number with the highest value in a collection of numbers.
-        /// </summary>
-        /// <param name="values">The collection of numbers.</param>
-        public static int Argmax(double[] values)
-        {
-            int index = -1;
-            double min = double.NegativeInfinity;
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values[i] > min)
-                {
-                    index = i;
-                    min = values[i];
-                }
-            }
-            return index;
-        }
-
-        public static float Remap(float fromValue, float fromMin, float fromMax, float toMin, float toMax, bool clamped = true)
-        {
-            return MathHelper.Lerp(toMin, toMax, Utils.GetLerpValue(fromMin, fromMax, fromValue, clamped));
         }
 
         public static int Factorial(int n)

@@ -8,7 +8,7 @@ using Terraria;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {

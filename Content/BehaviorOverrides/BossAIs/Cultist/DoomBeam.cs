@@ -78,9 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
-
-
-
+        
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.03f, completionRatio, true) * Utils.GetLerpValue(1f, 0.97f, completionRatio, true);

@@ -1,4 +1,6 @@
 using CalamityMod;
+using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Core;
@@ -6,12 +8,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
+using System.Diagnostics;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -83,6 +88,10 @@ namespace InfernumMode.Common.Graphics
             Main.OnPreDraw += PrepareBlurEffects;
         }
 
+        // Due to how universal this method is for the game's draw logic, it's inconvenient to have VS' debugger randomly say that the orig Draw method is being called, as that
+        // gives basically no useful information.
+        // As such, it is intentionally invisible to the debugger.
+        [DebuggerHidden]
         private void HandleDrawMainThreadQueue(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
         {
             while (DrawActionQueue.TryDequeue(out Action a))
@@ -112,9 +121,24 @@ namespace InfernumMode.Common.Graphics
 
             while (ThingsToDrawOnTopOfBlur.Count > 0)
             {
+                if (ThingsToDrawOnTopOfBlur[0].position.Length() > 10000f)
+                    ThingsToDrawOnTopOfBlur[0] = ThingsToDrawOnTopOfBlur[0] with { position = ThingsToDrawOnTopOfBlur[0].position - Main.screenPosition };
                 ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
                 ThingsToDrawOnTopOfBlur.RemoveAt(0);
             }
+
+            LargeLumenylCrystal.DefineCrystalDrawers();
+
+            IcicleDrawer.ApplyShader();
+            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
+            {
+                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
+                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
+            }
+
+            // Regularly reset the crystal cache.
+            if (Main.GameUpdateCount % 120 == 119)
+                LargeLumenylCrystal.CrystalCache.Clear();
 
             ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)

@@ -70,6 +70,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public override void AI()
         {
+            // Disappear if the brain is not present.
+            if (!NPC.AnyNPCs(NPCID.BrainofCthulhu))
+            {
+                Projectile.Kill();
+                return;
+            }
+
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.06f, 0f, 1f);
             Projectile.velocity *= 0.97f;
 
@@ -123,8 +130,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-
-
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.9f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
@@ -141,8 +146,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(ref Color lightColor)
         {
-
-
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
             {
@@ -165,8 +168,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         {
             OrbDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
-            List<Vector2> drawPoints = new();
             spriteBatch.EnterShaderRegion();
+
+            List<Vector2> drawPoints = new();
+            
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
             {

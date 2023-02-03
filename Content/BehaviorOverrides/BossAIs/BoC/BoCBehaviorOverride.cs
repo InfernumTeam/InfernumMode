@@ -43,6 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         {
             NPC.crimsonBoss = npc.whoAmI;
 
+            // Disable knockback since it fucks up the fight.
+            npc.knockBackResist = 0f;
+
             // Emit a crimson light idly.
             Lighting.AddLight(npc.Center, Color.Crimson.ToVector3());
 

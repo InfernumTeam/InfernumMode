@@ -117,8 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            if (SlashDrawer is null)
-                SlashDrawer = new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
+            SlashDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
 
             InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.GrayscaleWater);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);

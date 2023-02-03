@@ -1,4 +1,6 @@
 using CalamityMod;
+using CalamityMod.Tiles.Abyss;
+using Microsoft.Xna.Framework.Graphics;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -7,6 +9,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Content.Tiles.Abyss;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -19,6 +22,8 @@ namespace InfernumMode.Core.GlobalInstances
                 ModContent.TileType<ColosseumPortal>(),
                 ModContent.TileType<ProvidenceSummoner>(),
                 ModContent.TileType<ProvidenceRoomDoorPedestal>(),
+                ModContent.TileType<IronBootsSkeleton>(),
+                ModContent.TileType<StrangeOrbTile>(),
             };
 
             Tile checkTile = CalamityUtils.ParanoidTileRetrieval(x, y);
@@ -47,7 +52,18 @@ namespace InfernumMode.Core.GlobalInstances
             if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
+            if (CalamityUtils.ParanoidTileRetrieval(i, j - 1).TileType == ModContent.TileType<AbyssalKelp>())
+                WorldGen.KillTile(i, j - 1);
+
             return base.CanKillTile(i, j, type, ref blockDamaged);
+        }
+        
+        public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
+        {
+            if (type == ModContent.TileType<LumenylCrystals>())
+                return false;
+
+            return base.PreDraw(i, j, type, spriteBatch);
         }
 
         public override void NearbyEffects(int i, int j, int type, bool closer)

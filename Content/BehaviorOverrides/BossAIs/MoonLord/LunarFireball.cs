@@ -73,10 +73,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             for (int dust = 0; dust < 4; dust++)
                 Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Nightwither, 0f, 0f);
         }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
-        }
     }
 }

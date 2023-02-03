@@ -17,6 +17,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public ref float Time => ref Projectile.ai[0];
 
+        public const int Lifetime = 105;
+
         public const float LaserLength = 4000f;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -30,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 105;
+            Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
@@ -43,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / 105f) * 3f;
+            Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -76,9 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
-
-
-
+        
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.03f, completionRatio, true) * Utils.GetLerpValue(1f, 0.97f, completionRatio, true);

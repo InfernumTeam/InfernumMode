@@ -236,7 +236,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootRate = (int)MathHelper.Lerp(80f, 50f, 1f - lifeRatio);
-            float walkSpeed = MathHelper.Lerp(7f, 10.45f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(5.75f, 9f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
@@ -514,7 +514,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
             int laserShootDelay = 136;
             float laserSpeed = 10.5f;
-            float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(7f, 10.4f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -692,7 +692,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 170;
-            float walkSpeed = MathHelper.Lerp(9.6f, 15f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(9f, 13.45f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.GetLerpValue(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
             walkSpeed *= Utils.GetLerpValue(100f, 180f, MathHelper.Distance(target.Center.X, npc.Center.X), true);

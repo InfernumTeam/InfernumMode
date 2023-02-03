@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Balancing;
+using CalamityMod.BiomeManagers;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
@@ -21,6 +22,7 @@ using MonoMod.Cil;
 using ReLogic.Content;
 using SubworldLibrary;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -31,6 +33,7 @@ using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
+using InfernumMode.Content.WorldGeneration;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -197,16 +200,21 @@ namespace InfernumMode.Core.ILEditingStuff
         private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
             // Don't draw the moon if it's in use.
-            if (!Main.dayTime && TheMoon.MoonIsNotInSky)
+            if (!Main.dayTime && StolenCelestialObject.MoonIsNotInSky)
                 return;
 
-            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
-            if (!inColosseum)
-            {
-                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+            // Don't draw the sun if it's in use.
+            if (Main.dayTime && StolenCelestialObject.SunIsNotInSky)
                 return;
+
+            if (EmpressUltimateAttackLightSystem.VerticalSunMoonOffset >= 0f)
+            {
+                sceneArea.bgTopY -= (int)EmpressUltimateAttackLightSystem.VerticalSunMoonOffset;
+                EmpressUltimateAttackLightSystem.VerticalSunMoonOffset *= 0.96f;
             }
 
+            bool inColosseum = !Main.gameMenu && SubworldSystem.IsActive<LostColosseum>();
+            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
@@ -216,10 +224,46 @@ namespace InfernumMode.Core.ILEditingStuff
 
             // Calculate the position of the sun.
             Texture2D sunTexture = TextureAssets.Sun.Value;
-            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
             int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + Main.sunModY);
-            Vector2 sunPosition = new(x, y);
+            Vector2 sunPosition = new(x - 108f, y + 180f);
+
+            if (!inColosseum)
+            {
+                // Draw a vibrant glow effect behind the sun if fighting the empress during the day.
+                bool empressIsPresent = NPC.AnyNPCs(NPCID.HallowBoss) && InfernumMode.CanUseCustomAIs && Main.dayTime;
+                if (empressIsPresent)
+                {
+                    // Use additive drawing.
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
+                    Vector2 origin = backglowTexture.Size() * 0.5f;
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Cyan * 0.56f, 0f, origin, 4f, 0, 0f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.HotPink * 0.5f, 0f, origin, 8f, 0, 0f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, Color.Lerp(Color.IndianRed, Color.Pink, 0.7f) * 0.4f, 0f, origin, 15f, 0, 0f);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+                }
+
+                orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+
+                if (empressIsPresent)
+                {
+                    // Use additive drawing.
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
+                    Vector2 origin = backglowTexture.Size() * 0.5f;
+                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
+                    Main.spriteBatch.Draw(backglowTexture, sunPosition, null, transColor, 0f, origin, 0.74f, 0, 0f);
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+                }
+
+                return;
+            }
 
             // Use brighter sun colors in general in the colosseum.
             if (inColosseum)
@@ -540,6 +584,15 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => On.Terraria.Player.UpdateBiomes -= MakeDesertRequirementsMoreLenient;
     }
 
+    public class ReplaceAbyssWorldgen : IHookEdit
+    {
+        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
+
+        public void Load() => GenerateAbyss += ChangeAbyssGen;
+
+        public void Unload() => GenerateAbyss -= ChangeAbyssGen;
+    }
+
     public class SepulcherOnHitProjectileEffectRemovalHook : IHookEdit
     {
         internal static void EarlyReturn(ILContext il)
@@ -618,6 +671,169 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => AresBodyCanHitPlayer += LetAresHitPlayer;
 
         public void Unload() => AresBodyCanHitPlayer -= LetAresHitPlayer;
+    }
+
+    public class AdjustAbyssDefinitionHook : IHookEdit
+    {
+        internal bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
+        {
+            Point point = player.Center.ToTileCoordinates();
+            playerYTileCoords = point.Y;
+
+            // Subworlds do not count as the abyss.
+            if (WeakReferenceSupport.InAnySubworld())
+                return false;
+            
+            // Check if the player is in the generous abyss area and has abyss walls behind them to determine if they are in the abyss.
+            bool horizontalCheck;
+            bool verticalCheck = point.Y <= Main.UnderworldLayer - 42 && point.Y > SulphurousSea.YStart + SulphurousSea.BlockDepth - 78;
+            float yCompletion = Utils.GetLerpValue(CustomAbyss.AbyssTop, CustomAbyss.AbyssBottom - 1f, player.Center.Y / 16f, true);
+            int abyssWidth = CustomAbyss.GetWidth(yCompletion, CustomAbyss.MinAbyssWidth, CustomAbyss.MaxAbyssWidth);
+            if (Abyss.AtLeftSideOfWorld)
+                horizontalCheck = point.X < abyssWidth;
+            else
+                horizontalCheck = point.X > Main.maxTilesX - abyssWidth;
+            
+            return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
+        }
+
+        internal bool ChangeLayer1Requirement(Func<AbyssLayer1Biome, Player, bool> orig, AbyssLayer1Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords <= CustomAbyss.Layer2Top;
+            }
+
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer2Requirement(Func<AbyssLayer2Biome, Player, bool> orig, AbyssLayer2Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer2Top && playerYTileCoords <= CustomAbyss.Layer3Top;
+            }
+
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer3Requirement(Func<AbyssLayer3Biome, Player, bool> orig, AbyssLayer3Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer3Top && playerYTileCoords <= CustomAbyss.Layer4Top;
+            }
+
+            return orig(self, player);
+        }
+
+        internal bool ChangeLayer4Requirement(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player)
+        {
+            if (WorldSaveSystem.InPostAEWUpdateWorld)
+            {
+                return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
+                    playerYTileCoords > CustomAbyss.Layer4Top && playerYTileCoords <= CustomAbyss.AbyssBottom;
+            }
+            
+            return orig(self, player);
+        }
+
+        public void Load()
+        {
+            MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
+            IsAbyssLayer1BiomeActive += ChangeLayer1Requirement;
+            IsAbyssLayer2BiomeActive += ChangeLayer2Requirement;
+            IsAbyssLayer3BiomeActive += ChangeLayer3Requirement;
+            IsAbyssLayer4BiomeActive += ChangeLayer4Requirement;
+        }
+
+        public void Unload()
+        {
+            MeetsBaseAbyssRequirement -= ChangeAbyssRequirement;
+            IsAbyssLayer1BiomeActive -= ChangeLayer1Requirement;
+            IsAbyssLayer2BiomeActive -= ChangeLayer2Requirement;
+            IsAbyssLayer3BiomeActive -= ChangeLayer3Requirement;
+            IsAbyssLayer4BiomeActive -= ChangeLayer4Requirement;
+        }
+    }
+
+    public class MakeMapGlitchInLayer4AbyssHook : IHookEdit
+    {
+        internal void CreateMapGlitchEffect(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", new Type[] { typeof(Color), typeof(float) });
+            ConstructorInfo colorConstructor = typeof(Color).GetConstructor(new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) });
+
+            // ==== APPLY EFFECT TO FULLSCREEN MAP =====
+
+            // Find the map background draw method and use it as a hooking reference.
+            if (!cursor.TryGotoNext(i => i.MatchCall<Main>("DrawMapFullscreenBackground")))
+                return;
+
+            // Go to the next 3 instances of Color.White being loaded and multiply them by the opacity factor.
+            for (int i = 0; i < 3; i++)
+            {
+                if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<Color>("get_White")))
+                    continue;
+
+                cursor.EmitDelegate(() => 1f - Main.LocalPlayer.Infernum_Biome().MapObscurityInterpolant);
+                cursor.Emit(OpCodes.Call, colorFloatMultiply);
+            }
+
+            // ==== APPLY EFFECT TO MAP RENDER TARGETS =====
+
+            // Move after the map target color is decided, and multiply the result by the opacity factor/add blackness to it.
+            if (!cursor.TryGotoNext(i => i.MatchLdfld<Main>("mapTarget")))
+                return;
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchNewobj(colorConstructor)))
+                return;
+
+            cursor.EmitDelegate((Color c) =>
+            {
+                float obscurityInterpolant = Main.LocalPlayer.Infernum_Biome().MapObscurityInterpolant;
+                if (Main.mapFullscreen)
+                    return c * (1f - obscurityInterpolant);
+
+                return Color.Lerp(c, Color.Black, obscurityInterpolant);
+            });
+        }
+
+        public void Load() => IL.Terraria.Main.DrawMap += CreateMapGlitchEffect;
+
+        public void Unload() => IL.Terraria.Main.DrawMap -= CreateMapGlitchEffect;
+    }
+
+    public class PreventAbyssDungeonInteractionsHook : IHookEdit
+    {
+        internal static void FixAbyssDungeonInteractions(ILContext il)
+        {
+            // Prevent the Dungeon's halls from getting anywhere near the Abyss.
+            var cursor = new ILCursor(il);
+
+            // Forcefully clamp the X position of the new hall end.
+            // This prevents a hall, and as a result, the dungeon, from ever impeding on the Abyss/Sulph Sea.
+            for (int k = 0; k < 2; k++)
+            {
+                if (!cursor.TryGotoNext(MoveType.After, i => i.MatchStloc(6)))
+                    return;
+            }
+
+            cursor.Emit(OpCodes.Ldloc, 6);
+            cursor.EmitDelegate<Func<Vector2, Vector2>>(unclampedValue =>
+            {
+                unclampedValue.X = MathHelper.Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 25, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 25);
+                return unclampedValue;
+            });
+            cursor.Emit(OpCodes.Stloc, 6);
+        }
+
+        public void Load() => IL.Terraria.WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
+
+        public void Unload() => IL.Terraria.WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
     }
 
     public class ChangeBRSkyColorHook : IHookEdit

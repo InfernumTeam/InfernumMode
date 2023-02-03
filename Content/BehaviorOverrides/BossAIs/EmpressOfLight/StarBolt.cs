@@ -3,6 +3,7 @@ using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -91,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Projectile.velocity.Length() < 7f)
                     Projectile.velocity = StarPolarEquation(5, MathHelper.TwoPi * Projectile.ai[1]) * 13f;
 
-                Projectile.velocity *= 1.0132f;
+                Projectile.velocity *= 1.0126f;
             }
 
             Time++;
@@ -144,7 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.velocity.Length() < 4.5f || Time < FireDelay)
+            if (Projectile.velocity.Length() < 4.5f || Time < FireDelay || InfernumConfig.Instance.ReducedGraphicsConfig)
                 return false;
 
             // Initialize the telegraph drawer.
@@ -159,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Rectangle cutoffRegion = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
             Main.spriteBatch.EnforceCutoffRegion(cutoffRegion, Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
             
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 23);
+            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 11);
 
             Main.spriteBatch.ExitShaderRegion();
             

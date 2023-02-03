@@ -7,6 +7,18 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldSaveSystem : ModSystem
     {
+        public static int AbyssLayer1ForestSeed
+        {
+            get;
+            set;
+        }
+
+        public static int AbyssLayer3CavernSeed
+        {
+            get;
+            set;
+        }
+
         public static bool HasGeneratedProfanedShrine
         {
             get;
@@ -59,7 +71,33 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             set;
-        } = false;
+        }
+
+        public static bool HasDefeatedEidolists
+        {
+            get;
+            set;
+        }
+
+        public static Point SquidDenCenter
+        {
+            get;
+            set;
+        }
+
+        public static Point EidolistWorshipPedestalCenter
+        {
+            get;
+            set;
+        }
+
+        // This value is only set to true in new worldgen code. All prior worlds will never naturally have this flag enabled.
+        // This is done to allow backwards compatibility with old Abyss worldgen.
+        public static bool InPostAEWUpdateWorld
+        {
+            get;
+            set;
+        }
 
         public static Vector2 WayfinderGateLocation
         {
@@ -116,6 +154,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("HasProvidenceDoorShattered");
             if (HasSepulcherAnimationBeenPlayed)
                 downed.Add("HasSepulcherAnimationBeenPlayed");
+            if (InPostAEWUpdateWorld)
+                downed.Add("InPostAEWUpdateWorld");
             if (HasOpenedLostColosseumPortal)
                 downed.Add("HasOpenedLostColosseumPortal");
             if (DownedBereftVassal)
@@ -131,6 +171,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
             tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
             tag["ProvidenceDoorXPosition"] = ProvidenceDoorXPosition;
+
+            tag["AbyssLayer1ForestSeed"] = AbyssLayer1ForestSeed;
+            tag["AbyssLayer3CavernSeed"] = AbyssLayer3CavernSeed;
+            tag["SquidDenCenterX"] = SquidDenCenter.X;
+            tag["SquidDenCenterY"] = SquidDenCenter.Y;
+            tag["EidolistWorshipPedestalCenterX"] = EidolistWorshipPedestalCenter.X;
+            tag["EidolistWorshipPedestalCenterY"] = EidolistWorshipPedestalCenter.Y;
+
             tag["DreamgateLocationX"] = WayfinderGateLocation.X;
             tag["DreamgateLocationY"] = WayfinderGateLocation.Y;
         }
@@ -145,6 +193,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
+            InPostAEWUpdateWorld = downed.Contains("InPostAEWUpdateWorld");
             HasOpenedLostColosseumPortal = downed.Contains("HasOpenedLostColosseumPortal");
             DownedBereftVassal = downed.Contains("DownedBereftVassal");
             DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
@@ -152,6 +201,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
+
+            AbyssLayer1ForestSeed = tag.GetInt("AbyssLayer1ForestSeed");
+            AbyssLayer3CavernSeed = tag.GetInt("AbyssLayer3CavernSeed");
+            SquidDenCenter = new(tag.GetInt("SquidDenCenterX"), tag.GetInt("SquidDenCenterY"));
+            EidolistWorshipPedestalCenter = new(tag.GetInt("EidolistWorshipPedestalCenterX"), tag.GetInt("EidolistWorshipPedestalCenterY"));
+
             WayfinderGateLocation = new(tag.GetFloat("DreamgateLocationX"), tag.GetFloat("DreamgateLocationY"));
         }
 

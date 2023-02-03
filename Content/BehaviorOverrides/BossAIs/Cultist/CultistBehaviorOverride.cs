@@ -460,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoAttack_FireballBarrage(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
-            int fireballShootRate = phase2 ? 11 : 7;
+            int fireballShootRate = phase2 ? 14 : 7;
             int fireballCount = phase2 ? 30 : 32;
             int hoverTime = 105;
             int laserTelegraphCreationDelay = 90;
@@ -576,7 +576,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (adjustedTime > laserTelegraphCreationDelay - 10f && adjustedTime < laserTelegraphCreationDelay + 50f)
                     frameType = (int)CultistFrameState.Laugh;
 
-                if (adjustedTime == 10f && !npc.WithinRange(target.Center, 720f))
+                if (adjustedTime == 10f && !npc.WithinRange(target.Center, 300f))
                 {
                     Vector2 teleportPosition = target.Center - Vector2.UnitY * 325f;
                     CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
@@ -1227,32 +1227,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public static void DoAttack_DesperationAttack(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
             int attackDelay = 75;
-
-            int chargeTime = 50;
-            int slowdownTime = 10;
-            int totalCharges = 5;
-            int chargePhaseTime = attackDelay + (chargeTime + slowdownTime) * totalCharges;
-            int chargeBoltCreationRate = 6;
-            float chargeSpeed = 31f;
-
-            int spinTime = 360;
-            int spinBoltCreationRate = 38;
-            int spinPhaseTime = chargePhaseTime + spinTime;
-            float spinSpeed = 30f;
-            float spinOffset = 560f;
-
             int burstTeleportTime = 30;
             int burstCount = 5;
             int burstShootRate = 110;
-            int spreadPhaseTime = spinPhaseTime + burstShootRate * burstCount + burstTeleportTime;
+            int spreadPhaseTime = burstShootRate * burstCount + burstTeleportTime;
             ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
             ref float cycleIndex = ref npc.Infernum().ExtraAI[1];
-
-            if (BossRushEvent.BossRushActive && attackTimer < spreadPhaseTime)
-            {
-                attackTimer = spreadPhaseTime;
-                npc.netUpdate = true;
-            }
 
             // Disable damage, allowing the player to focus solely on dodging.
             npc.dontTakeDamage = true;
@@ -1282,76 +1262,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 return;
             }
 
-            // Perform multiple fast charges at the target and release bolts perpendicular to the current direction.
-            if (attackTimer <= chargePhaseTime)
-            {
-                int chargeTimer = (int)(attackTimer - attackDelay) % (chargeTime + slowdownTime);
-
-                // Charge at the target.
-                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                if (chargeTimer <= 6f)
-                {
-                    npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.2f);
-                    npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
-                }
-                if (chargeTimer == 6f)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
-                    npc.velocity = chargeVelocity;
-                    npc.netUpdate = true;
-                }
-
-                // Do contact damage when charging.
-                if (npc.velocity.Length() > chargeSpeed * 0.8f)
-                {
-                    npc.damage = 184;
-
-                    // Release perpendicular bolts.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % chargeBoltCreationRate == chargeBoltCreationRate - 1f)
-                    {
-                        Vector2 left = npc.velocity.RotatedBy(-MathHelper.PiOver2) * 0.3f;
-                        Vector2 right = npc.velocity.RotatedBy(MathHelper.PiOver2) * 0.3f;
-                        Utilities.NewProjectileBetter(npc.Center, left, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, right, ModContent.ProjectileType<DarkBolt>(), 180, 0f);
-                    }
-                }
-
-                // Slow down after charging.
-                if (chargeTimer >= chargeTime)
-                {
-                    npc.velocity *= 0.85f;
-                    npc.damage = 0;
-                }
-
-                return;
-            }
-
-            // Spin around the target and release redirecting large dark bolts.
-            if (attackTimer <= spinPhaseTime)
-            {
-                // Do the spin.
-                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(MathHelper.TwoPi / spinTime * 3f * attackTimer) * spinOffset;
-                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, spinSpeed);
-
-                // Release bolts.
-                if (attackTimer % spinBoltCreationRate == spinBoltCreationRate - 1f && attackTimer < spinPhaseTime - 60f)
-                {
-                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 10f, ModContent.ProjectileType<DarkBoltLarge>(), 180, 0f);
-                }
-
-                npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
-                return;
-            }
-
             // Delete large bolts.
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkBoltLarge>());
 
-            // Release an even spread of bolts while hovering near the target.
+            // Release an even spread of laserbeams while hovering near the target.
             if (attackTimer <= spreadPhaseTime)
             {
-                float doomTimer = attackTimer - spinTime;
+                float doomTimer = attackTimer - spreadPhaseTime;
 
                 // Teleport and raise arms.
                 if (doomTimer == burstTeleportTime)

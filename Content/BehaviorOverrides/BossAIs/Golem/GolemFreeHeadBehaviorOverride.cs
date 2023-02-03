@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;
-
+            npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             npc.chaseable = !npc.dontTakeDamage;
             npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;

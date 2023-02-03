@@ -31,14 +31,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             int projectileILIndex = 0;
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStfld<Projectile>("stepSpeed")))
             {
-                LogFailure("Projectile Initialization Manager", "Could not step speed check variable.");
+                LogFailure("Projectile Initialization Manager", "Could not find the step speed check variable.");
                 return;
             }
 
             int placeToSetAction = cursor.Index;
             if (!cursor.TryGotoPrev(i => i.MatchLdloc(out projectileILIndex)))
             {
-                LogFailure("Projectile Initialization Manager", "Could not spawned projectile's local IL index.");
+                LogFailure("Projectile Initialization Manager", "Could not find the spawned projectile's local IL index.");
                 return;
             }
 

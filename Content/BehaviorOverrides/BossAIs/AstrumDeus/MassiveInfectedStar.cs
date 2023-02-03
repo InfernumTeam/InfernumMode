@@ -85,15 +85,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * (float)Math.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * CalamityUtils.Convert01To010(completionRatio);
 
-        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Orange, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.45f + 0.25f) * Projectile.Opacity;
+        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Orange, CalamityUtils.Convert01To010(completionRatio) * 0.45f + 0.25f) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (FireDrawer is null)
-                FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
-
+            FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 

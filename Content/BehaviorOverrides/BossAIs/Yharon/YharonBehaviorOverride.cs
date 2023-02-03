@@ -1414,7 +1414,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     }
                     SoundEngine.PlaySound(BigFlare.FlareSound, target.Center);
                 }
-                MoonlordDeathDrama.RequestLight(brightness, target.Center);
+                if (InfernumConfig.Instance.FlashbangOverlays)
+                    MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
         }
 

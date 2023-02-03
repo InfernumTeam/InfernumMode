@@ -9,6 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
     public class EoCTooth2 : ModProjectile
     {
         public Player Target => Main.player[(int)Projectile.ai[0]];
+        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Tooth");
@@ -48,11 +49,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
         }
     }
 }

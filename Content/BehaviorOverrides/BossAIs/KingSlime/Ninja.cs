@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 HasCreatedSlimeExplosion = true;
             }
 
-            NPC.damage = KatanaUseTimer > 0 ? 115 : 0;
+            NPC.damage = 0;
             NPC.noTileCollide = NPC.Bottom.Y < Target.Top.Y;
             AttackDelayFuckYou++;
 
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                         for (int i = 0; i < shurikenCount; i++)
                         {
                             Vector2 shurikenVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * shurikenSpeed;
-                            Utilities.NewProjectileBetter(NPC.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
+                            Utilities.NewProjectileBetter(NPC.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 60, 0f);
                         }
                     }
 
@@ -195,19 +195,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (NPC.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f && onSolidGround)
-            {
-                NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
-                NPC.velocity = NPC.SafeDirectionTo(Target.Center) * 8f;
-                NPC.velocity.Y -= 4f;
-                KatanaRotation = 0f;
-                KatanaUseTimer = KatanaUseLength = 54f;
-                ShurikenShootCountdown = 0f;
-                NPC.netUpdate = true;
-
-                SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
-            }
-
             if (Main.netMode != NetmodeID.MultiplayerClient && canDashTeleport)
             {
                 StuckTimer = 0f;
@@ -241,11 +228,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             float extraEndSlashDelay = 20;
             Vector2 kingSlimeCenter = new(kingSlimeCenterX, kingSlimeCenterY);
             Vector2 teleportOffset = new(375, -100);
+
             // Calclate the length of the Vector, using pythagarus theorum.
             float teleportOffsetDifference = teleportOffset.Length();
+
             // Then the length in time it will take to move two of them at the charge speed.
             int dashLength = (int)(teleportOffsetDifference / chargeSpeed * 2);
-
 
             // If king slime has set us a landing position.
             if (kingSlimeCenterX > 0 && localDeathTimer == 0)

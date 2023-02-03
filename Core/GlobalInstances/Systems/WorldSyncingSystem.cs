@@ -10,18 +10,29 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void NetSend(BinaryWriter writer)
         {
             BitsByte flags = new();
+            BitsByte flags2 = new();
             flags[0] = WorldSaveSystem.InfernumMode;
             flags[1] = HasBeatedInfernumNightProvBeforeDay;
             flags[2] = HasBeatedInfernumProvRegularly;
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
-            flags[5] = HasGeneratedProfanedShrine;
-            flags[6] = HasGeneratedColosseumEntrance;
+            flags[5] = InPostAEWUpdateWorld;
+            flags[6] = HasDefeatedEidolists;
             flags[7] = DownedBereftVassal;
-            writer.Write(flags);
 
-            BitsByte flags2 = new();
-            flags2[0] = PerformedLacewingAnimation;
+            flags2[0] = HasGeneratedProfanedShrine;
+            flags2[1] = HasGeneratedColosseumEntrance;
+            flags2[2] = PerformedLacewingAnimation;
+
+            writer.Write(flags);
+            writer.Write(flags2);
+            
+            writer.Write(AbyssLayer1ForestSeed);
+            writer.Write(AbyssLayer3CavernSeed);
+            writer.Write(SquidDenCenter.X);
+            writer.Write(SquidDenCenter.Y);
+            writer.Write(EidolistWorshipPedestalCenter.X);
+            writer.Write(EidolistWorshipPedestalCenter.Y);
 
             writer.Write(ProvidenceArena.X);
             writer.Write(ProvidenceArena.Y);
@@ -35,17 +46,24 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void NetReceive(BinaryReader reader)
         {
             BitsByte flags = reader.ReadByte();
+            BitsByte flags2 = reader.ReadByte();
             WorldSaveSystem.InfernumMode = flags[0];
             HasBeatedInfernumNightProvBeforeDay = flags[1];
             HasBeatedInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
-            HasGeneratedProfanedShrine = flags[5];
-            HasGeneratedColosseumEntrance = flags[6];
+            InPostAEWUpdateWorld = flags[5];
+            HasDefeatedEidolists = flags[6];
             DownedBereftVassal = flags[7];
 
-            BitsByte flags2 = reader.ReadByte();
-            PerformedLacewingAnimation = flags2[0];
+            HasGeneratedProfanedShrine = flags2[0];
+            HasGeneratedColosseumEntrance = flags2[1];
+            PerformedLacewingAnimation = flags2[2];
+
+            AbyssLayer1ForestSeed = reader.ReadInt32();
+            AbyssLayer3CavernSeed = reader.ReadInt32();
+            SquidDenCenter = new(reader.ReadInt32(), reader.ReadInt32());
+            EidolistWorshipPedestalCenter = new(reader.ReadInt32(), reader.ReadInt32());
 
             ProvidenceArena = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 

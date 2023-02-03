@@ -374,8 +374,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 float startY = Utilities.GetGroundPositionFrom(Main.player[npc.target].Center).Y - 50f;
                 for (float i = -3650f; i < 3650f; i += 50f)
                 {
-                    Vector2 top = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY), new Searches.Up(9001)).Floor();
-                    Vector2 bottom = Utilities.GetGroundPositionFrom(new(Main.player[npc.target].Center.X + i, startY)).Floor();
+                    Vector2 top = Utilities.GetGroundPositionFrom(new Vector2(Main.player[npc.target].Center.X + i, startY), new Searches.Up(9001)).Floor();
+                    Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(Main.player[npc.target].Center.X + i, startY)).Floor();
 
                     // Create top spikes.
                     Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<GroundCrystalSpike>(), 350, 0f, -1, 0f, MathHelper.PiOver2);

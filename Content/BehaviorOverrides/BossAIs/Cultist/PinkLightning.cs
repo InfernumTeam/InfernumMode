@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
             float baseWidth = MathHelper.Lerp(0.25f, 3.5f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio) + 1f;
+            return baseWidth * CalamityUtils.Convert01To010(completionRatio) + 1f;
         }
 
         public override Color PrimitiveColorFunction(float completionRatio)

@@ -14,6 +14,7 @@ namespace InfernumMode
     public static partial class Utilities
     {
         public const float DefaultTargetRedecideThreshold = 4000f;
+        
         public static void TargetClosestIfTargetIsInvalid(this NPC npc, float distanceThreshold = DefaultTargetRedecideThreshold)
         {
             bool invalidTargetIndex = npc.target is < 0 or >= 255;
@@ -24,7 +25,7 @@ namespace InfernumMode
             }
 
             Player target = Main.player[npc.target];
-            bool invalidTarget = target.dead || !target.active;
+            bool invalidTarget = target.dead || !target.active || target.Infernum_Eel().EelSwallowIndex >= 0;
             if (invalidTarget)
                 npc.TargetClosest();
 
@@ -44,13 +45,6 @@ namespace InfernumMode
                 }
                 return null;
             }
-        }
-
-        // This function returns an available Calamity Music Mod track, or null if the Calamity Music Mod is not available.
-        public static int? GetMusicFromMusicMod(string songFilename)
-        {
-            bool musicAvailable = ModLoader.TryGetMod("CalamityModMusic", out Mod musicMod);
-            return musicAvailable ? MusicLoader.GetMusicSlot(musicMod, "Sounds/Music/" + songFilename) : null;
         }
 
         public static bool IsExoMech(NPC npc)
@@ -84,7 +78,7 @@ namespace InfernumMode
             }
 
             return false;
-        }
+        }       
 
         public static string GetNPCNameFromID(int id)
         {
@@ -98,7 +92,6 @@ namespace InfernumMode
         {
             if (id < NPCID.Count)
                 return NPC.GetFullnameByID(id);
-            ;
 
             return NPCLoader.GetNPC(id).DisplayName.GetDefault();
         }

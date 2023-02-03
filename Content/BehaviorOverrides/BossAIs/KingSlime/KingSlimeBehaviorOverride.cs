@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public const float MinScale = 1.85f;
 
-        public static readonly Vector2 HitboxScaleFactor = new(108f, 88f);
+        public static Vector2 HitboxScaleFactor => new(128f, 88f);
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -70,14 +70,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage - 15;
             npc.dontTakeDamage = false;
+            npc.noTileCollide = false;
 
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
             ref float jewelSummonTimer = ref npc.localAI[1];
             ref float teleportDirection = ref npc.Infernum().ExtraAI[5];
             ref float deathTimer = ref npc.Infernum().ExtraAI[6];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[7];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -161,6 +163,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 return false;
             }
 
+            if (npc.position.WithinRange(npc.oldPosition, 2f))
+            {
+                stuckTimer++;
+                if (stuckTimer >= 300f)
+                {
+                    npc.ai[1] = (int)KingSlimeAttackType.Teleport;
+                    stuckTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+            else
+                stuckTimer = 0f;
+
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {
                 case KingSlimeAttackType.SmallJump:
@@ -184,6 +199,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (npc.Opacity > 0.7f)
                 npc.Opacity = 0.7f;
+
+            // Don't get stuck.
+            for (int i = 0; i < 2; i++)
+            {
+                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 4))
+                {
+                    npc.position.Y -= 8f;
+                    npc.frame.Y = 0;
+                    npc.velocity.Y = 0f;
+                }
+            }
 
             npc.gfxOffY = (int)(npc.scale * -14f);
 
@@ -243,8 +269,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(210f, 202f, deathTimer, true);
             }
 
-            // Perform a large jump
+            // Perform a large jump.
             DoBehavior_LargeJump(npc, ref target, ref deathTimer, true);
+
+            // Stay above ground.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height, true))
+            {
+                npc.velocity.Y = 0f;
+                npc.position.Y -= 12f;
+            }
+
             // Check if the ninja has initialized their local timer, which happens after they create the projectile, plus the length which is ~30.
             if (deathTimer > 70)
             {
@@ -356,22 +390,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public static void DoBehavior_SmallJump(NPC npc, ref Player target, ref float attackTimer)
         {
-            if (npc.velocity.Y == 0f)
+            ref float postJumpTimer = ref npc.Infernum().ExtraAI[0];
+
+            if (Math.Abs(npc.velocity.Y) < 0.31f)
             {
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                if (attackTimer == 25f && npc.collideY)
+                if (attackTimer == 25f && postJumpTimer == 0f)
                 {
                     target = Main.player[npc.target];
-                    float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.GetLerpValue(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    float jumpSpeed = MathHelper.Lerp(8.25f, 14f, Utils.GetLerpValue(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                     npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 2.4f;
 
+                    postJumpTimer = 1f;
                     npc.netUpdate = true;
                 }
 
@@ -380,25 +417,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             }
             else
                 attackTimer--;
+
+            if (postJumpTimer >= 1f && attackTimer >= 25f)
+            {
+                // Don't interact with tiles for a moment after jumping, to prevent being stuck.
+                npc.noTileCollide = postJumpTimer < 30f;
+                postJumpTimer++;
+            }
         }
 
         public static void DoBehavior_LargeJump(NPC npc, ref Player target, ref float attackTimer, bool performingDeathAnimation = false)
         {
-            if (npc.velocity.Y == 0f)
+            ref float postJumpTimer = ref npc.Infernum().ExtraAI[0];
+
+            if (Math.Abs(npc.velocity.Y) < 0.31f)
             {
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                if (attackTimer == 35f)
+                if (attackTimer == 35f && postJumpTimer == 0f)
                 {
                     target = Main.player[npc.target];
-                    float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.GetLerpValue(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    float jumpSpeed = MathHelper.Lerp(10f, 26f, Utils.GetLerpValue(40f, 480f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                     npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 1.5f;
+
+                    postJumpTimer = 1f;
                     npc.netUpdate = true;
                 }
 
@@ -431,6 +479,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             }
             else
                 attackTimer--;
+
+            if (postJumpTimer >= 1f && attackTimer >= 36f)
+            {
+                // Don't interact with tiles for a moment after jumping, to prevent being stuck.
+                npc.noTileCollide = postJumpTimer < 30f;
+                postJumpTimer++;
+            }
         }
 
         public static void DoBehavior_Teleport(NPC npc, Player target, float idealScale, ref float attackTimer, ref float teleportDirection)
@@ -486,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 // Decide the teleport position and prepare the teleport direction for next time by making it go to the other side.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Bottom = newBottom.ToWorldCoordinates(8, -16);
+                    npc.Bottom = newBottom.ToWorldCoordinates(8, -npc.height - 12);
                     teleportDirection *= -1f;
                     npc.netUpdate = true;
                 }
@@ -546,6 +601,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         {
             Texture2D kingSlimeTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+
+            if (npc.ai[1] == (int)KingSlimeAttackType.Teleport)
+                npc.frame.Y = 0;
 
             // Draw the ninja, if it's still stuck.
             if (npc.life > npc.lifeMax * Phase3LifeRatio)

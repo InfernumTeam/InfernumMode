@@ -48,13 +48,13 @@ namespace InfernumMode.Content.Projectiles
                 set;
             }
 
-            public Action ClickBehavior
+            public Action<Player> ClickBehavior
             {
                 get;
                 set;
             }
 
-            public bool Draw(Vector2 left, Vector2 right, float indexRatio, float opacity)
+            public bool Draw(Player player, Vector2 left, Vector2 right, float indexRatio, float opacity)
             {
                 Texture2D background = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/HyperplaneMatrixIconBackground").Value;
                 Texture2D icon = IconTexture.Value;
@@ -80,14 +80,15 @@ namespace InfernumMode.Content.Projectiles
                 {
                     var font = FontAssets.MouseText.Value;
                     Vector2 textArea = font.MeasureString(HoverText);
-                    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, HoverText, Main.MouseScreen - Vector2.UnitX * textArea * 0.5f, Draedon.TextColor, 0f, textArea * new Vector2(0f, 0.5f), Vector2.One);
+                    Vector2 textPosition = (left + right) * 0.5f - Vector2.UnitY * 70f;
+                    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, HoverText, textPosition - Vector2.UnitX * textArea * 0.5f, Draedon.TextColor, 0f, textArea * new Vector2(0f, 0.5f), Vector2.One);
                 }
 
                 // Handle click behaviors.
                 bool clicked = opacity > 0f && Main.mouseLeft && Main.mouseLeftRelease && hoveringOverBackground;
                 if (clicked)
                 {
-                    ClickBehavior?.Invoke();
+                    ClickBehavior?.Invoke(player);
                     return true;
                 }
                 return false;
@@ -131,30 +132,37 @@ namespace InfernumMode.Content.Projectiles
         {
             new()
             {
+                HoverText = "Toggle cybernetic immortality",
+                IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/CyborgImmortalityIcon"),
+                ClickBehavior = player => player.Infernum_Immortality().ToggleImmortality()
+            },
+
+            new()
+            {
                 HoverText = "Accelerate time until sunrise",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/SunriseIcon"),
-                ClickBehavior = () => HyperplaneMatrixTimeChangeSystem.ApproachTime(1, true)
+                ClickBehavior = _ => HyperplaneMatrixTimeChangeSystem.ApproachTime(1, true)
             },
 
             new()
             {
                 HoverText = "Accelerate time until noon",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/NoonIcon"),
-                ClickBehavior = () => HyperplaneMatrixTimeChangeSystem.ApproachTime(27000, true)
+                ClickBehavior = _ => HyperplaneMatrixTimeChangeSystem.ApproachTime(27000, true)
             },
 
             new()
             {
                 HoverText = "Accelerate time until sunset",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/SunsetIcon"),
-                ClickBehavior = () => HyperplaneMatrixTimeChangeSystem.ApproachTime(1, false)
+                ClickBehavior = _ => HyperplaneMatrixTimeChangeSystem.ApproachTime(1, false)
             },
 
             new()
             {
                 HoverText = "Atomize every single hostile NPC",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/AtomizeIcon"),
-                ClickBehavior = AtomizeHostileNPCs
+                ClickBehavior = _ => AtomizeHostileNPCs()
             },
         };
 
@@ -247,7 +255,7 @@ namespace InfernumMode.Content.Projectiles
 
         public void DoBehavior_InitialShake()
         {
-            int shakeTime = 156;
+            int shakeTime = 90;
 
             // Play an electric sound on the first frame.
             if (Time == 1f)
@@ -403,7 +411,7 @@ namespace InfernumMode.Content.Projectiles
                 if (UIStates.Count <= 1)
                     indexCompletion = 0.5f;
 
-                if (UIStates[i].Draw(left, right, indexCompletion, opacity))
+                if (DisappearCountdown == 0f && UIStates[i].Draw(Owner, left, right, indexCompletion, opacity))
                 {
                     SoundEngine.PlaySound(DecryptionComputer.InstallSound);
                     break;

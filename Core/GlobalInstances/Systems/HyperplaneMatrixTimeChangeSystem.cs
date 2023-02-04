@@ -58,7 +58,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Disable the effect if very close to the sought time.
             if (MathHelper.Distance(SoughtTime.Value, (int)Main.time) <= 220f && Main.dayTime == SeekingDayTime)
             {
-                Main.time = (int)SoughtTime.Value;
+                Main.time = SoughtTime.Value;
                 SoughtTime = null;
                 PacketManager.SendPacket<TimeChangeSystemPacket>();
                 Main.UpdateTimeRate();

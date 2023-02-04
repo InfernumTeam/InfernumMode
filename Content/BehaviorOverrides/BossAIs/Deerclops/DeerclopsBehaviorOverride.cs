@@ -381,7 +381,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             {
                 float handDirection = Main.rand.NextBool().ToDirectionInt();
                 Vector2 handSpawnPosition = target.Center + Vector2.UnitY * handDirection * 640f;
-                Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 105, 0f);
+                Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 90, 0f);
             }
 
             if (attackTimer >= spikeShootTime + 30f)
@@ -543,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 {
                     float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / (float)(shadowHandCount - 1f));
                     Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(12.5f, 16f);
-                    Utilities.NewProjectileBetter(npc.Center - shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 105, 0f, -1, 0f, 47f);
+                    Utilities.NewProjectileBetter(npc.Center - shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 90, 0f, -1, 0f, 47f);
                 }
             }
 
@@ -667,7 +667,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                         float spawnOffsetAngle = MathHelper.Lerp(-1.26f, 1.26f, i / (float)(totalHandsToSummon - 1f));
                         Vector2 handSpawnPosition = target.Center + handSpawnOffsetDirection.RotatedBy(spawnOffsetAngle) * handSpawnOffset;
                         Vector2 handSpawnVelocity = (target.Center - handSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * -Main.rand.NextFloat(7f, 10f);
-                        Utilities.NewProjectileBetter(handSpawnPosition, handSpawnVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 105, 0f);
+                        Utilities.NewProjectileBetter(handSpawnPosition, handSpawnVelocity, ModContent.ProjectileType<SpinningShadowHand>(), 90, 0f);
                     }
                 }
             }

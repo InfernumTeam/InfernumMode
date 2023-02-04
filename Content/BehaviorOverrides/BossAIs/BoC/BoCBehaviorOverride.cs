@@ -65,6 +65,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
 
             Player target = Main.player[npc.target];
+
+            // Lol. Lmao.
+            if (target.HasBuff(BuffID.Electrified))
+                target.ClearBuff(BuffID.Electrified);
+
             int creeperCount = 8;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];

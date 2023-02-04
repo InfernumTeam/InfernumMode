@@ -84,38 +84,37 @@ namespace InfernumMode.Common.Graphics
                 // Evolve the system based on the Kaliset.
                 // Over time it will achieve very, very chaotic behavior similar to a fractal and as such is incredibly reliable for
                 // getting pseudo-random change over time.
-                for (int i = 0; i < width; i++)
+                for (int i = 0; i < width * height; i++)
                 {
-                    for (int j = 0; j < height; j++)
+                    int x = i % width;
+                    int y = i / width;
+                    float previousDistance = 0f;
+                    float totalChange = 0f;
+                    Vector2 p = new(x / (float)width - 0.5f, y / (float)height - 0.5f);
+
+                    // Repeat the iterative function of 'abs(z) / dot(z) - c' multiple times to generate the fractal patterns.
+                    // The higher the amount of iterations, the greater amount of detail. Do note that too much detail can lead to grainy artifacts
+                    // due to individual pixels being unusually bright next to their neighbors, as the fractal inevitably becomes so detailed that the
+                    // texture cannot encompass all of its features.
+                    for (int j = 0; j < iterations; j++)
                     {
-                        float previousDistance = 0f;
-                        float totalChange = 0f;
-                        Vector2 p = new(i / (float)width - 0.5f, j / (float)height - 0.5f);
+                        p = new Vector2(Math.Abs(p.X), Math.Abs(p.Y)) / Vector2.Dot(p, p);
+                        p.X -= julia;
+                        p.Y -= julia;
 
-                        // Repeat the iterative function of 'abs(z) / dot(z) - c' multiple times to generate the fractal patterns.
-                        // The higher the amount of iterations, the greater amount of detail. Do note that too much detail can lead to grainy artifacts
-                        // due to individual pixels being unusually bright next to their neighbors, as the fractal inevitably becomes so detailed that the
-                        // texture cannot encompass all of its features.
-                        for (int k = 0; k < iterations; k++)
-                        {
-                            p = new Vector2(Math.Abs(p.X), Math.Abs(p.Y)) / Vector2.Dot(p, p);
-                            p.X -= julia;
-                            p.Y -= julia;
-
-                            float distance = p.Length();
-                            totalChange += Math.Abs(distance - previousDistance);
-                            previousDistance = distance;
-                        }
-
-                        // Sometimes the results of the above iterative process will send the distance so far off that the numbers explode into the NaN or Infinity range.
-                        // The GPU won't know what to do with this and will just act like it's a black pixel, which we don't want.
-                        // As such, this check exists to put a hard limit on the values sent into the fractal texture. Something beyond 1000 shouldn't be making a difference anyway.
-                        // At that point the pixel it spits out from the shader should be a pure white.
-                        if (float.IsNaN(totalChange) || float.IsInfinity(totalChange) || totalChange >= 1000f)
-                            totalChange = 1000f;
-
-                        kalisetData[i + j * width] = totalChange;
+                        float distance = p.Length();
+                        totalChange += Math.Abs(distance - previousDistance);
+                        previousDistance = distance;
                     }
+
+                    // Sometimes the results of the above iterative process will send the distance so far off that the numbers explode into the NaN or Infinity range.
+                    // The GPU won't know what to do with this and will just act like it's a black pixel, which we don't want.
+                    // As such, this check exists to put a hard limit on the values sent into the fractal texture. Something beyond 1000 shouldn't be making a difference anyway.
+                    // At that point the pixel it spits out from the shader should be a pure white.
+                    if (float.IsNaN(totalChange) || float.IsInfinity(totalChange) || totalChange >= 1000f)
+                        totalChange = 1000f;
+
+                    kalisetData[i] = totalChange;
                 }
 
                 Main.QueueMainThreadAction(() => KalisetFractal.SetData(kalisetData));

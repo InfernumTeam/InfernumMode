@@ -9,6 +9,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Items;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
@@ -60,11 +62,12 @@ namespace InfernumMode.Content.Projectiles
                 Texture2D icon = IconTexture.Value;
 
                 // Acquire drawing information.
+                float scale = Scale * opacity * 0.8f;
                 Vector2 drawPosition = Vector2.Lerp(left, right, indexRatio);
                 drawPosition.Y -= CalamityUtils.Convert01To010(indexRatio) * opacity * 40f;
                 Vector2 backgroundOrigin = background.Size() * 0.5f;
                 Vector2 iconOrigin = icon.Size() * 0.5f;
-                Rectangle drawArea = Utils.CenteredRectangle(drawPosition, background.Size() * Scale);
+                Rectangle drawArea = Utils.CenteredRectangle(drawPosition, background.Size() * scale);
 
                 // Determine if the mouse is hovering over the icon.
                 // If it is, it should display the hover text and increase in size.
@@ -72,8 +75,8 @@ namespace InfernumMode.Content.Projectiles
                 Scale = MathHelper.Clamp(Scale + hoveringOverBackground.ToDirectionInt() * 0.04f, 1f, 1.35f);
 
                 // Draw the icon.
-                Main.spriteBatch.Draw(background, drawPosition, null, Color.White * opacity, 0f, backgroundOrigin, Scale * opacity, 0, 0f);
-                Main.spriteBatch.Draw(icon, drawPosition, null, Color.White * opacity, 0f, iconOrigin, Scale * opacity, 0, 0f);
+                Main.spriteBatch.Draw(background, drawPosition, null, Color.White * opacity, 0f, backgroundOrigin, scale, 0, 0f);
+                Main.spriteBatch.Draw(icon, drawPosition, null, Color.White * opacity, 0f, iconOrigin, scale, 0, 0f);
 
                 // Draw the text above the icon.
                 if (hoveringOverBackground && opacity > 0f)
@@ -135,6 +138,13 @@ namespace InfernumMode.Content.Projectiles
                 HoverText = "Toggle cybernetic immortality",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/CyborgImmortalityIcon"),
                 ClickBehavior = player => player.Infernum_Immortality().ToggleImmortality()
+            },
+
+            new()
+            {
+                HoverText = "Toggle physics defiance flying",
+                IconTexture = ModContent.Request<Texture2D>("CalamityMod/Items/Mounts/ExoThrone"),
+                ClickBehavior = player => player.Infernum_PhysicsDefiance().ToggleEffect()
             },
 
             new()
@@ -261,7 +271,7 @@ namespace InfernumMode.Content.Projectiles
             if (Time == 1f)
                 SoundEngine.PlaySound(VoltageRegulationSystem.InstallSound);
 
-            // Random release small electric sparks.
+            // Randomly release small electric sparks.
             if (Main.rand.NextBool(4))
             {
                 Dust spark = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f), 264);
@@ -300,7 +310,7 @@ namespace InfernumMode.Content.Projectiles
                 var particle = new HeavySmokeParticle(firePosition, Vector2.Zero, fireColor, 54, fireScale, 1f, fireRotationSpeed, true, 0f, true);
                 GeneralParticleHandler.SpawnParticle(particle);
             }
-
+            
             // Hurt the player.
             var hurtReason = PlayerDeathReason.ByCustomReason($"{Owner.name} was blown up.");
             Owner.Hurt(hurtReason, HyperplaneMatrix.UnableToBeUsedHurtDamage, 0);
@@ -362,7 +372,8 @@ namespace InfernumMode.Content.Projectiles
 
         public static Color RayColorFunction(float completionRatio)
         {
-            return Color.Cyan * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * 0.3f;
+            float opacity = Filters.Scene["InfernumMode:ScreenSaturationBlur"].IsActive() ? 0.1f : 0.3f;
+            return Color.Cyan * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -403,8 +414,8 @@ namespace InfernumMode.Content.Projectiles
                 return;
 
             float opacity = Projectile.Opacity * HologramRayBrightness;
-            Vector2 left = Projectile.Center - Main.screenPosition + new Vector2(MaxHologramWidth * -0.4f, -MaxHologramHeight + 90f) * opacity;
-            Vector2 right = Projectile.Center - Main.screenPosition + new Vector2(MaxHologramWidth * 0.4f, -MaxHologramHeight + 90f) * opacity;
+            Vector2 left = Projectile.Center - Main.screenPosition + new Vector2(MaxHologramWidth * -0.45f, -MaxHologramHeight + 90f) * opacity;
+            Vector2 right = Projectile.Center - Main.screenPosition + new Vector2(MaxHologramWidth * 0.45f, -MaxHologramHeight + 90f) * opacity;
             for (int i = 0; i < UIStates.Count; i++)
             {
                 float indexCompletion = i / (float)(UIStates.Count - 1f);
@@ -432,7 +443,8 @@ namespace InfernumMode.Content.Projectiles
                 NPCID.CultistTablet,
                 NPCID.DD2LanePortal,
                 NPCID.DD2EterniaCrystal,
-                ModContent.NPCType<Eidolist>()
+                ModContent.NPCType<Draedon>(),
+                ModContent.NPCType<Eidolist>(),
             };
 
             int killedNPCs = 0;
@@ -456,7 +468,7 @@ namespace InfernumMode.Content.Projectiles
 
                 n.Calamity().DR = 0f;
                 n.Calamity().unbreakableDR = false;
-                n.StrikeNPCNoInteraction(1000000000, 0f, 0, true);
+                n.StrikeNPCNoInteraction(n.lifeMax * 10, 0f, 0, true);
                 n.boss = false;
 
                 // If for some reason the NPC is not immediately dead, kill it manually. This mitigates death animations entirely.

@@ -7,7 +7,9 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.Items;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -417,14 +419,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
+        public static bool HasEarnedHyperplaneMatrix()
+        {
+            // Check to see if any player has completed the Lab Rat achievement.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (!Main.player[i].active)
+                    continue;
+
+                Player p = Main.player[i];
+                foreach (var achievement in p.GetModPlayer<AchievementPlayer>().AchievementInstances)
+                {
+                    // If someone has the achievement, check to see if SCal has also been defeated.
+                    if (achievement.GetType() == typeof(ExoPathAchievement) && achievement.IsCompleted)
+                        return DownedBossSystem.downedSCal;
+                }
+            }
+
+            return false;
+        }
+
         public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)
         {
             AchievementPlayer.DraedonDefeated = true;
 
             // Become vulnerable after being defeated after a certain point.
             bool hasBeenKilled = npc.localAI[2] == 1f;
+            bool earnedHyperplaneMatrix = HasEarnedHyperplaneMatrix();
             ref float hologramEffectTimer = ref npc.localAI[1];
-            npc.dontTakeDamage = defeatTimer < TalkDelay * 2f + 50f || hasBeenKilled;
+            npc.dontTakeDamage = defeatTimer < TalkDelay * 2f + 50f || hasBeenKilled || earnedHyperplaneMatrix;
             npc.Calamity().CanHaveBossHealthBar = !npc.dontTakeDamage;
             npc.Calamity().ShouldCloseHPBar = hasBeenKilled;
 
@@ -452,28 +475,67 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.ModNPC<DraedonNPC>().ShouldStartStandingUp = true;
 
             if (defeatTimer == DelayBeforeDefeatStandup + 50f)
+            {
                 Utilities.DisplayText("Intriguing. Truly, intriguing.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay + 50f)
-                Utilities.DisplayText("My magnum opera, truly and utterly defeated.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                    Utilities.DisplayText("You have been an excellent test subject.", TextColor);
+                else
+                    Utilities.DisplayText("My magnum opera, truly and utterly defeated.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 2f + 50f)
-                Utilities.DisplayText("This outcome was not what I had expected.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                    Utilities.DisplayText("The data I have acquired from your combat has been invaluable.", TextColor);
+                else
+                    Utilities.DisplayText("This outcome was not what I had expected.", TextColor);
+            }
 
             // After this point Draedon becomes vulnerable.
             // He sits back down as well as he thinks for a bit.
             // Killing him will cause gore to appear but also for Draedon to come back as a hologram.
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 50f)
-                Utilities.DisplayText("...Excuse my introspection. I must gather my thoughts after that display.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                    Utilities.DisplayText("...Perhaps, I may be able to grant you a reward for your time.", TextColor);
+                else
+                    Utilities.DisplayText("...Excuse my introspection. I must gather my thoughts after that display.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 165f)
-                Utilities.DisplayText("It is perhaps not irrational to infer that you are beyond my reasoning.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Item.NewItem(npc.GetSource_FromThis(), Main.player[npc.target].Center, ModContent.ItemType<HyperplaneMatrix>());
+                }
+                else
+                    Utilities.DisplayText("It is perhaps not irrational to infer that you are beyond my reasoning.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 4f + 165f)
-                Utilities.DisplayText("Now.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                    Utilities.DisplayText("My most useful creation. I'm sure you will find some use for it.", TextColor);
+                else
+                    Utilities.DisplayText("Now.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 5f + 165f)
-                Utilities.DisplayText("You would wish to reach the Tyrant. I cannot assist you in that.", TextColor);
+            {
+                if (earnedHyperplaneMatrix)
+                {
+                    Utilities.DisplayText("Use it wisely.", TextColorEdgy);
+                    defeatTimer = DelayBeforeDefeatStandup + TalkDelay * 6f + 166f;
+                    npc.netUpdate = true;
+                }
+                else
+                    Utilities.DisplayText("You would wish to reach the Tyrant. I cannot assist you in that.", TextColor);
+            }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 6f + 165f)
                 Utilities.DisplayText("It is not a matter of spite, for I would wish nothing more than to observe such a conflict.", TextColor);

@@ -31,8 +31,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (!SoughtTime.HasValue)
                 return;
 
-            timeRate = 150D;
-            eventUpdateRate = 150D;
+            timeRate = 300D;
+            eventUpdateRate = 300D;
         }
 
         public override void ModifySunLightColor(ref Color tileColor, ref Color backgroundColor)
@@ -56,7 +56,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
 
             // Disable the effect if very close to the sought time.
-            if (MathHelper.Distance(SoughtTime.Value, (int)Main.time) <= 220f && Main.dayTime == SeekingDayTime)
+            if (MathHelper.Distance(SoughtTime.Value, (int)Main.time) <= 320f && Main.dayTime == SeekingDayTime)
             {
                 Main.time = SoughtTime.Value;
                 SoughtTime = null;

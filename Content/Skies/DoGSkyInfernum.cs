@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,7 +16,7 @@ namespace InfernumMode.Content.Skies
 {
     public class DoGSkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.DoGHead != -1;
+        public override bool IsSceneEffectActive(Player player) => CosmicBackgroundSystem.EffectIsActive;
 
         // FUCK YOU FUCK YOU
         public override SceneEffectPriority Priority => SceneEffectPriority.BiomeLow;

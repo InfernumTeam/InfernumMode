@@ -20,6 +20,7 @@ using Terraria.DataStructures;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using ReLogic.Content;
 using CalamityMod;
+using System.Collections.Generic;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -216,7 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly)) / 2f;
             float opacity = MathHelper.Lerp(0.01f, 0.12f, sine);
 
-            // Draw the wall overlay.
+            // Draw the overlay.
             DrawData overlay = new(npcTexture, npc.Center - Main.screenPosition, npc.frame, Color.White * opacity, 0f, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(overlay);
             overlay.Draw(spriteBatch);

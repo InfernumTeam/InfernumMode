@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
             Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
             // If shield connections should be drawn.
-            if (npc.ai[2] == 1f)
+            if (npc.ai[2] == 1f || commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] > 0f)
                 DrawShieldConnections(npc);
             return false;
         }
@@ -113,18 +113,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < backglowAmount; i++)
             {
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
-                Color backglowColor = MagicCrystalShot.ColorSet[0];
+                Color backglowColor = MagicSpiralCrystalShot.ColorSet[0];
                 backglowColor.A = 0;
                 spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
             }
         }
 
-        public static Color EnergyColorFunction(float completionRatio) => MagicCrystalShot.ColorSet[0];
+        public static Color EnergyColorFunction(float completionRatio) => MagicSpiralCrystalShot.ColorSet[0];
 
         public void DrawShieldConnections(NPC npc)
         {
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
-            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] * 20f,
+            ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => commander.width * 0.35f,
                 EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
             NPC npcToConnectTo = default;
             if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
@@ -145,12 +145,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else
                 return;
 
-            Vector2 startPos = npc.TopLeft + new Vector2(16f, 60f);
+            Vector2 startPos = npc.Center + new Vector2(npc.spriteDirection * 32f, 12f);
             Vector2 endPos = npcToConnectTo.Top;
 
             InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBubbleGlow);
-            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(MagicCrystalShot.ColorSet[0], Color.White, 0.1f));
-            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(2.5f);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], Color.White, 0.1f));
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(2.5f * commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex]);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["reverseDirection"].SetValue(false);
 
@@ -169,9 +169,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Texture2D glowTexture = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
             Vector2 drawPosition = startPos - Main.screenPosition;
             Vector2 glowOrigin = glowTexture.Size() * 0.5f;
-            Color baseColor = MagicCrystalShot.ColorSet[0];
+            Color baseColor = MagicSpiralCrystalShot.ColorSet[0];
             baseColor.A = 0;
-            Color modifiedColor = Color.Lerp(Color.Transparent, baseColor, npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex]);
+            float widthScale = commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
+            Color modifiedColor = Color.Lerp(Color.Transparent, baseColor, widthScale);
             float scaleSine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly)) / 2f;
             float glowScale = MathHelper.Lerp(1.1f, 1.15f, scaleSine);
             Color finalColor = Color.Lerp(modifiedColor, new(1f, 1f, 1f, 0f), scaleSine);

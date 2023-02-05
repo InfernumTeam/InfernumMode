@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.GlobalInstances;
@@ -33,6 +34,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             CommanderDeathAnimation
         }
 
+        public enum DefenderShieldStatus
+        {
+            Inactive,
+            Active,
+            MarkedForRemoval
+        }
+
         public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6780, 1500);
 
         public const int DefenderFireSuckupWidthIndex = 10;
@@ -40,7 +48,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int DefenderShouldGlowIndex = 12;
         public const int DefenderDrawDashTelegraphIndex = 13;
         public const int DefenderDashTelegraphOpacityIndex = 14;
-        public const int CommanderMovedToTriplePosition = 15;
+        public const int CommanderMovedToTriplePositionIndex = 15;
+        // 0 = shield needs to spawn, 1 = shield is spawned, 2 = shield should die.
+        public const int DefenderShieldStatusIndex = 16;
 
         public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
@@ -75,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.damage = npc.defDamage;
                     npc.dontTakeDamage = false;
                     // Go to the initial attack and reset the attack timer.
-                    SelectNewAttack(npc, ref attackTimer, npc);
+                    SelectNewAttack(npc, ref attackTimer);
                 }
             }
 
@@ -237,7 +247,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         else
                         {
                             npc.velocity *= 0.5f;
-                            npc.spriteDirection = 1;
+                            npc.spriteDirection = -1;
                         }
 
                         // If the crystal is shattering, decrease the scale, else increase it.
@@ -255,7 +265,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // The commander remains in the center firing its two spinning fire beams.
             if (npc.type == CommanderType)
             {
-                ref float movedToPosition = ref npc.Infernum().ExtraAI[CommanderMovedToTriplePosition];
+                ref float movedToPosition = ref npc.Infernum().ExtraAI[CommanderMovedToTriplePositionIndex];
                 ref float spawnedLasers = ref npc.Infernum().ExtraAI[1];
 
                 Vector2 hoverPosition = CrystalPosition + new Vector2(-200f, 0);
@@ -276,6 +286,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.velocity.Y = sine * 0.5f;
                     npc.spriteDirection = 1;
+
+                    if (Main.projectile.Any((Projectile proj) => proj.active && proj.type == ModContent.ProjectileType<HolySpinningFireBeam>()))
+                        spawnedLasers = 1;
 
                     if (spawnedLasers == 0)
                     {
@@ -317,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         150,
                         240,
                         330,
-                        420
+                        420 
                     };
 
                     for (int i = 0; i < rockAmount; i++)
@@ -325,8 +338,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Vector2 rockPosition = npc.Center + (MathHelper.TwoPi * i / rockAmount).ToRotationVector2() * 100f;
 
                         int waitTimeToUse = Main.rand.Next(0, waitTimes.Count);
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedRock>().WaitTime = waitTimes[waitTimeToUse]);
-                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedRock>(), 120, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedCirclingRock>().WaitTime = waitTimes[waitTimeToUse]);
+                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), 120, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
                         waitTimes.RemoveAt(waitTimeToUse);
                     }
                 }
@@ -346,7 +359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 hoverPosition = CrystalPosition - new Vector2(50f, 0f);
                 // Sit still behind the commander
                 if (npc.Distance(hoverPosition) > 5f && movedToPosition == 0f)
-                    npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                     npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 25)) / 8f;
                 else
                 {
                     drawShieldConnections = 1f;
@@ -373,15 +386,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < crystalAmount; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 15f;
-                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f, -1, 0f, crystalsFired % 2f == 0f ? -1f : 1f);
+                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), 230, 0f, -1, 0f, crystalsFired % 2f == 0f ? -1f : 1f);
                         }
+                        if (crystalsFired >= maxCrystalsFired)
+                            universalAttackTimer = 0;
                         crystalsFired++;
                     }
 
                     // The attack should end.
                     if (crystalsFired >= maxCrystalsFired)
                     {
-                        SelectNewAttack(commander, ref universalAttackTimer, npc);
+                        SelectNewAttack(commander, ref universalAttackTimer);
                         drawShieldConnections = 0;
                     }
                 }
@@ -405,15 +420,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float hoverOffsetY = ref npc.Infernum().ExtraAI[2];
                 ref float dashesCompleted = ref npc.Infernum().ExtraAI[3];
 
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
                 ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
                 ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
 
                 float maxDashes = 4f;
-                float waitTime = dashesCompleted == 0f ? 120f : 60f;
+                float waitTime = dashesCompleted == 0f ? 90f : 60f;
                 float telegraphWaitTime = 20f;
                 float dashTime = 30f;
                 float dashSpeed = 35f;
                 Vector2 oldHoverOffset = new(hoverOffsetX, hoverOffsetY);
+
+                // Generate the shield if it is inactive.
+                if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive)
+                {
+                    // Mark the shield as active.
+                    shieldStatus = (float)DefenderShieldStatus.Active;
+                    Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 100f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                }
 
                 switch (substate)
                 {
@@ -476,6 +500,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             substate++;
                         }
                         break;
+
                     // Charge
                     case 2:
                         drawDashTelegraph = 1;
@@ -484,6 +509,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
                         substate++;
                         universalAttackTimer = 0;
+
+                        //float rockAmount = 4;
+                        //// Shoot rocks out.
+                        //if (Main.netMode != NetmodeID.MultiplayerClient)
+                        //{
+                        //    for (int i = 0; i < rockAmount; i++)
+                        //    {
+                        //        Vector2 rockPosition = npc.Center + (MathHelper.TwoPi * i / rockAmount).ToRotationVector2() * 50f;
+                        //        Vector2 velocity = ((MathHelper.TwoPi * i / rockAmount) + npc.DirectionTo(target.Center).ToRotation()).ToRotationVector2() * dashSpeed * 0.5f;
+                        //        Utilities.NewProjectileBetter(rockPosition, velocity.RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<ProfanedRock>(), 200, 0f, ai1: npc.whoAmI);
+                        //    }
+                        //}
                         break;
 
                     // After a set time, reset.
@@ -506,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             dashesCompleted++;
                             
                             if (dashesCompleted >= maxDashes)
-                                SelectNewAttack(commander, ref universalAttackTimer, npc);
+                                SelectNewAttack(commander, ref universalAttackTimer);
                             else
                             {
                                 substate = 0;
@@ -520,9 +557,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // The healer hovers around the commander, whos shield is toned down a bit in opacity.
             else if (npc.type == HealerType)
             {
+                ref float drawShieldConnections = ref npc.ai[2];
+                drawShieldConnections = 1f;
                 ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
+
+                float crystalShotReleaseRate = 90f;
+                float crystalShotSpeed = 6f;
+                float crystalAmount = 6f;
+
                 // Move around the commander.
-                Vector2 hoverDestination = commander.Center + (localAttackTimer / 25f).ToRotationVector2() * 150f;
+                Vector2 hoverDestination = commander.Center + (localAttackTimer / 25f).ToRotationVector2() * 200f;
                 if (npc.velocity.Length() < 2f)
                     npc.velocity = Vector2.UnitY * -2.4f;
 
@@ -530,7 +574,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
                 npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
-                npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                npc.spriteDirection = MathF.Sign(npc.DirectionTo(commander.Center).X);
+
+                if (localAttackTimer % crystalShotReleaseRate == crystalShotReleaseRate - 1)
+                {
+                    for (int i = 0; i < crystalAmount; i++)
+                    {
+                        Vector2 fastShootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * crystalShotSpeed;
+                        Vector2 slowShootVelocity = (MathHelper.TwoPi * (i + 0.5f) / crystalAmount).ToRotationVector2() * (crystalShotSpeed / 3f);
+                        Utilities.NewProjectileBetter(commander.Center, fastShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 200, 0f);
+                        Utilities.NewProjectileBetter(commander.Center, slowShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 200, 0f);
+                    }
+                }
+
                 localAttackTimer++;
             }
         }
@@ -540,29 +596,162 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Commander remains hovering still.
             if (npc.type == CommanderType)
             {
-                //npc.velocity.X *= 0.9f;
-                //float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
-                //npc.velocity.Y = sine * 0.5f;
-                //npc.spriteDirection = 1;
+                npc.velocity.X *= 0.9f;
+                float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                npc.velocity.Y = sine * 0.5f;
+                npc.spriteDirection = 1;
             }
 
             else if (npc.type == DefenderType)
             {
+                ref float substate = ref commander.Infernum().ExtraAI[0];
+                ref float localAttackTimer = ref npc.Infernum().ExtraAI[1];
+                ref float hoverOffsetY = ref npc.Infernum().ExtraAI[2];
+                ref float dashesCompleted = ref npc.Infernum().ExtraAI[3];
+                ref float xOffset = ref npc.Infernum().ExtraAI[4];
+
+                ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
+                ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
+
+                float waitTime = dashesCompleted == 0f ? 60f : 30;
+                float telegraphWaitTime = 20f;
+                float dashTime = 25f;
+                float dashSpeed = 35f;
+
+                switch (substate)
+                {
+                    // Determine the best location to move to based on the Y position relative to the player.
+                    case 0:
+                        // If higher than the target.
+                        if (npc.Center.Y < target.Center.Y)
+                            hoverOffsetY = -500f;
+                        else
+                            hoverOffsetY = 500f;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            xOffset = Main.rand.NextFloat(100f, 200f) * Main.rand.NextFromList(-1f, 1f);
+                            npc.netUpdate = true;
+                        }
+                        localAttackTimer = 0;
+                        substate++;
+                        break;
+
+                    // Move to the dash starting location.
+                    case 1:
+                        npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                        Vector2 position = target.Center + new Vector2(xOffset, hoverOffsetY);
+
+                        if (npc.velocity.Length() < 2f)
+                            npc.velocity = Vector2.UnitY * -2.4f;
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(position) * MathHelper.Min(npc.Distance(position), 33f)) / 8f;
+
+                        // Move out of the way of the target if going around them.
+                        if (npc.WithinRange(target.Center, 150f))
+                            npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                        // Initialize the dash telegraph.
+                        if (localAttackTimer >= telegraphWaitTime)
+                            drawDashTelegraph = 1;
+
+                        // Increase the opacity.
+                        if (drawDashTelegraph == 1)
+                            dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
+
+
+                        if ((npc.WithinRange(position, 25f) && localAttackTimer >= waitTime) || localAttackTimer >= 120f)
+                        {
+                            localAttackTimer = 0;
+                            substate++;
+                        }
+                        break;
+
+                    // Charge
+                    case 2:
+                        drawDashTelegraph = 1;
+                        npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
+                        commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
+                        SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
+                        substate++;
+                        localAttackTimer = 0;
+                        break;
+
+                    // After a set time, reset.
+                    case 3:
+                        // Decrease the dash telegraph.
+                        drawDashTelegraph = 1;
+                        dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
+                        commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
+
+                        // Create particles to indicate the sudden speed.
+                        if (Main.rand.NextBool(2))
+                        {
+                            Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                            Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                            GeneralParticleHandler.SpawnParticle(energyLeak);
+                        }
+
+                        if (localAttackTimer >= dashTime)
+                        {
+                            substate = 0;
+                            localAttackTimer = 0;
+                        }
+                        break;
+                }
+                localAttackTimer++;
             }
 
+            // The healer moves above the commander, and released crystal walls upwards.
             else if (npc.type == HealerType)
             {
-            }
+                ref float movedToPosition = ref npc.Infernum().ExtraAI[0];
+                ref float completedCrystalLayers = ref npc.Infernum().ExtraAI[1];
+                float totalCrystalLayers = 6;
+                float totalCrystalsPerLayer = 10;
+                float crystalLayerFireRate = 90f;
+                float endOfAttackDelay = 120f;
+                Vector2 hoverPosition = new(commander.Center.X, CrystalPosition.Y - 450);
+                // Sit still behind the commander
+                if (npc.Distance(hoverPosition) > 5f && movedToPosition == 0f)
+                    npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                else
+                {
+                    npc.velocity.X *= 0.9f;
+                    if (movedToPosition == 0)
+                        npc.Center = hoverPosition;
+                    movedToPosition = 1f;
+                    float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                    npc.velocity.Y = sine * 0.5f;
+                    npc.spriteDirection = -1;
+                }
 
-            if (universalAttackTimer >= 1f)
-                SelectNewAttack(commander, ref universalAttackTimer, npc);
+                if (universalAttackTimer % crystalLayerFireRate == crystalLayerFireRate - 1 && Main.netMode != NetmodeID.MultiplayerClient && completedCrystalLayers < totalCrystalLayers)
+                {
+                    SoundEngine.PlaySound(SoundID.Item109, target.Center);
+                    //float xSpeedOffset = target.velocity.X + Main.rand.NextFloat(-5f, 5f);
+                    for (int i = 0; i < totalCrystalsPerLayer; i++)
+                    {
+                        Vector2 shootVelocity = new(MathHelper.Lerp(-20f, 20f, i / (float)totalCrystalsPerLayer), -10.75f);
+                        shootVelocity.X += Main.rand.NextFloatDirection() * 0.6f;
+                        Utilities.NewProjectileBetter(npc.Center + -Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<FallingCrystalShard>(), 200, 0f);
+                    }
+                    completedCrystalLayers++;
+                    if (completedCrystalLayers >= totalCrystalLayers)
+                        universalAttackTimer = 0;
+                }
+
+                if (completedCrystalLayers >= totalCrystalLayers && commander.Infernum().ExtraAI[0] == 0 && universalAttackTimer >= endOfAttackDelay)
+                {
+                    SelectNewAttack(commander, ref universalAttackTimer);
+                }
+            }
         }
 
-        public static void SelectNewAttack(NPC commander, ref float universalAttackTimer, NPC npc)
+        public static void SelectNewAttack(NPC commander, ref float universalAttackTimer)
         {
             // Reset the first 5 extra ai slots. These are used for per attack information.
             for (int i = 0; i < 5; i++)
-                npc.Infernum().ExtraAI[i] = 0;
+                commander.Infernum().ExtraAI[i] = 0;
 
             if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
             {
@@ -571,6 +760,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     NPC defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
                     for (int i = 0; i < 5; i++)
                         defender.Infernum().ExtraAI[i] = 0;
+
+                    // If the next attack is the healer solo, mark the defending shield as no longer needed.
+                    // This gets reset back to zero by the shield before removing itself.
+                    if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.HealerAndDefender)
+                    {
+                        if ((DefenderShieldStatus)defender.Infernum().ExtraAI[DefenderShieldStatusIndex] == DefenderShieldStatus.Active)
+                            defender.Infernum().ExtraAI[DefenderShieldStatusIndex] = (float)DefenderShieldStatus.MarkedForRemoval;
+                        else
+                            defender.Infernum().ExtraAI[DefenderShieldStatusIndex] = (float)DefenderShieldStatus.Inactive;
+                    }
                 }
             }
 
@@ -584,15 +783,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
 
-            // Reset the attack timer.
+            // Reset the universal attack timer.
             universalAttackTimer = 0;
             // If not the final combo attack, advance the current attack.
             if (commander.ai[0] < 4)
                 commander.ai[0]++;
 
             // Else, reset it back to the first combo attack.
-            else if (commander.ai[0] == 4)
-                commander.ai[0] = 2;
+            else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.HealerAndDefender)
+                commander.ai[0] = (float)GuardiansAttackType.SoloHealer;
+
         }
     }
 }

@@ -209,7 +209,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor, rotation, origin, 0.8f, SpriteEffects.None, 0f);
                 return;
             }
-
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GuardiansLaserVertexShader);
 
             InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
@@ -217,7 +216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.GuardiansLaserVertexShader.UseColor(new Color(255, 221, 135));
             InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["flipY"].SetValue(false);
             float lengthScalar = CurrentLaserLength / MaxLaserLength;
-            InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue(3f * lengthScalar);
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue(3.5f * lengthScalar);
 
             Vector2 startPos = Projectile.Center - Projectile.velocity * 2f;
             Vector2 endPos = Projectile.Center + Projectile.velocity * CurrentLaserLength * (0.2f * (1f - (lengthScalar * 0.8f)) + 1f);

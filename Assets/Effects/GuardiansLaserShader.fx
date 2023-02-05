@@ -53,11 +53,12 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     
     if (flipY)
         coords.y = 1 - coords.y;
-    
+
     float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * stretchAmount - uTime * 1.8), coords.y));
     float bloomFadeout = pow(sin(coords.y * 3.141), 3);
     float opacity = (fadeMapColor.r + 1) * bloomFadeout;
     float bloomFadeout2 = pow(sin(coords.y * 3.141), 18);
+    
     
     float4 fadeMapColor2 = tex2D(uImage2, float2(frac(coords.x * (stretchAmount * 1.66666666) - uTime * 2.2), coords.y));
     float opacity2 = saturate(fadeMapColor2.r - 0.5) * bloomFadeout2;

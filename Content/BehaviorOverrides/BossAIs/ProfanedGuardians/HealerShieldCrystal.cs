@@ -114,21 +114,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Die
                 NPC.active = false;
-                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
-                    return;
-
-                NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
-                // Tell the commander to swap attacks. The other guardians use this.
-                commander.ai[0] = (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer;
-                // Reset the first 5 extra ai slots. These are used for per attack information.
-                for (int i = 0; i < 5; i++)
-                    commander.Infernum().ExtraAI[i] = 0f;
-
-                // Reset the attack timer.
-                commander.ai[1] = 0f;
 
                 // Despawn all the fire walls.
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFireWall>());
+
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
+                    return;
+
+                NPC guard = Main.npc[CalamityGlobalNPC.doughnutBoss];
+                // Tell the commander to swap attacks. The other guardians use this.
+                guard.ai[0] = (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer;
+                // Reset the first 5 extra ai slots. These are used for per attack information.
+                for (int i = 0; i < 5; i++)
+                    guard.Infernum().ExtraAI[i] = 0f;
+
+                // Reset the attack timer.
+                guard.ai[1] = 0f;
+
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
+                    return;
+
+                guard = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
+                for (int i = 0; i < 5; i++)
+                    guard.Infernum().ExtraAI[i] = 0f;
+
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossHealer))
+                    return;
+
+                guard = Main.npc[CalamityGlobalNPC.doughnutBossHealer];
+                for (int i = 0; i < 5; i++)
+                    guard.Infernum().ExtraAI[i] = 0f;
             }
             ShatteringTimer++;
         }
@@ -144,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             DrawWall(spriteBatch, drawPosition);
             DrawBackglow(spriteBatch, mainTexture, drawPosition, NPC.frame);
-            spriteBatch.Draw(mainTexture, drawPosition, null, Color.White * NPC.Opacity, NPC.rotation * NPC.Opacity, origin, NPC.scale * NPC.Opacity, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTexture, drawPosition, null, Color.White * NPC.Opacity, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -193,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < backglowAmount; i++)
             {
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
-                Color backglowColor = MagicCrystalShot.ColorSet[0];
+                Color backglowColor = MagicSpiralCrystalShot.ColorSet[0];
                 backglowColor.A = 0;
                 spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor * NPC.Opacity, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }

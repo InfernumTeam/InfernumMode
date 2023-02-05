@@ -15,6 +15,7 @@ namespace InfernumMode.Content.Achievements
         public int TotalCompletion = 1;
         public int CurrentCompletion;
         public bool DoneCompletionEffects = false;
+        public AchievementUpdateCheck UpdateCheck;
         #endregion
 
         #region Properties
@@ -38,7 +39,7 @@ namespace InfernumMode.Content.Achievements
         /// Name<br />
         /// Description<br />
         /// TotalCompletion<br />
-        /// PositionInMainList>br />
+        /// PositionInMainList
         /// </summary>
         public virtual void Initialize()
         {
@@ -70,26 +71,13 @@ namespace InfernumMode.Content.Achievements
         }
         #endregion
 
-        #region ExtraUpdates
+        #region ExtraUpdate
         /// <summary>
-        /// An ExtraUpdate that takes no parameters. Call this for specific circumstances.
+        /// Called when the set <see cref="UpdateCheck"/> occures.
         /// </summary>
-        public virtual void ExtraUpdate()
-        {
-
-        }
-        /// <summary>
-        /// An ExtraUpdate that takes in a npc index.
-        /// </summary>
-        public virtual void ExtraUpdateNPC(int npcIndex)
-        {
-
-        }
-        /// <summary>
-        /// An ExtraUpdate that takes in an item type.
-        /// </summary>
-        /// <param name="itemID"></param>
-        public virtual void ExtraUpdateItem(int itemID)
+        /// <param name="player">The player that called this update</param>
+        /// <param name="extraInfo">What this contains depends on the <see cref="UpdateCheck"/>, ranging from item types to npc indexes.</param>
+        public virtual void ExtraUpdate(Player player, int extraInfo)
         {
 
         }

@@ -55,6 +55,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Defeat the various minor threats across the world!\n[c/777777:Beat every Infernum Miniboss]";
             TotalCompletion = 9;
             PositionInMainList = 7;
+            UpdateCheck = AchievementUpdateCheck.NPCKill;
             CreateDict();
         }
 
@@ -97,7 +98,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             }
             CurrentCompletion = currentCompletion;
         }
-        public override void ExtraUpdateNPC(int npcIndex)
+        public override void ExtraUpdate(Player player, int npcIndex)
         {
             bool updatedList = false;
             int npcID = Main.npc[npcIndex].type;

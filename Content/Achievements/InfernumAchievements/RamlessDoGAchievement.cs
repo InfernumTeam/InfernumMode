@@ -28,6 +28,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Best the Devourer at his own game: without a ram!\n[c/777777:Beat the Infernum Devourer of Gods without using a ram dash]";
             TotalCompletion = 1;
             PositionInMainList = 4;
+            UpdateCheck = AchievementUpdateCheck.None;
         }
         public override void Update()
         {

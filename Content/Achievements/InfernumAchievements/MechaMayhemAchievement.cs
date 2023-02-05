@@ -26,6 +26,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Decommission the Maniacal Mechanical trio in one fell swoop!\n[c/777777:Beat Infernum Mecha-Mayhem]";
             TotalCompletion = 1;
             PositionInMainList = 1;
+            UpdateCheck = AchievementUpdateCheck.NPCKill;
         }
         public override void Update()
         {
@@ -54,7 +55,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 }
             }
         }
-        public override void ExtraUpdateNPC(int npcIndex)
+        public override void ExtraUpdate(Player player, int npcIndex)
         {
             if (!MayhemIsOccuring)
                 return;
@@ -83,11 +84,9 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #endregion
 
         #region Methods
-        private bool IsAMech(int npcID)
-        {
-            return npcID is NPCID.TheDestroyer or NPCID.SkeletronPrime or NPCID.Retinazer or NPCID.Spazmatism;
-        }
-        private bool AnyOtherMechsActive(int npcID)
+        private static bool IsAMech(int npcID) => npcID is NPCID.TheDestroyer or NPCID.SkeletronPrime or NPCID.Retinazer or NPCID.Spazmatism;
+
+        private static bool AnyOtherMechsActive(int npcID)
         {
             foreach (int mechID in Mechs)
             {

@@ -107,6 +107,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Rip and tear, until it is done\n[c/777777:Beat every Infernum Boss]";
             TotalCompletion = BossList.Count;
             PositionInMainList = 8;
+            UpdateCheck = AchievementUpdateCheck.NPCKill;
             CreateNewDict();
         }
         public override void Update()
@@ -140,7 +141,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             DoneCompletionEffects = tag.Get<bool>("BossesDoneCompletionEffects");
         }
 
-        public override void ExtraUpdateNPC(int npcIndex)
+        public override void ExtraUpdate(Player player, int npcIndex)
         {
             // Don't count Boss Rush kills.
             if (BossRushEvent.BossRushActive)

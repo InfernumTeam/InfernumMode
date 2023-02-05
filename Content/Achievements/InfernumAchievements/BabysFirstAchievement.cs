@@ -12,6 +12,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "The higher the count, the more you've learnt\n[c/777777:Die to an Infernum boss]";
             TotalCompletion = 1;
             PositionInMainList = 0;
+            UpdateCheck = AchievementUpdateCheck.PlayerDeath;
         }
 
         public override void Update()
@@ -21,7 +22,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 CurrentCompletion++;
         }
 
-        public override void ExtraUpdate() => CurrentCompletion++;
+        public override void ExtraUpdate(Player player, int extraInfo) => CurrentCompletion++;
 
         public override void SaveProgress(TagCompound tag)
         {

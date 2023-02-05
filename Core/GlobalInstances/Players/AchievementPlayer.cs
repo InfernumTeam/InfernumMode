@@ -1,6 +1,7 @@
 ﻿using CalamityMod.CalPlayer;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
+using InfernumMode.Core.GlobalInstances.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,53 +58,21 @@ namespace InfernumMode.Core.GlobalInstances.Players
         }
 
         /// <summary>
-        /// Call this in specific places for your specific achievements, creating the appropriate UpdateContext context.
+        /// Call this where an achivement with the provided update check should call its extra update.
         /// </summary>
-        /// <param name="context"></param>
-        internal static void ExtraUpdateAchievements(Player player, UpdateContext context)
+        /// <param name="player">The player running the extra update</param>
+        /// <param name="updateCheck">The type of check that should be ran</param>
+        /// <param name="extraInfo">Optional extra information, what this is used for is per achievement</param>
+        internal static void ExtraUpdateHandler(Player player, AchievementUpdateCheck updateCheck, int extraInfo = -1)
         {
-            if (!player.active)
-                return;
-
-            foreach (var achievement in player.GetModPlayer<AchievementPlayer>().AchievementInstances)
+            foreach (Achievement achievement in player.GetModPlayer<AchievementPlayer>().AchievementInstances)
             {
-                if (context.NPCIndex != -1)
-                {
-                    if (achievement.GetType() == typeof(KillAllBossesAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateNPC(context.NPCIndex);
-                    if (achievement.GetType() == typeof(KillAllMinibossesAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateNPC(context.NPCIndex);
-                    if (achievement.GetType() == typeof(MechaMayhemAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateNPC(context.NPCIndex);
-                    if (achievement.GetType() == typeof(BereftVassalAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateNPC(context.NPCIndex);
-                    if (achievement.GetType() == typeof(ExoPathAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateNPC(context.NPCIndex);
-                }
-
-                if (context.ItemType != -1)
-                {
-                    if (achievement.GetType() == typeof(InfernalChaliceAchievement) && !achievement.IsCompleted)
-                        achievement.ExtraUpdateItem(context.ItemType);
-                }
-
-                if (context.SpecificContext != SpecificUpdateContexts.None)
-                {
-                    switch (context.SpecificContext)
-                    {
-                        case SpecificUpdateContexts.PlayerDeath:
-                            if (achievement.GetType() == typeof(BabysFirstAchievement) && !achievement.IsCompleted)
-                                achievement.ExtraUpdate();
-                            break;
-                    }
-                }
+                if (achievement.UpdateCheck == updateCheck)
+                    achievement.ExtraUpdate(player, extraInfo);
             }
         }
 
-        internal static List<Achievement> GetAchievementsList()
-        {
-            return Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.ToList();
-        }
+        internal static List<Achievement> GetAchievementsList() => Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.ToList();
 
         public static int GetIconIndex(Achievement achievement)
         {
@@ -128,14 +97,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
             foreach (var achievement in AchievementInstances)
                 achievement.LoadProgress(tag);
         }
-        public override void Initialize()
-        {
-            InitializeIfNecessary();
-        }
-        public override void OnEnterWorld(Player player)
-        {
-            AchievementsNotificationTracker.Clear();
-        }
+
+        public override void Initialize() => InitializeIfNecessary();
+
+        public override void OnEnterWorld(Player player) => AchievementsNotificationTracker.Clear();
 
         public override void PostUpdate()
         {
@@ -157,8 +122,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (CalamityPlayer.areThereAnyDamnBosses)
-                ExtraUpdateAchievements(Player, new UpdateContext(-1, -1, SpecificUpdateContexts.PlayerDeath));
+            if (CalamityPlayer.areThereAnyDamnBosses && WorldSaveSystem.InfernumMode)
+                ExtraUpdateHandler(Player, AchievementUpdateCheck.PlayerDeath);
         }
         #endregion
 
@@ -168,29 +133,5 @@ namespace InfernumMode.Core.GlobalInstances.Players
         internal static bool DraedonDefeated = false;
         internal static bool ShouldUpdateSavedMechOrder = false;
         #endregion
-    }
-
-    // These two arent *entirely* needed as of right now, but allows for future proofing for if/when we add
-    // more achievements.
-    public struct UpdateContext
-    {
-        public int NPCIndex;
-
-        public int ItemType;
-
-        public SpecificUpdateContexts SpecificContext;
-
-        public UpdateContext(int npcIndex = -1, int itemType = -1, SpecificUpdateContexts specificContext = SpecificUpdateContexts.None)
-        {
-            NPCIndex = npcIndex;
-            ItemType = itemType;
-            SpecificContext = specificContext;
-        }
-    }
-
-    public enum SpecificUpdateContexts
-    {
-        None,
-        PlayerDeath
     }
 }

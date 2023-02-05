@@ -15,8 +15,9 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Best the Bereft Vassal in combat, in the far reaches of the desert's dunes\n[c/777777:Defeat the Bereft Vassal]";
             TotalCompletion = 1;
             PositionInMainList = 2;
+            UpdateCheck = AchievementUpdateCheck.NPCKill;
         }
-        public override void ExtraUpdateNPC(int npcIndex)
+        public override void ExtraUpdate(Player player, int npcIndex)
         {
             if (Main.npc[npcIndex].type == ModContent.NPCType<BereftVassal>())
                 CurrentCompletion++;

@@ -1,3 +1,4 @@
+using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Items;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
@@ -10,7 +11,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
         public override bool OnPickup(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<DemonicChaliceOfInfernum>())
-                AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(itemType: item.type));
+                AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.ItemPickup, item.type);
             return true;
         }
     }

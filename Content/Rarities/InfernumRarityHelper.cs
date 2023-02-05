@@ -7,7 +7,6 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 
@@ -19,7 +18,7 @@ namespace InfernumMode.Content.Rarities
 
         public static Texture2D SparkleTexure => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/BaseRaritySparkleTexture").Value;
 
-        public static void DrawBaseTooltipTextAndGlow(DrawableTooltipLine tooltipLine, Color glowColor, Color textOuterColor, Color? textInnerColor = null, Texture2D glowTexture = null, Asset<Texture2D> glowShaderTexture = null)
+        public static void DrawBaseTooltipTextAndGlow(DrawableTooltipLine tooltipLine, Color glowColor, Color textOuterColor, Color? textInnerColor = null, Texture2D glowTexture = null)
         {
             textInnerColor ??= Color.Black;
             glowTexture ??= GlowTexture;
@@ -98,13 +97,16 @@ namespace InfernumMode.Content.Rarities
                         velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f));
                         sparklesList.Add(new RelicSparkle(sparkleType, lifetime, scale, initialRotation, rotationSpeed, position, velocity));
                         break;
-
+                    case SparkleType.EggSparkle:
                     case SparkleType.VassalSparkle:
                         lifetime = (int)Main.rand.NextFloat(70f - 25f, 70f);
                         scale = Main.rand.NextFloat(0.3f * 0.5f, 0.3f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.4f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = Vector2.UnitY * Main.rand.NextFloat(0.1f, 0.25f);
-                        sparklesList.Add(new VassalSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
+                        if (sparkleType == SparkleType.VassalSparkle)
+                            sparklesList.Add(new VassalSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
+                        else
+                            sparklesList.Add(new EggSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
                         break;
                 }
             }

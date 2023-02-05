@@ -2,6 +2,7 @@
 {
     public enum SparkleType
     {
+        EggSparkle,
         HourglassSparkle,
         ProfanedSparkle,
         RelicSparkle,

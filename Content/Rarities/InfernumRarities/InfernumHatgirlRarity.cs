@@ -7,7 +7,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
 {
     public class InfernumHatgirlRarity : ModRarity
     {
-        public override Color RarityColor => Color.Red;
+        public override Color RarityColor => Color.Lavender;
 
         internal static List<RaritySparkle> HourglassSparkleList = new();
 

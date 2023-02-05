@@ -421,7 +421,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
         public static bool HasEarnedHyperplaneMatrix()
         {
-            // Check to see if any player has completed the Lab Rat achievement.
+            // Check to see if any player has completed the Lab Rat and defeat all bosses achievement.
+            bool allExosCondition = false;
+            bool allBossesCondition = false;
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (!Main.player[i].active)
@@ -430,13 +432,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 Player p = Main.player[i];
                 foreach (var achievement in p.GetModPlayer<AchievementPlayer>().AchievementInstances)
                 {
-                    // If someone has the achievement, check to see if SCal has also been defeated.
                     if (achievement.GetType() == typeof(ExoPathAchievement) && achievement.IsCompleted)
-                        return DownedBossSystem.downedSCal;
+                        allExosCondition = true;
+                    if (achievement.GetType() == typeof(KillAllBossesAchievement) && achievement.IsCompleted)
+                        allBossesCondition = true;
                 }
             }
 
-            return false;
+            return allExosCondition && allBossesCondition;
         }
 
         public static void HandleDefeatStuff(NPC npc, ref float defeatTimer)

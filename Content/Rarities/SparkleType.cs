@@ -6,6 +6,7 @@
         HourglassSparkle,
         ProfanedSparkle,
         RelicSparkle,
-        VassalSparkle
+        VassalSparkle,
+        CodeSymbols
     }
 }

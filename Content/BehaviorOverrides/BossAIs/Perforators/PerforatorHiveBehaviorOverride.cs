@@ -19,6 +19,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using CalamityMod.Buffs.DamageOverTime;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 {
@@ -132,6 +133,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
                 backgroundStrength = Utils.GetLerpValue(45f, 150f, finalPhaseTransitionTimer, true);
             }
+
+            // I'm so fucking tired, man.
+            if (target.HasBuff(ModContent.BuffType<BurningBlood>()))
+                target.ClearBuff(ModContent.BuffType<BurningBlood>());
 
             if (deathTimer > 0)
             {
@@ -641,7 +646,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         {
             int fireDelay = 50;
             int shootRate = 45;
-            int blastCount = 12;
+            int blastCount = 9;
 
             if (inPhase2)
                 shootRate -= 4;

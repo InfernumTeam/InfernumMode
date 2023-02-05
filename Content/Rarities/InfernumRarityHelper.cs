@@ -1,9 +1,6 @@
-﻿using InfernumMode.Assets.Effects;
-using InfernumMode.Content.Rarities.InfernumRarities;
-using InfernumMode.Content.Rarities.Sparkles;
+﻿using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -107,6 +104,13 @@ namespace InfernumMode.Content.Rarities
                             sparklesList.Add(new VassalSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
                         else
                             sparklesList.Add(new EggSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
+                        break;
+                    case SparkleType.CodeSymbols:
+                        lifetime = Main.rand.Next(30, 42);
+                        scale = Main.rand.NextFloat(0.8f, 1f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f))) + Vector2.UnitY * 5f;
+                        velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f)) * Main.rand.NextFloat(0.15f, 0.5f);
+                        sparklesList.Add(new CodeSymbol(sparkleType, lifetime, scale, position, velocity));
                         break;
                 }
             }

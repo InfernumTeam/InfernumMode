@@ -157,10 +157,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             if (finalPhaseInvinciblityTime > 0f)
             {
                 npc.knockBackResist = 0f;
-                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 300f);
+                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 90f);
                 npc.ai = new float[] { 0f, 0f, 0f, 0f };
                 npc.Infernum().ExtraAI[0] = (int)HiveMindAttackState.SuspensionStateDrift;
                 npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
+                npc.Infernum().ExtraAI[15] = npc.Infernum().ExtraAI[16] = 0f;
                 npc.velocity *= 0.825f;
                 npc.defense = 9999;
                 afterimagePulse += 0.24f;
@@ -290,6 +291,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 else
                     npc.alpha = 0;
 
+                nextAttack = HiveMindAttackState.UndergroundFlameDash;
                 npc.Infernum().ExtraAI[0] = (int)nextAttack;
                 hasBeenHitFlag = 0f;
                 npc.dontTakeDamage = false;

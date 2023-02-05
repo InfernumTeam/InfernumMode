@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -98,6 +99,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             float horizontalSpeed = MathHelper.Lerp(-21f, 21f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 6f;
                             float verticalSpeed = Main.rand.NextFloat(-12f, -11f);
                             Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(ichor =>
+                            {
+                                ichor.tileCollide = false;
+                            });
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 80, 0f);
                         }
                         npc.netUpdate = true;

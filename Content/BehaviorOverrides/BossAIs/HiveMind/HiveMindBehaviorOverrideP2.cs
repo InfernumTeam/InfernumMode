@@ -658,7 +658,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 if (npc.ai[3] % clotSpawnRate == clotSpawnRate - 1f)
                 {
                     Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 540f, Main.rand.NextFloat(-555f, -505f));
-                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 12f;
+                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 8f;
                     Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 72, 1f);
                 }
                 if (npc.ai[3] % cloudSpawnRate == cloudSpawnRate - 1f)
@@ -675,7 +675,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 }
 
                 if (attackTimer >= attackTime)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<VileClot>(), ModContent.ProjectileType<ShadeNimbusHostile>(), ModContent.ProjectileType<ShaderainHostile>());
                     npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.Reset;
+                }
             }
         }
 

@@ -267,11 +267,11 @@ namespace InfernumMode.Core.GlobalInstances
                     if (p is null || !p.active)
                         continue;
 
-                    int rock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
+                    int notRock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
                     if (Main.netMode == NetmodeID.Server)
                     {
-                        Main.timeItemSlotCannotBeReusedFor[rock] = 54000;
-                        NetMessage.SendData(MessageID.InstancedItem, i, -1, null, rock);
+                        Main.timeItemSlotCannotBeReusedFor[notRock] = 54000;
+                        NetMessage.SendData(MessageID.InstancedItem, i, -1, null, notRock);
                     }
                 }
             }

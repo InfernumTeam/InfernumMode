@@ -230,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (deathTimer % flinchInterval == 0)
             {
                 // Move slightly to emulate flinching from something inside the hive.
-                npc.velocity = npc.DirectionTo(player.Center).SafeNormalize(Vector2.One).RotatedByRandom(MathHelper.TwoPi) * 6;
+                npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 6;
                 npc.rotation = npc.velocity.ToRotation();
             }
             if (deathTimer % flinchInterval + 20 == 0)
@@ -272,7 +272,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     int goreAmount = 4;
                     for (int i = 1; i <= goreAmount; i++)
                     {
-                        Vector2 goreVelocity = npc.DirectionTo(player.Center).SafeNormalize(Vector2.One).RotatedByRandom(MathHelper.TwoPi) * 3;
+                        Vector2 goreVelocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 3;
                         Gore.NewGore(npc.GetSource_FromAI(), npc.position, goreVelocity, InfernumMode.Instance.Find<ModGore>("Perf" + i).Type, 1f);
 
                     }

@@ -41,6 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             float ownerAttackTimer = owner.ai[1];
             ref float creeperOffsetAngleFactor = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float telegraphInterpolant = ref npc.ai[2];
 
             Vector2 destinationOffsetDirection = (MathHelper.TwoPi * creeperOffsetAngleFactor + attackTimer / 105f).ToRotationVector2();
             Vector2 destination = owner.Center + destinationOffsetDirection * 420f;
@@ -90,13 +91,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             // Otherwise, if a target is close, release ichor at them, assuming no tiles are in the way.
             else if (npc.alpha <= 10)
             {
+                float shootTimer = attackTimer % 90f;
                 bool obstacleInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
-                if (Main.netMode != NetmodeID.MultiplayerClient && !obstacleInWayOfTarget && attackTimer % 45f == 44f && Main.rand.NextBool(3) && !npc.WithinRange(target.Center, 270f))
+                bool canFire = !obstacleInWayOfTarget && !npc.WithinRange(target.Center, 270f);
+                if (Main.netMode != NetmodeID.MultiplayerClient && !obstacleInWayOfTarget && shootTimer == 89f && canFire)
                 {
                     float aimAwayAngle = Utils.GetLerpValue(300f, 150f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
                     Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
                 }
+
+                if (canFire && shootTimer >= 56f)
+                    telegraphInterpolant = MathHelper.Clamp(telegraphInterpolant + 0.12f, 0f, 1f);
             }
+
+            // Make the telegraph interpolant naturally dissipate.
+            telegraphInterpolant = MathHelper.Clamp(telegraphInterpolant - 0.04f, 0f, 1f);
 
             // Drift towards the destination around the brain.
             if (!npc.WithinRange(destination, 75f))
@@ -114,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            float cyanAuraStrength = Main.npc[NPC.crimsonBoss].localAI[1];
+            float cyanAuraStrength = MathHelper.Max(Main.npc[NPC.crimsonBoss].localAI[1], npc.ai[2]);
 
             void drawInstance(Vector2 drawPosition, Color color, float scale)
             {

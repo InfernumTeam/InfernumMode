@@ -1155,7 +1155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     for (int i = 0; i < 2; i++)
                     {
-                        ElectricSpark electricSpark = new(npc.Center + Main.rand.NextVector2Circular(5, 5), npc.Center.DirectionTo(new Vector2(spinningPointX, spinningPointY)).RotatedByRandom(MathHelper.TwoPi) * 60 * Main.rand.NextFloat(0.9f, 1.1f), Color.Orange, Color.Gold, Main.rand.NextFloat(1.3f, 1.5f), 60);
+                        ElectricSpark electricSpark = new(npc.Center + Main.rand.NextVector2Circular(5, 5), npc.SafeDirectionTo(new Vector2(spinningPointX, spinningPointY)).RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.9f, 1.1f) * 60f, Color.Orange, Color.Gold, Main.rand.NextFloat(1.3f, 1.5f), 60);
                         GeneralParticleHandler.SpawnParticle(electricSpark);
                     }
 

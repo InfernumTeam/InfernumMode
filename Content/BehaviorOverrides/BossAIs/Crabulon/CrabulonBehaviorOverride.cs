@@ -275,7 +275,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
                         // Optionally, if below a certain life ratio or enraged, release mushrooms into the air.
                         bool tooManyShrooms = NPC.CountNPCS(ModContent.NPCType<CrabShroom>()) > 10;
-                        if (Main.netMode != NetmodeID.MultiplayerClient && (lifeRatio < Phase2LifeRatio || enraged))
+                        if (Main.netMode != NetmodeID.MultiplayerClient && (lifeRatio < Phase2LifeRatio || enraged) && lifeRatio >= Phase3LifeRatio)
                         {
                             for (int i = 0; i < 2; i++)
                             {

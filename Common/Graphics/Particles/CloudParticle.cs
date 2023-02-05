@@ -7,9 +7,21 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Particles
 {
-    public class BloodCloudParticle : Particle
+    public class CloudParticle : Particle
     {
         public float StartingScale
+        {
+            get;
+            set;
+        }
+
+        public Color StartingColor
+        {
+            get;
+            set;
+        }
+
+        public Color EndingColor
         {
             get;
             set;
@@ -21,13 +33,15 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override bool UseAdditiveBlend => true;
 
-        public override string Texture => "InfernumMode/Common/Graphics/Particles/BloodCloudParticle";
+        public override string Texture => "InfernumMode/Common/Graphics/Particles/CloudParticle";
 
-        public BloodCloudParticle(Vector2 relativePosition, Vector2 velocity, int lifetime, float scale)
+        public CloudParticle(Vector2 relativePosition, Vector2 velocity, Color startingColor, Color endingColor, int lifetime, float scale)
         {
             Position = relativePosition;
             Velocity = velocity;
             StartingScale = scale;
+            StartingColor = startingColor;
+            EndingColor = endingColor;
             Scale = 0.01f;
             Lifetime = lifetime;
         }
@@ -36,14 +50,14 @@ namespace InfernumMode.Common.Graphics.Particles
         {
             Velocity *= 0.987f;
             Scale = MathHelper.Lerp(Scale, StartingScale, 0.03f);
-            Color = Color.Lerp(Color.Red, Color.DarkRed, LifetimeCompletion);
+            Color = Color.Lerp(StartingColor, EndingColor, LifetimeCompletion);
             Color = Color.Lerp(Color, Color.Transparent, (float)Math.Pow((double)LifetimeCompletion, 3.0));
             Rotation += Velocity.X * 0.003f;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            float brightness = (float)Math.Pow((double)Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15) * 0.4f;
+            float brightness = (float)Math.Pow((double)Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15) * 0.45f;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, Color * brightness, Rotation, texture.Size() * 0.5f, Scale, 0, 0f);
         }

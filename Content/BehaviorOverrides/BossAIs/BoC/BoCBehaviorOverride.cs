@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
-            float floatSpeed = MathHelper.Lerp(5.8f, 8f, 1f - lifeRatio);
+            float floatSpeed = MathHelper.Lerp(5.8f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.009f;
             if (enraged)
                 floatSpeed *= 1.5f;
             if (BossRushEvent.BossRushActive)
@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (phase3)
                 teleportFadeTime -= 6;
 
-            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -360f);
+            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -420f);
             if (Math.Abs(target.velocity.X) > 0f)
                 teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -360f);
 
@@ -340,9 +340,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public static void DoAttack_DashingIllusions(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-
             int teleportFadeTime = 35;
+            int chargeDelay = 56;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             Vector2 teleportDestination = target.Center + Vector2.UnitY * 435f;
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
@@ -362,7 +362,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 }
             }
 
-            if (attackTimer == teleportFadeTime + 75f)
+            if (attackTimer == teleportFadeTime + chargeDelay)
             {
                 SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
@@ -375,7 +375,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 npc.netUpdate = true;
             }
 
-            if (attackTimer > teleportFadeTime + 120f)
+            if (attackTimer > teleportFadeTime + chargeDelay + 50f)
             {
                 npc.velocity *= 0.97f;
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
@@ -387,7 +387,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     if (chargeCounter >= 2f)
                         GotoNextAttackState(npc);
                     else
-                        attackTimer = teleportFadeTime + 35f;
+                        attackTimer = teleportFadeTime + 28f;
                     npc.Opacity = 1f;
                     npc.netUpdate = true;
                 }

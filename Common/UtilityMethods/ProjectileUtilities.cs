@@ -125,10 +125,11 @@ namespace InfernumMode
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Vector2 origin = frame.Value.Size() * 0.5f;
             Color backAfterimageColor = backglowColor * projectile.Opacity;
+            SpriteEffects direction = projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             for (int i = 0; i < 10; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * backglowArea;
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, backAfterimageColor, projectile.rotation, origin, projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, backAfterimageColor, projectile.rotation, origin, projectile.scale, direction, 0f);
             }
         }
 
@@ -143,7 +144,8 @@ namespace InfernumMode
             Vector2 origin = frame.Value.Size() * 0.5f;
 
             DrawBackglow(projectile, backglowColor, backglowArea, frame);
-            Main.spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, 0, 0f);
+            SpriteEffects direction = projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, direction, 0f);
         }
 
         public static Projectile FindProjectileByIdentity(int identity, int ownerIndex)

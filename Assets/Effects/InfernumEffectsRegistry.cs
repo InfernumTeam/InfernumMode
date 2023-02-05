@@ -44,6 +44,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
+        public static MiscShaderData ScrollingCodePrimShader => GameShaders.Misc["Infernum:ScrollingCode"];
         public static MiscShaderData TelegraphVertexShader => GameShaders.Misc["Infernum:TelegraphShader"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
         public static MiscShaderData WaterVertexShader => InfernumConfig.Instance.ReducedGraphicsConfig ? DukeTornadoVertexShader : GameShaders.Misc["Infernum:WaterShader"];
@@ -193,6 +194,9 @@ namespace InfernumMode.Assets.Effects
             Ref<Effect> streakShader = new(assets.Request<Effect>("Assets/Effects/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
 
+            Ref<Effect> codeScrollShader = new(assets.Request<Effect>("Assets/Effects/ScrollingCodePrimShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ScrollingCode"] = new MiscShaderData(codeScrollShader, "TrailPass");
+
             Ref<Effect> yharonBurnShader = new(assets.Request<Effect>("Assets/Effects/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
 
@@ -223,9 +227,21 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
+            // General screen shake distortion.
+            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
+
+            // Heat distortion effect.
+            Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Assets/Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
+
             // Hive Mind.
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSky.SkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
+
+            // Hyperplane Matrix time change sky.
+            Filters.Scene["InfernumMode:HyperplaneMatrixTimeChange"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(1f, 1f, 1f).UseOpacity(0f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:HyperplaneMatrixTimeChange"] = new HyperplaneMatrixTimeChangeSky();
 
             // Deerclops.
             Ref<Effect> madnessShader = new(assets.Request<Effect>("Assets/Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
@@ -249,21 +265,13 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 
-            // Supreme Calamitas.
-            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(fireBGShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
-
-            // General screen shake distortion.
-            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
-
             // Screen saturation blur system shader.
             Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Assets/Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
 
-            // Heat distortion effect.
-            Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Assets/Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
+            // Supreme Calamitas.
+            Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(fireBGShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();
 
             // Twins (desperation phase).
             Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);

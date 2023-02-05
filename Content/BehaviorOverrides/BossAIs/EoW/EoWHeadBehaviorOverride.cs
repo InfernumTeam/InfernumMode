@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager;
@@ -89,6 +90,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 DoAttack_Despawn(npc);
                 return false;
             }
+
+            if (target.HasBuff(ModContent.BuffType<Shadowflame>()))
+                target.ClearBuff(ModContent.BuffType<Shadowflame>());
 
             switch ((EoWAttackState)(int)attackState)
             {
@@ -196,7 +200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 }
             }
 
-            if (attackTimer >= 720f)
+            if (attackTimer >= 540f)
                 SelectNextAttack(npc);
         }
 
@@ -208,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
             if (attackTimer < 75f)
                 flySpeed *= 0.6f;
-
+            
             if (BossRushEvent.BossRushActive)
                 flySpeed *= 2.15f;
 
@@ -262,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 }
             }
 
-            if (attackTimer >= 520f)
+            if (attackTimer >= 360f)
                 SelectNextAttack(npc);
         }
 

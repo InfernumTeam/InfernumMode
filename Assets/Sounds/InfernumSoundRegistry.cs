@@ -146,6 +146,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Assets/Sounds/Item/GlassmakerOutro");
 
+        public static readonly SoundStyle HyperplaneMatrixActivateSound = new("InfernumMode/Assets/Sounds/Item/HyperplaneMatrixActivate");
+
         public static readonly SoundStyle WayfinderCreateSound = new("InfernumMode/Assets/Sounds/Item/WayfinderCreate");
 
         public static readonly SoundStyle WayfinderDestroySound = new("InfernumMode/Assets/Sounds/Item/WayfinderDestroy");

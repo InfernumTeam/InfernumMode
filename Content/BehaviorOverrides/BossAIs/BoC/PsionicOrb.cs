@@ -70,6 +70,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public override void AI()
         {
+            // Disappear if the brain is not present.
+            if (!NPC.AnyNPCs(NPCID.BrainofCthulhu))
+            {
+                Projectile.Kill();
+                return;
+            }
+
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.06f, 0f, 1f);
             Projectile.velocity *= 0.97f;
 
@@ -86,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                         for (int i = 0; i < 10; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / 10f + offsetAngle).ToRotationVector2() * 9f;
-                            Utilities.NewProjectileBetter(Projectile.position, shootVelocity, ProjectileID.MartianTurretBolt, 90, 0f);
+                            Utilities.NewProjectileBetter(Projectile.position, shootVelocity, ProjectileID.MartianTurretBolt, 95, 0f);
                         }
                     }
                 }
@@ -98,7 +105,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (Time % AttackCycleTime < AttackCycleTime * 0.5f)
             {
                 Vector2 aimVector = (nearestTarget.Center + nearestTarget.velocity * 32f - Projectile.Center).SafeNormalize(Vector2.UnitY);
-                PredictiveAimRotation = Vector2.Normalize(Vector2.Lerp(aimVector, PredictiveAimRotation.ToRotationVector2(), 0.02f)).ToRotation();
+                PredictiveAimRotation = PredictiveAimRotation.AngleLerp(aimVector.ToRotation(), 0.03f).AngleTowards(aimVector.ToRotation(), 0.02f);
+
+                if (Time <= 2f)
+                    PredictiveAimRotation = aimVector.ToRotation();
             }
 
             Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * 1.6f);
@@ -110,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * 16f;
-                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 135, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
+                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 145, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
             }
 
             for (int i = 0; i < 36; i++)
@@ -122,8 +132,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 psychicMagic.noGravity = true;
             }
         }
-
-
 
         public float WidthFunction(float completionRatio)
         {
@@ -141,8 +149,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(ref Color lightColor)
         {
-
-
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
             {
@@ -165,8 +171,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         {
             OrbDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.BrainPsychicVertexShader);
 
-            List<Vector2> drawPoints = new();
             spriteBatch.EnterShaderRegion();
+
+            List<Vector2> drawPoints = new();
+            
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
             {

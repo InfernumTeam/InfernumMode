@@ -299,9 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                             {
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
                                 Vector2 sporeShootVelocity = Main.rand.NextVector2Unit() * sporeCloudSpeed * Main.rand.NextFloat(1f, 2f);
-                                int cloud = Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), 75, 0f);
-                                if (Main.projectile.IndexInRange(cloud))
-                                    Main.projectile[cloud].ai[0] = Main.rand.Next(3);
+                                Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), 75, 0f, -1, Main.rand.Next(3));
                             }
                         }
 
@@ -367,7 +365,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Check if tile collision ignoral is necessary.
             PerformGravityCheck(npc, target);
 
-            if (attackTimer >= 180f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
+            if (attackTimer >= 132f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
             {
                 SelectNextAttack(npc);
                 if (target.Center.Y > npc.Bottom.Y + 80f)
@@ -495,7 +493,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                                 if (target.Center.Y < npc.Center.Y - 400f)
                                     shroomVelocity.Y *= 1.5f;
 
-                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
+                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, npc.Bottom.Y);
                             }
                         }
                     }

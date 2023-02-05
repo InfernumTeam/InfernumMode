@@ -23,6 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             StingerBurst,
             HoneyBlast,
             CreateMinionsFromAbdomen,
+            InwardMovingBees,
             BeeletHell
         }
 
@@ -36,7 +37,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         #region AI
 
         public const float FinalPhaseLifeRatio = 0.225f;
-
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<BeeWave>(), 0, 0f);
 
                     SoundEngine.PlaySound(SoundID.Roar, npc.Center);
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
                 }
 
                 npc.velocity *= 0.93f;
@@ -122,6 +122,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                     break;
                 case QueenBeeAttackState.CreateMinionsFromAbdomen:
                     DoAttack_CreateMinionsFromAbdomen(npc, target, ref frameType, ref attackTimer);
+                    break;
+                case QueenBeeAttackState.InwardMovingBees:
+                    DoAttack_InwardMovingBees(npc, target, ref frameType, ref attackTimer);
                     break;
                 case QueenBeeAttackState.BeeletHell:
                     DoAttack_BeeletHell(npc, target, ref frameType, ref attackTimer);
@@ -240,7 +243,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             }
 
             if (totalChargesDone >= chargeCount)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_StingerBurst(NPC npc, Player target, ref float frameType, ref float attackTimer)
@@ -332,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             flyDestinationY = currentFlyDestination.Y;
 
             if (attackTimer >= totalStingersToShoot * shootRate)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_HoneyBlast(NPC npc, Player target, ref float frameType, ref float attackTimer)
@@ -372,7 +375,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             }
 
             if (attackTimer >= shootRate * totalBlastsToShoot)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_CreateMinionsFromAbdomen(NPC npc, Player target, ref float frameType, ref float attackTimer)
@@ -415,7 +418,84 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             }
 
             if (attackTimer >= summonRate * totalThingsToSummon)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
+        }
+
+        public static void DoAttack_InwardMovingBees(NPC npc, Player target, ref float frameType, ref float attackTimer)
+        {
+            int hoverTime = 150;
+            int beeSummonDelay = 60;
+            int beeShootRate = 23;
+            int beeShootTime = 480;
+            float coneSpread = 0.37f;
+            ref float beeAimConeDirection = ref npc.Infernum().ExtraAI[0];
+
+            frameType = (int)QueenBeeFrameType.UpwardFly;
+
+            // Hover to the side of the target before beginning the attack.
+            if (attackTimer < hoverTime)
+            {
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X - npc.Center.X < 0f).ToDirectionInt() * 540f;
+                npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();
+                npc.velocity *= 0.9f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.04f).MoveTowards(hoverDestination, 8f);
+                return;
+            }
+
+            if (attackTimer == hoverTime)
+            {
+                beeAimConeDirection = npc.AngleTo(target.Center);
+                npc.netUpdate = true;
+            }
+
+            // Release a flurry of stingers as a pseudo-arena.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 3f == 2f && attackTimer < hoverTime + beeSummonDelay + beeShootTime)
+            {
+                float stingerShootSpeed = 11f;
+                Vector2 stingerSpawnPosition = new(npc.Center.X + Main.rand.NextFloat(4f) * npc.spriteDirection, npc.Center.Y + npc.height * 0.3f);
+                Vector2 stingerShootVelocity = (beeAimConeDirection - coneSpread).ToRotationVector2() * stingerShootSpeed;
+                int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 105, 0f);
+                if (Main.projectile.IndexInRange(stinger))
+                    Main.projectile[stinger].tileCollide = false;
+
+                stingerShootVelocity = (beeAimConeDirection + coneSpread).ToRotationVector2() * stingerShootSpeed;
+                stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 105, 0f);
+                if (Main.projectile.IndexInRange(stinger))
+                    Main.projectile[stinger].tileCollide = false;
+            }
+
+            // Summon bees that converge inward.
+            bool isTimeToSummonBees = attackTimer >= hoverTime + beeSummonDelay && attackTimer < hoverTime + beeSummonDelay + beeShootTime;
+            if (Main.netMode != NetmodeID.MultiplayerClient && isTimeToSummonBees && attackTimer % beeShootRate == beeShootRate - 1f)
+            {
+                Vector2 beeSpawnPosition = target.Center + npc.SafeDirectionTo(target.Center).RotatedByRandom(beeAimConeDirection * 0.6f) * 500f;
+                Vector2 beeShootVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
+                Utilities.NewProjectileBetter(beeSpawnPosition, beeShootVelocity, ModContent.ProjectileType<ConvergingHornet>(), 90, 0f);
+            }
+
+            // Bob up and down.
+            if (isTimeToSummonBees)
+                npc.velocity = Vector2.UnitY * (float)Math.Cos(MathHelper.TwoPi * attackTimer / 150f) * 3f;
+
+            // Delete far away stingers.
+            foreach (Projectile stinger in Utilities.AllProjectilesByID(ProjectileID.Stinger))
+            {
+                if (!stinger.WithinRange(npc.Center, 1500f))
+                    stinger.Kill();
+            }
+
+            // Approach the target if they're too far away.
+            if (isTimeToSummonBees && !npc.WithinRange(target.Center, 900f))
+                npc.Center = npc.Center.MoveTowards(target.Center, 8f);
+
+            if (attackTimer == hoverTime + beeSummonDelay + beeShootTime + 75f)
+                ConvergingHornet.MakeAllBeesFlyOutward();
+
+            if (attackTimer >= hoverTime + beeSummonDelay + beeShootTime + 145f)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ConvergingHornet>());
+                SelectNextAttack(npc);
+            }
         }
 
         public static void DoAttack_BeeletHell(NPC npc, Player target, ref float frameType, ref float attackTimer)
@@ -459,7 +539,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             }
 
             if (attackTimer >= 805f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();
         }
@@ -496,7 +576,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         #region AI Utility Methods
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -511,9 +591,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                     newAttackType = QueenBeeAttackState.HoneyBlast;
                     break;
                 case QueenBeeAttackState.HoneyBlast:
-                    newAttackType = QueenBeeAttackState.CreateMinionsFromAbdomen;
+                    newAttackType = lifeRatio < 0.5f ? QueenBeeAttackState.InwardMovingBees : QueenBeeAttackState.CreateMinionsFromAbdomen;
                     break;
                 case QueenBeeAttackState.CreateMinionsFromAbdomen:
+                case QueenBeeAttackState.InwardMovingBees:
                     newAttackType = lifeRatio < 0.5f ? QueenBeeAttackState.BeeletHell : QueenBeeAttackState.HorizontalCharge;
                     break;
             }

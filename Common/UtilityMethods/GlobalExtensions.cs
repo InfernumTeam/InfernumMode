@@ -9,6 +9,10 @@ namespace InfernumMode
     {
         public static BiomeEffectsPlayer Infernum_Biome(this Player player) => player.GetModPlayer<BiomeEffectsPlayer>();
 
+        public static CyberneticImmortalityPlayer Infernum_Immortality(this Player player) => player.GetModPlayer<CyberneticImmortalityPlayer>();
+
+        public static PhysicsDefiancePlayer Infernum_PhysicsDefiance(this Player player) => player.GetModPlayer<PhysicsDefiancePlayer>();
+
         public static ProfanedTempleCinderPlayer Infernum_TempleCinder(this Player player) => player.GetModPlayer<ProfanedTempleCinderPlayer>();
 
         public static CameraEffectsPlayer Infernum_Camera(this Player player) => player.GetModPlayer<CameraEffectsPlayer>();

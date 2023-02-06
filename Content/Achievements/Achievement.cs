@@ -16,6 +16,7 @@ namespace InfernumMode.Content.Achievements
         public int CurrentCompletion;
         public bool DoneCompletionEffects = false;
         public AchievementUpdateCheck UpdateCheck;
+        public bool IsDevWish;
         #endregion
 
         #region Properties
@@ -27,7 +28,7 @@ namespace InfernumMode.Content.Achievements
         /// <summary>
         /// What should happen once the achievement is completed.
         /// </summary>
-        public virtual void OnCompletion()
+        public virtual void OnCompletion(Player player)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
             Main.NewText($"Achievement Completed! [c/ff884d:{Name}]");
@@ -39,7 +40,8 @@ namespace InfernumMode.Content.Achievements
         /// Name<br />
         /// Description<br />
         /// TotalCompletion<br />
-        /// PositionInMainList
+        /// PositionInMainList<br />
+        /// UpdateCheck
         /// </summary>
         public virtual void Initialize()
         {
@@ -80,6 +82,16 @@ namespace InfernumMode.Content.Achievements
         public virtual void ExtraUpdate(Player player, int extraInfo)
         {
 
+        }
+        #endregion
+
+        #region Methods
+        protected void WishCompletionEffects(Player player, int assosiatedItemType)
+        {
+            AchievementsNotificationTracker.AddAchievementAsCompleted(this);
+            Main.NewText($"Dev Wish Completed! [c/ff884d:{Name}]");
+            SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
+            player.QuickSpawnItem(Entity.GetSource_None(), assosiatedItemType, 1);
         }
         #endregion
     }

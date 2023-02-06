@@ -13,5 +13,6 @@ namespace InfernumMode.Content.Achievements
         NPCKill,
         PlayerDeath,
         PlayerUpdate,
+        TileBreak
     }
 }

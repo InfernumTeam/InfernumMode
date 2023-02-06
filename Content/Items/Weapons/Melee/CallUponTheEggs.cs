@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Items;
+using CalamityMod.Items.Materials;
 using InfernumMode.Content.Projectiles.Melee;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -77,6 +78,17 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 }
             }
             return false;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ItemID.Starfury)
+                .AddIngredient(ModContent.ItemType<LivingShard>(), 10)
+                .AddIngredient(ModContent.ItemType<LifeAlloy>(), 5)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
+                
         }
     }
 }

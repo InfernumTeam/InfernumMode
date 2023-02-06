@@ -203,7 +203,7 @@ namespace InfernumMode.Core.ILEditingStuff
             Main.inFancyUI = true;
 
             // Set this as the current UI state to draw. This is the custom UIState.
-            Main.InGameUI.SetState(UIRenderingSystem.achievementUIManager);
+            Main.InGameUI.SetState(UIRenderingSystem.CurrentAchievementUI);
         }
     }
 
@@ -227,15 +227,11 @@ namespace InfernumMode.Core.ILEditingStuff
         private void ActiveSound_Update(On.Terraria.Audio.ActiveSound.orig_Update orig, ActiveSound self)
         {
             if (!Program.IsMainThread)
-            {
                 typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, new object[] { (Action)self.Update });
-            }
             else
             {
                 if (self.Sound == null || self.Sound.IsDisposed)
-                {
                     return;
-                }
 
                 Vector2 screenMiddle = Main.screenPosition + new Vector2(Main.screenWidth / 2, Main.screenHeight / 2);
                 float volumeModifier = 1f;
@@ -263,9 +259,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     case SoundType.Ambient:
                         volumeModifier *= Main.ambientVolume;
                         if (Main.gameInactive)
-                        {
                             volumeModifier = 0f;
-                        }
 
                         break;
                     case SoundType.Music:

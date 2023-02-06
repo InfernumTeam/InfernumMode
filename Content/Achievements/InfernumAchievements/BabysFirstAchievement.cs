@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using CalamityMod.CalPlayer;
+using InfernumMode.Core.GlobalInstances.Systems;
+using Terraria;
 using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Achievements.InfernumAchievements
@@ -22,7 +24,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 CurrentCompletion++;
         }
 
-        public override void ExtraUpdate(Player player, int extraInfo) => CurrentCompletion++;
+        public override void ExtraUpdate(Player player, int extraInfo)
+        {
+            if (CalamityPlayer.areThereAnyDamnBosses && WorldSaveSystem.InfernumMode)
+                CurrentCompletion++;
+        }
 
         public override void SaveProgress(TagCompound tag)
         {

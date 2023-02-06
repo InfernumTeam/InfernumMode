@@ -291,7 +291,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 else
                     npc.alpha = 0;
 
-                nextAttack = HiveMindAttackState.UndergroundFlameDash;
                 npc.Infernum().ExtraAI[0] = (int)nextAttack;
                 hasBeenHitFlag = 0f;
                 npc.dontTakeDamage = false;
@@ -455,7 +454,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < MaxSlowdownTime)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < teleportDelay + MaxSlowdownTime)
                 {
                     Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 2.1f;
                     int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);

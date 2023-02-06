@@ -44,7 +44,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             Item.useAnimation = 50;
             Item.useTime = 50;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.knockBack = 1f;
+            Item.knockBack = 9f;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<StormMaidensRetributionProj>();

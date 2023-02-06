@@ -5,7 +5,6 @@ using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 

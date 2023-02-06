@@ -44,6 +44,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumHyperplaneMatrixRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumRedSparkRarity>())
+                {
+                    InfernumRedSparkRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

@@ -12,9 +12,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-namespace InfernumMode.Content.Projectiles.Melee
+namespace InfernumMode.Content.Projectiles.Rogue
 {
-    public class MyrindaelLightning : ModProjectile
+    public class StormMaidensLightning : ModProjectile
     {
         internal PrimitiveTrail LightningDrawer;
 
@@ -29,11 +29,10 @@ namespace InfernumMode.Content.Projectiles.Melee
         public ref float AccumulatedXMovementSpeeds => ref Projectile.localAI[0];
         public ref float BranchingIteration => ref Projectile.localAI[1];
 
-        public virtual float LightningTurnRandomnessFactor { get; } = 2f;
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Myrndael Lightning Bolt");
+            DisplayName.SetDefault("Storm Maiden Lightning Bolt");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 10000;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 50;
@@ -41,15 +40,15 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 18;
+            Projectile.width = 30;
+            Projectile.height = 30;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.MaxUpdates = 7;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = RogueDamageClass.Instance;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = Projectile.MaxUpdates * 10;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
@@ -91,11 +90,12 @@ namespace InfernumMode.Content.Projectiles.Melee
             {
                 Projectile.frameCounter = 0;
 
-                float originalSpeed = MathHelper.Min(15f, Projectile.velocity.Length());
-                UnifiedRandom unifiedRandom = new((int)BaseTurnAngleRatio);
                 int turnTries = 0;
+                float originalSpeed = MathHelper.Min(15f, Projectile.velocity.Length());
+                float lightningTurnRandomnessFactor = 3.2f;
                 Vector2 newBaseDirection = -Vector2.UnitY;
                 Vector2 potentialBaseDirection;
+                UnifiedRandom unifiedRandom = new((int)BaseTurnAngleRatio);
 
                 do
                 {
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                     // This mess of math basically encourages movement at the ends of an extraUpdate cycle,
                     // discourages super frequenent randomness as the accumulated X speed changes get larger,
                     // or if the original speed is quite large.
-                    if (Math.Abs(potentialBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed + AccumulatedXMovementSpeeds) > Projectile.MaxUpdates * LightningTurnRandomnessFactor)
+                    if (Math.Abs(potentialBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed + AccumulatedXMovementSpeeds) > Projectile.MaxUpdates * lightningTurnRandomnessFactor)
                         canChangeLightningDirection = false;
 
                     // If the above checks were all passed, redefine the base direction of the lightning.
@@ -139,8 +139,8 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
-            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
+            float colorInterpolant = (float)Math.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 3.1f) * 0.5f + 0.5f;
+            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Orange, Color.Pink, Color.IndianRed);
             return color;
         }
 
@@ -167,7 +167,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
 
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 9);
+            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 25);
             return false;
         }
     }

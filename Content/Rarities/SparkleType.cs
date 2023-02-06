@@ -7,6 +7,7 @@
         ProfanedSparkle,
         RelicSparkle,
         VassalSparkle,
-        CodeSymbols
+        CodeSymbols,
+        RedLightningSparkle
     }
 }

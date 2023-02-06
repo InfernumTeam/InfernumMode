@@ -126,7 +126,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
             if (DeveloperItem)
             {
-                Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2);
+                Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2f);
                 TooltipLine developerLine = new(Mod, "Developer", $"[c/{devColor.Hex3()}:~ Developer Item ~]");
                 tooltips.Add(developerLine);
             }    

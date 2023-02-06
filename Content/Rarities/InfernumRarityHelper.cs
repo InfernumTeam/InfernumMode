@@ -112,6 +112,14 @@ namespace InfernumMode.Content.Rarities
                         velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f)) * Main.rand.NextFloat(0.15f, 0.5f);
                         sparklesList.Add(new CodeSymbol(sparkleType, lifetime, scale, position, velocity));
                         break;
+                    case SparkleType.RedLightningSparkle:
+                        lifetime = Main.rand.Next(35, 48);
+                        scale = Main.rand.NextFloat(0.8f, 1f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
+                        velocity = position.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.15f) * Main.rand.NextFloat(0.2f, 0.54f);
+                        velocity.Y -= 0.14f;
+                        sparklesList.Add(new RedLightningSparkle(sparkleType, lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, position, velocity));
+                        break;
                 }
             }
 

@@ -1,7 +1,8 @@
-﻿using InfernumMode.Content.Projectiles.Melee;
+﻿using CalamityMod.Items;
+using CalamityMod.Items.Materials;
+using InfernumMode.Content.Projectiles.Melee;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
-using InfernumMode.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -12,7 +13,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 {
     public class CallUponTheEggs : ModItem
     {
-        public const string FlavorText = "This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones";
+        public const string FlavorText = "[c/f0ad56:This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones]";
 
         public override void SetStaticDefaults()
         {
@@ -35,7 +36,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.rare = ModContent.RarityType<InfernumEggRarity>();
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.GetGlobalItem<TooltipChangeGlobalItem>().DeveloperItem = true;
+            Item.value = CalamityGlobalItem.RarityYellowBuyPrice;
+            Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
         public override bool AltFunctionUse(Player player) => true;
@@ -76,6 +78,17 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 }
             }
             return false;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ItemID.Starfury)
+                .AddIngredient(ModContent.ItemType<LivingShard>(), 10)
+                .AddIngredient(ModContent.ItemType<LifeAlloy>(), 5)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
+                
         }
     }
 }

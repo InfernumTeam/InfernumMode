@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 
 namespace InfernumMode.Content.Rarities.Sparkles
@@ -25,6 +26,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
         public void Update()
         {
             Position += Velocity;
+
             if (!CustomUpdate())
             {
                 Time++;
@@ -74,4 +76,5 @@ namespace InfernumMode.Content.Rarities.Sparkles
             spriteBatch.Draw(Texture, drawPosition, frame, drawColor, Rotation, !frame.HasValue ? Texture.Size() * 0.5f : frame.Value.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
         }
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.Projectiles;
+﻿using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
 using Terraria.ID;

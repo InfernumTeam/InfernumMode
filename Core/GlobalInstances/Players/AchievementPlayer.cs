@@ -112,7 +112,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 if (achievement.IsCompleted && !achievement.DoneCompletionEffects)
                 {
                     achievement.DoneCompletionEffects = true;
-                    achievement.OnCompletion();
+                    achievement.OnCompletion(Player);
                 }
                 else if (!achievement.IsCompleted)
                     achievement.Update();
@@ -120,16 +120,13 @@ namespace InfernumMode.Core.GlobalInstances.Players
             AchievementsNotificationTracker.Update();
         }
 
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            if (CalamityPlayer.areThereAnyDamnBosses && WorldSaveSystem.InfernumMode)
-                ExtraUpdateHandler(Player, AchievementUpdateCheck.PlayerDeath);
-        }
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) => ExtraUpdateHandler(Player, AchievementUpdateCheck.PlayerDeath);
         #endregion
 
         #region Helper Fields
         internal static bool DoGDefeated = false;
         internal static bool ProviDefeated = false;
+        internal static bool NightProviDefeated = false;
         internal static bool DraedonDefeated = false;
         internal static bool ShouldUpdateSavedMechOrder = false;
         #endregion

@@ -55,13 +55,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (EggShieldActive)
             {
                 Player.statDefense += 100;
-                Player.GetDamage<MeleeDamageClass>() *= 0.5f;
-                Player.GetDamage<RangedDamageClass>() *= 0.5f;
-                Player.GetDamage<MagicDamageClass>() *= 0.5f;
-                Player.GetDamage<SummonDamageClass>() *= 0.5f;
-                Player.GetDamage<RogueDamageClass>() *= 0.5f;
-                Player.GetDamage<MagicSummonHybridDamageClass>() *= 0.5f;
-                Player.GetDamage<SummonMeleeSpeedDamageClass>() *= 0.5f;
+                Player.GetDamage<GenericDamageClass>() *= 0.5f;
             }
         }
 

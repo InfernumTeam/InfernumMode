@@ -1,12 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
 using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.Rarities;
 using InfernumMode.Content.Projectiles.Rogue;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +50,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
 
             Item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
             Item.rare = ModContent.RarityType<InfernumRedSparkRarity>();
-            Item.GetGlobalItem<TooltipChangeGlobalItem>().DeveloperItem = true;
+            Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

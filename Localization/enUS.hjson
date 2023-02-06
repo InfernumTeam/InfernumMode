@@ -8,6 +8,7 @@ UI:
 {
     NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]",
     AchievementsHeader: "Death Wishes",
+    WishesHeader: "Dev Wishes",
 }
 
 }}

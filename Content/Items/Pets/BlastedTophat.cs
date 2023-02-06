@@ -1,7 +1,6 @@
 ﻿using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Rarities.InfernumRarities;
-using InfernumMode.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -33,7 +32,7 @@ namespace InfernumMode.Content.Items.Pets
             Item.shoot = ModContent.ProjectileType<HatGirl>();
             Item.buffType = ModContent.BuffType<HatGirlBuff>();
             Item.UseSound = SoundID.Meowmere;
-            Item.GetGlobalItem<TooltipChangeGlobalItem>().DeveloperItem = true;
+            Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)

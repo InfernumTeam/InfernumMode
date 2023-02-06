@@ -8,6 +8,7 @@
         RelicSparkle,
         VassalSparkle,
         CodeSymbols,
-        RedLightningSparkle
+        RedLightningSparkle,
+        PuritySparkle
     }
 }

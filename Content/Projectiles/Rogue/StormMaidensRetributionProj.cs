@@ -282,13 +282,16 @@ namespace InfernumMode.Content.Projectiles.Rogue
             if (!StealthStrikeEffects)
                 return;
 
+            if (CalamityConfig.Instance.Screenshake)
+                Owner.Infernum_Camera().CurrentScreenShakePower = 6f;
+
             Color[] explosionColorPalette = (Color[])CalamityUtils.ExoPalette.Clone();
             for (int i = 0; i < explosionColorPalette.Length; i++)
                 explosionColorPalette[i] = Color.Lerp(explosionColorPalette[i], Color.Red, 0.3f);
 
             for (int i = 0; i < 6; i++)
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(target.Center + Main.rand.NextVector2Circular(60f, 60f), Vector2.Zero, explosionColorPalette, 1.45f, 78, 0.3f));
-
+            
             CreateCrackleWithSparks(false);
             for (int i = 0; i < 6; i++)
                 ShootLightningInDirection(target.Center - Vector2.UnitY * 1100f + Main.rand.NextVector2Circular(60f, 60f), Vector2.UnitY);

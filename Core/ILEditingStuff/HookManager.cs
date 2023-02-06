@@ -259,6 +259,8 @@ namespace InfernumMode.ILEditingStuff
 
         public delegate bool AbyssInBiomeHookDelegate4(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player);
 
+        public delegate void SCalSkyDrawDelegate(Action<SCalBackgroundScene, Player, bool> orig, SCalBackgroundScene instance, Player player, bool isActive);
+
         public static event AbyssRequirementHookDelegate MeetsBaseAbyssRequirement
         {
             add => HookEndpointManager.Add(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
@@ -328,6 +330,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event SCalSkyDrawDelegate SCalSkyDraw
+        {
+            add => HookEndpointManager.Add(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
         }
     }
 }

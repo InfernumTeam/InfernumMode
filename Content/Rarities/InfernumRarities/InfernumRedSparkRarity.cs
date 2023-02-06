@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.Rarities.Sparkles;
+﻿using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.ModLoader;

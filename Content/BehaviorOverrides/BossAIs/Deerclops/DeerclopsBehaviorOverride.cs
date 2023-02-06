@@ -654,7 +654,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             npc.noTileCollide = true;
 
             // Create hands.
-            if (attackTimer % handSummonRate == (int)(handSummonRate / 3f))
+            if (attackTimer % handSummonRate == (int)(handSummonRate / 2f))
             {
                 SoundEngine.PlaySound(SoundID.DeerclopsScream, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -672,7 +672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 }
             }
 
-            if (attackTimer >= (handSummonCycleCount + 0.24f) * handSummonRate)
+            if (attackTimer >= (handSummonCycleCount + 0.4f) * handSummonRate)
                 SelectNextAttack(npc);
             DoDefaultWalk(npc, target, 5f, haltMovement);
         }

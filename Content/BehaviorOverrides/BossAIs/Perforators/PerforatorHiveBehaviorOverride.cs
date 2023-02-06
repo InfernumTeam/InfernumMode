@@ -1044,6 +1044,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage.
+            npc.damage = 0;
             npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
@@ -1213,7 +1214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 32;
             int ichorBlobCount = 3;
             float chargeHoverSpeed = 19.5f;
-            float chargeSpeed = 29f;
+            float chargeSpeed = 26f;
             float maxHoverSpeed = 11f;
             bool doneReelingBack = attackTimer >= wormSummonTime + reelBackTime;
 
@@ -1292,7 +1293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 }
                 else if (chargeTimer <= chargeRedirectTime + chargeTime)
                 {
-                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * chargeSpeed, 0.1f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * chargeSpeed, 0.06f);
                     if (chargeTimer == chargeRedirectTime + chargeTime)
                         npc.velocity *= 0.7f;
                 }

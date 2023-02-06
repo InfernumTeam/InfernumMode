@@ -7,6 +7,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.Items;
@@ -512,10 +513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 165f)
             {
                 if (earnedHyperplaneMatrix)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Item.NewItem(npc.GetSource_FromThis(), Main.player[npc.target].Center, ModContent.ItemType<HyperplaneMatrix>());
-                }
+                    AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
                 else
                     Utilities.DisplayText("It is perhaps not irrational to infer that you are beyond my reasoning.", TextColor);
             }

@@ -335,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 DoHoverMovement(npc, destination, acceleration);
 
                 int skullShootRate = 42;
-                bool targetInLineOfSight = Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.head);
+                bool targetInLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.position, 1, 1);
                 if (attackTimer % skullShootRate == skullShootRate - 1f && targetInLineOfSight)
                 {
                     SoundEngine.PlaySound(SoundID.Item8, target.Center);
@@ -425,6 +425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             // Go to the next state after enough shots have been performed.
             if (attackTimer >= totalShots * shootRate + 35f)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ShadowflameFireball>());
                 SelectNextAttack(npc);
                 attackTimer = 0f;
                 npc.netUpdate = true;
@@ -555,6 +556,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
             if (attackTimer >= 385f)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ShadowflameFireball>());
                 SelectNextAttack(npc);
                 attackTimer = 0f;
                 npc.netUpdate = true;
@@ -580,6 +582,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
             if (attackTimer >= 660f)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ShadowflameFireball>());
                 SelectNextAttack(npc);
                 attackTimer = 0f;
                 npc.netUpdate = true;

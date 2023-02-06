@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -22,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.scale = 1f;
-            Projectile.alpha = 255;
+            Projectile.Opacity = 0f;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.hostile = true;
@@ -31,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override void AI()
         {
-            Projectile.alpha = Utils.Clamp(Projectile.alpha - 50, 0, 255);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
             Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
             Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
 
@@ -52,6 +53,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * (float)Math.Pow(Projectile.Opacity, 2D), lightColor, Projectile.Opacity * 6f);
+            return false;
         }
     }
 }

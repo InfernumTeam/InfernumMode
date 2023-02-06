@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 420;
+            Projectile.timeLeft = 600;
             Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;

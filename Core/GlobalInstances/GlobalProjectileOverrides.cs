@@ -3,10 +3,12 @@ using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
+using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Subworlds;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -25,6 +27,8 @@ namespace InfernumMode.Core.GlobalInstances
 {
     public class GlobalProjectileOverrides : GlobalProjectile
     {
+        public bool FrameOneModifiersDone = false;
+
         public bool FadesAwayWhenManuallyKilled;
 
         public int FadeAwayTimer;

@@ -1,12 +1,15 @@
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.GlobalInstances;
+using InfernumMode.GlobalInstances.GlobalItems;
 using Terraria;
 
 namespace InfernumMode
 {
     public static partial class Utilities
     {
+        public static AccessoryPlayer Infernum_Accessory(this Player player) => player.GetModPlayer<AccessoryPlayer>();
+
         public static BiomeEffectsPlayer Infernum_Biome(this Player player) => player.GetModPlayer<BiomeEffectsPlayer>();
 
         public static CyberneticImmortalityPlayer Infernum_Immortality(this Player player) => player.GetModPlayer<CyberneticImmortalityPlayer>();
@@ -24,6 +27,8 @@ namespace InfernumMode
         public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
 
         public static HatGirlTipsPlayer Infernum_HatGirl(this Player player) => player.GetModPlayer<HatGirlTipsPlayer>();
+
+        public static TooltipChangeGlobalItem Infernum_Tooltips(this Item item) => item.GetGlobalItem<TooltipChangeGlobalItem>();
 
         public static GlobalNPCOverrides Infernum(this NPC npc) => npc.GetGlobalNPC<GlobalNPCOverrides>();
 

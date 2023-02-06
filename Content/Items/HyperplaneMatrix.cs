@@ -1,11 +1,8 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
 using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.Rarities;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Rarities.InfernumRarities;
-using InfernumMode.GlobalInstances.GlobalItems;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -47,7 +44,7 @@ namespace InfernumMode.Content.Items
 
             Item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
             Item.rare = ModContent.RarityType<InfernumHyperplaneMatrixRarity>();
-            Item.GetGlobalItem<TooltipChangeGlobalItem>().DeveloperItem = true;
+            Item.Infernum_Tooltips().DeveloperItem = true;
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;

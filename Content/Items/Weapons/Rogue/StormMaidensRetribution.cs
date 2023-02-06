@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             DisplayName.SetDefault("Storm Maiden's Retribution");
             Tooltip.SetDefault("Fires a spear that releases torrents of red lightning once fired\n" +
                 "Stealth strikes release three spears upon firing that home in on enemies and release lightning from above when colliding with something\n" +
-                "A divine spear weilded by a storm goddess, tempered by her vast abilities\n" +
+                "A divine spear wielded by a storm goddess, tempered by her vast abilities\n" +
                 "The weapon itself seems to echo with perpetual misery, regret, and mourning");
             SacrificeTotal = 1;
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));

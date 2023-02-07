@@ -14,6 +14,7 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
@@ -266,10 +267,8 @@ namespace InfernumMode.GlobalInstances
                     continue;
 
                 Player player = Main.player[i];
-                if (npc.boss)
-                    AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(npc.whoAmI));
-                else if (KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
-                    AchievementPlayer.ExtraUpdateAchievements(player, new UpdateContext(npc.whoAmI));
+                if (npc.boss || KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
+                    AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.NPCKill, npc.whoAmI);
             }
         }
 

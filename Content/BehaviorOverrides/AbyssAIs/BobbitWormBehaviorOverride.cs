@@ -262,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     GeneralParticleHandler.SpawnParticle(blood);
                 }
 
-                BloodCloudParticle bloodCloud = new(target.Center, Main.rand.NextVector2Circular(12f, 12f), 270, Main.rand.NextFloat(1.9f, 2.12f));
+                CloudParticle bloodCloud = new(target.Center, Main.rand.NextVector2Circular(12f, 12f), Color.Red, Color.DarkRed, 270, Main.rand.NextFloat(1.9f, 2.12f));
                 GeneralParticleHandler.SpawnParticle(bloodCloud);
                 return;
             }

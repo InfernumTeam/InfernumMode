@@ -1900,7 +1900,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             float flamePillarHorizontalStep = 300f;
 
             int baseTeleportDelay = 38;
-            int sitTime = 720;
+            int sitTime = 780;
 
             int bombBulletHellDuration = 636;
             int baseBombReleaseRate = 120;

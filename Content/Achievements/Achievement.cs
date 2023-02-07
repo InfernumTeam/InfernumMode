@@ -15,6 +15,8 @@ namespace InfernumMode.Content.Achievements
         public int TotalCompletion = 1;
         public int CurrentCompletion;
         public bool DoneCompletionEffects = false;
+        public AchievementUpdateCheck UpdateCheck;
+        public bool IsDevWish;
         #endregion
 
         #region Properties
@@ -26,7 +28,7 @@ namespace InfernumMode.Content.Achievements
         /// <summary>
         /// What should happen once the achievement is completed.
         /// </summary>
-        public virtual void OnCompletion()
+        public virtual void OnCompletion(Player player)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
             Main.NewText($"Achievement Completed! [c/ff884d:{Name}]");
@@ -38,7 +40,8 @@ namespace InfernumMode.Content.Achievements
         /// Name<br />
         /// Description<br />
         /// TotalCompletion<br />
-        /// PositionInMainList>br />
+        /// PositionInMainList<br />
+        /// UpdateCheck
         /// </summary>
         public virtual void Initialize()
         {
@@ -70,28 +73,25 @@ namespace InfernumMode.Content.Achievements
         }
         #endregion
 
-        #region ExtraUpdates
+        #region ExtraUpdate
         /// <summary>
-        /// An ExtraUpdate that takes no parameters. Call this for specific circumstances.
+        /// Called when the set <see cref="UpdateCheck"/> occures.
         /// </summary>
-        public virtual void ExtraUpdate()
+        /// <param name="player">The player that called this update</param>
+        /// <param name="extraInfo">What this contains depends on the <see cref="UpdateCheck"/>, ranging from item types to npc indexes.</param>
+        public virtual void ExtraUpdate(Player player, int extraInfo)
         {
 
         }
-        /// <summary>
-        /// An ExtraUpdate that takes in a npc index.
-        /// </summary>
-        public virtual void ExtraUpdateNPC(int npcIndex)
-        {
+        #endregion
 
-        }
-        /// <summary>
-        /// An ExtraUpdate that takes in an item type.
-        /// </summary>
-        /// <param name="itemID"></param>
-        public virtual void ExtraUpdateItem(int itemID)
+        #region Methods
+        protected void WishCompletionEffects(Player player, int assosiatedItemType)
         {
-
+            AchievementsNotificationTracker.AddAchievementAsCompleted(this);
+            Main.NewText($"Dev Wish Completed! [c/ff884d:{Name}]");
+            SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
+            player.QuickSpawnItem(Entity.GetSource_None(), assosiatedItemType, 1);
         }
         #endregion
     }

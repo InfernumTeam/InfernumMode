@@ -1,6 +1,8 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -50,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 420;
+            Projectile.timeLeft = 600;
             Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
@@ -65,7 +67,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
             Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             Projectile.frame = Projectile.timeLeft / 4 % Main.projFrames[Projectile.type];
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+
+            if (Projectile.localAI[0] == 0f)
+            {
+                SoundEngine.PlaySound(SoundID.Item17, Projectile.Center);
+                Projectile.localAI[0] = 1f;
+            }
 
             switch (CurrentAttackState)
             {
@@ -122,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, Projectile.Opacity * 6f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * (float)Math.Pow(Projectile.Opacity, 2D), lightColor, Projectile.Opacity * 6f);
             return false;
         }
 

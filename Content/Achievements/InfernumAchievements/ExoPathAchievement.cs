@@ -26,6 +26,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Become Draedon's favorite test subject\n[c/777777:Beat all Infernum Exo Mech combinations]";
             TotalCompletion = Utilities.NumberOfCombinations(ExoMechManagement.ExoMechIDs.Count, 2);
             PositionInMainList = 5;
+            UpdateCheck = AchievementUpdateCheck.NPCKill;
             InitializeCompletionVariables();
         }
 
@@ -34,7 +35,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             CurrentCompletion = CompletedExoMechCombinations.Count;
         }
 
-        public override void ExtraUpdateNPC(int npcIndex)
+        public override void ExtraUpdate(Player player, int npcIndex)
         {
             // Don't count Boss Rush kills.
             if (BossRushEvent.BossRushActive)

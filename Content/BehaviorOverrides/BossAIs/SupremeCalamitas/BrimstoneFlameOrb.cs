@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -87,6 +88,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public Color OrbColorFunction(float completionRatio)
         {
             Color c = Color.Lerp(Color.Yellow, Color.Red, MathHelper.Lerp(0.2f, 0.8f, Projectile.localAI[0] % 1f));
+            if (CalamityGlobalNPC.SCal == CalamityGlobalNPC.SCalLament)
+                c = Color.Lerp(c, Color.DeepSkyBlue, 0.65f);
             c = Color.Lerp(c, Color.White, completionRatio * 0.5f);
             c.A = 0;
             return c;
@@ -106,8 +109,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
                     Vector2 start = Projectile.Center;
                     Vector2 end = Projectile.Center + laserDirection * 4200f;
-                    Color telegraphColor = Color.Orange * (float)Math.Pow(TelegraphInterpolant, 0.67);
-                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
+                    Color telegraphColor = Color.Orange;
+                    if (CalamityGlobalNPC.SCal == CalamityGlobalNPC.SCalLament)
+                        telegraphColor = Color.Lerp(telegraphColor, Color.DeepSkyBlue, 0.65f);
+                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor * (float)Math.Pow(TelegraphInterpolant, 0.67), telegraphWidth);
                 }
             }
             return false;

@@ -1,13 +1,17 @@
+using CalamityMod;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 {
     public class ShadeFire : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public const int Lifetime = 65;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -24,18 +28,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 3;
-            Projectile.timeLeft = 80;
+            Projectile.timeLeft = Lifetime;
             Projectile.tileCollide = false;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.15f, 0f, Projectile.Opacity * 0.2f);
-            if (Projectile.timeLeft > 80)
-                Projectile.timeLeft = 80;
+            if (Projectile.timeLeft > Lifetime)
+                Projectile.timeLeft = Lifetime;
 
             // Start with a random color between green and a muted purple. The variance from this leads to a pseudo-gradient look.
-            float lifetimeInterpolant = 1f - Projectile.timeLeft / 80f;
+            float lifetimeInterpolant = 1f - Projectile.timeLeft / (float)Lifetime;
             float particleScale = MathHelper.Lerp(0.03f, 1.2f, (float)Math.Pow(lifetimeInterpolant, 0.53));
             float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true) * 0.84f;
             float fadeToBlack = Utils.GetLerpValue(5f, 32f, Projectile.timeLeft, true);

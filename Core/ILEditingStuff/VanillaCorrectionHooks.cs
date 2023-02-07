@@ -34,6 +34,7 @@ using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
 using InfernumMode.Content.WorldGeneration;
+using CalamityMod.Systems;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -899,11 +900,27 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DeleteDoGsStupidScreenShaderHook : IHookEdit
+    public class DeleteStupidScreenShadersHook : IHookEdit
     {
-        public void Load() => On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
+        public void Load()
+        {
+            On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
+            SCalSkyDraw += ChangeSCalSkyRequirements;
+        }
 
-        public void Unload() => On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
+        public void Unload()
+        {
+            On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
+            SCalSkyDraw -= ChangeSCalSkyRequirements;
+        }
+
+        private void ChangeSCalSkyRequirements(Action<SCalBackgroundScene, Player, bool> orig, SCalBackgroundScene instance, Player player, bool isActive)
+        {
+            if (InfernumMode.CanUseCustomAIs)
+                return;
+
+            orig(instance, player, isActive);
+        }
 
         private bool NoScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
         {

@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader.IO;
+﻿using Terraria;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
@@ -11,10 +12,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Complete the final challenge, and earn your reward\n[c/777777:Obtain the Infernal Chalice]";
             TotalCompletion = 1;
             PositionInMainList = 6;
+            UpdateCheck = AchievementUpdateCheck.ItemPickup;
         }
         // This takes in itemID, but doesn't need it as its checked before this is sent due to only needing
         // to check one thing.
-        public override void ExtraUpdateItem(int itemID)
+        public override void ExtraUpdate(Player player, int itemID)
         {
             CurrentCompletion++;
         }

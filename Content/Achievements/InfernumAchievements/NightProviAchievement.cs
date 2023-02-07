@@ -20,6 +20,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             Description = "Challenge the Profaned Goddess under the gaze of the stars\n[c/777777:Beat Infernum Night Providence]";
             TotalCompletion = 1;
             PositionInMainList = 3;
+            UpdateCheck = AchievementUpdateCheck.None;
         }
         public override void Update()
         {

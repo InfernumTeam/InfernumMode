@@ -97,6 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<BeeWave>(), 0, 0f);
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ConvergingHornet>());
 
                     SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                     SelectNextAttack(npc);
@@ -428,6 +429,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             int beeShootRate = 23;
             int beeShootTime = 480;
             float coneSpread = 0.37f;
+            
+            if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
+            {
+                hoverTime -= 30;
+                beeShootRate -= 5;
+                beeShootTime -= 60;
+            }
+
             ref float beeAimConeDirection = ref npc.Infernum().ExtraAI[0];
 
             frameType = (int)QueenBeeFrameType.UpwardFly;
@@ -444,6 +453,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
             if (attackTimer == hoverTime)
             {
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                 beeAimConeDirection = npc.AngleTo(target.Center);
                 npc.netUpdate = true;
             }

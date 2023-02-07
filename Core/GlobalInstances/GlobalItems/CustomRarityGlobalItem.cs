@@ -34,6 +34,26 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumHatgirlRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumEggRarity>())
+                {
+                    InfernumEggRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
+                else if (item.rare == ModContent.RarityType<InfernumHyperplaneMatrixRarity>())
+                {
+                    InfernumHyperplaneMatrixRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
+                else if (item.rare == ModContent.RarityType<InfernumRedSparkRarity>())
+                {
+                    InfernumRedSparkRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
+                else if (item.rare == ModContent.RarityType<InfernumPurityRarity>())
+                {
+                    InfernumPurityRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

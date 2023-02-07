@@ -19,6 +19,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using CalamityMod.Buffs.DamageOverTime;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 {
@@ -133,6 +134,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 backgroundStrength = Utils.GetLerpValue(45f, 150f, finalPhaseTransitionTimer, true);
             }
 
+            // I'm so fucking tired, man.
+            if (target.HasBuff(ModContent.BuffType<BurningBlood>()))
+                target.ClearBuff(ModContent.BuffType<BurningBlood>());
+
             if (deathTimer > 0)
             {
                 npc.Calamity().ShouldCloseHPBar = true;
@@ -230,7 +235,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (deathTimer % flinchInterval == 0)
             {
                 // Move slightly to emulate flinching from something inside the hive.
-                npc.velocity = npc.DirectionTo(player.Center).SafeNormalize(Vector2.One).RotatedByRandom(MathHelper.TwoPi) * 6;
+                npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 6;
                 npc.rotation = npc.velocity.ToRotation();
             }
             if (deathTimer % flinchInterval + 20 == 0)
@@ -272,7 +277,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     int goreAmount = 4;
                     for (int i = 1; i <= goreAmount; i++)
                     {
-                        Vector2 goreVelocity = npc.DirectionTo(player.Center).SafeNormalize(Vector2.One).RotatedByRandom(MathHelper.TwoPi) * 3;
+                        Vector2 goreVelocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 3;
                         Gore.NewGore(npc.GetSource_FromAI(), npc.position, goreVelocity, InfernumMode.Instance.Find<ModGore>("Perf" + i).Type, 1f);
 
                     }
@@ -641,7 +646,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         {
             int fireDelay = 50;
             int shootRate = 45;
-            int blastCount = 12;
+            int blastCount = 9;
 
             if (inPhase2)
                 shootRate -= 4;
@@ -1039,6 +1044,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage.
+            npc.damage = 0;
             npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
@@ -1208,7 +1214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 32;
             int ichorBlobCount = 3;
             float chargeHoverSpeed = 19.5f;
-            float chargeSpeed = 29f;
+            float chargeSpeed = 26f;
             float maxHoverSpeed = 11f;
             bool doneReelingBack = attackTimer >= wormSummonTime + reelBackTime;
 
@@ -1287,7 +1293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 }
                 else if (chargeTimer <= chargeRedirectTime + chargeTime)
                 {
-                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * chargeSpeed, 0.1f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * chargeSpeed, 0.06f);
                     if (chargeTimer == chargeRedirectTime + chargeTime)
                         npc.velocity *= 0.7f;
                 }

@@ -11,6 +11,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     public class UIRenderingSystem : ModSystem
     {
         internal static AchievementUIManager achievementUIManager = new();
+
+        internal static WishesUIManager wishesUIManager = new();
+
+        internal static UIState CurrentAchievementUI = achievementUIManager;
+
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
             int mouseIndex = layers.FindIndex(layer => layer.Name == "Vanilla: Mouse Text");
@@ -24,7 +29,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Achievment Completion Animation", () =>
                 {
                     AchievementsNotificationTracker.DrawInGame(Main.spriteBatch);
-                    //AchivementsNotificationTracker.DrawInIngameOptions(Main.spriteBatch);
                     return true;
                 }, InterfaceScaleType.UI));
             }

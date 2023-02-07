@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     noTileCollisionCountdown = 10f;
                     jumpCounter++;
 
-                    npc.velocity.Y -= 6f;
+                    npc.velocity.Y -= 9f;
                     if (target.position.Y + target.height < npc.Center.Y)
                         npc.velocity.Y -= 1.25f;
                     if (target.position.Y + target.height < npc.Center.Y - 40f)
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             stuckTimer++;
-            if (jumpCounter >= 6)
+            if (jumpCounter >= 4f)
                 SelectNextAttack(npc);
         }
 
@@ -213,7 +213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             float burstSpeed = MathHelper.Lerp(5.8f, 7f, 1f - lifeRatio);
-            float jumpDelay = 10f;
+            float jumpDelay = 20f;
             float coreChargeSpeed = 24.5f;
 
             bool touchingGround = Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16, true);
@@ -267,7 +267,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     noTileCollisionCountdown = 10f;
                     jumpCounter++;
 
-                    npc.velocity.Y -= 6f;
+                    npc.velocity.Y -= 8.5f;
                     if (target.position.Y + target.height < npc.Center.Y)
                         npc.velocity.Y -= 1.25f;
                     if (target.position.Y + target.height < npc.Center.Y - 40f)
@@ -321,7 +321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             stuckTimer++;
-            if (jumpCounter >= 5)
+            if (jumpCounter >= 3f)
             {
                 core.ai[0] = (int)SlimeGodCoreBehaviorOverride.SlimeGodCoreAttackType.HoverAndDoNothing;
                 core.netUpdate = true;

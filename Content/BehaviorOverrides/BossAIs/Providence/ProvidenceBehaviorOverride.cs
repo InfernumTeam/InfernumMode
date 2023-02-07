@@ -51,7 +51,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             AcceleratingCrystalFan,
             SinusoidalCrystalFan,
             CeilingCinders,
-            CrystalRainTransformation,
             CrystalBladesWithLaser,
             FireSpearCrystalCocoon,
             HolyBlasts,
@@ -346,9 +345,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     break;
                 case ProvidenceAttackType.CeilingCinders:
                     DoBehavior_CeilingCinders(npc, target, inPhase2, inPhase3, arenaArea, ref attackTimer);
-                    break;
-                case ProvidenceAttackType.CrystalRainTransformation:
-                    DoBehavior_CrystalRainTransformation(npc, target, lifeRatio, inPhase2, inPhase3, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalBlades:
                     DoBehavior_CrystalBlades(npc, lifeRatio, ref attackTimer);
@@ -874,103 +870,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_CrystalRainTransformation(NPC npc, Player target, float lifeRatio, bool inPhase2, bool inPhase3, ref float attackTimer)
-        {
-            int shootDelay = 90;
-            int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
-            int crystalBurstShootRate = (int)MathHelper.Lerp(36f, 28f, 1f - lifeRatio);
-            int totalCrystalsPerBurst = 24;
-            int transitionDelay = 120;
-
-            if (inPhase2)
-            {
-                crystalBurstShootRate += 5;
-                totalCrystalsPerBurst -= 2;
-            }
-
-            if (inPhase3)
-                totalCrystalsPerBurst++;
-
-            if (IsEnraged)
-            {
-                crystalBurstShootRate -= 4;
-                totalCrystalsPerBurst += 5;
-            }
-
-            ref float burstTimer = ref npc.Infernum().ExtraAI[2];
-            ref float burstCounter = ref npc.Infernum().ExtraAI[3];
-
-            Vector2 destination;
-            if (target.gravDir == -1f)
-                destination = target.Top + Vector2.UnitY * 400f;
-            else
-                destination = target.Bottom - Vector2.UnitY * 400f;
-
-            // Give a tip.
-            if (attackTimer == shootDelay - 30f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't move around too quickly! Small but quick horizontal movements are important for evading those crystals!");
-
-            // Fade into rainbow crystal form at first.
-            if (attackTimer < shootDelay)
-                npc.Opacity = 1f - attackTimer / shootDelay;
-            else
-            {
-                // Adjust the hitbox to align with the crystal.
-                npc.width = 42;
-                npc.height = 100;
-
-                burstTimer++;
-                npc.Opacity = 0f;
-
-                // If movement results in the crystal being close to the player, don't shoot at all.
-                // This is done to prevent cheap shots.
-                bool veryCloseToPlayer = npc.WithinRange(target.Center, 180f);
-                if (!veryCloseToPlayer && burstCounter < totalCrystalBursts && burstTimer >= crystalBurstShootRate)
-                {
-                    SoundEngine.PlaySound(SoundID.Item109, target.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int crystalShardDamage = !IsEnraged ? 250 : 400;
-                        float xSpeedOffset = target.velocity.X + Main.rand.NextFloat(-5f, 5f);
-                        Vector2 shootPosition = npc.Center - Vector2.UnitY * 36f;
-                        for (int i = 0; i < totalCrystalsPerBurst; i++)
-                        {
-                            Vector2 shootVelocity = new(MathHelper.Lerp(-20f, 20f, i / (float)totalCrystalsPerBurst) + xSpeedOffset, -5.75f);
-                            shootVelocity.X += Main.rand.NextFloatDirection() * 0.6f;
-                            Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<FallingCrystalShard>(), crystalShardDamage, 0f);
-                        }
-                        burstTimer = 0f;
-                        burstCounter++;
-                        npc.netUpdate = true;
-                    }
-                }
-                npc.velocity = Vector2.Zero;
-                npc.Center = Vector2.Lerp(npc.Center, destination, 0.35f);
-            }
-
-            if (burstCounter >= totalCrystalBursts)
-            {
-                npc.Opacity = 1f;
-                npc.Center = target.Center - Vector2.UnitY * 800f;
-
-                if (burstTimer >= transitionDelay)
-                {
-                    // Explode violently into a burst of flames before reverting back to normal.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
-                        {
-                            explosion.MaxUpdates = 2;
-                            explosion.ModProjectile<HolySunExplosion>().MaxRadius = 600f;
-                        });
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
-                    }
-
-                    SelectNextAttack(npc);
-                }
-            }
-        }
-
         public static void DoBehavior_CrystalBlades(NPC npc, float lifeRatio, ref float attackTimer)
         {
             int crystalCount = (int)MathHelper.Lerp(12f, 22f, 1f - lifeRatio);
@@ -1340,7 +1239,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     npc.ai[0] = (int)ProvidenceAttackType.CeilingCinders;
                     break;
                 case 7:
-                    npc.ai[0] = (int)ProvidenceAttackType.CrystalRainTransformation;
+                    npc.ai[0] = (int)ProvidenceAttackType.SinusoidalCrystalFan;
                     break;
                 case 8:
                     npc.ai[0] = inPhase2 ? (int)ProvidenceAttackType.CrystalBladesWithLaser : (int)ProvidenceAttackType.CrystalBlades;

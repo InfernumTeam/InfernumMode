@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             NPC slimeGod = Main.npc[OwnerIndex];
             float flySpeed = 14f;
             Vector2 destinationOffset = (MathHelper.TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 32f;
-            NPC.velocity = (NPC.velocity * 34f + NPC.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 35f;
+            NPC.velocity = (NPC.velocity * 41f + NPC.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 42f;
 
             NPC.Opacity = Utils.Remap(NPC.Distance(slimeGod.Center), 240f, 80f, 1f, 0.1f);
             if (NPC.Opacity <= 0.1f)

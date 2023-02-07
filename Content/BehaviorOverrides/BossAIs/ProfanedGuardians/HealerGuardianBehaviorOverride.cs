@@ -74,10 +74,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
             }
+
             if (drawShieldConnections == 1)
                 connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
             else
                 connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
+
             return false;
         }
         #endregion
@@ -94,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             // If maintaining the front shield or shielding the commander, glow.
-            if ((GuardiansAttackType)commander.ai[0] is GuardiansAttackType.FlappyBird or GuardiansAttackType.SoloHealer)
+            if ((GuardiansAttackType)commander.ai[0] is not GuardiansAttackType.SpawnEffects)
                 DrawNPCBackglow(npc, spriteBatch, texture, direction);
 
             // Draw the npc.
@@ -137,7 +139,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
                 }
             }
-            else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
+            // Messy hack to stop the healer connecting to the commander immediately after the crystal dies. This should be made nicer.
+            else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) && (((GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloHealer && commander.ai[1] > 15) || (GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloDefender))
             {
                 if (Main.npc[CalamityGlobalNPC.doughnutBoss].active)
                     npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];

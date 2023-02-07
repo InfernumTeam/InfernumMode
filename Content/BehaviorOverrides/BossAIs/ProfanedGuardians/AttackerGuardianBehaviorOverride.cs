@@ -93,9 +93,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.dontTakeDamage = true;
 
             // Reset fields.
-            npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0; 
+            npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
+            // Give the player infinite flight time.
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                Player player = Main.player[i];
+                if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
+                    player.wingTime = player.wingTimeMax;
+            }
+
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
@@ -238,15 +245,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);              
 
-            DrawBorder(npc, spriteBatch);
             return false;
         }
 
-        public void DrawBorder(NPC npc, SpriteBatch spriteBatch)
-        {
-        }
-
-        public void DrawBackglowEffects(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
+        public static void DrawBackglowEffects(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
             // Glow effect.
             Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
@@ -270,7 +272,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)
+        public static void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)
         {
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 

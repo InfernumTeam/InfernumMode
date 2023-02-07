@@ -7,6 +7,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -34,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float CurrentLaserLength;
 
-        public static int TelegraphTime => 90;
+        public static int TelegraphTime => 45;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -79,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Time <= TelegraphTime)
             {
-                Projectile.Opacity = (float)Math.Sin(Time / TelegraphTime * MathHelper.Pi) * 4f;
+                Projectile.Opacity = (float)Math.Sin(Time / TelegraphTime * MathHelper.Pi) * 2f;
                 Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
                 Projectile.Center = owner.Center + Projectile.velocity;
                 Time++;
@@ -87,18 +88,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.05f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
+            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);
 
             // Rotate.
-            Projectile.rotation += 0.015f;
+            Projectile.rotation += MathHelper.Lerp(0f, 0.015f, Projectile.Opacity);
             Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
             Projectile.Center = owner.Center + Projectile.velocity;
 
             // Sort out length.
             DetermineLaserLength(owner);
 
-            if (Main.myPlayer == Projectile.owner)
+            if (Main.myPlayer == Projectile.owner && !InfernumConfig.Instance.ReducedGraphicsConfig)
                 CreateTileHitEffects();
         }
 
@@ -167,10 +168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return Color.Lerp(Color.OrangeRed, Color.Gold, colorInterpolant) * Projectile.Opacity;
         }
 
-        public float TelegraphWidthFunction(float completionRatio)
-        {
-            return Projectile.width * 1.5f;
-        }
+        public float TelegraphWidthFunction(float completionRatio) => Projectile.width * 1.5f;
 
         public Color TelegraphColorFunction(float completionRatio)
         {

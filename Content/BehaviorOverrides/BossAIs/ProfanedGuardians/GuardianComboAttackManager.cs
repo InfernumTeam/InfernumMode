@@ -31,13 +31,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             SoloDefender,
             HealerAndDefender,
 
+            HealerDeath,
+
             CommanderDeathAnimation
         }
 
         public enum DefenderShieldStatus
         {
             Inactive,
-            Active,
+            ActiveAndAiming,
+            ActiveAndStatic,
             MarkedForRemoval
         }
 
@@ -49,8 +52,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int DefenderDrawDashTelegraphIndex = 13;
         public const int DefenderDashTelegraphOpacityIndex = 14;
         public const int CommanderMovedToTriplePositionIndex = 15;
-        // 0 = shield needs to spawn, 1 = shield is spawned, 2 = shield should die.
+        // 0 = shield needs to spawn, 1 = shield is spawned and should aim at the player, 2 = shield is spawned and should stop aiming, 3 = shield should die.
         public const int DefenderShieldStatusIndex = 16;
+        public const int DefenderFireAfterimagesIndex = 17;
 
         public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
@@ -152,14 +156,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float drawFireSuckup = ref npc.ai[2];
                 drawFireSuckup = 1;
                 ref float fireSuckupWidth = ref commander.Infernum().ExtraAI[DefenderFireSuckupWidthIndex];
-
-                // Give the player infinite flight time.
-                for (int i = 0; i < Main.player.Length; i++)
-                {
-                    Player player = Main.player[i];
-                    if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
-                        player.wingTime = player.wingTimeMax;
-                }
 
                 // Do not take damage.
                 npc.dontTakeDamage = true;
@@ -281,10 +277,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     if (movedToPosition == 0)
                         npc.Center = hoverPosition;
-                    npc.velocity.X *= 0.9f;
+                    npc.velocity *= 0.9f;
                     movedToPosition = 1f;
                     float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
-                    npc.velocity.Y = sine * 0.5f;
+                    npc.position.Y += sine * 0.5f;
                     npc.spriteDirection = 1;
 
                     if (Main.projectile.Any((Projectile proj) => proj.active && proj.type == ModContent.ProjectileType<HolySpinningFireBeam>()))
@@ -296,7 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < 2; i++)
                         {
                             float offsetAngleInterpolant = (float)i / 2;
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), 400, 0f, -1, 0f, offsetAngleInterpolant);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), 700, 0f, -1, 0f, offsetAngleInterpolant);
 
                             // Screenshake
                             if (CalamityConfig.Instance.Screenshake)
@@ -407,9 +403,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Commander remains hovering still.
             if (npc.type == CommanderType)
             {
-                npc.velocity.X *= 0.9f;
+                npc.velocity *= 0.9f;
                 float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
-                npc.velocity.Y = sine * 0.5f;
+                npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = 1;
             }
 
@@ -423,6 +419,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
                 ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
                 ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
+                ref float drawFireAfterimages = ref commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex];
 
                 float maxDashes = 4f;
                 float waitTime = dashesCompleted == 0f ? 90f : 60f;
@@ -432,11 +429,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 oldHoverOffset = new(hoverOffsetX, hoverOffsetY);
 
                 // Generate the shield if it is inactive.
-                if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive)
+                if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
                 {
                     // Mark the shield as active.
-                    shieldStatus = (float)DefenderShieldStatus.Active;
-                    Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 100f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                    shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                    Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
 
                 switch (substate)
@@ -466,6 +463,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Get into position for the dash.
                     case 1:
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
                         float distance = 625f;
                         Vector2 position = target.Center + oldHoverOffset * distance;
@@ -503,6 +501,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Charge
                     case 2:
+                        drawFireAfterimages = 1;
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
                         drawDashTelegraph = 1;
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
@@ -541,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer >= dashTime)
                         {
                             dashesCompleted++;
-                            
+                            drawFireAfterimages = 0;
                             if (dashesCompleted >= maxDashes)
                                 SelectNewAttack(commander, ref universalAttackTimer);
                             else
@@ -596,9 +596,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Commander remains hovering still.
             if (npc.type == CommanderType)
             {
-                npc.velocity.X *= 0.9f;
+                npc.velocity *= 0.9f;
                 float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
-                npc.velocity.Y = sine * 0.5f;
+                npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = 1;
             }
 
@@ -610,8 +610,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float dashesCompleted = ref npc.Infernum().ExtraAI[3];
                 ref float xOffset = ref npc.Infernum().ExtraAI[4];
 
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
                 ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
                 ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
+                ref float drawFireAfterimages = ref commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex];
 
                 float waitTime = dashesCompleted == 0f ? 60f : 30;
                 float telegraphWaitTime = 20f;
@@ -638,6 +640,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Move to the dash starting location.
                     case 1:
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
                         Vector2 position = target.Center + new Vector2(xOffset, hoverOffsetY);
 
@@ -668,6 +671,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Charge
                     case 2:
+                        drawFireAfterimages = 1;
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
                         drawDashTelegraph = 1;
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
@@ -693,6 +698,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (localAttackTimer >= dashTime)
                         {
+                            drawFireAfterimages = 0;
                             substate = 0;
                             localAttackTimer = 0;
                         }
@@ -722,7 +728,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     movedToPosition = 1f;
                     float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.velocity.Y = sine * 0.5f;
-                    npc.spriteDirection = -1;
+                    npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0).ToInt();
                 }
 
                 if (universalAttackTimer % crystalLayerFireRate == crystalLayerFireRate - 1 && Main.netMode != NetmodeID.MultiplayerClient && completedCrystalLayers < totalCrystalLayers)
@@ -747,6 +753,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
+        public static void DoBehavior_HealerDeath(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        {
+
+        }
+
         public static void SelectNewAttack(NPC commander, ref float universalAttackTimer)
         {
             // Reset the first 5 extra ai slots. These are used for per attack information.
@@ -765,7 +776,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // This gets reset back to zero by the shield before removing itself.
                     if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.HealerAndDefender)
                     {
-                        if ((DefenderShieldStatus)defender.Infernum().ExtraAI[DefenderShieldStatusIndex] == DefenderShieldStatus.Active)
+                        if ((DefenderShieldStatus)defender.Infernum().ExtraAI[DefenderShieldStatusIndex] is DefenderShieldStatus.ActiveAndAiming or DefenderShieldStatus.ActiveAndStatic)
                             defender.Infernum().ExtraAI[DefenderShieldStatusIndex] = (float)DefenderShieldStatus.MarkedForRemoval;
                         else
                             defender.Infernum().ExtraAI[DefenderShieldStatusIndex] = (float)DefenderShieldStatus.Inactive;

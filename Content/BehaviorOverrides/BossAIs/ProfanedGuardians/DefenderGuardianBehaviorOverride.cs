@@ -109,6 +109,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1)
                 DrawDashTelegraph(npc, spriteBatch, commander);
 
+            // Draw afterimages.
+            if (commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex] == 1)
+                DrawFireAfterimages(npc, spriteBatch, commander, direction);
+
             // Glow during the healer solo.
             if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
                 DrawBackglow(npc, spriteBatch, texture);
@@ -147,6 +151,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             FireDrawer.Draw(drawPositions, -Main.screenPosition, 40);
         }
 
+        public static void DrawFireAfterimages(NPC npc, SpriteBatch spriteBatch, NPC commander, SpriteEffects direction)
+        {
+            Texture2D afterTexture = InfernumTextureRegistry.GuardianWarning.Value;
+            bool soloDefender = (GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloDefender;
+            float length = soloDefender ? 30f : 25f;
+            float timer = soloDefender ? commander.ai[1] : npc.Infernum().ExtraAI[1];
+            float fadeOutLength = 6f;
+            int maxAfterimages = 6;
+
+            if (timer < 6)
+                maxAfterimages = (int)timer;
+            else if (timer >= length - fadeOutLength)
+                maxAfterimages = (int)MathHelper.Lerp(6f, 0f, (timer - (length - fadeOutLength)) / fadeOutLength);
+
+            // Failsafe
+            if (maxAfterimages > npc.oldPos.Length)
+                maxAfterimages = npc.oldPos.Length;
+
+            for (int i = 0; i < maxAfterimages; i++)
+            {
+                Vector2 basePosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                Vector2 positionOffset = (npc.velocity * MathHelper.Lerp(0f, 8f, (float)i / npc.oldPos.Length));
+                spriteBatch.Draw(afterTexture, basePosition + positionOffset, null, WayfinderSymbol.Colors[1] with { A = 0 } * 0.8f, npc.rotation, afterTexture.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
+            }
+        }
+
         public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
             int backglowAmount = 12;
@@ -162,6 +192,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
+        public static Color DashTelegraphColor() => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f) * 0.75f;
+
         public void DrawDashTelegraph(NPC npc, SpriteBatch spriteBatch, NPC commander)
         {
             float opacityScalar = commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
@@ -170,8 +202,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (opacityScalar == 0)
                 return;
 
-            DashTelegraphDrawer ??= new PrimitiveTrailCopy((float completionRatio) => 65f,
-                (float completionRatio) => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f) * commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex],
+            DashTelegraphDrawer ??= new PrimitiveTrailCopy(c => 65f,
+                c => DashTelegraphColor(),
                 null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
             InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);

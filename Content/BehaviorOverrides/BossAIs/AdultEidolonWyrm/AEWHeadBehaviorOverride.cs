@@ -17,6 +17,9 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using InfernumMode.Content.WorldGeneration;
+using System;
+using InfernumMode.Assets.ExtraTextures;
+using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -31,8 +34,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Light attacks.
             BurningGaze,
 
+            // Dark attacks.
+            ForbiddenUnleash,
+
             // Neutral attacks.
             SplitFormCharges,
+            CrystalConstriction,
+            HammerheadRams,
 
             // Enrage attack.
             RuthlesslyMurderTarget
@@ -45,8 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             Phase2LifeRatio,
             Phase3LifeRatio,
-            Phase4LifeRatio,
-            Phase5LifeRatio
+            Phase4LifeRatio
         };
 
         // Projectile damage values.
@@ -56,13 +63,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public const int PowerfulShotDamage = 850;
 
-        public const float Phase2LifeRatio = 0.8f;
+        public const float Phase2LifeRatio = 0.7f;
 
-        public const float Phase3LifeRatio = 0.6f;
+        public const float Phase3LifeRatio = 0.45f;
 
-        public const float Phase4LifeRatio = 0.35f;
-
-        public const float Phase5LifeRatio = 0.1f;
+        public const float Phase4LifeRatio = 0.15f;
 
         public const int EyeGlowOpacityIndex = 5;
 
@@ -78,6 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             ref float attackTimer = ref npc.ai[1];
             ref float initializedFlag = ref npc.ai[2];
             ref float superEnrageTimer = ref npc.ai[3];
+            ref float hammerHeadRotation = ref npc.localAI[0];
             ref float eyeGlowOpacity = ref npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
             ref float superEnrageFormAestheticInterpolant = ref npc.Infernum().ExtraAI[SuperEnrageFormAestheticInterpolantIndex];
 
@@ -126,8 +132,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case AEWAttackType.BurningGaze:
                     DoBehavior_BurningGaze(npc, target, ref attackTimer);
                     break;
+                case AEWAttackType.ForbiddenUnleash:
+                    DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation);
+                    break;
                 case AEWAttackType.SplitFormCharges:
                     DoBehavior_SplitFormCharges(npc, target, ref attackTimer);
+                    break;
+                case AEWAttackType.CrystalConstriction:
+                    DoBehavior_CrystalConstriction(npc, target, ref attackTimer);
+                    break;
+                case AEWAttackType.HammerheadRams:
+                    DoBehavior_HammerheadRams(npc, target, ref attackTimer);
                     break;
                 case AEWAttackType.RuthlesslyMurderTarget:
                     DoBehavior_RuthlesslyMurderTarget(npc, target, ref attackTimer);
@@ -177,6 +192,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (npc.timeLeft > 210)
                 npc.timeLeft = 210;
+
+            if (!npc.WithinRange(Main.player[npc.target].Center, 3000f))
+                npc.active = false;
         }
 
         public static void DoBehavior_SnatchTerminus(NPC npc)
@@ -238,6 +256,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Slow down and look at the target threateningly before attacking.
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 3f, 0.071f);
+
+            // Become opaque.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.067f, 0f, 1f);
 
             // Make the eye glowmask gradually fade in.
             eyeGlowOpacity = Utils.GetLerpValue(0f, eyeGlowFadeinTime, attackTimer, true);
@@ -329,6 +350,62 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
+        public static void DoBehavior_ForbiddenUnleash(NPC npc, Player target, ref float attackTimer, ref float hammerHeadRotation)
+        {
+            int headOpenTime = 56;
+            int attackDelay = 96;
+            int soulReleaseRate = 25;
+            int soulShootTime = 480;
+            int attackTransitionDelay = 180;
+            int soulBurstCount = 23;
+            float spinAngularVelocity = MathHelper.Pi / 193f;
+            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Open the hammer head to reveal the dark portal.
+            if (attackTimer <= headOpenTime)
+            {
+                if (attackTimer == 36f)
+                    SoundEngine.PlaySound(SoundID.NPCDeath30, target.Center);
+                if (attackTimer == 50f)
+                    SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
+
+                float headOpenInterpolant = (float)Math.Pow(attackTimer / headOpenTime, 7D);
+                hammerHeadRotation = MathHelper.SmoothStep(0f, 1f, headOpenInterpolant) * MathHelper.Pi * 0.19f;
+            }
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Move towards the target.
+            if (!npc.WithinRange(target.Center, 180f))
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 6f, 0.18f);
+
+            if (attackTimer >= attackDelay && attackTimer <= attackDelay + soulShootTime && attackTimer % soulReleaseRate == soulReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item72, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float directionalAngularVelocity = spinAngularVelocity * (shootCounter % 2f == 0f).ToDirectionInt();
+                    Vector2 soulSpawnPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 36f;
+                    for (int i = 0; i < soulBurstCount; i++)
+                    {
+                        Vector2 soulBurstVelocity = (MathHelper.TwoPi * i / soulBurstCount + shootCounter).ToRotationVector2() * 2f;
+                        Utilities.NewProjectileBetter(soulSpawnPosition, soulBurstVelocity, ModContent.ProjectileType<AbyssalSoul>(), StrongerNormalShotDamage, 0f, -1, 0f, directionalAngularVelocity);
+                    }
+
+                    shootCounter++;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= attackDelay + soulShootTime)
+                hammerHeadRotation = hammerHeadRotation.AngleLerp(0f, 0.16f).AngleTowards(0f, 0.02f);
+
+            if (attackTimer >= attackDelay + soulShootTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
         public static void DoBehavior_SplitFormCharges(NPC npc, Player target, ref float attackTimer)
         {
             int swimTime = 105;
@@ -409,6 +486,132 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
+        public static void DoBehavior_CrystalConstriction(NPC npc, Player target, ref float attackTimer)
+        {
+            int spinTime = 540;
+            int totalArmSpirals = 6;
+            int attackDelay = 150;
+            float startingSpinRadius = 1200f;
+            float endingSpinRadius = 880f;
+            float worldEdgeAvoidanceDistance = 600f;
+            float spinRadius = Utils.Remap(attackTimer - attackDelay, 0f, spinTime - 180f, startingSpinRadius, endingSpinRadius);
+            float spiralSpinRate = MathHelper.Pi / Utils.Remap(attackTimer - attackDelay, 0f, spinTime - 180f, 38f, 29f);
+            ref float spinCenterX = ref npc.Infernum().ExtraAI[0];
+            ref float spinCenterY = ref npc.Infernum().ExtraAI[1];
+            ref float crystalShootOffsetAngle = ref npc.Infernum().ExtraAI[2];
+
+            // Decide the spin center on the first frame.
+            if (attackTimer == 1f)
+            {
+                spinCenterX = MathHelper.Clamp(target.Center.X, worldEdgeAvoidanceDistance, Main.maxTilesX * 16f - worldEdgeAvoidanceDistance);
+                spinCenterY = target.Center.Y;
+                while (!Collision.CanHitLine(new Vector2(spinCenterX, spinCenterY), 1, 1, new Vector2(spinCenterX, spinCenterY + 900f), 1, 1))
+                    spinCenterY -= 10f;
+
+                npc.netUpdate = true;
+            }
+
+            // Spin around the target.
+            float spinSpeedInterpolant = Utils.GetLerpValue(0f, 75f, attackTimer, true);
+            Vector2 hoverDestination = new Vector2(spinCenterX, spinCenterY) + (MathHelper.TwoPi * attackTimer / 150f).ToRotationVector2() * spinRadius;
+            npc.Center = npc.Center.MoveTowards(hoverDestination, spinSpeedInterpolant * 20f);
+            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * spinSpeedInterpolant * 60f, spinSpeedInterpolant * 0.2f);
+
+            // Disable attacks at first.
+            if (attackTimer <= attackDelay)
+            {
+                npc.damage = 0;
+                if (attackTimer == attackDelay)
+                {
+                    // Orient the crystals such that the player starts out squarely in the middle of a gap, for gameplay fairness purposes.
+                    crystalShootOffsetAngle = npc.AngleTo(target.Center) + MathHelper.Pi / totalArmSpirals;
+                    npc.netUpdate = true;
+                }
+
+                return;
+            }
+
+            // Release spirals of crystals inward.
+            if (attackTimer % 3f == 0f)
+            {
+                if (attackTimer % 24f == 0f)
+                    SoundEngine.PlaySound(SoundID.Item9, target.Center);
+                for (int i = 0; i < totalArmSpirals; i++)
+                {
+                    Vector2 spiralDirection = (MathHelper.TwoPi * i / totalArmSpirals + crystalShootOffsetAngle).ToRotationVector2();
+                    Vector2 spinCenter = new(spinCenterX, spinCenterY);
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(crystal =>
+                    {
+                        crystal.ModProjectile<ConvergingLumenylCrystal>().ConvergenceCenter = spinCenter;
+                    });
+                    Vector2 spiralSpawnOffset = spiralDirection * (spinRadius - 72f);
+                    Utilities.NewProjectileBetter(spinCenter + spiralSpawnOffset, spiralDirection * -9f, ModContent.ProjectileType<ConvergingLumenylCrystal>(), NormalShotDamage, 0f);
+                }
+                crystalShootOffsetAngle += spiralSpinRate;
+            }
+
+            if (attackTimer >= attackDelay + spinTime)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ConvergingLumenylCrystal>());
+                SelectNextAttack(npc);
+            }
+        }
+
+        public static void DoBehavior_HammerheadRams(NPC npc, Player target, ref float attackTimer)
+        {
+            int attackDelay = 90;
+            int ramTime = 36;
+            int redirectTime = 24;
+            int ramCount = 6;
+            float chargeSpeed = 39f;
+            float chargeAcceleration = 1.06f;
+            float wrappedAttackTimer = (attackTimer - attackDelay) % (ramTime + redirectTime);
+            ref float ramCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Roar on the first frame as a warning.
+            if (attackTimer == 1f)
+            {
+                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.7f);
+            }
+
+            // Look at the player before attacking.
+            if (attackTimer < attackDelay)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.24f);
+                return;
+            }
+
+            // Release an even spread of ice before charging.
+            if (wrappedAttackTimer == redirectTime && !npc.WithinRange(target.Center, 300f))
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.AEWIceBurst, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 23; i++)
+                    {
+                        Vector2 icicleVelocity = (MathHelper.TwoPi * i / 23f).ToRotationVector2() * 11f;
+                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), NormalShotDamage, 0f);
+                    }
+                }
+            }
+
+            if (wrappedAttackTimer < redirectTime)
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.2f) * 0.96f;
+            else if (npc.velocity.Length() < chargeSpeed)
+                npc.velocity *= chargeAcceleration;
+
+            if (wrappedAttackTimer == redirectTime + ramTime)
+            {
+                ramCounter++;
+                if (ramCounter >= ramCount)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<EidolistIce>());
+                    SelectNextAttack(npc);
+                }
+            }
+        }
+
         public static void DoBehavior_RuthlesslyMurderTarget(NPC npc, Player target, ref float attackTimer)
         {
             float swimSpeed = Utils.Remap(attackTimer, 0f, 95f, 6f, attackTimer * 0.05f + 50f);
@@ -481,6 +684,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
+            else if (currentAttack == AEWAttackType.ForbiddenUnleash)
+                nextAttack = AEWAttackType.ForbiddenUnleash;
+
+            if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
+                nextAttack = AEWAttackType.ForbiddenUnleash;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -496,13 +704,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             npc.frame = new(0, 0, 254, 138);
 
-            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWEyes").Value;
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Color eyeColor = Color.Cyan * npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
-
             DrawSegment(npc, lightColor);
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyeTexture, drawPosition, null, eyeColor, npc.rotation, eyeTexture.Size() * 0.5f, npc.scale, 0, 0));
-
             return false;
         }
 
@@ -524,19 +726,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Calculate variables for the super-enrage aesthetic.
             float superEnrageFormAestheticInterpolant = head.Infernum().ExtraAI[SuperEnrageFormAestheticInterpolantIndex];
 
+            if (segmentString == "Head")
+            {
+                DrawHead(npc, lightColor, superEnrageFormAestheticInterpolant);
+                npc.frame = Rectangle.Empty;
+                return;
+            }
+
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowmaskTexture = ModContent.Request<Texture2D>($"CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrm{segmentString}Glow").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
             // Reset the texture frame for drawing.
             npc.frame = texture.Frame();
 
             if (drawPosition.X <= -300f || drawPosition.X >= Main.screenWidth + 300f || drawPosition.Y <= -300f || drawPosition.Y >= Main.screenHeight + 300f)
+            {
+                npc.frame = Rectangle.Empty;
                 return;
+            }
             
             // Draw the segment.
-            Main.EntitySpriteDraw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Insert(0, new(glowmaskTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * 0.65f, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - superEnrageFormAestheticInterpolant), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
             if (superEnrageFormAestheticInterpolant > 0f)
             {
                 Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
@@ -549,6 +759,86 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Hacky way of ensuring that PostDraw doesn't do anything.
             npc.frame = Rectangle.Empty;
+        }
+
+        public static void DrawHead(NPC npc, Color lightColor, float superEnrageFormAestheticInterpolant)
+        {
+            float hammerHeadRotation = npc.localAI[0];
+            Color eyeColor = Color.Cyan * npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
+            Texture2D backHeadTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWBackHead").Value;
+            Texture2D backHeadGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWBackHeadGlow").Value;
+            Texture2D hammerHeadTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWHammerHeadSide").Value;
+            Texture2D hammerHeadGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWHammerHeadSideGlow").Value;
+            Texture2D eyesGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWEyesSide").Value;
+
+            void drawInstance(Vector2 drawPosition, Color? colorOverride = null)
+            {
+                // Draw the back head.
+                Main.EntitySpriteDraw(backHeadTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0);
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(backHeadGlowmask, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0));
+
+                float moveBackInterpolant = Utils.GetLerpValue(0f, 0.3f, hammerHeadRotation, true) * 34f;
+                drawPosition += (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * backHeadTexture.Height * 0.5f;
+                drawPosition += (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * moveBackInterpolant;
+
+                // Draw the hammer head sides.
+                Vector2 leftHeadOrigin = hammerHeadTexture.Size();
+                Vector2 rightHeadOrigin = hammerHeadTexture.Size() * new Vector2(0f, 1f);
+                float leftHeadRotation = npc.rotation - hammerHeadRotation;
+                float rightHeadRotation = npc.rotation + hammerHeadRotation;
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyesGlowmask, drawPosition, null, eyeColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyesGlowmask, drawPosition, null, eyeColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+            }
+
+            if (superEnrageFormAestheticInterpolant > 0.2f)
+            {
+                Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
+                    drawInstance(npc.Center - Main.screenPosition + drawOffset, wispFormColor);
+                }
+            }
+            else
+                drawInstance(npc.Center - Main.screenPosition);
+        }
+
+        public static void TryToDrawAbyssalBlackHole()
+        {
+            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
+            if (!Main.npc.IndexInRange(aewIndex))
+                return;
+
+            float blackHoleInterpolant = Utils.GetLerpValue(0f, 0.26f, Main.npc[aewIndex].localAI[0], true);
+            DrawAbyssalBlackHole(Main.npc[aewIndex].Center - Main.screenPosition, blackHoleInterpolant, blackHoleInterpolant * 0.86f);
+        }
+
+        public static void DrawAbyssalBlackHole(Vector2 drawPosition, float opacity, float scale)
+        {
+            if (opacity <= 0.01f || scale <= 0.01f)
+                return;
+
+            Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
+            Vector2 origin = noiseTexture.Size() * 0.5f;
+            Main.spriteBatch.EnterShaderRegion();
+
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(opacity);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Purple);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Purple);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, scale, 0, 0f);
+
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(opacity * 0.7f);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Purple);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Cyan);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, scale, 0, 0f);
+            Main.spriteBatch.ExitShaderRegion();
         }
         #endregion Draw Effects
 

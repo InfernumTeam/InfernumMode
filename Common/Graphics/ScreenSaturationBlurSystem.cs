@@ -16,6 +16,7 @@ using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using System.Diagnostics;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -118,9 +119,13 @@ namespace InfernumMode.Common.Graphics
             if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
                 ThingsToDrawOnTopOfBlur.Clear();
 
+            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+
+            Vector2 topLeft = Vector2.One * -200f;
+            Vector2 bottomRight = new Vector2(Main.screenWidth, Main.screenHeight) - topLeft;
             while (ThingsToDrawOnTopOfBlur.Count > 0)
             {
-                if (ThingsToDrawOnTopOfBlur[0].position.Length() > 10000f)
+                if (ThingsToDrawOnTopOfBlur[0].position.Length() > 10000f && ThingsToDrawOnTopOfBlur[0].position.Between(topLeft, bottomRight))
                     ThingsToDrawOnTopOfBlur[0] = ThingsToDrawOnTopOfBlur[0] with { position = ThingsToDrawOnTopOfBlur[0].position - Main.screenPosition };
                 ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
                 ThingsToDrawOnTopOfBlur.RemoveAt(0);

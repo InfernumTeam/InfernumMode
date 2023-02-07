@@ -26,8 +26,6 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> DistortedBloomRing => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/DistortedBloomRing");
 
-        public static Asset<Texture2D> DistortNormalTile => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/NormalMaps/DistortNormalTile");
-
         public static Asset<Texture2D> EmpressStar => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/EmpressStar");
 
         public static Asset<Texture2D> Gleam => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam");
@@ -63,8 +61,6 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> Shadow2 => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Shadow2");
 
         public static Asset<Texture2D> Smoke => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Smoke");
-
-        public static Asset<Texture2D> SmokeMap => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/NormalMaps/SmokeMap");
 
         public static Asset<Texture2D> Stars => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Stars");
 

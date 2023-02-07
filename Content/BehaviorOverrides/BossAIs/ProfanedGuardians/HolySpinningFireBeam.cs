@@ -86,10 +86,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Time++;
                 return;
             }
-
+            bool fadeOut = owner.Infernum().ExtraAI[CommanderBlenderShouldFadeOutIndex] == 1 && (GuardiansAttackType)owner.ai[0] is GuardiansAttackType.HealerDeathAnimation;
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);
+            if (!fadeOut)
+            {
+                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
+                Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);
+            }
+            else
+            {
+                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
+                Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.025f, 0f, 1f);
+                if (Projectile.Opacity == 0)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
 
             // Rotate.
             Projectile.rotation += MathHelper.Lerp(0f, 0.015f, Projectile.Opacity);
@@ -135,6 +148,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
+        public override bool? CanDamage() => Projectile.Opacity >= 0.85f;
+
         public override bool ShouldUpdatePosition() => false;
 
         public override bool PreDraw(ref Color lightColor)
@@ -156,10 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public float WidthFunction(float completionRatio)
-        {
-            return Projectile.width * Projectile.scale * 2f;
-        }
+        public float WidthFunction(float completionRatio) => Projectile.width * Projectile.scale * 2f;
 
         public Color ColorFunction(float completionRatio)
         {
@@ -207,6 +219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor, rotation, origin, 0.8f, SpriteEffects.None, 0f);
                 return;
             }
+
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GuardiansLaserVertexShader);
 
             InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);

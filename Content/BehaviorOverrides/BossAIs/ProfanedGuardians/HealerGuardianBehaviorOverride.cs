@@ -1,8 +1,10 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.GlobalInstances;
@@ -73,6 +75,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case GuardiansAttackType.HealerAndDefender:
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
+                case GuardiansAttackType.HealerDeathAnimation:
+                    DoBehavior_HealerDeathAnimation(npc, target, ref attackTimer, commander);
+                    break;
             }
 
             if (drawShieldConnections == 1)
@@ -100,9 +105,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 DrawNPCBackglow(npc, spriteBatch, texture, direction);
 
             // Draw the npc.
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
-            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
-            Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
+            // If the white glow should be drawn.
+            if ((GuardiansAttackType)commander.ai[0] is GuardiansAttackType.HealerDeathAnimation && npc.Infernum().ExtraAI[0] > 0)
+                DrawWhiteGlowOverlay(npc, spriteBatch, texture, glowmask, glowmask2, commander, lightColor, direction);
+            else
+            {
+                Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
+                Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
+                Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
+            }
             // If shield connections should be drawn.
             if (npc.ai[2] == 1f || commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex] > 0f)
                 DrawShieldConnections(npc);
@@ -188,6 +199,88 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float gleamRotation = MathHelper.Pi * Main.GlobalTimeWrappedHourly * 2f;
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
+        }
+
+        public void DrawWhiteGlowOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Texture2D glowmask2, NPC commander, Color lightColor, SpriteEffects direction)
+        {
+            float commanderTimer = commander.ai[1];
+            float whiteGlowTime = 120f;
+            float ashesTime = 90;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            float opacityScalar = npc.Infernum().ExtraAI[0];
+
+            float opacityScalar2 = 1f;
+            if (commanderTimer > whiteGlowTime)
+            {
+                float interlopant = (commanderTimer - whiteGlowTime) / ashesTime;
+                opacityScalar2 = 1 - CalamityUtils.LinearEasing(interlopant, 0);
+            }
+
+            // Commander glow effect, as if the commander is trying to stop it dying.
+            Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
+            Color drawColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f);
+            drawColor.A = 0;
+            Color drawColor2 = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.5f);
+            drawColor2.A = 0;
+            Vector2 origin = glow.Size() * 0.5f;
+            spriteBatch.Draw(glow, drawPosition, null, drawColor * opacityScalar * opacityScalar2, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glow, drawPosition, null, drawColor2 * opacityScalar * opacityScalar2, 0f, origin, 2.5f, SpriteEffects.None, 0f);
+
+            // Draw back afterimages, indicating that the guardian is fading away into ashes.
+            if (commanderTimer > whiteGlowTime)
+            {
+                float interlopant = (commanderTimer - whiteGlowTime) / ashesTime;
+                float smoothed = CalamityUtils.SineInEasing(interlopant, 0);
+                float radius = MathHelper.Lerp(0f, 55f, smoothed);
+                if (radius > 0.5f)
+                {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        Vector2 drawOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * radius;
+                        Color backimageColor = WayfinderSymbol.Colors[0];
+                        backimageColor.A = (byte)MathHelper.Lerp(164f, 0f, MathHelper.Lerp(1f, 0f, smoothed));
+                        spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backimageColor * npc.Opacity * (1f - smoothed), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                    }
+                }
+            }
+
+            // Draw the main sprites.
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor) * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White) * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White) * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+
+            // Draw a white overlay
+            float overlayAmount = MathHelper.Lerp(0f, 5f, opacityScalar2);
+            for (int i = 0; i < overlayAmount; i++)
+            {
+                Vector2 backglowOffset = (MathHelper.TwoPi * i / overlayAmount).ToRotationVector2() * 2f;
+                Color backglowColor = Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], Color.White, commanderTimer / whiteGlowTime);
+                backglowColor.A = 0;
+                spriteBatch.Draw(texture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * opacityScalar * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+            }
+
+            // Easings for making the shield bob in and out opacity wise.
+            float opacity0to1 = MathF.Sin(MathF.PI * (commanderTimer / whiteGlowTime));
+            float shieldOpacity;
+            if (commanderTimer >= whiteGlowTime / 2f)
+                shieldOpacity = Utilities.EaseInBounce(opacity0to1);
+            else
+                shieldOpacity = CalamityUtils.ExpInEasing(opacity0to1, 0);
+
+            // Draw the shield, as if its trying to protect itself in its last moments instead of the commander.
+            AttackerGuardianBehaviorOverride.DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity * 1.15f);
+        }
+        #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            DespawnTransitionProjectiles();
+            SelectNewAttack(commander, ref commander.ai[1], (float)GuardiansAttackType.HealerDeathAnimation);
+            npc.life = npc.lifeMax;
+            npc.netUpdate = true;
+            return false;
         }
         #endregion
     }

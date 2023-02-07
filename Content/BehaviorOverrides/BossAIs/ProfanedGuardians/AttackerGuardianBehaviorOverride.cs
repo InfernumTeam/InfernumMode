@@ -38,8 +38,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static float BorderPosition => WorldSaveSystem.ProvidenceArena.X * 16f + 300f;
 
-        public const int BrightnessWidthFactorIndex = 5;
-
         public const float ImmortalUntilPhase2LifeRatio = 0.75f;
 
         public const float Phase2LifeRatio = 0.6f;
@@ -124,6 +122,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case GuardiansAttackType.HealerAndDefender:
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, npc);
                     break;
+                case GuardiansAttackType.HealerDeathAnimation:
+                    DoBehavior_HealerDeathAnimation(npc, target, ref attackTimer, npc);
+                    break;
                 case GuardiansAttackType.CommanderDeathAnimation:
                     DoBehavior_DeathAnimation(npc, target, ref attackTimer);
                     break;
@@ -139,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             int secondExpansionDelay = 1;
             int secondExpansionTime = 132;
             ref float fadeOutFactor = ref npc.Infernum().ExtraAI[0];
-            ref float brightnessWidthFactor = ref npc.Infernum().ExtraAI[BrightnessWidthFactorIndex];
+            ref float brightnessWidthFactor = ref npc.Infernum().ExtraAI[CommanderBrightnessWidthFactorIndex];
 
             // Slow to a screeching halt.
             npc.velocity *= 0.9f;
@@ -178,7 +179,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             int afterimageCount = 7;
-            float brightnessWidthFactor = npc.Infernum().ExtraAI[BrightnessWidthFactorIndex];
+            float brightnessWidthFactor = npc.Infernum().ExtraAI[CommanderBrightnessWidthFactorIndex];
             float fadeToBlack = Utils.GetLerpValue(1.84f, 2.66f, brightnessWidthFactor, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianCommanderGlow").Value;
@@ -241,6 +242,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Draw(texture, drawPosition, npc.frame, Color.Lerp(npc.GetAlpha(lightColor), Color.Black * npc.Opacity, fadeToBlack), npc.rotation, origin, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
+            ref float glowAmount = ref npc.Infernum().ExtraAI[CommanderAngerGlowAmountIndex];
+            if (glowAmount > 0f)
+                DrawAngerOverlay(npc, spriteBatch, texture, glowmask, lightColor, direction);
 
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);              
@@ -270,6 +274,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
             }
+        }
+
+        public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Color lightColor, SpriteEffects direction)
+        {
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 }, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 }, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
         }
 
         public static void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)

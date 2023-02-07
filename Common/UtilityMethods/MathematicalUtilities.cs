@@ -150,5 +150,26 @@ namespace InfernumMode
 
         public static int NumberOfCombinations(int sizeOfSet, int totalToSelect) =>
             Factorial(sizeOfSet) / (Factorial(totalToSelect) * Factorial(sizeOfSet - totalToSelect));
+
+        public static float EaseInBounce(float value) => 1f - EaseOutBounce(1f - value);
+
+        public static float EaseOutBounce(float value)
+        {
+            float n1 = 7.5625f;
+            float d1 = 2.75f;
+
+            if (value < 1f / d1) {
+                return n1 * value * value;
+            } else if (value < 2f / d1) {
+                return n1 * (value -= 1.5f / d1) * value + 0.75f;
+            } else if (value < 2.5f / d1)
+            {
+                return n1 * (value -= 2.25f / d1) * value + 0.9375f;
+            }
+            else
+            {
+                return n1 * (value -= 2.625f / d1) * value + 0.984375f;
+            }
+        }
     }
 }

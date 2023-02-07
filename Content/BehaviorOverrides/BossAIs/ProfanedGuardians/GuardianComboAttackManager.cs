@@ -31,7 +31,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             SoloDefender,
             HealerAndDefender,
 
-            HealerDeath,
+            HealerDeathAnimation,
+
+            // Commander and Defender combo attacks
+            SpearDashAndGroundSlam,
 
             CommanderDeathAnimation
         }
@@ -55,12 +58,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         // 0 = shield needs to spawn, 1 = shield is spawned and should aim at the player, 2 = shield is spawned and should stop aiming, 3 = shield should die.
         public const int DefenderShieldStatusIndex = 16;
         public const int DefenderFireAfterimagesIndex = 17;
+        public const int CommanderBlenderShouldFadeOutIndex = 18;
+        public const int CommanderAngerGlowAmountIndex = 19;
+
+        public const int CommanderBrightnessWidthFactorIndex = 50;
+
 
         public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
 
-
+        #region Commander + Defender + Healer Attacks
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
         {
             float inertia = 20f;
@@ -398,6 +406,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
         }
+
         public static void DoBehavior_SoloDefender(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
             // Commander remains hovering still.
@@ -509,18 +518,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
                         substate++;
                         universalAttackTimer = 0;
-
-                        //float rockAmount = 4;
-                        //// Shoot rocks out.
-                        //if (Main.netMode != NetmodeID.MultiplayerClient)
-                        //{
-                        //    for (int i = 0; i < rockAmount; i++)
-                        //    {
-                        //        Vector2 rockPosition = npc.Center + (MathHelper.TwoPi * i / rockAmount).ToRotationVector2() * 50f;
-                        //        Vector2 velocity = ((MathHelper.TwoPi * i / rockAmount) + npc.DirectionTo(target.Center).ToRotation()).ToRotationVector2() * dashSpeed * 0.5f;
-                        //        Utilities.NewProjectileBetter(rockPosition, velocity.RotatedBy(MathHelper.PiOver2), ModContent.ProjectileType<ProfanedRock>(), 200, 0f, ai1: npc.whoAmI);
-                        //    }
-                        //}
                         break;
 
                     // After a set time, reset.
@@ -747,18 +744,112 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
 
                 if (completedCrystalLayers >= totalCrystalLayers && commander.Infernum().ExtraAI[0] == 0 && universalAttackTimer >= endOfAttackDelay)
-                {
                     SelectNewAttack(commander, ref universalAttackTimer);
-                }
             }
         }
 
-        public static void DoBehavior_HealerDeath(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        public static void DoBehavior_HealerDeathAnimation(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
+            // The commander stays in place still, and the lasers fade out.
+            if (npc.type == CommanderType)
+            {
+                float angerDelay = 90;
+                float angerTime = 45;
 
+                ref float glowAmount = ref npc.Infernum().ExtraAI[CommanderAngerGlowAmountIndex];
+
+                npc.velocity *= 0.9f;
+                float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                npc.position.Y += sine * 0.5f;
+                npc.spriteDirection = 1;
+
+                // This tells the blender lasers to fade out and disappear.
+                npc.Infernum().ExtraAI[CommanderBlenderShouldFadeOutIndex] = 1;
+
+                if (universalAttackTimer >= angerDelay && universalAttackTimer < angerDelay + angerTime)
+                {
+                    float interlopant = MathF.Sin(MathF.PI * ((universalAttackTimer - angerDelay) / angerTime));
+                    glowAmount = CalamityUtils.SineInOutEasing(interlopant, 0);
+                }
+            }
+
+            // The defender rushes to the commander to shield it.
+            else if (npc.type == DefenderType)
+            {
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
+
+                Vector2 hoverDestination = commander.Center + commander.SafeDirectionTo(target.Center) * MathHelper.Lerp(25, 150, MathHelper.Clamp(target.Distance(commander.Center) / 850f, 0f, 1f));
+                if (npc.velocity.Length() < 2f)
+                    npc.velocity = Vector2.UnitY * -2.4f;
+
+                float flySpeed = MathHelper.Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+                flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
+                npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
+                npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+
+                // Generate the shield if it is inactive.
+                if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
+                {
+                    // Mark the shield as active.
+                    shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                    Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                }
+            }
+
+            // The healer rapidly slows down, and glows white, before poofing.
+            else if (npc.type == HealerType)
+            {
+                float whiteGlowTime = 120f;
+                float ashesTime = 90f;
+                ref float whiteGlowOpacity = ref npc.Infernum().ExtraAI[0];
+
+                // Slow down rapidly.
+                npc.velocity *= 0.97f;
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+
+                if (universalAttackTimer <= whiteGlowTime)
+                    whiteGlowOpacity = CalamityUtils.ExpInEasing(MathHelper.Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
+                else if (universalAttackTimer == whiteGlowTime + ashesTime - 5)
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        Vector2 position = npc.Center + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f);
+                        Vector2 velocity = npc.SafeDirectionTo(position) * Main.rand.NextFloat(1.5f, 2f);
+                        Particle ashes = new MediumMistParticle(position, velocity, WayfinderSymbol.Colors[1], Color.Gray, Main.rand.NextFloat(0.75f, 0.95f), 400, Main.rand.NextFloat(-0.05f, 0.05f));
+                        GeneralParticleHandler.SpawnParticle(ashes);
+                    }
+                }
+                else if (universalAttackTimer >= whiteGlowTime + ashesTime)
+                {
+                    // Die once the animation is complete.
+                    npc.life = 0;
+                    npc.active = false;
+                }
+            }
         }
+        #endregion
 
-        public static void SelectNewAttack(NPC commander, ref float universalAttackTimer)
+        #region Commander + Defender Attacks
+        public static void DoBehavior_SpearDashAndGroundSlam(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        {
+            // The commander lines up horizontally, spins his spear around releasing spears in a circle before dashing at a rapid speed at the player.
+            // The won't be ram-able due to the spear.
+            if (npc.type == CommanderType)
+            {
+
+            }
+
+            // The defender hovers above the target, gathering fire energy, before charging up and slamming downwards, spawning lava eruptions from the ground when colliding with the ground.
+            else if (npc.type == DefenderType)
+            {
+
+            }
+        }
+        #endregion
+
+        public static void SelectNewAttack(NPC commander, ref float universalAttackTimer, float specificAttackToSwapTo = -1)
         {
             // Reset the first 5 extra ai slots. These are used for per attack information.
             for (int i = 0; i < 5; i++)
@@ -796,14 +887,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Reset the universal attack timer.
             universalAttackTimer = 0;
+
+            if (specificAttackToSwapTo != -1)
+            {
+                commander.ai[0] = specificAttackToSwapTo;
+                return;
+            }
             // If not the final combo attack, advance the current attack.
             if (commander.ai[0] < 4)
                 commander.ai[0]++;
 
-            // Else, reset it back to the first combo attack.
+            // Else, if its the final combo attack reset it back to the first combo attack.
             else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.HealerAndDefender)
                 commander.ai[0] = (float)GuardiansAttackType.SoloHealer;
 
+        }
+
+        public static void DespawnTransitionProjectiles()
+        {
+            Utilities.DeleteAllProjectiles(true,
+                ModContent.ProjectileType<ProfanedCirclingRock>(),
+                ModContent.ProjectileType<ProfanedRock>(),
+                ModContent.ProjectileType<MagicCrystalShot>(),
+                ModContent.ProjectileType<MagicSpiralCrystalShot>(),
+                ModContent.ProjectileType<DefenderShield>()
+                );
         }
     }
 }

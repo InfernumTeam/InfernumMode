@@ -63,9 +63,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float attackTimer = ref commander.ai[1];
             ref float drawFireSuckup = ref npc.ai[2];
             drawFireSuckup = 0;
+            ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
+            drawDashTelegraph = 0;
 
             // Reset taking damage.
             npc.dontTakeDamage = false;
+            npc.damage = 300;
 
             switch ((GuardiansAttackType)attackState)
             {
@@ -83,6 +86,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
                 case GuardiansAttackType.HealerAndDefender:
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
+                    break;
+                case GuardiansAttackType.HealerDeathAnimation:
+                    DoBehavior_HealerDeathAnimation(npc, target, ref attackTimer, commander);
                     break;
             }
             return false;

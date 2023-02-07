@@ -554,7 +554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             DoHoverMovement(npc, destination, acceleration);
             npc.rotation = npc.velocity.X * 0.05f;
 
-            if (attackTimer >= 385f)
+            if (attackTimer >= 420f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ShadowflameFireball>());
                 SelectNextAttack(npc);
@@ -594,7 +594,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             int totalShots = 7;
             int shootRate = 90;
             int attackDelay = 135;
-            Vector2 destination = target.Center - Vector2.UnitY * 400f;
+            Vector2 destination = target.Center - Vector2.UnitY * 440f;
             Vector2 acceleration = new(0.08f, 0.12f);
             DoHoverMovement(npc, destination, acceleration);
 

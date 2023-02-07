@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = npc.Center.MoveTowards(destination, 12f);
 
                         adjustedTimer = attackTimer % 210f;
-                        if (adjustedTimer > 50f && adjustedTimer < 180f && adjustedTimer % 45f == 44f && attackTimer < 520f)
+                        if (adjustedTimer > 50f && adjustedTimer < 180f && adjustedTimer % 45f == 44f && attackTimer < 360f)
                         {
                             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 

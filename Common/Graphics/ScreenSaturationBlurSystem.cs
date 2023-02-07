@@ -115,22 +115,8 @@ namespace InfernumMode.Common.Graphics
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            // WHAT THE FUCK NO ABORT ABORT ABORT
-            if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
-                ThingsToDrawOnTopOfBlur.Clear();
-
             AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
-
-            Vector2 topLeft = Vector2.One * -200f;
-            Vector2 bottomRight = new Vector2(Main.screenWidth, Main.screenHeight) - topLeft;
-            while (ThingsToDrawOnTopOfBlur.Count > 0)
-            {
-                if (ThingsToDrawOnTopOfBlur[0].position.Length() > 10000f && ThingsToDrawOnTopOfBlur[0].position.Between(topLeft, bottomRight))
-                    ThingsToDrawOnTopOfBlur[0] = ThingsToDrawOnTopOfBlur[0] with { position = ThingsToDrawOnTopOfBlur[0].position - Main.screenPosition };
-                ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
-                ThingsToDrawOnTopOfBlur.RemoveAt(0);
-            }
-
+            EmptyDrawCache(ThingsToDrawOnTopOfBlur);
             LargeLumenylCrystal.DefineCrystalDrawers();
 
             IcicleDrawer.ApplyShader();
@@ -149,6 +135,27 @@ namespace InfernumMode.Common.Graphics
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             
             Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            EmptyDrawCache(ThingsToDrawOnTopOfBlurAdditive);
+
+            Main.spriteBatch.End();
+        }
+
+        internal static void EmptyDrawCache(List<DrawData> drawCache)
+        {
+            // WHAT THE FUCK NO ABORT ABORT ABORT
+            if (drawCache.Count >= 10000 || Main.mapFullscreen)
+                drawCache.Clear();
+
+            Vector2 topLeft = Vector2.One * -200f;
+            Vector2 bottomRight = new Vector2(Main.screenWidth, Main.screenHeight) - topLeft;
+            while (drawCache.Count > 0)
+            {
+                if (drawCache[0].position.Length() > 10000f && drawCache[0].position.Between(topLeft, bottomRight))
+                    drawCache[0] = drawCache[0] with { position = drawCache[0].position - Main.screenPosition };
+                drawCache[0].Draw(Main.spriteBatch);
+                drawCache.RemoveAt(0);
+            }
         }
 
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)

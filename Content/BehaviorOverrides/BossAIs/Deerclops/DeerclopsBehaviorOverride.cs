@@ -707,6 +707,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             npc.chaseable = false;
             npc.Calamity().DR = 0.6f;
+            npc.dontTakeDamage = true;
 
             // Make the radius decrease as more hands congregate near the eye.
             // To make the attack better than a simple DPS check the hands will target nearby players if close to deerclops.

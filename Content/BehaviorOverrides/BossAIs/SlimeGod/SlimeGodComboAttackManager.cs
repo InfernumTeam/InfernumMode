@@ -374,7 +374,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         for (int i = 0; i < acceleratingGlobPerShot; i++)
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.62f, 0.62f, i / (float)(acceleratingGlobPerShot - 1f));
-                            Vector2 globVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * globSpeed;
+                            Vector2 globVelocity = Vector2.UnitX.RotatedBy(shootOffsetAngle) * globSpeed;
+                            if (target.Center.X < npc.Center.X)
+                                globVelocity *= -1f;
+
                             Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
                         }
                     }

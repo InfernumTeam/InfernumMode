@@ -40,7 +40,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
 
             // Accelerate over time.
-            if (Projectile.velocity.Length() < 35f)
+            if (Projectile.ai[1] <= 0f)
+                Projectile.ai[1] = 35f;
+            if (Projectile.velocity.Length() < Projectile.ai[1])
                 Projectile.velocity *= 1.034f;
 
             Time++;

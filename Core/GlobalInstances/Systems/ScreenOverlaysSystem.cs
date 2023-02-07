@@ -36,6 +36,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             private set;
         } = new();
 
+        public static List<DrawData> ThingsToDrawOnTopOfBlurAdditive
+        {
+            get;
+            private set;
+        } = new();
+
         internal static void DrawBlackout(ILContext il)
         {
             ILCursor cursor = new(il);

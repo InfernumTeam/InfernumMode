@@ -33,6 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Light attacks.
             BurningGaze,
+            PsychicBlasts,
 
             // Dark attacks.
             ForbiddenUnleash,
@@ -132,6 +133,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case AEWAttackType.BurningGaze:
                     DoBehavior_BurningGaze(npc, target, ref attackTimer);
                     break;
+                case AEWAttackType.PsychicBlasts:
+                    DoBehavior_PsychicBlasts(npc, target, ref attackTimer, ref superEnrageFormAestheticInterpolant);
+                    break;
                 case AEWAttackType.ForbiddenUnleash:
                     DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation);
                     break;
@@ -164,7 +168,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Transform into a being of light if the super-enrage form is active.
             // This happens gradually under normal circumstances but is instantaneous if enraged with the RoD on the first frame.
-            superEnrageFormAestheticInterpolant = Utils.GetLerpValue(0f, 60f, superEnrageTimer, true);
+            if (attackType != (int)AEWAttackType.PsychicBlasts)
+                superEnrageFormAestheticInterpolant = Utils.GetLerpValue(0f, 60f, superEnrageTimer, true);
             if (attackType != (int)AEWAttackType.RuthlesslyMurderTarget && targetNeedsDeath)
             {
                 if (attackType == (int)AEWAttackType.ThreateninglyHoverNearPlayer && attackTimer <= 10f && target.chaosState)
@@ -346,6 +351,56 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     hasReachedDestination = 0f;
                     horizontalHoverOffsetDirection *= -1f;
                     npc.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_PsychicBlasts(NPC npc, Player target, ref float attackTimer, ref float brightnessFormInterpolant)
+        {
+            int chargeUpTime = 77;
+            int chargeSoundDelay = 65;
+            int shotCount = 7;
+            float wrappedAttackTimer = attackTimer % chargeUpTime;
+            float idealBrightness = (float)Math.Pow(wrappedAttackTimer / chargeUpTime, 2.4);
+            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Charge at the target.
+            if (!npc.WithinRange(target.Center, 160f))
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 13f, 0.08f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.1f);
+            }
+            else
+                npc.velocity *= 1.07f;
+
+            if (shootCounter >= shotCount)
+            {
+                if (attackTimer >= 150f)
+                    SelectNextAttack(npc);
+                return;
+            }
+
+            // Make the brightness rapidly approach the ideal.
+            brightnessFormInterpolant = MathHelper.Lerp(brightnessFormInterpolant, idealBrightness, 0.16f);
+
+            // Play a charge-up sound before firing.
+            if (wrappedAttackTimer == chargeUpTime - chargeSoundDelay)
+                SoundEngine.PlaySound(InfernumSoundRegistry.AEWEnergyCharge with { Volume = 2f });
+
+            // Release a psychic blast.
+            if (wrappedAttackTimer == chargeUpTime - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item73, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 blastVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 19f;
+                    Utilities.NewProjectileBetter(npc.Center + blastVelocity * 4f, blastVelocity, ModContent.ProjectileType<PsychicBlast>(), PowerfulShotDamage, 0f);
+                    shootCounter++;
+                    if (shootCounter >= shotCount)
+                    {
+                        attackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
                 }
             }
         }
@@ -684,11 +739,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
-            else if (currentAttack == AEWAttackType.ForbiddenUnleash)
-                nextAttack = AEWAttackType.ForbiddenUnleash;
+            else if (currentAttack == AEWAttackType.PsychicBlasts)
+                nextAttack = AEWAttackType.PsychicBlasts;
 
             if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
-                nextAttack = AEWAttackType.ForbiddenUnleash;
+                nextAttack = AEWAttackType.PsychicBlasts;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -750,9 +805,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (superEnrageFormAestheticInterpolant > 0f)
             {
                 Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 12; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
                     ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, npc.frame, wispFormColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
                 }
             }

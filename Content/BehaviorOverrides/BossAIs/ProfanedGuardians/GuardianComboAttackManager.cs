@@ -882,7 +882,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float totalSpearsToRelease = 13f;
                 int spearReleasePoint = (int)(spinLength / totalSpearsToRelease);
 
-                drawFireAfterimages = 0;
+                drawFireAfterimages = 0f;
                 npc.Infernum().ExtraAI[CommanderFireAfterimagesLengthIndex] = chargeLength;
 
                 switch (substate)
@@ -900,7 +900,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
                         }
-
+                        spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         substate++;
                         localAttackTimer = 0f;
                         spearRotationStartingOffset = spearRotation;
@@ -909,7 +909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 1:
                         hoverDestination = target.Center + new Vector2(xOffset, 0f);
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
-                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         // Make the spear rotation point to the player.
                         float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
@@ -930,7 +930,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         hoverDestination = target.Center + new Vector2(xOffset, 0f);
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         drawShieldSmear = 1f;
-                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (localAttackTimer == 0)
                             SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelSpinSound with { Pitch = -0.1f, Volume = 0.9f }, target.Center);
@@ -964,7 +964,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
                         
 
-                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (localAttackTimer >= recoilLength)
                         {
@@ -995,7 +995,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         drawFireAfterimages = 1f;
                         if (localAttackTimer >= chargeLength)
                         {
-                            substate = 0;
+                            substate = 0f;
                             localAttackTimer = 0f;
                             return;
                         }
@@ -1018,12 +1018,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float recoilWait = 10f;
                 float recoilLength = 30f;
                 float slamLength = 150f;
-                float afterSlamWaitLength = 60;
+                float afterSlamWaitLength = 60f;
                 float slamSpeed = 35f;
                 float flySpeed = 19f;
                 float maxSlams = 3f;
                 float pillarAmount = 12f;
-                float rockAmount = 2;
+                float rockAmount = 2f;
 
                 switch (substate)
                 {
@@ -1052,6 +1052,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             }
                         }
 
+                        if ((DefenderShieldStatus)shieldStatus != DefenderShieldStatus.Inactive)
+                            shieldStatus = (float)DefenderShieldStatus.MarkedForRemoval;
+
                         substate++;
                         universalAttackTimer = 0;
                         return;
@@ -1064,7 +1067,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (npc.WithinRange(target.Center, 200f))
                             npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 5f;
 
-                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (universalAttackTimer >= chargeUpLength && npc.Distance(hoverDestination) < 75f)
                         {
@@ -1081,7 +1084,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer == recoilWait)
                             npc.velocity.Y = -3.2f;
 
-                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         // Generate the shield if it is inactive.
                         if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
@@ -1098,7 +1101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         else if (universalAttackTimer >= recoilWait + recoilLength)
                         {
                             substate++;
-                            universalAttackTimer = 0;
+                            universalAttackTimer = 0f;
                             return;
                         }
                         break;
@@ -1108,7 +1111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 0.9f }, target.Center);
                         npc.velocity = Vector2.UnitY * slamSpeed;
 
-                        universalAttackTimer = 0;
+                        universalAttackTimer = 0f;
                         substate++;
                         return;
 
@@ -1129,11 +1132,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             if (CalamityConfig.Instance.Screenshake)
                                 target.Infernum_Camera().CurrentScreenShakePower = 12f;
+
                             npc.life -= (int)(npc.lifeMax * 0.001f);
                             npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
-                            float yPos = (Main.maxTilesY * 16) - 50f;
-                            Vector2 start = new(npc.Center.X - 3000, yPos);
-                            Vector2 end = new(npc.Center.X + 3000, yPos);
+
+                            float yPos = (Main.maxTilesY * 16f) - 50f;
+                            Vector2 start = new(npc.Center.X - 3000f, yPos);
+                            Vector2 end = new(npc.Center.X + 3000f, yPos);
+
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 for (int i = 0; i < pillarAmount; i++)
@@ -1148,7 +1154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 GeneralParticleHandler.SpawnParticle(rock);
                             }
                             substate++;
-                            universalAttackTimer = 0;
+                            universalAttackTimer = 0f;
                             return;
                         }
                         break;
@@ -1161,14 +1167,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             slamsPerformed++;
                             if (slamsPerformed >= maxSlams)
                             {
+                                bool pillarsAreMostlyGone = !Main.projectile.Any(proj => proj.active && proj.type == ModContent.ProjectileType<LavaEruptionPillar>() && proj.timeLeft >= 30);
                                 // Switch to next attack. It will stall here if the commander is mid spin/charge until it is free. This is to avoid abruptly stopping mid spin/charge.
-                                if (commander.ai[0] is 0 or 1)
+                                if (commander.Infernum().ExtraAI[0] is 0f or 1f && pillarsAreMostlyGone)
                                     SelectNewAttack(commander, ref universalAttackTimer);
                             }
                             else
                             {
-                                substate = 0;
-                                universalAttackTimer = 0;
+                                substate = 0f;
+                                universalAttackTimer = 0f;
                             }
                         }
                         break;
@@ -1178,14 +1185,243 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DoBehavior_CrashRam(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
+            // They both use the same substate due to needing to be synced.
+            ref float substate = ref commander.Infernum().ExtraAI[0];
+            ref float commanderOffset = ref commander.Infernum().ExtraAI[1];
+            ref float defenderIsReady = ref commander.Infernum().ExtraAI[2];
+            ref float ramsCompleted = ref commander.Infernum().ExtraAI[3];
+
+            float maxRamsToComplete = 4f;
+            float hoverWaitTime = 45f;
+            float maxMoveTime = 120f;
+            float flySpeed = 25f;
+            // Get faster if taking too long to get into position.
+            float flySpeedScaled = universalAttackTimer > maxMoveTime ? flySpeed + (universalAttackTimer - maxMoveTime) : flySpeed;
+
+            float commanderHoverDistance = 600f;
+            float defenderHoverDistance = commanderHoverDistance * 0.75f;
+            float defenderRamSpeed = 35f;
+            float commanderRamSpeed = defenderRamSpeed * 1.25f;
+
+            float recoilTime = 30f;
+            float rockAmount = 9f;
+
+            NPC defender;
+
+            if (CalamityGlobalNPC.doughnutBossDefender == -1)
+                return;
+
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
+                return;
+
+             defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];            
+
             if (npc.type == CommanderType)
             {
+                ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
+                ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
+                ref float drawFireAfterimages = ref npc.Infernum().ExtraAI[CommanderFireAfterimagesIndex];
+                npc.Infernum().ExtraAI[CommanderFireAfterimagesLengthIndex] = 10f;
+                switch (substate)
+                {
+                    // Get an offset from the player.
+                    case 0:
+                        commanderOffset += Main.rand.NextFloat(MathHelper.PiOver4, MathHelper.PiOver2) * Main.rand.NextFromList(-1f, 1f);
+                        substate++;
+                        universalAttackTimer = 0f;
+                        break;
 
+                    // Move to said offset.
+                    case 1:
+                        Vector2 hoverDestination = target.Center + commanderOffset.ToRotationVector2() * commanderHoverDistance;
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeedScaled)) / 8f;
+
+                        // Move out of the way of the target if going around them.
+                        if (npc.WithinRange(target.Center, 150f))
+                            npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                        // Spawn the spear if it does not exist.
+                        if ((DefenderShieldStatus)spearStatus is DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))
+                        {
+                            spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                        }
+
+                        spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                        // Make the spear rotation point to the player.
+                        float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
+                        spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
+
+                        // If close enough, and the defender is ready.
+                        if (npc.WithinRange(hoverDestination, 50f) && universalAttackTimer >= hoverWaitTime && defenderIsReady == 1f)
+                        {
+                            substate++;
+                            universalAttackTimer = 0;
+                        }
+                        break;
+
+                    // Charge towards the defender.
+                    case 2:
+                        npc.velocity = npc.DirectionTo(defender.Center) * commanderRamSpeed;
+                        spearStatus = (float)DefenderShieldStatus.ActiveAndStatic;
+                        // Cause the defender to charge as well.
+                        defender.velocity = defender.DirectionTo(npc.Center) * defenderRamSpeed;
+
+                        drawFireAfterimages = 1f;
+                        // Reset the defender being ready.
+                        defenderIsReady = 0f;
+                        substate++;
+                        universalAttackTimer = 0f;
+                        break;
+
+                    // If close enough to the defender, or if enough time has passed if they missed.
+                    case 3:
+                        drawFireAfterimages = 1f;
+
+                        // Create particles to indicate the sudden speed.
+                        if (Main.rand.NextBool())
+                        {
+                            Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                            Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                            GeneralParticleHandler.SpawnParticle(energyLeak);
+                        }
+
+                        if (npc.WithinRange(defender.Center, 180f) || universalAttackTimer >= 240f)
+                        {
+                            substate++;
+                            universalAttackTimer = 0f;
+                        }
+                        break;
+
+                    // Create an explosion and recoil backwards.
+                    case 4:
+                        if (universalAttackTimer == 1f)
+                        {
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * -5f;
+                            defender.velocity = defender.velocity.SafeNormalize(Vector2.UnitY) * -3.75f;
+
+                            // Create a bunch of rock particles to indicate a heavy impact.
+                            Vector2 impactCenter = (npc.Center + defender.Center) / 2f;
+                            for (int j = 0; j < 20; j++)
+                            {
+                                Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(MathF.Tau) * Main.rand.NextFloat(6f, 9f), Color.White, Main.rand.NextFloat(0.85f, 1.15f), 60, Main.rand.NextFloat(0f, 0.2f), false);
+                                GeneralParticleHandler.SpawnParticle(rock);
+                            }
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                                {
+                                    explosion.ModProjectile<HolySunExplosion>().MaxRadius = 160f;
+                                });
+                                Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
+
+                                // Also spawn a bunch of rocks with slightly random direction and speed.
+                                for (int i = 0; i < rockAmount; i++)
+                                {
+
+                                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock =>
+                                    {
+                                        rock.ModProjectile<ProfanedRock>().SpeedUp = true;
+                                    });
+
+                                    Vector2 direction = impactCenter + ((MathHelper.TwoPi * i / rockAmount) + Main.rand.NextFloat(-0.4f, 0.4f)).ToRotationVector2();
+                                    Vector2 velocity = impactCenter.DirectionTo(direction) * Main.rand.NextFloat(5f, 7f);
+
+                                    // Aim one directly at the player and make it slightly faster.
+                                    if (i == rockAmount - 1f)
+                                    {
+                                        direction = impactCenter + impactCenter.DirectionTo(target.Center);
+                                        velocity = impactCenter.DirectionTo(direction) * 7.5f;
+                                    }
+                                    Utilities.NewProjectileBetter(impactCenter, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
+                                }
+                            }
+
+                            // Play a loud explosion + hitbox sound and screenshake to give the impact power.
+                            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+                            SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
+
+                            if (CalamityConfig.Instance.Screenshake)
+                                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+
+                            // Damage the defender slightly, as it has been stabbed by the spear.
+                            defender.life -= (int)(defender.lifeMax * 0.003f);
+                        }
+
+                        npc.velocity *= 0.99f;
+                        defender.velocity *= 0.99f;
+
+                        // If enough rams have happened, select a new attack, else reset the substate.
+                        if (universalAttackTimer >= recoilTime)
+                        {
+                            ramsCompleted++;
+                            if (ramsCompleted >= maxRamsToComplete)
+                            {
+                                SelectNewAttack(commander, ref universalAttackTimer);
+                                return;
+                            }
+
+                            substate = 0f;
+                            universalAttackTimer = 0f;
+                        }
+                        break;
+                }
             }
 
+            // The defender has most of its stuff controlled by the commander here.
             else if (npc.type == DefenderType)
             {
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
 
+                switch (substate)
+                {
+                    // Move to said offset.
+                    case 1:
+                        Vector2 hoverDestination = target.Center + (commanderOffset + MathF.PI).ToRotationVector2() * defenderHoverDistance;
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeedScaled)) / 8f;
+
+                        // Move out of the way of the target if going around them.
+                        if (npc.WithinRange(target.Center, 150f))
+                            npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                        // Generate the shield if it is inactive.
+                        if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
+                        {
+                            // Mark the shield as active.
+                            shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                                Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                        }
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+
+                        // If close enough, mark us as ready.
+                        if (npc.WithinRange(hoverDestination, 50f))
+                            defenderIsReady = 1f;
+                        else
+                            defenderIsReady = 0f;
+                        break;
+
+                    // Mark the shield as static.
+                    case 3:
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
+
+                        // Create particles to indicate the sudden speed.
+                        if (Main.rand.NextBool())
+                        {
+                            Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                            Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                            GeneralParticleHandler.SpawnParticle(energyLeak);
+                        }
+                        break;
+                }
             }
         }
         #endregion
@@ -1194,7 +1430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             // Reset the first 5 extra ai slots. These are used for per attack information.
             for (int i = 0; i < 5; i++)
-                commander.Infernum().ExtraAI[i] = 0;
+                commander.Infernum().ExtraAI[i] = 0f;
 
             if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
             {
@@ -1202,7 +1438,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     NPC defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
                     for (int i = 0; i < 5; i++)
-                        defender.Infernum().ExtraAI[i] = 0;
+                        defender.Infernum().ExtraAI[i] = 0f;
 
                     // If the next attack is the healer solo, mark the defending shield as no longer needed.
                     // This gets reset back to zero by the shield before removing itself.
@@ -1222,14 +1458,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     NPC healer = Main.npc[CalamityGlobalNPC.doughnutBossHealer];
                     for (int i = 0; i < 5; i++)
-                        healer.Infernum().ExtraAI[i] = 0;
+                        healer.Infernum().ExtraAI[i] = 0f;
                 }
             }
 
             // Reset the universal attack timer.
-            universalAttackTimer = 0;
+            universalAttackTimer = 0f;
 
-            if (specificAttackToSwapTo != -1)
+            if (specificAttackToSwapTo != -1f)
             {
                 commander.ai[0] = specificAttackToSwapTo;
                 return;

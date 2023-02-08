@@ -30,6 +30,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const int RedHotGlowTimer = 30;
 
+        public bool SpeedUp = false;
+
         public ref float Timer => ref Projectile.ai[0];
 
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
@@ -90,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
-            if (!Owner.active || Owner.type != ModContent.NPCType<ProfanedGuardianDefender>())
+            if (!Owner.active)
             {
                 Projectile.Kill();
                 return;
@@ -98,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Player target = Main.player[Owner.target];
 
-            if (Timer == 0)
+            if (Timer == 0 && !SpeedUp)
             {
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.95f, Volume = 0.9f }, target.Center);
                 for (int i = 0; i < 20; i++)
@@ -112,6 +114,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
                 if (CalamityConfig.Instance.Screenshake)
                     target.Infernum_Camera().CurrentScreenShakePower = 2f;
+            }
+            else if (SpeedUp)
+            {
+                if (Projectile.velocity.Length() < 30f)
+                    Projectile.velocity *= 1.035f;
             }
 
             Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
@@ -138,7 +145,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
                 laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Pow((double)opacity, 0.5f));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(340f));
-                Player target = Main.player[Owner.target];
                 laserScopeEffect.Parameters["laserAngle"].SetValue(Projectile.velocity.ToRotation() * -1f);
                 laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + (float)Math.Pow((double)opacity, 5.0) * ((float)Math.Sin((double)(Main.GlobalTimeWrappedHourly * 3f)) * 0.002f + 0.002f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);

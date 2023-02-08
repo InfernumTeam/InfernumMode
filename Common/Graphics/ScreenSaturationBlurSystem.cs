@@ -16,6 +16,8 @@ using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using System.Diagnostics;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -114,18 +116,8 @@ namespace InfernumMode.Common.Graphics
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            // WHAT THE FUCK NO ABORT ABORT ABORT
-            if (ThingsToDrawOnTopOfBlur.Count >= 10000 || Main.mapFullscreen)
-                ThingsToDrawOnTopOfBlur.Clear();
-
-            while (ThingsToDrawOnTopOfBlur.Count > 0)
-            {
-                if (ThingsToDrawOnTopOfBlur[0].position.Length() > 10000f)
-                    ThingsToDrawOnTopOfBlur[0] = ThingsToDrawOnTopOfBlur[0] with { position = ThingsToDrawOnTopOfBlur[0].position - Main.screenPosition };
-                ThingsToDrawOnTopOfBlur[0].Draw(Main.spriteBatch);
-                ThingsToDrawOnTopOfBlur.RemoveAt(0);
-            }
-
+            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
             LargeLumenylCrystal.DefineCrystalDrawers();
 
             IcicleDrawer.ApplyShader();
@@ -142,8 +134,38 @@ namespace InfernumMode.Common.Graphics
             ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
-            
+
+            DrawAdditiveCache();
+            DrawAEW();
+            DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
+        }
+
+        internal static void DrawAdditiveCache()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            ThingsToDrawOnTopOfBlurAdditive.EmptyDrawCache();
+        }
+
+        internal static void DrawAEW()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            AEWShadowFormDrawSystem.DrawTarget();
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int i = 0; i < AEWShadowFormDrawSystem.AEWEyesDrawCache.Count; i++)
+            {
+                AEWShadowFormDrawSystem.AEWEyesDrawCache[i] = AEWShadowFormDrawSystem.AEWEyesDrawCache[i] with
+                {
+                    position = AEWShadowFormDrawSystem.AEWEyesDrawCache[i].position + Main.screenPosition - Main.screenLastPosition
+                };
+            }
+
+            AEWShadowFormDrawSystem.AEWEyesDrawCache.EmptyDrawCache();
         }
 
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
@@ -151,9 +173,9 @@ namespace InfernumMode.Common.Graphics
             if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
-            // Free GPU resources for the old targets.
             DrawActionQueue.Enqueue(() =>
             {
+                // Free GPU resources for the old targets.
                 BloomTarget?.Dispose();
                 FinalScreenTarget?.Dispose();
                 DownscaledBloomTarget?.Dispose();

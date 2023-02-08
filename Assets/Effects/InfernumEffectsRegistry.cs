@@ -13,6 +13,7 @@ namespace InfernumMode.Assets.Effects
     {
         #region Texture Shaders
         public static MiscShaderData AEWPsychicEnergyShader => GameShaders.Misc["Infernum:AEWPsychicEnergy"];
+        public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
@@ -118,6 +119,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> aewPsychicEnergyShader = new(assets.Request<Effect>("Assets/Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
+
+            Ref<Effect> aewShadowShader = new(assets.Request<Effect>("Assets/Effects/AEWShadowShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:AEWShadowForm"] = new MiscShaderData(aewShadowShader, "BurnPass");
 
             Ref<Effect> gradientShader = new(assets.Request<Effect>("Assets/Effects/GradientWingShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GradientWingShader"] = new MiscShaderData(gradientShader, "GradientPass");

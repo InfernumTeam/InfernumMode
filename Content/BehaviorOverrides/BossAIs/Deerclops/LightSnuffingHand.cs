@@ -58,9 +58,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             }
 
             // Begin dying if the player is really close to the hand, preferring to attack them instead of hovering near deerclops.
-            float flySpeed = 7.4f;
+            float flySpeed = 8.5f;
             Player target = Main.player[Player.FindClosest(NPC.Center, 1, 1)];
-            bool chasePlayer = NPC.WithinRange(target.Center, 210f) && Main.npc[deerclopsIndex].WithinRange(target.Center, 400f);
+            bool chasePlayer = NPC.WithinRange(target.Center, 300f) && Main.npc[deerclopsIndex].WithinRange(target.Center, 480f);
             if (BossRushEvent.BossRushActive)
                 flySpeed *= 1.75f;
 

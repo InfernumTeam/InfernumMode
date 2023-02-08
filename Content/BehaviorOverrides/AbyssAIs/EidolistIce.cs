@@ -48,7 +48,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
+
+            if (drawPosition.Between(Vector2.One * -300f, new(Main.screenWidth + 300f, Main.screenHeight + 300f)))
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
             return false;
         }
 

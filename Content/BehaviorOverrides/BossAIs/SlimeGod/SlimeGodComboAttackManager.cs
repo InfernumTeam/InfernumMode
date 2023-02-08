@@ -272,10 +272,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public static void DoBehavior_TeleportAndFireBlobs(NPC npc, Player target, bool red, ref float attackTimer)
         {
-            int teleportTime = 48;
+            int teleportTime = 78;
             int blobShootRate = 60;
-            int groundBlobCountPerShot = 4;
-            int acceleratingGlobPerShot = 5;
+            int groundBlobCountPerShot = 2;
+            int acceleratingGlobPerShot = 3;
             int blobShootTime = blobShootRate * 3 - 8;
             float globSpeed = 6f;
 
@@ -374,7 +374,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         for (int i = 0; i < acceleratingGlobPerShot; i++)
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.62f, 0.62f, i / (float)(acceleratingGlobPerShot - 1f));
-                            Vector2 globVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * globSpeed;
+                            Vector2 globVelocity = Vector2.UnitX.RotatedBy(shootOffsetAngle) * globSpeed;
+                            if (target.Center.X < npc.Center.X)
+                                globVelocity *= -1f;
+
                             Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
                         }
                     }
@@ -389,7 +392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         {
             int swarmTime = 420;
             int reformTime = 120;
-            int acceleratingGlobPerShot = 3;
+            int acceleratingGlobPerShot = 4;
             float chargeSpeed = 16.5f;
             float globSpeed = 7f;
             ref float splitState = ref npc.Infernum().ExtraAI[1];

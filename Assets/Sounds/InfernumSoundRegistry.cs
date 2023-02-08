@@ -15,6 +15,10 @@ namespace InfernumMode.Assets.Sounds
 
         #region Bosses and Enemies
 
+        public static readonly SoundStyle AEWEnergyCharge = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWEnergyCharge") with { Volume = 1.5f };
+
+        public static readonly SoundStyle AEWIceBurst = new("InfernumMode/Assets/Sounds/Custom/AEW/AEWIceBurst");
+
         public static readonly SoundStyle AEWThreatenRoar = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWThreatenRoar") with { Volume = 1.64f };
 
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresLaugh");

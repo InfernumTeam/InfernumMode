@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.UI.DraedonSummoning;
@@ -341,5 +342,27 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => On.Terraria.Main.DrawInfernoRings += DrawForcefields;
 
         public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
+    }
+
+    public class DisableWaterEffectsInAEWFightHook : IHookEdit
+    {
+        private void DisableWaterEffects(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            c.GotoNext(MoveType.After, i => i.MatchCall<Collision>("WetCollision"));
+            c.EmitDelegate(() =>
+            {
+                if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs)
+                    return false;
+
+                return true;
+            });
+            c.Emit(OpCodes.And);
+        }
+
+        public void Load() => IL.Terraria.Player.Update += DisableWaterEffects;
+
+        public void Unload() => IL.Terraria.Player.Update -= DisableWaterEffects;
     }
 }

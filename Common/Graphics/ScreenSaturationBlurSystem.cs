@@ -17,6 +17,7 @@ using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using System.Diagnostics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -136,6 +137,7 @@ namespace InfernumMode.Common.Graphics
 
             DrawAdditiveCache();
             DrawAEW();
+            DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
         }
 
@@ -153,7 +155,16 @@ namespace InfernumMode.Common.Graphics
             AEWShadowFormDrawSystem.DrawTarget();
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int i = 0; i < AEWShadowFormDrawSystem.AEWEyesDrawCache.Count; i++)
+            {
+                AEWShadowFormDrawSystem.AEWEyesDrawCache[i] = AEWShadowFormDrawSystem.AEWEyesDrawCache[i] with
+                {
+                    position = AEWShadowFormDrawSystem.AEWEyesDrawCache[i].position + Main.screenPosition - Main.screenLastPosition
+                };
+            }
+
             AEWShadowFormDrawSystem.AEWEyesDrawCache.EmptyDrawCache();
         }
 

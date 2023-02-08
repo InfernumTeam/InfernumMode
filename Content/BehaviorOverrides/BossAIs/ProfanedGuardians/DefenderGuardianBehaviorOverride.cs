@@ -70,25 +70,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.dontTakeDamage = false;
             npc.damage = 300;
 
+            // If the healer is dead, resume taking damage.
+            if (CalamityGlobalNPC.doughnutBossHealer == -1)
+                npc.Calamity().DR = 0.3f;
+
             switch ((GuardiansAttackType)attackState)
             {
                 case GuardiansAttackType.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
+
                 case GuardiansAttackType.FlappyBird:
                     DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.SoloHealer:
                     DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.SoloDefender:
                     DoBehavior_SoloDefender(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.HealerAndDefender:
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.HealerDeathAnimation:
                     DoBehavior_HealerDeathAnimation(npc, target, ref attackTimer, commander);
+                    break;
+
+                case GuardiansAttackType.SpearDashAndGroundSlam:
+                    DoBehavior_SpearDashAndGroundSlam(npc, target, ref attackTimer, commander);
+                    break;
+
+                case GuardiansAttackType.CrashRam:
+                    DoBehavior_CrashRam(npc, target, ref attackTimer, commander);
                     break;
             }
             return false;
@@ -117,7 +134,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Draw afterimages.
             if (commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex] == 1)
-                DrawFireAfterimages(npc, spriteBatch, commander, direction);
+                PrepareFireAfterimages(npc, spriteBatch, commander, direction);
 
             // Glow during the healer solo.
             if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
@@ -157,30 +174,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             FireDrawer.Draw(drawPositions, -Main.screenPosition, 40);
         }
 
-        public static void DrawFireAfterimages(NPC npc, SpriteBatch spriteBatch, NPC commander, SpriteEffects direction)
+        public static void PrepareFireAfterimages(NPC npc, SpriteBatch spriteBatch, NPC commander, SpriteEffects direction)
         {
-            Texture2D afterTexture = InfernumTextureRegistry.GuardianWarning.Value;
+            Texture2D afterTexture = InfernumTextureRegistry.GuardianDefenderGlow.Value;
             bool soloDefender = (GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloDefender;
             float length = soloDefender ? 30f : 25f;
             float timer = soloDefender ? commander.ai[1] : npc.Infernum().ExtraAI[1];
             float fadeOutLength = 6f;
             int maxAfterimages = 6;
 
-            if (timer < 6)
-                maxAfterimages = (int)timer;
-            else if (timer >= length - fadeOutLength)
-                maxAfterimages = (int)MathHelper.Lerp(6f, 0f, (timer - (length - fadeOutLength)) / fadeOutLength);
-
-            // Failsafe
-            if (maxAfterimages > npc.oldPos.Length)
-                maxAfterimages = npc.oldPos.Length;
-
-            for (int i = 0; i < maxAfterimages; i++)
-            {
-                Vector2 basePosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
-                Vector2 positionOffset = (npc.velocity * MathHelper.Lerp(0f, 8f, (float)i / npc.oldPos.Length));
-                spriteBatch.Draw(afterTexture, basePosition + positionOffset, null, WayfinderSymbol.Colors[1] with { A = 0 } * 0.8f, npc.rotation, afterTexture.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
-            }
+            AttackerGuardianBehaviorOverride.DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);          
         }
 
         public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

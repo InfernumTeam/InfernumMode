@@ -19,6 +19,7 @@ float4 uShaderSpecificData;
 
 bool flipY;
 float stretchAmount;
+bool pillarVarient;
 
 struct VertexShaderInput
 {
@@ -50,9 +51,6 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
-    
-    if (flipY)
-        coords.y = 1 - coords.y;
 
     float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * stretchAmount - uTime * 1.8), coords.y));
     float bloomFadeout = pow(sin(coords.y * 3.141), 3);
@@ -64,12 +62,12 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float opacity2 = saturate(fadeMapColor2.r - 0.5) * bloomFadeout2;
     float4 colorCorrected = float4(uColor, fadeMapColor2.r * bloomFadeout * 3);
     
-    if (coords.x > 0.87)
+    if (coords.x > 0.86)
     {
-        opacity *= pow(1 - (coords.x - 0.87) / 0.13, 7);
-        opacity2 *= pow(1 - (coords.x - 0.87) / 0.13, 7);
+        opacity *= pow(1 - (coords.x - 0.86) / 0.14, 7);
+        opacity2 *= pow(1 - (coords.x - 0.86) / 0.14, 7);
     }
-
+    
     return color * opacity + colorCorrected * 5 * opacity2;
 }
 

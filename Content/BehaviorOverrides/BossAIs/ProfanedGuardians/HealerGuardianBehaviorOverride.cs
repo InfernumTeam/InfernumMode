@@ -63,18 +63,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case GuardiansAttackType.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, target, ref attackTimer);
                     break;
+
                 case GuardiansAttackType.FlappyBird:
                     DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.SoloHealer:
                     DoBehavior_SoloHealer(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.SoloDefender:
                     DoBehavior_SoloDefender(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.HealerAndDefender:
                     DoBehavior_HealerAndDefender(npc, target, ref attackTimer, commander);
                     break;
+
                 case GuardiansAttackType.HealerDeathAnimation:
                     DoBehavior_HealerDeathAnimation(npc, target, ref attackTimer, commander);
                     break;

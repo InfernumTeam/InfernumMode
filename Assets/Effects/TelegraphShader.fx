@@ -52,7 +52,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 2 - uTime * 1), coords.y));
     float opacity = (0.5 + fadeMapColor.g) * bloomFadeout;
     
-    return color * opacity * 5 * uOpacity;
+    return color * opacity * uOpacity;
 }
 
 technique Technique1

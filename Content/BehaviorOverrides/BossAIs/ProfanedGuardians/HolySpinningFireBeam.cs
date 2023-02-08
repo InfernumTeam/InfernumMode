@@ -1,11 +1,13 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
@@ -114,6 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Main.myPlayer == Projectile.owner && !InfernumConfig.Instance.ReducedGraphicsConfig)
                 CreateTileHitEffects();
+            Time++;
         }
 
         public void DetermineLaserLength(NPC owner)
@@ -228,6 +231,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["flipY"].SetValue(false);
             float lengthScalar = CurrentLaserLength / MaxLaserLength;
             InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue(3.5f * lengthScalar);
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["pillarVarient"].SetValue(false);
 
             Vector2 startPos = Projectile.Center - Projectile.velocity * 2f;
             Vector2 endPos = Projectile.Center + Projectile.velocity * CurrentLaserLength * (0.2f * (1f - (lengthScalar * 0.8f)) + 1f);

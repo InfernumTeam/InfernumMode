@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     Vector2 velocity = -Vector2.UnitX * 10f;
                     Vector2 position = new(Projectile.Center.X, Projectile.Center.Y + Main.rand.NextFloat(-800f, 800f));
-                    Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 200, 0f, ai1: Projectile.whoAmI);
+                    Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<TelegraphedProfanedSpearInfernum>(), 200, 0f, ai1: Projectile.whoAmI);
                 }
             }
             Timer++;

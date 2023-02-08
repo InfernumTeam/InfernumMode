@@ -151,8 +151,18 @@ namespace InfernumMode
         public static int NumberOfCombinations(int sizeOfSet, int totalToSelect) =>
             Factorial(sizeOfSet) / (Factorial(totalToSelect) * Factorial(sizeOfSet - totalToSelect));
 
+        /// <summary>
+        /// Returns a 0-1 value based on an easing curve.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static float EaseInBounce(float value) => 1f - EaseOutBounce(1f - value);
 
+        /// <summary>
+        /// Returns a 0-1 value based on an easing curve.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static float EaseOutBounce(float value)
         {
             float n1 = 7.5625f;
@@ -170,6 +180,18 @@ namespace InfernumMode
             {
                 return n1 * (value -= 2.625f / d1) * value + 0.984375f;
             }
+        }
+
+        /// <summary>
+        /// Returns a 0-1 value based on an easing curve.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static float EaseInOutCubic(float value)
+        {
+            return value < 0.5f ?
+                4f * value * value * value * value :
+                1f - MathF.Pow(-2f * value + 2f, 3f) / 2f;
         }
     }
 }

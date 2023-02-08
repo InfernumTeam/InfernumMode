@@ -57,7 +57,7 @@ namespace InfernumMode.Core.Balancing
             [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.DD2DarkMageT1] = 5000,
-            [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 9600,
+            [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 8100,
             [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 9176,
             [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 239000 : 2000,
             [ModContent.NPCType<PerforatorHeadMedium>()] = BossRushEvent.BossRushActive ? 330000 : 2735,

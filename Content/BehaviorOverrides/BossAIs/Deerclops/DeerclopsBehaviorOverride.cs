@@ -252,9 +252,47 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public static void DoBehavior_DecideArena(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
+            ref float hasHitGround = ref npc.Infernum().ExtraAI[0];
+
             // Slow down and roar.
             npc.velocity.X *= 0.9f;
             frameType = (int)DeerclopsFrameType.FrontFacingRoar;
+
+            // Teleport above the target in a burst of snow on the first frame.
+            if (attackTimer == 1f)
+            {
+                npc.Bottom = target.Center - Vector2.UnitY * 500f;
+                npc.netUpdate = true;
+
+                for (int i = 0; i < 50; i++)
+                {
+                    Vector2 snowVelocity = Main.rand.NextVector2Circular(8f, 8f);
+                    MediumMistParticle snow = new(npc.Center + Main.rand.NextVector2Circular(100f, 100f), snowVelocity, Color.LightGray, Color.LightCyan, 1.3f, 255f);
+                    GeneralParticleHandler.SpawnParticle(snow);
+                }
+            }
+
+            if (hasHitGround == 0f)
+            {
+                if (attackTimer >= 37f)
+                    attackTimer = 36f;
+
+                npc.position.Y += 3f;
+                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 28))
+                {
+                    Collision.HitTiles(npc.TopLeft, Vector2.UnitY * -3f, npc.width, npc.height + 20);
+                    hasHitGround = 1f;
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Vector2 snowVelocity = -Vector2.UnitY.RotatedByRandom(1.1f) * Main.rand.NextFloat(0.7f, 20f);
+                        Vector2 snowSpawnPosition = npc.Bottom + Main.rand.NextVector2Circular(npc.width * 0.5f, 10f);
+                        MediumMistParticle snow = new(snowSpawnPosition, snowVelocity, Color.LightGray, Color.LightCyan, 1.3f, 255f);
+                        GeneralParticleHandler.SpawnParticle(snow);
+                    }
+                    target.Calamity().GeneralScreenShakePower = 10f;
+                    npc.netUpdate = true;
+                }
+            }
 
             if (attackTimer == 38f)
             {
@@ -1027,7 +1065,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 case DeerclopsFrameType.Walking:
                     if (frame is >= 12 or < 2)
                         frame = 2;
-                    if (npc.frameCounter >= 6D)
+                    if (npc.frameCounter >= 4D)
                     {
                         frame++;
                         if (frame >= 12)

@@ -594,9 +594,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             int totalShots = 7;
             int shootRate = 90;
             int attackDelay = 135;
+            float slowdownInterpolant = Utils.GetLerpValue(90f, 150f, attackTimer, true);
             Vector2 destination = target.Center - Vector2.UnitY * 440f;
             Vector2 acceleration = new(0.08f, 0.12f);
-            DoHoverMovement(npc, destination, acceleration);
+            DoHoverMovement(npc, destination, (1f - slowdownInterpolant) * acceleration);
+            if (slowdownInterpolant >= 0.9f)
+                npc.velocity *= 0.9f;
 
             npc.rotation = npc.velocity.X * 0.05f;
 

@@ -31,7 +31,7 @@ namespace InfernumMode.Common.Graphics
             private set;
         }
 
-        public static List<DrawData> AEWDrawCache
+        public static List<DrawData> LightAndDarkEffectsCache
         {
             get;
             private set;
@@ -79,7 +79,7 @@ namespace InfernumMode.Common.Graphics
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            AEWDrawCache.EmptyDrawCache();
+            LightAndDarkEffectsCache.EmptyDrawCache();
             Main.spriteBatch.End();
 
             PrepareNextFrameTarget();

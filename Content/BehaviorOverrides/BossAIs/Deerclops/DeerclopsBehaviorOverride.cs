@@ -106,9 +106,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public const float Phase1ArenaWidth = 2000f;
 
-        public const float Phase2LifeRatio = 0.66667f;
+        public const float Phase2LifeRatio = 0.75f;
 
-        public const float Phase3LifeRatio = 0.3f;
+        public const float Phase3LifeRatio = 0.35f;
 
         public override int NPCOverrideType => NPCID.Deerclops;
 

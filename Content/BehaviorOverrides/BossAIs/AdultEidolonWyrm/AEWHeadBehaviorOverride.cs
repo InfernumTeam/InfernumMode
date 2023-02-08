@@ -20,6 +20,7 @@ using InfernumMode.Content.WorldGeneration;
 using System;
 using InfernumMode.Assets.ExtraTextures;
 using Terraria.Graphics.Shaders;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -34,6 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Light attacks.
             BurningGaze,
             PsychicBlasts,
+            DisintegratingBeam,
 
             // Dark attacks.
             ForbiddenUnleash,
@@ -72,7 +74,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public const int EyeGlowOpacityIndex = 5;
 
-        public const int SuperEnrageFormAestheticInterpolantIndex = 6;
+        public const int LightFormInterpolantIndex = 6;
+
+        public const int DarkFormInterpolantIndex = 7;
 
         public override bool PreAI(NPC npc)
         {
@@ -86,7 +90,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             ref float superEnrageTimer = ref npc.ai[3];
             ref float hammerHeadRotation = ref npc.localAI[0];
             ref float eyeGlowOpacity = ref npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
-            ref float superEnrageFormAestheticInterpolant = ref npc.Infernum().ExtraAI[SuperEnrageFormAestheticInterpolantIndex];
+            ref float lightFormInterpolant = ref npc.Infernum().ExtraAI[LightFormInterpolantIndex];
+            ref float darkFormInterpolant = ref npc.Infernum().ExtraAI[DarkFormInterpolantIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -134,7 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     DoBehavior_BurningGaze(npc, target, ref attackTimer);
                     break;
                 case AEWAttackType.PsychicBlasts:
-                    DoBehavior_PsychicBlasts(npc, target, ref attackTimer, ref superEnrageFormAestheticInterpolant);
+                    DoBehavior_PsychicBlasts(npc, target, ref attackTimer, ref lightFormInterpolant);
                     break;
                 case AEWAttackType.ForbiddenUnleash:
                     DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation);
@@ -169,13 +174,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Transform into a being of light if the super-enrage form is active.
             // This happens gradually under normal circumstances but is instantaneous if enraged with the RoD on the first frame.
             if (attackType != (int)AEWAttackType.PsychicBlasts)
-                superEnrageFormAestheticInterpolant = Utils.GetLerpValue(0f, 60f, superEnrageTimer, true);
+                lightFormInterpolant = Utils.GetLerpValue(0f, 60f, superEnrageTimer, true);
             if (attackType != (int)AEWAttackType.RuthlesslyMurderTarget && targetNeedsDeath)
             {
                 if (attackType == (int)AEWAttackType.ThreateninglyHoverNearPlayer && attackTimer <= 10f && target.chaosState)
                 {
                     superEnrageTimer = 60f;
-                    superEnrageFormAestheticInterpolant = 1f;
+                    lightFormInterpolant = 1f;
                 }
 
                 SelectNextAttack(npc);
@@ -420,7 +425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (attackTimer <= headOpenTime)
             {
                 if (attackTimer == 36f)
-                    SoundEngine.PlaySound(SoundID.NPCDeath30, target.Center);
+                    SoundEngine.PlaySound(SoundID.NPCDeath30 with { Pitch = -0.35f }, target.Center);
                 if (attackTimer == 50f)
                     SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
 
@@ -679,7 +684,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.Opacity = 1f;
 
             // The target must die.
-            npc.damage = 25000;
+            npc.damage = 12151215;
             npc.dontTakeDamage = true;
             npc.Calamity().ShouldCloseHPBar = true;
 
@@ -739,11 +744,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
-            else if (currentAttack == AEWAttackType.PsychicBlasts)
-                nextAttack = AEWAttackType.PsychicBlasts;
+            else if (currentAttack == AEWAttackType.ForbiddenUnleash)
+                nextAttack = AEWAttackType.ForbiddenUnleash;
 
             if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
-                nextAttack = AEWAttackType.PsychicBlasts;
+                nextAttack = AEWAttackType.ForbiddenUnleash;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -778,12 +783,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (npc.realLife >= 0 && Main.npc[npc.realLife].active && Main.npc[npc.realLife].type == ModContent.NPCType<AdultEidolonWyrmHead>())
                 head = Main.npc[npc.realLife];
 
-            // Calculate variables for the super-enrage aesthetic.
-            float superEnrageFormAestheticInterpolant = head.Infernum().ExtraAI[SuperEnrageFormAestheticInterpolantIndex];
-
             if (segmentString == "Head")
             {
-                DrawHead(npc, lightColor, superEnrageFormAestheticInterpolant);
+                DrawHead(npc, lightColor);
                 npc.frame = Rectangle.Empty;
                 return;
             }
@@ -801,22 +803,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
             
             // Draw the segment.
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - superEnrageFormAestheticInterpolant), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
-            if (superEnrageFormAestheticInterpolant > 0f)
-            {
-                Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
-                for (int i = 0; i < 12; i++)
-                {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
-                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, npc.frame, wispFormColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
-                }
-            }
+            AEWShadowFormDrawSystem.AEWDrawCache.Add(new(texture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
 
             // Hacky way of ensuring that PostDraw doesn't do anything.
             npc.frame = Rectangle.Empty;
         }
 
-        public static void DrawHead(NPC npc, Color lightColor, float superEnrageFormAestheticInterpolant)
+        public static void DrawHead(NPC npc, Color lightColor)
         {
             float hammerHeadRotation = npc.localAI[0];
             Color eyeColor = Color.Cyan * npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
@@ -830,7 +823,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 // Draw the back head.
                 Main.EntitySpriteDraw(backHeadTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0);
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(backHeadGlowmask, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0));
+                AEWShadowFormDrawSystem.AEWDrawCache.Add(new(backHeadGlowmask, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0));
 
                 float moveBackInterpolant = Utils.GetLerpValue(0f, 0.3f, hammerHeadRotation, true) * 34f;
                 drawPosition += (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * backHeadTexture.Height * 0.5f;
@@ -841,26 +834,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Vector2 rightHeadOrigin = hammerHeadTexture.Size() * new Vector2(0f, 1f);
                 float leftHeadRotation = npc.rotation - hammerHeadRotation;
                 float rightHeadRotation = npc.rotation + hammerHeadRotation;
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyesGlowmask, drawPosition, null, eyeColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                AEWShadowFormDrawSystem.AEWDrawCache.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                AEWShadowFormDrawSystem.AEWDrawCache.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition, null, eyeColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
 
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyesGlowmask, drawPosition, null, eyeColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                AEWShadowFormDrawSystem.AEWDrawCache.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                AEWShadowFormDrawSystem.AEWDrawCache.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition, null, eyeColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
             }
-
-            if (superEnrageFormAestheticInterpolant > 0.2f)
-            {
-                Color wispFormColor = new Color(255, 178, 167, 0) * npc.Opacity * superEnrageFormAestheticInterpolant;
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 2.1f + npc.whoAmI + npc.rotation).ToRotationVector2() * superEnrageFormAestheticInterpolant * new Vector2(20f, 8f);
-                    drawInstance(npc.Center - Main.screenPosition + drawOffset, wispFormColor);
-                }
-            }
-            else
-                drawInstance(npc.Center - Main.screenPosition);
+            drawInstance(npc.Center - Main.screenPosition);
         }
 
         public static void TryToDrawAbyssalBlackHole()

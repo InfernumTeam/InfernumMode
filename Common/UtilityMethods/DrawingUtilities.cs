@@ -34,7 +34,6 @@ namespace InfernumMode
 
         private static readonly FieldInfo shaderTextureField2 = typeof(MiscShaderData).GetField("_uImage2", BindingFlags.NonPublic | BindingFlags.Instance);
 
-
         /// <summary>
         /// Uses reflection to set the _uImage1. Its underlying data is private and the only way to change it publicly is via a method that only accepts paths to vanilla textures.
         /// </summary>
@@ -479,6 +478,23 @@ namespace InfernumMode
             list.Add(new WayfinderMapLayer());
             // Set the value.
             layers.SetValue(Main.MapIcons, list);
+        }
+
+        public static void EmptyDrawCache(this List<DrawData> drawCache)
+        {
+            // WHAT THE FUCK NO ABORT ABORT ABORT
+            if (drawCache.Count >= 10000 || Main.mapFullscreen)
+                drawCache.Clear();
+
+            Vector2 topLeft = Vector2.One * -200f;
+            Vector2 bottomRight = new Vector2(Main.screenWidth, Main.screenHeight) - topLeft;
+            while (drawCache.Count > 0)
+            {
+                if (drawCache[0].position.Length() > 10000f && drawCache[0].position.Between(topLeft, bottomRight))
+                    drawCache[0] = drawCache[0] with { position = drawCache[0].position - Main.screenPosition };
+                drawCache[0].Draw(Main.spriteBatch);
+                drawCache.RemoveAt(0);
+            }
         }
 
         public static string InfernalRelicText

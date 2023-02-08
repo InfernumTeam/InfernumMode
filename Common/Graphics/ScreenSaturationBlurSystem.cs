@@ -116,7 +116,7 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
-            EmptyDrawCache(ThingsToDrawOnTopOfBlur);
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
             LargeLumenylCrystal.DefineCrystalDrawers();
 
             IcicleDrawer.ApplyShader();
@@ -133,29 +133,28 @@ namespace InfernumMode.Common.Graphics
             ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
-            
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            EmptyDrawCache(ThingsToDrawOnTopOfBlurAdditive);
 
+            DrawAdditiveCache();
+            DrawAEW();
             Main.spriteBatch.End();
         }
 
-        internal static void EmptyDrawCache(List<DrawData> drawCache)
+        internal static void DrawAdditiveCache()
         {
-            // WHAT THE FUCK NO ABORT ABORT ABORT
-            if (drawCache.Count >= 10000 || Main.mapFullscreen)
-                drawCache.Clear();
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            ThingsToDrawOnTopOfBlurAdditive.EmptyDrawCache();
+        }
 
-            Vector2 topLeft = Vector2.One * -200f;
-            Vector2 bottomRight = new Vector2(Main.screenWidth, Main.screenHeight) - topLeft;
-            while (drawCache.Count > 0)
-            {
-                if (drawCache[0].position.Length() > 10000f && drawCache[0].position.Between(topLeft, bottomRight))
-                    drawCache[0] = drawCache[0] with { position = drawCache[0].position - Main.screenPosition };
-                drawCache[0].Draw(Main.spriteBatch);
-                drawCache.RemoveAt(0);
-            }
+        internal static void DrawAEW()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            AEWShadowFormDrawSystem.DrawTarget();
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            AEWShadowFormDrawSystem.AEWEyesDrawCache.EmptyDrawCache();
         }
 
         internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
@@ -163,9 +162,9 @@ namespace InfernumMode.Common.Graphics
             if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
                 return;
 
-            // Free GPU resources for the old targets.
             DrawActionQueue.Enqueue(() =>
             {
+                // Free GPU resources for the old targets.
                 BloomTarget?.Dispose();
                 FinalScreenTarget?.Dispose();
                 DownscaledBloomTarget?.Dispose();

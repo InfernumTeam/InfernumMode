@@ -108,12 +108,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
+            // Reset opacities depending on whether they are being drawn or not.
             ref float smearOpacity = ref npc.Infernum().ExtraAI[CommanderSpearSmearOpacityIndex];
-            // Reset stuff.
             if (npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] == 1)
                 smearOpacity = MathHelper.Clamp(smearOpacity + 0.1f, 0f, 1f);
             else
                 smearOpacity = MathHelper.Clamp(smearOpacity - 0.1f, 0f, 1f);
+
+            ref float blackBarOpacity = ref npc.Infernum().ExtraAI[CommanderBlackBarsOpacityIndex];
+            if (npc.Infernum().ExtraAI[CommanderDrawBlackBarsIndex] == 1)
+                blackBarOpacity = MathHelper.Clamp(blackBarOpacity + 0.1f, 0f, 1f);
+            else
+                blackBarOpacity = MathHelper.Clamp(blackBarOpacity - 0.1f, 0f, 1f);
 
             npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0;
 
@@ -152,15 +158,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_CrashRam(npc, target, ref attackTimer, npc);
                     break;
 
+                case GuardiansAttackType.DefenderDeathAnimation:
+                    DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, npc);
+                    break;
+
                 case GuardiansAttackType.CommanderDeathAnimation:
-                    DoBehavior_DeathAnimation(npc, target, ref attackTimer);
+                    DoBehavior_CommanderDeathAnimation(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
             return false;
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_CommanderDeathAnimation(NPC npc, Player target, ref float attackTimer)
         {
             int widthExpandDelay = 90;
             int firstExpansionTime = 20;
@@ -276,13 +286,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Draw(texture, drawPosition, npc.frame, Color.Lerp(npc.GetAlpha(lightColor), Color.Black * npc.Opacity, fadeToBlack), npc.rotation, origin, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
+            // Draw an overlay.
             ref float glowAmount = ref npc.Infernum().ExtraAI[CommanderAngerGlowAmountIndex];
             if (glowAmount > 0f && (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.HealerDeathAnimation)
-                DrawAngerOverlay(npc, spriteBatch, texture, glowmask, lightColor, direction);
+                DrawAngerOverlay(npc, spriteBatch, texture, glowmask, lightColor, direction, glowAmount);
 
             if (shouldDrawShield)
-                DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);              
-
+                DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);
             return false;
         }
 
@@ -310,10 +320,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Color lightColor, SpriteEffects direction)
+        public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Color lightColor, SpriteEffects direction, float glowAmount)
         {
-            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 }, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
-            spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 }, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * glowAmount, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 } * glowAmount, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
         }
 
         public static void PrepareFireAfterimages(NPC npc, SpriteBatch spriteBatch, SpriteEffects direction)

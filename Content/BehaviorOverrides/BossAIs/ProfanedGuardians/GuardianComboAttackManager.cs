@@ -38,6 +38,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             SpearDashAndGroundSlam,
             CrashRam,
 
+            DefenderDeathAnimation,
+
             CommanderDeathAnimation
         }
 
@@ -70,6 +72,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int CommanderDrawSpearSmearIndex = 22;
         public const int CommanderFireAfterimagesIndex = 23;
         public const int CommanderFireAfterimagesLengthIndex = 24;
+
+        public const int CommanderDrawBlackBarsIndex = 25;
+        public const int CommanderBlackBarsRotationIndex = 26;
+        // Reset by the commander every frame based on the draw index.
+        public const int CommanderBlackBarsOpacityIndex = 27;
+        public const int CommanderHandsSpawnedIndex = 28;
+
+        // Hand stuff
+        public const int LeftHandIndex = 29;
+        public const int RightHandIndex = 30;
+        public const int LeftHandXIndex = 31;
+        public const int LeftHandYIndex = 32;
+        public const int RightHandXIndex = 33;
+        public const int RightHandYIndex = 34;
 
         public const int CommanderBrightnessWidthFactorIndex = 50;
 
@@ -1422,6 +1438,188 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
                 }
+            }
+        }
+
+        public static void DoBehavior_DefenderDeathAnimation(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        {
+            ref float substate = ref commander.Infernum().ExtraAI[0];
+            ref float startingRightHandRotation = ref commander.Infernum().ExtraAI[1];
+
+            ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
+            ref float drawBlackRotation = ref commander.Infernum().ExtraAI[CommanderBlackBarsRotationIndex];
+            ref float handsSpawned = ref commander.Infernum().ExtraAI[CommanderHandsSpawnedIndex];
+            ref float leftHandIndex = ref commander.Infernum().ExtraAI[LeftHandIndex];
+            ref float rightHandIndex = ref commander.Infernum().ExtraAI[RightHandIndex];
+            ref float leftHandX = ref commander.Infernum().ExtraAI[LeftHandXIndex];
+            ref float leftHandY = ref commander.Infernum().ExtraAI[LeftHandYIndex];
+            ref float rightHandX = ref commander.Infernum().ExtraAI[RightHandXIndex];
+            ref float rightHandY = ref commander.Infernum().ExtraAI[RightHandYIndex];
+
+            NPC leftHand = null;
+            NPC rightHand = null;
+
+            if (Main.npc.IndexInRange((int)leftHandIndex) && Main.npc.IndexInRange((int)rightHandIndex) && (rightHandIndex != 0 && leftHandIndex != 0))
+            {
+                leftHand = Main.npc[(int)leftHandIndex];
+                rightHand = Main.npc[(int)rightHandIndex];
+            }
+            else
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    leftHandIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
+                    rightHandIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
+                    npc.netUpdate = true;
+                }
+            }
+
+            // The commander spawns in the hands, moves towards your top right, pulls the defender into its hands, spins it around itself twice then lobs it at the player at mach 10.
+            if (npc.type == CommanderType)
+            {
+                ref float spearStatus = ref commander.Infernum().ExtraAI[CommanderSpearStatusIndex];
+
+                float flySpeed = 24f;
+                float symbolSpawnRate = 15f;
+
+                drawBlackBars = 1f;
+                Vector2 focusPosition = target.Center + new Vector2(0f, target.gfxOffY) + (-0.4f).ToRotationVector2() * 70f;
+
+                // Do not take damage.
+                npc.dontTakeDamage = true;
+                // Do not deal damage.
+                npc.damage = 0;
+                // Hide UI.
+                if (Main.myPlayer == npc.target)
+                    Main.hideUI = false;
+
+                target.Infernum_Camera().ScreenFocusInterpolant = 6f;
+                target.Infernum_Camera().ScreenFocusPosition = focusPosition;
+                target.Infernum_Camera().CurrentScreenShakePower = 1f;
+
+                // Use the screen saturation effect.
+                npc.Infernum().ShouldUseSaturationBlur = true;
+
+                // Spawn cool symbols.
+                if (universalAttackTimer % symbolSpawnRate == symbolSpawnRate - 1f)
+                {
+                    Vector2 position = npc.Center+ Main.rand.NextVector2Circular(250f, 250f);
+                    Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.1f, 0.4f)) * Main.rand.NextFloat(1.5f, 2f);
+                    Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(1f));
+                    Particle jojo = new ProfanedSymbolParticle(position, velocity, color, 0.8f, 120);
+                    GeneralParticleHandler.SpawnParticle(jojo);
+                }
+
+                Vector2 hoverDestination = target.Center + new Vector2(900f, -425f);
+                if (npc.Distance(hoverDestination) > 2f)
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                else
+                    npc.Center = hoverDestination;
+                npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                switch (substate)
+                {
+                    // Move to the top right of the target.
+                    case 0:
+                        // Despawn the spear if it is active.
+                        if ((DefenderShieldStatus)spearStatus != DefenderShieldStatus.Inactive || Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))
+                            // Mark the spear for removal.
+                            spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
+                        break;
+                }
+            }
+
+            // The defender begins to ram at you from the left vertically, but is pulled up by the commander before reacing you. It then glues to the commanders hands, while squirming around
+            // on the spot and changing its sprite direction to indicate struggling.
+            else if (npc.type == DefenderType)
+            {
+                ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
+
+                float flySpeed = 20f;
+                float chargeDelay = 60f;
+                float chargeSpeed = 25f;
+                float pullbackDelay = 20f;
+                float pullBackTime = 90f;
+
+                float catchHoverDistance
+                // Close the HP bar.
+                npc.Calamity().ShouldCloseHPBar = true;
+                // Do not take damage.
+                npc.dontTakeDamage = true;
+                // Do not deal damage either.
+                npc.damage = 0;
+
+                switch (substate)
+                {
+                    // Hover to the right of the target.
+                    case 0:
+                        Vector2 hoverDestination = target.Center + new Vector2(1200f, 0f);
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                        // Generate the shield if it is inactive.
+                        if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
+                        {
+                            // Mark the shield as active.
+                            shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                                Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                        }
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+
+                        if (npc.WithinRange(hoverDestination, 20f) && localAttackTimer >= chargeDelay)
+                        {
+                            substate++;
+                            localAttackTimer = 0;
+                            return;
+                        }
+                        break;
+
+                    // Charge.
+                    case 1:
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        substate++;
+                        localAttackTimer = 0;
+                        return;
+
+                    // Halfway through, advance the main substate.
+                    case 2:
+                        if (localAttackTimer >= pullbackDelay)
+                        {
+                            substate++;
+                            localAttackTimer++;
+                            return;
+                        }
+                        break;
+
+                    // Gets pulled back to the hand by the commander.
+                    case 3:
+                        Vector2 recievingHandPos = new(-150f, -75f);
+                        Vector2 aimingHandPos = new(-75f, 50f);
+                        rightHandX = recievingHandPos.X;
+                        rightHandY = recievingHandPos.Y;
+                        leftHandX = aimingHandPos.X;
+                        leftHandY = aimingHandPos.Y;
+                        if (localAttackTimer == 1)
+                            npc.velocity = npc.SafeDirectionTo(recievingHandPos + commander.Center) * (npc.Distance(aimingHandPos + commander.Center) / pullBackTime);
+
+                        if (localAttackTimer >= pullBackTime)
+                        {
+                            localAttackTimer = 0;
+                            substate++;
+                            return;
+                        }
+                        break;
+
+                    // Stick to the hand.
+                    case 4:
+                        npc.velocity = Vector2.Zero;
+                        npc.Center = new Vector2(rightHandX, rightHandY) + commander.Center;
+                        break;
+                }
+
+                localAttackTimer++;
             }
         }
         #endregion

@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -28,6 +28,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public float AttackTime => AttackerGuardian.ai[1];
         public AttackerGuardianBehaviorOverride.AttackerGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackerGuardianAttackState)(int)AttackerGuardian.ai[0];
         public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
+
+        public Vector2? HandPositionOverride
+        {
+            get
+            {
+                // Left
+                if (HandSide == -1)
+                {
+                    Vector2 leftHandPos;
+                    leftHandPos.X = AttackerGuardian.Infernum().ExtraAI[LeftHandXIndex];
+                    leftHandPos.Y = AttackerGuardian.Infernum().ExtraAI[LeftHandYIndex];
+                    if (leftHandPos != Vector2.Zero)
+                        return leftHandPos;
+                    else
+                        return null;
+                }
+                else
+                {
+                    Vector2 rightHandPos;
+                    rightHandPos.X = AttackerGuardian.Infernum().ExtraAI[RightHandXIndex];
+                    rightHandPos.Y = AttackerGuardian.Infernum().ExtraAI[RightHandYIndex];
+                    if (rightHandPos != Vector2.Zero)
+                        return rightHandPos;
+                    else
+                        return null;
+                }
+            }
+        }
 
         public const float HandSize = 56f;
 
@@ -78,12 +106,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 destination = AttackerGuardian.Center;
             destination += new Vector2(HandSide * 110f, (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f) * 30f - 120f);
 
-            
             FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 35f, 0.2f);
 
             // Close in on the attacker guardian's center when the hands should be invisible.
             if (ShouldBeInvisible)
                 destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(NPC.Center);
+
+            if (HandPositionOverride is not null)
+                destination = HandPositionOverride.Value + AttackerGuardian.Center;
 
             float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, NPC.Distance(destination));
             NPC.velocity = NPC.SafeDirectionTo(destination) * hoverSpeed;
@@ -114,8 +144,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, NPC.Center, 0.5f);
            
-            sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(0f, 18f).Y * -10f;
-            sagLocation.Y += MathHelper.Lerp(0f, 60f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
+            sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(1f, 18f).Y * -5f;
+            sagLocation.Y += MathHelper.Lerp(0f, 30f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y + 0.1f), true));
             
 
             Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints).ToArray();

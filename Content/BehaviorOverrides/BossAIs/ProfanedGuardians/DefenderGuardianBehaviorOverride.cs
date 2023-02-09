@@ -107,10 +107,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case GuardiansAttackType.CrashRam:
                     DoBehavior_CrashRam(npc, target, ref attackTimer, commander);
                     break;
+
+                case GuardiansAttackType.DefenderDeathAnimation:
+                    DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, commander);
+                    break;
             }
             return false;
-        }      
+        }
 
+        #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
@@ -265,5 +270,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             spriteBatch.ExitShaderRegion();
         }
+        #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            DespawnTransitionProjectiles();
+            SelectNewAttack(commander, ref commander.ai[1], (float)GuardiansAttackType.DefenderDeathAnimation);
+            npc.life = npc.lifeMax;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion
     }
 }

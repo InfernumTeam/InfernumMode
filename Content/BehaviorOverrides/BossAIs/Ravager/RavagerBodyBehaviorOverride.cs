@@ -716,6 +716,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
+            // WHY ARE YOU SLIDING AWAY YOU MOTHERFUCKER???
+            npc.velocity.X *= 0.95f;
+
             // Be a bit more lenient with wall creation rates if the free head is present.
             if (phaseInfo.FreeHeadExists)
                 wallCreateRate += 10;

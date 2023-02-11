@@ -21,6 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public static class GuardianComboAttackManager
     {
+        #region Enums
         public enum GuardiansAttackType
         {
             // Initial attacks.
@@ -40,6 +41,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             DefenderDeathAnimation,
 
+            // Commander solo attacks.
+
             CommanderDeathAnimation
         }
 
@@ -50,9 +53,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ActiveAndStatic,
             MarkedForRemoval
         }
+        #endregion
 
+        #region Fields And Properties
         public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6780, 1500);
 
+        public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
+        public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
+        public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
+
+        // The length of the phase 3 looping music section.
+        public const int LoopingMusicLength = 2560;
+        #endregion
+
+        #region Indexes
         public const int DefenderFireSuckupWidthIndex = 10;
         public const int HealerConnectionsWidthScaleIndex = 11;
         public const int DefenderShouldGlowIndex = 12;
@@ -87,12 +101,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int RightHandXIndex = 33;
         public const int RightHandYIndex = 34;
 
+        public const int DefenderHasBeenYeetedIndex = 35;
+
         public const int CommanderBrightnessWidthFactorIndex = 50;
-
-
-        public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
-        public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
-        public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
+        public const int MusicTimerIndex = 51;
+        public const int MusicHasStartedIndex = 52;
+        #endregion
 
         #region Commander + Defender + Healer Attacks
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
@@ -1444,7 +1458,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static void DoBehavior_DefenderDeathAnimation(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
             ref float substate = ref commander.Infernum().ExtraAI[0];
-            ref float startingRightHandRotation = ref commander.Infernum().ExtraAI[1];
+            ref float catchingLeftHandXOG = ref commander.Infernum().ExtraAI[1];
+            ref float catchingLeftHandYOG = ref commander.Infernum().ExtraAI[2];
+            ref float catchingRightHandXOG = ref commander.Infernum().ExtraAI[3];
+            ref float catchingRightHandYOG = ref commander.Infernum().ExtraAI[4];
 
             ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
             ref float drawBlackRotation = ref commander.Infernum().ExtraAI[CommanderBlackBarsRotationIndex];
@@ -1485,17 +1502,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 drawBlackBars = 1f;
                 Vector2 focusPosition = target.Center + new Vector2(0f, target.gfxOffY) + (-0.4f).ToRotationVector2() * 70f;
 
-                // Do not take damage.
-                npc.dontTakeDamage = true;
-                // Do not deal damage.
-                npc.damage = 0;
-                // Hide UI.
-                if (Main.myPlayer == npc.target)
-                    Main.hideUI = false;
 
-                target.Infernum_Camera().ScreenFocusInterpolant = 6f;
-                target.Infernum_Camera().ScreenFocusPosition = focusPosition;
-                target.Infernum_Camera().CurrentScreenShakePower = 1f;
+                if (substate < 6f)
+                {
+                    target.Infernum_Camera().ScreenFocusInterpolant = 3f;
+                    target.Infernum_Camera().ScreenFocusPosition = focusPosition;
+                    target.Infernum_Camera().CurrentScreenShakePower = 1f;
+
+                    // Do not take damage.
+                    npc.dontTakeDamage = true;
+                    // Do not deal damage.
+                    npc.damage = 0;
+                    // Hide UI.
+                    if (Main.myPlayer == npc.target)
+                        Main.hideUI = true;
+                }
+                else
 
                 // Use the screen saturation effect.
                 npc.Infernum().ShouldUseSaturationBlur = true;
@@ -1529,20 +1551,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
 
-            // The defender begins to ram at you from the left vertically, but is pulled up by the commander before reacing you. It then glues to the commanders hands, while squirming around
+            // The defender begins to ram at you from the left vertically, but is pulled up by the commander before reaching you. It then glues to the commanders hands, while squirming around
             // on the spot and changing its sprite direction to indicate struggling.
             else if (npc.type == DefenderType)
             {
                 ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
+
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
 
+                Vector2 originalRightHandPos = new(catchingRightHandXOG, catchingRightHandYOG);
+                Vector2 originalLeftHandPos = new(catchingLeftHandXOG, catchingLeftHandYOG);
                 float flySpeed = 20f;
                 float chargeDelay = 60f;
                 float chargeSpeed = 25f;
                 float pullbackDelay = 20f;
                 float pullBackTime = 90f;
+                float reelbackTime = 30f;
+                float launchTime = 20f;
+                float yeetSpeed = 50f;
 
-                float catchHoverDistance
                 // Close the HP bar.
                 npc.Calamity().ShouldCloseHPBar = true;
                 // Do not take damage.
@@ -1596,11 +1623,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Gets pulled back to the hand by the commander.
                     case 3:
                         Vector2 recievingHandPos = new(-150f, -75f);
-                        Vector2 aimingHandPos = new(-75f, 50f);
+                        Vector2 aimingHandPos = new(-40f, 25f);
+
+                        // Right hand. This hurts to try and read.
                         rightHandX = recievingHandPos.X;
+                        catchingRightHandXOG = recievingHandPos.X;
                         rightHandY = recievingHandPos.Y;
+                        catchingRightHandYOG = recievingHandPos.Y;
+
                         leftHandX = aimingHandPos.X;
+                        catchingLeftHandXOG = aimingHandPos.X;
                         leftHandY = aimingHandPos.Y;
+                        catchingLeftHandYOG = aimingHandPos.Y;
+
                         if (localAttackTimer == 1)
                             npc.velocity = npc.SafeDirectionTo(recievingHandPos + commander.Center) * (npc.Distance(aimingHandPos + commander.Center) / pullBackTime);
 
@@ -1612,10 +1647,73 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
 
-                    // Stick to the hand.
+                    // Stick to the hand. The hands reel back.
                     case 4:
+                        float rightHandMoveInterpolant = Utilities.EaseInOutCubic(localAttackTimer / reelbackTime);
+                        float leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / reelbackTime, 0);
+
+                        // Right Hand
+                        recievingHandPos = (commander.Center - originalRightHandPos).RotatedBy(-3f * rightHandMoveInterpolant, commander.Center);
+
+                        // Left hand
+                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new(-75f, 50f), leftHandMoveInterpolant);
+
+                        leftHandX = aimingHandPos.X;
+                        leftHandY = aimingHandPos.Y;
+                        rightHandX = recievingHandPos.X;
+                        rightHandY = recievingHandPos.Y;
+
                         npc.velocity = Vector2.Zero;
                         npc.Center = new Vector2(rightHandX, rightHandY) + commander.Center;
+
+                        if (localAttackTimer >= reelbackTime)
+                        {
+                            // Reset the default positions for the next attack.
+                            catchingRightHandXOG = recievingHandPos.X;
+                            catchingRightHandYOG = recievingHandPos.Y;
+
+                            catchingLeftHandXOG = aimingHandPos.X;
+                            catchingLeftHandYOG = aimingHandPos.Y;
+
+                            localAttackTimer = 0;
+                            substate++;
+                            return;
+                        }
+                        break;
+
+                    // Continue to stick to the hands. They will stop at the correct position.
+                    case 5:
+                        rightHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
+                        leftHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
+
+                        recievingHandPos = (commander.Center - originalRightHandPos).RotatedBy(MathF.PI * rightHandMoveInterpolant, commander.Center);
+                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new(-75f, 50f), leftHandMoveInterpolant);
+
+                        leftHandX = aimingHandPos.X;
+                        leftHandY = aimingHandPos.Y;
+                        rightHandX = recievingHandPos.X;
+                        rightHandY = recievingHandPos.Y;
+
+                        npc.velocity = Vector2.Zero;
+                        npc.Center = new Vector2(rightHandX, rightHandY) + commander.Center;
+
+                        if (localAttackTimer >= launchTime)
+                        {
+                            leftHandX = 0f;
+                            leftHandY = 0f;
+                            rightHandX = 0f;
+                            rightHandY = 0f;
+
+                            // Launch at the target.
+                            npc.velocity = npc.DirectionTo(target.Center) * yeetSpeed;
+                            npc.damage = 300;
+
+                            localAttackTimer = 0;
+                            substate++;
+                            commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] = 1f;
+                            SelectNewAttack(commander, ref universalAttackTimer);
+                            return;
+                        }
                         break;
                 }
 
@@ -1624,10 +1722,38 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
         #endregion
 
+        #region Commander Attacks
+        public static void DoBehavior_RapidSpearCharges(NPC commander, Player target, ref float universalAttackTimer)
+        {
+
+        }
+        #endregion
+
+        #region AI Utilities
+        public static void HandleMusicSyncStuff(NPC commander)
+        {
+            ref float musicTimer = ref commander.Infernum().ExtraAI[MusicTimerIndex];
+
+            // If the timer has reached the end, reset it.
+            if (musicTimer >= LoopingMusicLength)
+                musicTimer = 0f;
+            // Else, advance the timer by one.
+            else
+                musicTimer++;
+        }
+
+        public static bool IsLoopingMusicPlaying(NPC commander)
+        {
+            if (commander.Infernum().ExtraAI[MusicHasStartedIndex] == 1f)
+                return true;
+            return false;
+        }
+
         public static void SelectNewAttack(NPC commander, ref float universalAttackTimer, float specificAttackToSwapTo = -1)
         {
-            // Reset the first 5 extra ai slots. These are used for per attack information.
-            for (int i = 0; i < 5; i++)
+            // Reset the first few extra ai slots. These are used for per attack information.
+            int aiSlotsToClear = 7;
+            for (int i = 0; i < aiSlotsToClear; i++)
                 commander.Infernum().ExtraAI[i] = 0f;
 
             if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
@@ -1635,7 +1761,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (Main.npc[CalamityGlobalNPC.doughnutBossDefender].active)
                 {
                     NPC defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < aiSlotsToClear; i++)
                         defender.Infernum().ExtraAI[i] = 0f;
 
                     // If the next attack is the healer solo, mark the defending shield as no longer needed.
@@ -1655,7 +1781,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (Main.npc[CalamityGlobalNPC.doughnutBossHealer].active)
                 {
                     NPC healer = Main.npc[CalamityGlobalNPC.doughnutBossHealer];
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < aiSlotsToClear; i++)
                         healer.Infernum().ExtraAI[i] = 0f;
                 }
             }
@@ -1663,6 +1789,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset the universal attack timer.
             universalAttackTimer = 0f;
 
+            // Swap to a specific attack if one is specified.
             if (specificAttackToSwapTo != -1f)
             {
                 commander.ai[0] = specificAttackToSwapTo;
@@ -1698,5 +1825,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ModContent.ProjectileType<DefenderShield>()
                 );
         }
+        #endregion
     }
 }

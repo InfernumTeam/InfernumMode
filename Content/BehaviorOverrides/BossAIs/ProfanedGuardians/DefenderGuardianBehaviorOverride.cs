@@ -21,6 +21,9 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.Gu
 using ReLogic.Content;
 using CalamityMod;
 using System.Collections.Generic;
+using CalamityMod.Particles;
+using Terraria.Audio;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -74,6 +77,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (CalamityGlobalNPC.doughnutBossHealer == -1)
                 npc.Calamity().DR = 0.3f;
 
+            if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)
+            {
+                DoBehavior_DefenderYeetEffects(npc, target);
+                return false;
+            }
+
             switch ((GuardiansAttackType)attackState)
             {
                 case GuardiansAttackType.SpawnEffects:
@@ -113,6 +122,43 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
             }
             return false;
+        }
+
+        public static void DoBehavior_DefenderYeetEffects(NPC npc, Player target)
+        {
+            ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
+
+            // Create particles to indicate the sudden speed.
+            if (Main.rand.NextBool())
+            {
+                Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                GeneralParticleHandler.SpawnParticle(energyLeak);
+            }
+
+            if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
+            {
+
+                // Play a loud explosion + hitbox sound and screenshake to give the impact power.
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+                SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
+
+                if (CalamityConfig.Instance.Screenshake)
+                    target.Infernum_Camera().CurrentScreenShakePower = 20f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<HolySunExplosion>().MaxRadius = 160f;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
+                }
+                npc.life = 0;
+                npc.active = false;
+                return;
+            }
+            localAttackTimer++;
         }
 
         #region Drawing

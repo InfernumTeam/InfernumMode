@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float TelegraphWidthFunction(float completionRatio) => Width * 0.75f;
 
-        public Color TelegraphColorFunction(float completionRatio)
+        public static Color TelegraphColorFunction(float completionRatio)
         {
             Color orange = Color.Lerp(Color.OrangeRed, WayfinderSymbol.Colors[2], 0.5f);
             return Color.Lerp(orange, WayfinderSymbol.Colors[0], completionRatio);
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.5f * opacityScalar);
 
                 Vector2 startT = Projectile.Center;
-                Vector2 endT = startT - Vector2.UnitY * MaxLength;
+                Vector2 endT = startT - Vector2.UnitY * MaxLength * 1.2f;
                 Vector2[] drawPositionsT = new Vector2[8];
                 for (int i = 0; i < drawPositionsT.Length; i++)
                     drawPositionsT[i] = Vector2.Lerp(startT, endT, (float)i / drawPositionsT.Length);

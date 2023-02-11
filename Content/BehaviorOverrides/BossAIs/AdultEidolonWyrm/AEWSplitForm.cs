@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -191,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 {
                     float offsetAngle = MathHelper.Lerp(-MathHelper.PiOver2, MathHelper.PiOver2, j / 2f);
                     Vector2 drawOffset = (Projectile.rotation + offsetAngle).ToRotationVector2() * Projectile.scale * new Vector2(10f, 5f);
-                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
                 }
             }
 
@@ -201,7 +202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Texture2D texture = decideSegmentTexture(i);
                 Color color = Projectile.GetAlpha(Color.White);
                 for (int j = 0; j < 2; j++)
-                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, decideDrawPosition(i), null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, decideDrawPosition(i), null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
             }
 
             return false;

@@ -50,7 +50,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 noise1 = tex2D(uImage1, noiseCoordsBase + float2(0, uTime * 0.064) + uScreenPosition * 0.0001);
     float4 noise2 = tex2D(uImage1, noiseCoordsBase + float2(uTime * 0.022, uTime * -0.049) + uScreenPosition * 0.0001);
     float4 noise = (noise1 + noise2) * 0.6;
-    float noiseFadeInterpolant = InverseLerp(distanceFromCenter, 0.7, 1.4);
+    float noiseFadeInterpolant = InverseLerp(distanceFromCenter, 1.1, 1.4);
     float4 noiseColor = pow(noise, 3) * noiseFadeInterpolant * 1.4 + 0.2;
     noiseColor *= float4(uColor, 1) * uIntensity;
     

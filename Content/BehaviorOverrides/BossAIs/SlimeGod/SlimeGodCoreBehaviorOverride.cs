@@ -376,6 +376,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 if (npc.velocity.Length() > 4.5f)
                     npc.velocity *= 0.97f;
+                npc.velocity.Y *= 0.9f;
                 npc.rotation += npc.velocity.X * 0.04f;
             }
 

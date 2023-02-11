@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override void SetDefaults()
         {
-            NPC.damage = 70;
+            NPC.damage = 78;
             NPC.npcSlots = 0f;
             NPC.width = NPC.height = 40;
             NPC.defense = 0;

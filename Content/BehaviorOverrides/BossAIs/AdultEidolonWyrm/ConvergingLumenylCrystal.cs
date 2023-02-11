@@ -1,4 +1,5 @@
 using CalamityMod.Particles;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(46f, 448f, Projectile.Distance(ConvergenceCenter), true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(46f, 248f, Projectile.Distance(ConvergenceCenter), true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Release magic particles if close to invisible.
@@ -86,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, frame, Color.White * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, 0, 0));
+            AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, drawPosition, frame, Color.White with { A = 100 } * Projectile.Opacity * 3f, Projectile.rotation, origin, Projectile.scale, 0, 0));
             
             return false;
         }

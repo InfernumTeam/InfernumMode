@@ -40,12 +40,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Decide frames.
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
-
-            // Accelerate and arc over time.
-            if (Projectile.velocity.Length() < 35f)
-                Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity) * 1.018f;
+            Projectile.velocity = PerformMovementStep(Projectile.velocity, AngularVelocity);
 
             Time++;
+        }
+
+        public static Vector2 PerformMovementStep(Vector2 oldVelocity, float angularVelocity)
+        {
+            // Accelerate and arc over time.
+            if (oldVelocity.Length() >= 35f)
+                return oldVelocity;
+
+            return oldVelocity.RotatedBy(angularVelocity) * 1.02f;
         }
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.9f;
@@ -59,7 +65,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Color soulColor = Color.Lerp(Color.White, Color.Red, Projectile.identity % 8f / 11f);
+            soulColor.A = 0;
             ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition, frame, soulColor * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, 0, 0));
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 5f;
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, frame, soulColor * Projectile.Opacity * 0.4f, Projectile.rotation, origin, Projectile.scale, 0, 0));
+            }
             
             return false;
         }

@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             ref float deathTimer = ref npc.Infernum().ExtraAI[DeathTimerIndex];
 
             // Reset certain things.
-            npc.Calamity().DR = 0.2f;
+            npc.Calamity().DR = 0.1f;
             backafterimageGlowInterpolant = MathHelper.Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -993,6 +993,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             ref float horizontalWallOffset = ref npc.Infernum().ExtraAI[0];
 
+            // Use a bit more DR than usual.
+            npc.Calamity().DR = 0.3f;
+            npc.Calamity().CurrentlyIncreasingDefenseOrDR = true;
+
             // Perform the initial rise.
             if (attackTimer == 1f)
             {
@@ -1140,6 +1144,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             }
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+
+            // Use a bit more DR than usual.
+            npc.Calamity().DR = 0.3f;
+            npc.Calamity().CurrentlyIncreasingDefenseOrDR = true;
 
             // Hover into position.
             if (attackSubstate == 0f)

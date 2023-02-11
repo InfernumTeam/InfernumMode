@@ -31,7 +31,7 @@ using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class SupremeCalamitasBehaviorOverride : NPCBehaviorOverride
+    public partial class SupremeCalamitasBehaviorOverride : NPCBehaviorOverride
     {
         public enum SCalAttackType
         {

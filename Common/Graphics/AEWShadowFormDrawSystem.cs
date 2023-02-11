@@ -19,7 +19,7 @@ namespace InfernumMode.Common.Graphics
             private set;
         }
 
-        public static RenderTarget2D AEWShadoWispTarget
+        public static RenderTarget2D AEWShadowWispTarget
         {
             get;
             private set;
@@ -58,12 +58,12 @@ namespace InfernumMode.Common.Graphics
             {
                 // Free GPU resources for the old targets.
                 AEWDrawTarget?.Dispose();
-                AEWShadoWispTarget?.Dispose();
+                AEWShadowWispTarget?.Dispose();
                 TemporaryAuxillaryTarget?.Dispose();
 
                 // Recreate targets.
                 AEWDrawTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                AEWShadoWispTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+                AEWShadowWispTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
                 TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
             });
 
@@ -79,10 +79,22 @@ namespace InfernumMode.Common.Graphics
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
+            DrawShadowProjectiles();
             LightAndDarkEffectsCache.EmptyDrawCache();
             Main.spriteBatch.End();
 
             PrepareNextFrameTarget();
+        }
+
+        internal static void DrawShadowProjectiles()
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IAEWShadowProjectileDrawer drawer)
+                    continue;
+
+                drawer.DrawShadow(Main.spriteBatch);
+            }
         }
 
         internal static void PrepareNextFrameTarget()
@@ -91,18 +103,18 @@ namespace InfernumMode.Common.Graphics
             Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
 
-            Main.instance.GraphicsDevice.Textures[0] = AEWShadoWispTarget;
+            Main.instance.GraphicsDevice.Textures[0] = AEWShadowWispTarget;
             Main.instance.GraphicsDevice.Textures[1] = AEWDrawTarget;
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
             var shader = InfernumEffectsRegistry.AEWShadowFormShader.Shader;
-            shader.Parameters["actualSize"].SetValue(AEWShadoWispTarget.Size());
+            shader.Parameters["actualSize"].SetValue(AEWShadowWispTarget.Size());
             shader.Parameters["screenMoveOffset"].SetValue(Main.screenPosition - Main.screenLastPosition);
             shader.CurrentTechnique.Passes["UpdatePass"].Apply();
 
-            Main.spriteBatch.Draw(AEWShadoWispTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+            Main.spriteBatch.Draw(AEWShadowWispTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
             Main.spriteBatch.End();
 
-            AEWShadoWispTarget.CopyContentsFrom(TemporaryAuxillaryTarget);
+            AEWShadowWispTarget.CopyContentsFrom(TemporaryAuxillaryTarget);
         }
 
         public static void DrawTarget()
@@ -112,16 +124,16 @@ namespace InfernumMode.Common.Graphics
                 return;
             
             NPC aew = Main.npc[aewIndex];
-            float lightFormInterpolant = aew.Infernum().ExtraAI[AEWHeadBehaviorOverride.LightFormInterpolantIndex] * 0.5f;
+            float lightFormInterpolant = aew.Infernum().ExtraAI[AEWHeadBehaviorOverride.LightFormInterpolantIndex];
             float darkFormInterpolant = aew.Infernum().ExtraAI[AEWHeadBehaviorOverride.DarkFormInterpolantIndex];
-            InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["lightFormInterpolant"].SetValue(lightFormInterpolant);
+            InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["lightFormInterpolant"].SetValue(lightFormInterpolant * 0.5f);
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["darkFormInterpolant"].SetValue(darkFormInterpolant);
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["actualSize"].SetValue(AEWDrawTarget.Size());
             InfernumEffectsRegistry.AEWShadowFormShader.UseColor(Color.Purple);
             InfernumEffectsRegistry.AEWShadowFormShader.UseSecondaryColor(Color.DarkViolet * 0.7f);
             InfernumEffectsRegistry.AEWShadowFormShader.UseImage1("Images/Misc/Perlin");
             InfernumEffectsRegistry.AEWShadowFormShader.Apply();
-            Main.instance.GraphicsDevice.Textures[2] = AEWShadoWispTarget;
+            Main.instance.GraphicsDevice.Textures[2] = AEWShadowWispTarget;
             Main.spriteBatch.Draw(AEWDrawTarget, Vector2.Zero, Color.White);
         }
     }

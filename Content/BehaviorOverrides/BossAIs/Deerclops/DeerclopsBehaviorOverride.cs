@@ -339,6 +339,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public static void DoBehavior_CreateIcicles(NPC npc, Player target, bool wideIcicles, bool inPhase2, ref float attackTimer, ref float frameType)
         {
+            int spikeShootDelay = 42;
             int spikeShootRate = 2;
             int spikeShootTime = 64;
             int handCreationRate = 0;
@@ -369,6 +370,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             int spikeCount = spikeShootTime / spikeShootRate;
             ref float sendSpikesForward = ref npc.Infernum().ExtraAI[0];
+            ref float holdAnimationHasFinished = ref npc.Infernum().ExtraAI[1];
 
             // Slow down and choose frames.
             npc.velocity.X *= 0.9f;
@@ -390,7 +392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             // Don't increment the attack timer until the dig effect has happened.
             bool hitGround = npc.collideY || npc.velocity.Y == 0f;
-            if (sendSpikesForward == 0f || !hitGround)
+            if (!hitGround)
                 attackTimer = -1f;
             if (!hitGround)
                 frameType = (int)DeerclopsFrameType.RaiseArmsUp;
@@ -398,31 +400,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Point point = npc.Bottom.ToTileCoordinates();
             point.X += npc.spriteDirection * 3;
 
-            // Create a screen shake on the first frame when ready to shoot.
-            if (attackTimer == 1f)
+            // Create a screen shake and puff of snow when ready to shoot.
+            if (attackTimer == spikeShootDelay)
             {
                 PunchCameraModifier modifier = new(npc.Center, Vector2.UnitY, 20f, 6f, 30, 1000f, "Deerclops");
                 Main.instance.CameraModifiers.Add(modifier);
+
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 snowVelocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(2f, 15f) + Vector2.UnitX * npc.spriteDirection * Main.rand.NextFloat(7f, 18f);
+                    MediumMistParticle snow = new(npc.Bottom + Vector2.UnitX * npc.spriteDirection * 50f, snowVelocity, Color.LightGray, Color.LightCyan, 1.3f, 255f);
+                    GeneralParticleHandler.SpawnParticle(snow);
+                }
+
+                holdAnimationHasFinished = 1f;
+                npc.netUpdate = true;
             }
 
             // Create spikes.
-            int spikeIndex = (int)attackTimer / spikeShootRate;
-            if (spikeShootRate <= 1f || attackTimer % spikeShootRate == spikeShootRate - 1f && attackTimer < spikeShootTime)
+            int spikeIndex = (int)(attackTimer - spikeShootDelay) / spikeShootRate;
+            bool readyToShootThisCycle = spikeShootRate <= 1f || attackTimer % spikeShootRate == spikeShootRate - 1f;
+            if (readyToShootThisCycle && attackTimer >= spikeShootDelay && attackTimer < spikeShootDelay + spikeShootTime)
             {
                 float horizontalOffset = spikeIndex * offsetPerSpike;
-                float scale = Utils.Remap(attackTimer / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
+                float scale = Utils.Remap((attackTimer - spikeShootDelay) / spikeShootTime, 0f, 0.75f, minSpikeScale, maxSpikeScale);
                 TryMakingSpike(target, ref point, 105, inPhase2, npc.spriteDirection, spikeCount, spikeIndex, horizontalOffset, scale);
             }
 
             // Summon shadow hands.
-            if (Main.netMode != NetmodeID.MultiplayerClient && handCreationRate > 0 && attackTimer % handCreationRate == handCreationRate - 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= spikeShootDelay && handCreationRate >= 1 && attackTimer % handCreationRate == handCreationRate - 1f)
             {
                 float handDirection = Main.rand.NextBool().ToDirectionInt();
                 Vector2 handSpawnPosition = target.Center + Vector2.UnitY * handDirection * 640f;
                 Utilities.NewProjectileBetter(handSpawnPosition, Vector2.UnitY * handDirection * -7.5f, ModContent.ProjectileType<AcceleratingShadowHand>(), 90, 0f);
             }
 
-            if (attackTimer >= spikeShootTime + 30f)
+            if (attackTimer >= spikeShootDelay + spikeShootTime + 30f)
                 SelectNextAttack(npc);
         }
 
@@ -506,7 +519,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public static void DoBehavior_UpwardDebrisLaunch(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
-            int debrisCount = 18;
+            int debrisCount = 15;
             int shadowHandCount = 0;
             int attackTransitionDelay = 175;
             float debrisShootSpeed = 13.75f;
@@ -568,11 +581,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 // Handle debris creation.
                 for (int i = 0; i < debrisCount; i++)
                 {
-                    Vector2 shootDestination = target.Center + Vector2.UnitX * (MathHelper.Lerp(-450f, 450f, i / (float)(debrisCount - 1f)) + Main.rand.NextFloat(10f));
-                    Vector2 shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed, out _).RotatedByRandom(0.08f);
+                    Vector2 shootDestination = target.Center + Vector2.UnitX * (MathHelper.Lerp(-640f, 640f, i / (float)(debrisCount - 1f)) + Main.rand.NextFloat(10f));
+                    Vector2 shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed, out _).RotatedByRandom(0.04f);
                     Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 105, 0f, -1, 0f, Main.rand.Next(6, 12));
 
-                    shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed * 1.45f, out _).RotatedByRandom(0.06f);
+                    shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed * 1.15f, out _).RotatedByRandom(0.04f);
+                    Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 105, 0f, -1, 0f, Main.rand.Next(6, 12));
+
+                    shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed * 0.9f, out _).RotatedByRandom(0.04f);
                     Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, 105, 0f, -1, 0f, Main.rand.Next(6, 12));
                 }
 
@@ -1032,6 +1048,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             npc.localAI[1] = 0f;
 
+            DeerclopsAttackState currentAttack = (DeerclopsAttackState)npc.ai[0];
             switch ((DeerclopsFrameType)npc.localAI[0])
             {
                 case DeerclopsFrameType.FrontFacingRoar:
@@ -1053,9 +1070,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 case DeerclopsFrameType.DigIntoGround:
                     if (frame is < 12 or >= 19)
                         frame = 12;
+
+                    bool performingIcicleAttack = currentAttack is DeerclopsAttackState.TallIcicles or DeerclopsAttackState.WideIcicles;
+                    bool continueHoldingHandsInGround = performingIcicleAttack && npc.Infernum().ExtraAI[1] == 0f;
                     if (npc.frameCounter >= 7D && frame < 18)
                     {
                         frame++;
+                        if (continueHoldingHandsInGround && frame >= 16)
+                            frame = 16;
+
                         if (frame == 17)
                             npc.localAI[1] = 1f;
 

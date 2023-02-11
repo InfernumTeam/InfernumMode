@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     DoBehavior_DisintegratingBeam(npc, target, ref attackTimer, ref lightFormInterpolant);
                     break;
                 case AEWAttackType.ForbiddenUnleash:
-                    DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation);
+                    DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation, ref darkFormInterpolant);
                     break;
                 case AEWAttackType.ShadowIllusions:
                     DoBehavior_ShadowIllusions(npc, target, ref attackTimer, ref darkFormInterpolant);
@@ -169,7 +169,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
 
             // Determine rotation based on the current velocity.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            if (npc.velocity != Vector2.Zero && npc.velocity.Length() > 0.01f)
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Increment the attack timer.
             attackTimer++;
@@ -508,14 +509,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
-        public static void DoBehavior_ForbiddenUnleash(NPC npc, Player target, ref float attackTimer, ref float hammerHeadRotation)
+        public static void DoBehavior_ForbiddenUnleash(NPC npc, Player target, ref float attackTimer, ref float hammerHeadRotation, ref float darkFormInterpolant)
         {
             int headOpenTime = 56;
             int attackDelay = 96;
-            int soulReleaseRate = 25;
+            int soulReleaseRate = 24;
             int soulShootTime = 480;
             int attackTransitionDelay = 180;
-            int soulBurstCount = 23;
+            int soulBurstCount = 12;
             float spinAngularVelocity = MathHelper.Pi / 193f;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -529,6 +530,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 float headOpenInterpolant = (float)Math.Pow(attackTimer / headOpenTime, 7D);
                 hammerHeadRotation = MathHelper.SmoothStep(0f, 1f, headOpenInterpolant) * MathHelper.Pi * 0.19f;
+
+                // Turn into shadow.
+                darkFormInterpolant = Utils.GetLerpValue(0f, headOpenTime - 15f, attackTimer, true);
             }
 
             // Disable contact damage.
@@ -536,8 +540,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Move towards the target.
             if (!npc.WithinRange(target.Center, 180f))
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 6f, 0.18f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 4f, 0.18f);
 
+            // Release arcing souls and telegraphs outward.
             if (attackTimer >= attackDelay && attackTimer <= attackDelay + soulShootTime && attackTimer % soulReleaseRate == soulReleaseRate - 1f)
             {
                 SoundEngine.PlaySound(SoundID.Item72, target.Center);
@@ -550,6 +555,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         Vector2 soulBurstVelocity = (MathHelper.TwoPi * i / soulBurstCount + shootCounter).ToRotationVector2() * 2f;
                         Utilities.NewProjectileBetter(soulSpawnPosition, soulBurstVelocity, ModContent.ProjectileType<AbyssalSoul>(), StrongerNormalShotDamage, 0f, -1, 0f, directionalAngularVelocity);
+
+                        List<Vector2> telegraphPoints = new();
+                        Vector2 telegraphVelocity = soulBurstVelocity;
+                        Vector2 telegraphPosition = soulSpawnPosition;
+                        for (int j = 0; j < 160; j++)
+                        {
+                            telegraphVelocity = AbyssalSoul.PerformMovementStep(telegraphVelocity, directionalAngularVelocity);
+                            telegraphPosition += telegraphVelocity;
+                            if (j % 2 == 1 || j == 0)
+                                telegraphPoints.Add(telegraphPosition);
+                        }
+
+                        float hue = i / (float)(soulBurstCount - 1f);
+                        if (shootCounter % 2f == 1f)
+                            hue = 1f - hue;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                        {
+                            telegraph.ModProjectile<AbyssalSoulTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
+                        });
+                        Utilities.NewProjectileBetter(soulSpawnPosition, Vector2.Zero, ModContent.ProjectileType<AbyssalSoulTelegraph>(), 0, 0f, -1, hue);
                     }
 
                     shootCounter++;
@@ -558,7 +584,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
 
             if (attackTimer >= attackDelay + soulShootTime)
+            {
                 hammerHeadRotation = hammerHeadRotation.AngleLerp(0f, 0.16f).AngleTowards(0f, 0.02f);
+                darkFormInterpolant = MathHelper.Clamp(darkFormInterpolant - 0.08f, 0f, 1f);
+            }
 
             if (attackTimer >= attackDelay + soulShootTime + attackTransitionDelay)
                 SelectNextAttack(npc);
@@ -915,6 +944,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 if (i >= 1)
                     Main.npc[previousIndex].ai[0] = nextIndex;
+                Main.npc[nextIndex].ai[3] = i;
 
                 // Force sync the new segment into existence.
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, nextIndex, 0f, 0f, 0f, 0);
@@ -934,11 +964,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
-            else if (currentAttack == AEWAttackType.ShadowIllusions)
-                nextAttack = AEWAttackType.ShadowIllusions;
+            else if (currentAttack == AEWAttackType.ForbiddenUnleash)
+                nextAttack = AEWAttackType.ForbiddenUnleash;
 
             if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
-                nextAttack = AEWAttackType.ShadowIllusions;
+                nextAttack = AEWAttackType.ForbiddenUnleash;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -1051,12 +1081,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(opacity);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Purple);
-            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Purple);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.HotPink);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
             Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, scale, 0, 0f);
 
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(opacity * 0.7f);
-            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Purple);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Cyan);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
             Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, scale, 0, 0f);

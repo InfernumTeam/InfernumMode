@@ -673,6 +673,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             chompEffectsCountdown = 0f;
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
+            // Stop it.
+            npc.damage = 0;
+
             // Move towards the target.
             Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 660f;
             if (flyHigherUp)

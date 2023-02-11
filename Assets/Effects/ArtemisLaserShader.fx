@@ -16,6 +16,7 @@ float2 uImageSize1;
 float2 uImageSize2;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
+float uStretchReverseFactor;
 
 struct VertexShaderInput
 {
@@ -54,14 +55,19 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
+    float stretchReverseFactor = uStretchReverseFactor;
+    if (stretchReverseFactor <= 0)
+        stretchReverseFactor = 1;
+    float adjustedCompletionRatio = coords.x * stretchReverseFactor;
     
     // Read the fade map as a streak.
+    float time = uTime * (uOpacity + 1);
     float bloomFadeout = pow(sin(coords.y * 3.141), 4);
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 20 - uTime * 5.5), coords.y));
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(adjustedCompletionRatio * 20 - time * 5.4), coords.y));
     float opacity = (0.5 + fadeMapColor.g) * bloomFadeout;
     
     // Calculate electricity colors.
-    float electricityFade = tex2D(uImage2, float2(frac(coords.x * 6 - uTime * 2.5), coords.y)).r;
+    float electricityFade = tex2D(uImage2, float2(frac(adjustedCompletionRatio * 6 - time * 2.5), coords.y)).r;
     float4 electricityColor = InverseLerp(0.4, 0.5, electricityFade * bloomFadeout) * float4(uColor, 1);
     
     // Fade out at the ends of the streak.

@@ -1139,12 +1139,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 coreLaserRayInterpolant = Utils.GetLerpValue(0f, laserTelegraphTime - 32f, attackTimer, true);
                 if (coreLaserRayInterpolant < 1f)
                     coreLaserRayDirection = npc.AngleTo(target.Center).AngleLerp(-MathHelper.PiOver2, 0.84f);
-                npc.Infernum().ExtraAI[0] = 0f;
+                npc.Infernum().ExtraAI[25] = 0f;
             }
             // Store the angular velocity for the laser to read.
-            else if (npc.Infernum().ExtraAI[0] == 0f || Math.Abs(npc.Infernum().ExtraAI[0]) > 0.2f)
+            else if (npc.Infernum().ExtraAI[25] == 0f || Math.Abs(npc.Infernum().ExtraAI[25]) > 0.2f)
             {
-                npc.Infernum().ExtraAI[0] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
+                npc.Infernum().ExtraAI[25] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
                 if (Main.netMode == NetmodeID.Server)
                     npc.netUpdate = true;
             }
@@ -1164,9 +1164,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer == laserTelegraphTime)
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
+                target.Calamity().GeneralScreenShakePower = 10f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f, -1, 0f, laserLifetime);
             }
+
+            // Maintain screen shake effects.
+            if (attackTimer >= laserTelegraphTime)
+                target.Calamity().GeneralScreenShakePower = MathHelper.Max(target.Calamity().GeneralScreenShakePower, 2f);
 
             // Create lasers from the core after firing.
             if (attackTimer > laserTelegraphTime && attackTimer % coreLaserFireRate == coreLaserFireRate - 1f)
@@ -1650,6 +1655,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     break;
             }
             while ((float)nextAttack == attackState || (float)nextAttack == previousAttackState2);
+            nextAttack = GolemAttackState.SpinLaser;
 
             previousAttackState2 = previousAttackState;
             previousAttackState = attackState;

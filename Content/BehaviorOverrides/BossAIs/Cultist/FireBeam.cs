@@ -14,9 +14,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
     public class FireBeam : ModProjectile, IPixelPrimitiveDrawer
     {
         internal PrimitiveTrailCopy BeamDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float AngularVelocity => ref Projectile.ai[1];
+
         public const float LaserLength = 4800f;
+
+        public static float LaserPulse => (float)Math.Sin(Main.GlobalTimeWrappedHourly * 36f);
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
@@ -75,13 +81,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
+            return MathHelper.SmoothStep(2f, Projectile.width + LaserPulse * 3f, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
-            return color * Projectile.Opacity;
+            Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 0.53D));
+            return color * (Projectile.Opacity + (LaserPulse * 0.5f + 0.5f) * 1.1f);
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -93,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
 
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(1.4f);
-            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

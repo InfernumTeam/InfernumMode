@@ -72,6 +72,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 5f;
                 ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, frame, soulColor * Projectile.Opacity * 0.4f, Projectile.rotation, origin, Projectile.scale, 0, 0));
+
+                Vector2 afterimageDrawPosition = Vector2.Lerp(Projectile.oldPos[i] + Projectile.Size * 0.5f, Projectile.Center, 0.4f) - Main.screenPosition;
+                float afterimageColor = 1f - i / 4f;
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, afterimageDrawPosition, frame, soulColor * Projectile.Opacity * afterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0));
             }
             
             return false;

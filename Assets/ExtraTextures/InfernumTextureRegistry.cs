@@ -30,6 +30,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> GrayscaleWater => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/GrayscaleWater");
 
+        public static Asset<Texture2D> HarshNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/HarshNoise");
+
         public static Asset<Texture2D> HollowCircleSoftEdge => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/HollowCircleSoftEdge");
 
         public static Asset<Texture2D> HyperplaneMatrixCode => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HyperplaneMatrixCode");

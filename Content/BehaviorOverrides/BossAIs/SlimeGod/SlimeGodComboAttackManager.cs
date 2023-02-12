@@ -393,6 +393,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                             Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
                         }
+
+                        // Shoot one glob directly at the target to prevent sitting in place.
+                        Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, 90, 0f);
                     }
                 }
             }

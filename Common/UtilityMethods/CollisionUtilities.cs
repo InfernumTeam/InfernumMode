@@ -1,6 +1,8 @@
+using CalamityMod;
 using InfernumMode.Common;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.WorldBuilding;
 
 namespace InfernumMode
@@ -61,6 +63,27 @@ namespace InfernumMode
             float distance2 = Vector2.Distance(checkPosition, focus2);
             distance = distance1 + distance2;
             return distance <= distanceConstant;
+        }
+
+        public static bool ActualSolidCollisionTop(Vector2 topLeft, int width, int height)
+        {
+            int x = (int)(topLeft.X / 16f);
+            int y = (int)(topLeft.Y / 16f);
+            for (int i = x; i < x + width / 16; i++)
+            {
+                for (int j = y; j < y + width / 16; j++)
+                {
+                    Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+                    if (!t.HasUnactuatedTile)
+                        continue;
+
+                    if (t.TileType == TileID.Platforms)
+                        return true;
+                }
+            }
+
+            bool halfCorrectCheck = Collision.SolidCollision(topLeft, width, height);
+            return halfCorrectCheck;
         }
     }
 }

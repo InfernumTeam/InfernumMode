@@ -114,14 +114,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             Projectile.scale *= 0.8f;
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFire.Value;
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.TrypophobiaNoise.Value;
             Projectile.scale /= 0.8f;
 
             RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
             InfernumEffectsRegistry.PrismaticRayVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFire.Value;
+            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.TrypophobiaNoise.Value;
             RayDrawer.DrawPixelated(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;
         }

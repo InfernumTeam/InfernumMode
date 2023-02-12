@@ -80,6 +80,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> TelegraphLine => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
 
+        public static Asset<Texture2D> TrypophobiaNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/TrypophobiaNoise");
+
         public static Asset<Texture2D> VoronoiShapes => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiShapes");
 
         public static Asset<Texture2D> Water => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Water");

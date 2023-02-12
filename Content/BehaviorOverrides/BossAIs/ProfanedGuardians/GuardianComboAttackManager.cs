@@ -6,6 +6,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -42,6 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             DefenderDeathAnimation,
 
             // Commander solo attacks.
+            TempAttack,
 
             CommanderDeathAnimation
         }
@@ -971,7 +974,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (localAttackTimer % spearReleasePoint == spearReleasePoint - 1f && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 float positionRotation = MathF.Tau * CalamityUtils.LinearEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
-                                Vector2 position = npc.Center + positionRotation.ToRotationVector2() * 50f;
+                                Vector2 position = npc.Center + positionRotation.ToRotationVector2() * 75f;
                                 Vector2 velocity = npc.SafeDirectionTo(position) * 5f;
                                 Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 250, 0f);
                             }
@@ -1499,7 +1502,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float flySpeed = 24f;
                 float symbolSpawnRate = 15f;
 
-                drawBlackBars = 1f;
                 Vector2 focusPosition = target.Center + new Vector2(0f, target.gfxOffY) + (-0.4f).ToRotationVector2() * 70f;
 
 
@@ -1508,6 +1510,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     target.Infernum_Camera().ScreenFocusInterpolant = 3f;
                     target.Infernum_Camera().ScreenFocusPosition = focusPosition;
                     target.Infernum_Camera().CurrentScreenShakePower = 1f;
+                    drawBlackBars = 1f;
 
                     // Do not take damage.
                     npc.dontTakeDamage = true;
@@ -1517,22 +1520,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (Main.myPlayer == npc.target)
                         Main.hideUI = true;
                 }
-                else
-
-                // Use the screen saturation effect.
-                npc.Infernum().ShouldUseSaturationBlur = true;
 
                 // Spawn cool symbols.
                 if (universalAttackTimer % symbolSpawnRate == symbolSpawnRate - 1f)
                 {
-                    Vector2 position = npc.Center+ Main.rand.NextVector2Circular(250f, 250f);
+                    Vector2 position = npc.Center  + npc.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * 50f + Main.rand.NextVector2Circular(250f, 250f);
                     Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.1f, 0.4f)) * Main.rand.NextFloat(1.5f, 2f);
                     Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(1f));
                     Particle jojo = new ProfanedSymbolParticle(position, velocity, color, 0.8f, 120);
                     GeneralParticleHandler.SpawnParticle(jojo);
                 }
 
-                Vector2 hoverDestination = target.Center + new Vector2(900f, -425f);
+                Vector2 hoverDestination = target.Center + new Vector2(800f, -325f);
+                if (universalAttackTimer == 1)
+                    npc.Center = hoverDestination;
+
                 if (npc.Distance(hoverDestination) > 2f)
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                 else
@@ -1563,12 +1565,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 originalLeftHandPos = new(catchingLeftHandXOG, catchingLeftHandYOG);
                 float flySpeed = 20f;
                 float chargeDelay = 60f;
-                float chargeSpeed = 25f;
-                float pullbackDelay = 20f;
-                float pullBackTime = 90f;
-                float reelbackTime = 30f;
-                float launchTime = 20f;
-                float yeetSpeed = 50f;
+                float chargeSpeed = 35f;
+                float pullbackDelay = 25f;
+                float pullBackTime = 30f;
+                float reelbackTime = 50f;
+                float launchTime = 30f;
+                float yeetSpeed = 40f;
 
                 // Close the HP bar.
                 npc.Calamity().ShouldCloseHPBar = true;
@@ -1577,11 +1579,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Do not deal damage either.
                 npc.damage = 0;
 
+                npc.Infernum().ShouldUseSaturationBlur = true;
                 switch (substate)
                 {
                     // Hover to the right of the target.
                     case 0:
                         Vector2 hoverDestination = target.Center + new Vector2(1200f, 0f);
+
+                        if (localAttackTimer == 1)
+                            npc.Center = hoverDestination;
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -1594,6 +1600,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
                         }
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+
+                        if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 0)
+                            typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);//MoonlordDeathDrama.RequestLight(1f/*1f - Utils.GetLerpValue(15f, 45f, universalAttackTimer, true)*/, target.Center);
 
                         if (npc.WithinRange(hoverDestination, 20f) && localAttackTimer >= chargeDelay)
                         {
@@ -1615,7 +1624,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (localAttackTimer >= pullbackDelay)
                         {
                             substate++;
-                            localAttackTimer++;
+                            localAttackTimer = 0;
                             return;
                         }
                         break;
@@ -1637,7 +1646,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         catchingLeftHandYOG = aimingHandPos.Y;
 
                         if (localAttackTimer == 1)
-                            npc.velocity = npc.SafeDirectionTo(recievingHandPos + commander.Center) * (npc.Distance(aimingHandPos + commander.Center) / pullBackTime);
+                            npc.velocity = npc.SafeDirectionTo(new Vector2(rightHandX, rightHandY) + commander.Center) * (npc.Distance(new Vector2(rightHandX, rightHandY) + commander.Center) / pullBackTime);
 
                         if (localAttackTimer >= pullBackTime)
                         {
@@ -1652,19 +1661,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         float rightHandMoveInterpolant = Utilities.EaseInOutCubic(localAttackTimer / reelbackTime);
                         float leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / reelbackTime, 0);
 
-                        // Right Hand
-                        recievingHandPos = (commander.Center - originalRightHandPos).RotatedBy(-3f * rightHandMoveInterpolant, commander.Center);
+                        npc.velocity = Vector2.Zero;
+                        npc.Center = rightHand.Center;
 
-                        // Left hand
-                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new(-75f, 50f), leftHandMoveInterpolant);
+                        // Right hand.
+                        recievingHandPos = originalRightHandPos.RotatedBy(3f * rightHandMoveInterpolant);
+                        // Left hand.
+                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new Vector2(-125f, 70f), leftHandMoveInterpolant);
 
                         leftHandX = aimingHandPos.X;
                         leftHandY = aimingHandPos.Y;
                         rightHandX = recievingHandPos.X;
                         rightHandY = recievingHandPos.Y;
-
-                        npc.velocity = Vector2.Zero;
-                        npc.Center = new Vector2(rightHandX, rightHandY) + commander.Center;
 
                         if (localAttackTimer >= reelbackTime)
                         {
@@ -1684,18 +1692,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Continue to stick to the hands. They will stop at the correct position.
                     case 5:
                         rightHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
-                        leftHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
+                        leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / launchTime, 0);
 
-                        recievingHandPos = (commander.Center - originalRightHandPos).RotatedBy(MathF.PI * rightHandMoveInterpolant, commander.Center);
-                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new(-75f, 50f), leftHandMoveInterpolant);
+                        recievingHandPos = originalRightHandPos.RotatedBy(-4f * rightHandMoveInterpolant);
+                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new Vector2(-55f, 40f), leftHandMoveInterpolant);
 
                         leftHandX = aimingHandPos.X;
                         leftHandY = aimingHandPos.Y;
                         rightHandX = recievingHandPos.X;
                         rightHandY = recievingHandPos.Y;
 
-                        npc.velocity = Vector2.Zero;
-                        npc.Center = new Vector2(rightHandX, rightHandY) + commander.Center;
+                        npc.Center = rightHand.Center;
 
                         if (localAttackTimer >= launchTime)
                         {
@@ -1723,9 +1730,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region Commander Attacks
-        public static void DoBehavior_RapidSpearCharges(NPC commander, Player target, ref float universalAttackTimer)
+        public static void DoBehavior_RapidSpearCharges(NPC npc, Player target, ref float universalAttackTimer)
         {
+            float flySpeed = 25f;
+            Vector2 hoverDestination = target.Center + new Vector2(0, -400f);
 
+            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
         }
         #endregion
 
@@ -1810,6 +1820,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // If its at the end of the final double combo attack, reset back to the start.
             else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.CrashRam)
                 commander.ai[0] = (float)GuardiansAttackType.SpearDashAndGroundSlam;
+
             // Else if its in the commander + defender combos, remain in them.
             else if ((GuardiansAttackType)commander.ai[0] < GuardiansAttackType.CrashRam)
                 commander.ai[0]++;
@@ -1822,7 +1833,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ModContent.ProjectileType<ProfanedRock>(),
                 ModContent.ProjectileType<MagicCrystalShot>(),
                 ModContent.ProjectileType<MagicSpiralCrystalShot>(),
-                ModContent.ProjectileType<DefenderShield>()
+                ModContent.ProjectileType<DefenderShield>(),
+                ModContent.ProjectileType<LavaEruptionPillar>(),
+                ModContent.ProjectileType<ProfanedSpearInfernum>()
                 );
         }
         #endregion

@@ -53,8 +53,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float2 coords = input.TextureCoordinates;
 
     float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * stretchAmount - uTime * 1.8), coords.y));
-    float bloomFadeout = pow(sin(coords.y * 3.141), 3);
-    float opacity = (fadeMapColor.r + 1) * bloomFadeout;
+    float bloomFadeout = pow(sin(coords.y * 3.141), 8);
+    float opacity = (fadeMapColor.r + 0.75) * bloomFadeout;
     float bloomFadeout2 = pow(sin(coords.y * 3.141), 18);
     
     

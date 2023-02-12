@@ -123,6 +123,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0;
 
+            //if (attackState >= (float)GuardiansAttackType.DefenderDeathAnimation)
+            //    npc.Infernum().ShouldUseSaturationBlur = true;
+
             // Do attacks.
             switch ((GuardiansAttackType)attackState)
             {
@@ -160,6 +163,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case GuardiansAttackType.DefenderDeathAnimation:
                     DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, npc);
+                    break;
+
+                case GuardiansAttackType.TempAttack:
+                    DoBehavior_RapidSpearCharges(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.CommanderDeathAnimation:

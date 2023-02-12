@@ -20,6 +20,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> Cloud2 => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas2");
 
+        public static Asset<Texture2D> CrustyNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CrustyNoise");
+
         public static Asset<Texture2D> CultistRayMap => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CultistRayMap");
 
         public static Asset<Texture2D> DiagonalGleam => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/DiagonalGleam");
@@ -52,9 +54,13 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> LaserCircle => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/LaserCircle");
 
+        public static Asset<Texture2D> LessCrustyNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/LessCrustyNoise");
+
         public static Asset<Texture2D> LightningStreak => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakLightning");
 
         public static Asset<Texture2D> Line => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/Line");
+
+        public static Asset<Texture2D> MilkyNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/MilkyNoise");
 
         public static Asset<Texture2D> MoonLordBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/MoonLordBGLayer");
 

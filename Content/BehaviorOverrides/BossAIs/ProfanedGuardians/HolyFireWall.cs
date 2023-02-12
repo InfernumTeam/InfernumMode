@@ -55,19 +55,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            float _ = 0f;
+            float width = 150f * Projectile.scale;
             Vector2 topStart = Projectile.Center - new Vector2(0, 100);
             Vector2 topEnd = topStart - Vector2.UnitY * (2000 - 80f);
-            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), topStart, topEnd))
+            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), topStart, topEnd, width, ref _))
                 return true;
 
             Vector2 bottomStart = Projectile.Center + new Vector2(0, 100);
             Vector2 bottomEnd = bottomStart + Vector2.UnitY * (2000 - 80f);
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), bottomStart, bottomEnd);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), bottomStart, bottomEnd, width, ref _);
         }
 
-        public float WidthFunction(float completionRatio) => 200 * Projectile.scale;
+        public float WidthFunction(float completionRatio) => 150f * Projectile.scale;
 
-        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73) * Projectile.Opacity;
+        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73);
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
@@ -86,8 +88,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < bottomDrawPoints.Length; i++)
                 bottomDrawPoints[i] = Vector2.Lerp(bottomBaseDrawPos, new Vector2(bottomBaseDrawPos.X, bottomBaseDrawPos.Y + laserDistance), (float)i / bottomDrawPoints.Length);
 
-            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
-            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150) * Projectile.Opacity);
+            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150));
             InfernumEffectsRegistry.GenericLaserVertexShader.Shader.Parameters["strongerFade"].SetValue(true);
 
             FlameDrawer.DrawPixelated(topDrawPoints, -Main.screenPosition, 20);

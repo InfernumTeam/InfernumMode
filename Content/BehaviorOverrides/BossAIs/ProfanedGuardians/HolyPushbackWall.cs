@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < topDrawPoints.Length; i++)
                 topDrawPoints[i] = Vector2.Lerp(drawPos, endPos, (float)i / topDrawPoints.Length);
 
-            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
+            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.CrustyNoise);
             InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150) * Projectile.Opacity);
             InfernumEffectsRegistry.GenericLaserVertexShader.Shader.Parameters["strongerFade"].SetValue(true);
 

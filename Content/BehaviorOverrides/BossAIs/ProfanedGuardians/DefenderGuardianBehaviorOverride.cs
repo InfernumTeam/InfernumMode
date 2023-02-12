@@ -24,6 +24,9 @@ using System.Collections.Generic;
 using CalamityMod.Particles;
 using Terraria.Audio;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Common.Graphics.Particles;
+using Terraria.GameContent.Events;
+using InfernumMode.Core;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -79,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)
             {
-                DoBehavior_DefenderYeetEffects(npc, target);
+                DoBehavior_DefenderYeetEffects(npc, target, ref attackTimer, commander);
                 return false;
             }
 
@@ -124,39 +127,79 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
-        public static void DoBehavior_DefenderYeetEffects(NPC npc, Player target)
+        public static void DoBehavior_DefenderYeetEffects(NPC npc, Player target, ref float attackTimer, NPC commander)
         {
             ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
-
-            // Create particles to indicate the sudden speed.
-            if (Main.rand.NextBool())
+            ref float substate = ref npc.Infernum().ExtraAI[1];
+            npc.Calamity().ShouldCloseHPBar = true;
+            switch (substate)
             {
-                Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
-                Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
-                GeneralParticleHandler.SpawnParticle(energyLeak);
-            }
-
-            if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
-            {
-
-                // Play a loud explosion + hitbox sound and screenshake to give the impact power.
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
-                SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
-
-                if (CalamityConfig.Instance.Screenshake)
-                    target.Infernum_Camera().CurrentScreenShakePower = 20f;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                case 0:
+                    npc.Infernum().ShouldUseSaturationBlur = true;
+                    // Create particles to indicate the sudden speed.
+                    if (Main.rand.NextBool())
                     {
-                        explosion.ModProjectile<HolySunExplosion>().MaxRadius = 160f;
-                    });
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
-                }
-                npc.life = 0;
-                npc.active = false;
-                return;
+                        Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                        Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                        GeneralParticleHandler.SpawnParticle(energyLeak);
+                    }
+
+                    if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
+                    {
+                        // Play a loud explosion + hitbox sound and screenshake to give the impact power.
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 3f }, target.Center);
+                        SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 5f }, target.Center);
+
+                        if (CalamityConfig.Instance.Screenshake)
+                            target.Infernum_Camera().CurrentScreenShakePower = 20f;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                            {
+                                explosion.ModProjectile<HolySunExplosion>().MaxRadius = 300f;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
+                        }
+
+                        for (int i = 0; i < 100; i++)
+                        {
+                            Vector2 position = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height);
+                            Vector2 velocity = npc.SafeDirectionTo(position) * Main.rand.NextFloat(1.5f, 2f);
+                            Particle ashes = new MediumMistParticle(position, velocity, WayfinderSymbol.Colors[1], Color.Gray, Main.rand.NextFloat(0.75f, 0.95f), 400, Main.rand.NextFloat(-0.05f, 0.05f));
+                            GeneralParticleHandler.SpawnParticle(ashes);
+                        }
+                        if (InfernumConfig.Instance.FlashbangOverlays)
+                            MoonlordDeathDrama.RequestLight(1f, target.Center);
+
+                        // Create a bunch of rock particles to indicate a heavy impact.
+                        Vector2 impactCenter = npc.Center;
+                        for (int j = 0; j < 50; j++)
+                        {
+                            Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(MathF.Tau) * Main.rand.NextFloat(3f, 6f), Color.White, Main.rand.NextFloat(0.85f, 1.15f), 120, Main.rand.NextFloat(0f, 0.2f), false);
+                            GeneralParticleHandler.SpawnParticle(rock);
+                        }
+                        substate++;
+                        localAttackTimer = 0f;
+                    }
+                    break;
+
+                case 1:
+                    if (localAttackTimer < 30f)
+                        npc.Infernum().ShouldUseSaturationBlur = true;
+                    if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 30f)
+                        typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);//MoonlordDeathDrama.RequestLight(1f/*1f - Utils.GetLerpValue(15f, 30f, localAttackTimer, true)*/, target.Center);
+                    ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
+                    drawBlackBars = 0f;
+                    npc.Opacity = 0f;
+                    if (localAttackTimer > 45f)
+                    {
+                        Main.hideUI = false;
+                        SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.TempAttack);
+                        npc.life = 0;
+                        npc.active = false;
+                    }
+                    break;
             }
             localAttackTimer++;
         }
@@ -234,7 +277,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float fadeOutLength = 6f;
             int maxAfterimages = 6;
 
-            AttackerGuardianBehaviorOverride.DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);          
+            DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);          
         }
 
         public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

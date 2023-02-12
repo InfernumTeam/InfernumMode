@@ -2,6 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -75,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = Projectile.width * Projectile.scale * 2f;
+            float width = Projectile.width * Projectile.scale * 2.5f;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * (LaserLength - 300f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
@@ -85,10 +86,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         
         public float WidthFunction(float completionRatio)
         {
-            return Projectile.width * Projectile.scale * 2f;
+            return Projectile.width * Projectile.scale * 2.5f;
         }
 
-        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73) * Projectile.Opacity;
+        public Color ColorFunction(float completionRatio) => /*new Color(255, 191, 73)*/ Color.Lerp(WayfinderSymbol.Colors[1], Color.OrangeRed, 0.5f) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor) => false;
 
@@ -97,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GenericLaserVertexShader);
 
             InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(BrightFire);
-            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
+            InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

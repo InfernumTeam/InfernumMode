@@ -513,7 +513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int headOpenTime = 56;
             int attackDelay = 96;
-            int soulReleaseRate = 24;
+            int soulReleaseRate = 30;
             int soulShootTime = 480;
             int attackTransitionDelay = 180;
             int soulBurstCount = 12;
@@ -553,18 +553,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Vector2 soulSpawnPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 36f;
                     for (int i = 0; i < soulBurstCount; i++)
                     {
-                        Vector2 soulBurstVelocity = (MathHelper.TwoPi * i / soulBurstCount + shootCounter).ToRotationVector2() * 2f;
+                        Vector2 soulBurstVelocity = (MathHelper.TwoPi * i / soulBurstCount + shootCounter).ToRotationVector2() * 3f;
                         Utilities.NewProjectileBetter(soulSpawnPosition, soulBurstVelocity, ModContent.ProjectileType<AbyssalSoul>(), StrongerNormalShotDamage, 0f, -1, 0f, directionalAngularVelocity);
 
                         List<Vector2> telegraphPoints = new();
                         Vector2 telegraphVelocity = soulBurstVelocity;
                         Vector2 telegraphPosition = soulSpawnPosition;
-                        for (int j = 0; j < 160; j++)
+                        for (int j = 0; j < 108; j++)
                         {
+                            if (j % 2 == 0)
+                                telegraphPoints.Add(telegraphPosition);
                             telegraphVelocity = AbyssalSoul.PerformMovementStep(telegraphVelocity, directionalAngularVelocity);
                             telegraphPosition += telegraphVelocity;
-                            if (j % 2 == 1 || j == 0)
-                                telegraphPoints.Add(telegraphPosition);
                         }
 
                         float hue = i / (float)(soulBurstCount - 1f);
@@ -964,11 +964,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
-            else if (currentAttack == AEWAttackType.ForbiddenUnleash)
-                nextAttack = AEWAttackType.ForbiddenUnleash;
+            else if (currentAttack == AEWAttackType.DisintegratingBeam)
+                nextAttack = AEWAttackType.DisintegratingBeam;
 
             if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
-                nextAttack = AEWAttackType.ForbiddenUnleash;
+                nextAttack = AEWAttackType.DisintegratingBeam;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

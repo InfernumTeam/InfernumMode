@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 npc.Size = size;
 
             npc.dontTakeDamage = head.dontTakeDamage || npc.Opacity < 0.1f;
-            npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
+            npc.damage = npc.dontTakeDamage || head.damage <= 0 ? 0 : npc.defDamage;
             npc.life = npc.lifeMax;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;

@@ -106,8 +106,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             if (target.HasBuff(ModContent.BuffType<BurningBlood>()))
                 target.ClearBuff(ModContent.BuffType<BurningBlood>());
 
-
-
             switch ((DreadnautilusAttackState)npc.ai[0])
             {
                 case DreadnautilusAttackState.InitialSummonDelay:

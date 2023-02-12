@@ -382,7 +382,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
-                    rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rocketVelocity.Length(), 0.6f);
+                    rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.9f);
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 150, 0f);
                 }

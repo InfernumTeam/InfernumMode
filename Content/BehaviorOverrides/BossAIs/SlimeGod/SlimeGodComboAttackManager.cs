@@ -37,6 +37,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public static int SecondSlimeToSummonIndex => WorldGen.crimson ? CalamityGlobalNPC.slimeGodPurple : CalamityGlobalNPC.slimeGodRed;
 
+        public static int DelayBeforeSoloEnrageAttacksBegin => 90;
+
         public static NPC LeaderOfFight
         {
             get
@@ -116,6 +118,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         {
             bool red = npc.type == ModContent.NPCType<CrimulanSlimeGod>();
             bool alone = FightState == SlimeGodFightState.AloneSingleLargeSlimeEnraged;
+
+            // Wait a bit before attacking in the alone and enraged phase.
+            if (alone && npc.ai[2] >= 1f)
+            {
+                npc.defense = 999999;
+                npc.ai[0] = (int)BigSlimeGodAttackType.LongJumps;
+                npc.ai[2]--;
+                attackTimer = 0f;
+                return;
+            }
+
             switch ((int)npc.ai[0])
             {
                 case (int)BigSlimeGodAttackType.LongJumps:

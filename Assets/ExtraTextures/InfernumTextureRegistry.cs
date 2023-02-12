@@ -36,6 +36,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> GuardianDefenderGlow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/DefenderGlow");
 
+        public static Asset<Texture2D> HarshNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/HarshNoise");
+
         public static Asset<Texture2D> HollowCircleSoftEdge => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/HollowCircleSoftEdge");
 
         public static Asset<Texture2D> HolyCrystalLayer => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HolyCrystalLayer");

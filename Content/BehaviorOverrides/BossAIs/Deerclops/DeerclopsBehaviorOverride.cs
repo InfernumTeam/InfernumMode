@@ -308,8 +308,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public static void DoBehavior_WalkToTarget(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
             int maxWalkTime = 210;
-            float walkSpeed = MathHelper.Lerp(4.56f, 7f, 1f - npc.life / (float)npc.lifeMax);
-            bool haltMovement = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
+            float walkSpeed = MathHelper.Lerp(3.45f, 5.8f, 1f - npc.life / (float)npc.lifeMax);
+            bool closeToTarget = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
             if (inPhase3)
             {
                 maxWalkTime -= 60;
@@ -322,9 +322,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 walkSpeed *= 2f;
             }
 
-            // Slow down and make the attack go by quicker if really close to the target.
-            if (haltMovement)
-                attackTimer += 5f;
+            // Make the attack go by quicker if really close to the target.
+            if (closeToTarget)
+                attackTimer += 4f;
 
             // Use walking frames.
             frameType = (int)DeerclopsFrameType.Walking;
@@ -334,7 +334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             if (attackTimer >= maxWalkTime)
                 SelectNextAttack(npc);
-            DoDefaultWalk(npc, target, walkSpeed, haltMovement);
+            DoDefaultWalk(npc, target, walkSpeed, false);
         }
 
         public static void DoBehavior_CreateIcicles(NPC npc, Player target, bool wideIcicles, bool inPhase2, ref float attackTimer, ref float frameType)

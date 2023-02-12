@@ -7,6 +7,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldSaveSystem : ModSystem
     {
+        private static bool infernumMode;
+
         public static int AbyssLayer1ForestSeed
         {
             get;
@@ -45,8 +47,16 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static bool InfernumMode
         {
-            get;
-            set;
+            get => infernumMode;
+            set
+            {
+                if (!value)
+                    CalamityBossHPBarChangesSystem.UndoBarChanges();
+                else
+                    CalamityBossHPBarChangesSystem.PerformBarChanges();
+
+                infernumMode = value;
+            }
         }
 
         public static Rectangle ProvidenceArena

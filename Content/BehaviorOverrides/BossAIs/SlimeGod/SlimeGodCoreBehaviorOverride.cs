@@ -1,6 +1,8 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.UI;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -80,6 +82,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGod = npc.whoAmI;
+
+            // Update the boss HP bar.
+            BossHealthBarManager.BossExclusionList.Remove(npc.type);
+
+            npc.boss = SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase;
+            npc.Calamity().CanHaveBossHealthBar = npc.boss;
+            npc.Calamity().ShouldCloseHPBar = !npc.boss;
 
             if (npc.ai[0] <= 1f)
             {

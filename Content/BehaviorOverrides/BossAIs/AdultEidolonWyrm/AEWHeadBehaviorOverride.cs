@@ -518,8 +518,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int attackDelay = HorizontalRayTerminus.RedirectTime + HorizontalRayTerminus.WingGrowTime;
             int ramTime = 42;
             int redirectTime = 12;
-            float chargeSpeed = 43f;
-            float chargeAcceleration = 1.05f;
+            float chargeSpeed = 36f;
+            float chargeAcceleration = 1.04f;
             float wrappedAttackTimer = (attackTimer - attackDelay) % (ramTime + redirectTime);
 
             lightFormInterpolant = Utils.GetLerpValue(0f, 32f, attackTimer, true) * Utils.GetLerpValue(-30f, -5f, HorizontalRayTerminus.Lifetime - attackTimer, true);
@@ -527,8 +527,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (attackTimer == 2f && !npc.WithinRange(target.Center, 400f))
             {
                 npc.velocity = npc.velocity.SafeNormalize(target.Center) * 10f;
+                npc.Center = npc.Center.MoveTowards(target.Center, 12f);
                 attackTimer = 1f;
             }
+
+            // Don't do damage if the laser hasn't been cast.
+            if (!Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusDeathray>()))
+                npc.damage = 0;
 
             // Summon the Terminus on the first frame.
             if (attackTimer == 2f)
@@ -550,7 +555,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (attackTimer < HorizontalRayTerminus.Lifetime - 96f)
             {
                 if (wrappedAttackTimer < redirectTime)
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.4f) * 0.98f;
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.3f) * 0.98f;
                 else if (npc.velocity.Length() < chargeSpeed)
                     npc.velocity *= chargeAcceleration;
             }

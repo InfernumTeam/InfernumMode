@@ -212,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int energyChargeTime = 106;
             int wingFlapRate = 50;
-            int boltReleaseRate = 30;
+            int attackCycleTime = 75;
             int boltCountPerBurst = 15;
             float time = Time - WingGrowTime - RedirectTime;
 
@@ -259,27 +259,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 wingFlapRate = 36;
                 float direction = Math.Abs(Projectile.velocity.X) >= 8f ? Math.Sign(Projectile.velocity.X) : (Target.Center.X > Projectile.Center.X).ToDirectionInt();
+                float wrappedAttackTimer = (time - energyChargeTime) % attackCycleTime;
+
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.UnitX * direction * 14f, 0.06f);
 
                 // Periodically release bolts.
-                if (time % boltReleaseRate == boltReleaseRate - 1f)
+                if (wrappedAttackTimer == 50f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.AEWIceBurst, Projectile.Center);
-                    if (Main.myPlayer == Projectile.owner)
-                    {
-                        int telegraphID = ModContent.ProjectileType<AEWTelegraphLine>();
-                        int boltID = ModContent.ProjectileType<DivineLightBolt>();
-                        for (int i = 0; i < boltCountPerBurst; i++)
-                        {
-                            Vector2 shootVelocity = (MathHelper.TwoPi * i / boltCountPerBurst).ToRotationVector2() * 2f;
+                    Projectile.ai[1] = Projectile.AngleTo(Target.Center);
+                    Projectile.netUpdate = true;
+                }
 
-                            int telegraph = Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, telegraphID, 0, 0f, -1, 0f, 30f);
-                            if (Main.projectile.IndexInRange(telegraph))
-                                Main.projectile[telegraph].localAI[1] = 1f;
+                if (Main.myPlayer == Projectile.owner && wrappedAttackTimer >= 50f && wrappedAttackTimer % 2f == 1f && (Target.Center.X > Projectile.Center.X).ToDirectionInt() == Math.Sign(Projectile.velocity.X))
+                {
+                    int telegraphID = ModContent.ProjectileType<AEWTelegraphLine>();
+                    int boltID = ModContent.ProjectileType<DivineLightBolt>();
+                    float offsetAngle = Utils.Remap(wrappedAttackTimer, 50f, 74f, -0.95f, 0.95f);
+                    Vector2 shootVelocity = (Projectile.ai[1] + offsetAngle).ToRotationVector2() * 3.6f;
 
-                            Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, boltID, AEWHeadBehaviorOverride.NormalShotDamage, 0f);
-                        }
-                    }
+                    int telegraph = Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, telegraphID, 0, 0f, -1, 0f, 45f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].localAI[1] = 1f;
+
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, boltID, AEWHeadBehaviorOverride.NormalShotDamage, 0f);
                 }
             }
 

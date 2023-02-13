@@ -39,6 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Commander and Defender combo attacks
             SpearDashAndGroundSlam,
+            LavaRaise,
             CrashRam,
 
             DefenderDeathAnimation,
@@ -1213,6 +1214,38 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
                 }
+            }
+        }
+
+        public static void DoBehavior_LavaRaise(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        {
+            float attackLength = 400f;
+            if (npc.type == CommanderType)
+            {
+                ref float lavaSpawned = ref npc.Infernum().ExtraAI[0];
+
+                if (lavaSpawned == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    lavaSpawned = 1;
+                    Vector2 position = new(WorldSaveSystem.ProvidenceDoorXPosition + 500f, (Main.maxTilesY * 16f) - 50f);
+                    Utilities.NewProjectileBetter(position, Vector2.Zero, ModContent.ProjectileType<ProfanedLavaWave>(), 500, 0f);
+                }
+
+                Vector2 hoverDestination = target.Center + new Vector2(0, -400f);
+
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 19f)) / 8f;
+
+                if (universalAttackTimer >= attackLength)
+                {
+                    SelectNewAttack(commander, ref universalAttackTimer, (float)GuardiansAttackType.LavaRaise);
+                }
+            }
+
+            else if (npc.type == DefenderType)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2(400, 0);
+
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 19f)) / 8f;
             }
         }
 

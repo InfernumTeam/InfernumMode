@@ -72,6 +72,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> Smoke => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Smoke");
 
+        public static Asset<Texture2D> SolidEdgeGradient => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient");
+
         public static Asset<Texture2D> Stars => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Stars");
 
         public static Asset<Texture2D> StreakBigBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/MegaStreakBacking");

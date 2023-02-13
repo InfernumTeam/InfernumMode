@@ -87,6 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             if (Timer < 30)
                 DrawLines(Main.spriteBatch);
+
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 1; i < Projectile.oldPos.Length; i++)
             {

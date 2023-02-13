@@ -17,13 +17,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public PrimitiveTrailCopy TelegraphDrawer { get; private set; } = null;
 
-        public static int Lifetime => (int)(180 + TelegraphLength);
+        public int Lifetime => (int)(MaxTime + TelegraphLength);
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public static float MaxLength => 4000f;
 
-        public static float TelegraphLength => 30;
+        public float TelegraphLength => BigVersion ? 60 : 30;
+
+        public float MaxTime => BigVersion? 300 : 180;
+
+        public bool BigVersion;
 
         public ref float Timer => ref Projectile.ai[0];
 
@@ -31,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float StretchOffset => ref Projectile.localAI[0];
 
-        public float Width => Projectile.width * 40f;
+        public float Width => BigVersion ? 400 : 160f;
 
         public float VariableWidth => Width * Utilities.EaseInOutCubic(CurrentLength / MaxLength);
 
@@ -47,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
-            Projectile.ignoreWater = false;
+            Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             CooldownSlot = 1;

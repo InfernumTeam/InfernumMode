@@ -116,6 +116,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_SpearDashAndGroundSlam(npc, target, ref attackTimer, commander);
                     break;
 
+                case GuardiansAttackType.LavaRaise:
+                    DoBehavior_LavaRaise(npc, target, ref attackTimer, commander);
+                    break;
+
                 case GuardiansAttackType.CrashRam:
                     DoBehavior_CrashRam(npc, target, ref attackTimer, commander);
                     break;

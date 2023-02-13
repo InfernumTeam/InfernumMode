@@ -37,6 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             BurningGaze,
             PsychicBlasts,
             DisintegratingBeam,
+            TerminusChase,
 
             // Dark attacks.
             ForbiddenUnleash,
@@ -147,6 +148,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.DisintegratingBeam:
                     DoBehavior_DisintegratingBeam(npc, target, ref attackTimer, ref lightFormInterpolant);
+                    break;
+                case AEWAttackType.TerminusChase:
+                    DoBehavior_TerminusChase(npc, target, ref attackTimer, ref lightFormInterpolant);
                     break;
                 case AEWAttackType.ForbiddenUnleash:
                     DoBehavior_ForbiddenUnleash(npc, target, ref attackTimer, ref hammerHeadRotation, ref darkFormInterpolant);
@@ -503,10 +507,58 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 lightOrbRadius *= 0.94f;
                 if (lightOrbRadius <= 3f)
                 {
-                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DivineLightOrb>());
-                    attackTimer = 0f;
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DivineLightOrb>(), ModContent.ProjectileType<DivineLightBolt>());
+                    SelectNextAttack(npc);
                 }
             }
+        }
+
+        public static void DoBehavior_TerminusChase(NPC npc, Player target, ref float attackTimer, ref float lightFormInterpolant)
+        {
+            int attackDelay = HorizontalRayTerminus.RedirectTime + HorizontalRayTerminus.WingGrowTime;
+            int ramTime = 42;
+            int redirectTime = 12;
+            float chargeSpeed = 43f;
+            float chargeAcceleration = 1.05f;
+            float wrappedAttackTimer = (attackTimer - attackDelay) % (ramTime + redirectTime);
+
+            lightFormInterpolant = Utils.GetLerpValue(0f, 32f, attackTimer, true) * Utils.GetLerpValue(-30f, -5f, HorizontalRayTerminus.Lifetime - attackTimer, true);
+
+            if (attackTimer == 2f && !npc.WithinRange(target.Center, 400f))
+            {
+                npc.velocity = npc.velocity.SafeNormalize(target.Center) * 10f;
+                attackTimer = 1f;
+            }
+
+            // Summon the Terminus on the first frame.
+            if (attackTimer == 2f)
+            {
+                SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.HolyRaySound, target.Center);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.7f);
+
+                if (Main.myPlayer == target.whoAmI)
+                    Utilities.NewProjectileBetter(npc.Top, Vector2.Zero, ModContent.ProjectileType<HorizontalRayTerminus>(), 0, 0f, target.whoAmI);
+            }
+
+            // Look at the player before attacking.
+            if (attackTimer < attackDelay)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.24f);
+                return;
+            }
+
+            if (attackTimer < HorizontalRayTerminus.Lifetime - 96f)
+            {
+                if (wrappedAttackTimer < redirectTime)
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.4f) * 0.98f;
+                else if (npc.velocity.Length() < chargeSpeed)
+                    npc.velocity *= chargeAcceleration;
+            }
+            else
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 9f, 0.12f);
+
+            if (attackTimer >= HorizontalRayTerminus.Lifetime - 30f)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_ForbiddenUnleash(NPC npc, Player target, ref float attackTimer, ref float hammerHeadRotation, ref float darkFormInterpolant)
@@ -964,11 +1016,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 nextAttack = AEWAttackType.SplitFormCharges;
             else if (currentAttack == AEWAttackType.SplitFormCharges)
                 nextAttack = AEWAttackType.BurningGaze;
-            else if (currentAttack == AEWAttackType.DisintegratingBeam)
-                nextAttack = AEWAttackType.DisintegratingBeam;
+            else if (currentAttack == AEWAttackType.TerminusChase)
+                nextAttack = AEWAttackType.TerminusChase;
 
             if (currentAttack == AEWAttackType.ThreateninglyHoverNearPlayer)
-                nextAttack = AEWAttackType.DisintegratingBeam;
+                nextAttack = AEWAttackType.TerminusChase;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

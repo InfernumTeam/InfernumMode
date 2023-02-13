@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.Sounds;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -9,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class AEWTelegraphLine : ModProjectile
+    public class AEWTelegraphLine : ModProjectile, IAboveWaterProjectileDrawer
     {
         public bool DarkForm
         {
@@ -58,16 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            float telegraphWidth = MathHelper.Lerp(0.3f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
-
-            // Draw a telegraph line outward.
-            Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
-            Main.spriteBatch.DrawLineBetter(start, end, DarkForm ? Color.Violet : Color.Yellow, telegraphWidth);
-            return false;
-        }
+        public override bool PreDraw(ref Color lightColor) => false;
 
         public override void Kill(int timeLeft)
         {
@@ -87,6 +80,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             Vector2 splitFormVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 18f;
             Utilities.NewProjectileBetter(Projectile.Center, splitFormVelocity, ModContent.ProjectileType<AEWSplitForm>(), AEWHeadBehaviorOverride.PowerfulShotDamage, 0f, -1, DarkForm.ToInt());
+        }
+
+        public void DrawAboveWater(SpriteBatch spriteBatch)
+        {
+            float telegraphWidth = MathHelper.Lerp(0.3f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
+
+            // Draw a telegraph line outward.
+            Vector2 start = Projectile.Center;
+            Vector2 end = start + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
+            Main.spriteBatch.DrawLineBetter(start, end, DarkForm ? Color.Violet : Color.Lerp(Color.Yellow, Color.Pink, 0.5f), telegraphWidth);
         }
     }
 }

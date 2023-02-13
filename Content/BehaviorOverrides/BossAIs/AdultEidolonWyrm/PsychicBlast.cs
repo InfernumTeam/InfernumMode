@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 90;
+            Projectile.Calamity().DealsDefenseDamage = true;
         }
 
         public override void AI()

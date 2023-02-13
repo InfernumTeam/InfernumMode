@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -150,5 +151,7 @@ namespace InfernumMode
 
         public static int NumberOfCombinations(int sizeOfSet, int totalToSelect) =>
             Factorial(sizeOfSet) / (Factorial(totalToSelect) * Factorial(sizeOfSet - totalToSelect));
+
+        public static float EndingHeight(this CalamityUtils.CurveSegment segment) => segment.startingHeight + segment.elevationShift;
     }
 }

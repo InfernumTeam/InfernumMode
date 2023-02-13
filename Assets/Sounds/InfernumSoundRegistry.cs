@@ -119,6 +119,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
 
+        public static readonly SoundStyle TerminusLaserbeamSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/TerminusLaserbeam") with { Volume = 1.75f };
+
         public static readonly SoundStyle ThanatosLightRay = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ThanatosLightRay");
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ThanatosTransition");

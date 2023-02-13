@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Fire the funny laser.
             if (time == energyChargeTime)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.TerminusLaserbeamSound, Target.Center);
 
                 if (Main.myPlayer == Projectile.owner)
                 {

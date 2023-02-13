@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 if (!doCircleAttack)
                 {
-                    hoverSpeedFactor = 1.6f;
+                    hoverSpeedFactor = 1.3f;
                     hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
                     hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
                 }
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
                 else
                 {
-                    if (wallAttackTimer % 28f == 27f && npc.WithinRange(hoverDestination, 80f) && wallAttackTimer % 1200f > 680f)
+                    if (wallAttackTimer % 36f == 35f && npc.WithinRange(hoverDestination, 80f) && wallAttackTimer % 1200f > 680f)
                     {
                         SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             // Move in sharp, sudden movements while releasing things at the target.
             Vector2 destination = Main.npc[Main.wofNPCIndex].Center;
-            destination += Main.npc[Main.wofNPCIndex].velocity.SafeNormalize(Vector2.UnitX).RotatedBy(destinationAngularOffset) * destinationOffset;
+            destination += Main.npc[Main.wofNPCIndex].velocity.SafeNormalize(Vector2.UnitX).RotatedBy(destinationAngularOffset) * new Vector2(1f, 0.65f) * destinationOffset;
 
             float maxSpeed = Utilities.AnyProjectiles(ModContent.ProjectileType<FireBeamWoF>()) ? 1.5f : 15f;
 

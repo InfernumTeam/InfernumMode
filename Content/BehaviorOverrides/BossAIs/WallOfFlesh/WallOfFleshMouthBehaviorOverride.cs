@@ -130,6 +130,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                     Main.npc[leech].velocity = npc.velocity * 1.25f;
             }
 
+            // Roar before beginning the eye laser bursts.
+            if (attackTimer % 1200f == 600f && lifeRatio < Phase2LifeRatio)
+                SoundEngine.PlaySound(SoundID.NPCDeath10, npc.position);
+
             return false;
         }
 
@@ -210,7 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
         {
             float verticalDestination = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2 - npc.height / 2;
-            float horizontalSpeed = MathHelper.Lerp(4.35f, 7.4f, 1f - lifeRatio);
+            float horizontalSpeed = MathHelper.Lerp(4.1f, 7.2f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 

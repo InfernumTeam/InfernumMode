@@ -160,12 +160,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public const int PowerfulShotDamage = 850;
 
-        public const float Phase2LifeRatio = 0.7f;
-
-        public const float Phase3LifeRatio = 0.45f;
-
-        public const float Phase4LifeRatio = 0.15f;
-
         public const int EyeGlowOpacityIndex = 5;
 
         public const int LightFormInterpolantIndex = 6;
@@ -181,6 +175,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const int CurrentPhaseIndex = 11;
 
         public const int EyeColorShiftInterpolant = 12;
+
+        public const float Phase2LifeRatio = 0.75f;
+
+        public const float Phase3LifeRatio = 0.45f;
+
+        public const float Phase4LifeRatio = 0.15f;
 
         public override bool PreAI(NPC npc)
         {
@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int chargeUpTime = 50;
             int chargeSoundDelay = 43;
-            int shotCount = 7;
+            int shotCount = 10;
 
             if (currentPhase >= 1f)
             {
@@ -1063,6 +1063,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 while (!Collision.CanHitLine(new Vector2(spinCenterX, spinCenterY), 1, 1, new Vector2(spinCenterX, spinCenterY + 900f), 1, 1))
                     spinCenterY -= 10f;
 
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(new(spinCenterX, spinCenterY), Vector2.Zero, ModContent.ProjectileType<CircleCenterTelegraph>(), 0, 0f);
+
                 npc.netUpdate = true;
             }
 
@@ -1087,7 +1090,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
 
             // Release spirals of crystals inward.
-            if (attackTimer % 3f == 0f)
+            if (attackTimer % 3f == 0f && attackTimer < attackDelay + spinTime)
             {
                 if (attackTimer % 24f == 0f)
                     SoundEngine.PlaySound(SoundID.Item9, target.Center);
@@ -1105,7 +1108,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 crystalShootOffsetAngle += spiralSpinRate;
             }
 
-            if (attackTimer >= attackDelay + spinTime)
+            // Spawn a lot of light bolts around the player if they leave the circle.
+            if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(new(spinCenterX, spinCenterY), spinRadius + 180f) && attackTimer % 60f == 59f)
+            {
+                int telegraphID = ModContent.ProjectileType<AEWTelegraphLine>();
+                int boltID = ModContent.ProjectileType<DivineLightBolt>();
+                for (float dx = -1500f; dx < 1500f; dx += 30f)
+                {
+                    int telegraph = Utilities.NewProjectileBetter(target.Center + new Vector2(dx, -1500f), Vector2.UnitY, telegraphID, 0, 0f, -1, 0f, 30f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].localAI[1] = 1f;
+                    telegraph = Utilities.NewProjectileBetter(target.Center + new Vector2(-1500f, dx), Vector2.UnitX, telegraphID, 0, 0f, -1, 0f, 30f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].localAI[1] = 1f;
+
+                    Utilities.NewProjectileBetter(target.Center + new Vector2(dx, -1500f), Vector2.UnitY * 8f, boltID, PowerfulShotDamage, 0f);
+                    Utilities.NewProjectileBetter(target.Center + new Vector2(-1500f, dx), Vector2.UnitX * 8f, boltID, PowerfulShotDamage, 0f);
+                }
+            }
+
+            if (attackTimer >= attackDelay + spinTime + 45f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ConvergingLumenylCrystal>());
                 SelectNextAttack(npc);

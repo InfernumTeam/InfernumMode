@@ -165,11 +165,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Wings become squished the faster they're moving, to give an illusion of 3D motion.
             float squishOffset = MathHelper.Min(0.7f, Math.Abs(rotationDifferenceMovingAverage) * 3.5f);
 
-            // Draw multiple instances of the wings. This includes afterimages based on how quickly they're flapping
+            // Draw multiple instances of the wings. This includes afterimages based on how quickly they're flapping.
             Vector2 scale = new Vector2(1f, 1f - squishOffset) * fadeInterpolant;
             for (int i = 4; i >= 0; i--)
             {
-                // Make wings slightly brighter when they're moving at a face angular pace.
+                // Make wings slightly brighter when they're moving at a fast angular pace.
                 Color wingColor = Color.Lerp(wingsDrawColor, wingsDrawColorWeak, i / 4f) * Utils.Remap(rotationDifferenceMovingAverage, 0f, 0.04f, 0.66f, 0.75f);
 
                 float rotationOffset = i * MathHelper.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;

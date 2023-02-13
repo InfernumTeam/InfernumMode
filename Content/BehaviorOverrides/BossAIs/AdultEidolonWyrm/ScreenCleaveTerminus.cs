@@ -6,21 +6,25 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Common.Graphics;
 using System;
 using CalamityMod.Particles;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria.Audio;
 using CalamityMod.Items.Tools;
-using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.WorldGeneration;
 using CalamityMod.World;
-using static CalamityMod.CalamityUtils;
+using CalamityMod.Sounds;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class HorizontalRayTerminus : BaseAttackingTerminusProjectile, IAboveWaterProjectileDrawer
+    public class ScreenCleaveTerminus : BaseAttackingTerminusProjectile, IAboveWaterProjectileDrawer
     {
         public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
         public override int WingCount => 1;
+
+        public Vector2 AimCenterPoint
+        {
+            get;
+            set;
+        }
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -39,13 +43,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static int WingGrowTime => 90;
 
-        public static int RedirectTime => 60;
-
-        public static int AttackTime => 420;
+        public static int AttackTime => 150;
 
         public static int ReturnToWyrmTime => 90;
 
-        public static int Lifetime => WingGrowTime + RedirectTime + AttackTime + ReturnToWyrmTime;
+        public static int Lifetime => WingGrowTime + AttackTime + ReturnToWyrmTime;
 
         public static NPC EidolonWyrm
         {
@@ -62,26 +64,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void AI()
         {
             // Disappear if the AEW is not present.
+            /*
             if (EidolonWyrm is null)
             {
                 Projectile.Kill();
                 return;
             }
+            */
 
             Time++;
-            if (Time >= Lifetime)
-                Projectile.Kill();
+            if (Time >= Lifetime - ReturnToWyrmTime)
+                Time = Lifetime - AttackTime - ReturnToWyrmTime;
 
             if (Time < WingGrowTime)
                 DoBehavior_RiseAndGrowWings();
-            else if (Time < WingGrowTime + RedirectTime)
-                DoBehavior_HoverToSideOfTarget();
-            else if (Time < WingGrowTime + RedirectTime + AttackTime)
+            else if (Time < WingGrowTime + AttackTime)
                 DoBehavior_AttackTarget();
             else
             {
                 // Fly away.
-                float time = Time - WingGrowTime - RedirectTime - AttackTime;
+                float time = Time - WingGrowTime - AttackTime;
                 float animationCompletion = time / 35f % 1f;
                 UpdateWings(WingMotionState.Flap, animationCompletion);
 
@@ -91,10 +93,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
 
             // Stay within the world.
+            /*
             if (Abyss.AtLeftSideOfWorld)
                 Projectile.position.X = MathHelper.Clamp(Projectile.position.X, 720f, AbyssWallWidth);
             else
                 Projectile.position.X = MathHelper.Clamp(Projectile.position.X, Main.maxTilesX - AbyssWallWidth, Main.maxTilesX - 720f);
+            */
             Projectile.rotation = (Projectile.position.X - Projectile.oldPosition.X) * 0.012f;
         }
 
@@ -108,24 +112,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.velocity = -Vector2.UnitY * (1f - WingsFadeInInterpolant) * 6f;
         }
 
-        public void DoBehavior_HoverToSideOfTarget()
-        {
-            float time = Time - WingGrowTime;
-            float animationCompletion = time / RedirectTime % 1f;
-            UpdateWings(WingMotionState.Flap, animationCompletion);
-
-            // Hover to the side of the target that's closest to an abyss wall.
-            Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X > AbyssCenterX).ToDirectionInt() * 450f, -300f);
-            Projectile.velocity = Vector2.UnitY * animationCompletion * 2.5f;
-            Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.12f);
-        }
-
         public void DoBehavior_AttackTarget()
         {
-            int energyChargeTime = 106;
+            int energyChargeTime = 50;
             int wingFlapRate = 50;
-            int attackCycleTime = 75;
-            float time = Time - WingGrowTime - RedirectTime;
+            int telegraphReleaseRate = 12;
+            float time = Time - WingGrowTime;
+            float hoverOffset = 1300f;
 
             // Make the runes fade in.
             RuneFadeInInterpolant = MathHelper.Clamp(RuneFadeInInterpolant + 0.03f, 0f, 1f);
@@ -134,7 +127,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (time < energyChargeTime)
             {
                 if (time == 1f)
+                {
                     SoundEngine.PlaySound(CrystylCrusher.ChargeSound, Target.Center);
+                    AimCenterPoint = Target.Center;
+                }
 
                 wingFlapRate = energyChargeTime / 2;
                 Projectile.velocity *= 0.94f;
@@ -149,63 +145,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Projectile.Center += Main.rand.NextVector2CircularEdge(1.8f, 1.8f);
             }
 
-            // Fire the funny laser.
-            if (time == energyChargeTime)
-            {
-                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Target.Center);
-
-                if (Main.myPlayer == Projectile.owner)
-                {
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
-                    {
-                        deathray.ModProjectile<TerminusDeathray>().OwnerIndex = Projectile.identity;
-                    });
-                    Utilities.NewProjectileBetter(Projectile.Bottom, Vector2.UnitY, ModContent.ProjectileType<TerminusDeathray>(), AEWHeadBehaviorOverride.PowerfulShotDamage, 0f, Projectile.owner, 0f, AttackTime - time);
-                    Projectile.netUpdate = true;
-                }
-            }
-
-            // Move towards the target.
+            // Move around the target.
             if (time >= energyChargeTime)
             {
-                wingFlapRate = 36;
-                float direction = Math.Abs(Projectile.velocity.X) >= 8f ? Math.Sign(Projectile.velocity.X) : (Target.Center.X > Projectile.Center.X).ToDirectionInt();
-                float wrappedAttackTimer = (time - energyChargeTime) % attackCycleTime;
+                Vector2 hoverDestination = AimCenterPoint + (MathHelper.TwoPi * (time - energyChargeTime) / (AttackTime - energyChargeTime)).ToRotationVector2() * hoverOffset;
+                Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.18f).MoveTowards(hoverDestination, 120f);
 
-                // Move horizontally.
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.UnitX * direction * 14f, 0.06f);
-
-                // Prepare the bolt barrage.
-                if (wrappedAttackTimer == attackCycleTime - 15f)
+                // Release telegraphs inward.
+                if (time % telegraphReleaseRate == telegraphReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.AEWIceBurst, Projectile.Center);
-                    Projectile.ai[1] = Projectile.AngleTo(Target.Center);
-                    Projectile.netUpdate = true;
-                }
-
-                // Release barrages of bolts in the general direction of the target that they must evade while trying to not get eaten by the AEW.
-                bool targetIsInFrontOfMe = (Target.Center.X > Projectile.Center.X).ToDirectionInt() == Math.Sign(Projectile.velocity.X);
-                if (Main.myPlayer == Projectile.owner && wrappedAttackTimer >= attackCycleTime - 15f && wrappedAttackTimer % 2f == 1f && targetIsInFrontOfMe)
-                {
-                    int telegraphID = ModContent.ProjectileType<AEWTelegraphLine>();
-                    int boltID = ModContent.ProjectileType<DivineLightBolt>();
-                    float offsetAngle = Utils.Remap(wrappedAttackTimer, attackCycleTime - 15f, attackCycleTime - 1f, -0.95f, 0.95f);
-                    Vector2 shootVelocity = (Projectile.ai[1] + offsetAngle).ToRotationVector2() * 3.6f;
-
-                    int telegraph = Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, telegraphID, 0, 0f, -1, 0f, 45f);
-                    if (Main.projectile.IndexInRange(telegraph))
-                        Main.projectile[telegraph].localAI[1] = 1f;
-
-                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, boltID, AEWHeadBehaviorOverride.NormalShotDamage, 0f);
+                    SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound, Target.Center);
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        float remainingTime = AttackTime - time + 16f;
+                        Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(AimCenterPoint), ModContent.ProjectileType<LightCleaveTelegraph>(), 0, 0f, -1, hoverOffset, remainingTime);
+                    }
                 }
             }
 
             // Flap wings.
             float animationCompletion = time / wingFlapRate % 1f;
             UpdateWings(WingMotionState.Flap, animationCompletion);
-
-            // Stay above the target to prevent just flying away from the laser.
-            Projectile.position.Y = MathHelper.Lerp(Projectile.position.Y, Target.Center.Y - 250f, 0.16f);
         }
         
         public override bool PreDraw(ref Color lightColor) => false;

@@ -73,9 +73,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                for (int i = 0; i < 35; i++)
+                for (int i = 0; i < 48; i++)
                 {
-                    Vector2 lightBoltVelocity = (MathHelper.TwoPi * i / 35f + shootOffsetAngle).ToRotationVector2() * 3f;
+                    Vector2 lightBoltVelocity = (MathHelper.TwoPi * i / 48f + shootOffsetAngle).ToRotationVector2() * 3f;
                     Utilities.NewProjectileBetter(Projectile.Center, lightBoltVelocity, ModContent.ProjectileType<DivineLightBolt>(), AEWHeadBehaviorOverride.StrongerNormalShotDamage, 0f, -1, 0f, 22f);
                 }
             }

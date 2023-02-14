@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 return Main.npc[aewIndex];
             }
         }
-
+        
         public override void AI()
         {
             // Disappear if the AEW is not present.

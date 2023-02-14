@@ -1,13 +1,18 @@
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
+using InfernumMode.Content.WorldGeneration;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Projectiles;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -16,12 +21,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.WorldGeneration;
-using System;
-using InfernumMode.Assets.ExtraTextures;
 using Terraria.Graphics.Shaders;
-using InfernumMode.Common.Graphics;
-using CalamityMod.Particles;
+using InfernumMode.Content.Achievements;
+using InfernumMode.Core.GlobalInstances.Players;
+using CalamityMod.Items.SummonItems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -50,7 +53,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             HammerheadRams,
 
             // Enrage attack.
-            RuthlesslyMurderTarget
+            RuthlesslyMurderTarget,
+
+            // Death animation state.
+            DeathAnimation
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmHead>();
@@ -160,6 +166,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public const int PowerfulShotDamage = 850;
 
+        public const int EnragedFormSegmentCount = 45;
+
+        public const int SegmentCount = 125;
+
         public const int EyeGlowOpacityIndex = 5;
 
         public const int LightFormInterpolantIndex = 6;
@@ -175,6 +185,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const int CurrentPhaseIndex = 11;
 
         public const int EyeColorShiftInterpolant = 12;
+
+        public const int DeathAnimationFadeCompletionInterpolantIndex = 13;
+
+        public const int TerminusDrawInterpolantIndex = 14;
 
         public const float Phase2LifeRatio = 0.75f;
 
@@ -199,15 +213,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             ref float eyeColorShiftInterpolant = ref npc.Infernum().ExtraAI[EyeColorShiftInterpolant];
             ref float currentPhase = ref npc.Infernum().ExtraAI[CurrentPhaseIndex];
 
+            // Create segments on the first frame of existence.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                int segmentCount = target.chaosState ? 45 : 125;
+                int segmentCount = target.chaosState ? EnragedFormSegmentCount : SegmentCount;
                 CreateSegments(npc, segmentCount, ModContent.NPCType<AdultEidolonWyrmBody>(), ModContent.NPCType<AdultEidolonWyrmBodyAlt>(), ModContent.NPCType<AdultEidolonWyrmTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
 
-            // If there still was no valid target, swim away.
+            // If there still was no valid target after the above search for one, swim away.
             float despawnDistance = attackType == (int)AEWAttackType.ShadowIllusions ? 40000f : 18000f;
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || !Main.player[npc.target].WithinRange(npc.Center, despawnDistance))
             {
@@ -227,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.defDamage = 600;
             npc.damage = npc.defDamage;
 
-            // This is necessary to allow the boss effects buff to be shown.
+            // This is necessary to allow the boss effects buff to be applied.
             npc.Calamity().KillTime = 1;
 
             // Why are you despawning?
@@ -292,6 +307,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case AEWAttackType.RuthlesslyMurderTarget:
                     DoBehavior_RuthlesslyMurderTarget(npc, target, ref attackTimer);
                     break;
+
+                // This isn't an attack, how kind of you to notice.
+                case AEWAttackType.DeathAnimation:
+                    npc.Opacity = 1f;
+                    if (npc.Infernum().ExtraAI[TerminusDrawInterpolantIndex] <= 0.5f)
+                    {
+                        darkFormInterpolant = Utils.GetLerpValue(15f, 90f, attackTimer, true) * 0.7f;
+                        lightFormInterpolant = MathHelper.Clamp(lightFormInterpolant - 0.05f, 0f, 1f);
+                    }
+                    else
+                    {
+                        lightFormInterpolant = MathHelper.Clamp(lightFormInterpolant + 0.04f, 0f, 0.2f);
+                        darkFormInterpolant = MathHelper.Clamp(darkFormInterpolant - 0.05f, 0f, 1f);
+                    }
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer);
+                    break;
             }
 
             // Determine rotation based on the current velocity.
@@ -306,7 +337,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (targetNeedsDeath)
                 superEnrageTimer++;
             if (superEnrageTimer >= 1800f)
-                target.KillMe(PlayerDeathReason.ByNPC(npc.whoAmI), 1000000D, 0);
+                target.KillMe(PlayerDeathReason.ByNPC(npc.whoAmI), 10000000D, 0);
 
             // Transform into a being of light if the super-enrage form is active.
             // This happens gradually under normal circumstances but is instantaneous if enraged with the RoD on the first frame.
@@ -1216,7 +1247,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.Opacity = 1f;
 
             // The target must die.
-            npc.damage = 12151215;
+            npc.damage = 1367750;
             npc.dontTakeDamage = true;
             npc.Calamity().ShouldCloseHPBar = true;
 
@@ -1224,6 +1255,73 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * swimSpeed, 0.1f);
             else
                 npc.velocity *= 1.1f;
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
+        {
+            int fadeStartTime = 30;
+            int fadeEndTime = 540;
+            ref float fadeCompletionInterpolant = ref npc.Infernum().ExtraAI[DeathAnimationFadeCompletionInterpolantIndex];
+            ref float terminusDrawInterpolant = ref npc.Infernum().ExtraAI[TerminusDrawInterpolantIndex];
+
+            void giveLoot()
+            {
+                npc.NPCLoot();
+                Main.BestiaryTracker.Kills.RegisterKill(npc);
+                AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
+                DownedBossSystem.downedAdultEidolonWyrm = true;
+            }
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+            npc.Calamity().ShouldCloseHPBar = true;
+            npc.Calamity().ProvidesProximityRage = false;
+
+            // Disable sounds.
+            npc.HitSound = npc.DeathSound = null;
+
+            if (attackTimer == 151f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.AEWDeathAnimationSound, target.Center);
+
+            // Slowly attempt to approach the target.
+            if (terminusDrawInterpolant <= 0f)
+            {
+                if (!npc.WithinRange(target.Center, 125f))
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 6f, 0.056f);
+                if (npc.velocity.Length() > 10f)
+                    npc.velocity *= 0.95f;
+
+                if (!npc.WithinRange(target.Center, 800f))
+                    npc.Center = npc.Center.MoveTowards(target.Center, 50f);
+            }
+            else if (terminusDrawInterpolant >= 1f)
+            {
+                npc.velocity = Vector2.UnitY * (float)Math.Sin(MathHelper.TwoPi * attackTimer / 240f) * 2f;
+
+                // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
+                if (attackTimer % 90f == 67f)
+                    Utilities.CreateShockwave(npc.Center, 1, 3, 18f, false);
+                if (attackTimer % 90f == 89f)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.TerminusPulseSound, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && target.WithinRange(npc.Center, 60f))
+                {
+                    giveLoot();
+                    Item.NewItem(npc.GetSource_Death(), npc.Center, ModContent.ItemType<Terminus>());
+                    npc.active = false;
+                }
+            }
+            else
+                npc.velocity *= 0.9f;
+
+            // Make the segments gradually fade away.
+            fadeCompletionInterpolant = Utils.GetLerpValue(fadeStartTime, fadeEndTime, attackTimer, true);
+            terminusDrawInterpolant = Utils.GetLerpValue(fadeEndTime, fadeEndTime + 95f, attackTimer, true);
+
+            // Clear projectiles.
+            Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AbyssalSoul>(), ModContent.ProjectileType<AEWSplitForm>(), ModContent.ProjectileType<ConvergingLumenylCrystal>(),
+                ModContent.ProjectileType<DivineLightBolt>(), ModContent.ProjectileType<DivineLightLaserbeam>(), ModContent.ProjectileType<HorizontalRayTerminus>(), ModContent.ProjectileType<PsychicBlast>());
         }
 
         #endregion Specific Behaviors
@@ -1380,9 +1478,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.frame = Rectangle.Empty;
                 return;
             }
-            
+
+            NPC head = Main.npc[npc.realLife];
+            float fadeCompletionInterpolant = head.Infernum().ExtraAI[DeathAnimationFadeCompletionInterpolantIndex];
+            float terminusDrawInterpolant = head.Infernum().ExtraAI[TerminusDrawInterpolantIndex];
+            int segmentToFadeAway = (int)Math.Round(SegmentCount * (1f - fadeCompletionInterpolant));
+            float deathAnimationOpacity = 1f;
+
+            // Make segments fade away over time.
+            if (fadeCompletionInterpolant > 0f)
+            {
+                // Segments that have already faded away stay invisible.
+                if (npc.ai[3] > segmentToFadeAway)
+                    deathAnimationOpacity = 0f;
+
+                // Segments that are in the process of fading away do so before disappearing.
+                else if (npc.ai[3] == segmentToFadeAway)
+                    deathAnimationOpacity = (float)Math.Pow(fadeCompletionInterpolant * SegmentCount % 1f, 2D);
+            }
+
             // Draw the segment.
-            AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+            Color drawColor = npc.GetAlpha(Color.White) * deathAnimationOpacity * (1f - terminusDrawInterpolant);
+            AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, drawPosition, npc.frame, drawColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
 
             // Hacky way of ensuring that PostDraw doesn't do anything.
             npc.frame = Rectangle.Empty;
@@ -1391,11 +1508,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public static void DrawHead(NPC npc, Color lightColor)
         {
             float hammerHeadRotation = npc.localAI[0];
+            float terminusDrawInterpolant = npc.Infernum().ExtraAI[TerminusDrawInterpolantIndex];
             Color currentEyeColor = GetCurrentPatternSet(npc).Keys.ElementAt((int)npc.Infernum().ExtraAI[PatternEyeIndexIndex]);
             Color previousEyeColor = GetCurrentPatternSet(npc).Keys.ElementAt((int)npc.Infernum().ExtraAI[PreviousPatternEyeIndexIndex]);
             Color eyeColor = Color.Lerp(previousEyeColor, currentEyeColor, npc.Infernum().ExtraAI[EyeColorShiftInterpolant]);
 
-            eyeColor *= npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex];
+            eyeColor *= npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex] * (1f - terminusDrawInterpolant);
             Texture2D backHeadTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWBackHead").Value;
             Texture2D backHeadGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWBackHeadGlow").Value;
             Texture2D hammerHeadTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/AEWHammerHeadSide").Value;
@@ -1405,8 +1523,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             void drawInstance(Vector2 drawPosition, Color? colorOverride = null)
             {
                 // Draw the back head.
-                Main.EntitySpriteDraw(backHeadTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0);
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(backHeadGlowmask, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0));
+                Main.EntitySpriteDraw(backHeadTexture, drawPosition, null, npc.GetAlpha(lightColor) * (1f - terminusDrawInterpolant), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0);
+                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(backHeadGlowmask, drawPosition, null, npc.GetAlpha(Color.White) * (1f - terminusDrawInterpolant), npc.rotation, backHeadTexture.Size() * 0.5f, npc.scale, 0, 0));
 
                 float moveBackInterpolant = Utils.GetLerpValue(0f, 0.3f, hammerHeadRotation, true) * 34f;
                 drawPosition += (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * backHeadTexture.Height * 0.5f;
@@ -1417,13 +1535,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Vector2 rightHeadOrigin = hammerHeadTexture.Size() * new Vector2(0f, 1f);
                 float leftHeadRotation = npc.rotation - hammerHeadRotation;
                 float rightHeadRotation = npc.rotation + hammerHeadRotation;
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
-                AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition - npc.velocity, null, eyeColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                Color generalColor = (colorOverride ?? npc.GetAlpha(Color.White)) * (1f - terminusDrawInterpolant);
 
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadTexture, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadGlowmask, drawPosition, null, colorOverride ?? npc.GetAlpha(Color.White), rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
-                AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition - npc.velocity, null, eyeColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                if (terminusDrawInterpolant < 1f)
+                {
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadTexture, drawPosition, null, generalColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadGlowmask, drawPosition, null, generalColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+                    AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition - npc.velocity, null, eyeColor, leftHeadRotation, leftHeadOrigin, npc.scale, 0, 0));
+
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadTexture, drawPosition, null, generalColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(hammerHeadGlowmask, drawPosition, null, generalColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                    AEWShadowFormDrawSystem.AEWEyesDrawCache.Add(new(eyesGlowmask, drawPosition - npc.velocity, null, eyeColor, rightHeadRotation, rightHeadOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0));
+                }
+
+                // Draw the terminus if necessary.
+                if (terminusDrawInterpolant > 0f)
+                {
+                    Texture2D terminusTexture = ModContent.Request<Texture2D>("CalamityMod/Items/SummonItems/Terminus").Value;
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(terminusTexture, npc.Center - Main.screenPosition, null, Color.White * (float)Math.Pow(terminusDrawInterpolant, 6D), 0f, terminusTexture.Size() * 0.5f, 1f, 0, 0));
+                }
             }
             drawInstance(npc.Center - Main.screenPosition);
         }
@@ -1461,6 +1591,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Main.spriteBatch.ExitShaderRegion();
         }
         #endregion Draw Effects
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            // Just die as usual if the wyrm is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.
+            if (npc.ai[0] == (int)AEWAttackType.DeathAnimation)
+                return true;
+
+            SelectNextAttack(npc);
+            npc.ai[0] = (int)AEWAttackType.DeathAnimation;
+            npc.life = npc.lifeMax;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
 

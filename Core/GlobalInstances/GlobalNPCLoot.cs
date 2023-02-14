@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -37,6 +38,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Items.Relics;
+using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -212,6 +214,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Yharon>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
+
+            if (npc.type == ModContent.NPCType<AdultEidolonWyrmHead>())
+                npcLoot.Add(ModContent.ItemType<EvokingSearune>());
 
             bool isExoMech = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<AresBody>();
             if (isExoMech)

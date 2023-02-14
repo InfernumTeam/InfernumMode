@@ -1317,7 +1317,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Make the segments gradually fade away.
             fadeCompletionInterpolant = Utils.GetLerpValue(fadeStartTime, fadeEndTime, attackTimer, true);
-            terminusDrawInterpolant = Utils.GetLerpValue(fadeEndTime, fadeEndTime + 95f, attackTimer, true);
+
+            // Transform into the Terminus if not already defeated.
+            // If already defeated simply disspear and give loot.
+            if (!DownedBossSystem.downedAdultEidolonWyrm)
+                terminusDrawInterpolant = Utils.GetLerpValue(fadeEndTime, fadeEndTime + 95f, attackTimer, true);
+            else
+            {
+                npc.Opacity = Utils.GetLerpValue(fadeEndTime + 95f, fadeEndTime, attackTimer, true);
+                if (npc.Opacity <= 0f)
+                {
+                    giveLoot();
+                    npc.active = false;
+                }
+            }
 
             // Clear projectiles.
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AbyssalSoul>(), ModContent.ProjectileType<AEWSplitForm>(), ModContent.ProjectileType<ConvergingLumenylCrystal>(),

@@ -32,6 +32,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
+        public static MiscShaderData LavaVertexShader => GameShaders.Misc["Infernum:LavaShader"];
         public static MiscShaderData LinearTransformationVertexShader => GameShaders.Misc["Infernum:LinearTransformation"];
         public static MiscShaderData NecroplasmicRoarShader => GameShaders.Misc["Infernum:NecroplasmicRoar"];
         public static MiscShaderData MechsIntroLetterShader => GameShaders.Misc["Infernum:MechsIntro"];
@@ -87,6 +88,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> lavaShader = new(assets.Request<Effect>("Assets/Effects/LavaShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:LavaShader"] = new MiscShaderData(lavaShader, "WaterPass");
+
             Ref<Effect> telegraphShader = new(assets.Request<Effect>("Assets/Effects/TelegraphShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:TelegraphShader"] = new MiscShaderData(telegraphShader, "TrailPass");
 

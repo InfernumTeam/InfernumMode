@@ -1219,15 +1219,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DoBehavior_LavaRaise(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
-            float attackLength = 400f;
+            float attackLength = 600f;
             if (npc.type == CommanderType)
             {
                 ref float lavaSpawned = ref npc.Infernum().ExtraAI[0];
+                ref float localAttackTimer = ref npc.Infernum().ExtraAI[1];
 
                 if (lavaSpawned == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     lavaSpawned = 1;
-                    Vector2 position = new(WorldSaveSystem.ProvidenceDoorXPosition + 500f, (Main.maxTilesY * 16f) - 50f);
+                    Vector2 position = new(WorldSaveSystem.ProvidenceDoorXPosition + 1500f, (Main.maxTilesY * 16f) - 50f);
                     Utilities.NewProjectileBetter(position, Vector2.Zero, ModContent.ProjectileType<ProfanedLavaWave>(), 500, 0f);
                 }
 
@@ -1235,17 +1236,58 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 19f)) / 8f;
 
-                if (universalAttackTimer >= attackLength)
-                {
+                if (localAttackTimer >= attackLength)
                     SelectNewAttack(commander, ref universalAttackTimer, (float)GuardiansAttackType.LavaRaise);
-                }
+
+                localAttackTimer++;
             }
 
+            // The defender dives into the lava, creating a splash. It dives out in a arcing motion aimed at the player, leaving behind a lingering
+            // lava trail.
             else if (npc.type == DefenderType)
             {
-                Vector2 hoverDestination = target.Center + new Vector2(400, 0);
+                ref float substate = ref npc.Infernum().ExtraAI[0];
 
-                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 19f)) / 8f;
+                float lavaRisingDelay = ProfanedLavaWave.MoveTime + ProfanedLavaWave.TelegraphTime;
+                float recoilWait = 10f;
+                float recoilLength = 30f;
+
+                float initialFlySpeed = 19f;
+
+                npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+                switch (substate)
+                {
+                    // Hover to the right of the target.
+                    case 0:                       
+                        Vector2 hoverDestination = target.Center + new Vector2(300, 0);
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), initialFlySpeed)) / 8f;
+
+                        if (universalAttackTimer >= lavaRisingDelay)
+                        {
+                            universalAttackTimer = 0;
+                            substate++;
+                        }
+                        break;
+
+                    // Raise up slightly.
+                    case 1:
+                        npc.velocity.X *= 0.8f;
+
+                        if (universalAttackTimer == recoilWait)
+                            npc.velocity.Y = -3.2f;
+
+                        else if (universalAttackTimer >= recoilWait + recoilLength)
+                        {
+                            universalAttackTimer = 0f;
+                            substate++;
+                        }
+                        break;
+
+                    // Dive down into the lava.
+                    case 2:
+
+                        break;
+                }
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
+sampler uImage2 : register(s2);
+sampler uImage3 : register(s3);
 float3 uColor;
 float3 uSecondaryColor;
 float uOpacity;
@@ -12,8 +14,21 @@ float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
+float2 uImageSize2;
+float2 uImageSize3;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
+
+float lavaSpeed;
+float lavaStretch;
+float lavaScale;
+float2 lavaRemap;
+float voronoiSpeed;
+float voronoiScale;
+float voronoiAmount;
+float noiseSpeed;
+float noisePower;
+float noiseAmount;
 
 struct VertexShaderInput
 {
@@ -41,29 +56,21 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
     return output;
 }
 
+// The X coordinate is the trail completion, the Y coordinate is the same as any other.
+// This is simply how the primitive TextCoord is layed out in the C# code.
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-    float innerBrightnessIntensity = 2.7;
-    float4 color = input.Color;
     float2 coords = input.TextureCoordinates;
+    float4 color = input.Color;
     
-    float bloomOpacity = pow(cos(coords.y * 4.8 - 0.9), 2000);
+    float noise = tex2D(uImage1, float2(frac(coords.x - uTime * 0.05), frac(coords.y * 3 - uTime * 0.05))).r;
     
-    // Create some noisy opaque blotches in the inner part of the trail.
-    if (coords.y > 0.15 && coords.y < 0.85)
-    {
-        float minOpacity = pow(1 - sin(coords.y * 3.141) + tex2D(uImage1, coords * 1.1 + float2(uTime * -0.2, 0)).r * 2.2, 0.2);
-        bloomOpacity += lerp(0.04, 0.3, minOpacity);
-    }
-    
-    bloomOpacity *= 0.05 * innerBrightnessIntensity + 1;
-    
-    return color * lerp(0, 3.6, bloomOpacity * pow(coords.x, 0.1)) * pow(1 - coords.x, 1.1) * uOpacity;
+    return lerp(color, float4(uColor, 1), noise);
 }
 
 technique Technique1
 {
-    pass TrailPass
+    pass WaterPass
     {
         VertexShader = compile vs_2_0 VertexShaderFunction();
         PixelShader = compile ps_2_0 PixelShaderFunction();

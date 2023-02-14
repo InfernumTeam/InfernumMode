@@ -37,13 +37,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             ThreateninglyHoverNearPlayer,
 
             // Light attacks.
-            // AbyssalNightmareRitual,
             BurningGaze,
-            PsychicBlasts,
             DisintegratingBeam,
             TerminusChase,
 
             // Dark attacks.
+            AbyssalNightmareRitual,
             ForbiddenUnleash,
             ShadowIllusions,
 
@@ -74,14 +73,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             [Color.Cyan] = new AEWAttackType[]
             {
                 AEWAttackType.BurningGaze,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.BurningGaze,
             },
             [Color.Yellow] = new AEWAttackType[]
             {
                 AEWAttackType.CrystalConstriction,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.HammerheadRams,
             },
@@ -99,21 +98,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             [Color.Cyan] = new AEWAttackType[]
             {
                 AEWAttackType.BurningGaze,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.ForbiddenUnleash,
             },
             [Color.Yellow] = new AEWAttackType[]
             {
                 AEWAttackType.CrystalConstriction,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.HammerheadRams,
             },
             [Color.Violet] = new AEWAttackType[]
             {
                 AEWAttackType.CrystalConstriction,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.ForbiddenUnleash,
                 AEWAttackType.HammerheadRams,
             },
@@ -133,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.DisintegratingBeam,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
             },
             [Color.Violet] = new AEWAttackType[]
             {
@@ -151,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 AEWAttackType.TerminusChase,
                 AEWAttackType.DisintegratingBeam,
                 AEWAttackType.TerminusChase,
-                AEWAttackType.PsychicBlasts,
+                AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.TerminusChase,
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.TerminusChase,
@@ -239,7 +238,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Reset various things every frame.
             npc.dontTakeDamage = false;
-            npc.defDamage = 600;
+            npc.defDamage = 550;
             npc.damage = npc.defDamage;
 
             // This is necessary to allow the boss effects buff to be applied.
@@ -274,9 +273,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case AEWAttackType.BurningGaze:
                     DoBehavior_BurningGaze(npc, target, currentPhase, ref attackTimer);
                     break;
-                case AEWAttackType.PsychicBlasts:
-                    DoBehavior_PsychicBlasts(npc, target, currentPhase, ref attackTimer, ref lightFormInterpolant);
-                    break;
                 case AEWAttackType.DisintegratingBeam:
                     DoBehavior_DisintegratingBeam(npc, target, currentPhase, ref attackTimer, ref lightFormInterpolant);
                     break;
@@ -285,6 +281,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
 
                 // Dark attacks.
+                case AEWAttackType.AbyssalNightmareRitual:
+                    DoBehavior_AbyssalNightmareRitual(npc, target, currentPhase, ref attackTimer, ref darkFormInterpolant);
+                    break;
                 case AEWAttackType.ForbiddenUnleash:
                     DoBehavior_ForbiddenUnleash(npc, target, currentPhase, ref attackTimer, ref hammerHeadRotation, ref darkFormInterpolant);
                     break;
@@ -776,6 +775,109 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (attackTimer >= HorizontalRayTerminus.Lifetime - 30f)
                 SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_AbyssalNightmareRitual(NPC npc, Player target, float currentPhase, ref float attackTimer, ref float darkFormInterpolant)
+        {
+            int fadeOutTime = 60;
+            int chargeTime = 132;
+            int returnToTargetTime = 50;
+            int chargeCount = 2;
+            float demonUpwardChargeSpeed = 19f;
+            float mainWyrmUpwardChargeSpeed = 39f;
+            float demonSpacing = 400f;
+
+            if (currentPhase >= 1f)
+                demonSpacing -= 40f;
+            if (currentPhase >= 2f)
+            {
+                fadeOutTime -= 4;
+                chargeTime -= 10;
+            }
+            if (currentPhase >= 3f)
+            {
+                fadeOutTime -= 5;
+                chargeTime -= 5;
+                demonSpacing -= 25f;
+            }
+
+            Vector2 wyrmSpawnPoint = target.Center + Vector2.UnitY * 2000f;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            void createWyrms(float horizontalOffset)
+            {
+                for (float dx = -1900f; dx < 1900f; dx += demonSpacing)
+                {
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                    {
+                        telegraph.ModProjectile<AEWTelegraphLine>().CreateSplitAEW = false;
+                    });
+                    Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset), -Vector2.UnitY, ModContent.ProjectileType<AEWTelegraphLine>(), 0, 0f, -1, 1f, 50f);
+                    Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset + 85f), -Vector2.UnitY * demonUpwardChargeSpeed, ModContent.ProjectileType<AEWNightmareWyrm>(), StrongerNormalShotDamage, 0f, -1);
+                }
+            }
+
+            // Disappear before attacking.
+            if (attackTimer < fadeOutTime)
+            {
+                npc.damage = 0;
+                npc.Opacity = Utils.GetLerpValue(fadeOutTime - 4f, 0f, attackTimer, true);
+                npc.dontTakeDamage = true;
+                darkFormInterpolant = 1f - npc.Opacity;
+            }
+            else
+                npc.Opacity = 1f;
+
+            // Teleport below the target and charge.
+            if (attackTimer == fadeOutTime)
+            {
+                npc.Center = wyrmSpawnPoint;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * mainWyrmUpwardChargeSpeed;
+
+                // Bring the segments to the teleport position.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (!n.active || (n.type != ModContent.NPCType<AdultEidolonWyrmBody>() && n.type != ModContent.NPCType<AdultEidolonWyrmBodyAlt>() && n.type != ModContent.NPCType<AdultEidolonWyrmTail>()))
+                        continue;
+
+                    n.Center = npc.Center;
+                    n.netUpdate = true;
+                }
+
+                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                    {
+                        telegraph.ModProjectile<AEWTelegraphLine>().CreateSplitAEW = false;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center), ModContent.ProjectileType<AEWTelegraphLine>(), 0, 0f, -1, 1f, 30f);
+                    createWyrms(0f);
+                }
+            }
+
+            if (attackTimer == fadeOutTime + 67f)
+                createWyrms(150f);
+
+            // Move towards the target after charging.
+            if (attackTimer >= fadeOutTime + chargeTime)
+            {
+                if (!npc.WithinRange(target.Center, 900f))
+                    npc.Center = npc.Center.MoveTowards(target.Center, 20f);
+                if (!npc.WithinRange(target.Center, 120f))
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 14f, 0.1f);
+            }
+
+            if (attackTimer >= fadeOutTime + chargeTime + returnToTargetTime)
+            {
+                chargeCounter++;
+                attackTimer = 0f;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_ForbiddenUnleash(NPC npc, Player target, float currentPhase, ref float attackTimer, ref float hammerHeadRotation, ref float darkFormInterpolant)

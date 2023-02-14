@@ -1,6 +1,7 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -9,16 +10,17 @@ namespace InfernumMode.Common.Graphics
 {
     public class Primitive3DStrip
     {
+        internal VertexHeightFunction HeightFunction;
+
+        internal VertexColorFunction ColorFunction;
+
+        internal Asset<Texture2D> BandTexture;
+
+        internal BasicEffect BaseEffect;
+
         public delegate float VertexHeightFunction(float completionRatio);
-        public delegate Vector2 VertexOffsetFunction(float completionRatio);
+
         public delegate Color VertexColorFunction(float completionRatio);
-
-        public VertexHeightFunction HeightFunction;
-        public VertexColorFunction ColorFunction;
-        public VertexOffsetFunction OffsetFunction;
-
-        public bool UsesSmoothening;
-        public BasicEffect BaseEffect;
 
         public Primitive3DStrip(VertexHeightFunction heightFunction, VertexColorFunction colorFunction)
         {
@@ -41,6 +43,8 @@ namespace InfernumMode.Common.Graphics
             BaseEffect.View = effectView;
             BaseEffect.Projection = effectProjection;
         }
+
+        public void UseBandTexture(Asset<Texture2D> bandTexture) => BandTexture = bandTexture;
 
         internal VertexPositionColorTexture[] CalculateVertices(Vector2 left, Vector2 right, float textureScrollSpeed, float verticalWobble, float wobblePhaseShift)
         {
@@ -96,7 +100,9 @@ namespace InfernumMode.Common.Graphics
             UpdateBaseEffect(out _, out _);
 
             Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            BaseEffect.Texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols").Value;
+
+            if (BandTexture is not null)
+                BaseEffect.Texture = BandTexture.Value;
             BaseEffect.CurrentTechnique.Passes[0].Apply();
 
             var vertices = CalculateVertices(left, right, textureScrollSpeed, verticalWobble, wobblePhaseShift);

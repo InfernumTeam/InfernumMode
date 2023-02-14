@@ -144,6 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Vector2 left = Projectile.Center - Vector2.UnitX * 60f - Main.screenPosition;
             Vector2 right = Projectile.Center + Vector2.UnitX * 60f - Main.screenPosition;
             RuneStripDrawer ??= new(RuneHeightFunction, RuneColorFunction);
+            RuneStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
 
             Main.instance.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             RuneStripDrawer.Draw(left, right, 0.3f, 4f, Main.GlobalTimeWrappedHourly * 2f);

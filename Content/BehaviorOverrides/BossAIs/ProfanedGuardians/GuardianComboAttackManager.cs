@@ -1219,7 +1219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DoBehavior_LavaRaise(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
-            float attackLength = 600f;
+            float attackLength = 1800f;
             if (npc.type == CommanderType)
             {
                 ref float lavaSpawned = ref npc.Infernum().ExtraAI[0];
@@ -1242,15 +1242,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 localAttackTimer++;
             }
 
-            // The defender dives into the lava, creating a splash. It dives out in a arcing motion aimed at the player, leaving behind a lingering
-            // lava trail.
+            // The defender dives onto the lava, and surfs along it on its shield, jumping out at the player before falling back down towards it.
             else if (npc.type == DefenderType)
             {
                 ref float substate = ref npc.Infernum().ExtraAI[0];
+                ref float initialDirection = ref npc.Infernum().ExtraAI[1];
+                ref float surfSpeed = ref npc.Infernum().ExtraAI[2];
+                ref float surfSubstate = ref npc.Infernum().ExtraAI[3];
+
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
 
                 float lavaRisingDelay = ProfanedLavaWave.MoveTime + ProfanedLavaWave.TelegraphTime;
                 float recoilWait = 10f;
                 float recoilLength = 30f;
+                float diveSpeed = 30f;
+                float jumpTime = 90f;
 
                 float initialFlySpeed = 19f;
 
@@ -1259,7 +1265,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // Hover to the right of the target.
                     case 0:                       
-                        Vector2 hoverDestination = target.Center + new Vector2(300, 0);
+                        Vector2 hoverDestination = target.Center + new Vector2(600, 0);
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), initialFlySpeed)) / 8f;
 
                         if (universalAttackTimer >= lavaRisingDelay)
@@ -1285,7 +1291,81 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Dive down into the lava.
                     case 2:
+                        Vector2 hoverPosition = new(npc.Center.X, GetLavaWaveHeightFromWorldBottom(npc) - npc.height);
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), diveSpeed)) / 8f;
 
+                        // Generate the shield if it is inactive.
+                        if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
+                        {
+                            // Mark the shield as active.
+                            shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(shield => shield.ModProjectile<DefenderShield>().PositionOffset = Vector2.UnitY * 60f);
+                                Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                            }
+                        }
+
+                        if (npc.WithinRange(hoverPosition, 30f))
+                        {
+                            universalAttackTimer = 0f;
+                            substate++;
+                        }
+                        break;
+
+                    // Surf along the surface of the lava.
+                    case 3:
+                        float currentLavaHeight = GetLavaWaveHeightFromWorldBottom(npc);
+
+                        npc.Center = new(npc.Center.X, currentLavaHeight - npc.height);
+                        if (initialDirection == 0)
+                            initialDirection = npc.Center.X > target.Center.X ? 1 : -1;
+
+                        float currentDirection = npc.Center.X > target.Center.X ? 1 : -1;
+
+                        //if (currentDirection != initialDirection)
+                        //{
+                        //    npc.velocity.X -= npc.velocity.X > 0f ? 0.01f : -0.01f;
+
+                        //    if (Math.Abs(npc.velocity.X) <= 3f)
+                        //        initialDirection = npc.Center.X > target.Center.X ? 1 : -1;
+                        //}
+                        switch (surfSubstate)
+                        {
+                            case 0:
+                                if (currentDirection != initialDirection)
+                                    surfSpeed = MathHelper.Clamp(surfSpeed - 0.15f, 0f, 17f);
+                                else
+                                    surfSpeed = MathHelper.Clamp(surfSpeed + 0.2f, 0f, 17f);
+
+                                if (surfSpeed <= 0.5f)
+                                {
+                                    surfSubstate++;
+                                    initialDirection = npc.Center.X > target.Center.X ? 1 : -1;
+                                }
+                                break;
+
+                            case 1:
+                                surfSpeed = MathHelper.Clamp(surfSpeed + 0.2f, 0f, 17f);
+                                if (surfSpeed >= 17f)
+                                {
+                                    surfSubstate = 0f;
+                                    //initialDirection = npc.Center.X > target.Center.X ? 1 : -1;
+                                }
+                                break;
+                        }
+
+                        npc.velocity.X = -initialDirection * surfSpeed;
+
+                        if (MathF.Abs(npc.Center.X - target.Center.X) < 200f && universalAttackTimer > jumpTime)
+                        {
+                            //universalAttackTimer = 0f;
+                            //substate++;
+                        }
+                        break;
+
+                    // Leap out at the target.
+                    case 4:
                         break;
                 }
             }
@@ -1815,6 +1895,40 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region AI Utilities
+        public static float GetLavaWaveHeightFromWorldBottom(NPC defender)
+        {
+            ProfanedLavaWave lavaWave = null;
+            for (int i = 0; i < Main.projectile.Length; i++)
+            {
+                Projectile proj = Main.projectile[i];
+                if (proj.ModProjectile is null)
+                    continue;
+
+                if (proj.type == ModContent.ProjectileType<ProfanedLavaWave>() && proj.active && proj.ModProjectile is ProfanedLavaWave lava)
+                {
+                    lavaWave = lava;
+                    break;
+                }
+            }
+
+            if (lavaWave is null)
+                return 0f;
+            else
+            {
+                // Get both bounds.
+                float rightMostX = lavaWave.Projectile.Center.X;
+                float leftMostX = rightMostX - lavaWave.Length;
+                // Make them go from 0 at the left to the max length at the right.
+                rightMostX -= leftMostX;
+                leftMostX -= leftMostX;
+                // Get the npcs x position with the same offset.
+                float npcX = defender.Center.X - leftMostX;
+                // Get the 0-1 ratio of it between the bounds and clamp it.
+                float xPositionRatio = Math.Clamp(npcX - rightMostX, 0f, 1f);
+                return lavaWave.OffsetFunction(xPositionRatio).Y + ((Main.maxTilesY * 16f) - 50f) - lavaWave.WaveHeight;
+            }
+        }
+
         public static void HandleMusicSyncStuff(NPC commander)
         {
             ref float musicTimer = ref commander.Infernum().ExtraAI[MusicTimerIndex];

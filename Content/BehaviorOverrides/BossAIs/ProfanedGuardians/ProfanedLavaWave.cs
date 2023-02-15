@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public PrimitiveTrailCopy TelegraphDrawer = null;
         public PrimitiveTrailCopy LavaDrawer = null;
 
-        public int Lifetime = 600;
+        public int Lifetime = 1800;
 
         public static float TelegraphTime = 45f;
 
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return Color.Lerp(WayfinderSymbol.Colors[1], Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 1f), sine);
         }
 
-        internal Vector2 OffsetFunction(float completionRatio) => new Vector2(0f, WaveHeight / MaxHeight) * (float)Math.Sin(completionRatio * 300 + Main.GlobalTimeWrappedHourly * 4f) * 20f;
+        internal Vector2 OffsetFunction(float completionRatio) => new Vector2(0f, WaveHeight / MaxHeight) * (float)Math.Sin(completionRatio * 300 + Main.GlobalTimeWrappedHourly * 4f) * 60f;
 
         internal float TelegraphWidthFunction(float completionRatio) => MaxHeight * 1.45f;
 

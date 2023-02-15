@@ -9,7 +9,7 @@ using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Projectiles;
+using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -194,6 +194,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const float Phase3LifeRatio = 0.45f;
 
         public const float Phase4LifeRatio = 0.15f;
+
+        public static Color LoreTooltipColor => new(107, 101, 180);
 
         public override bool PreAI(NPC npc)
         {

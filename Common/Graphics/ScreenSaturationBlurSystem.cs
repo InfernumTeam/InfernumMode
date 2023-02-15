@@ -13,14 +13,13 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using System.Diagnostics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
-using InfernumMode.Core.GlobalInstances.Systems;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using MonoMod.Cil;
 using Mono.Cecil.Cil;
+using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -89,11 +88,11 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
-            IL.Terraria.Main.DoDraw += LetEffectsDrawOnStupidLightSettings;
+            IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             Main.OnPreDraw += PrepareBlurEffects;
         }
 
-        private void LetEffectsDrawOnStupidLightSettings(ILContext il)
+        private void LetEffectsDrawOnBudgetLightSettings(ILContext il)
         {
             ILCursor c = new(il);
 
@@ -113,7 +112,7 @@ namespace InfernumMode.Common.Graphics
         [DebuggerHidden]
         private void HandleDrawMainThreadQueue(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
         {
-            while (DrawActionQueue.TryDequeue(out Action a))
+            while (DrawActionQueue is not null && DrawActionQueue.TryDequeue(out Action a))
                 a();
             
             orig(self, gameTime);
@@ -173,6 +172,7 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             AEWShadowFormDrawSystem.DrawTarget();
+            ShadowIllusionDrawSystem.DrawTarget();
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

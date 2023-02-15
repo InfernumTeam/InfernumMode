@@ -12,7 +12,7 @@ using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Common.Graphics;
 
-namespace InfernumMode.Projectiles
+namespace InfernumMode.Content.Projectiles
 {
     public class TerminusAnimationProj : ModProjectile
     {

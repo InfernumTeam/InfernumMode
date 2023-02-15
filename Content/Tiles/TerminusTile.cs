@@ -1,6 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Projectiles;
+using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

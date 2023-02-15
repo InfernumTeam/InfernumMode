@@ -2,7 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Projectiles;
+using InfernumMode.Content.Projectiles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

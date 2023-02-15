@@ -102,7 +102,7 @@ namespace InfernumMode.Common.Graphics
             c.GotoPrev(MoveType.After, i => i.MatchStloc(out localIndex));
 
             c.Emit(OpCodes.Ldloc, localIndex);
-            c.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs);
+            c.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs && !Main.mapFullscreen);
             c.Emit(OpCodes.Or);
             c.Emit(OpCodes.Stloc, localIndex);
         }
@@ -157,7 +157,7 @@ namespace InfernumMode.Common.Graphics
             DrawAEW();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
                 Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 

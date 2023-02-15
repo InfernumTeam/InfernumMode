@@ -324,6 +324,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
             }
 
+            lightFormInterpolant *= 0.98f;
+            darkFormInterpolant *= 0.98f;
+
             // Determine rotation based on the current velocity.
             if (npc.velocity != Vector2.Zero && npc.velocity.Length() > 0.01f)
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -382,6 +385,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
             // Transition to the next attack if there are no more Terminus instances.
             if (terminusInstances.Count <= 0)
             {
@@ -410,6 +417,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int attackTransitionDelay = 210;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 450f, -360f);
             ref float hasReachedDestination = ref npc.Infernum().ExtraAI[0];
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
 
             // Attempt to hover to the top left/right of the target at first.
             if (hasReachedDestination == 0f)
@@ -446,10 +457,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void DoBehavior_BurningGaze(NPC npc, Player target, float currentPhase, ref float attackTimer)
         {
-            int boltShootDelay = 30;
-            int boltCountPerBurst = 5;
+            int boltShootDelay = 36;
+            int boltCountPerBurst = 7;
             int telegraphTime = 30;
-            int boltShotCount = 9;
+            int boltShotCount = 7;
             float boltShootSpeed = 1.6f;
 
             if (currentPhase >= 1f)
@@ -524,7 +535,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         // Be careful when adjusting the range of the offset angle. If it isn't just right then the attack might be invalidated by just literally
                         // standing still and letting the bolts fly away.
-                        float shootOffsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / (float)(boltCountPerBurst - 1f));
+                        float shootOffsetAngle = MathHelper.Lerp(-0.85f, 0.85f, i / (float)(boltCountPerBurst - 1f));
                         Vector2 leftVelocity = npc.SafeDirectionTo(left).RotatedBy(shootOffsetAngle) * boltShootSpeed;
                         Vector2 rightVelocity = npc.SafeDirectionTo(right).RotatedBy(shootOffsetAngle) * boltShootSpeed;
 
@@ -554,79 +565,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
-        public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float currentPhase, ref float attackTimer, ref float lightFormInterpolant)
-        {
-            int chargeUpTime = 50;
-            int chargeSoundDelay = 43;
-            int shotCount = 10;
-
-            if (currentPhase >= 1f)
-            {
-                chargeUpTime -= 4;
-                chargeSoundDelay -= 4;
-                shotCount--;
-            }
-            if (currentPhase >= 2f)
-            {
-                chargeUpTime -= 5;
-                chargeSoundDelay -= 5;
-            }
-            if (currentPhase >= 3f)
-            {
-                chargeUpTime -= 5;
-                chargeSoundDelay -= 5;
-            }
-
-            float wrappedAttackTimer = attackTimer % chargeUpTime;
-            float idealBrightness = (float)Math.Pow(wrappedAttackTimer / chargeUpTime, 2.4);
-            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Charge at the target.
-            if (!npc.WithinRange(target.Center, 160f))
-            {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 13f, 0.08f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.1f);
-            }
-            else
-                npc.velocity *= 1.07f;
-
-            if (shootCounter >= shotCount)
-            {
-                if (attackTimer >= 150f)
-                    SelectNextAttack(npc);
-                return;
-            }
-
-            // Make the brightness rapidly approach the ideal.
-            lightFormInterpolant = MathHelper.Lerp(lightFormInterpolant, idealBrightness, 0.16f);
-
-            // Play a charge-up sound before firing.
-            if (wrappedAttackTimer == chargeUpTime - chargeSoundDelay)
-                SoundEngine.PlaySound(InfernumSoundRegistry.AEWEnergyCharge with { Volume = 2f });
-
-            // Release a psychic blast.
-            if (wrappedAttackTimer == chargeUpTime - 1f)
-            {
-                SoundEngine.PlaySound(SoundID.Item73, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 blastVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 19f;
-                    Utilities.NewProjectileBetter(npc.Center + blastVelocity * 4f, blastVelocity, ModContent.ProjectileType<PsychicBlast>(), PowerfulShotDamage, 0f);
-                    shootCounter++;
-                    if (shootCounter >= shotCount)
-                    {
-                        attackTimer = 0f;
-                        npc.netUpdate = true;
-                    }
-                }
-            }
-        }
-
         public static void DoBehavior_DisintegratingBeam(NPC npc, Player target, float currentPhase, ref float attackTimer, ref float lightFormInterpolant)
         {
             int hoverTime = 90;
             int laserShootTime = DivineLightLaserbeam.LifetimeConst;
-            int perpendicularBoltShootRate = 30;
+            int perpendicularBoltShootRate = 42;
             float spinAngularVelocity = MathHelper.Pi / 180f;
             float perpendicularLaserSpacing = 184f;
 
@@ -674,11 +617,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 lightOrbRadius = MathHelper.Lerp(lightOrbRadius, 108f, 0.04f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 6f, 0.084f);
+                if (!npc.WithinRange(target.Center, 450f))
+                    npc.Center = npc.Center.MoveTowards(target.Center, Utils.GetLerpValue(449f, 600f, npc.Distance(target.Center), true) * 8f);
 
                 // Cast the light laserbeam.
                 if (attackTimer == hoverTime)
                 {
-                    Utilities.CreateShockwave(npc.Center);
+                    Utilities.CreateShockwave(npc.Center, 2, 8, 75, false);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.TerminusLaserbeamSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Utilities.NewProjectileBetter(lightOrbCenter, npc.velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<DivineLightLaserbeam>(), PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
@@ -718,7 +664,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 lightOrbRadius *= 0.94f;
                 if (lightOrbRadius <= 3f)
                 {
-                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DivineLightOrb>(), ModContent.ProjectileType<DivineLightBolt>());
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DivineLightOrb>());
                     SelectNextAttack(npc);
                 }
             }
@@ -944,7 +890,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         List<Vector2> telegraphPoints = new();
                         Vector2 telegraphVelocity = soulBurstVelocity;
                         Vector2 telegraphPosition = soulSpawnPosition;
-                        for (int j = 0; j < 108; j++)
+                        for (int j = 0; j < 72; j++)
                         {
                             if (j % 2 == 0)
                                 telegraphPoints.Add(telegraphPosition);
@@ -1063,6 +1009,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     darkFormInterpolant = MathHelper.Clamp(darkFormInterpolant - 0.02f, 0f, 1f);
                     npc.velocity = ((target.Center - npc.Center) * 0.01f).ClampMagnitude(2f, 40f);
 
+                    if (!npc.WithinRange(target.Center, 1000f))
+                        npc.Center = npc.Center.MoveTowards(target.Center, 100f);
+
                     if (attackTimer >= 150f)
                         SelectNextAttack(npc);
 
@@ -1074,13 +1023,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int swimTime = 105;
             int telegraphTime = 42;
-            int chargeTime = 45;
-            int chargeCount = 5;
+            int chargeTime = 46;
+            int chargeCount = 3;
 
             if (currentPhase >= 3f)
             {
                 telegraphTime -= 5;
-                chargeTime -= 6;
+                chargeTime -= 3;
             }
 
             int attackCycleTime = telegraphTime + chargeTime;
@@ -1368,7 +1317,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             void giveLoot()
             {
-                npc.NPCLoot();
+                npc.life = 0;
+                npc.checkDead();
                 Main.BestiaryTracker.Kills.RegisterKill(npc);
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
                 DownedBossSystem.downedAdultEidolonWyrm = true;
@@ -1624,8 +1574,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             float hammerHeadRotation = npc.localAI[0];
             float terminusDrawInterpolant = npc.Infernum().ExtraAI[TerminusDrawInterpolantIndex];
-            Color currentEyeColor = GetCurrentPatternSet(npc).Keys.ElementAt((int)npc.Infernum().ExtraAI[PatternEyeIndexIndex]);
-            Color previousEyeColor = GetCurrentPatternSet(npc).Keys.ElementAt((int)npc.Infernum().ExtraAI[PreviousPatternEyeIndexIndex]);
+
+            var eyeColorList = GetCurrentPatternSet(npc).Keys;
+            if (npc.Infernum().ExtraAI[PatternEyeIndexIndex] >= eyeColorList.Count)
+                npc.Infernum().ExtraAI[PatternEyeIndexIndex] = 0f;
+            if (npc.Infernum().ExtraAI[PreviousPatternEyeIndexIndex] >= eyeColorList.Count)
+                npc.Infernum().ExtraAI[PreviousPatternEyeIndexIndex] = 0f;
+
+            Color currentEyeColor = eyeColorList.ElementAt((int)npc.Infernum().ExtraAI[PatternEyeIndexIndex]);
+            Color previousEyeColor = eyeColorList.ElementAt((int)npc.Infernum().ExtraAI[PreviousPatternEyeIndexIndex]);
             Color eyeColor = Color.Lerp(previousEyeColor, currentEyeColor, npc.Infernum().ExtraAI[EyeColorShiftInterpolant]);
 
             eyeColor *= npc.Opacity * npc.Infernum().ExtraAI[EyeGlowOpacityIndex] * (1f - terminusDrawInterpolant);

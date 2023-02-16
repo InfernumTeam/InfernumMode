@@ -123,7 +123,7 @@ namespace InfernumMode.Content.Skies
             }
 
             // Grief section.
-            if (CalamityGlobalNPC.SCalEpiphany == CalamityGlobalNPC.SCal)
+            if (CalamityGlobalNPC.SCalEpiphany == CalamityGlobalNPC.SCal && CalamityGlobalNPC.SCalAcceptance != CalamityGlobalNPC.SCal)
             {
                 var epiphany = splitMusicPointsIntoSections(Epiphany_HighPoints.Select(s => s.Key).ToList()).Where(m => m.Item2 >= songTime);
                 if (epiphany.Any() && songTime >= epiphany.First().Item1 && songTime <= epiphany.First().Item2)

@@ -9,7 +9,6 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Core;
 
 namespace InfernumMode.Core.TrackedMusic
 {
@@ -62,6 +61,9 @@ namespace InfernumMode.Core.TrackedMusic
 
             foreach (string path in CustomTrackPaths)
             {
+                if (Main.netMode == NetmodeID.Server)
+                    break;
+
                 string modName = path.Split('/').First();
                 if (!ModLoader.TryGetMod(modName, out Mod mod))
                     continue;

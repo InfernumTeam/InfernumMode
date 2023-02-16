@@ -61,7 +61,7 @@ namespace InfernumMode.Common.Graphics
 
         internal static void PrepareAEWTargets(GameTime obj)
         {
-            if (Main.gameMenu || ShadowDrawTarget.IsDisposed)
+            if (Main.gameMenu || ShadowDrawTarget.IsDisposed || !Utilities.AnyProjectiles(ModContent.ProjectileType<ShadowIllusion>()))
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(ShadowDrawTarget);
@@ -108,9 +108,6 @@ namespace InfernumMode.Common.Graphics
 
         public static void DrawTarget()
         {
-            if (!Utilities.AnyProjectiles(ModContent.ProjectileType<ShadowIllusion>()))
-                return;
-            
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["lightFormInterpolant"].SetValue(0f);
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["darkFormInterpolant"].SetValue(1f);
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["actualSize"].SetValue(ShadowDrawTarget.Size());

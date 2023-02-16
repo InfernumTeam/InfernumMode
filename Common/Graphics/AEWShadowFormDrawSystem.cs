@@ -72,7 +72,7 @@ namespace InfernumMode.Common.Graphics
 
         internal static void PrepareAEWTargets(GameTime obj)
         {
-            if (Main.gameMenu || AEWDrawTarget.IsDisposed)
+            if (Main.gameMenu || AEWDrawTarget.IsDisposed || !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()))
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(AEWDrawTarget);

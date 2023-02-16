@@ -380,7 +380,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             int minHoverTime = 45;
             int maxHoverTime = 270;
-            int upwardChargeTime = 66;
+            int upwardChargeTime = 57;
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
             float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
@@ -400,6 +400,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             ref float chargeAngularVelocity = ref npc.Infernum().ExtraAI[0];
             ref float reachedDestination = ref npc.Infernum().ExtraAI[1];
+
+            // Create a weird sound as the attack starts.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(SoundID.Zombie63, target.Center);
 
             // Hover to the bottom left/right of the target.
             if (attackTimer < maxHoverTime)
@@ -456,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 SoundEngine.PlaySound(SoundID.Item122, npc.Center);
 
-                npc.velocity = Vector2.UnitY * -upwardChargeSpeed;
+                npc.velocity = Vector2.UnitY.RotateRandom(0.32f) * -upwardChargeSpeed;
                 chargeAngularVelocity = (target.Center.X > npc.Center.X).ToDirectionInt() * upwardChargeSpinArc / upwardChargeTime;
                 npc.netUpdate = true;
 
@@ -539,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 530f, -50f);
                 if (!npc.WithinRange(hoverDestination, 50f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.4f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.54f);
             }
 
             // Slow down for a moment.

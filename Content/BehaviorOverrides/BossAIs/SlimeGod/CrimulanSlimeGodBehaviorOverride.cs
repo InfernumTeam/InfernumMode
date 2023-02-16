@@ -57,6 +57,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             npc.noGravity = false;
             npc.noTileCollide = false;
 
+            // Initialize on the first frame.
+            if (npc.ai[3] == 0f)
+            {
+                npc.scale = SlimeGodComboAttackManager.BigSlimeBaseScale;
+                npc.ai[3] = 1f;
+            }
+
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
 

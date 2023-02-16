@@ -71,13 +71,13 @@ namespace InfernumMode
             int y = (int)(topLeft.Y / 16f);
             for (int i = x; i < x + width / 16; i++)
             {
-                for (int j = y; j < y + width / 16; j++)
+                for (int j = y; j < y + height / 16; j++)
                 {
                     Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
                     if (!t.HasUnactuatedTile)
                         continue;
 
-                    if (t.TileType == TileID.Platforms)
+                    if (t.TileType == TileID.Platforms || TileID.Sets.Platforms[t.TileType])
                         return true;
                 }
             }

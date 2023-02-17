@@ -77,6 +77,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public const float BigSlimeBaseScale = 1.5f;
 
+        public const float CoreBaseScale = 1.3f;
+
         public static void InheritAttributesFromLeader(NPC npc)
         {
             bool needsToPickNewAttack = false;

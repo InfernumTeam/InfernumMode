@@ -21,16 +21,15 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using AresPlasmaFireballInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode;
 using InfernumMode.Core.GlobalInstances.Systems;
 using System.IO;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
+using AresPlasmaFireballInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {

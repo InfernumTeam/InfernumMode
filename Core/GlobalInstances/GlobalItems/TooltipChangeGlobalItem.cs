@@ -22,8 +22,8 @@ namespace InfernumMode.GlobalInstances.GlobalItems
         public static Dictionary<int, string> EnrageTooltipReplacements => new()
         {
             [ModContent.ItemType<DecapoditaSprout>()] = "Enrages outside of the Mushroom biome",
-            [ItemID.WormFood] = "Enrages outside of the Corruption",
-            [ItemID.BloodySpine] = "Enrages outside of the Crimson",
+            [ItemID.WormFood] = "Enrages outside of the Corruption\n",
+            [ItemID.BloodySpine] = "Enrages outside of the Crimson\n",
             [ModContent.ItemType<Teratoma>()] = "Enrages outside of the Corruption",
             [ModContent.ItemType<BloodyWormFood>()] = "Enrages outside of the Crimson",
             [ItemID.MechanicalEye] = null,
@@ -94,7 +94,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             if (InfernumMode.CanUseCustomAIs && item.type == ItemID.LihzahrdPowerCell)
             {
                 string summoningText = "Summons Golem when used at the Lihzhard Altar\n" +
-                    "Golem summons rectangular arena around the altar\n" +
+                    "Golem summons a rectangular arena around the altar\n" +
                     "If the altar is inside of the temple solid tiles within the arena are broken";
                 replaceTooltipText("Tooltip0", summoningText);
             }

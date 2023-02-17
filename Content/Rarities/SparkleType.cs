@@ -9,6 +9,7 @@
         VassalSparkle,
         CodeSymbols,
         RedLightningSparkle,
-        PuritySparkle
+        PuritySparkle,
+        MusicNotes
     }
 }

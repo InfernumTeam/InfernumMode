@@ -1164,7 +1164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer == laserTelegraphTime)
             {
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
-                target.Calamity().GeneralScreenShakePower = 10f;
+                target.Calamity().GeneralScreenShakePower = 12f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f, -1, 0f, laserLifetime);
             }
@@ -1655,7 +1655,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     break;
             }
             while ((float)nextAttack == attackState || (float)nextAttack == previousAttackState2);
-            nextAttack = GolemAttackState.SpinLaser;
 
             previousAttackState2 = previousAttackState;
             previousAttackState = attackState;

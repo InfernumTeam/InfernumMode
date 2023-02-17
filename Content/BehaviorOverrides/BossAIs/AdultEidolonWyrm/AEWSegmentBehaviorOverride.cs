@@ -1,10 +1,13 @@
 using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm.AEWHeadBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -50,6 +53,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * segmentOffset;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
+
+            // Emit light effects before disappearing.
+            float fadeCompletionInterpolant = head.Infernum().ExtraAI[DeathAnimationFadeCompletionInterpolantIndex];
+            int segmentToFadeAway = (int)Math.Round(SegmentCount * (1f - fadeCompletionInterpolant));
+            if (fadeCompletionInterpolant > 0f && fadeCompletionInterpolant < 1f && npc.ai[3] == segmentToFadeAway)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Color lightColor = Color.Lerp(Color.HotPink, Color.Red, Main.rand.NextFloat(0.1f, 0.7f));
+                    Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Circular(60f, 60f);
+                    Vector2 lightVelocity = -directionToNextSegment.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(1f, 3f);
+                    SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, Main.rand.NextFloat(0.4f, 0.5f), lightColor, 64, 1.6f);
+                    GeneralParticleHandler.SpawnParticle(light);
+                }
+            }
         }
         
         public override bool PreAI(NPC npc)
@@ -60,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
+            DrawSegment(npc, lightColor);
             return false;
         }
     }
@@ -77,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
+            DrawSegment(npc, lightColor);
             return false;
         }
     }
@@ -94,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            AEWHeadBehaviorOverride.DrawSegment(npc, lightColor);
+            DrawSegment(npc, lightColor);
             return false;
         }
     }

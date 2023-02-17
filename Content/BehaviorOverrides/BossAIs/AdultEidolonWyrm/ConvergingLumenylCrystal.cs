@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Time++;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.9f;
+        public override bool? CanDamage() => Projectile.timeLeft < 350;
 
         public override Color? GetAlpha(Color lightColor) => new Color(255, 108, 50, 0) * Projectile.Opacity;
 

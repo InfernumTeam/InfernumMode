@@ -2,8 +2,6 @@ using CalamityMod.Cooldowns;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BossBars;
 using InfernumMode.Content.BossIntroScreens;
-using InfernumMode.Content.Items;
-using InfernumMode.Core;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -24,13 +22,21 @@ namespace InfernumMode
 
         internal static Mod CalamityMod = null;
 
+        internal static Mod InfernumMusicMod = null;
+
         internal static Mod FargosMutantMod = null;
 
         internal static Mod FargowiltasSouls = null;
 
         internal static Mod PhaseIndicator = null;
 
-        internal static bool CanUseCustomAIs => WorldSaveSystem.InfernumMode;
+        public static bool MusicModIsActive
+        {
+            get;
+            private set;
+        }
+
+        public static bool CanUseCustomAIs => WorldSaveSystem.InfernumMode;
 
         public static float BlackFade
         {
@@ -67,6 +73,7 @@ namespace InfernumMode
             ModLoader.TryGetMod("Fargowiltas", out FargosMutantMod);
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
+            MusicModIsActive = ModLoader.TryGetMod("InfernumModeMusic", out InfernumMusicMod);
 
             BalancingChangesManager.Load();
             Main.RunOnMainThread(HookManager.Load);

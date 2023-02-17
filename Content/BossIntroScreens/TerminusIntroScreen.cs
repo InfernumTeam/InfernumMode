@@ -1,5 +1,5 @@
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Projectiles;
+using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

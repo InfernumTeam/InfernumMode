@@ -15,6 +15,8 @@ namespace InfernumMode.Assets.Sounds
 
         #region Bosses and Enemies
 
+        public static readonly SoundStyle AEWDeathAnimationSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWDeathAnimation") with { Volume = 1.6f };
+
         public static readonly SoundStyle AEWEnergyCharge = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWEnergyCharge") with { Volume = 1.5f };
 
         public static readonly SoundStyle AEWIceBurst = new("InfernumMode/Assets/Sounds/Custom/AEW/AEWIceBurst");
@@ -118,6 +120,10 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronHeadBonk");
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
+
+        public static readonly SoundStyle TerminusLaserbeamSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/TerminusLaserbeam") with { Volume = 1.75f };
+
+        public static readonly SoundStyle TerminusPulseSound = new("InfernumMode/Assets/Sounds/Custom/AEW/TerminusPulse");
 
         public static readonly SoundStyle ThanatosLightRay = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ThanatosLightRay");
 

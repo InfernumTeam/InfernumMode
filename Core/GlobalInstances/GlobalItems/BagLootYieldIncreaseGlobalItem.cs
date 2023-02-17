@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.Items.TreasureBags.MiscGrabBags;
+using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Pets;
 using Terraria;
 using Terraria.ID;
@@ -21,9 +22,12 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 infLCR.Add(itemID, 1, quantity, quantity + 1);
             }
 
-            // Starter bags provide the Blasted Tophat.
+            // Starter bags provide the Blasted Tophat and Soul-Driven Headphones.
             if (item.type == ModContent.ItemType<StarterBag>())
+            {
                 loot.Add(ModContent.ItemType<BlastedTophat>());
+                loot.Add(ModContent.ItemType<SoulDrivenHeadphones>());
+            }
 
             // The Eater of Worlds and Brain of Cthulhu both drop 125 extra ore and 50 extra scales/tissue samples.
             if (item.type == ItemID.EaterOfWorldsBossBag)

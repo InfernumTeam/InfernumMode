@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
@@ -127,6 +128,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 936000,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2960000 : 1776500,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 3076000 : 1840000,
+            [ModContent.NPCType<AdultEidolonWyrmHead>()] = 1675000,
             [ModContent.NPCType<ThanatosHead>()] = 2400000,
             [ModContent.NPCType<AresBody>()] = 2250000,
             [ModContent.NPCType<Artemis>()] = 2400000,

@@ -13,11 +13,13 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using System.Diagnostics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
-using InfernumMode.Core.GlobalInstances.Systems;
+using CalamityMod.NPCs.AdultEidolonWyrm;
+using MonoMod.Cil;
+using Mono.Cecil.Cil;
+using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics
 {
@@ -86,7 +88,22 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
+            IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             Main.OnPreDraw += PrepareBlurEffects;
+        }
+
+        private void LetEffectsDrawOnBudgetLightSettings(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            int localIndex = 0;
+            c.GotoNext(i => i.MatchCallOrCallvirt<FilterManager>("BeginCapture"));
+            c.GotoPrev(MoveType.After, i => i.MatchStloc(out localIndex));
+
+            c.Emit(OpCodes.Ldloc, localIndex);
+            c.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs && !Main.mapFullscreen);
+            c.Emit(OpCodes.Or);
+            c.Emit(OpCodes.Stloc, localIndex);
         }
 
         // Due to how universal this method is for the game's draw logic, it's inconvenient to have VS' debugger randomly say that the orig Draw method is being called, as that
@@ -95,7 +112,7 @@ namespace InfernumMode.Common.Graphics
         [DebuggerHidden]
         private void HandleDrawMainThreadQueue(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
         {
-            while (DrawActionQueue.TryDequeue(out Action a))
+            while (DrawActionQueue is not null && DrawActionQueue.TryDequeue(out Action a))
                 a();
             
             orig(self, gameTime);
@@ -139,6 +156,8 @@ namespace InfernumMode.Common.Graphics
             DrawAEW();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
+                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 
         internal static void DrawAdditiveCache()
@@ -153,6 +172,7 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             AEWShadowFormDrawSystem.DrawTarget();
+            ShadowIllusionDrawSystem.DrawTarget();
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

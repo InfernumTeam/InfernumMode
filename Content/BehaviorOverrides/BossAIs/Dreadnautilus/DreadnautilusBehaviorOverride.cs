@@ -172,7 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public static void DoBehavior_BloodSpitToothBalls(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
-            int shootCycleTime = 62;
+            int shootCycleTime = 51;
             int shootPrepareTime = 30;
             int shotCount = 3;
 
@@ -380,11 +380,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             int minHoverTime = 45;
             int maxHoverTime = 270;
-            int upwardChargeTime = 66;
+            int upwardChargeTime = 57;
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
             float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, 180f);
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 400f, 180f);
 
             if (phase2)
             {
@@ -400,6 +400,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             ref float chargeAngularVelocity = ref npc.Infernum().ExtraAI[0];
             ref float reachedDestination = ref npc.Infernum().ExtraAI[1];
+
+            // Create a weird sound as the attack starts.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(SoundID.Zombie63, target.Center);
 
             // Hover to the bottom left/right of the target.
             if (attackTimer < maxHoverTime)
@@ -456,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 SoundEngine.PlaySound(SoundID.Item122, npc.Center);
 
-                npc.velocity = Vector2.UnitY * -upwardChargeSpeed;
+                npc.velocity = Vector2.UnitY.RotateRandom(0.32f) * -upwardChargeSpeed;
                 chargeAngularVelocity = (target.Center.X > npc.Center.X).ToDirectionInt() * upwardChargeSpinArc / upwardChargeTime;
                 npc.netUpdate = true;
 
@@ -537,9 +541,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             // Hover into position prior to firing.
             if (attackTimer < shootDelay)
             {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 530f, -50f);
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 436f, -50f);
                 if (!npc.WithinRange(hoverDestination, 50f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.4f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 15f, 0.54f);
             }
 
             // Slow down for a moment.
@@ -658,7 +662,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 blood.color = Color.Red;
 
                 // Do damage and become temporarily invulnerable. This is done to prevent dash-cheese.
-                npc.damage = npc.defDamage + 40;
+                npc.damage = npc.defDamage + 15;
                 npc.dontTakeDamage = true;
             }
             else
@@ -681,7 +685,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             int totalBatsToSummon = 15;
             int batAttackTime = SanguineBat.Lifetime;
             int attackTransitionDelay = 90;
-            int bloodBurstReleaseRate = 24;
+            int bloodBurstReleaseRate = 30;
             int bloodBurstCycleTime = 90;
             ref float bloodBurstShootCounter = ref npc.Infernum().ExtraAI[0];
 

@@ -15,6 +15,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 
 namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 {
@@ -41,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             ref float isHostile = ref npc.Infernum().ExtraAI[5];
 
             // Reset things.
-            npc.dontTakeDamage = false;
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
             npc.chaseable = isHostile == 1f;
 
             // Don't naturally despawn if in silent worship.

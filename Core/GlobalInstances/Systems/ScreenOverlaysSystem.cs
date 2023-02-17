@@ -183,7 +183,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         internal static void DrawAboveWaterProjectiles()
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IAboveWaterProjectileDrawer drawer)

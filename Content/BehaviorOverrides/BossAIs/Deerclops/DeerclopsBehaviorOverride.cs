@@ -98,6 +98,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public const int DragPortalAppearInterpolantIndex = 11;
 
+        public const int ContactDamageDelayCountdownIndex = 12;
+
         public const int ShadowHandSpinTime = 150;
 
         public const int ShadowHandReelbackTime = 54;
@@ -133,6 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             ref float shadowFormP3Interpolant = ref npc.Infernum().ExtraAI[ShadowFormPhase3InterpolantIndex];
             ref float dragPortalCenterY = ref npc.Infernum().ExtraAI[DragPortalCenterYIndex];
             ref float dragPortalAppearInterpolant = ref npc.Infernum().ExtraAI[DragPortalAppearInterpolantIndex];
+            ref float contactDamageDelayCountdown = ref npc.Infernum().ExtraAI[ContactDamageDelayCountdownIndex];
 
             // Reset things.
             radiusDecreaseInterpolant = 0f;
@@ -141,6 +144,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             npc.noTileCollide = false;
             npc.dontTakeDamage = false;
             npc.chaseable = true;
+            npc.damage = npc.defDamage;
+
+            if (contactDamageDelayCountdown > 0f)
+            {
+                npc.damage = 0;
+                contactDamageDelayCountdown--;
+            }
+
             npc.Calamity().DR = 0.15f;
 
             // Constantly give the target Weak Pertrification in boss rush.
@@ -232,6 +243,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                         DoBehavior_TransitionToNextPhase(npc, target, ref attackTimer, ref frameType, ref shadowFormInterpolant);
                     else
                         DoBehavior_TransitionToNextPhase(npc, target, ref attackTimer, ref frameType, ref shadowFormP3Interpolant);
+                    contactDamageDelayCountdown = 90f;
                     break;
                 case DeerclopsAttackState.FeastclopsEyeLaserbeam:
                     DoBehavior_FeastclopsEyeLaserbeam(npc, target, inPhase3, ref attackTimer, ref frameType);
@@ -610,6 +622,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             int fadeToShadowTime = 36;
             int roarTime = 56;
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             // Slow down.
             if (attackTimer <= fadeToShadowTime)
             {
@@ -760,6 +775,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             }
 
             npc.chaseable = false;
+            npc.damage = 0;
             npc.Calamity().DR = 0.6f;
             npc.dontTakeDamage = true;
 
@@ -834,6 +850,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
                 }
+
+                // Delete leftover projectiles.
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), ModContent.ProjectileType<GroundIcicleSpike>(), ModContent.ProjectileType<SpinningShadowHand>(), ProjectileID.DeerclopsRangedProjectile);
             }
 
             // Make the portal appear.

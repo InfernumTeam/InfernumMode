@@ -54,6 +54,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumPurityRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumSoulDrivenHeadphonesRarity>())
+                {
+                    InfernumSoulDrivenHeadphonesRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

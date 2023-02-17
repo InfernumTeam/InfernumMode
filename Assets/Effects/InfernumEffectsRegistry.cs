@@ -37,6 +37,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData NecroplasmicRoarShader => GameShaders.Misc["Infernum:NecroplasmicRoar"];
         public static MiscShaderData MechsIntroLetterShader => GameShaders.Misc["Infernum:MechsIntro"];
         public static MiscShaderData MoonLordBGDistortionShader => GameShaders.Misc["Infernum:MoonLordBGDistortion"];
+        public static MiscShaderData NoiseDisplacementShader => GameShaders.Misc["Infernum:NoiseDisplacement"];
         public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
         public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
@@ -210,6 +211,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> teleportShader = new(assets.Request<Effect>("Assets/Effects/TeleportShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:Teleport"] = new MiscShaderData(teleportShader, "HologramPass");
+
+            Ref<Effect> noiseDisplacementShader = new(assets.Request<Effect>("Assets/Effects/NoiseDisplacement", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:NoiseDisplacement"] = new MiscShaderData(noiseDisplacementShader, "GlitchPass");
         }
 
         public static void LoadScreenShaders(AssetRepository assets)

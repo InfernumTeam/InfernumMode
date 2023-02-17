@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             ref float stuckTimer = ref npc.Infernum().ExtraAI[2];
 
             // Slow down and prepare to jump if on the ground.
-            if (npc.velocity.Y == 0f && Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 36, true) || stuckTimer >= 270f)
+            if (npc.velocity.Y == 0f && Utilities.ActualSolidCollisionTop(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 54) || stuckTimer >= 270f)
             {
                 npc.velocity.X *= 0.5f;
                 attackTimer++;
@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.velocity.X *= 0.8f;
                 npc.noTileCollide = npc.Bottom.Y < target.Bottom.Y;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + gravity, -12f, 21f);
-                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 4, true) && !npc.noTileCollide)
+                if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 32) && !npc.noTileCollide)
                 {
                     // Do collision effects after slamming.
                     if (hasSlammed == 0f)
@@ -186,6 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         attackTimer = maxHoverTime + maxSlamTime;
                         hasSlammed = 1f;
                         npc.velocity.Y = 0f;
+                        npc.position.Y -= 24f;
                         npc.netUpdate = true;
                     }
                 }
@@ -216,7 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             float jumpDelay = 20f;
             float coreChargeSpeed = 24.5f;
 
-            bool touchingGround = Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16, true);
+            bool touchingGround = Utilities.ActualSolidCollisionTop(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16);
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
             ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
             ref float stuckTimer = ref npc.Infernum().ExtraAI[2];
@@ -308,7 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             }
             else
             {
-                npc.noTileCollide = !Collision.SolidCollision(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
+                npc.noTileCollide = !Utilities.ActualSolidCollisionTop(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
                 npc.noGravity = true;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
                 attackTimer = 0f;

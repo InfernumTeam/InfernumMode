@@ -73,6 +73,9 @@ namespace InfernumMode.Core.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type == 576)
                 Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type;
 
+            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type))
+                return Main.maxDust;
+
             return orig(source, Position, Velocity, Type, Scale);
         }
 

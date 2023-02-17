@@ -53,6 +53,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
+            // Initialize on the first frame.
+            if (npc.ai[3] == 0f)
+            {
+                npc.scale = SlimeGodComboAttackManager.BigSlimeBaseScale;
+                npc.ai[3] = 1f;
+            }
+
             // Reset things.
             npc.timeLeft = 3600;
             npc.Opacity = 1f;

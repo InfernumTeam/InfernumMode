@@ -43,11 +43,12 @@ namespace InfernumMode.Content.Items.SummonItems
         public override bool? UseItem(Player player)
         {
             SoundEngine.PlaySound(SoundID.Roar, player.position);
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.BloodNautilus);
-            else
-                NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, NPCID.BloodNautilus);
 
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 spawnPosition = player.Center - Vector2.UnitY * 600f;
+                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.BloodNautilus);
+            }
             return true;
         }
     }

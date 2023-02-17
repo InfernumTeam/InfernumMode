@@ -61,6 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 int slimeGodID = WorldGen.crimson ? ModContent.NPCType<CrimulanSGBig>() : ModContent.NPCType<EbonianSGBig>();
                 int fuck = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 500, (int)target.Center.Y - 750, slimeGodID);
                 Main.npc[fuck].velocity = Vector2.UnitY * 8f;
+                npc.scale = SlimeGodComboAttackManager.CoreBaseScale;
                 npc.localAI[3] = 1f;
             }
 

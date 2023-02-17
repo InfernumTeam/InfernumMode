@@ -75,6 +75,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public const float SummonSecondSlimeLifeRatio = 0.6f;
 
+        public const float BigSlimeBaseScale = 1.5f;
+
+        public const float CoreBaseScale = 1.3f;
+
         public static void InheritAttributesFromLeader(NPC npc)
         {
             bool needsToPickNewAttack = false;
@@ -87,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             if (npc.ai[0] >= 100f && FightState != SlimeGodFightState.BothLargeSlimes)
             {
                 npc.Opacity = 1f;
-                npc.scale = 1f;
+                npc.scale = BigSlimeBaseScale;
 
                 int splitSlimeID = ModContent.NPCType<SplitBigSlime>();
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -301,6 +305,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.scale = Utils.GetLerpValue(teleportTime / 2 - 5f, 0f, attackTimer, true);
                 if (attackTimer >= teleportTime / 2)
                     npc.scale += Utils.GetLerpValue(teleportTime / 2, teleportTime - 10f, attackTimer, true);
+                npc.scale *= BigSlimeBaseScale;
 
                 if (npc.scale <= 0f)
                     npc.scale = 0.0001f;
@@ -393,6 +398,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                             Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
                         }
+
+                        // Shoot one glob directly at the target to prevent sitting in place.
+                        Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, 90, 0f);
                     }
                 }
             }
@@ -496,7 +504,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 splitState = 2f;
                 npc.Opacity = 1f;
-                npc.scale = MathHelper.Clamp(npc.scale + 0.075f, 0f, 1f);
+                npc.scale = MathHelper.Clamp(npc.scale + 0.075f, 0f, BigSlimeBaseScale);
             }
             else
                 npc.Opacity = 0f;

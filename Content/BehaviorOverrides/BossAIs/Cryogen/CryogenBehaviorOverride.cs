@@ -174,6 +174,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Make a blizzard happen.
             CalamityUtils.StartRain();
 
+            // Slowly going insane.
+            if (target.HasBuff(BuffID.Slow))
+                target.ClearBuff(BuffID.Slow);
+
             // Spawn snowflakes.
             target.CreateCinderParticles(lifeRatio, new SnowflakeCinder());
 
@@ -478,7 +482,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             npc.rotation = npc.velocity.X * 0.03f;
 
-            if (attackTimer >= teleportWaitTime + 95f)
+            if (attackTimer >= teleportWaitTime + 144f)
             {
                 attackTimer = 0f;
                 attackState++;
@@ -493,7 +497,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             int burstCount = 3;
             int burstCreationRate = 160 - (int)(zeroBasedAttackPower * 25f);
             int pillarCreationRate = 135 - (int)(zeroBasedAttackPower * 30f);
-            int icicleCount = 5 + (int)(zeroBasedAttackPower * 3f);
+            int icicleCount = 6 + (int)(zeroBasedAttackPower * 3f);
             float pillarHorizontalOffset = 750f - zeroBasedAttackPower * 130f;
             ref float icePillarCreationTimer = ref npc.Infernum().ExtraAI[0];
 
@@ -557,7 +561,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 npc.netUpdate = true;
             }
 
-            if (attackTimer >= burstCreationRate * burstCount + 155f)
+            if (attackTimer >= burstCreationRate * burstCount + 204f)
             {
                 icePillarCreationTimer = 0f;
                 attackTimer = 0f;
@@ -673,11 +677,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 }
             }
 
-            // Prepare for the charge.
+            // Spin before charging.
             if (attackSubstate == 1f)
             {
+                npc.velocity *= 0.95f;
+                npc.rotation += Math.Sign(npc.SafeDirectionTo(target.Center).X) * attackTimer / 90f;
+                if (attackTimer >= 30f)
+                {
+                    attackSubstate = 2f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Prepare for the charge.
+            if (attackSubstate == 2f)
+            {
                 int chargeDelay = 30;
-                float flyInertia = 8f;
+                float flyInertia = 4f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
                 npc.rotation = npc.velocity.X * 0.02f;
@@ -688,7 +705,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     SoundEngine.PlaySound(SoundID.Item28, npc.Center);
 
                     attackTimer = 0f;
-                    attackSubstate = 2f;
+                    attackSubstate = 3f;
                     npc.velocity = chargeVelocity;
                     if (Main.rand.NextBool(3))
                         npc.velocity *= 1.5f;
@@ -698,7 +715,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             }
 
             // Do the actual charge.
-            if (attackSubstate == 2f)
+            if (attackSubstate == 3f)
             {
                 // Release redirecting icicles perpendicularly.
                 if (attackTimer % 30f == 29f)

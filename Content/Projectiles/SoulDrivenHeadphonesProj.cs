@@ -62,10 +62,10 @@ namespace InfernumMode.Content.Projectiles
                 Texture2D icon = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/MusicIcons").Value;
 
                 // Acquire drawing information.
-                bool unlockedTrack = UnlockCondition();
+                bool unlockedTrack = UnlockCondition() || player.Infernum_Music().UnlockAllMusic;
                 float scale = Scale * opacity * 0.8f;
                 float indexAngle = MathHelper.TwoPi * indexRatio - MathHelper.PiOver2;
-                Vector2 drawPosition = center + indexAngle.ToRotationVector2() * 120f;
+                Vector2 drawPosition = center + indexAngle.ToRotationVector2() * 90f;
                 Vector2 backgroundOrigin = background.Size() * 0.5f;
                 Rectangle iconFrame = icon.Frame(1, 3, 0, (int)(indexRatio * 10f) % 3);
                 Vector2 iconOrigin = iconFrame.Size() * 0.5f;
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.Projectiles
                 if (unlockedTrack)
                 {
                     Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
-                    Main.spriteBatch.Draw(icon, drawPosition - indexAngle.ToRotationVector2() * 18f, iconFrame, iconColor * opacity, 0f, iconOrigin, scale, 0, 0f);
+                    Main.spriteBatch.Draw(icon, drawPosition - indexAngle.ToRotationVector2() * 16f, iconFrame, iconColor * opacity, 0f, iconOrigin, scale, 0, 0f);
                     Main.spriteBatch.ResetBlendState();
                 }
 
@@ -460,7 +460,7 @@ namespace InfernumMode.Content.Projectiles
                 if (UIStates.Count <= 1)
                     indexCompletion = 0.5f;
 
-                bool clicked = UIStates[i].Draw(Owner, Projectile.Center - Vector2.UnitY * 200f - Main.screenPosition, indexCompletion, opacity, out Vector2 localTextDrawPosition, out Color localTextColor, out string localText) && opacity >= 1f;
+                bool clicked = UIStates[i].Draw(Owner, Projectile.Center - Vector2.UnitY * 150f - Main.screenPosition, indexCompletion, opacity, out Vector2 localTextDrawPosition, out Color localTextColor, out string localText) && opacity >= 1f;
                 if (!string.IsNullOrEmpty(localText) && opacity >= 1f)
                 {
                     text = localText;

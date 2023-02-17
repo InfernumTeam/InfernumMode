@@ -63,6 +63,10 @@ namespace InfernumMode.Content.Projectiles
 
                 // Acquire drawing information.
                 float scale = Scale * opacity * 0.8f;
+                Vector2 iconScale = Vector2.One * scale;
+                if ((icon.Size() * iconScale).Length() >= 42f)
+                    iconScale *= Vector2.One * 42f / icon.Size();
+
                 Vector2 drawPosition = Vector2.Lerp(left, right, indexRatio);
                 drawPosition.Y -= CalamityUtils.Convert01To010(indexRatio) * opacity * 40f;
                 Vector2 backgroundOrigin = background.Size() * 0.5f;
@@ -76,7 +80,7 @@ namespace InfernumMode.Content.Projectiles
 
                 // Draw the icon.
                 Main.spriteBatch.Draw(background, drawPosition, null, Color.White * opacity, 0f, backgroundOrigin, scale, 0, 0f);
-                Main.spriteBatch.Draw(icon, drawPosition, null, Color.White * opacity, 0f, iconOrigin, scale, 0, 0f);
+                Main.spriteBatch.Draw(icon, drawPosition, null, Color.White * opacity, 0f, iconOrigin, iconScale, 0, 0f);
 
                 // Draw the text above the icon.
                 if (hoveringOverBackground && opacity > 0f)
@@ -173,6 +177,17 @@ namespace InfernumMode.Content.Projectiles
                 HoverText = "Atomize every single hostile NPC",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/AtomizeIcon"),
                 ClickBehavior = _ => AtomizeHostileNPCs()
+            },
+
+            new()
+            {
+                HoverText = "Unlock all music with the Soul-Driven Headphones",
+                IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SoulDrivenHeadphones"),
+                ClickBehavior = player =>
+                {
+                    player.Infernum_Music().UnlockAllMusic = true;
+                    Utilities.DisplayText("All music has been unlocked for the Soul-Driven Headphones.", Color.Pink);
+                }
             },
         };
 

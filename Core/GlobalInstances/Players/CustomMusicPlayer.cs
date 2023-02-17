@@ -21,6 +21,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool UnlockAllMusic
+        {
+            get;
+            set;
+        }
+
         public override void PreUpdate()
         {
             if (!UsingHeadphones)
@@ -43,12 +49,14 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void SaveData(TagCompound tag)
         {
             tag["UsingHeadphones"] = UsingHeadphones;
+            tag["UnlockAllMusic"] = UnlockAllMusic;
             tag["CurrentTrackName"] = CurrentTrackName;
         }
 
         public override void LoadData(TagCompound tag)
         {
             UsingHeadphones = tag.GetBool("UsingHeadphones");
+            UnlockAllMusic = tag.GetBool("UnlockAllMusic");
             CurrentTrackName = tag.GetString("CurrentTrackName");
         }
     }

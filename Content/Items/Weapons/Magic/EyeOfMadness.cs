@@ -1,19 +1,10 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.Items;
 using CalamityMod.Rarities;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
-using InfernumMode.Content.Projectiles.Magic;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.UI.Chat;
-using Terraria.Graphics.Shaders;
-using InfernumMode.Assets.Effects;
 
 namespace InfernumMode.Content.Items.Weapons.Magic
 {
@@ -21,7 +12,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            // This thing canonically has the Mrrp Lore Rework contained within it! Unfortunately, the player is too stupid to unlock it. Sad!
+            // This thing canonically has the Mrrp Lore Rework contained within it! Unfortunately, the player is too stupid to unlock it.
             string tooltip = "Releases barrages of shadow tendrils that ensnare enemies within their range\n" +
                 "A sacred artifact once used by the Eidolists. Somehow, it contains within it knowledge of aeons past\n" +
                 "Unfortunately, the full extent of its contents are beyond your understanding, but it would seem that you have an affinity for its\n" +

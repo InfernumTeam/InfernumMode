@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 480;
+            Projectile.timeLeft = 360;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -132,8 +132,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 tipBottom = i;
             }
         }
-
-
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 

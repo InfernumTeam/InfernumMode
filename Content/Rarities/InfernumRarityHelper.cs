@@ -128,6 +128,15 @@ namespace InfernumMode.Content.Rarities
                         velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
                         sparklesList.Add(new PuritySparkle(sparkleType, lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, 0f, position, velocity));
                         break;
+                    case SparkleType.MusicNotes:
+                        lifetime = Main.rand.Next(50, 105);
+                        scale = Main.rand.NextFloat(0.3f, 0.45f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
+                        velocity = position.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.15f) * Main.rand.NextFloat(0.125f, 0.432f);
+                        velocity.Y -= 0.25f;
+                        velocity *= 0.4f;
+                        sparklesList.Add(new MusicNoteSymbol(sparkleType, lifetime, scale, position, velocity));
+                        break;
                 }
             }
 

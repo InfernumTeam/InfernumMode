@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public PrimitiveTrailCopy TelegraphDrawer = null;
         public PrimitiveTrailCopy LavaDrawer = null;
 
-        public int Lifetime = 1800;
+        public int Lifetime = 120;
 
         public static float TelegraphTime = 45f;
 

@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -353,6 +354,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
                         }
                     }
+                }
+
+                if (universalAttackTimer == HolySpinningFireBeam.TelegraphTime && CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
+                    ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
                 }
             }
             // The defender hovers to your top left, not dealing contact damage and occasionally firing rocks at you.
@@ -1165,7 +1172,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
                             if (CalamityConfig.Instance.Screenshake)
-                                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                            {
+                                //target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                                ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
+                            }
 
                             npc.life -= (int)(npc.lifeMax * 0.001f);
                             npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
@@ -1219,7 +1229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DoBehavior_LavaRaise(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
-            float attackLength = 1800f;
+            float attackLength = 120f;
             if (npc.type == CommanderType)
             {
                 ref float lavaSpawned = ref npc.Infernum().ExtraAI[0];
@@ -1237,7 +1247,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 19f)) / 8f;
 
                 if (localAttackTimer >= attackLength)
-                    SelectNewAttack(commander, ref universalAttackTimer, (float)GuardiansAttackType.LavaRaise);
+                    SelectNewAttack(commander, ref universalAttackTimer);
 
                 localAttackTimer++;
             }
@@ -1359,8 +1369,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (MathF.Abs(npc.Center.X - target.Center.X) < 200f && universalAttackTimer > jumpTime)
                         {
-                            //universalAttackTimer = 0f;
-                            //substate++;
+                            universalAttackTimer = 0f;
+                            substate++;
                         }
                         break;
 
@@ -1535,7 +1545,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
                             if (CalamityConfig.Instance.Screenshake)
-                                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                                ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
                             defender.life -= (int)(defender.lifeMax * 0.003f);

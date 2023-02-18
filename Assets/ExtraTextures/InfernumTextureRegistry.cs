@@ -12,6 +12,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> BinaryLine => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/BinaryLine");
 
+        public static Asset<Texture2D> BloomFlare => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/BloomFlare");
+
         public static Asset<Texture2D> BloomLine => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/BloomLine");
 
         public static Asset<Texture2D> BloomLineSmall => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/BloomLineSmall");

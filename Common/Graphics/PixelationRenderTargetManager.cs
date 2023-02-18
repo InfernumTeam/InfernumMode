@@ -83,7 +83,7 @@ namespace InfernumMode.Common.Graphics
         private static void DrawPrimsToRenderTarget(RenderTarget2D renderTarget, List<IPixelPrimitiveDrawer> pixelPrimitives)
         {
             // Swap to the custom render target to prepare things to pixelation.
-            SwapToRenderTarget(renderTarget);
+            renderTarget.SwapToRenderTarget();
             
             if (pixelPrimitives.Any())
             {
@@ -97,24 +97,7 @@ namespace InfernumMode.Common.Graphics
                 // Prepare the sprite batch for the next draw cycle.
                 Main.spriteBatch.End();
             }
-        }
-
-        private static void SwapToRenderTarget(RenderTarget2D renderTarget)
-        {
-            // Local variables for convinience.
-            GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
-            SpriteBatch spriteBatch = Main.spriteBatch;
-
-            // If we are in the menu, a server, or any of these are null, return.
-            if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
-                return;
-
-            // Otherwise set the render target.
-            graphicsDevice.SetRenderTarget(renderTarget);
-            
-            // "Flush" the screen, removing any previous things drawn to it.
-            graphicsDevice.Clear(Color.Transparent);
-        }
+        }     
 
         private void ResizePixelRenderTarget(bool load)
         {

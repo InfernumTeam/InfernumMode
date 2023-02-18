@@ -48,7 +48,7 @@ namespace InfernumMode.Core.OverridingSystem
                 }
             }
 
-            foreach (Type type in Utilities.GetEveryMethodDerivedFrom(typeof(ProjectileBehaviorOverride), typeof(InfernumMode).Assembly))
+            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(ProjectileBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 ProjectileBehaviorOverride instance = (ProjectileBehaviorOverride)Activator.CreateInstance(type);
                 if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectileAI))

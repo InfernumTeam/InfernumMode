@@ -104,7 +104,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             int npcID = Main.npc[npcIndex].type;
             if (MinibossIDs.Contains(npcID))
             {
-                if (npcID == NPCID.DD2DarkMageT3 && !MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)])
+                int darkMageIndex = MinibossIDs.IndexOf(NPCID.DD2DarkMageT1);
+                if (npcID == NPCID.DD2DarkMageT3 && !MinibossesCompleted[darkMageIndex])
                 {
                     MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)] = true;
                     updatedList = true;
@@ -114,7 +115,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                     MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)] = true;
                     updatedList = true;
                 }
-                else if (!MinibossesCompleted[MinibossIDs.IndexOf(npcID)])
+                else if (MinibossesCompleted.TryGetValue(MinibossIDs.IndexOf(npcID), out bool completed) && !completed)
                 {
                     MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
                     updatedList = true;

@@ -19,7 +19,7 @@ namespace InfernumMode.Core.OverridingSystem
         {
             BehaviorOverrides = new();
 
-            foreach (Type type in Utilities.GetEveryMethodDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
+            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Reflection;
+using Terraria.ModLoader.Core;
 
 namespace InfernumMode
 {
@@ -18,9 +19,9 @@ namespace InfernumMode
         /// </summary>
         /// <param name="baseType">The base type.</param>
         /// <param name="assemblyToSearch">The assembly to search.</param>
-        public static IEnumerable<Type> GetEveryMethodDerivedFrom(Type baseType, Assembly assemblyToSearch)
+        public static IEnumerable<Type> GetEveryTypeDerivedFrom(Type baseType, Assembly assemblyToSearch)
         {
-            foreach (Type type in assemblyToSearch.GetTypes())
+            foreach (Type type in AssemblyManager.GetLoadableTypes(assemblyToSearch))
             {
                 if (!type.IsSubclassOf(baseType) || type.IsAbstract)
                     continue;

@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -44,7 +45,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 
             // Despawn if spawned in an incorrect context.
             if (Main.netMode != NetmodeID.MultiplayerClient && !wasSpawnedInValidContext)
+            {
+                npc.Calamity().ShouldCloseHPBar = true;
                 npc.active = false;
+                return false;
+            }
             else
             {
                 // Clear pickoff enemies.

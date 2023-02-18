@@ -61,7 +61,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public void BobHeadToMusic()
         {
             // Return the head rotation to its intended angle if there is no music high point being played.
-            if (!TrackedMusicManager.TryGetSongInformation(out var songInfo) || !songInfo.HighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)))
+            if (!TrackedMusicManager.TryGetSongInformation(out var songInfo) || !songInfo.HighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)) || Player.velocity.Length() > 0.1f)
             {
                 Player.headRotation = Player.headRotation.AngleTowards(0f, 0.042f);
                 HeadRotationTime = 0f;

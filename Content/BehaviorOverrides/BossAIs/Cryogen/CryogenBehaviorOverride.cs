@@ -15,6 +15,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -28,9 +29,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public const float Phase4LifeRatio = 0.55f;
 
-        public const float Phase5LifeRatio = 0.35f;
+        public const float Phase5LifeRatio = 0.4f;
 
-        public const float Phase6LifeRatio = 0.2f;
+        public const float Phase6LifeRatio = 0.25f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -157,12 +158,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Set the whoAmI index.
             GlobalNPCOverrides.Cryogen = npc.whoAmI;
 
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float subphaseState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float attackState = ref npc.ai[2];
             ref float enrageTimer = ref npc.ai[3];
             ref float hitEffectCooldown = ref npc.Infernum().ExtraAI[6];
-            float lifeRatio = npc.life / (float)npc.lifeMax;
 
             if (!BossRushEvent.BossRushActive)
                 enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 660);
@@ -219,6 +220,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 attackPower = MathHelper.Lerp(1.5f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase6AttackCycle;
             }
+
+            // WHY DOES THIS SILLY ICE CUBE HAVE 30% DR IN BASE???
+            npc.Calamity().DR = 0.1075f;
 
             switch (attackCycle[(int)attackState % attackCycle.Length])
             {
@@ -316,7 +320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             float zeroBasedAttackPower = attackPower - 1f;
             int burstCount = 3;
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 25f);
-            int icicleCount = 12 + (int)(zeroBasedAttackPower * 5f);
+            int icicleCount = 11 + (int)(zeroBasedAttackPower * 4f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
@@ -341,19 +345,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 0; i < icicleCount; i++)
                     {
                         float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f, -1, icicleFireDirection, npc.whoAmI);
-                        if (Main.projectile.IndexInRange(icicleCount))
-                        {
-                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
-                            Main.projectile[icicle].netUpdate = true;
-                        }
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f, -1, icicleFireDirection, npc.whoAmI);
 
                         icicleFireDirection = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
-                        if (Main.projectile.IndexInRange(icicleCount))
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
+                    }
+
+                    // Create a seconnd set of rings in later phases.
+                    if (npc.life < npc.lifeMax * Phase4LifeRatio)
+                    {
+                        for (int i = 0; i < icicleCount; i++)
                         {
-                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
-                            Main.projectile[icicle].netUpdate = true;
+                            float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(icicle =>
+                            {
+                                icicle.ModProjectile<IcicleSpike>().InwardRadiusOffset = 42f;
+                                icicle.ModProjectile<IcicleSpike>().Time = -20f;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
                         }
                     }
                 }
@@ -405,7 +415,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 0; i < icicleCount; i++)
                     {
                         Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(angularOffsetRandomness) * Main.rand.NextFloat(7f, 11f);
-                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f, -1, 0f, i / (float)icicleCount * 68f);
+                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f, -1, 0f, i / (float)icicleCount * 90f);
                     }
 
                     for (int i = 0; i < 4; i++)
@@ -448,7 +458,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             {
                 if (teleportPositionX == 0f || teleportPositionY == 0f)
                 {
-                    Vector2 teleportPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(360f, 435f);
+                    Vector2 teleportPosition = target.Center + target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * Main.rand.NextFloat(400f, 450f);
                     teleportPositionX = teleportPosition.X;
                     teleportPositionY = teleportPosition.Y;
                 }
@@ -544,6 +554,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
                             Main.projectile[icicle].netUpdate = true;
+                        }
+                    }
+
+                    // Create a seconnd set of rings in later phases.
+                    if (npc.life < npc.lifeMax * Phase3LifeRatio)
+                    {
+                        icicleCount -= 2;
+                        for (int i = 0; i < icicleCount; i++)
+                        {
+                            float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(icicle =>
+                            {
+                                icicle.ModProjectile<IcicleSpike>().InwardRadiusOffset = 42f;
+                                icicle.ModProjectile<IcicleSpike>().Time = -20f;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
                         }
                     }
                 }
@@ -648,7 +675,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 3;
-            float chargeSpeed = MathHelper.Lerp(17f, 22f, zeroBasedAttackPower);
+            float chargeSpeed = MathHelper.Lerp(20.75f, 28f, zeroBasedAttackPower);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.45f;
 
@@ -659,9 +686,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (attackSubstate == 0f)
             {
                 float verticalOffsetLeniance = 65f;
-                float flySpeed = 10f;
+                float flySpeed = 14f;
                 float flyInertia = 4f;
-                float horizontalOffset = 720f;
+                float horizontalOffset = 700f;
                 Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
 
                 // Fly towards the destination beside the player.
@@ -681,8 +708,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (attackSubstate == 1f)
             {
                 npc.velocity *= 0.95f;
-                npc.rotation += Math.Sign(npc.SafeDirectionTo(target.Center).X) * attackTimer / 90f;
-                if (attackTimer >= 30f)
+                npc.rotation += Math.Sign(npc.SafeDirectionTo(target.Center).X) * attackTimer / 67f;
+                if (attackTimer >= 20f)
                 {
                     attackSubstate = 2f;
                     attackTimer = 0f;
@@ -718,7 +745,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (attackSubstate == 3f)
             {
                 // Release redirecting icicles perpendicularly.
-                if (attackTimer % 30f == 29f)
+                if (attackTimer % 15f == 14f)
                 {
                     SoundEngine.PlaySound(SoundID.Item72, npc.Center);
 
@@ -754,6 +781,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             int shootDelay = 90;
             int spiritSummonTime = (int)(540 + zeroBasedAttackPower * 210f);
             int spiritSummonRate = (int)(16f - zeroBasedAttackPower * 3f);
+            int bombShootRate = (int)(50f - zeroBasedAttackPower * 8f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
@@ -770,10 +798,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
             {
+                bool dontCurve = Main.rand.NextBool(10);
                 Vector2 spiritSpawnPosition = target.Center - Vector2.UnitY * Main.rand.NextFloat(450f);
                 spiritSpawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 825f;
                 Vector2 spiritVelocity = Vector2.UnitX * Math.Sign(target.Center.X - spiritSpawnPosition.X) * 6.5f;
-                Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), 140, 0f);
+                if (dontCurve)
+                {
+                    spiritSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 800f;
+                    spiritVelocity = Vector2.UnitX * Math.Sign(target.Center.X - spiritSpawnPosition.X) * 13.5f;
+                }
+
+                Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), 140, 0f, -1, 0f, dontCurve.ToInt());
+            }
+
+            // Release bombs from above in the final phase.
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase6LifeRatio && canShoot && attackTimer % bombShootRate == bombShootRate - 1f)
+            {
+                Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 450f, Vector2.UnitY.RotatedByRandom(0.32f) * 7f, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
             }
 
             if (attackTimer >= spiritSummonTime + 90f)

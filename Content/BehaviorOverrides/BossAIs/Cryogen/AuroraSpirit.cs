@@ -50,10 +50,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             // Periodically descend via a squashed, downward-only sine.
             // After enough time has passed this stops in favor of horizontal acceleration.
-            if (Time < 110f)
-                Projectile.velocity.Y = (float)Math.Pow(Math.Sin(Time / 29f), 10D) * 14.5f;
-            else
-                Projectile.velocity.Y *= 0.93f;
+            if (Projectile.ai[1] == 0f)
+            {
+                if (Time < 110f)
+                    Projectile.velocity.Y = (float)Math.Pow(Math.Sin(Time / 29f), 10D) * 14.5f;
+                else
+                    Projectile.velocity.Y *= 0.93f;
+            }
 
             // Accelerate after enough time has passed.
             if (Time > 60f && Math.Abs(Projectile.velocity.X) < 19.5f)

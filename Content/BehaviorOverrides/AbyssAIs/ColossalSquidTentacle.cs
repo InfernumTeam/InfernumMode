@@ -75,6 +75,13 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void AI()
         {
+            // Disappear if Infernum is not active.
+            if (!InfernumMode.CanUseCustomAIs)
+            {
+                NPC.active = false;
+                return;
+            }
+
             if (Owner is null)
             {
                 NPC.active = false;

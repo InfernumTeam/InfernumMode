@@ -27,6 +27,7 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.Core.Physics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -62,6 +63,12 @@ namespace InfernumMode.GlobalInstances
         public Rectangle Arena = default;
 
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
+
+        public MotionCharacteristicSolver MotionCharacteristic
+        {
+            get;
+            set;
+        }
 
         internal static int Cryogen = -1;
         internal static int AstrumAureus = -1;
@@ -208,6 +215,13 @@ namespace InfernumMode.GlobalInstances
                     bool result = OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
                     if (ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
+
+                    // Apply motion characteristic effects if they're defined.
+                    if (MotionCharacteristic is not null)
+                    {
+                        MotionCharacteristic.Update(npc.Center);
+                        npc.Center = MotionCharacteristic.PreviousOutputPosition;
+                    }
 
                     return result;
                 }

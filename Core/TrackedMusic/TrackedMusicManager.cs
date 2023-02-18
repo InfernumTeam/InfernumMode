@@ -1,3 +1,5 @@
+using InfernumMode.Core.OverridingSystem;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using ReLogic.Content;
@@ -20,7 +22,7 @@ namespace InfernumMode.Core.TrackedMusic
 
         internal static ConstructorInfo SongConstructor;
 
-        public static List<string> CustomTrackPaths => new()
+        public static readonly List<string> CustomTrackPaths = new()
         {
             // Grief.
             "CalamityModMusic/Sounds/Music/SupremeCalamitas1",
@@ -36,6 +38,8 @@ namespace InfernumMode.Core.TrackedMusic
             "CalamityModMusic/Sounds/Music/SupremeCalamitas4",
         };
 
+        public static readonly Dictionary<string, BaseTrackedMusic> TrackInformation = new();
+
         // Song instances are expected to be read directly from the disk, not memory.
         // As such, we need to save them separately from the embedded tmod file data.
         public static readonly string MusicDirectory = $"{Main.SavePath}/TrackedMusic";
@@ -48,7 +52,10 @@ namespace InfernumMode.Core.TrackedMusic
 
         public static TimeSpan SongElapsedTime => TrackedSong is null || Main.netMode == NetmodeID.Server ? TimeSpan.Zero : MediaPlayer.PlayPosition;
 
-        public override void OnModLoad()
+        // Due to the Infernum Music mod directly relying on this mod, it must load after it.
+        // As such we need to wait until ALL mods have been loaded before we can perform this initialization, since Infernum Music's tracks
+        // aren't loaded by the time Infernum is fully loaded.
+        public override void PostSetupContent()
         {
             TracksThatDontUseTerrariasSystem = new();
 
@@ -58,6 +65,10 @@ namespace InfernumMode.Core.TrackedMusic
                 typeof(string),
                 typeof(string),
             });
+
+            // Load all tracked music.
+            foreach (Type musicType in Utilities.GetEveryTypeDerivedFrom(typeof(BaseTrackedMusic), InfernumMode.Instance.Code))
+                ((BaseTrackedMusic)Activator.CreateInstance(musicType)).Load();
 
             foreach (string path in CustomTrackPaths)
             {
@@ -127,7 +138,22 @@ namespace InfernumMode.Core.TrackedMusic
             orig(self, active, i, totalVolume, ref tempFade);
         }
 
-        public override void PreUpdateDusts()
+        public static bool TryGetSongInformation(out BaseTrackedMusic information)
+        {
+            information = null;
+
+            // If there is no tracked song currently being played, return immediately. There is no time-based information to acquire.
+            if (TrackedSong is null)
+                return false;
+
+            // If the tracked song does not have information defined by the current registry, return immediately.
+            if (!TrackInformation.TryGetValue(TrackedSong.Name, out information))
+                return false;
+
+            return true;
+        }
+
+        public override void UpdateUI(GameTime gameTime)
         {
             // Don't run any audio effects server-side.
             if (Main.netMode == NetmodeID.Server)
@@ -154,7 +180,7 @@ namespace InfernumMode.Core.TrackedMusic
             if (MediaPlayer.State == MediaState.Stopped)
                 MediaPlayer.Play(TrackedSong);
 
-            float currentVolume = volume * Main.musicVolume;
+            float currentVolume = volume * Main.musicVolume * 0.4f;
             if (MediaPlayer.Volume != currentVolume)
                 MediaPlayer.Volume = currentVolume;
             MediaPlayer.IsRepeating = true;

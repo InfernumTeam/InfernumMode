@@ -12,6 +12,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 {
     public class IcicleSpike : ModProjectile
     {
+        public float InwardRadiusOffset
+        {
+            get;
+            set;
+        }
+
         public static float SpeedPower => BossRushEvent.BossRushActive ? 1.122f : 0.66f;
 
         public ref float Time => ref Projectile.localAI[0];
@@ -35,9 +41,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.alpha = 255;
         }
 
-        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Time);
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Time);
+            writer.Write(InwardRadiusOffset);
+        }
 
-        public override void ReceiveExtraAI(BinaryReader reader) => Time = reader.ReadSingle();
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Time = reader.ReadSingle();
+            InwardRadiusOffset = reader.ReadSingle();
+        }
 
         public override void AI()
         {
@@ -58,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 Projectile.velocity *= 1f + SpeedPower * 0.03f;
 
             if (Time <= 80f)
-                Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * MathHelper.Lerp(110f, 72f, SpeedPower);
+                Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * (MathHelper.Lerp(110f, 72f, SpeedPower) - InwardRadiusOffset);
             else if (Time % 10 == 0)
             {
                 // Leave a trail of particles.

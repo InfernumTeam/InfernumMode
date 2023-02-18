@@ -110,7 +110,11 @@ namespace InfernumMode.Content.Projectiles
 
                 if (clicked && unlockedTrack)
                 {
-                    player.Infernum_Music().CurrentTrackName = TrackName;
+                    if (Main.myPlayer == player.whoAmI && player.Infernum_Music().CurrentTrackName != TrackName)
+                    {
+                        Main.NewText($"Now playing {HoverText.Split(" - ")[0]}.", HoverTextColor());
+                        player.Infernum_Music().CurrentTrackName = TrackName;
+                    }
                     return true;
                 }
                 return false;

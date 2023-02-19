@@ -36,7 +36,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
-            CooldownSlot = 1;
         }
 
         public override void AI()
@@ -44,8 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3.6f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
-            Projectile.scale = Projectile.Opacity;
-            Projectile.rotation += 0.01f;
+            Projectile.scale = Projectile.Opacity * MathHelper.Lerp(0.6f, 1f, Projectile.identity * MathHelper.Pi % 1f);
 
             // Randomly emit bubbles.
             Vector2 bubbleSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(120f, 120f) * Projectile.scale;
@@ -108,7 +106,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.YellowGreen, Color.Wheat, 0.75f)) * 0.7f;
-            float bubbleScale = Projectile.scale * 0.3f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.025f;
+            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.3f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.025f);
+
+            // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
+            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * MathHelper.TwoPi);
+            bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.07f;
+
             Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);
         }
     }

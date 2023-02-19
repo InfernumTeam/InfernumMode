@@ -4,6 +4,7 @@ using CalamityMod.NPCs.DesertScourge;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -18,6 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             BubbleSpin,
             RadiationPulse,
+            WallHitCharges,
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
@@ -38,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static float PoisonChargeUpSpeedFactor => 0.333f;
 
-        public static float PoisonFadeOutSpeedFactor => 1.7f;
+        public static float PoisonFadeOutSpeedFactor => 2.5f;
 
         public override bool PreAI(NPC npc)
         {
@@ -95,6 +97,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     break;
                 case AquaticScourgeAttackType.RadiationPulse:
                     DoBehavior_RadiationPulse(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.WallHitCharges:
+                    DoBehavior_WallHitCharges(npc, target, ref attackTimer);
                     break;
             }
 
@@ -198,8 +203,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     npc.netUpdate = true;
                 }
             }
-
-            // Emit sulphuric gas after charging.
+            
+            // Emit acid mist while charging.
             if (Main.netMode != NetmodeID.MultiplayerClient && charging && attackTimer % 2f == 0f)
             {
                 Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(2f, 6f);
@@ -216,7 +221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int shootDelay = 90;
             int pulseReleaseRate = 120;
             int acidReleaseRate = 60;
-            int shootTime = 360;
+            int shootTime = 480;
             int goodBubbleReleaseRate = 180;
             int acidShootCount = 4;
             float pulseMaxRadius = 425f;
@@ -265,6 +270,129 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(target.Center + Vector2.UnitY * 450f, -Vector2.UnitY * 5f, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f);
             }
+
+            if (attackTimer >= shootDelay + shootTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_WallHitCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeCount = 5;
+            int chargeDelay = 30;
+            int minChargeTime = 36;
+            int maxChargeTime = 67;
+            int stunTime = 60;
+            int rubbleCount = 9;
+            bool insideBlocks = Collision.SolidCollision(npc.TopLeft, npc.width, npc.height);
+            float chargeSpeed = 25f;
+            float rubbleArc = 1.17f;
+            float rubbleShootSpeed = 5f;
+            float bubbleSpacing = 384f;
+            float bubbleAreaCoverage = 1500f;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float performingCharge = ref npc.Infernum().ExtraAI[1];
+            ref float stunTimer = ref npc.Infernum().ExtraAI[2];
+            ref float dontInteractWithBlocksYet = ref npc.Infernum().ExtraAI[3];
+
+            if (chargeCounter <= 0f)
+                chargeDelay += 60;
+
+            // Attempt to move towards the target before charging.
+            if (attackTimer <= chargeDelay)
+            {
+                float slowdownInterpolant = (float)Math.Pow(attackTimer / chargeDelay, 2D);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * slowdownInterpolant * chargeSpeed;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
+            }
+
+            // Do the charge.
+            if (attackTimer == chargeDelay)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeCharge, target.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.netUpdate = true;
+
+                performingCharge = 1f;
+                dontInteractWithBlocksYet = insideBlocks.ToInt();
+            }
+
+            // Handle post-stun behaviors.
+            if (stunTimer >= 1f)
+            {
+                stunTimer--;
+                if (stunTimer <= 0f)
+                {
+                    attackTimer = 0f;
+                    dontInteractWithBlocksYet = 0f;
+                    chargeCounter++;
+                    if (chargeCounter >= chargeCount)
+                        SelectNextAttack(npc);
+
+                    // Release a single clean bubble on the third charge.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && chargeCounter == 3f)
+                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitY * 650f, -Vector2.UnitY * 5f, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f);
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (performingCharge == 1f)
+            {
+                // If the scourge started in blocks when charging but has now left them, allow it to rebound.
+                if (dontInteractWithBlocksYet == 1f && !insideBlocks)
+                {
+                    dontInteractWithBlocksYet = 0f;
+                    npc.netUpdate = true;
+                }
+
+                // Perform rebound effects when tiles are hit. This takes a small amount of time before it can happen, so that charges aren't immediate.
+                if (attackTimer >= minChargeTime && dontInteractWithBlocksYet == 0f && insideBlocks && npc.WithinRange(target.Center, 1200f))
+                {
+                    performingCharge = 0f;
+                    stunTimer = stunTime;
+
+                    // Create tile hit dust effects.
+                    Collision.HitTiles(npc.TopLeft, -npc.velocity, npc.width, npc.height);
+
+                    // Create rubble that aims backwards and some bubbles from below.
+                    SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < rubbleCount; i++)
+                        {
+                            float rubbleOffsetAngle = MathHelper.Lerp(-rubbleArc, rubbleArc, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.05f;
+                            Vector2 rubbleVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(rubbleOffsetAngle) * rubbleShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
+                        }
+                        
+                        for (float dx = -bubbleAreaCoverage; dx < bubbleAreaCoverage; dx += bubbleSpacing)
+                        {
+                            float bubbleSpeed = Main.rand.NextFloat(7f, 9f);
+                            float verticalOffset = Math.Max(target.velocity.Y * 30f, 0f) + 600f;
+                            Utilities.NewProjectileBetter(target.Center + new Vector2(dx, verticalOffset), -Vector2.UnitY * bubbleSpeed, ModContent.ProjectileType<AcidBubble>(), 135, 0f);
+                        }
+                    }
+
+                    npc.velocity = npc.velocity.RotatedByRandom(0.32f) * -0.24f;
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer >= chargeDelay + maxChargeTime)
+                {
+                    performingCharge = 0f;
+                    stunTimer = 2f;
+                    npc.velocity *= 0.5f;
+                    npc.netUpdate = true;
+                }
+
+                // Emit acid mist while charging and not inside of tiles.
+                if (Main.netMode != NetmodeID.MultiplayerClient && !insideBlocks && attackTimer % 5f == 0f)
+                {
+                    Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0.7f, 3f);
+                    Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                }
+            }
         }
 
         #endregion Specific Behaviors
@@ -299,7 +427,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             AquaticScourgeAttackType currentAttack = (AquaticScourgeAttackType)(int)npc.ai[2];
-            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.BubbleSpin;
+            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.WallHitCharges;
 
             // Get a new target.
             npc.TargetClosest();

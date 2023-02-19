@@ -35,6 +35,9 @@ using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
 using InfernumMode.Content.WorldGeneration;
 using CalamityMod.Systems;
+using CalamityMod.CalPlayer;
+using CalamityMod.NPCs.AquaticScourge;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -137,6 +140,68 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => PlaceHellLab += SlideOverHellLab;
 
         public void Unload() => PlaceHellLab -= SlideOverHellLab;
+    }
+
+    public class MakeSulphSeaCavesBiggerHook : IHookEdit
+    {
+        internal static void MakeCavesBigger1(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdsfld<SulphurousSea>("CheeseCaveCarveOutThresholds"));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => new float[]
+                {
+                    0.13f
+                });
+            }
+
+            cursor.Goto(0);
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(SulphurousSea.CheeseCaveMagnification));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => SulphurousSea.CheeseCaveMagnification * 0.3f);
+            }
+        }
+
+        internal static void MakeCavesBigger2(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdsfld<SulphurousSea>("SpaghettiCaveCarveOutThresholds"));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => new float[]
+                {
+                    0.033f,
+                    0.125f
+                });
+            }
+
+            cursor.Goto(0);
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(SulphurousSea.SpaghettiCaveMagnification));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => SulphurousSea.SpaghettiCaveMagnification * 0.6f);
+            }
+        }
+
+        public void Load()
+        {
+            GenerateSulphSeaCheeseCaves += MakeCavesBigger1;
+            GenerateSulphSeaSpaghettiCaves += MakeCavesBigger2;
+        }
+
+        public void Unload()
+        {
+            GenerateSulphSeaCheeseCaves -= MakeCavesBigger1;
+            GenerateSulphSeaSpaghettiCaves -= MakeCavesBigger2;
+        }
     }
 
     public class DrawLostColosseumBackgroundHook : IHookEdit
@@ -931,6 +996,46 @@ namespace InfernumMode.Core.ILEditingStuff
                 return false;
 
             return orig(self);
+        }
+    }
+
+    public class AdjustASWaterPoisonTimersHook : IHookEdit
+    {
+        public void Load()
+        {
+            UpdateBadLifeRegen += AdjustTimers;
+        }
+
+        public void Unload()
+        {
+            UpdateBadLifeRegen += AdjustTimers;
+        }
+
+        private void AdjustTimers(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            int poisonIncrementIndex = 0;
+            cursor.GotoNext(i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterSafetyTime));
+            cursor.GotoNext(i => i.MatchStloc(out poisonIncrementIndex));
+
+            // Multiply the poison increment by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
+            cursor.GotoNext(i => i.MatchLdfld<CalamityPlayer>("SulphWaterPoisoningLevel"));
+            cursor.GotoNext(MoveType.After, i => i.MatchLdloc(poisonIncrementIndex));
+            cursor.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs ? AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactor : 1f);
+            cursor.Emit(OpCodes.Mul);
+
+            // Redecide poison decrement by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
+            cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterRecoveryTime));
+            cursor.Emit(OpCodes.Pop);
+            cursor.EmitDelegate(() =>
+            {
+                int recoveryTime = CalamityPlayer.SulphSeaWaterRecoveryTime;
+                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                    recoveryTime = (int)(recoveryTime / AquaticScourgeHeadBehaviorOverride.PoisonFadeOutSpeedFactor);
+
+                return 1f / recoveryTime;
+            });
         }
     }
 }

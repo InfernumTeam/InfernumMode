@@ -1,14 +1,9 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.GreatSandShark;
-using CalamityMod.UI.DraedonSummoning;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.UtilityMethods;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -344,7 +339,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
     }
 
-    public class DisableWaterEffectsInAEWFightHook : IHookEdit
+    public class DisableWaterEffectsInFightsHook : IHookEdit
     {
         private void DisableWaterEffects(ILContext il)
         {
@@ -353,10 +348,14 @@ namespace InfernumMode.Core.ILEditingStuff
             c.GotoNext(MoveType.After, i => i.MatchCall<Collision>("WetCollision"));
             c.EmitDelegate(() =>
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs)
-                    return false;
+                if (!InfernumMode.CanUseCustomAIs)
+                    return true;
 
-                return true;
+                bool specialNPC = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
+                if (!specialNPC)
+                    return true;
+
+                return false;
             });
             c.Emit(OpCodes.And);
         }

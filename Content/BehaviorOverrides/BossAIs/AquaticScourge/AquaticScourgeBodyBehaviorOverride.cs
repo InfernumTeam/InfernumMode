@@ -50,22 +50,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
 
             attackTimer++;
-            float lifeRatio = headSegment.life / (float)headSegment.lifeMax;
-            bool canShoot = !npc.WithinRange(Main.player[npc.target].Center, 380f) && lifeRatio < 0.25f;
-            if (canShoot && attackTimer > Main.rand.NextFloat(320f, 415f) && Utilities.AllProjectilesByID(ModContent.ProjectileType<SlowerSandTooth>()).Count() < 5)
-            {
-                SoundEngine.PlaySound(SoundID.Item17, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 toothVelocity = Main.rand.NextVector2CircularEdge(7.2f, 7.2f);
-                    if (BossRushEvent.BossRushActive)
-                        toothVelocity *= 2.4f;
-
-                    Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
-                    attackTimer = 0f;
-                }
-            }
-
             return false;
         }
     }

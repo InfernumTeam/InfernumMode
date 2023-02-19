@@ -120,8 +120,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, specialSpawnCountdown: 300, permittedNPCs: new int[] { ModContent.NPCType<CrabShroom>() }),
 
                 new Boss(ModContent.NPCType<AquaticScourgeHead>(), permittedNPCs: new int[] { ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeBodyAlt>(),
-                    ModContent.NPCType<AquaticScourgeTail>(), ModContent.NPCType<AquaticParasite2>(), ModContent.NPCType<AquaticSeekerHead2>(),
-                    ModContent.NPCType<AquaticSeekerBody2>(), ModContent.NPCType<AquaticSeekerTail2>() }),
+                    ModContent.NPCType<AquaticScourgeTail>() }),
 
                 new Boss(ModContent.NPCType<DesertScourgeHead>(), spawnContext: type =>
                 {

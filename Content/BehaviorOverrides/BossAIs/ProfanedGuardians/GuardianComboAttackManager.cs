@@ -359,7 +359,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (universalAttackTimer == HolySpinningFireBeam.TelegraphTime && CalamityConfig.Instance.Screenshake)
                 {
                     Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
-                    ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
                 }
             }
             // The defender hovers to your top left, not dealing contact damage and occasionally firing rocks at you.
@@ -1174,7 +1175,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (CalamityConfig.Instance.Screenshake)
                             {
                                 //target.Infernum_Camera().CurrentScreenShakePower = 12f;
-                                ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
+                                ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
                             }
 
                             npc.life -= (int)(npc.lifeMax * 0.001f);
@@ -1545,7 +1547,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
                             if (CalamityConfig.Instance.Screenshake)
-                                ScreenBlurSystem.SetBlurEffect(npc.Center, 2f, 45);
+                            {
+                                ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
+                            }
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
                             defender.life -= (int)(defender.lifeMax * 0.003f);

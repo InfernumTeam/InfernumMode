@@ -24,6 +24,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/DesertScourgeRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

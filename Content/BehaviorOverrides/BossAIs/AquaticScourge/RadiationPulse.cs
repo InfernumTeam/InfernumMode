@@ -38,22 +38,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void PostAI()
         {
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                Player p = Main.player[i];
-                if (!p.active || p.dead)
-                    continue;
-
-                if (CalamityUtils.CircularHitboxCollision(Projectile.Center, CurrentRadius * Projectile.scale * 0.325f, p.Hitbox))
-                {
-                    float increment = AcidWaterAccelerationFactor / CalamityPlayer.SulphSeaWaterSafetyTime;
-                    if (p.Calamity().sulphurskin)
-                        increment *= 0.5f;
-                    if (p.Calamity().sulfurSet)
-                        increment *= 0.5f;
-                    p.Calamity().SulphWaterPoisoningLevel += increment;
-                }
-            }
+            // Make the sulphuric water effects go up far more quickly when inside the area of the pulse.
+            AquaticScourgeHeadBehaviorOverride.ApplySulphuricPoisoningBoostToPlayersInArea(Projectile.Center, CurrentRadius * Projectile.scale * 0.325f, AcidWaterAccelerationFactor);
         }
 
         public override bool? CanDamage() => false;

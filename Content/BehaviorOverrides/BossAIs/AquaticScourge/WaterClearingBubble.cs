@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
@@ -21,6 +20,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public PrimitiveTrailCopy WaterDrawer;
 
         public ref float Time => ref Projectile.ai[0];
+
+        public ref float Lifetime => ref Projectile.ai[1];
 
         public static float Radius => 120f;
 
@@ -59,12 +60,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 240;
+            Projectile.netImportant = true;
+            Projectile.timeLeft = 7200;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 240f) * 4f;
+            // Initialize the lifetime of the bubble if nothing is inputted.
+            if (Lifetime <= 0f)
+            {
+                Lifetime = 240f;
+                Projectile.netUpdate = true;
+            }
+
+            Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 4f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             Projectile.scale = Projectile.Opacity;
@@ -84,6 +93,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             Time++;
+            if (Time >= Lifetime)
+                Projectile.Kill();
         }
 
         public float WidthFunction(float completionRatio) => Radius * Projectile.scale * CalamityUtils.Convert01To010(completionRatio);

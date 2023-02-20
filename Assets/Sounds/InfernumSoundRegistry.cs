@@ -31,7 +31,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ArtemisSpinLaserbeamSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ArtemisSpinLaserbeam");
 
+        public static readonly SoundStyle AquaticScourgeAppear = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeAppear");
+
         public static readonly SoundStyle AquaticScourgeCharge = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeCharge");
+
+        public static readonly SoundStyle AquaticScourgeGore = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeGore");
 
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/BrimstoneElementalShellGroundHit");
 

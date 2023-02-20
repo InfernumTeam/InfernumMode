@@ -3,6 +3,8 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.Particles;
+using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
@@ -363,5 +365,53 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => IL.Terraria.Player.Update += DisableWaterEffects;
 
         public void Unload() => IL.Terraria.Player.Update -= DisableWaterEffects;
+    }
+
+    public class MakeSulphSeaWaterEasierToSeeInHook : IHookEdit
+    {
+        internal static int SulphurWaterIndex
+        {
+            get;
+            set;
+        }
+
+        private void MakeWaterEasierToSeeIn(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            for (int i = 0; i < 4; i++)
+            {
+                c.GotoNext(MoveType.After, i => i.MatchLdcR4(0.4f));
+                c.Emit(OpCodes.Pop);
+                c.Emit(OpCodes.Ldc_R4, 0.15f);
+            }
+        }
+
+        private void MakeSulphSeaWaterBrighter(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
+        {
+            orig(self, x, y, out outputColor);
+
+            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+            if (tile.LiquidAmount <= 0 || tile.HasTile || Main.waterStyle != SulphurWaterIndex)
+                return;
+
+            if (tile.TileType != (ushort)ModContent.TileType<RustyChestTile>())
+                outputColor = Vector3.Lerp(outputColor, Color.LightSeaGreen.ToVector3(), 0.8f);
+        }
+
+        public void Load()
+        {
+            if (Main.netMode != NetmodeID.Server)
+                SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
+
+            SelectSulphuricWaterColor += MakeWaterEasierToSeeIn;
+            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
+        }
+
+        public void Unload()
+        {
+            SelectSulphuricWaterColor -= MakeWaterEasierToSeeIn;
+            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
+        }
     }
 }

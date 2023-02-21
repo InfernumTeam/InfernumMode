@@ -39,7 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override void AI()
         {
             // Accelerate.
-            Projectile.velocity *= 1.023f;
+            if (Projectile.velocity.Length() < 20f)
+                Projectile.velocity *= 1.023f;
             Projectile.rotation += Projectile.velocity.X * 0.014f;
 
             // Interact with tiles after enough time has passed.
@@ -76,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-                Effect laserScopeEffect = Filters.Scene["PixelatedSightLine"].GetShader().Shader;
+                Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
                 laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
@@ -93,10 +94,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
 
                 laserScopeEffect.CurrentTechnique.Passes[0].Apply();
-                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, opacity * 1900f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, opacity * 2500f, SpriteEffects.None, 0f);
                 Main.spriteBatch.ExitShaderRegion();
             }
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
+            Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.Lime with { A = 0 } * opacity, lightColor, opacity * 6f);
 
             return false;
         }

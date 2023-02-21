@@ -1,19 +1,28 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Assets.Sounds;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
-    public class OverlyDramaticDukeSummoner : ModProjectile
+    public class SulphuricTornado : ModProjectile
     {
+        public SlotId WindSlot
+        { 
+            get;
+            set;
+        }
+
         public ref float Time => ref Projectile.ai[0];
 
         public ref float FlyDirection => ref Projectile.ai[1];
 
-        public static int Lifetime => 540;
+        public static int Lifetime => 720;
 
         public override string Texture => "CalamityMod/Projectiles/Boss/OldDukeVortex";
 
@@ -34,22 +43,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 1800;
+            Projectile.timeLeft = Lifetime;
         }
 
         public override void AI()
         {
             Projectile.rotation -= Projectile.Opacity * 0.15f;
             Projectile.width = (int)(Projectile.scale * 208f);
-            Projectile.height = (int)(Projectile.scale * 1600f);
+            Projectile.height = (int)(Projectile.scale * 1000f);
 
             // Fade in and grow to the appropriate size.
-            Projectile.Opacity = Utils.GetLerpValue(0f, 90f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 120f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
             Projectile.scale = Utils.GetLerpValue(0f, 60f, Time, true);
 
             // Move upward.
-            Projectile.velocity.X = (float)Math.Sin(MathHelper.TwoPi * Time / 210f) * FlyDirection * 25f;
-            Projectile.velocity.Y = -6f;
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            Projectile.velocity.X = (float)Math.Cos(MathHelper.TwoPi * Time / 235f) * FlyDirection * Projectile.Opacity * 25f;
+            Projectile.velocity.Y = -4.5f;
+            Projectile.position.X += Projectile.SafeDirectionTo(target.Center).X * Projectile.Opacity * 13f;
+
+            // Release a spray of falling acid.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.Opacity >= 0.6f && Projectile.height >= 750f && Time % 4f == 3f)
+            {
+                Vector2 acidSpawnPosition = Projectile.Top + new Vector2(Main.rand.NextFloatDirection() * 100f, Main.rand.NextFloat(250f));
+                Vector2 acidSpawnVelocity = -Vector2.UnitY.RotatedByRandom(1.1f) * Main.rand.NextFloat(10f, 25f);
+                Utilities.NewProjectileBetter(acidSpawnPosition, acidSpawnVelocity, ModContent.ProjectileType<FallingAcid>(), 140, 0f);
+            }
+
+            // Handle sound stuff.
+            if (SoundEngine.TryGetActiveSound(WindSlot, out var s))
+            {
+                if (s.Position != Projectile.Center && s.IsPlaying)
+                    s.Position = Projectile.Center;
+            }
+            else
+                WindSlot = SoundEngine.PlaySound(InfernumSoundRegistry.CloudElementalWindSound with { Volume = 1.5f }, Projectile.Center);
 
             Time++;
         }
@@ -63,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 float opacity = MathHelper.Lerp(1f, 0.6f, dy / Projectile.height) * Projectile.Opacity * 0.3f;
                 Vector2 drawPosition = Projectile.Bottom - Main.screenPosition - Vector2.UnitY * dy;
                 Color tornadoColor = Color.White * opacity;
-                tornadoColor.A /= 3;
+                tornadoColor.A /= 2;
                 
                 Main.EntitySpriteDraw(texture, drawPosition, null, tornadoColor, rotation, texture.Size() * 0.5f, TornadoPieceScale(dy), 0, 0);
             }

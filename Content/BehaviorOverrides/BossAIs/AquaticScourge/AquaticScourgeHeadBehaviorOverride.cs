@@ -113,6 +113,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 target.wingTime = target.wingTimeMax;
             }
 
+            // Stop despawning.
+            npc.timeLeft = 7200;
+
             switch ((AquaticScourgeAttackType)attackType)
             {
                 case AquaticScourgeAttackType.SpawnAnimation:
@@ -140,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     DoBehavior_AcidRain(npc, target, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.SulphurousTyphoon:
-                    //DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
+                    DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
             }
 
@@ -332,6 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (attackTimer >= waterBubbleTime + acidFizzleTime + emergeTime)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingAcid>(), ModContent.ProjectileType<AcidBubble>(), ModContent.ProjectileType<SulphurousRockRubble>());
                 SelectNextAttack(npc);
                 return;
             }
@@ -344,8 +348,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
-                npc.Center = target.Center + Vector2.UnitY * 1700f;
+                npc.Center = target.Center + Vector2.UnitY * 1300f;
                 npc.velocity = Vector2.UnitY * -3f;
+
+                int bodyID = ModContent.NPCType<AquaticScourgeBody>();
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (!n.active || n.realLife != npc.whoAmI || n.type != bodyID)
+                        continue;
+
+                    n.Center = npc.Center;
+                }
             }
             else
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.09f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.015f;
@@ -952,6 +966,57 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         npc.netUpdate = true;
                     }
                     break;
+            }
+        }
+
+        public static void DoBehavior_SulphurousTyphoon(NPC npc, Player target, ref float attackTimer)
+        {
+            int bubbleShootRate = 30;
+
+            // Don't do contact damage.
+            npc.damage = 0;
+
+            // Create the tornado on the first frame.
+            if (attackTimer <= 1f)
+            {
+                SoundEngine.PlaySound(CalamityMod.NPCs.Leviathan.Leviathan.EmergeSound);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float tornadoMoveDirection = (target.Center.X < 3000f).ToDirectionInt();
+                    Vector2 tornadoSpawnPosition = target.Center + Vector2.UnitY * 500f;
+                    Utilities.NewProjectileBetter(tornadoSpawnPosition, Vector2.UnitY * -3f, ModContent.ProjectileType<SulphuricTornado>(), 250, 0f, -1, 0f, tornadoMoveDirection);
+                }
+                return;
+            }
+
+            // Circle around the tornado.
+            List<Projectile> tornadoes = Utilities.AllProjectilesByID(ModContent.ProjectileType<SulphuricTornado>()).ToList();
+            if (!tornadoes.Any())
+            {
+                SelectNextAttack(npc);
+                return;
+            }
+
+            // Circle around the tornado.
+            Projectile tornado = tornadoes.First();
+            Vector2 hoverPosition = tornado.Center + (MathHelper.TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(208f, -330f);
+            hoverPosition.Y += (float)Math.Sin(MathHelper.TwoPi * attackTimer / 120f) * 15f;
+
+            npc.velocity = npc.SafeDirectionTo(hoverPosition, (npc.rotation - MathHelper.PiOver2).ToRotationVector2()) * MathHelper.Clamp(npc.Distance(hoverPosition), 0.4f, 50f);
+            npc.Center = npc.Center.MoveTowards(hoverPosition, 2f);
+
+            // Periodically vomit bubbles at the target.
+            if (attackTimer % bubbleShootRate == bubbleShootRate - 1f && npc.WithinRange(hoverPosition, 120f))
+            {
+                SoundEngine.PlaySound(SoundID.Item95, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int bubbleDamage = 145;
+                    int bubbleID = ModContent.ProjectileType<AcidBubble>();
+                    Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                    Utilities.NewProjectileBetter(npc.Center, bubbleShootVelocity, bubbleID, bubbleDamage, 0f);
+                    npc.netUpdate = true;
+                }
             }
         }
 

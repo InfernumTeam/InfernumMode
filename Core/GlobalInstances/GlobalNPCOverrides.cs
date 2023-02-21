@@ -322,8 +322,14 @@ namespace InfernumMode.GlobalInstances
                 PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
 
             // Ensure that the Aquatic Scourge stops the hissing sound if it's unexpectedly killed.
-            if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && npc.life <= 0f)
-                AquaticScourgeHeadBehaviorOverride.UpdateAcidHissSound(npc);
+            bool aquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
+            if (aquaticScourge && npc.life <= 0f)
+            {
+                NPC head = npc;
+                if (head.realLife >= 0)
+                    head = Main.npc[head.realLife];
+                AquaticScourgeHeadBehaviorOverride.UpdateAcidHissSound(head);
+            }
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

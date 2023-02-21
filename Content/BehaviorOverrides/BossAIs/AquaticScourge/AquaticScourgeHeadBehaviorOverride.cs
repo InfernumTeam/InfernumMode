@@ -6,6 +6,7 @@ using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
@@ -185,7 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Release acid mist based on the vertical line.
             if (acidVerticalLine != 0f)
             {
-                if (Main.rand.NextBool(4))
+                if (Main.rand.NextBool(3))
                 {
                     float skullSpawnPositionY = acidVerticalLine + Main.rand.NextFloat(250f);
                     if (target.Center.Y >= acidVerticalLine)
@@ -195,12 +196,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Tile t = CalamityUtils.ParanoidTileRetrieval((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
                     if (!t.HasTile && t.LiquidAmount > 0)
                     {
-                        DesertProwlerSkullParticle skull = new(skullSpawnPosition, -Vector2.UnitY * 2f, new(70, 204, 80), Color.Purple, Main.rand.NextFloat(0.3f, 0.5f), 250f);
+                        DesertProwlerSkullParticle skull = new(skullSpawnPosition, -Vector2.UnitY * 2f, new(70, 204, 80), Color.Purple, Main.rand.NextFloat(0.3f, 0.64f), 350f);
                         GeneralParticleHandler.SpawnParticle(skull);
                     }
                 }
 
-                for (int i = 0; i < 24; i++)
+                for (int i = 0; i < 36; i++)
                 {
                     Vector2 acidVelocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(1f, 3.5f);
 
@@ -216,7 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     if (t.HasTile || t.LiquidAmount <= 0)
                         continue;
 
-                    CloudParticle acidFoam = new(acidSpawnPosition, acidVelocity, acidColor, Color.White, 20, 0.2f)
+                    CloudParticle acidFoam = new(acidSpawnPosition, acidVelocity, acidColor, Color.White, 20, 0.3f)
                     {
                         Rotation = Main.rand.NextFloat(0.5f),
                     };
@@ -397,7 +398,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 }
             }
             else
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.09f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.015f;
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.09f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.011f;
         }
 
         public static void DoBehavior_BubbleSpin(NPC npc, Player target, bool phase2, bool enraged, ref float attackTimer)
@@ -840,8 +841,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (phase3)
             {
                 rubbleReleaseRate = int.MaxValue;
-                turnAngularVelocity += 0.0059f;
-                movementSpeed += 3f;
+                turnAngularVelocity += 0.0098f;
+                movementSpeed += 7f;
             }
             if (enraged)
             {
@@ -868,7 +869,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Create a good bubble above the target on the first frame.
             // If it spawns inside of blocks, move it up.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f && !phase3)
             {
                 Vector2 bubbleSpawnPosition = target.Center - Vector2.UnitY * 540f;
                 while (Collision.SolidCollision(bubbleSpawnPosition - Vector2.One * 125f, 250, 250))
@@ -931,6 +932,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoBehavior_EnterFinalPhase(NPC npc, Player target, ref float attackTimer, ref float acidVerticalLine)
         {
+            ref float rumbleSoundSlot = ref npc.localAI[2];
+
             // Intiialize the acid vertical line.
             // It will try to spawn a set distance below the player for the sake of fair time in being able to get out of the water, but if they're so
             // low that they're in the abyss, a limit is imposed so that the water doesn't take an eternity to rise to the surface.
@@ -941,13 +944,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.netUpdate = true;
             }
 
-            // Make the acid rise upward.
             float lineTop = SulphurousSea.YStart * 16f + 300f;
+            bool soundIsValid = SoundEngine.TryGetActiveSound(SlotId.FromFloat(rumbleSoundSlot), out ActiveSound rumbleSound);
+            bool needsToPlayRumble = !soundIsValid || rumbleSoundSlot == 0f;
+            float rumbleVolume = Utils.GetLerpValue(acidVerticalLine - 2900f, acidVerticalLine - 1650f, target.Center.Y, true) * Utils.GetLerpValue(lineTop + 300f, lineTop + 800f, acidVerticalLine, true) * 1.8f + 0.001f;
+            if (needsToPlayRumble && acidVerticalLine >= lineTop + 300f)
+                rumbleSoundSlot = SoundEngine.PlaySound(LeviathanSpawner.RumbleSound, target.Center).ToFloat();
+            if (rumbleSound is not null)
+                rumbleSound.Volume = rumbleVolume;
+
+            // Make the acid rise upward.
             if (acidVerticalLine >= lineTop)
-                acidVerticalLine -= Utils.Remap(acidVerticalLine, (float)lineTop + 500f, (float)lineTop, 9.6f, 4f);
+                acidVerticalLine -= Utils.Remap(acidVerticalLine, (float)lineTop + 500f, (float)lineTop, 10.5f, 4f);
             else
             {
                 acidVerticalLine = lineTop;
+                rumbleSound?.Stop();
                 SelectNextAttack(npc);
             }
 
@@ -955,9 +967,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.damage = 0;
             npc.dontTakeDamage = true;
             if (npc.Center.Y < acidVerticalLine)
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -10f, 0.04f);
+            {
+                float flySpeed = acidVerticalLine >= lineTop - 150f ? 8f : 17f;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -flySpeed, 0.04f);
+            }
             else
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -15f, 0.05f);
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -25f, 0.05f);
             npc.velocity.X = (float)Math.Sin(MathHelper.TwoPi * attackTimer / 90f) * 12f;
 
             // Create very strong rain.
@@ -1108,7 +1123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Circle around the tornado.
             Projectile tornado = tornadoes.First();
-            Vector2 hoverPosition = tornado.Center + (MathHelper.TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(208f, -330f);
+            Vector2 hoverPosition = tornado.Center + (MathHelper.TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(708f, -330f);
             hoverPosition.Y += (float)Math.Sin(MathHelper.TwoPi * attackTimer / 120f) * 15f;
 
             npc.velocity = npc.SafeDirectionTo(hoverPosition, (npc.rotation - MathHelper.PiOver2).ToRotationVector2()) * MathHelper.Clamp(npc.Distance(hoverPosition), 0.4f, 50f);

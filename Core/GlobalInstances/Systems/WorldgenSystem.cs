@@ -13,8 +13,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
             if (finalCleanupIndex != -1)
             {
-                tasks.Insert(++finalCleanupIndex, new PassLegacy("Jungle Digout Area", JungleArena.Generate));
-                tasks.Insert(++finalCleanupIndex, new PassLegacy("Dungeon Digout Area", DungeonArena.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Prov Arena", (progress, config) =>
                 {
                     progress.Message = "Constructing a temple for an ancient goddess";

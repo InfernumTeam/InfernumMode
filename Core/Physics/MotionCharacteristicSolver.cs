@@ -1,10 +1,5 @@
 using Microsoft.Xna.Framework;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 
 namespace InfernumMode.Core.Physics
 {

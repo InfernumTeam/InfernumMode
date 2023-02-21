@@ -33,7 +33,7 @@ namespace InfernumMode.Content.Items.SummonItems
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Worm);
-            recipe.AddIngredient(ModContent.ItemType<EssenceofChaos>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<EssenceofHavoc>(), 5);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

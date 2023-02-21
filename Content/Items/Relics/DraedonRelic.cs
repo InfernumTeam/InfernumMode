@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Items.Relics
         {
             get
             {
-                if (DownedBossSystem.downedSCal)
+                if (DownedBossSystem.downedCalamitas)
                 {
                     return "Spectacular work. You have conquered all of the major obstacles.\n" +
                         "Take pride in this accomplishment, for you are considerably stronger than you were when you began.";

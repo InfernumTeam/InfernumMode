@@ -1,21 +1,26 @@
 using CalamityMod;
+using CalamityMod.CalPlayer;
 using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.DesertScourge;
-using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.Enemy;
+using CalamityMod.Particles;
+using CalamityMod.World;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using Terraria.WorldBuilding;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
@@ -24,14 +29,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
     {
         public enum AquaticScourgeAttackType
         {
-            BelchAcid,
-            SpitTeeth,
-            ReleaseCircleOfSand,
-            BelchParasites,
-            BubbleSummon,
-            CallForSeekers,
-            ProjectileSpin,
-            JustCharges
+            SpawnAnimation,
+            BubbleSpin,
+            RadiationPulse,
+            WallHitCharges,
+            PerpendicularSpikeBarrage,
+            GasBreath,
+            EnterFinalPhase,
+            AcidRain,
+            SulphurousTyphoon
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
@@ -41,23 +47,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             Phase2LifeRatio,
             Phase3LifeRatio,
-            Phase4LifeRatio,
-            Phase5LifeRatio
+            Phase4LifeRatio
         };
 
-        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase2LifeRatio = 0.75f;
 
-        public const float Phase3LifeRatio = 0.5f;
+        public const float Phase3LifeRatio = 0.45f;
 
-        public const float Phase4LifeRatio = 0.35f;
+        public const float Phase4LifeRatio = 0.15f;
 
-        public const float Phase5LifeRatio = 0.15f;
+        public const int AcidVerticalLineIndex = 7;
+
+        public static float PoisonChargeUpSpeedFactor => 0.333f;
+
+        public static float PoisonChargeUpSpeedFactorFinalPhase => 10f;
+
+        public static float PoisonFadeOutSpeedFactor => 2.5f;
 
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
+            // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -66,34 +78,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float attackTimer = ref npc.ai[3];
             ref float attackDelay = ref npc.Infernum().ExtraAI[5];
             ref float initializedFlag = ref npc.Infernum().ExtraAI[6];
-            ref float angeredYet = ref npc.Infernum().ExtraAI[1];
+            ref float acidVerticalLine = ref npc.Infernum().ExtraAI[AcidVerticalLineIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                CreateSegments(npc, 32, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
+                CreateSegments(npc, 35, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
 
             // Determine hostility.
-            if (npc.justHit || lifeRatio < 0.995f || BossRushEvent.BossRushActive)
-            {
-                if (npc.damage == 0)
-                    npc.timeLeft *= 20;
-
-                CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
-                npc.Calamity().KillTime = revKillTime;
-
-                angeredYet = 1f;
-                npc.damage = npc.defDamage;
-                npc.boss = true;
-                npc.netUpdate = true;
-            }
-            else
-                npc.damage = 0;
-
-            npc.chaseable = angeredYet == 1f;
-            npc.Calamity().newAI[0] = angeredYet;
+            CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
+            npc.Calamity().KillTime = revKillTime;
+            npc.damage = npc.defDamage;
+            npc.boss = true;
+            npc.chaseable = true;
+            npc.dontTakeDamage = false;
+            npc.Calamity().newAI[0] = 1f;
 
             // If there still was no valid target, swim away.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -103,90 +104,93 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             Player target = Main.player[npc.target];
-            float speedFactor = 1f;
-            float enrageFactor = 1f - lifeRatio;
-            if (lifeRatio < Phase4LifeRatio)
-                speedFactor *= 1.15f;
 
-            // Enrage if the target leaves the ocean.
-            if (target.position.Y < 800f || target.position.Y > Main.worldSurface * 16.0 || target.position.X > 6400f && target.position.X < Main.maxTilesX * 16 - 6400)
+            // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
+            if (!target.Calamity().ZoneAbyss)
             {
-                if (!BossRushEvent.BossRushActive)
+                target.breath = target.breathMax;
+                target.ignoreWater = true;
+                target.wingTime = target.wingTimeMax;
+            }
+
+            switch ((AquaticScourgeAttackType)attackType)
+            {
+                case AquaticScourgeAttackType.SpawnAnimation:
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.BubbleSpin:
+                    DoBehavior_BubbleSpin(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.RadiationPulse:
+                    DoBehavior_RadiationPulse(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.WallHitCharges:
+                    DoBehavior_WallHitCharges(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.PerpendicularSpikeBarrage:
+                    DoBehavior_PerpendicularSpikeBarrage(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.GasBreath:
+                    DoBehavior_GasBreath(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.EnterFinalPhase:
+                    DoBehavior_EnterFinalPhase(npc, target, ref attackTimer, ref acidVerticalLine);
+                    break;
+                case AquaticScourgeAttackType.AcidRain:
+                    DoBehavior_AcidRain(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.SulphurousTyphoon:
+                    //DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
+                    break;
+            }
+
+            // Release acid mist based on the vertical line.
+            if (acidVerticalLine != 0f)
+            {
+                if (Main.rand.NextBool(4))
                 {
-                    npc.Calamity().CurrentlyEnraged = angeredYet == 1f;
-                    enrageFactor = 1.8f;
+                    float skullSpawnPositionY = acidVerticalLine + Main.rand.NextFloat(250f);
+                    if (target.Center.Y >= acidVerticalLine)
+                        skullSpawnPositionY = target.Center.Y + Main.rand.NextFloat() * 200f;
+                    Vector2 skullSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 800f, skullSpawnPositionY);
+
+                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
+                    if (!t.HasTile && t.LiquidAmount > 0)
+                    {
+                        DesertProwlerSkullParticle skull = new(skullSpawnPosition, -Vector2.UnitY * 2f, new(70, 204, 80), Color.Purple, Main.rand.NextFloat(0.3f, 0.5f), 250f);
+                        GeneralParticleHandler.SpawnParticle(skull);
+                    }
+                }
+
+                for (int i = 0; i < 24; i++)
+                {
+                    Vector2 acidVelocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(1f, 3.5f);
+
+                    // Determine where the acid mist should spawn.
+                    // If the player is below the acid line, just draw it near them to sell the illusion that the water is incredibly acidic.
+                    float acidSpawnPositionY = acidVerticalLine + Main.rand.NextFloat(200f);
+                    if (target.Center.Y >= acidVerticalLine)
+                        acidSpawnPositionY = target.Center.Y + Main.rand.NextFloat(-200f, 500f);
+                    Vector2 acidSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 1100f, acidSpawnPositionY);
+                    Color acidColor = Color.Lerp(Color.LightSeaGreen, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.6f));
+
+                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(acidSpawnPosition.X / 16f), (int)(acidSpawnPosition.Y / 16f));
+                    if (t.HasTile || t.LiquidAmount <= 0)
+                        continue;
+
+                    CloudParticle acidFoam = new(acidSpawnPosition, acidVelocity, acidColor, Color.White, 20, 0.2f)
+                    {
+                        Rotation = Main.rand.NextFloat(0.5f),
+                    };
+                    GeneralParticleHandler.SpawnParticle(acidFoam);
                 }
             }
 
-            if (BossRushEvent.BossRushActive)
-                enrageFactor *= 3f;
-
-            // Swim slowly around the "target" when not angry.
-            if (angeredYet == 0f)
-                DoMovement_IdleHoverMovement(npc, target);
-            else
-            {
-                if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/AquaticScourge");
-                else
-                    npc.ModNPC.Music = MusicID.Boss2;
-                float wrappedTime = generalTimer % 1040f;
-                if (wrappedTime < 360f)
-                {
-                    DoMovement_AggressiveSnakeMovement(npc, target, generalTimer, speedFactor);
-                    if (attackDelay > 50f)
-                        attackDelay = 50f;
-                }
-                else
-                {
-                    // Decrement the attack timer as needed.
-                    if (BossRushEvent.BossRushActive)
-                        attackDelay = 0f;
-
-                    if (attackDelay > 0f)
-                    {
-                        attackTimer = 0f;
-                        attackDelay--;
-                    }
-                    else
-                    {
-                        switch ((AquaticScourgeAttackType)(int)attackType)
-                        {
-                            case AquaticScourgeAttackType.BelchAcid:
-                                DoBehavior_BelchAcid(npc, target, attackTimer, enrageFactor);
-                                break;
-                            case AquaticScourgeAttackType.SpitTeeth:
-                                DoBehavior_SpitTeeth(npc, target, attackTimer, enrageFactor);
-                                break;
-                            case AquaticScourgeAttackType.ReleaseCircleOfSand:
-                                DoBehavior_ReleaseCircleOfSand(npc, target, attackTimer, enrageFactor);
-                                break;
-                            case AquaticScourgeAttackType.BelchParasites:
-                                DoBehavior_BelchParasites(npc, attackTimer, ref speedFactor);
-                                break;
-                            case AquaticScourgeAttackType.BubbleSummon:
-                                DoBehavior_BubbleSummon(npc, target, attackTimer, enrageFactor, ref speedFactor);
-                                break;
-                            case AquaticScourgeAttackType.CallForSeekers:
-                                DoBehavior_CallForSeekers(npc, target, attackTimer, ref speedFactor);
-                                break;
-                            case AquaticScourgeAttackType.ProjectileSpin:
-                                DoBehavior_ProjectileSpin(npc, attackTimer, ref speedFactor);
-                                break;
-                            case AquaticScourgeAttackType.JustCharges:
-                                speedFactor = 1.5f;
-                                if (attackTimer > 300f)
-                                    SelectNextAttack(npc);
-                                break;
-                        }
-                        attackTimer++;
-                    }
-
-                    DoMovement_GeneralMovement(npc, target, speedFactor * 1.25f);
-                }
-            }
+            // Update the acid hiss sound every frame.
+            UpdateAcidHissSound(npc);
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            attackTimer++;
             generalTimer++;
 
             return false;
@@ -209,306 +213,745 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.active = false;
         }
 
-        public static void DoBehavior_BelchAcid(NPC npc, Player target, float attackTimer, float enrageFactor)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer)
         {
-            int shootRate = 55;
-            int shootCount = 4;
+            int waterBubbleTime = 150;
+            int acidFizzleTime = 150;
+            int emergeTime = 96;
+            int acidWarningDelay = 30;
 
-            if (!npc.WithinRange(target.Center, 380f) && attackTimer % shootRate == shootRate - 1f)
+            // Handle acoustic and visual triggers.
+            Projectile bubbleProj = null;
+            List<Projectile> goodBubbles = Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterClearingBubble>()).ToList();
+            if (goodBubbles.Any())
+                bubbleProj = goodBubbles.First();
+
+            if (attackTimer < waterBubbleTime)
             {
-                SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
-                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                // Spawn the bubbles and inform the player of their usage.
+                if (attackTimer == acidWarningDelay)
                 {
-                    for (int i = 0; i < 11; i++)
+                    SoundEngine.PlaySound(CalamityMod.NPCs.Leviathan.Leviathan.EmergeSound);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 acidVelocity = Vector2.Lerp((npc.rotation - MathHelper.PiOver2).ToRotationVector2(), npc.SafeDirectionTo(target.Center), 0.5f);
-                        acidVelocity = acidVelocity.RotatedByRandom(0.35f) * Main.rand.NextFloat(11f, 15f) * (1f + enrageFactor * 0.2f);
-                        Utilities.NewProjectileBetter(npc.Center + acidVelocity * 3f, acidVelocity, ModContent.ProjectileType<OldDukeSummonDrop>(), 125, 0f);
+                        Vector2 bubbleSpawnPosition = target.Center + Vector2.UnitY * 300f;
+                        Utilities.NewProjectileBetter(bubbleSpawnPosition, -Vector2.UnitY * 2f, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f, -1, 0f, waterBubbleTime + acidFizzleTime);
                     }
+                }
 
-                    for (int i = 0; i < 4; i++)
+                float cameraInterpolant = Utils.GetLerpValue(acidWarningDelay, acidWarningDelay + 10f, attackTimer, true) * Utils.GetLerpValue(waterBubbleTime - 1f, waterBubbleTime - 10f, attackTimer, true);
+                if (bubbleProj is not null)
+                {
+                    target.Infernum_Camera().ScreenFocusInterpolant = cameraInterpolant;
+                    target.Infernum_Camera().ScreenFocusPosition = bubbleProj.Center;
+                }
+            }
+
+            // Emit bubbles around the player.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                float bubbleSpawnRate = Utils.Remap(attackTimer, 0f, acidWarningDelay + 45f, 0.02f, 0.3f);
+                for (int i = 0; i < 3; i++)
+                {
+                    if (Main.rand.NextFloat() > bubbleSpawnRate)
+                        continue;
+
+                    Vector2 bubbleSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(200f, 675f);
+                    if (Main.rand.NextBool(3))
+                        bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 540f, 650f);
+
+                    // Don't spawn negative particles inside of the bubble.
+                    if (bubbleProj is not null && bubbleSpawnPosition.WithinRange(bubbleProj.Center, bubbleProj.scale * 300f))
+                        continue;
+
+                    int goreID = 421;
+                    if (Main.rand.NextBool(4))
+                        goreID = 422;
+                    if (Main.rand.NextBool(27) && attackTimer >= acidWarningDelay)
+                        goreID = 423;
+                    if (Main.rand.NextBool(3))
+                        goreID -= 10;
+
+                    Gore bubble = Gore.NewGorePerfect(npc.GetSource_FromThis(), bubbleSpawnPosition, -Vector2.UnitY * Main.rand.NextFloat(0.6f, 3f), goreID);
+                    bubble.type = goreID;
+                    bubble.timeLeft = 50;
+                    bubble.scale = 0.4f;
+
+                    for (int j = 0; j < 3; j++)
                     {
-                        Vector2 cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(7f, 9f) + enrageFactor * 2f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SulphurousPoisonCloud>(), 125, 0f);
+                        Vector2 acidVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(3f);
+                        acidVelocity.X += Abyss.AtLeftSideOfWorld.ToDirectionInt() * -4f;
+                        Dust acid = Dust.NewDustPerfect(bubbleSpawnPosition + Main.rand.NextVector2Circular(80f, 80f), 256, acidVelocity);
+                        acid.scale = 1.25f;
+                        acid.fadeIn = 0.87f;
+                        acid.noGravity = true;
                     }
                 }
             }
 
-            if (attackTimer >= shootRate * shootCount)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_SpitTeeth(NPC npc, Player target, float attackTimer, float enrageFactor)
-        {
-            int shootRate = 65;
-            int shootCount = 4;
-
-            if (!npc.WithinRange(target.Center, 250f) && attackTimer % shootRate == shootRate - 1f)
+            // Create acid around the player.
+            if (attackTimer >= waterBubbleTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Vector2 toothVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.48f, 0.48f, i / 2f)) * 7.2f;
-                        toothVelocity *= 1f + (float)CalamityUtils.Convert01To010(i / 3f) * 0.2f + enrageFactor * 0.135f;
-                        Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 125, 0f);
-                    }
+                Color acidColor = Color.Lerp(Color.LightSeaGreen, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.6f));
 
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Vector2 cloudVelocity;
-                        do
-                            cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
-                        while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
-                    }
+                for (int i = 0; i < 2; i++)
+                {
+                    // Don't spawn negative particles inside of the bubble.
+                    Vector2 acidSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 600f, 500f);
+                    if (bubbleProj is not null && acidSpawnPosition.WithinRange(bubbleProj.Center, bubbleProj.scale * 300f))
+                        continue;
+
+                    MediumMistParticle acidFoam = new(acidSpawnPosition, -Vector2.UnitY.RotatedByRandom(0.67f) * Main.rand.NextFloat(4f, 20f), acidColor, Color.White, 0.5f, 255f, 0.02f);
+                    GeneralParticleHandler.SpawnParticle(acidFoam);
                 }
             }
 
-            if (attackTimer >= shootRate * shootCount)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_ReleaseCircleOfSand(NPC npc, Player target, float attackTimer, float enrageFactor)
-        {
-            int shootRate = 45;
-            int shootCount = 5;
-
-            if (!npc.WithinRange(target.Center, 345f) && attackTimer % shootRate == shootRate - 1f)
+            // Rise upward from below and attack.
+            if (attackTimer == waterBubbleTime + acidFizzleTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 24; i++)
-                    {
-                        Vector2 sandVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 6f;
-                        Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 125, 0f);
-                    }
+                SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeAppearSound);
+                SoundEngine.PlaySound(Mauler.RoarSound);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 9f;
+                npc.netUpdate = true;
+            }
 
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Vector2 cloudVelocity;
-                        do
-                            cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
-                        while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
-                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
-                    }
+            if (attackTimer == waterBubbleTime + acidFizzleTime + 34f)
+            {
+                // Release acid mist.
+                for (int i = 0; i < 100; i++)
+                {
+                    Vector2 acidVelocity = -Vector2.UnitY.RotatedByRandom(0.87f) * Main.rand.NextFloat(8f, 14f);
+                    acidVelocity.Y -= Main.rand.NextFloat(10f, 17f);
+                    Vector2 acidSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 500f, 500f);
+                    Color acidColor = Color.Lerp(Color.LightSeaGreen, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.6f));
+
+                    MediumMistParticle acidMistFoam = new(acidSpawnPosition, acidVelocity, acidColor, Color.White, 2f, 255f, 0.009f);
+                    GeneralParticleHandler.SpawnParticle(acidMistFoam);
                 }
             }
 
-            if (attackTimer >= shootRate * shootCount)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_BelchParasites(NPC npc, float attackTimer, ref float speedFactor)
-        {
-            speedFactor *= MathHelper.Lerp(1f, 0.25f, Utils.GetLerpValue(10f, 90f, attackTimer, true));
-            if (attackTimer == 135f)
+            if (attackTimer >= waterBubbleTime + acidFizzleTime + emergeTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        Vector2 parasiteVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.37f) * Main.rand.NextFloat(8.5f, 12f);
-                        int parasite = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
-                        if (Main.npc.IndexInRange(parasite))
-                        {
-                            Main.npc[parasite].velocity = parasiteVelocity;
-                            Main.npc[parasite].netUpdate = true;
-                        }
-                    }
-                }
-            }
-
-            if (attackTimer >= 205f)
                 SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_BubbleSummon(NPC npc, Player target, float attackTimer, float enrageFactor, ref float speedFactor)
-        {
-            speedFactor *= MathHelper.Lerp(1f, 0.667f, Utils.GetLerpValue(10f, 70f, attackTimer, true));
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 8f == 7f)
-            {
-                List<Vector2> potentialSpawnPoints = new();
-                for (int i = -120; i < 120; i++)
-                {
-                    Point waterPosition = new((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16 - 50);
-                    if (WorldUtils.Find(waterPosition, Searches.Chain(new Searches.Down(8000), new CustomTileConditions.IsWater()), out Point updatedWaterPosition))
-                        potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates());
-                }
-
-                Vector2 spawnPoint;
-                do
-                    spawnPoint = Main.rand.Next(potentialSpawnPoints);
-                while (MathHelper.Distance(spawnPoint.X, target.Center.X) < 180f);
-                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (8.4f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 125, 0f);
-            }
-
-            if (attackTimer >= 385f)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
-        {
-            int summonRate = 90;
-            int summonCount = 3;
-
-            speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(10f, 50f, attackTimer, true));
-
-            if (attackTimer == 75f)
-                SoundEngine.PlaySound(Mauler.RoarSound, npc.Center);
-
-            if (attackTimer % summonRate == summonRate - 1f)
-            {
-                List<Vector2> potentialSpawnPoints = new();
-                for (int i = -120; i < 120; i++)
-                {
-                    Point waterPosition = new((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16);
-                    if (WorldUtils.Find(waterPosition, Searches.Chain(new Searches.Down(8000), new CustomTileConditions.IsWater()), out Point updatedWaterPosition))
-                        potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates(8f, 36f));
-                }
-
-                if (potentialSpawnPoints.Count == 0)
-                {
-                    NPC bodySegment = Main.npc[(int)npc.ai[0]];
-                    for (int i = 0; i < 45; i++)
-                    {
-                        if (i > 5)
-                            potentialSpawnPoints.Add(bodySegment.Center);
-                        bodySegment = Main.npc[(int)bodySegment.ai[0]];
-                    }
-                }
-
-                if (Main.netMode != NetmodeID.MultiplayerClient && potentialSpawnPoints.Count > 0)
-                {
-                    Vector2 spawnPoint = Main.rand.Next(potentialSpawnPoints);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<AquaticSeekerHead2>());
-                }
-            }
-
-            if (attackTimer >= summonRate * summonCount)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_ProjectileSpin(NPC npc, float attackTimer, ref float speedFactor)
-        {
-            int redirectTime = 75;
-            int spinTime = 150;
-            int sandToothReleaseRate = 20;
-            int cloudReleaseRate = 48;
-            float spinSpeed = 23f;
-            float spinArc = MathHelper.TwoPi / spinTime;
-
-            // Disable contact damage.
-            npc.damage = 0;
-
-            speedFactor = Utils.GetLerpValue(redirectTime, 0f, attackTimer, true);
-            if (attackTimer < redirectTime)
                 return;
+            }
+
+            // Don't use the Calamity HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Stay below the player at first.
+            if (attackTimer < waterBubbleTime + acidFizzleTime)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                npc.Center = target.Center + Vector2.UnitY * 1700f;
+                npc.velocity = Vector2.UnitY * -3f;
+            }
+            else
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.09f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.015f;
+        }
+
+        public static void DoBehavior_BubbleSpin(NPC npc, Player target, ref float attackTimer)
+        {
+            int redirectTime = 35;
+            int spinTime = 270;
+            int bubbleReleaseRate = 22;
+            int chargeRedirectTime = 16;
+            int chargeTime = 56;
+            float spinSpeed = 23f;
+            float chargeSpeed = 28.5f;
+            float spinArc = MathHelper.Pi / spinTime * 3f;
+            bool charging = attackTimer >= redirectTime + spinTime + chargeRedirectTime;
+            bool doneCharging = attackTimer >= redirectTime + spinTime + chargeRedirectTime + chargeTime;
+            ref float bubbleReleaseCount = ref npc.Infernum().ExtraAI[0];
+
+            // Don't do damage if not charging.
+            if (!charging)
+                npc.damage = 0;
+
+            // Approach the target before spinning.
+            if (attackTimer < redirectTime)
+            {
+                float flySpeed = Utils.Remap(attackTimer, 16f, redirectTime - 8f, 9f, spinSpeed);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * flySpeed, 0.1f);
+                return;
+            }
 
             // Spin in place.
-            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * spinSpeed;
-            npc.velocity = npc.velocity.RotatedBy(spinArc);
-
-            // Release sand teeth.
-            if (attackTimer % sandToothReleaseRate == sandToothReleaseRate - 1f)
+            if (attackTimer < redirectTime + spinTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.45f, ModContent.ProjectileType<SlowerSandTooth>(), 125, 0f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(spinArc) * spinSpeed;
+                if (!npc.WithinRange(target.Center, 600f))
+                    npc.Center = npc.Center.MoveTowards(target.Center, 8f);
             }
 
-            // Release sand poison clouds.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudReleaseRate == cloudReleaseRate - 1f)
+            // Release bubbles at the player.
+            if (attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f && attackTimer < redirectTime + spinTime)
             {
-                for (int i = 0; i < 20; i++)
+                SoundEngine.PlaySound(SoundID.Item95, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 cloudVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 14.5f);
-                    Utilities.NewProjectileBetter(npc.Center, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 125, 0f);
+                    int bubbleDamage = 135;
+                    int bubbleID = ModContent.ProjectileType<AcidBubble>();
+                    Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                    if (bubbleReleaseCount % 8f == 3f)
+                    {
+                        bubbleDamage = 0;
+                        bubbleID = ModContent.ProjectileType<WaterClearingBubble>();
+                        bubbleShootVelocity *= 0.35f;
+                    }
+
+                    Utilities.NewProjectileBetter(npc.Center, bubbleShootVelocity, bubbleID, bubbleDamage, 0f);
+                    bubbleReleaseCount++;
+                    npc.netUpdate = true;
                 }
             }
 
-            if (attackTimer >= redirectTime + spinTime)
+            // Redirect for a charge towards the target.
+            if (attackTimer >= redirectTime + spinTime && !charging)
+            {
+                // Roar and pop all bubbles before the redirecting begins.
+                if (attackTimer == redirectTime + spinTime)
+                {
+                    SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
+                    PopAllBubbles();
+                }
+
+                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.08f);
+
+                if (attackTimer == redirectTime + spinTime + chargeRedirectTime - 1f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeChargeSound, target.Center);
+                    npc.velocity = chargeVelocity;
+                    npc.netUpdate = true;
+                }
+            }
+            
+            // Emit acid mist while charging.
+            if (Main.netMode != NetmodeID.MultiplayerClient && charging && attackTimer % 2f == 0f)
+            {
+                Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(2f, 6f);
+                Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+            }
+
+            if (doneCharging)
                 SelectNextAttack(npc);
         }
 
-        public static void DoMovement_IdleHoverMovement(NPC npc, Player target)
+        public static void DoBehavior_RadiationPulse(NPC npc, Player target, ref float attackTimer)
         {
-            if (npc.WithinRange(target.Center, 160f) && npc.velocity != Vector2.Zero)
+            int shootDelay = 90;
+            int pulseReleaseRate = 120;
+            int acidReleaseRate = 60;
+            int shootTime = 480;
+            int goodBubbleReleaseRate = 180;
+            int acidShootCount = 4;
+            float pulseMaxRadius = 425f;
+
+            // Slowly move towards the target.
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 5f;
+            if (npc.WithinRange(target.Center, 200f))
+                npc.velocity = (npc.velocity * 1.01f).ClampMagnitude(0f, idealVelocity.Length() * 1.5f);
+            else
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.125f);
+
+            if (attackTimer < shootDelay)
                 return;
 
-            Vector2 flyDestination = target.Center;
-
-            // Don't fly too high in the air.
-            if (WorldUtils.Find(flyDestination.ToTileCoordinates(), Searches.Chain(new Searches.Down(10000), new CustomTileConditions.IsWaterOrSolid()), out Point result))
+            // Release radiation pulses.
+            if (attackTimer % pulseReleaseRate == pulseReleaseRate - 1f)
             {
-                Vector2 worldCoordinatesResult = result.ToWorldCoordinates();
-                if (worldCoordinatesResult.Y > flyDestination.Y + 50f)
-                    flyDestination.Y = worldCoordinatesResult.Y + 25f;
+                SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RadiationPulse>(), 0, 0f, -1, 0f, pulseMaxRadius);
             }
 
-            float movementSpeed = MathHelper.Lerp(5f, 8.5f, Utils.GetLerpValue(300f, 750f, npc.Distance(flyDestination), true));
-            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(flyDestination), movementSpeed / 300f, true) * movementSpeed;
-        }
-
-        public static void DoMovement_AggressiveSnakeMovement(NPC npc, Player target, float generalTimer, float speedFactor)
-        {
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.023f, 0.0285f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
-            idealRotation += (float)Math.Sin(generalTimer / 43f) * Utils.GetLerpValue(360f, 425f, npc.Distance(target.Center), true) * 0.74f;
-            movementSpeed *= speedFactor;
-
-            ref float roarSoundCountdown = ref npc.localAI[0];
-
-            if (!npc.WithinRange(target.Center, 220f))
+            // Release acid.
+            if (attackTimer % acidReleaseRate == acidReleaseRate - 1f)
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, acceleration * 2.5f);
-                npc.velocity = npc.velocity.RotateTowards(idealRotation, acceleration, true);
-                npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, npc.SafeDirectionTo(target.Center) * newSpeed, 0.03f);
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
 
-                // Decrement the sound countdown as necessary.
-                if (roarSoundCountdown > 0f)
-                    roarSoundCountdown--;
-            }
-            else if (npc.velocity.Length() < 23.5f)
-            {
-                if (roarSoundCountdown <= 0f)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    SoundEngine.PlaySound(DesertScourgeHead.RoarSound, npc.Center);
-                    roarSoundCountdown = 45f;
+                    for (int i = 0; i < acidShootCount; i++)
+                    {
+                        float acidInterpolant = i / (float)(acidShootCount - 1f);
+                        float angularVelocity = MathHelper.Lerp(0.016f, -0.016f, acidInterpolant);
+                        Vector2 acidShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-1.09f, 1.09f, acidInterpolant)) * 5f;
+                        Utilities.NewProjectileBetter(npc.Center + acidShootVelocity * 5f, acidShootVelocity, ModContent.ProjectileType<AcceleratingArcingAcid>(), 135, 0f, -1, 0f, angularVelocity);
+                    }
                 }
-                npc.velocity *= 1.031f;
+            }
+
+            // Release safe bubbles from below occasionally.
+            if (attackTimer % goodBubbleReleaseRate == goodBubbleReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item95, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(target.Center + Vector2.UnitY * 450f, -Vector2.UnitY * 5f, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f);
+            }
+
+            if (attackTimer >= shootDelay + shootTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_WallHitCharges(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeCount = 5;
+            int chargeDelay = 30;
+            int minChargeTime = 36;
+            int maxChargeTime = 67;
+            int stunTime = 60;
+            int rubbleCount = 9;
+            bool insideBlocks = Collision.SolidCollision(npc.TopLeft, npc.width, npc.height);
+            float chargeSpeed = 25f;
+            float rubbleArc = 1.17f;
+            float rubbleShootSpeed = 5f;
+            float bubbleSpacing = 445f;
+            float bubbleAreaCoverage = 1500f;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float performingCharge = ref npc.Infernum().ExtraAI[1];
+            ref float stunTimer = ref npc.Infernum().ExtraAI[2];
+            ref float dontInteractWithBlocksYet = ref npc.Infernum().ExtraAI[3];
+
+            if (chargeCounter <= 0f)
+                chargeDelay += 60;
+
+            // Attempt to move towards the target before charging.
+            if (attackTimer <= chargeDelay)
+            {
+                float slowdownInterpolant = (float)Math.Pow(attackTimer / chargeDelay, 2D);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * slowdownInterpolant * chargeSpeed;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
+            }
+
+            // Do the charge.
+            if (attackTimer == chargeDelay)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeChargeSound, target.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                npc.netUpdate = true;
+
+                performingCharge = 1f;
+                dontInteractWithBlocksYet = insideBlocks.ToInt();
+            }
+
+            // Handle post-stun behaviors.
+            if (stunTimer >= 1f)
+            {
+                stunTimer--;
+                if (stunTimer <= 0f)
+                {
+                    attackTimer = 0f;
+                    dontInteractWithBlocksYet = 0f;
+                    chargeCounter++;
+                    if (chargeCounter >= chargeCount)
+                        SelectNextAttack(npc);
+
+                    // Release a single clean bubble on the third charge.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && chargeCounter == 3f)
+                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitY * 650f, -Vector2.UnitY * 5f, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f);
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (performingCharge == 1f)
+            {
+                // If the scourge started in blocks when charging but has now left them, allow it to rebound.
+                if (dontInteractWithBlocksYet == 1f && !insideBlocks)
+                {
+                    dontInteractWithBlocksYet = 0f;
+                    npc.netUpdate = true;
+                }
+
+                // Perform rebound effects when tiles are hit. This takes a small amount of time before it can happen, so that charges aren't immediate.
+                if (attackTimer >= minChargeTime && dontInteractWithBlocksYet == 0f && insideBlocks && npc.WithinRange(target.Center, 1200f))
+                {
+                    performingCharge = 0f;
+                    stunTimer = stunTime;
+
+                    // Create tile hit dust effects.
+                    Collision.HitTiles(npc.TopLeft, -npc.velocity, npc.width, npc.height);
+
+                    // Create rubble that aims backwards and some bubbles from below.
+                    if (Main.rand.NextBool(1))
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound, target.Center);
+                    else
+                        SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
+
+                    // Create some silly cartoon anger particles to give a bit of charm.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 angerParticleSpawnPosition = npc.Center + (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 48f + Main.rand.NextVector2Circular(12f, 12f);
+                        int angerParticleLifetime = Main.rand.Next(54, 67);
+                        float angerParticleScale = Main.rand.NextFloat(0.36f, 0.58f);
+                        CartoonAngerParticle angy = new(angerParticleSpawnPosition, Color.Red, Color.DarkRed, angerParticleLifetime, Main.rand.NextFloat(MathHelper.TwoPi), angerParticleScale);
+                        GeneralParticleHandler.SpawnParticle(angy);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < rubbleCount; i++)
+                        {
+                            float rubbleOffsetAngle = MathHelper.Lerp(-rubbleArc, rubbleArc, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.05f;
+                            Vector2 rubbleVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(rubbleOffsetAngle) * rubbleShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
+                        }
+                        
+                        for (float dx = -bubbleAreaCoverage; dx < bubbleAreaCoverage; dx += bubbleSpacing)
+                        {
+                            float bubbleSpeed = Main.rand.NextFloat(7f, 9f);
+                            float verticalOffset = Math.Max(target.velocity.Y * 30f, 0f) + 600f;
+                            Utilities.NewProjectileBetter(target.Center + new Vector2(dx, verticalOffset), -Vector2.UnitY * bubbleSpeed, ModContent.ProjectileType<AcidBubble>(), 135, 0f);
+                        }
+                    }
+
+                    npc.velocity = npc.velocity.RotatedByRandom(0.32f) * -0.1f;
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer >= chargeDelay + maxChargeTime)
+                {
+                    performingCharge = 0f;
+                    stunTimer = 2f;
+                    npc.velocity *= 0.5f;
+                    npc.netUpdate = true;
+                }
+
+                // Emit acid mist while charging and not inside of tiles.
+                if (Main.netMode != NetmodeID.MultiplayerClient && !insideBlocks && attackTimer % 5f == 0f)
+                {
+                    Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0.7f, 3f);
+                    Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                }
             }
         }
 
-        public static void DoMovement_GeneralMovement(NPC npc, Player target, float speedFactor)
+        public static void DoBehavior_PerpendicularSpikeBarrage(NPC npc, Player target, ref float attackTimer)
         {
-            if (speedFactor == 0f)
-                return;
+            int slowdownTime = 30;
+            int attackTime = 60;
+            int shootCount = 2;
+            float selfHurtHPRatio = 0.0075f;
+            ref float hasReachedPlayer = ref npc.Infernum().ExtraAI[0];
+            ref float shootCounter = ref npc.Infernum().ExtraAI[1];
+            ref float shudderOffset = ref npc.Infernum().ExtraAI[2];
+            ref float segmentShudderIndex = ref npc.Infernum().ExtraAI[3];
 
-            AquaticScourgeAttackType attackType = (AquaticScourgeAttackType)(int)npc.ai[2];
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.GetLerpValue(1f, Phase5LifeRatio, lifeRatio, true));
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
-            movementSpeed *= speedFactor * (BossRushEvent.BossRushActive ? 2.1f : 1f);
-            acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
-
-            if (attackType == AquaticScourgeAttackType.JustCharges)
-                acceleration *= (speedFactor - 1f) * 0.5f + 1f;
-
-            if (!npc.WithinRange(target.Center, attackType == AquaticScourgeAttackType.JustCharges ? 180f : 320f))
+            // Approach the player.
+            if (hasReachedPlayer == 0f)
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, acceleration * 3.2f);
-                npc.velocity = npc.velocity.RotateTowards(idealRotation, acceleration, true);
-                npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, npc.SafeDirectionTo(target.Center) * newSpeed, 0.015f);
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 250f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * (attackTimer * 0.05f + 20f);
+                npc.damage = 0;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.075f);
+
+                if (npc.WithinRange(target.Center, 600f) && !npc.WithinRange(target.Center, 250f))
+                {
+                    hasReachedPlayer = 1f;
+                    attackTimer = 0f;
+                    npc.velocity = npc.velocity.ClampMagnitude(4f, 16f);
+                    npc.netUpdate = true;
+                }
+
+                return;
+            }
+
+            // Slow down before releasing spikes from the body segments.
+            if (attackTimer <= slowdownTime)
+            {
+                npc.velocity *= 0.96f;
+                shudderOffset = 0f;
+                segmentShudderIndex = 0f;
+            }
+
+            if (attackTimer == slowdownTime)
+            {
+                npc.StrikeNPCNoInteraction((int)(npc.lifeMax * selfHurtHPRatio), 0f, 0);
+
+                SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound, target.Center);
+                ReleaseSpikesFromSegments(npc, shootCount, (int)shootCounter);
+
+                if (shootCounter >= shootCount - 1f)
+                {
+                    int bodyID = ModContent.NPCType<AquaticScourgeBody>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+                        if (!n.active || n.type != bodyID || n.realLife != npc.whoAmI)
+                            continue;
+
+                        n.Infernum().ExtraAI[0] = 0f;
+                        n.netUpdate = true;
+                    }
+                }
+
+                shudderOffset = 20f;
+                npc.netUpdate = true;
+            }
+
+            // Shudder if necessary.
+            if (shudderOffset > 0f)
+            {
+                segmentShudderIndex = Utils.GetLerpValue(slowdownTime, slowdownTime + attackTime - 10f, attackTimer, true) * 35f;
+                shudderOffset -= 0.15f;
+
+                if (segmentShudderIndex <= 3f)
+                    npc.Center += npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * shudderOffset;
+            }
+
+            if (attackTimer >= slowdownTime + attackTime)
+            {
+                attackTimer = 0f;
+                hasReachedPlayer = 0f;
+                shootCounter++;
+                if (shootCounter >= shootCount)
+                    SelectNextAttack(npc);
+
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_GasBreath(NPC npc, Player target, ref float attackTimer)
+        {
+            int attackTime = 480;
+            int rubbleReleaseRate = 90;
+            float idealRotation = npc.AngleTo(target.Center);
+            float turnAngularVelocity = BossRushEvent.BossRushActive ? 0.0384f : 0.027f;
+            float movementSpeed = MathHelper.Lerp(14.5f, 38f, Utils.GetLerpValue(640f, 3000f, npc.Distance(target.Center), true));
+            ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[0];
+
+            // Slither around when not close to the target.
+            float slitherInterpolant = Utils.GetLerpValue(250f, 540f, npc.Distance(target.Center), true);
+            idealRotation += (float)Math.Sin(MathHelper.TwoPi * attackTimer / 175f) * slitherInterpolant * 0.6f;
+
+            // Fly more aggressively if the target is close to the safety bubble.
+            Projectile closestBubble = null;
+            List<Projectile> goodBubbles = Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterClearingBubble>()).ToList();
+            if (goodBubbles.Any())
+            {
+                closestBubble = goodBubbles.OrderBy(b => b.DistanceSQ(target.Center)).First();
+                float closenessInterpolant = Utils.GetLerpValue(400f, 180f, closestBubble.Distance(target.Center), true);
+                movementSpeed += closenessInterpolant * 5f;
+                turnAngularVelocity *= MathHelper.Lerp(1f, 1.27f, closenessInterpolant);
+            }
+
+            // Create a good bubble above the target on the first frame.
+            // If it spawns inside of blocks, move it up.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+            {
+                Vector2 bubbleSpawnPosition = target.Center - Vector2.UnitY * 540f;
+                while (Collision.SolidCollision(bubbleSpawnPosition - Vector2.One * 125f, 250, 250))
+                    bubbleSpawnPosition.Y += 16f;
+
+                Utilities.NewProjectileBetter(bubbleSpawnPosition, Vector2.Zero, ModContent.ProjectileType<WaterClearingBubble>(), 0, 0f, -1, 0f, attackTime - 25f);
+            }
+
+            // Fly towards the target.
+            if (!npc.WithinRange(target.Center, 240f))
+            {
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, turnAngularVelocity * 3.2f);
+                npc.velocity = npc.velocity.RotateTowards(idealRotation, turnAngularVelocity, true);
+                npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, idealRotation.ToRotationVector2() * newSpeed, 0.03f);
+
+                // Vomit a bunch of gas if the scourge was close to the target previously but isn't anymore.
+                if (hasGottenNearPlayer == 1f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DesertScourgeShortRoar, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item66, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 25; i++)
+                        {
+                            Vector2 gasVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.43f) * Main.rand.NextFloat(5f, 40f) + npc.velocity * 0.6f;
+                            Utilities.NewProjectileBetter(npc.Center + gasVelocity * 4f, gasVelocity, ModContent.ProjectileType<SulphuricGasDebuff>(), 0, 0f);
+                        }
+                    }
+
+                    hasGottenNearPlayer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+            else
+            {
+                if (npc.WithinRange(target.Center, 200f))
+                    hasGottenNearPlayer = 1f;
+                npc.velocity *= 1.02f;
+            }
+
+            // Release rubble from the ceiling.
+            if (attackTimer % rubbleReleaseRate == rubbleReleaseRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, target.Center);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 rubbleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 800f, -30f), new Searches.Up(50));
+                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f)
+                        rubbleSpawnPosition.Y = target.Center.Y - 720f + Main.rand.NextFloatDirection() * 40f;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(rubbleSpawnPosition, 300f))
+                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
+                }
+            }
+
+            if (attackTimer >= attackTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_EnterFinalPhase(NPC npc, Player target, ref float attackTimer, ref float acidVerticalLine)
+        {
+            // Intiialize the acid vertical line.
+            // It will try to spawn a set distance below the player for the sake of fair time in being able to get out of the water, but if they're so
+            // low that they're in the abyss, a limit is imposed so that the water doesn't take an eternity to rise to the surface.
+            if (acidVerticalLine == 0f)
+            {
+                acidVerticalLine = MathHelper.Min(target.Bottom.Y + 2000f, CustomAbyss.AbyssTop * 16f + 900f);
+                Utilities.DisplayText("A deluge of acid is quickly rising from below!", Color.GreenYellow);
+                npc.netUpdate = true;
+            }
+
+            // Make the acid rise upward.
+            float lineTop = SulphurousSea.YStart * 16f + 300f;
+            if (acidVerticalLine >= lineTop)
+                acidVerticalLine -= Utils.Remap(acidVerticalLine, (float)lineTop + 500f, (float)lineTop, 9.6f, 4f);
+            else
+            {
+                acidVerticalLine = lineTop;
+                SelectNextAttack(npc);
+            }
+
+            // Make the scourge move upward slowly, not taking or doing damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+            if (npc.Center.Y < acidVerticalLine)
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -10f, 0.04f);
+            else
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -15f, 0.05f);
+            npc.velocity.X = (float)Math.Sin(MathHelper.TwoPi * attackTimer / 90f) * 12f;
+
+            // Create very strong rain.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                CalamityUtils.StartRain(true, true);
+                Main.cloudBGActive = 1f;
+                Main.numCloudsTemp = 150;
+                Main.numClouds = Main.numCloudsTemp;
+                Main.windSpeedCurrent = 0.84f;
+                Main.windSpeedTarget = Main.windSpeedCurrent;
+                Main.maxRaining = 0.85f;
+            }
+        }
+
+        public static void DoBehavior_AcidRain(NPC npc, Player target, ref float attackTimer)
+        {
+            int lungeCount = 2;
+            int vomitShootRate = 15;
+            int vomitBurstCount = 3;
+            int acidPerVomitBurst = 25;
+            int bubbleReleaseRate = 45;
+            float upwardLungeDistance = 450f;
+            ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            // Release acid bubbles below the target.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f)
+            {
+                Vector2 bubbleSpawnPosition = target.Bottom + Vector2.UnitY * 660f;
+                if (WorldUtils.Find((target.Bottom + Vector2.UnitY * 300f).ToTileCoordinates(), Searches.Chain(new Searches.Down(40), new CustomTileConditions.IsWaterOrSolid()), out Point result))
+                    bubbleSpawnPosition = result.ToWorldCoordinates();
+                Utilities.NewProjectileBetter(bubbleSpawnPosition + Vector2.UnitY * 136f, -Vector2.UnitY * 6f, ModContent.ProjectileType<AcidBubble>(), 140, 0f);
+            }
+
+            switch ((int)attackSubstate)
+            {
+                // Rise upward until sufficiently above the target.
+                case 0:
+                    float verticalSpeedAdditive = attackTimer * 0.05f;
+                    bool readyToReleaseAcid = npc.Center.Y < target.Center.Y - upwardLungeDistance;
+
+                    // Accelerate upward if almost above the target.
+                    if (npc.Center.Y < target.Center.Y + 200f)
+                    {
+                        Vector2 idealVelocity = Vector2.UnitY * -(verticalSpeedAdditive + 25f);
+                        npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.025f);
+                    }
+
+                    // If below the target, move upward while attempting to meet their horizontal position.
+                    else
+                    {
+                        Vector2 idealVelocity = new(npc.SafeDirectionTo(target.Center).X * 27f, -verticalSpeedAdditive - 24f);
+                        npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.11f).MoveTowards(idealVelocity, 0.8f);
+                    }
+
+                    if (readyToReleaseAcid)
+                    {
+                        attackSubstate = 1f;
+                        attackTimer = 0f;
+                        npc.velocity.Y *= 0.36f;
+                        npc.netUpdate = true;
+                    }
+
+                    break;
+
+                // Vomit bursts of acid into the air.
+                case 1:
+                    // Gain horizontal momentum in anticipation of the upcoming fall.
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 7.5f, 0.064f);
+
+                    // Release the vomit bursts.
+                    if (attackTimer % vomitShootRate == 0f)
+                    {
+                        SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int vomitShootCounter = (int)(attackTimer / vomitShootRate);
+                            float verticalVomitShootSpeed = MathHelper.Lerp(-10f, -15f, vomitShootCounter / (float)(vomitBurstCount - 1f));
+                            for (int i = 0; i < acidPerVomitBurst; i++)
+                            {
+                                Vector2 acidVelocity = new Vector2(MathHelper.Lerp(-28f, 28f, i / (float)(acidPerVomitBurst - 1f)), verticalVomitShootSpeed) + Main.rand.NextVector2Circular(0.3f, 0.3f);
+                                Utilities.NewProjectileBetter(npc.Center + acidVelocity, acidVelocity, ModContent.ProjectileType<FallingAcid>(), 140, 0f);
+                            }
+                        }
+                    }
+
+                    if (attackTimer >= vomitShootRate * vomitBurstCount)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 2f;
+                        npc.velocity.Y += 3f;
+                        npc.netUpdate = true;
+                    }
+
+                    break;
+
+                // Fall into the ground in anticipation of the next rise.
+                case 2:
+                    npc.velocity.X *= 0.99f;
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
+                    if (npc.Center.Y >= target.Center.Y + 1450f)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 0f;
+                        lungeCounter++;
+                        if (lungeCounter >= lungeCount)
+                        {
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingAcid>());
+                            SelectNextAttack(npc);
+                        }
+
+                        npc.velocity.Y *= 0.5f;
+                        npc.netUpdate = true;
+                    }
+                    break;
             }
         }
 
@@ -529,6 +972,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
                 Main.npc[nextIndex].ai[1] = previousIndex;
+                Main.npc[nextIndex].ai[3] = i;
                 Main.npc[previousIndex].ai[0] = nextIndex;
 
                 // Force sync the new segment into existence.
@@ -538,34 +982,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        internal static void SelectNextAttack(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
-            npc.alpha = 0;
+            npc.Opacity = 1f;
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase4 = lifeRatio < Phase4LifeRatio;
             AquaticScourgeAttackType currentAttack = (AquaticScourgeAttackType)(int)npc.ai[2];
-            AquaticScourgeAttackType nextAttack;
-
-            WeightedRandom<AquaticScourgeAttackType> attackSelector = new();
-
-            if (lifeRatio > Phase5LifeRatio)
+            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.PerpendicularSpikeBarrage;
+            if (phase4)
             {
-                attackSelector.Add(AquaticScourgeAttackType.BelchAcid, 1f);
-                attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
-                attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
-                attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < Phase2LifeRatio && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < Phase3LifeRatio ? 1.4f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.ProjectileSpin, lifeRatio < Phase3LifeRatio ? 1.4f : 0f);
-                attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < Phase4LifeRatio && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
-
-                do
-                    nextAttack = attackSelector.Get();
-                while (nextAttack == currentAttack);
-            }
-            else
-            {
-                if (currentAttack != AquaticScourgeAttackType.JustCharges)
-                    HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "The Scourge will stop at nothing to snack on you! Stay on the move!");
-                nextAttack = AquaticScourgeAttackType.JustCharges;
+                nextAttack = AquaticScourgeAttackType.SulphurousTyphoon;
+                if (npc.Infernum().ExtraAI[8] == 0f)
+                {
+                    nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
+                    npc.Infernum().ExtraAI[8] = 1f;
+                }
             }
 
             // Get a new target.
@@ -582,13 +1014,130 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.netUpdate = true;
         }
 
-        #endregion AI Utility Methods
-
-        #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public static void ReleaseSpikesFromSegments(NPC npc, int segmentInterval, int segmentIndex)
         {
-            yield return n => "If you can't handle dodging at high speeds, try baiting it into circling you!";
+            int bodyID = ModContent.NPCType<AquaticScourgeBody>();
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC n = Main.npc[i];
+                if (!n.active || n.type != bodyID || n.realLife != npc.whoAmI || n.ai[3] % segmentInterval != segmentIndex)
+                    continue;
+
+                foreach (Vector2 spikePosition in AquaticScourgeBodyBehaviorOverride.GetSpikePositions(n))
+                {
+                    Vector2 spikeVelocity = (spikePosition - n.Center).SafeNormalize(Vector2.UnitY) * 4f;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(spikePosition, spikeVelocity, ModContent.ProjectileType<AquaticScourgeBodySpike>(), 140, 0f, -1, 120f);
+
+                    // Release blood from the segment.
+                    for (int j = 0; j < 3; j++)
+                    {
+                        int bloodLifetime = Main.rand.Next(22, 36);
+                        float bloodScale = Main.rand.NextFloat(0.6f, 0.8f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
+                        bloodColor = Color.Lerp(bloodColor, new Color(51, 22, 94), Main.rand.NextFloat(0.65f));
+
+                        if (Main.rand.NextBool(20))
+                            bloodScale *= 2f;
+
+                        Vector2 bloodVelocity = spikeVelocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.81f) * Main.rand.NextFloat(11f, 23f);
+                        bloodVelocity.Y -= 12f;
+                        BloodParticle blood = new(spikePosition, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+                    for (int j = 0; j < 2; j++)
+                    {
+                        float bloodScale = Main.rand.NextFloat(0.2f, 0.33f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
+                        Vector2 bloodVelocity = spikeVelocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.9f) * Main.rand.NextFloat(9f, 14.5f);
+                        BloodParticle2 blood = new(spikePosition, bloodVelocity, 20, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+                }
+
+                CloudParticle bloodCloud = new(n.Center, Main.rand.NextVector2Circular(12f, 12f), Color.Red, Color.DarkRed, 270, Main.rand.NextFloat(1.9f, 2.12f));
+                GeneralParticleHandler.SpawnParticle(bloodCloud);
+
+                n.Infernum().ExtraAI[0] = 0.001f;
+                n.netUpdate = true;
+            }
         }
-        #endregion Tips
+
+        public static void ApplySulphuricPoisoningBoostToPlayersInArea(Vector2 center, float radius, float boostFactor)
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player p = Main.player[i];
+                if (!p.active || p.dead)
+                    continue;
+
+                if (CalamityUtils.CircularHitboxCollision(center, radius, p.Hitbox))
+                {
+                    float increment = boostFactor / CalamityPlayer.SulphSeaWaterSafetyTime;
+                    if (p.Calamity().sulphurskin)
+                        increment *= 0.5f;
+                    if (p.Calamity().sulfurSet)
+                        increment *= 0.5f;
+                    p.Calamity().SulphWaterPoisoningLevel += increment;
+                }
+            }
+        }
+
+        public static void PopAllBubbles()
+        {
+            List<int> bubbles = new()
+            {
+                ModContent.ProjectileType<AcidBubble>(),
+                ModContent.ProjectileType<WaterClearingBubble>()
+            };
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile p = Main.projectile[i];
+                if (!p.active || !bubbles.Contains(p.type))
+                    continue;
+                
+                for (int j = 0; j < 45; j++)
+                {
+                    Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), 256);
+                    bubble.velocity = (MathHelper.TwoPi * i / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
+                    bubble.scale = Main.rand.NextFloat(1f, 1.5f);
+                    bubble.noGravity = true;
+                }
+                p.timeLeft = Main.rand.Next(10, 20);
+            }
+        }
+
+        public static void UpdateAcidHissSound(NPC npc)
+        {
+            Player target = Main.player[npc.target];
+            float acidVerticalLine = npc.Infernum().ExtraAI[AcidVerticalLineIndex];
+            ref float hissSound = ref npc.localAI[0];
+            if (acidVerticalLine <= 0f)
+                return;
+
+            // Determine the volume of the acid sound.
+            float volumeInterpolant = Utils.GetLerpValue(500f, 60f, MathHelper.Distance(target.Center.Y, acidVerticalLine), true);
+            if (target.Center.Y >= acidVerticalLine)
+                volumeInterpolant = 1f;
+
+            // Initialize the sound if necessary.
+            bool shouldStopSound = volumeInterpolant <= 0f || npc.life <= 0 || !npc.active;
+            if (hissSound == 0f && !shouldStopSound)
+                hissSound = SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeAcidHissLoopSound, npc.Center).ToFloat();
+
+            // Update the sound's position.
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(hissSound), out var t) && t.IsPlaying)
+            {
+                t.Position = target.Center;
+                t.Volume = volumeInterpolant;
+                if (shouldStopSound)
+                    t.Stop();
+            }
+            else
+                hissSound = 0f;
+        }
+
+        #endregion AI Utility Methods
     }
 }

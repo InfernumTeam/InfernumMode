@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
+using CalamityMod.ILEditing;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
@@ -235,6 +236,18 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.InstabridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator GenerateSulphSeaCheeseCaves
+        {
+            add => HookEndpointManager.Modify(typeof(SulphurousSea).GetMethod("GenerateCheeseWaterCaves", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SulphurousSea).GetMethod("GenerateCheeseWaterCaves", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator GenerateSulphSeaSpaghettiCaves
+        {
+            add => HookEndpointManager.Modify(typeof(SulphurousSea).GetMethod("GenerateSpaghettiWaterCaves", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SulphurousSea).GetMethod("GenerateSpaghettiWaterCaves", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event Action<Action> GenerateAbyss
         {
             add => HookEndpointManager.Add(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
@@ -336,6 +349,18 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Add(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator UpdateBadLifeRegen
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator SelectSulphuricWaterColor
+        {
+            add => HookEndpointManager.Modify(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
         }
     }
 }

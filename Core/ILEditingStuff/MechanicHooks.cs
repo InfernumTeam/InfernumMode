@@ -1,14 +1,12 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.GreatSandShark;
-using CalamityMod.UI.DraedonSummoning;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics;
+using CalamityMod.Particles;
+using CalamityMod.Systems;
+using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -344,7 +342,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
     }
 
-    public class DisableWaterEffectsInAEWFightHook : IHookEdit
+    public class DisableWaterEffectsInFightsHook : IHookEdit
     {
         private void DisableWaterEffects(ILContext il)
         {
@@ -353,10 +351,14 @@ namespace InfernumMode.Core.ILEditingStuff
             c.GotoNext(MoveType.After, i => i.MatchCall<Collision>("WetCollision"));
             c.EmitDelegate(() =>
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs)
-                    return false;
+                if (!InfernumMode.CanUseCustomAIs)
+                    return true;
 
-                return true;
+                bool specialNPC = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
+                if (!specialNPC)
+                    return true;
+
+                return false;
             });
             c.Emit(OpCodes.And);
         }
@@ -364,5 +366,66 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => IL.Terraria.Player.Update += DisableWaterEffects;
 
         public void Unload() => IL.Terraria.Player.Update -= DisableWaterEffects;
+    }
+
+    public class MakeSulphSeaWaterEasierToSeeInHook : IHookEdit
+    {
+        internal static int SulphurWaterIndex
+        {
+            get;
+            set;
+        }
+
+        private void MakeWaterEasierToSeeIn(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            for (int i = 0; i < 4; i++)
+            {
+                c.GotoNext(MoveType.After, i => i.MatchLdcR4(0.4f));
+                c.Emit(OpCodes.Pop);
+                c.Emit(OpCodes.Ldc_R4, 0.15f);
+            }
+        }
+
+        private void MakeSulphSeaWaterBrighter(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
+        {
+            orig(self, x, y, out outputColor);
+
+            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+            if (tile.LiquidAmount <= 0 || tile.HasTile || Main.waterStyle != SulphurWaterIndex)
+                return;
+
+            if (tile.TileType != (ushort)ModContent.TileType<RustyChestTile>())
+            {
+                Vector3 idealColor = Color.LightSeaGreen.ToVector3();
+
+                if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.Count >= 1)
+                {
+                    Color cleanWaterColor = new(10, 109, 193);
+                    Point closestSafeZone = SulphuricWaterSafeZoneSystem.NearbySafeTiles.Keys.OrderBy(t => t.ToVector2().DistanceSQ(new(x, y))).First();
+                    float distanceToClosest = new Vector2(x, y).Distance(closestSafeZone.ToVector2());
+                    float acidicWaterInterpolant = Utils.GetLerpValue(12f, 20.5f, distanceToClosest + (1f - SulphuricWaterSafeZoneSystem.NearbySafeTiles[closestSafeZone]) * 21f, true);
+                    idealColor = Vector3.Lerp(idealColor, cleanWaterColor.ToVector3(), 1f - acidicWaterInterpolant);
+                }
+
+                outputColor = Vector3.Lerp(outputColor, idealColor, 0.8f);
+            }
+        }
+
+        public void Load()
+        {
+            if (Main.netMode != NetmodeID.Server)
+                SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
+
+            SelectSulphuricWaterColor += MakeWaterEasierToSeeIn;
+            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
+        }
+
+        public void Unload()
+        {
+            SelectSulphuricWaterColor -= MakeWaterEasierToSeeIn;
+            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
+        }
     }
 }

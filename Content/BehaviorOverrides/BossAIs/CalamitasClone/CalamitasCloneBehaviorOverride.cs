@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.CalClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
@@ -16,7 +16,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasClone;
+using CalamitasCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 {

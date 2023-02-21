@@ -30,11 +30,18 @@ using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Content.WorldGeneration;
+using CalamityMod.Systems;
+using CalamityMod.CalPlayer;
+using CalamityMod.NPCs.AquaticScourge;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
+using Mono.Cecil;
+using MonoMod.Utils;
+using MonoMod.RuntimeDetour.HookGen;
+using CecilMethodBody = Mono.Cecil.Cil.MethodBody;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
-using InfernumMode.Content.WorldGeneration;
-using CalamityMod.Systems;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -137,6 +144,68 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => PlaceHellLab += SlideOverHellLab;
 
         public void Unload() => PlaceHellLab -= SlideOverHellLab;
+    }
+
+    public class MakeSulphSeaCavesBiggerHook : IHookEdit
+    {
+        internal static void MakeCavesBigger1(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdsfld<SulphurousSea>("CheeseCaveCarveOutThresholds"));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => new float[]
+                {
+                    0.13f
+                });
+            }
+
+            cursor.Goto(0);
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(SulphurousSea.CheeseCaveMagnification));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => SulphurousSea.CheeseCaveMagnification * 0.3f);
+            }
+        }
+
+        internal static void MakeCavesBigger2(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdsfld<SulphurousSea>("SpaghettiCaveCarveOutThresholds"));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => new float[]
+                {
+                    0.033f,
+                    0.125f
+                });
+            }
+
+            cursor.Goto(0);
+            for (int i = 0; i < 2; i++)
+            {
+                cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(SulphurousSea.SpaghettiCaveMagnification));
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitDelegate(() => SulphurousSea.SpaghettiCaveMagnification * 0.6f);
+            }
+        }
+
+        public void Load()
+        {
+            GenerateSulphSeaCheeseCaves += MakeCavesBigger1;
+            GenerateSulphSeaSpaghettiCaves += MakeCavesBigger2;
+        }
+
+        public void Unload()
+        {
+            GenerateSulphSeaCheeseCaves -= MakeCavesBigger1;
+            GenerateSulphSeaSpaghettiCaves -= MakeCavesBigger2;
+        }
     }
 
     public class DrawLostColosseumBackgroundHook : IHookEdit
@@ -590,7 +659,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ReplaceAbyssWorldgen : IHookEdit
     {
-        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
+        internal static void ChangeAbyssGen(Action orig) => orig();
 
         public void Load() => GenerateAbyss += ChangeAbyssGen;
 
@@ -931,6 +1000,98 @@ namespace InfernumMode.Core.ILEditingStuff
                 return false;
 
             return orig(self);
+        }
+    }
+
+    public class AdjustASWaterPoisonTimersHook : IHookEdit
+    {
+        public void Load()
+        {
+            UpdateBadLifeRegen += AdjustTimers;
+        }
+
+        public void Unload()
+        {
+            UpdateBadLifeRegen += AdjustTimers;
+        }
+
+        private void AdjustTimers(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            int poisonIncrementIndex = 0;
+            cursor.GotoNext(i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterSafetyTime));
+            cursor.GotoNext(i => i.MatchStloc(out poisonIncrementIndex));
+
+            // Multiply the poison increment by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
+            cursor.GotoNext(i => i.MatchLdfld<CalamityPlayer>("SulphWaterPoisoningLevel"));
+            cursor.GotoNext(MoveType.After, i => i.MatchLdloc(poisonIncrementIndex));
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate((CalamityPlayer calamityPlayer) =>
+            {
+                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                {
+                    NPC scourge = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>())];
+                    Player player = calamityPlayer.Player;
+                    float acidVerticalLine = scourge.Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidVerticalLineIndex];
+                    if (acidVerticalLine > 0f && player.Top.Y >= acidVerticalLine)
+                        return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactorFinalPhase;
+
+                    return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactor;
+                }
+
+                return 1f;
+            });
+            cursor.Emit(OpCodes.Mul);
+
+            // Redecide poison decrement by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
+            cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterRecoveryTime));
+            cursor.Emit(OpCodes.Pop);
+
+            cursor.EmitDelegate(() =>
+            {
+                int recoveryTime = CalamityPlayer.SulphSeaWaterRecoveryTime;
+                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                    recoveryTime = (int)(recoveryTime / AquaticScourgeHeadBehaviorOverride.PoisonFadeOutSpeedFactor);
+
+                return 1f / recoveryTime;
+            });
+        }
+    }
+
+    public class MakeDungeonSpawnAtLeftSideHook : IHookEdit
+    {
+        internal static MethodReference ResetWorld;
+
+        private void SearchForResetWorldDelegate(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            // Find the first AddGenerationPass call in the world generation method and store the associated delegate it searches for.
+            cursor.GotoNext(i => i.MatchCall<WorldGen>("AddGenerationPass"));
+            cursor.GotoPrev(i => i.MatchLdftn(out ResetWorld));
+        }
+
+        private static void MakeDungeonLeftSide()
+        {
+            ILCursor cursor = new(new ILContext(ResetWorld.SafeResolve()));
+
+            // Find the storage value of the dungeon side and discard it in favor of a consistent -1 value, making it always generate on the left.
+            cursor.GotoNext(MoveType.Before, i => i.MatchStsfld<WorldGen>("dungeonSide"));
+            cursor.Emit(OpCodes.Pop);
+            cursor.Emit(OpCodes.Ldc_I4_M1);
+        }
+
+        public void Load()
+        {
+            IL.Terraria.WorldGen.GenerateWorld += SearchForResetWorldDelegate;
+            MakeDungeonLeftSide();
+        }
+
+        public void Unload()
+        {
+            IL.Terraria.WorldGen.GenerateWorld -= SearchForResetWorldDelegate;
         }
     }
 }

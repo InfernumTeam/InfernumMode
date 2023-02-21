@@ -56,7 +56,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 addInfernumExclusiveItem(ItemID.SoulofFright, 30);
 
             // Calamitas Clone drops 25 extra ashes of calamity.
-            if (item.type == ModContent.ItemType<CalamitasBag>())
+            if (item.type == ModContent.ItemType<CalamitasCloneBag>())
                 addInfernumExclusiveItem(ModContent.ItemType<AshesofCalamity>(), 25);
 
             // Plantera drops 25 extra living shards.
@@ -116,7 +116,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 addInfernumExclusiveItem(ModContent.ItemType<ExoPrism>(), 40);
 
             // Calamitas drops 40 extra ashes of annihilation.
-            if (item.type == ModContent.ItemType<SupremeCalamitasCoffer>())
+            if (item.type == ModContent.ItemType<CalamitasCoffer>())
                 addInfernumExclusiveItem(ModContent.ItemType<AshesofAnnihilation>(), 40);
         }
     }

@@ -201,6 +201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
                     sentinelAttackTimer = 0f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.2f, 30);
                 }
                 return false;
             }
@@ -577,10 +578,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (deathAnimationTimer == textDelay + 100f)
                 Utilities.DisplayText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
 
-            if (deathAnimationTimer == deathAnimationTimer + segmentDestructionTime - 50f)
+            if (deathAnimationTimer == textDelay + segmentDestructionTime - 50f)
                 Utilities.DisplayText("I WILL NOT...", Color.Cyan);
 
-            if (deathAnimationTimer == deathAnimationTimer + segmentDestructionTime + 40f)
+            if (deathAnimationTimer == textDelay + segmentDestructionTime + 40f)
                 Utilities.DisplayText("I...", Color.Cyan);
 
             // Destroy most of DoG's first segments.
@@ -1175,7 +1176,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             SoundEngine.PlaySound(YanmeisKnife.HitSound with { Volume = 1.7f }, target.Center);
                             SoundEngine.PlaySound(TeslaCannon.FireSound with { Volume = 1.7f }, target.Center);
-                            target.Calamity().GeneralScreenShakePower = 10f;
+                            if (CalamityConfig.Instance.Screenshake)
+                            {
+                                target.Calamity().GeneralScreenShakePower = 10f;
+                                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
+                            }
                         }
                     }
 

@@ -109,11 +109,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/PrimeSaw");
 
-        public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/ProvidenceHolyBlastShoot");
+        public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceHolyBlastShoot");
 
         public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/ProvidenceBlender") with { Volume = 2f };
 
-        public static readonly SoundStyle ProvidenceHolyRaySound = new("CalamityMod/Sounds/Custom/ProvidenceHolyRay");
+        public static readonly SoundStyle ProvidenceHolyRaySound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceHolyRay");
 
         public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorSoundLoop");
 

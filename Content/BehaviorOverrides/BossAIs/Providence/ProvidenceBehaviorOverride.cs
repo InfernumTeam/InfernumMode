@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 npc.active = false;
 
             // Keep the target within the arena.
-            if (!WorldSaveSystem.ProvidenceArena.IsEmpty && npc.WithinRange(target.Center, 9600f))
+            if (!WorldSaveSystem.ProvidenceArena.IsEmpty && npc.WithinRange(target.Center, 9600f) && Main.netMode == NetmodeID.SinglePlayer)
             {
                 if (target.position.X < arenaArea.Left)
                     target.position.X = arenaArea.Left;

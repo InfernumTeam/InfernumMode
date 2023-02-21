@@ -16,6 +16,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override bool PreAI(NPC npc)
         {
+            DoAI(npc);
+            return false;
+        }
+
+        public static void DoAI(NPC npc)
+        {
             // Go away if the ahead segment is not present.
             if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
@@ -23,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.HitEffect(0, 10.0);
                 npc.active = false;
                 npc.netUpdate = true;
-                return false;
+                return;
             }
 
             ref float segmentGrowInterpolant = ref npc.Infernum().ExtraAI[0];
@@ -68,8 +74,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (headSegment.Infernum().ExtraAI[3] >= 1f && npc.ai[3] >= 2f)
                     npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
             }
-
-            return false;
         }
 
         public static IEnumerable<Vector2> GetSpikePositions(NPC npc)

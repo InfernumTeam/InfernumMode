@@ -33,8 +33,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             BubbleSpin,
             RadiationPulse,
             WallHitCharges,
-            PerpendicularSpikeBarrage,
             GasBreath,
+            PerpendicularSpikeBarrage,
             EnterFinalPhase,
             AcidRain,
             SulphurousTyphoon
@@ -46,17 +46,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
-            Phase3LifeRatio,
-            Phase4LifeRatio
+            Phase3LifeRatio
         };
 
-        public const float Phase2LifeRatio = 0.75f;
+        public const float Phase2LifeRatio = 0.67f;
 
-        public const float Phase3LifeRatio = 0.45f;
-
-        public const float Phase4LifeRatio = 0.15f;
+        public const float Phase3LifeRatio = 0.25f;
 
         public const int AcidVerticalLineIndex = 7;
+
+        public const int CurrentPhaseIndex = 8;
+
+        public const int AttackCycleIndex = 9;
 
         public static float PoisonChargeUpSpeedFactor => 0.333f;
 
@@ -64,15 +65,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static float PoisonFadeOutSpeedFactor => 2.5f;
 
+        public static AquaticScourgeAttackType[] Phase1AttackCycle => new AquaticScourgeAttackType[]
+        {
+            AquaticScourgeAttackType.BubbleSpin,
+            AquaticScourgeAttackType.RadiationPulse,
+            AquaticScourgeAttackType.WallHitCharges,
+            AquaticScourgeAttackType.GasBreath,
+            AquaticScourgeAttackType.WallHitCharges,
+        };
+
+        public static AquaticScourgeAttackType[] Phase2AttackCycle => new AquaticScourgeAttackType[]
+        {
+            AquaticScourgeAttackType.PerpendicularSpikeBarrage,
+            AquaticScourgeAttackType.RadiationPulse,
+            AquaticScourgeAttackType.GasBreath,
+            AquaticScourgeAttackType.PerpendicularSpikeBarrage,
+            AquaticScourgeAttackType.WallHitCharges,
+        };
+
+        public static AquaticScourgeAttackType[] Phase3AttackCycle => new AquaticScourgeAttackType[]
+        {
+            AquaticScourgeAttackType.AcidRain,
+            AquaticScourgeAttackType.SulphurousTyphoon,
+            AquaticScourgeAttackType.GasBreath,
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
+            // WHY ARE YOU DESPAWNING????
+            npc.boss = true;
+
             // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float generalTimer = ref npc.ai[1];
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[3];
@@ -104,6 +132,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             Player target = Main.player[npc.target];
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
+            bool enraged = !target.IsUnderwater() && !phase3;
 
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
             if (!target.Calamity().ZoneAbyss)
@@ -116,25 +148,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Stop despawning.
             npc.timeLeft = 7200;
 
+            // Be enraged.
+            npc.Calamity().CurrentlyEnraged = enraged;
+
             switch ((AquaticScourgeAttackType)attackType)
             {
                 case AquaticScourgeAttackType.SpawnAnimation:
                     DoBehavior_SpawnAnimation(npc, target, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.BubbleSpin:
-                    DoBehavior_BubbleSpin(npc, target, ref attackTimer);
+                    DoBehavior_BubbleSpin(npc, target, phase2, enraged, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.RadiationPulse:
-                    DoBehavior_RadiationPulse(npc, target, ref attackTimer);
+                    DoBehavior_RadiationPulse(npc, target, phase2, enraged, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.WallHitCharges:
-                    DoBehavior_WallHitCharges(npc, target, ref attackTimer);
+                    DoBehavior_WallHitCharges(npc, target, phase2, enraged, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.PerpendicularSpikeBarrage:
-                    DoBehavior_PerpendicularSpikeBarrage(npc, target, ref attackTimer);
+                    DoBehavior_PerpendicularSpikeBarrage(npc, target, enraged, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.GasBreath:
-                    DoBehavior_GasBreath(npc, target, ref attackTimer);
+                    DoBehavior_GasBreath(npc, target, phase2, phase3, enraged, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.EnterFinalPhase:
                     DoBehavior_EnterFinalPhase(npc, target, ref attackTimer, ref acidVerticalLine);
@@ -365,7 +400,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.09f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.015f;
         }
 
-        public static void DoBehavior_BubbleSpin(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_BubbleSpin(NPC npc, Player target, bool phase2, bool enraged, ref float attackTimer)
         {
             int redirectTime = 35;
             int spinTime = 270;
@@ -374,7 +409,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int chargeTime = 56;
             float spinSpeed = 23f;
             float chargeSpeed = 28.5f;
+            float bubbleShootSpeed = 13f;
             float spinArc = MathHelper.Pi / spinTime * 3f;
+
+            if (phase2)
+            {
+                bubbleReleaseRate -= 6;
+                chargeSpeed += 4f;
+                bubbleShootSpeed += 2f;
+            }
+
+            if (enraged)
+            {
+                bubbleReleaseRate -= 9;
+                chargeSpeed += 13f;
+                bubbleShootSpeed += 7f;
+            }
+
             bool charging = attackTimer >= redirectTime + spinTime + chargeRedirectTime;
             bool doneCharging = attackTimer >= redirectTime + spinTime + chargeRedirectTime + chargeTime;
             ref float bubbleReleaseCount = ref npc.Infernum().ExtraAI[0];
@@ -407,7 +458,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 {
                     int bubbleDamage = 135;
                     int bubbleID = ModContent.ProjectileType<AcidBubble>();
-                    Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                    Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * bubbleShootSpeed;
                     if (bubbleReleaseCount % 8f == 3f)
                     {
                         bubbleDamage = 0;
@@ -454,7 +505,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_RadiationPulse(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_RadiationPulse(NPC npc, Player target, bool phase2, bool enraged, ref float attackTimer)
         {
             int shootDelay = 90;
             int pulseReleaseRate = 120;
@@ -463,6 +514,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int goodBubbleReleaseRate = 180;
             int acidShootCount = 4;
             float pulseMaxRadius = 425f;
+
+            if (phase2)
+            {
+                acidReleaseRate -= 5;
+                pulseMaxRadius += 56f;
+            }
+
+            if (enraged)
+            {
+                acidReleaseRate -= 25;
+                pulseMaxRadius += 184f;
+            }
 
             // Slowly move towards the target.
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 5f;
@@ -513,7 +576,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_WallHitCharges(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_WallHitCharges(NPC npc, Player target, bool phase2, bool enraged, ref float attackTimer)
         {
             int chargeCount = 5;
             int chargeDelay = 30;
@@ -527,6 +590,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             float rubbleShootSpeed = 5f;
             float bubbleSpacing = 445f;
             float bubbleAreaCoverage = 1500f;
+
+            if (phase2)
+            {
+                chargeDelay -= 4;
+                stunTime -= 15;
+                chargeSpeed += 5f;
+                rubbleArc += 0.09f;
+                bubbleSpacing -= 35f;
+            }
+            if (enraged)
+            {
+                chargeDelay -= 14;
+                stunTime = 16;
+                chargeSpeed = 41f;
+                rubbleArc += 0.09f;
+                rubbleCount += 5;
+            }
+
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
             ref float performingCharge = ref npc.Infernum().ExtraAI[1];
             ref float stunTimer = ref npc.Infernum().ExtraAI[2];
@@ -647,12 +728,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        public static void DoBehavior_PerpendicularSpikeBarrage(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_PerpendicularSpikeBarrage(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int slowdownTime = 30;
             int attackTime = 60;
             int shootCount = 2;
             float selfHurtHPRatio = 0.0075f;
+
+            if (enraged)
+            {
+                shootCount = 1;
+                selfHurtHPRatio = 0f;
+            }
+
             ref float hasReachedPlayer = ref npc.Infernum().ExtraAI[0];
             ref float shootCounter = ref npc.Infernum().ExtraAI[1];
             ref float shudderOffset = ref npc.Infernum().ExtraAI[2];
@@ -687,7 +775,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (attackTimer == slowdownTime)
             {
-                npc.StrikeNPCNoInteraction((int)(npc.lifeMax * selfHurtHPRatio), 0f, 0);
+                if (selfHurtHPRatio > 0f)
+                    npc.StrikeNPCNoInteraction((int)(npc.lifeMax * selfHurtHPRatio), 0f, 0);
 
                 SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound, target.Center);
@@ -733,13 +822,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        public static void DoBehavior_GasBreath(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_GasBreath(NPC npc, Player target, bool phase2, bool phase3, bool enraged, ref float attackTimer)
         {
             int attackTime = 480;
             int rubbleReleaseRate = 90;
             float idealRotation = npc.AngleTo(target.Center);
             float turnAngularVelocity = BossRushEvent.BossRushActive ? 0.0384f : 0.027f;
             float movementSpeed = MathHelper.Lerp(14.5f, 38f, Utils.GetLerpValue(640f, 3000f, npc.Distance(target.Center), true));
+
+            if (phase2)
+            {
+                attackTime += 60;
+                rubbleReleaseRate -= 30;
+                turnAngularVelocity += 0.0048f;
+                movementSpeed += 2.4f;
+            }
+            if (phase3)
+            {
+                rubbleReleaseRate = int.MaxValue;
+                turnAngularVelocity += 0.0059f;
+                movementSpeed += 3f;
+            }
+            if (enraged)
+            {
+                rubbleReleaseRate = int.MaxValue;
+                movementSpeed = 36f;
+            }
+
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[0];
 
             // Slither around when not close to the target.
@@ -1052,17 +1161,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.Opacity = 1f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase4 = lifeRatio < Phase4LifeRatio;
-            AquaticScourgeAttackType currentAttack = (AquaticScourgeAttackType)(int)npc.ai[2];
-            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.PerpendicularSpikeBarrage;
-            if (phase4)
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
+            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.GasBreath;
+            ref float currentPhase = ref npc.Infernum().ExtraAI[CurrentPhaseIndex];
+            ref float attackCycleIndex = ref npc.Infernum().ExtraAI[AttackCycleIndex];
+
+            attackCycleIndex++;
+            if (currentPhase == 0f)
+                nextAttack = Phase1AttackCycle[(int)(attackCycleIndex % Phase1AttackCycle.Length)];
+            if (currentPhase == 1f)
+                nextAttack = Phase2AttackCycle[(int)(attackCycleIndex % Phase2AttackCycle.Length)];
+            if (currentPhase == 2f)
+                nextAttack = Phase3AttackCycle[(int)(attackCycleIndex % Phase3AttackCycle.Length)];
+
+            // Increment the phase values.
+            if (phase2 && currentPhase <= 0f)
             {
-                nextAttack = AquaticScourgeAttackType.SulphurousTyphoon;
-                if (npc.Infernum().ExtraAI[8] == 0f)
-                {
-                    nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
-                    npc.Infernum().ExtraAI[8] = 1f;
-                }
+                currentPhase = 1f;
+                attackCycleIndex = -1f;
+            }
+            if (phase3 && currentPhase <= 1f)
+            {
+                currentPhase = 2f;
+                nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
+                attackCycleIndex = -1f;
             }
 
             // Get a new target.

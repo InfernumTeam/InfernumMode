@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Fall downward.
             Projectile.velocity.X *= 0.987f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.45f, -40f, 9.6f);
+            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.4f, -40f, 13f);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Time++;
         }

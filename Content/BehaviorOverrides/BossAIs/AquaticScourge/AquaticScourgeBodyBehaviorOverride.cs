@@ -16,6 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override bool PreAI(NPC npc)
         {
+            // Go away if the ahead segment is not present.
             if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
                 npc.life = 0;
@@ -40,9 +41,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC headSegment = Main.npc[npc.realLife];
 
+            // Fade in if the ahead segment has faded in sufficiently, resulting into the entire worm smoothly appearing.
             if (aheadSegment.alpha < 128)
                 npc.alpha = Utils.Clamp(npc.alpha - 42, 0, 255);
 
+            // Inherit attributes from the head.
             npc.target = aheadSegment.target;
             npc.defense = aheadSegment.defense;
             npc.damage = headSegment.damage >= 1 ? 60 : 0;
@@ -51,6 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.Calamity().newAI[0] = npc.chaseable.ToInt();
             npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);
 
+            // Stay behind the previous segment.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
@@ -58,11 +62,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
 
-            // Shudder if the head says so.
+            // Shudder if the head says to do so.
             if (headSegment.ai[2] == (int)AquaticScourgeHeadBehaviorOverride.AquaticScourgeAttackType.PerpendicularSpikeBarrage)
             {
                 if (headSegment.Infernum().ExtraAI[3] >= 1f && npc.ai[3] >= 2f)
-                    npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3f;
+                    npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
             }
 
             return false;
@@ -70,10 +74,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static IEnumerable<Vector2> GetSpikePositions(NPC npc)
         {
-            yield return npc.Center + new Vector2(16f, -4f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(20f, -18f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(-16f, -4f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(-20f, -18f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + new Vector2(16f, 4f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + new Vector2(16f, -10f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + new Vector2(-18f, 4f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + new Vector2(-18f, -10f).RotatedBy(npc.rotation) * npc.scale;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

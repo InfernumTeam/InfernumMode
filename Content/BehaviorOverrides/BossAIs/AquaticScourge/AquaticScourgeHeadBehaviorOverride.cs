@@ -36,7 +36,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             PerpendicularSpikeBarrage,
             GasBreath,
             EnterFinalPhase,
-            AcidRain
+            AcidRain,
+            SulphurousTyphoon
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
@@ -137,6 +138,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     break;
                 case AquaticScourgeAttackType.AcidRain:
                     DoBehavior_AcidRain(npc, target, ref attackTimer);
+                    break;
+                case AquaticScourgeAttackType.SulphurousTyphoon:
+                    DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
             }
 
@@ -851,7 +855,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int lungeCount = 2;
             int vomitShootRate = 15;
             int vomitBurstCount = 3;
-            int acidPerVomitBurst = 29;
+            int acidPerVomitBurst = 25;
             int bubbleReleaseRate = 45;
             float upwardLungeDistance = 450f;
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
@@ -910,7 +914,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int vomitShootCounter = (int)(attackTimer / vomitShootRate);
-                            float verticalVomitShootSpeed = MathHelper.Lerp(-10f, -14f, vomitShootCounter / (float)(vomitBurstCount - 1f));
+                            float verticalVomitShootSpeed = MathHelper.Lerp(-10f, -15f, vomitShootCounter / (float)(vomitBurstCount - 1f));
                             for (int i = 0; i < acidPerVomitBurst; i++)
                             {
                                 Vector2 acidVelocity = new Vector2(MathHelper.Lerp(-28f, 28f, i / (float)(acidPerVomitBurst - 1f)), verticalVomitShootSpeed) + Main.rand.NextVector2Circular(0.3f, 0.3f);
@@ -932,14 +936,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Fall into the ground in anticipation of the next rise.
                 case 2:
                     npc.velocity.X *= 0.99f;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.6f, -32f, 25f);
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
                     if (npc.Center.Y >= target.Center.Y + 1450f)
                     {
                         attackTimer = 0f;
                         attackSubstate = 0f;
                         lungeCounter++;
                         if (lungeCounter >= lungeCount)
+                        {
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingAcid>());
                             SelectNextAttack(npc);
+                        }
 
                         npc.velocity.Y *= 0.5f;
                         npc.netUpdate = true;
@@ -980,12 +987,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.Opacity = 1f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase4 = lifeRatio < Phase4LifeRatio;
             AquaticScourgeAttackType currentAttack = (AquaticScourgeAttackType)(int)npc.ai[2];
-            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.BubbleSpin;
-            if (lifeRatio < Phase4LifeRatio && npc.Infernum().ExtraAI[8] == 0f)
+            AquaticScourgeAttackType nextAttack = AquaticScourgeAttackType.PerpendicularSpikeBarrage;
+            if (phase4)
             {
-                nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
-                npc.Infernum().ExtraAI[8] = 1f;
+                nextAttack = AquaticScourgeAttackType.SulphurousTyphoon;
+                if (npc.Infernum().ExtraAI[8] == 0f)
+                {
+                    nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
+                    npc.Infernum().ExtraAI[8] = 1f;
+                }
             }
 
             // Get a new target.

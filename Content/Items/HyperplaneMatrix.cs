@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Items
 {
     public class HyperplaneMatrix : ModItem
     {
-        public static bool CanBeUsed => (DownedBossSystem.downedSCal && DownedBossSystem.downedExoMechs) || Main.LocalPlayer.name == "Dominic";
+        public static bool CanBeUsed => (DownedBossSystem.downedCalamitas && DownedBossSystem.downedExoMechs) || Main.LocalPlayer.name == "Dominic";
 
         // How much the player gets hurt for if the matrix explodes due to being able to be used.
         public const int UnableToBeUsedHurtDamage = 500;

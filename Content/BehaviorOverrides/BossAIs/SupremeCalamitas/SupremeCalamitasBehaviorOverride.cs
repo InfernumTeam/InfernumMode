@@ -2357,7 +2357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             float berserkPhaseInterpolant = npc.ai[3];
             Texture2D energyChargeupEffect = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect").Value;
-            Texture2D texture2D15 = DownedBossSystem.downedSCal && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
+            Texture2D texture2D15 = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
 
             // Draw a chargeup effect behind SCal if berserk.
             if (berserkPhaseInterpolant > 0f)
@@ -2398,7 +2398,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (inPhase2)
             {
                 // Make the sprite jitter with rage in phase 2. This does not happen in rematches since it would make little sense logically.
-                if (!DownedBossSystem.downedSCal)
+                if (!DownedBossSystem.downedCalamitas)
                     vector43 += Main.rand.NextVector2Circular(0.8f, 2f);
 
                 // And gain a flaming aura.

@@ -1,6 +1,6 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.CalClone;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.CalClone;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

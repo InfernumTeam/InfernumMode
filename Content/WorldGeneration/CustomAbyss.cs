@@ -693,7 +693,7 @@ namespace InfernumMode.Content.WorldGeneration
         {
             ushort ventID = (ushort)ModContent.TileType<HydrothermalVent>();
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort scoriaOre = (ushort)ModContent.TileType<ChaoticOre>();
+            ushort scoriaOre = (ushort)ModContent.TileType<ScoriaOre>();
             List<Point> ventPositions = new();
 
             int tries = 0;

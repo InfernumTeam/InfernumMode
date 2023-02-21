@@ -30,14 +30,18 @@ using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.Events.BossRushEvent;
-using static InfernumMode.ILEditingStuff.HookManager;
-using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
 using InfernumMode.Content.WorldGeneration;
 using CalamityMod.Systems;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
+using Mono.Cecil;
+using MonoMod.Utils;
+using MonoMod.RuntimeDetour.HookGen;
+using CecilMethodBody = Mono.Cecil.Cil.MethodBody;
+using static CalamityMod.Events.BossRushEvent;
+using static InfernumMode.ILEditingStuff.HookManager;
+using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -655,7 +659,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ReplaceAbyssWorldgen : IHookEdit
     {
-        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
+        internal static void ChangeAbyssGen(Action orig) => orig();
 
         public void Load() => GenerateAbyss += ChangeAbyssGen;
 
@@ -1053,6 +1057,41 @@ namespace InfernumMode.Core.ILEditingStuff
 
                 return 1f / recoveryTime;
             });
+        }
+    }
+
+    public class MakeDungeonSpawnAtLeftSideHook : IHookEdit
+    {
+        internal static MethodReference ResetWorld;
+
+        private void SearchForResetWorldDelegate(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            // Find the first AddGenerationPass call in the world generation method and store the associated delegate it searches for.
+            cursor.GotoNext(i => i.MatchCall<WorldGen>("AddGenerationPass"));
+            cursor.GotoPrev(i => i.MatchLdftn(out ResetWorld));
+        }
+
+        private static void MakeDungeonLeftSide()
+        {
+            ILCursor cursor = new(new ILContext(ResetWorld.SafeResolve()));
+
+            // Find the storage value of the dungeon side and discard it in favor of a consistent -1 value, making it always generate on the left.
+            cursor.GotoNext(MoveType.Before, i => i.MatchStsfld<WorldGen>("dungeonSide"));
+            cursor.Emit(OpCodes.Pop);
+            cursor.Emit(OpCodes.Ldc_I4_M1);
+        }
+
+        public void Load()
+        {
+            IL.Terraria.WorldGen.GenerateWorld += SearchForResetWorldDelegate;
+            MakeDungeonLeftSide();
+        }
+
+        public void Unload()
+        {
+            IL.Terraria.WorldGen.GenerateWorld -= SearchForResetWorldDelegate;
         }
     }
 }

@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     DoBehavior_AcidRain(npc, target, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.SulphurousTyphoon:
-                    DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
+                    //DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
             }
 

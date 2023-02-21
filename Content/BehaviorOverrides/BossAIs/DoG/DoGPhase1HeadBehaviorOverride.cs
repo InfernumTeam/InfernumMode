@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
@@ -140,6 +141,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public const int DamageImmunityCountdownIndex = 35;
 
+        public const int DashTelegraphOuterOpacityIndex = 36;
+
+        public const int DashTelegraphInnerOpacityIndex = 37;
+
         public const int BodySegmentDefense = 70;
 
         public const float BodySegmentDR = 0.925f;
@@ -195,6 +200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             ref float uncoilTimer = ref npc.Infernum().ExtraAI[InitialUncoilTimerIndex];
             ref float segmentFadeType = ref npc.Infernum().ExtraAI[BodySegmentFadeTypeIndex];
             ref float getInTheFuckingPortalTimer = ref npc.Infernum().ExtraAI[ForceDoGIntoPhase2PortalTimerIndex];
+            ref float innerTelegraphOpacity = ref npc.Infernum().ExtraAI[DashTelegraphInnerOpacityIndex];
 
             // Increment timers.
             universalFightTimer++;
@@ -236,6 +242,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             // Determine the hitbox size.
             npc.Size = Vector2.One * 132f;
+
+            // Spawn particles if the telegraph is fully formed.
+            if (innerTelegraphOpacity > 1f)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 position = Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(105f, 105f);
+                    Vector2 velocity = npc.SafeDirectionTo(position) * Main.rand.NextFloat(3f, 7f);
+                    Color color = Main.rand.NextBool() ? Color.Lerp(Color.Fuchsia, Color.White, 0.35f) : Color.Cyan;
+                    Particle particle = new GenericSparkle(position, velocity, color, Color.White, Main.rand.NextFloat(0.3f, 0.7f), 90, Main.rand.NextFloat(-0.1f, 0.1f));
+                    GeneralParticleHandler.SpawnParticle(particle);
+                }
+            }
 
             // Defer all further execution to the second phase AI manager if in the second phase.
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
@@ -444,6 +463,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            DoGPhase2HeadBehaviorOverride.DrawDashTimingIndicator(npc, spriteBatch);
+
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
                 return DoGPhase2HeadBehaviorOverride.PreDraw(npc, lightColor);
 
@@ -480,6 +501,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow").Value;
             Main.spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+
             return false;
         }
         #endregion Drawing

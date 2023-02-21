@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
@@ -16,6 +17,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
@@ -318,6 +320,10 @@ namespace InfernumMode.GlobalInstances
             // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
             if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
                 PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
+
+            // Ensure that the Aquatic Scourge stops the hissing sound if it's unexpectedly killed.
+            if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && npc.life <= 0f)
+                AquaticScourgeHeadBehaviorOverride.UpdateAcidHissSound(npc);
         }
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

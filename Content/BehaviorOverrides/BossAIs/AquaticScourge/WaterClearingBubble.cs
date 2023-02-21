@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.TryGetValue(p, out float s))
                     power = s;
 
-                SulphuricWaterSafeZoneSystem.NearbySafeTiles[p] = MathHelper.Max(power, bubble.scale * 0.8f);
+                SulphuricWaterSafeZoneSystem.NearbySafeTiles[p] = MathHelper.Max(power, bubble.scale);
             }
 
             orig(self, spriteBatch, drawOffset, waterStyle, globalAlpha, isBackgroundDraw);
@@ -78,6 +78,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Projectile.Opacity = 1f;
             Projectile.scale = Projectile.Opacity;
 
+            // Release positive golden/cyan particles.
+            Dust positiveParticle = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(220f, 220f) * Projectile.scale, 261);
+            positiveParticle.color = Main.rand.NextBool() ? Color.Gold : Color.Cyan;
+            positiveParticle.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.5f, 3f);
+            positiveParticle.scale = 1.5f;
+            positiveParticle.noGravity = true;
+
             // Randomly emit bubbles.
             Vector2 bubbleSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(250f, 250f) * Projectile.scale;
             bubbleSpawnPosition += Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 14f;
@@ -102,7 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public Color ColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Pow(Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)), 3D) * 0.5f;
-            return Color.Lerp(new Color(103, 218, 224), new Color(144, 114, 166), colorInterpolant) * Projectile.Opacity * 0.8f;
+            return Color.Lerp(new Color(103, 218, 224), new Color(144, 114, 166), colorInterpolant) * Projectile.Opacity * 0.3f;
         }
 
         public override void Kill(int timeLeft)
@@ -123,10 +130,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 2.2f;
+                float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 1.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 Vector2 radius = Vector2.One * Radius;
-                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 1.9f)));
+                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 1.1f)));
 
                 for (int i = 0; i <= 8; i++)
                 {

@@ -1914,7 +1914,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int baseGigaReleaseRate = 75;
             int dartBulletHellReleaseRate = 54;
             float dartBulletHellWallArea = 420f;
-            float dartBulletHellGapArea = 64f;
+            float dartBulletHellGapArea = 48f;
 
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[0];
             ref float teleportCountdown = ref npc.Infernum().ExtraAI[1];

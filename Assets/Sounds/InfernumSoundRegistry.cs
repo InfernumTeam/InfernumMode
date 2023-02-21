@@ -31,11 +31,13 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ArtemisSpinLaserbeamSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ArtemisSpinLaserbeam");
 
-        public static readonly SoundStyle AquaticScourgeAppear = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeAppear");
+        public static readonly SoundStyle AquaticScourgeAcidHissLoopSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeAcidHissLoop") with { IsLooped = true };
 
-        public static readonly SoundStyle AquaticScourgeCharge = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeCharge");
+        public static readonly SoundStyle AquaticScourgeAppearSound = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeAppear");
 
-        public static readonly SoundStyle AquaticScourgeGore = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeGore");
+        public static readonly SoundStyle AquaticScourgeChargeSound = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeCharge");
+
+        public static readonly SoundStyle AquaticScourgeGoreSound = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeGore");
 
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/BrimstoneElementalShellGroundHit");
 

@@ -1022,12 +1022,29 @@ namespace InfernumMode.Core.ILEditingStuff
             // Multiply the poison increment by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
             cursor.GotoNext(i => i.MatchLdfld<CalamityPlayer>("SulphWaterPoisoningLevel"));
             cursor.GotoNext(MoveType.After, i => i.MatchLdloc(poisonIncrementIndex));
-            cursor.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs ? AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactor : 1f);
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate((CalamityPlayer calamityPlayer) =>
+            {
+                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                {
+                    NPC scourge = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>())];
+                    Player player = calamityPlayer.Player;
+                    float acidVerticalLine = scourge.Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidVerticalLineIndex];
+                    if (acidVerticalLine > 0f && player.Top.Y >= acidVerticalLine)
+                        return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactorFinalPhase;
+
+                    return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactor;
+                }
+
+                return 1f;
+            });
             cursor.Emit(OpCodes.Mul);
 
             // Redecide poison decrement by a predetermined factor during the Aquatic Scourge fight, so that it's more fair overall.
             cursor.GotoNext(MoveType.After, i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterRecoveryTime));
             cursor.Emit(OpCodes.Pop);
+
             cursor.EmitDelegate(() =>
             {
                 int recoveryTime = CalamityPlayer.SulphSeaWaterRecoveryTime;

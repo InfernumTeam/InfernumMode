@@ -4,6 +4,7 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.Particles;
+using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
@@ -396,7 +397,20 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             if (tile.TileType != (ushort)ModContent.TileType<RustyChestTile>())
-                outputColor = Vector3.Lerp(outputColor, Color.LightSeaGreen.ToVector3(), 0.8f);
+            {
+                Vector3 idealColor = Color.LightSeaGreen.ToVector3();
+
+                if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.Count >= 1)
+                {
+                    Color cleanWaterColor = new(10, 109, 193);
+                    Point closestSafeZone = SulphuricWaterSafeZoneSystem.NearbySafeTiles.Keys.OrderBy(t => t.ToVector2().DistanceSQ(new(x, y))).First();
+                    float distanceToClosest = new Vector2(x, y).Distance(closestSafeZone.ToVector2());
+                    float acidicWaterInterpolant = Utils.GetLerpValue(12f, 20.5f, distanceToClosest + (1f - SulphuricWaterSafeZoneSystem.NearbySafeTiles[closestSafeZone]) * 21f, true);
+                    idealColor = Vector3.Lerp(idealColor, cleanWaterColor.ToVector3(), 1f - acidicWaterInterpolant);
+                }
+
+                outputColor = Vector3.Lerp(outputColor, idealColor, 0.8f);
+            }
         }
 
         public void Load()

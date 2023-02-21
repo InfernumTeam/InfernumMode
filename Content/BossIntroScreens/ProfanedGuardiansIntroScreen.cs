@@ -20,6 +20,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/Providence/ProvidenceSpawn");
     }
 }

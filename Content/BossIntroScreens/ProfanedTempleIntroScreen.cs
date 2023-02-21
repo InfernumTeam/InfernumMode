@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BossIntroScreens
         public override bool ShouldBeActive() => !SubworldSystem.IsActive<LostColosseum>() &&
             Main.LocalPlayer.Infernum_Biome().ZoneProfaned && !Main.LocalPlayer.Infernum_Biome().ProfanedTempleAnimationHasPlayed;
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/ProvidenceSpawn");
+        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/Providence/ProvidenceSpawn");
 
         public override SoundStyle? SoundToPlayWithLetterAddition => SoundID.Item100;
 

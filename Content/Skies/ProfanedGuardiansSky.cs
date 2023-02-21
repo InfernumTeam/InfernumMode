@@ -28,6 +28,8 @@ namespace InfernumMode.Content.Skies
         public override void SpecialVisuals(Player player, bool isActive)
         {
             player.ManageSpecialBiomeVisuals("InfernumMode:GuardianCommander", isActive);
+            // GO AWAY.
+            SkyManager.Instance["CalamityMod:DevourerofGodsHead"].Deactivate();
         }
     }
 
@@ -96,7 +98,7 @@ namespace InfernumMode.Content.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 Texture2D skyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/ProfanedGuardiansSky").Value;
-                spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity * 0.2f);
+                //spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity * 0.2f);
             }
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 

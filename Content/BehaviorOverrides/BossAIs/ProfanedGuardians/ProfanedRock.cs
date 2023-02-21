@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Texture2D invis = InfernumTextureRegistry.Invisible.Value;
                 float opacity = MathF.Sin(Timer / RedHotGlowTimer * MathF.PI);
-                Effect laserScopeEffect = Filters.Scene["PixelatedSightLine"].GetShader().Shader;
+                Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
                 laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Pow((double)opacity, 0.5f));

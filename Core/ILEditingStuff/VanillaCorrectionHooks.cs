@@ -1008,12 +1008,17 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Unload()
         {
-            UpdateBadLifeRegen += AdjustTimers;
+            UpdateBadLifeRegen -= AdjustTimers;
         }
 
         private void AdjustTimers(ILContext il)
         {
             ILCursor cursor = new(il);
+            cursor.EmitDelegate(() =>
+            {
+                if (!MakeSulphSeaWaterEasierToSeeInHook.CanUseHighQualityWater)
+                    WaterClearingBubble.ClaimAllBubbles();
+            });
 
             int poisonIncrementIndex = 0;
             cursor.GotoNext(i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterSafetyTime));

@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             Projectile.rotation -= Projectile.Opacity * 0.15f;
             Projectile.width = (int)(Projectile.scale * 208f);
-            Projectile.height = (int)(Projectile.scale * 1000f);
+            Projectile.height = (int)(Projectile.scale * 936f);
 
             // Fade in and grow to the appropriate size.
             Projectile.Opacity = Utils.GetLerpValue(0f, 120f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
@@ -58,15 +58,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Move upward.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.velocity.X = (float)Math.Cos(MathHelper.TwoPi * Time / 235f) * FlyDirection * Projectile.Opacity * 25f;
+            Projectile.velocity.X = (float)Math.Cos(MathHelper.TwoPi * Time / 270f) * FlyDirection * Projectile.Opacity * 19.5f;
             Projectile.velocity.Y = -4.5f;
             Projectile.position.X += Projectile.SafeDirectionTo(target.Center).X * Projectile.Opacity * 13f;
 
+            // Create a large column of bubbles before the tornado becomes full-sized, so that the play knows to avoid its general location.
+            if (Main.netMode != NetmodeID.Server && Time < 90f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    int bubbleID = 421;
+                    if (Main.rand.NextBool(4))
+                        bubbleID = 422;
+                    if (Main.rand.NextBool(8))
+                        bubbleID = 423;
+                    if (Main.rand.NextBool(25))
+                        bubbleID = 424;
+
+                    float horizontalOffset = MathHelper.Lerp(-Projectile.width * 0.65f, Projectile.width * 0.65f, (float)Math.Pow(Main.rand.NextFloat(), 2D));
+                    Vector2 bubbleSpawnPosition = Projectile.Bottom + new Vector2(horizontalOffset, Main.rand.NextFloat(400f, -Projectile.height - 800f));
+                    Vector2 bubbleSpawnVelocity = -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(2f, 8f);
+                    Gore bubble = Gore.NewGorePerfect(Projectile.GetSource_FromThis(), bubbleSpawnPosition, bubbleSpawnVelocity, bubbleID);
+                    bubble.timeLeft = Main.rand.Next(35, 60);
+                    bubble.type = bubbleID;
+                }
+            }
+
             // Release a spray of falling acid.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.Opacity >= 0.6f && Projectile.height >= 750f && Time % 4f == 3f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.Opacity >= 0.6f && Projectile.height >= 640f && Time % 4f == 3f)
             {
                 Vector2 acidSpawnPosition = Projectile.Top + new Vector2(Main.rand.NextFloatDirection() * 100f, Main.rand.NextFloat(250f));
-                Vector2 acidSpawnVelocity = -Vector2.UnitY.RotatedByRandom(1.1f) * Main.rand.NextFloat(10f, 25f);
+                Vector2 acidSpawnVelocity = -Vector2.UnitY.RotatedByRandom(1.1f) * new Vector2(1.6f, 1f) * Main.rand.NextFloat(10f, 25f);
                 Utilities.NewProjectileBetter(acidSpawnPosition, acidSpawnVelocity, ModContent.ProjectileType<FallingAcid>(), 140, 0f);
             }
 
@@ -91,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 float opacity = MathHelper.Lerp(1f, 0.6f, dy / Projectile.height) * Projectile.Opacity * 0.3f;
                 Vector2 drawPosition = Projectile.Bottom - Main.screenPosition - Vector2.UnitY * dy;
                 Color tornadoColor = Color.White * opacity;
-                tornadoColor.A /= 2;
+                tornadoColor.A /= 3;
                 
                 Main.EntitySpriteDraw(texture, drawPosition, null, tornadoColor, rotation, texture.Size() * 0.5f, TornadoPieceScale(dy), 0, 0);
             }

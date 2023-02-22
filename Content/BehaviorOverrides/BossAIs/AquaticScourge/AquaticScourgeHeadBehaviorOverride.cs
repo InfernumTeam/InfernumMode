@@ -911,7 +911,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
             if (phase3)
             {
-                rubbleReleaseRate = int.MaxValue;
+                rubbleReleaseRate -= 5;
                 turnAngularVelocity += 0.0098f;
                 movementSpeed += 7f;
             }
@@ -985,15 +985,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Release rubble from the ceiling.
             if (attackTimer % rubbleReleaseRate == rubbleReleaseRate - 1f)
             {
-                SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, target.Center);
+                if (!phase3)
+                    SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, target.Center);
                 for (int i = 0; i < 5; i++)
                 {
+                    int projID = ModContent.ProjectileType<SulphurousRockRubble>();
                     Vector2 rubbleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 800f, -30f), new Searches.Up(50));
-                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f)
+                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f || phase3)
                         rubbleSpawnPosition.Y = target.Center.Y - 980f + Main.rand.NextFloatDirection() * 40f;
+                    if (phase3)
+                        projID = ModContent.ProjectileType<FallingAcid>();
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(rubbleSpawnPosition, 300f))
-                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
+                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, projID, 135, 0f, -1, 0f, phase3 ? 1f :0f);
                 }
             }
 
@@ -1080,6 +1084,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
+            // Fall into the ground if the first charge started off with the scourge far in the air.
+            if (lungeCounter <= 0f && attackTimer == 1f && npc.Center.Y < target.Center.Y - upwardLungeDistance - 500f)
+            {
+                attackSubstate = 2f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
             // Release acid bubbles below the target.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f)
             {
@@ -1107,6 +1119,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     else
                     {
                         Vector2 idealVelocity = new(npc.SafeDirectionTo(target.Center).X * 27f, -verticalSpeedAdditive - 24f);
+                        if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 600f)
+                            idealVelocity.X *= 2f;
+
                         npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.11f).MoveTowards(idealVelocity, 0.8f);
                     }
 

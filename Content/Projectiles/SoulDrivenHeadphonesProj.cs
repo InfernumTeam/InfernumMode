@@ -65,7 +65,7 @@ namespace InfernumMode.Content.Projectiles
                 bool unlockedTrack = UnlockCondition() || player.Infernum_Music().UnlockAllMusic;
                 float scale = Scale * opacity * 0.8f;
                 float indexAngle = MathHelper.TwoPi * indexRatio - MathHelper.PiOver2;
-                Vector2 drawPosition = center + indexAngle.ToRotationVector2() * 90f;
+                Vector2 drawPosition = center + indexAngle.ToRotationVector2() * 108f;
                 Vector2 backgroundOrigin = background.Size() * 0.5f;
                 Rectangle iconFrame = icon.Frame(1, 3, 0, (int)(indexRatio * 10f) % 3);
                 Vector2 iconOrigin = iconFrame.Size() * 0.5f;
@@ -282,6 +282,15 @@ namespace InfernumMode.Content.Projectiles
 
             new()
             {
+                HoverText = "Inferior Fabrications (Exo Remix) - The Exo Mechs",
+                TrackName = "ExoMechBossesOld",
+                HoverTextColor = () => Color.Lerp(CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 0.27f % 1f, CalamityUtils.ExoPalette), Color.Silver, 0.4f),
+                UnlockCondition = () => DownedBossSystem.downedExoMechs,
+                BossIconTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosNormalHead")
+            },
+
+            new()
+            {
                 HoverText = "Catastrophic Fabrications - The Exo Mechs",
                 TrackName = "ExoMechBosses",
                 HoverTextColor = () => CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 0.32f % 1f, CalamityUtils.ExoPalette),
@@ -464,7 +473,7 @@ namespace InfernumMode.Content.Projectiles
                 if (UIStates.Count <= 1)
                     indexCompletion = 0.5f;
 
-                bool clicked = UIStates[i].Draw(Owner, Projectile.Center - Vector2.UnitY * 150f - Main.screenPosition, indexCompletion, opacity, out Vector2 localTextDrawPosition, out Color localTextColor, out string localText) && opacity >= 1f;
+                bool clicked = UIStates[i].Draw(Owner, Projectile.Center - Vector2.UnitY * 180f - Main.screenPosition, indexCompletion, opacity, out Vector2 localTextDrawPosition, out Color localTextColor, out string localText) && opacity >= 1f;
                 if (!string.IsNullOrEmpty(localText) && opacity >= 1f)
                 {
                     text = localText;

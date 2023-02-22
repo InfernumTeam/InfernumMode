@@ -294,15 +294,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/Head").Value;
+            Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 headOrigin = new(191f, 130f);
-            Texture2D eyeScleraTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadSclera").Value;
-            Texture2D pupilTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadPupil").Value;
+            Texture2D eyeScleraTexture = TextureAssets.Extra[18].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
             Vector2 mouthOrigin = new(19f, 34f);
-            Texture2D mouthTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/Mouth").Value;
+            Texture2D mouthTexture = TextureAssets.Extra[25].Value;
             Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
             Rectangle mouthFrame = mouthTexture.Frame(1, 3, 0, (int)npc.Infernum().ExtraAI[6]);
-            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/MoonLord/CustomSprites/HeadEye").Value;
+            Texture2D eyeTexture = TextureAssets.Extra[29].Value;
             Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
             Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
             eyeFrame.Height /= 4;

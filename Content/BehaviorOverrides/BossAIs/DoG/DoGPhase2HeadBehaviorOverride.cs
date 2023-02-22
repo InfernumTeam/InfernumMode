@@ -567,6 +567,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             int lastSegmentsDestructionDelay = 30;
             int lastSegmentsDestructionTime = 60;
             float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.GetLerpValue(15f, 210f, deathAnimationTimer, true));
+            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(Main.player[npc.target].Center), 0.02f);
             if (npc.velocity.Length() != idealSpeed)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
 
@@ -578,10 +579,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (deathAnimationTimer == textDelay + 100f)
                 Utilities.DisplayText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
 
-            if (deathAnimationTimer == textDelay + segmentDestructionTime - 50f)
+            if (deathAnimationTimer == textDelay + 200f)
                 Utilities.DisplayText("I WILL NOT...", Color.Cyan);
 
-            if (deathAnimationTimer == textDelay + segmentDestructionTime + 40f)
+            if (deathAnimationTimer == textDelay + 270f)
                 Utilities.DisplayText("I...", Color.Cyan);
 
             // Destroy most of DoG's first segments.
@@ -753,8 +754,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             else
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
             
-            float slitherOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.19f;
-
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
@@ -791,7 +790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 14.333f, flySpeedFactor * 32f);
 
                 // And handle movement.
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + slitherOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * speed;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 25f);
             }
 

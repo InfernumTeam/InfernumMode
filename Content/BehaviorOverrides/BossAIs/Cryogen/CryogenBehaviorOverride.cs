@@ -780,8 +780,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             float zeroBasedAttackPower = attackPower - 1f;
             int shootDelay = 90;
             int spiritSummonTime = (int)(540 + zeroBasedAttackPower * 210f);
-            int spiritSummonRate = (int)(16f - zeroBasedAttackPower * 3f);
-            int bombShootRate = (int)(50f - zeroBasedAttackPower * 8f);
+            int spiritSummonRate = (int)(19f - zeroBasedAttackPower * 3f);
+            int bombShootRate = (int)(100f - zeroBasedAttackPower * 8f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
@@ -814,7 +814,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Release bombs from above in the final phase.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase6LifeRatio && canShoot && attackTimer % bombShootRate == bombShootRate - 1f)
             {
-                Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 450f, Vector2.UnitY.RotatedByRandom(0.32f) * 7f, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
+                Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 450f, Vector2.UnitY.RotatedByRandom(0.32f) * 4f, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
             }
 
             if (attackTimer >= spiritSummonTime + 90f)

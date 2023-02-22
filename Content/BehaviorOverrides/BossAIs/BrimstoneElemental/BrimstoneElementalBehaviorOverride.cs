@@ -6,6 +6,8 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
@@ -172,7 +174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             int bombardCount = lifeRatio < Phase2LifeRatio ? 7 : 6;
             int bombardTime = 75;
             int fireballShootRate = lifeRatio < Phase2LifeRatio ? 6 : 9;
-            int fadeOutTime = (int)MathHelper.Lerp(48f, 27f, 1f - lifeRatio);
+            int fadeOutTime = (int)MathHelper.Lerp(48f, 30f, 1f - lifeRatio);
             float skullShootSpeed = 11f;
             float horizontalTeleportOffset = MathHelper.Lerp(950f, 820f, 1f - lifeRatio);
             float verticalDestinationOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
@@ -203,6 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     npc.Opacity = MathHelper.Clamp(npc.Opacity - 1f / fadeOutTime, 0f, 1f);
 
                     int brimstoneDustCount = (int)MathHelper.Lerp(2f, 8f, npc.Opacity);
+                    Vector2 teleportPosition = target.Center + Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt() * 0.8f;
                     for (int i = 0; i < brimstoneDustCount; i++)
                     {
                         Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
@@ -212,15 +215,39 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         brimstoneFire.noGravity = true;
                     }
 
-                    // Go to the next attack state and teleport once completely invisible.
+                    // Create particles at the teleport position.
+                    Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
+                    CloudParticle fireCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor, Color.DarkGray, 36, Main.rand.NextFloat(1.4f, 1.6f));
+                    GeneralParticleHandler.SpawnParticle(fireCloud);
+
+                    Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), 219);
+                    fire.velocity = -Vector2.UnitY.RotateRandom(0.5f) * Main.rand.NextFloat(1f, 5f);
+                    fire.scale *= 1.12f;
+                    fire.noGravity = true;
+
+                    // Go to the next attack substate and teleport once completely invisible.
                     if (npc.Opacity <= 0f)
                     {
-                        Vector2 teleportOffset = Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt() * Main.rand.NextFloat(0.65f, 1f);
                         attackTimer = 0f;
                         attackState++;
-                        npc.Center = target.Center + teleportOffset;
+                        npc.Center = teleportPosition;
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.velocity = npc.SafeDirectionTo(verticalDestination) * npc.Distance(verticalDestination) / bombardTime;
+
+                        SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.NearBurnSound);
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 3f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.7f, 35);
+                        }
+
+                        for (int i = 0; i < 20; i++)
+                        {
+                            fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
+                            fireCloud = new(teleportPosition, (MathHelper.TwoPi * i / 20f).ToRotationVector2() * 11f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(1.9f, 2.3f));
+                            GeneralParticleHandler.SpawnParticle(fireCloud);
+                        }
+
                         npc.netUpdate = true;
                     }
 
@@ -853,6 +880,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.TargetClosest();
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            BrimmyAttackType previousAttack = (BrimmyAttackType)npc.ai[0];
             List<BrimmyAttackType> possibleAttacks = new()
             {
                 BrimmyAttackType.FlameChargeSkullBlasts,
@@ -863,9 +891,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             };
             possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < Phase2LifeRatio);
 
-            possibleAttacks.Remove((BrimmyAttackType)(int)npc.ai[0]);
-
-            npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
+            do
+                npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
+            while (previousAttack == (BrimmyAttackType)npc.ai[0]);
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

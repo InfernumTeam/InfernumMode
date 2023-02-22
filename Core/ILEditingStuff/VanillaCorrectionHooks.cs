@@ -1028,13 +1028,12 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.GotoNext(i => i.MatchLdfld<CalamityPlayer>("SulphWaterPoisoningLevel"));
             cursor.GotoNext(MoveType.After, i => i.MatchLdloc(poisonIncrementIndex));
 
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate((CalamityPlayer calamityPlayer) =>
+            cursor.EmitDelegate(() =>
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
                 {
                     NPC scourge = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>())];
-                    Player player = calamityPlayer.Player;
+                    Player player = Main.LocalPlayer;
                     float acidVerticalLine = scourge.Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidVerticalLineIndex];
                     if (acidVerticalLine > 0f && player.Top.Y >= acidVerticalLine)
                         return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactorFinalPhase;

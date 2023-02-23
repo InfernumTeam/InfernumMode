@@ -81,10 +81,11 @@ namespace InfernumMode.Core.TrackedMusic
                 if (!ModLoader.TryGetMod(modName, out Mod mod))
                     continue;
 
+                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 string musicPath = AssetPathHelper.CleanPath($"{MusicDirectory}/{path}.ogg");
+                CustomTrackDiskPositions[musicSlotIndex] = musicPath;
 
                 // Write the music to a permanent file if it hasn't been placed there yet.
-                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 if (!File.Exists(musicPath))
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
@@ -95,7 +96,6 @@ namespace InfernumMode.Core.TrackedMusic
 
                 TracksThatDontUseTerrariasSystem.Add(musicSlotIndex);
                 CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
-                CustomTrackDiskPositions[musicSlotIndex] = musicPath;
             }
 
             On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;

@@ -263,7 +263,7 @@ namespace InfernumMode.Content.WorldGeneration
                 (ushort)ModContent.TileType<PirateCrate5>(),
                 (ushort)ModContent.TileType<PirateCrate6>()
             });
-            GenerateScenicTilesInArea(layer1Area, 11, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(layer1Area, 11, 1, new ushort[] { (ushort)ModContent.TileType<SulphurousShale>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<ShalePile1>(),
                 (ushort)ModContent.TileType<ShalePile2>(),
@@ -277,7 +277,7 @@ namespace InfernumMode.Content.WorldGeneration
             WorldSaveSystem.AbyssLayer1ForestSeed = WorldGen.genRand.Next();
 
             ushort abyssGravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort sulphuricGravelID = (ushort)ModContent.TileType<SulphurousGravel>();
+            ushort sulphuricShaleID = (ushort)ModContent.TileType<SulphurousShale>();
 
             // Edge score evaluation function that determines the propensity a tile has to become sandstone.
             // This is based on how much nearby empty areas there are, allowing for "edges" to appear.
@@ -313,10 +313,10 @@ namespace InfernumMode.Content.WorldGeneration
                     // Make the sandstone appearance chance dependant on the edge score.
                     sulphurousConvertChance *= Utils.GetLerpValue(4f, 11f, getEdgeScore(x, y), true);
 
-                    if (WorldGen.genRand.NextFloat() > sulphurousConvertChance || sulphurousConvertChance < 0.64f)
+                    if (WorldGen.genRand.NextFloat() > sulphurousConvertChance || sulphurousConvertChance < 0.57f)
                         continue;
 
-                    // Convert to sulphuric gravel as necessary.
+                    // Convert to sulphuric shale as necessary.
                     for (int dx = -2; dx <= 2; dx++)
                     {
                         for (int dy = -2; dy <= 2; dy++)
@@ -325,7 +325,7 @@ namespace InfernumMode.Content.WorldGeneration
                             {
                                 if (CalamityUtils.ParanoidTileRetrieval(x + dx, y + dy).TileType == abyssGravelID)
                                 {
-                                    Main.tile[x + dx, y + dy].TileType = sulphuricGravelID;
+                                    Main.tile[x + dx, y + dy].TileType = sulphuricShaleID;
 
                                     // Encourage the growth of ground vines.
                                     if (InsideOfLayer1Forest(new(x + dx, y + dy)))
@@ -341,10 +341,6 @@ namespace InfernumMode.Content.WorldGeneration
                                                 SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy));
                                         }
                                     }
-
-                                    // Try to grow small plants.
-                                    if (WorldGen.genRand.NextBool(Layer1SmallPlantCreationChance) && SulphurousGravel.TryToGrowSmallPlantAbove(new(x + dx, y + dy)))
-                                    { }
                                 }
                             }
                         }

@@ -56,7 +56,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public const float Layer1ForestMinNoiseValue = 0.235f;
 
-        public const int Layer1KelpCreationChance = 8;
+        public const int Layer1KelpCreationChance = 18;
 
         public static int Layer2TrenchCount => (int)Math.Sqrt(Main.maxTilesX / 176f);
 
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public const int MaxTrenchOffset = 28;
 
-        public const int Layer2WildlifeSpawnAttempts = 95200;
+        public const int Layer2WildlifeSpawnAttempts = 35200;
 
         public const int Layer3CaveCarveoutSteps = 124;
 
@@ -235,7 +235,11 @@ namespace InfernumMode.Content.WorldGeneration
             // Generate scenic tiles.
             GeneratePostSkeletronTiles(layer1Area);
             GenerateAbyssalKelp(layer1Area);
-            GenerateScenicTilesInArea(layer1Area, 15, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+
+            // Create random blobs of planty mush.
+            GeneratePlantyMushClumps(layer1Area);
+
+            GenerateScenicTilesInArea(layer1Area, 10, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<AbyssGiantKelp1>(),
                 (ushort)ModContent.TileType<AbyssGiantKelp2>(),
@@ -248,7 +252,7 @@ namespace InfernumMode.Content.WorldGeneration
                 (ushort)ModContent.TileType<AbyssVent2>(),
                 (ushort)ModContent.TileType<AbyssVent3>()
             });
-            GenerateScenicTilesInArea(layer1Area, 9, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(layer1Area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<GravelPile1>(),
                 (ushort)ModContent.TileType<GravelPile2>(),
@@ -263,7 +267,7 @@ namespace InfernumMode.Content.WorldGeneration
                 (ushort)ModContent.TileType<PirateCrate5>(),
                 (ushort)ModContent.TileType<PirateCrate6>()
             });
-            GenerateScenicTilesInArea(layer1Area, 11, 1, new ushort[] { (ushort)ModContent.TileType<SulphurousShale>() }, new ushort[]
+            GenerateScenicTilesInArea(layer1Area, 8, 1, new ushort[] { (ushort)ModContent.TileType<SulphurousShale>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<ShalePile1>(),
                 (ushort)ModContent.TileType<ShalePile2>(),
@@ -397,6 +401,25 @@ namespace InfernumMode.Content.WorldGeneration
                         }
                     }
                 }
+            }
+        }
+
+        public static void GeneratePlantyMushClumps(Rectangle layer1Area)
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                int x = GetActualX(WorldGen.genRand.Next(layer1Area.Left + 90, layer1Area.Right - 70));
+                int y = WorldGen.genRand.Next(layer1Area.Top + 40, layer1Area.Bottom - 15);
+                Point p = new(x, y);
+
+                // Make the surrounding pyre molten.
+                WorldUtils.Gen(p, new Shapes.Circle(WorldGen.genRand.Next(14, 18)), Actions.Chain(new GenAction[]
+                {
+                    new Modifiers.RadialDither(12f, 18f),
+                    new Modifiers.Conditions(new Conditions.IsTile((ushort)ModContent.TileType<AbyssGravel>(), (ushort)ModContent.TileType<SulphurousShale>())),
+                    new Actions.SetTile((ushort)ModContent.TileType<PlantyMush>()),
+                    new Actions.PlaceWall((ushort)ModContent.WallType<AbyssGravelWall>()),
+                }));
             }
         }
 
@@ -589,29 +612,29 @@ namespace InfernumMode.Content.WorldGeneration
                 (ushort)ModContent.TileType<AbyssGiantKelp3>(),
                 (ushort)ModContent.TileType<AbyssGiantKelp4>()
             });
-            GenerateScenicTilesInArea(area, 11, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(area, 9, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<AbyssVent1>(),
                 (ushort)ModContent.TileType<AbyssVent2>(),
                 (ushort)ModContent.TileType<AbyssVent3>()
             });
-            GenerateScenicTilesInArea(area, 9, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<BulbTree1>(),
                 (ushort)ModContent.TileType<BulbTree2>(),
                 (ushort)ModContent.TileType<BulbTree3>()
             });
-            GenerateScenicTilesInArea(area, 14, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<GravelPile1>(),
                 (ushort)ModContent.TileType<GravelPile2>(),
                 (ushort)ModContent.TileType<GravelPile3>()
             });
-            GenerateScenicTilesInArea(area, 18, 5, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(area, 10, 5, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<TenebrisRemnant>()
             });
-            GenerateScenicTilesInArea(area, 7, 16, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            GenerateScenicTilesInArea(area, 5, 16, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
             {
                 (ushort)ModContent.TileType<AbyssalKelp>()
             });
@@ -1259,6 +1282,13 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 if (!WorldGen.SolidTile(x + i, y + 1))
                     return;
+            }
+
+            // Clear out tiles that were in the area previously, to prevent overlap.
+            for (int i = x; i < x + width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                    WorldGen.KillTile(i, y - j);
             }
 
             for (int i = x; i < x + width; i++)

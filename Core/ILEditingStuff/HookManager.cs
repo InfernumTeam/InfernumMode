@@ -362,5 +362,11 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator DrawCodebreakerUI
+        {
+            add => HookEndpointManager.Modify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

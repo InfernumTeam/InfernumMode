@@ -38,6 +38,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
+using CalamityMod.TileEntities;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -1092,6 +1093,34 @@ namespace InfernumMode.Core.ILEditingStuff
             }
 
             return orig(self, maxValue);
+        }
+    }
+
+    public class AllowTalkingToDraedonGook : IHookEdit
+    {
+        public void Load()
+        {
+            if (DraetingSimSystem.ShouldEnableDraedonDialog)
+                DrawCodebreakerUI += ChangeTalkCondition;
+        }
+
+        public void Unload()
+        {
+            if (DraetingSimSystem.ShouldEnableDraedonDialog)
+                DrawCodebreakerUI -= ChangeTalkCondition;
+        }
+
+        private void ChangeTalkCondition(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(i => i.MatchCallOrCallvirt<TECodebreaker>("get_ReadyToSummonDraedon"));
+
+            for (int i = 0; i < 2; i++)
+                cursor.GotoNext(j => j.MatchStloc(out _));
+
+            cursor.GotoPrev(MoveType.After, i => i.MatchLdcI4(0));
+            cursor.Emit(OpCodes.Pop);
+            cursor.EmitDelegate(() => DownedBossSystem.downedExoMechs.ToInt());
         }
     }
 }

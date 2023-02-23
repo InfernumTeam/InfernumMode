@@ -1033,6 +1033,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             else
                 npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
 
+            if (oldAttackType == ThanatosHeadAttackType.RefractionRotorRays)
+                npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
+
             // In the final phase a preset order is established, ending with the ultimate attack.
             if (ExoMechManagement.CurrentThanatosPhase >= 6)
             {

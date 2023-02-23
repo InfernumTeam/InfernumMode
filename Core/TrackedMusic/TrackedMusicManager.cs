@@ -20,6 +20,8 @@ namespace InfernumMode.Core.TrackedMusic
 
         internal static Dictionary<int, Song> CustomTracks = new();
 
+        internal static Dictionary<int, string> CustomTrackDiskPositions = new();
+
         internal static ConstructorInfo SongConstructor;
 
         public static readonly List<string> CustomTrackPaths = new()
@@ -82,17 +84,18 @@ namespace InfernumMode.Core.TrackedMusic
                 string musicPath = AssetPathHelper.CleanPath($"{MusicDirectory}/{path}.ogg");
 
                 // Write the music to a permanent file if it hasn't been placed there yet.
+                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 if (!File.Exists(musicPath))
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
                     using FileStream saveStream = File.Create(musicPath);
-                    using Stream musicStream = mod.GetFileStream(path.Replace(modName + "/", string.Empty) + ".ogg", true);
+                    using Stream musicStream = mod.GetFileStream(CustomTrackDiskPositions[musicSlotIndex], true);
                     musicStream.CopyTo(saveStream);
                 }
 
-                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 TracksThatDontUseTerrariasSystem.Add(musicSlotIndex);
                 CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
+                CustomTrackDiskPositions[musicSlotIndex] = musicPath;
             }
 
             On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
@@ -120,6 +123,13 @@ namespace InfernumMode.Core.TrackedMusic
         {
             if (TracksThatDontUseTerrariasSystem.Contains(i))
             {
+                // If for some reason the file isn't present, just use the default system.
+                if (!File.Exists(CustomTrackDiskPositions[i]))
+                {
+                    orig(self, active, i, totalVolume, ref tempFade);
+                    return;
+                }
+
                 if (self.AudioTracks[i].IsPlaying)
                 {
                     self.AudioTracks[i].SetVariable("Volume", 0f);
@@ -174,7 +184,7 @@ namespace InfernumMode.Core.TrackedMusic
                 }
             }
 
-            if (TrackedSong is null)
+            if (TrackedSong is null || !File.Exists(CustomTrackDiskPositions[CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First()]))
                 return;
 
             if (MediaPlayer.State == MediaState.Stopped)

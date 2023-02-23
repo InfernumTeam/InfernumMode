@@ -5,14 +5,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class DraetingSimSystem : ModSystem
     {
-        public static bool ShouldEnableDraedonDialog => false;
+        public static bool ShouldEnableDraedonDialog => true;
 
         public override void OnModLoad()
         {
             if (!ShouldEnableDraedonDialog)
                 return;
-
-            DraedonDialogRegistry.DialogOptions[0] = new("What is this?", "Hahahah you FOOL! Welcome to my ZOOM CALL!!!");
         }
     }
 }

@@ -171,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public static void DoBehavior_FlameTeleportBombardment(NPC npc, Player target, float lifeRatio, bool pissedOff, ref float attackTimer, ref float frameType)
         {
-            int bombardCount = lifeRatio < Phase2LifeRatio ? 7 : 6;
+            int bombardCount = lifeRatio < Phase2LifeRatio ? 4 : 3;
             int bombardTime = 75;
             int fireballShootRate = lifeRatio < Phase2LifeRatio ? 6 : 9;
             int fadeOutTime = (int)MathHelper.Lerp(48f, 30f, 1f - lifeRatio);
@@ -234,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.velocity = npc.SafeDirectionTo(verticalDestination) * npc.Distance(verticalDestination) / bombardTime;
 
-                        SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.NearBurnSound);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
                         if (CalamityConfig.Instance.Screenshake)
                         {
                             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 3f;
@@ -478,9 +478,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             }
 
                             // And hellblasts.
-                            for (int i = 0; i < skullCount / 2 + 2; i++)
+                            for (int i = 0; i < 3; i++)
                             {
-                                float offsetAngle = Main.rand.NextFloat(-0.89f, 0.89f);
+                                float offsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(0.8f, 1.6f);
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), skullDamage, 0f);
                             }

@@ -127,6 +127,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ShadowHydraSpawn = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/HydraSpawn");
 
+        public static readonly SoundStyle SizzleSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceSizzle");
+
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronHeadBonk");
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };

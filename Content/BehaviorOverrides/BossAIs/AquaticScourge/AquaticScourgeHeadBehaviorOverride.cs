@@ -98,8 +98,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
-            // WHY ARE YOU DESPAWNING????
-            npc.boss = true;
+            // Decide music.
+            npc.ModNPC.Music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("AquaticScourge") ?? MusicID.Boss1;
 
             // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
@@ -775,7 +775,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (attackTimer == roarDelay)
             {
                 SoundEngine.PlaySound(Mauler.RoarSound);
-                SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.NearBurnSound);
+                SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
                 if (CalamityConfig.Instance.Screenshake)
                 {
                     Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
@@ -1018,7 +1018,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Utilities.DisplayText("A deluge of acid is quickly rising from below!", Color.GreenYellow);
 
                 SoundEngine.PlaySound(Mauler.RoarSound);
-                SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.NearBurnSound);
+                SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
                 if (CalamityConfig.Instance.Screenshake)
                 {
                     Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 10f;

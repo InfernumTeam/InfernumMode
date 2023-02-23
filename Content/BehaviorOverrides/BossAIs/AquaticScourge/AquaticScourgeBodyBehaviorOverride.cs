@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.target = aheadSegment.target;
             npc.defense = aheadSegment.defense;
             npc.damage = headSegment.damage >= 1 ? 60 : 0;
-            npc.dontTakeDamage = aheadSegment.dontTakeDamage;
+            npc.dontTakeDamage = headSegment.dontTakeDamage;
             npc.chaseable = headSegment.chaseable;
             npc.Calamity().newAI[0] = npc.chaseable.ToInt();
             npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);

@@ -655,7 +655,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ReplaceAbyssWorldgen : IHookEdit
     {
-        internal static void ChangeAbyssGen(Action orig) => orig();
+        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
 
         public void Load() => GenerateAbyss += ChangeAbyssGen;
 

@@ -153,6 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Be enraged.
             npc.Calamity().CurrentlyEnraged = enraged;
+            npc.dontTakeDamage = enraged;
 
             switch ((AquaticScourgeAttackType)attackType)
             {
@@ -919,6 +920,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 rubbleReleaseRate = int.MaxValue;
                 movementSpeed = 36f;
+                turnAngularVelocity = 0.1f;
             }
 
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[0];

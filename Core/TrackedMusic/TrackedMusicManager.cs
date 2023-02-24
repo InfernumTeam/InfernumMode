@@ -26,17 +26,17 @@ namespace InfernumMode.Core.TrackedMusic
         public static readonly List<string> CustomTrackPaths = new()
         {
             // Grief.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas1",
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas1_FullIntro",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase1",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase1_FullIntro",
 
             // Lament.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas2",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase2",
 
             // Epiphany.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas3",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase3",
 
             // Acceptance.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas4",
+            "CalamityModMusic/Sounds/Music/CalamitasDefeat",
         };
 
         public static readonly Dictionary<string, BaseTrackedMusic> TrackInformation = new();

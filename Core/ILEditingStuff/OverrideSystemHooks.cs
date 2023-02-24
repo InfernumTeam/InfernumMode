@@ -191,8 +191,10 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
+                    // "Fixed so good that it happened to me and now I need to redo everything"
+                    // Well, have fun with your shroomed nohits, I suppose.
                     bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
-                    if (overridableProjectile)
+                    if (overridableProjectile && InfernumMode.CanUseCustomAIs)
                         continue;
 
                     result &= g.PreDraw(projectile, ref lightColor);

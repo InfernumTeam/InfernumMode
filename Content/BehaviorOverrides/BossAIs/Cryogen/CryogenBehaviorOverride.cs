@@ -321,7 +321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             int burstCount = 3;
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 25f);
             int icicleCount = 11 + (int)(zeroBasedAttackPower * 4f);
-            Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
+            Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -400f);
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
             // EoL-esque bullshit hits.
@@ -720,7 +720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Prepare for the charge.
             if (attackSubstate == 2f)
             {
-                int chargeDelay = 30;
+                int chargeDelay = 10;
                 float flyInertia = 4f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
@@ -781,7 +781,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             int shootDelay = 90;
             int spiritSummonTime = (int)(540 + zeroBasedAttackPower * 210f);
             int spiritSummonRate = (int)(19f - zeroBasedAttackPower * 3f);
-            int bombShootRate = (int)(100f - zeroBasedAttackPower * 8f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
@@ -809,12 +808,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 }
 
                 Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), 140, 0f, -1, 0f, dontCurve.ToInt());
-            }
-
-            // Release bombs from above in the final phase.
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase6LifeRatio && canShoot && attackTimer % bombShootRate == bombShootRate - 1f)
-            {
-                Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 450f, Vector2.UnitY.RotatedByRandom(0.32f) * 4f, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
             }
 
             if (attackTimer >= spiritSummonTime + 90f)

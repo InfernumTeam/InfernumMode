@@ -380,9 +380,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             // Generate sets of points where the roses will be spawned.
                             Vector2 roseSpawnPosition = circleCenter + Main.rand.NextVector2Unit() * Main.rand.NextFloat(150f, 920f);
 
-                            Dust.QuickDustLine(eyePosition, roseSpawnPosition, 45f, Color.Red);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float telegraphLength = eyePosition.Distance(roseSpawnPosition);
+                                Utilities.NewProjectileBetter(eyePosition, (roseSpawnPosition - eyePosition).SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<RedFlameTelegraph>(), 0, 0f, -1, 0f, telegraphLength * 2f);
                                 Utilities.NewProjectileBetter(roseSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneRose>(), 0, 0f, -1, 0f, pissedOff.ToInt());
+                            }
                         }
 
                         attackTimer = 0f;

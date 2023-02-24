@@ -132,7 +132,7 @@ namespace InfernumMode.Common.Graphics
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
-            orig(self, finalTexture, FinalScreenTarget, screenTarget2, clearColor);
+            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 

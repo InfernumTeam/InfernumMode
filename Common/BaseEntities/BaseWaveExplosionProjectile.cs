@@ -20,12 +20,19 @@ namespace InfernumMode.Common.BaseEntities
         public virtual float Opacity { get; } = 1f;
 
         public virtual float MinScale { get; } = 1.2f;
+
         public virtual float MaxScale { get; } = 5f;
+
         public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
+
         public abstract int Lifetime { get; }
+
         public abstract float MaxRadius { get; }
+
         public abstract float RadiusExpandRateInterpolant { get; }
+
         public abstract float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer);
+
         public abstract Color DetermineExplosionColor(float lifetimeCompletionRatio);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";

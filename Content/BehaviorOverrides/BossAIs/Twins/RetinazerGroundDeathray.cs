@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
-    public class AimedDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
+    public class RetinazerGroundDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer
         {
@@ -19,15 +20,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             set;
         } = null;
 
-        public const int LifetimeConst = 27;
+        public NPC Owner => Main.npc[(int)Projectile.ai[1]];
+
+        public const int LifetimeConst = 35;
 
         public const float LaserLengthConst = 2820f;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override float MaxScale => 1.05f;
+        public override float MaxScale => Utils.Remap(Time, 0f, 8f, 0.2f, 1f);
 
-        public override float MaxLaserLength => LaserLengthConst;
+        public override float MaxLaserLength => Utils.Remap(Time, 0f, 8f, 50f, LaserLengthConst);
 
         public override float Lifetime => LifetimeConst;
 
@@ -41,7 +44,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/UltimaRayEnd", AssetRequestMode.ImmediateLoad).Value;
 
-        // To allow easy, static access from different locations.
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Deathray");
@@ -49,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 44;
+            Projectile.width = Projectile.height = 32;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
@@ -59,27 +61,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void AttachToSomething()
         {
-            if (!Main.npc.IndexInRange((int)Projectile.ai[1]) || !Main.npc[(int)Projectile.ai[1]].active)
+            if (!Main.npc.IndexInRange((int)Projectile.ai[1]) || !Owner.active)
                 Projectile.Kill();
 
-            Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
-            Projectile.Center = Main.npc[(int)Projectile.ai[1]].Center + Projectile.velocity * 40f;
-        }
+            Owner.rotation = 0f;
+            Projectile.velocity = (Owner.rotation + MathHelper.PiOver2).ToRotationVector2();
+            Projectile.Center = Owner.Center + Projectile.velocity * 88f;
 
-        public override void Kill(int timeLeft)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            for (float i = 0f; i < LaserLength; i += 180f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time == 8f)
             {
-                for (int direction = -1; direction <= 1; direction += 2)
+                Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (LaserLength - 32f);
+                for (int i = 0; i < 24; i++)
                 {
-                    Vector2 shootVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * direction) * 4.2f;
-                    Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity * i, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
+                    Vector2 laserVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 6f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                    {
+                        laser.tileCollide = false;
+                    });
+                    Utilities.NewProjectileBetter(endOfLaser, laserVelocity, ProjectileID.DeathLaser, 145, 0f);
                 }
+                Utilities.NewProjectileBetter(endOfLaser, Vector2.Zero, ModContent.ProjectileType<LaserGroundShock>(), 0, 0f);
             }
         }
+
+        public override float DetermineLaserLength() => DetermineLaserLength_CollideWithTiles(10);
 
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * Projectile.localAI[1] * 0.5f;
 
@@ -88,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             float colorInterpolant = CalamityUtils.Convert01To010(Time / Lifetime) * 0.45f + 0.15f;
             colorInterpolant = MathHelper.Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
 
-            return Color.Lerp(Color.Red, Color.White, colorInterpolant) * (1f / Projectile.localAI[1]);
+            return Color.Lerp(Color.Red, Color.White, colorInterpolant * 0.5f) * (1f / Projectile.localAI[1]);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

@@ -18,6 +18,8 @@ using Terraria.ModLoader;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using InfernumMode.Core.GlobalInstances.Systems;
 using CalamityMod.Sounds;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
@@ -30,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             SwitchCharges,
             Spin,
             FlamethrowerBurst,
-            RedirectingLasersAndFlameCharge,
+            ChaoticFireAndDownwardLaser,
             LazilyObserve,
             DeathAnimation
         }
@@ -230,8 +232,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 phase2Timer++;
                 phase2TransitionSpin = Utils.GetLerpValue(0f, Phase2TransitionTime / 2f, phase2Timer, true);
-                phase2TransitionSpin *= Utils.GetLerpValue(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true);
-                phase2TransitionSpin *= 0.4f;
+                phase2TransitionSpin *= Utils.GetLerpValue(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true) * 0.5f;
 
                 CurrentAttackState = TwinsAttackState.ChargeRedirect;
                 UniversalAttackTimer = 0;
@@ -254,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     for (int i = 0; i < 20; i++)
                         Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 0, default, 1f);
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                    SoundEngine.PlaySound(Apollo.MissileLaunchSound, Target.Center);
                 }
 
                 chargeFlameTimer = 0f;
@@ -388,8 +389,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 case TwinsAttackState.FlamethrowerBurst:
                     DoBehavior_FlamethrowerBurst(npc, isSpazmatism, isRetinazer, ref afterimageInterpolant);
                     break;
-                case TwinsAttackState.RedirectingLasersAndFlameCharge:
-                    if (!DoBehavior_RedirectingLasersAndFlameCharge(npc, isSpazmatism, ref chargingFlag))
+                case TwinsAttackState.ChaoticFireAndDownwardLaser:
+                    if (!DoBehavior_ChaoticFireAndDownwardLaser(npc, isSpazmatism, ref chargingFlag))
                         return false;
                     break;
                 case TwinsAttackState.LazilyObserve:
@@ -464,13 +465,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             int chargeDelay = 30;
             int attackDuration = (int)MathHelper.Lerp(105f, 75f, 1f - CombinedLifeRatio);
-            float reelbackSpeed = 6f;
+            float reelbackSpeed = 7f;
             float chargeSpeed = MathHelper.Lerp(16.5f, 23f, 1f - CombinedLifeRatio);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.8f;
 
-            if (UniversalAttackTimer < chargeDelay - 1)
+            if (UniversalAttackTimer < chargeDelay - 1f)
             {
+                if (UniversalAttackTimer == 1f)
+                    SoundEngine.PlaySound(Artemis.ChargeTelegraphSound, npc.Center);
+
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * -reelbackSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
             }
@@ -479,7 +483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                 npc.netUpdate = true;
 
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                SoundEngine.PlaySound(Artemis.ChargeSound, npc.Center);
             }
 
             // Accelerate after charging.
@@ -511,6 +515,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 willCharge = isRetinazer;
 
             hoverDestination += willCharge ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
+
+            if (chargeSpecificWrappedAttackTimer == 1f && isSpazmatism)
+                SoundEngine.PlaySound(Artemis.AttackSelectionSound, Target.Center);
 
             // Redirect.
             if (chargeSpecificWrappedAttackTimer <= redirectTime)
@@ -545,7 +552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     npc.netUpdate = true;
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                    SoundEngine.PlaySound(Artemis.ChargeSound, npc.Center);
                 }
             }
             else if (willCharge)
@@ -567,7 +574,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int chargeTime = 55;
             int attackDuration = 400;
             float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
-            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(6.4f), 1f - CombinedLifeRatio);
+            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(4.64f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
 
@@ -617,14 +624,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                 // Relase some projectiles while spinning to pass the time.
                 int fireRate = BossRushEvent.BossRushActive ? 18 : 30;
-                if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
-                {
-                    float shootSpeed = MathHelper.Lerp(9f, 11.5f, 1f - CombinedLifeRatio);
-                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
-                    int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
 
-                    int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 145, 0f);
-                    Main.projectile[proj].tileCollide = false;
+                if (UniversalAttackTimer % fireRate == fireRate - 1f)
+                {
+                    SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float shootSpeed = MathHelper.Lerp(9f, 11.5f, 1f - CombinedLifeRatio);
+                        Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
+                        int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
+                        int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 145, 0f);
+                        Main.projectile[proj].tileCollide = false;
+                    }
                 }
             }
 
@@ -658,7 +669,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                 npc.netUpdate = true;
 
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
+                SoundEngine.PlaySound(Artemis.ChargeSound, npc.Center);
             }
 
             if (UniversalAttackTimer >= redirectTime + spinTime + reelbackTime && UniversalAttackTimer < redirectTime + spinTime + reelbackTime + chargeTime)
@@ -856,110 +867,154 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public static bool DoBehavior_RedirectingLasersAndFlameCharge(NPC npc, bool isSpazmatism, ref float chargingFlag)
+        public static bool DoBehavior_ChaoticFireAndDownwardLaser(NPC npc, bool isSpazmatism, ref float chargingFlag)
         {
-            int attackDuration = 420;
+            int shootDelay = 60;
+            int attackDuration = 360;
+            int attackCycleTime = 120;
+            int slowdownTime = 15;
+            int laserChargeUpTime = 36;
+            int fireballReleaseRate = 2;
+            int spazmatismIndex = NPC.FindFirstNPC(NPCID.Spazmatism);
+            bool readyToAttack = UniversalAttackTimer >= shootDelay;
+            float spinRadius = 100f;
+            float maxSpinAngularVelocity = MathHelper.ToRadians(5.4f);
+            float fireballShootSpeed = 9f;
+            ref float centerOfMassX = ref Main.npc[spazmatismIndex].ai[0];
+            ref float centerOfMassY = ref Main.npc[spazmatismIndex].ai[1];
+            ref float spinRotation = ref Main.npc[spazmatismIndex].ai[2];
+            ref float attackCountdown = ref Main.npc[spazmatismIndex].ai[3];
+            bool isAttacking = attackCountdown >= 1f;
 
-            if (UniversalAttackTimer < 60f)
-            {
-                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(Target.Center) - MathHelper.PiOver2, MathHelper.TwoPi / 10f);
-                npc.velocity *= 0.95f;
-                npc.ai[0] = npc.ai[1] = 0f;
-                return false;
-            }
+            // Disable contact universally. It is not relevant for this attack.
+            npc.damage = 0;
+
+            // Easy temporary variable to allow vector math to be done more efficiently. The X and Y values inherit whatever this becomes at the end of the update frame.
+            Vector2 nextCenterOfMass = new(centerOfMassX, centerOfMassY);
+            if (nextCenterOfMass == Vector2.Zero)
+                nextCenterOfMass = npc.Center;
+
+            // Spazmatism stores the relevant update information. To prevent two updates per frame, only it will perform those updates.
+            // This may lead to a one-frame buffer for the information Retinazer has, but that shouldn't matter in practice.
+            Vector2 hoverDestination = Target.Center + new Vector2((npc.Center.X > Target.Center.X).ToDirectionInt() * 450f, -270f);
+            if (readyToAttack)
+                hoverDestination = Target.Center - Vector2.UnitY * 350f;
 
             if (isSpazmatism)
             {
-                int chargeTime = 90;
-                ref float offsetAngle = ref npc.ai[0];
-                ref float chargingTime = ref npc.ai[1];
-
-                Vector2 destination = Target.Center - Vector2.UnitY.RotatedBy(offsetAngle) * 740f;
-                if (npc.WithinRange(destination, 40f))
-                {
-                    offsetAngle = Main.rand.NextFloat(MathHelper.ToRadians(-34f), MathHelper.ToRadians(34f));
-                    npc.Center = destination;
-                    npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 7f) * 21f;
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
-                    npc.noTileCollide = false;
-
-                    if (chargingTime == 0f)
-                        SoundEngine.PlaySound(SoundID.ForceRoarPitched, npc.Center);
-                    chargingTime++;
-                }
-                else if (chargingTime == 0f)
-                {
-                    npc.noTileCollide = npc.Bottom.Y > Target.Top.Y - 180f;
-                    npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 14f, 0.15f);
-                    npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                    npc.netUpdate = true;
-                }
-                else if (chargingTime > 0f)
-                {
-                    chargingTime++;
-                    if (chargingTime >= chargeTime)
-                        chargingTime = 0f;
-                    chargingFlag = 1f;
-
-                    npc.damage += 35;
-
-                    Tile tile = CalamityUtils.ParanoidTileRetrieval((int)npc.Center.X / 16, (int)npc.Center.Y / 16);
-                    bool platformFuck = (TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType]) && tile.HasUnactuatedTile && npc.Center.Y > Target.Center.Y;
-                    if (platformFuck || Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.Center.Y > Target.Center.Y + 800f)
-                    {
-                        chargingTime = 0f;
-                        Collision.HitTiles(npc.position + npc.velocity, npc.velocity, npc.width, npc.height);
-                        npc.velocity = Vector2.Zero;
-                        npc.netUpdate = true;
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int totalProjectiles = 18;
-                            for (int i = 0; i < totalProjectiles; i++)
-                            {
-                                Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / totalProjectiles) * 14.5f;
-                                if (BossRushEvent.BossRushActive)
-                                    shootVelocity *= 2.2f;
-                                int fire = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.CursedFlameHostile, 140, 0f);
-                                Main.projectile[fire].ignoreWater = true;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Vector2 destination = Target.Center - Vector2.UnitY * 500f;
-                if (npc.WithinRange(destination, 40f))
-                {
-                    npc.Center = destination;
-                    npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 7f) * 21f;
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
-                    npc.noTileCollide = false;
-
-                    int fireRate = 25;
-                    if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
-                    {
-                        float shootSpeed = 8.5f;
-                        Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 12f, shootVelocity, ProjectileID.DeathLaser, 145, 0f);
-                    }
-                    else
-                    {
-                        Vector2 toAimTowards = Target.Center + Target.velocity * 30f;
-                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(toAimTowards) - MathHelper.PiOver2, MathHelper.TwoPi / 80f);
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 50f == 49f)
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
-                }
+                float slowdownFactor = Utils.GetLerpValue(attackCycleTime - slowdownTime, attackCycleTime - 1f, attackCountdown, true);
+                if (isAttacking)
+                    attackCountdown--;
                 else
+                    slowdownFactor = 1f;
+
+                // Update the spin.
+                spinRotation += Utils.GetLerpValue(0f, shootDelay * 0.5f, UniversalAttackTimer, true) * slowdownFactor * maxSpinAngularVelocity;
+
+                // Update the center of mass. It starts at the top left/right of the target before transitioning to above them.
+                nextCenterOfMass = Vector2.Lerp(nextCenterOfMass, hoverDestination, slowdownFactor * 0.04f).MoveTowards(hoverDestination, slowdownFactor * 10f);
+            }
+
+            // Spin in place around the center of mass.
+            float localSpinRotation = spinRotation;
+            if (!isSpazmatism)
+                localSpinRotation += MathHelper.Pi;
+            Vector2 spinDestination = nextCenterOfMass + localSpinRotation.ToRotationVector2() * spinRadius;
+            npc.Center = Vector2.Lerp(npc.Center, spinDestination, 0.04f);
+            npc.velocity = Vector2.Zero.MoveTowards(spinDestination - npc.Center, 16f);
+
+            // Prepare to attack if not already attacking and sufficiently close to the hover destination.
+            // This specifically waits until Spazmatism is pointing up (meaning Retinazer is pointing down) before attacking as well, to ensure that
+            // the laser points downward as well.
+
+            // For context of where the remainingAngleFromSlowdown value comes from, it represents the amount of angular motion that will inevitably elapse
+            // when slowing down based on slowdownFactor above. The exact value can be determined by summation, like this:
+            // maxSpinAngularVelocity * (slowdownTime - 1) / slowdownTime +
+            // maxSpinAngularVelocity * (slowdownTime - 2) / slowdownTime +
+            // maxSpinAngularVelocity * (slowdownTime - 3) / slowdownTime +
+            // ...
+            // Luckily, this summation does not need to be calculated manually and can be easily expressed as simply (slowdownTime - 1) / 2. Factoring in
+            // the maxSpinAngularVelocity again gives us the final answer.
+            float remainingAngleFromSlowdown = (slowdownTime - 1f) * maxSpinAngularVelocity * 0.5f;
+            bool pointingUpwards = spinRotation.ToRotationVector2().AngleBetween(-Vector2.UnitY) < remainingAngleFromSlowdown;
+
+            if (isSpazmatism && readyToAttack && nextCenterOfMass.WithinRange(hoverDestination, 75f) && !isAttacking && pointingUpwards)
+            {
+                attackCountdown = attackCycleTime;
+                npc.netUpdate = true;
+            }
+
+            // Slow down if attacking.
+            if (isAttacking)
+                npc.velocity *= 0.9f;
+
+            // Otherwise look at the target.
+            else
+                npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
+
+            // Spazmatism circles in place and releases accelerating fireballs outward when attacking.
+            if (isSpazmatism && isAttacking)
+            {
+                npc.rotation += maxSpinAngularVelocity * Main.rand.NextFloat(1.3f, 1.5f);
+                if (UniversalAttackTimer % fireballReleaseRate == 0f)
                 {
-                    npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 23f, 0.15f);
-                    npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                    npc.netUpdate = true;
+                    if (UniversalAttackTimer % (fireballReleaseRate * 3f) == 0f)
+                        SoundEngine.PlaySound(CommonCalamitySounds.ExoPlasmaShootSound, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.096f).ToRotationVector2() * fireballShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<CursedFireballBomb>(), 145, 0f);
+                    }
                 }
             }
+
+            // Retinazer releases a laserbeam downward that explodes with tiles.
+            if (!isSpazmatism && isAttacking)
+            {
+                npc.rotation = npc.rotation.AngleTowards(0f, 0.01f);
+
+                // Charge up energy at first.
+                if (attackCountdown >= attackCycleTime - laserChargeUpTime)
+                {
+                    float chargeUpInterpolant = Utils.GetLerpValue(attackCycleTime, attackCycleTime - laserChargeUpTime, attackCountdown, true);
+                    Vector2 endOfLaserCannon = npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 80f;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (Main.rand.NextFloat() > chargeUpInterpolant)
+                            continue;
+
+                        Color laserEnergyColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.64f));
+                        Vector2 laserEnergySpawnPosition = endOfLaserCannon + Main.rand.NextVector2Unit() * Main.rand.NextFloat(80f, 132f);
+                        Vector2 laserEnergyVelocity = (endOfLaserCannon - laserEnergySpawnPosition) * 0.04f;
+                        SquishyLightParticle laserEnergy = new(laserEnergySpawnPosition, laserEnergyVelocity, 1.5f, laserEnergyColor, 36, 1f, 4f);
+                        GeneralParticleHandler.SpawnParticle(laserEnergy);
+                    }
+                }
+
+                // Move upward when firing the laser as an indicator that it's reactive force is moving Retinazer backwards.
+                else
+                    npc.velocity = -Vector2.UnitY * 10f;
+
+                // Cast the laserbeam.
+                if (attackCountdown == attackCycleTime - laserChargeUpTime)
+                {
+                    SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 20);
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<RetinazerGroundDeathray>(), 200, 0f, -1, 0f, npc.whoAmI);
+                }
+            }
+
+            // Copy the new center of mass from the temporary vector.
+            centerOfMassX = nextCenterOfMass.X;
+            centerOfMassY = nextCenterOfMass.Y;
 
             if (UniversalAttackTimer >= attackDuration)
                 SelectNextAttack();
@@ -1109,26 +1164,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     float hoverAcceleration = MathHelper.Lerp(0.35f, 0.9f, 1f - lifeRatio);
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 60f == 59f)
+                    if (attackTimer % 60f == 59f)
                     {
-                        for (int i = 0; i < 3; i++)
+                        SoundEngine.PlaySound(Artemis.LaserShotgunSound, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 2f)) * 9f;
-                            if (BossRushEvent.BossRushActive)
-                                laserVelocity *= 2.25f;
-                            int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 8f, laserVelocity, ProjectileID.DeathLaser, 140, 0f);
-                            Main.projectile[laser].tileCollide = false;
-                        }
-                        burstCounter++;
-
-                        if (burstCounter > 2)
-                        {
-                            if (Main.rand.NextBool(3) || burstCounter >= 4)
+                            for (int i = 0; i < 3; i++)
                             {
-                                attackTimer = 0f;
-                                burstCounter = 0f;
-                                attackState = Main.rand.NextBool() ? (int)RetinazerAttackState.LaserBarrage : (int)RetinazerAttackState.DanceOfLightnings;
-                                npc.netUpdate = true;
+                                Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 2f)) * 9f;
+                                if (BossRushEvent.BossRushActive)
+                                    laserVelocity *= 2.25f;
+                                int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 8f, laserVelocity, ProjectileID.DeathLaser, 140, 0f);
+                                Main.projectile[laser].tileCollide = false;
+                            }
+                            burstCounter++;
+
+                            if (burstCounter > 2)
+                            {
+                                if (Main.rand.NextBool(3) || burstCounter >= 4)
+                                {
+                                    attackTimer = 0f;
+                                    burstCounter = 0f;
+                                    attackState = Main.rand.NextBool() ? (int)RetinazerAttackState.LaserBarrage : (int)RetinazerAttackState.DanceOfLightnings;
+                                    npc.netUpdate = true;
+                                }
                             }
                         }
                     }
@@ -1610,7 +1669,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     _ => TwinsAttackState.ChargeRedirect,
                 };
                 if (CombinedLifeRatio < Phase3LifeRatioThreshold && UniversalStateIndex % 4 == 3)
-                    CurrentAttackState = TwinsAttackState.RedirectingLasersAndFlameCharge;
+                    CurrentAttackState = TwinsAttackState.ChaoticFireAndDownwardLaser;
             }
             else
             {
@@ -1634,6 +1693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             if (UniversalStateIndex % 5 == 4 && !InPhase2 && !BossRushEvent.BossRushActive)
                 CurrentAttackState = TwinsAttackState.LazilyObserve;
+            CurrentAttackState = TwinsAttackState.ChaoticFireAndDownwardLaser;
         }
 
         public static NPC GetOtherTwin(NPC npc)

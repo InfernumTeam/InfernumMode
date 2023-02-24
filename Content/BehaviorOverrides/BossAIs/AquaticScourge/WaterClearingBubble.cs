@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
                 }
 
-                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 20, adjustedAngle);
+                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 12, adjustedAngle);
             }
         }
 

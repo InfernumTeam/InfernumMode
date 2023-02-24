@@ -77,6 +77,11 @@ namespace InfernumMode.Core.TrackedMusic
                     break;
 
                 string modName = path.Split('/').First();
+                string fileName = string.Empty;
+                foreach (string part in path.Split('/').Skip(1))
+                    fileName += part + "/";
+                fileName = string.Concat(fileName.Take(fileName.Length - 1)) + ".ogg";
+
                 if (!ModLoader.TryGetMod(modName, out Mod mod))
                     continue;
 
@@ -89,7 +94,7 @@ namespace InfernumMode.Core.TrackedMusic
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
                     using FileStream saveStream = File.Create(musicPath);
-                    using Stream musicStream = mod.GetFileStream(CustomTrackDiskPositions[musicSlotIndex], true);
+                    using Stream musicStream = mod.GetFileStream(fileName, true);
                     musicStream.CopyTo(saveStream);
                 }
 

@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.DesertScourge;
@@ -740,6 +739,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
                 }
             }
+
+            // Skip to the next attack if the scourge is so far away that it won't be able to accomplish anything.
+            if (!npc.WithinRange(target.Center, 2200f))
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_EnterSecondPhase(NPC npc, Player target, ref float attackTimer)

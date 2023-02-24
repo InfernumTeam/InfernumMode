@@ -130,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int totalInstancesToDraw = 1;
             Color color = lightColor;
             float overdriveTimer = npc.Infernum().ExtraAI[4];
-            if (!BossRushEvent.BossRushActive && (CurrentAttackState == TwinsAttackState.RedirectingLasersAndFlameCharge || overdriveTimer > 0f))
+            if (!BossRushEvent.BossRushActive && overdriveTimer > 0f)
             {
                 color = Color.YellowGreen;
                 float fadeCompletion = Utils.GetLerpValue(0f, 60f, UniversalAttackTimer, true);

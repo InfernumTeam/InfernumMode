@@ -5,6 +5,7 @@ using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using CalamityMod.UI.CalamitasEnchants;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
@@ -98,6 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float spawnAnimationTimer = ref npc.ai[2];
             ref float frameType = ref npc.localAI[0];
 
+            npc.damage = 0;
             npc.dontTakeDamage = pissedOff;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
@@ -114,23 +116,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             switch ((BrimmyAttackType)(int)attackType)
             {
                 case BrimmyAttackType.FlameTeleportBombardment:
-                    npc.damage = 0;
                     DoBehavior_FlameTeleportBombardment(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.BrimstoneRoseBurst:
-                    npc.damage = npc.defDamage;
                     DoBehavior_BrimstoneRoseBurst(npc, target, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.FlameChargeSkullBlasts:
-                    npc.damage = 0;
                     DoBehavior_FlameChargeSkullBlasts(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.GrimmBulletHellCopyLmao:
-                    npc.damage = 0;
                     DoBehavior_CocoonBulletHell(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.EyeLaserbeams:
-                    npc.damage = 0;
                     DoBehavior_EyeLaserbeams(npc, target, lifeRatio, pissedOff, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.DeathAnimation:
@@ -308,6 +305,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float roseCreationCounter = ref npc.Infernum().ExtraAI[1];
             ref float circleCenterX = ref npc.Infernum().ExtraAI[2];
             ref float circleCenterY = ref npc.Infernum().ExtraAI[3];
+            ref float circleRadius = ref npc.Infernum().ExtraAI[4];
             Vector2 circleCenter = new(circleCenterX, circleCenterY);
 
             // Adjust sprite direction to look at the player.
@@ -317,19 +315,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             if (circleCenterX == 0f)
             {
+                SoundEngine.PlaySound(CalamitasEnchantUI.EnchSound with { Pitch = 0.15f }, target.Center);
                 circleCenterX = target.Center.X;
                 circleCenterY = target.Center.Y;
+                circleRadius = 0f;
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Stay near the center of your arena if you can. Those thorns are really good at cornering you!");
                 npc.netUpdate = true;
             }
 
             // Hurt the player if they walk into the vines.
-            else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
+            else if (!target.WithinRange(circleCenter, circleRadius - 8f) && circleRadius >= RoseCircleRadius - 80f)
             {
                 int roseDamage = Main.rand.Next(120, 135);
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
                 target.Hurt(PlayerDeathReason.ByCustomReason($"{target.name} was violently pricked by roses."), roseDamage, 0);
             }
+
+            // Make the rose circle move outward.
+            circleRadius = MathHelper.Lerp(circleRadius, RoseCircleRadius, 0.036f);
 
             switch ((int)attackState)
             {
@@ -950,27 +953,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
             {
                 float circleAngle = 0f;
+                float circleRadius = npc.Infernum().ExtraAI[4];
                 Texture2D vineTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine", AssetRequestMode.ImmediateLoad).Value;
                 Texture2D roseTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRoseBorder", AssetRequestMode.ImmediateLoad).Value;
                 Vector2 vineOrigin = vineTexture.Size() * 0.5f;
                 Vector2 roseOrigin = roseTexture.Size() * 0.5f;
+                Color circleColor = Color.Lerp(Color.OrangeRed with { A = 0 }, Color.White, circleRadius / RoseCircleRadius);
                 while (circleAngle < MathHelper.TwoPi)
                 {
                     float vineRotation = circleAngle;
                     Vector2 vineDrawPosition = new(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
-                    vineDrawPosition += circleAngle.ToRotationVector2() * RoseCircleRadius - Main.screenPosition;
-                    Main.spriteBatch.Draw(vineTexture, vineDrawPosition, null, Color.White, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
+                    vineDrawPosition += circleAngle.ToRotationVector2() * circleRadius - Main.screenPosition;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * (1f - circleRadius / RoseCircleRadius) * 10f;
+                        Main.spriteBatch.Draw(vineTexture, vineDrawPosition + drawOffset, null, circleColor, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
+                    }
 
                     // A benefit of using radians is that a necessary angle increment can be easily computed by the formula:
                     // theta = arc length / radius.
-                    circleAngle += vineTexture.Height / RoseCircleRadius;
+                    circleAngle += vineTexture.Height / circleRadius;
 
                     if (roseRNG.NextBool(4))
                     {
                         float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
                         float roseScale = roseRNG.NextFloat(0.7f, 1f);
                         Vector2 rosePosition = vineDrawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
-                        Main.spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(roseTexture, rosePosition, null, circleColor, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
                     }
                 }
             }

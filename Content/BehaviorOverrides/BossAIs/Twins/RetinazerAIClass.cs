@@ -125,8 +125,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             float telegraphDirection = npc.Infernum().ExtraAI[14];
             float telegraphOpacity = npc.Infernum().ExtraAI[15];
+            bool validTelegraphAttack = InFinalPhase || CurrentAttackState == TwinsAttackState.FlamethrowerBurst;
             if (CurrentAttackState == TwinsAttackState.DeathAnimation && !InFinalPhase)
                 telegraphOpacity = 0f;
+            if (!validTelegraphAttack)
+            {
+                telegraphOpacity = MathHelper.Clamp(telegraphOpacity - 0.1f, 0f, 1f);
+                telegraphDirection = npc.rotation + MathHelper.PiOver2;
+            }
 
             if (telegraphOpacity > 0f)
             {

@@ -425,6 +425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Fly towards the destination.
             if (!npc.WithinRange(hoverDestination, 72f))
             {
+                npc.Center = Vector2.Lerp(npc.Center, Target.Center, 0.0425f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.8f);
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
             }
@@ -550,6 +551,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             else if (willCharge)
                 chargingFlag = 1f;
 
+            if (!willCharge)
+                npc.damage = 0;
+
             if (UniversalAttackTimer >= attackDuration)
                 SelectNextAttack();
         }
@@ -563,7 +567,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int chargeTime = 55;
             int attackDuration = 400;
             float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
-            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(3.3f), 1f - CombinedLifeRatio);
+            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(6.4f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
 
@@ -572,17 +576,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.damage = 0;
 
             // Initialize the spin rotation for both eyes.
+            NPC otherEye = GetOtherTwin(npc);
             if (UniversalAttackTimer == 1)
             {
                 spinRotation = Main.rand.NextFloat(MathHelper.TwoPi);
 
-                NPC otherEye = GetOtherTwin(npc);
                 if (otherEye != null)
                 {
                     otherEye.ai[0] = spinRotation + MathHelper.Pi;
                     otherEye.netUpdate = true;
                 }
+                spinDirection = 0f;
                 npc.netUpdate = true;
+            }
+
+            if (spinDirection == 0f && otherEye is not null && otherEye.ai[1] != 0f)
+                spinDirection = otherEye.ai[1];
+
+            // Update the spin direction for both eyes.
+            if (spinDirection >= 1.1f && isSpazmatism)
+            {
+                spinDirection = (Math.Cos(npc.AngleTo(Target.Center)) > 0).ToDirectionInt();
+                if (otherEye != null)
+                    otherEye.ai[1] = spinDirection;
             }
 
             Vector2 destination = Target.Center + spinRotation.ToRotationVector2() * 610f;
@@ -592,7 +608,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (spinDirection == 0f && isSpazmatism)
                 {
                     spinDirection = (Math.Cos(npc.AngleTo(Target.Center)) > 0).ToDirectionInt();
-                    NPC otherEye = GetOtherTwin(npc);
                     if (otherEye != null)
                         otherEye.ai[1] = spinDirection;
                 }
@@ -657,13 +672,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             int redirectTime = 90;
             int attackTelegraphTime = 36;
-            int chargeTime = 124;
-            int totalCharges = 4;
+            int chargeTime = 84;
+            int totalCharges = 6;
             int totalLaserBurstsUntilExhaustion = 5;
             int baseExhaustCountdown = 90;
             int telegraphTime = (int)MathHelper.Lerp(42f, 28f, 1f - CombinedLifeRatio);
             float laserShootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
-            float chargeSpeed = MathHelper.Lerp(14f, 18.25f, 1f - CombinedLifeRatio);
+            float chargeSpeed = MathHelper.Lerp(16.25f, 20.5f, 1f - CombinedLifeRatio);
             float chargeAngularVelocity = MathHelper.Lerp(0.006f, 0.0093f, 1f - CombinedLifeRatio);
 
             // Only applies to Spazmatism.
@@ -799,9 +814,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 aimDirection = telegraphDirection.ToRotationVector2();
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 5; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.27f, 0.27f, i / 2f);
+                            float shootOffsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / 4f);
                             Vector2 laserShootVelocity = aimDirection.RotatedBy(shootOffsetAngle) * laserShootSpeed;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
@@ -849,6 +864,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(Target.Center) - MathHelper.PiOver2, MathHelper.TwoPi / 10f);
                 npc.velocity *= 0.95f;
+                npc.ai[0] = npc.ai[1] = 0f;
                 return false;
             }
 
@@ -1455,7 +1471,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                                 {
                                     for (int i = 0; i < fireballsPerBurst; i++)
                                     {
-                                        float offsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / (float)fireballsPerBurst);
+                                        float offsetAngle = MathHelper.Lerp(-0.96f, 0.96f, i / (float)fireballsPerBurst);
                                         Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 16f;
                                         if (BossRushEvent.BossRushActive)
                                             shootVelocity *= 1.8f;

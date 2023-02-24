@@ -191,8 +191,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
-                    // "Fixed so good that it happened to me and now I need to redo everything"
-                    // Well, have fun with your shroomed nohits, I suppose.
+                    // The InfernumMode.CanUseCustomAIs check is necessary to ensure that Calamity's global shroomed effect isn't disabled when the mod is enabled for Infernum itself isn't in the world.
                     bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
                     if (overridableProjectile && InfernumMode.CanUseCustomAIs)
                         continue;

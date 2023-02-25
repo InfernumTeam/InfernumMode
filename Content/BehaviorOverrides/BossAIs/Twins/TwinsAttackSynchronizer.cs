@@ -873,7 +873,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int attackDuration = 540;
             int attackCycleTime = 120;
             int slowdownTime = 15;
-            int laserChargeUpTime = 36;
+            int laserChargeUpTime = 44;
             int fireballReleaseRate = 2;
             int spazmatismIndex = NPC.FindFirstNPC(NPCID.Spazmatism);
             bool readyToAttack = UniversalAttackTimer >= shootDelay;
@@ -892,7 +892,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Easy temporary variable to allow vector math to be done more efficiently. The X and Y values inherit whatever this becomes at the end of the update frame.
             Vector2 nextCenterOfMass = new(centerOfMassX, centerOfMassY);
             if (nextCenterOfMass == Vector2.Zero || UniversalAttackTimer <= 1f)
+            {
                 nextCenterOfMass = npc.Center;
+                attackCountdown = 0f;
+            }
 
             // Spazmatism stores the relevant update information. To prevent two updates per frame, only it will perform those updates.
             // This may lead to a one-frame buffer for the information Retinazer has, but that shouldn't matter in practice.
@@ -1023,7 +1026,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             centerOfMassX = nextCenterOfMass.X;
             centerOfMassY = nextCenterOfMass.Y;
 
-            if (UniversalAttackTimer >= attackDuration)
+            if (UniversalAttackTimer >= attackDuration && !isAttacking)
                 SelectNextAttack();
 
             return true;

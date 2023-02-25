@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 20;
+            Projectile.width = Projectile.height = 36;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;

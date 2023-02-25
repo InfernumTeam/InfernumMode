@@ -375,12 +375,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 {
                     if (!InfernumEffectsRegistry.ScreenBorderShader.IsActive() && !InfernumConfig.Instance.ReducedGraphicsConfig)
                     {
+                        // TODO: This currently follows the camera to the edges of the world. Copying the camera stay in bounds code here didnt work, so find a way
+                        // to do it properly.
                         Vector2 focusPoint = Main.LocalPlayer.Center;
 
                         Filters.Scene.Activate("InfernumMode:ScreenBorder", focusPoint);
 
+                        // Get the section(s) where the current elapsed time is in.
                         var section = songInfo.SongSections.Keys.Where(s => s.WithinRange(TrackedMusicManager.SongElapsedTime));
-
+                        
+                        // Get the type of section we are in from the first (as it could potentially be more than one) key found above in the Dictonary.
                         int mechType = 0;
                         if (songInfo.SongSections.TryGetValue(section.FirstOrDefault(), out int mech))
                             mechType = mech;
@@ -388,6 +392,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                         float intensity = 0.5f;
                         float saturation = 1f;
 
+                        // The hue of the colors. These use HSL for needing to sync a single value as opposed to 3.
+                        // These don't really need to be so precise but it is what windows calculator gave me so.
                         float blue = 0.666666667f;
                         float green = 0.25f;
                         float orange = 0.0444444444f;
@@ -399,6 +405,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                         float timerInterpolant = hueTimer / transitionLength;
 
+                        // Get the hue that should be transitioned to.
                         var newHue = (ExoMechMusicPhases)mechType switch
                         {
                             ExoMechMusicPhases.Thanatos => blue,
@@ -408,34 +415,44 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                             _ => 0f,
                         };
 
-                        if (hueTimer == 0)
-                            currentHue = 1f;
-                        if (hueTimer < transitionLength && currentHue != 0.3f)
+                        // Transition to the new hue.
+                        if (hueTimer < transitionLength && currentHue != newHue)
                         {
                             currentHue = MathHelper.Lerp(previousHue, newHue, timerInterpolant);
+
+                            // If the mech type is draedon, also change the saturation. This is because white has a saturation of 0, while the
+                            // other colors share one of 1.
                             if ((ExoMechMusicPhases)mechType is ExoMechMusicPhases.Draedon)
                                 saturation = currentHue;
                             hueTimer++;
                         }
+                        // When the transition time has elapsed, update the hue variables to the current hue.
                         else
                         {
                             previousHue = newHue;
                             currentHue = newHue;
+                            // Also keep setting the saturation at 0 if needed.
                             if ((ExoMechMusicPhases)mechType is ExoMechMusicPhases.Draedon)
                                 saturation = 0f;
+                            // Reset the timer.
                             hueTimer = 0;
                         }
 
+                        // The draedon all mechs mech type should have a lower luminosity.
                         float luminosity = 0.5f;
-                        if (currentHue == rgb)
+                        if ((ExoMechMusicPhases)mechType == ExoMechMusicPhases.AllThree)
                             luminosity = 0.36f;
 
+                        // Set the shader color, opactiy, image, and intensity.
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseColor(Main.hslToRgb(currentHue, saturation, luminosity));
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(1f);
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseImage(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise").Value, 0, SamplerState.AnisotropicWrap);
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(intensity);
                     }
                 }
+
+                // For some reason, screen shaders have a several frames delay after deactivating before they actually vanish. This is fucking annoying.
+                // Setting the shader's opacity to 0 if it should be gone seems to "fix" it, but its still actually being ran so its more of a bandaid fix.
                 else
                 {
                     if (Main.netMode != NetmodeID.Server)
@@ -443,6 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(0f);
                         InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(0f);
                     }
+                    // Reset the previous hue.
                     npc.Infernum().ExtraAI[ExoMechManagement.PreviousHueIndex] = 0;
                 }
             }

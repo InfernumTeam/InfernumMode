@@ -42,9 +42,6 @@ namespace InfernumMode.Core.TrackedMusic
             TrackedMusicManager.TrackInformation[MusicPath] = this;
         }
 
-        public static TimeSpan TimeFormat(int minutes, int seconds, int milliseconds)
-        {
-            return new TimeSpan(0, 0, minutes, seconds, milliseconds);
-        }
+        public static TimeSpan TimeFormat(int minutes, int seconds, int milliseconds) => new(0, 0, minutes, seconds, milliseconds);
     }
 }

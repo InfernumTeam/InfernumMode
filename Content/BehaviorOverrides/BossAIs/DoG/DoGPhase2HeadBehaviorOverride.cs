@@ -1465,7 +1465,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 else if (distanceToTarget <= ringsShineDistance)
                     innerRingOpacity = outerRingOpacity = 1.1f;
             }
+
             float maxDrawDistanceFromPlayer = 105f;
+
             // Draw the inner ring.
             if (innerRingOpacity > 0f)
             {

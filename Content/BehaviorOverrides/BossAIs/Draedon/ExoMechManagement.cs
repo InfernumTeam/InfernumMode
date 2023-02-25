@@ -33,6 +33,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public const int SecondaryMechNPCTypeIndex = 24;
         public const int StartingFinalPhaseAnimationHPIndex = 27;
         public const int InitialMechNPCTypeIndex = 28;
+        public const int CurrentHueIndex = 29;
+        public const int PreviousHueIndex = 30;
+        public const int HueTimerIndex = 31;
 
         public const int Thanatos_AttackDelayIndex = 13;
         public const int Thanatos_FinalPhaseAttackCounter = 14;

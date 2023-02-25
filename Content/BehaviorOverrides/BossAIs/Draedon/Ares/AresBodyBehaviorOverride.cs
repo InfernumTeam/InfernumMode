@@ -28,6 +28,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using System.IO;
 using InfernumMode.Core;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -357,6 +358,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f });
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
+
+            if (CalamityConfig.Instance.Screenshake)
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1.3f, 45);
         }
 
         public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset) { }

@@ -6,24 +6,32 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
 using CalamityMod.World;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechAIUtilities;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
@@ -358,6 +366,85 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             {
                 HandleDefeatStuff(npc, ref npc.ModNPC<DraedonNPC>().DefeatTimer);
                 npc.ModNPC<DraedonNPC>().DefeatTimer++;
+            }
+
+            // Set the screenshader based on the current song section.
+            if (ExoMechIsPresent && Main.netMode != NetmodeID.Server)
+            {
+                if (TrackedMusicManager.TryGetSongInformation(out var songInfo) && songInfo.SongSections.Any(s => s.Key.WithinRange(TrackedMusicManager.SongElapsedTime)))
+                {
+                    if (!InfernumEffectsRegistry.ScreenBorderShader.IsActive() && !InfernumConfig.Instance.ReducedGraphicsConfig)
+                    {
+                        Vector2 focusPoint = Main.LocalPlayer.Center;
+
+                        Filters.Scene.Activate("InfernumMode:ScreenBorder", focusPoint);
+
+                        var section = songInfo.SongSections.Keys.Where(s => s.WithinRange(TrackedMusicManager.SongElapsedTime));
+
+                        int mechType = 0;
+                        if (songInfo.SongSections.TryGetValue(section.FirstOrDefault(), out int mech))
+                            mechType = mech;
+
+                        float intensity = 0.5f;
+                        float saturation = 1f;
+
+                        float blue = 0.666666667f;
+                        float green = 0.25f;
+                        float orange = 0.0444444444f;
+                        float rgb = (1 + Main.GlobalTimeWrappedHourly * 0.3f + 35 * 0.54f) % 1f;
+                        float transitionLength = 10f;
+                        ref float currentHue = ref npc.Infernum().ExtraAI[ExoMechManagement.CurrentHueIndex];
+                        ref float previousHue = ref npc.Infernum().ExtraAI[ExoMechManagement.PreviousHueIndex];
+                        ref float hueTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.HueTimerIndex];
+
+                        float timerInterpolant = hueTimer / transitionLength;
+
+                        var newHue = (ExoMechMusicPhases)mechType switch
+                        {
+                            ExoMechMusicPhases.Thanatos => blue,
+                            ExoMechMusicPhases.Twins => green,
+                            ExoMechMusicPhases.Ares => orange,
+                            ExoMechMusicPhases.AllThree => rgb,
+                            _ => 0f,
+                        };
+
+                        if (hueTimer == 0)
+                            currentHue = 1f;
+                        if (hueTimer < transitionLength && currentHue != 0.3f)
+                        {
+                            currentHue = MathHelper.Lerp(previousHue, newHue, timerInterpolant);
+                            if ((ExoMechMusicPhases)mechType is ExoMechMusicPhases.Draedon)
+                                saturation = currentHue;
+                            hueTimer++;
+                        }
+                        else
+                        {
+                            previousHue = newHue;
+                            currentHue = newHue;
+                            if ((ExoMechMusicPhases)mechType is ExoMechMusicPhases.Draedon)
+                                saturation = 0f;
+                            hueTimer = 0;
+                        }
+
+                        float luminosity = 0.5f;
+                        if (currentHue == rgb)
+                            luminosity = 0.36f;
+
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseColor(Main.hslToRgb(currentHue, saturation, luminosity));
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(1f);
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseImage(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise").Value, 0, SamplerState.AnisotropicWrap);
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(intensity);
+                    }
+                }
+                else
+                {
+                    if (Main.netMode != NetmodeID.Server)
+                    {
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(0f);
+                        InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(0f);
+                    }
+                    npc.Infernum().ExtraAI[ExoMechManagement.PreviousHueIndex] = 0;
+                }
             }
 
             talkTimer++;

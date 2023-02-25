@@ -10,7 +10,9 @@ namespace InfernumMode.Core.TrackedMusic
 
         // I don't know the actual value for this, but it doesn't matter since this isn't used by headphones.
         public override float BeatsPerMinute => 0f;
-        
+
+        public override List<SongSection> HeadphonesHighPoints => new();
+
         public override List<SongSection> HighPoints => new()
         {
             new(TimeFormat(0, 3, 591), TimeFormat(0, 3, 691)),

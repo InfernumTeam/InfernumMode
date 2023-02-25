@@ -199,8 +199,17 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Player.Calamity().momentumCapacitorBoost = 1.8f;
 
             // Reset the screen distortion shader for the next frame.
-            if (Main.netMode != NetmodeID.Server && InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
-                InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
+            if (Main.netMode != NetmodeID.Server)
+            { 
+                if (InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
+                    InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
+                if (InfernumEffectsRegistry.ScreenBorderShader.IsActive())
+                {
+                    InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(0f);
+                    InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(0f);
+                    InfernumEffectsRegistry.ScreenBorderShader.Deactivate();
+                }
+            }
             UpdatePortalDistortionEffects();
 
             // Check whether to change the boss rush list.

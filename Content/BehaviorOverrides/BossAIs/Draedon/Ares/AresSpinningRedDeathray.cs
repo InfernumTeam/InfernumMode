@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = Projectile.width * 0.8f;
+            float width = Projectile.width * 1.5f * 0.8f;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public float WidthFunction(float completionRatio)
         {
-            return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
+            return MathHelper.Clamp(Projectile.width * Projectile.scale * 1.5f, 0f, Projectile.width * Projectile.scale * 1.5f);
         }
 
         public Color ColorFunction(float completionRatio)

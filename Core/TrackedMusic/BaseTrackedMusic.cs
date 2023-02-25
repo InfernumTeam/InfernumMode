@@ -1,3 +1,4 @@
+using CalamityMod;
 using System;
 using System.Collections.Generic;
 
@@ -20,10 +21,20 @@ namespace InfernumMode.Core.TrackedMusic
             get;
         }
 
+        public abstract List<SongSection> HeadphonesHighPoints
+        {
+            get;
+        }
+
         public abstract List<SongSection> HighPoints
         {
             get;
         }
+
+        public virtual Dictionary<SongSection, int> SongSections
+        {
+            get;
+        } = null;
 
         internal void Load()
         {

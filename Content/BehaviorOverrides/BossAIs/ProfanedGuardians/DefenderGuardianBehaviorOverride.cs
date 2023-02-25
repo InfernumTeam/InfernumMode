@@ -150,12 +150,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
                     {
-                        // Play a loud explosion + hitbox sound and screenshake to give the impact power.
-                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 3f }, target.Center);
-                        SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 5f }, target.Center);
+                        // Play a loud explosion + hurt sound and screenshake to give the impact power.
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 4f }, target.Center);
+                        SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 6f }, target.Center);
 
                         if (CalamityConfig.Instance.Screenshake)
+                        {
                             target.Infernum_Camera().CurrentScreenShakePower = 20f;
+                            ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 60);
+                        }
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -199,8 +202,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (localAttackTimer > 45f)
                     {
                         Main.hideUI = false;
-                        SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.TempAttack);
+                        SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndFireCharge);
                         npc.life = 0;
+                        npc.NPCLoot();
                         npc.active = false;
                     }
                     break;

@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             DefenderDeathAnimation,
 
             // Commander solo attacks.
-            TempAttack,
+            LargeGeyserAndFireCharge,
 
             CommanderDeathAnimation
         }
@@ -107,6 +107,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public const int RightHandYIndex = 34;
 
         public const int DefenderHasBeenYeetedIndex = 35;
+
+        public const int CommanderHasSpawnedBlenderAlreadyIndex = 36;
 
         public const int CommanderBrightnessWidthFactorIndex = 50;
         public const int MusicTimerIndex = 51;
@@ -315,6 +317,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.type == CommanderType)
             {
                 ref float movedToPosition = ref npc.Infernum().ExtraAI[CommanderMovedToTriplePositionIndex];
+                ref float commanderHasAlreadyDoneBoom = ref npc.Infernum().ExtraAI[CommanderHasSpawnedBlenderAlreadyIndex];
                 ref float spawnedLasers = ref npc.Infernum().ExtraAI[1];
 
                 Vector2 hoverPosition = CrystalPosition + new Vector2(-200f, 0);
@@ -356,11 +359,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     }
                 }
 
-                if (universalAttackTimer == HolySpinningFireBeam.TelegraphTime && CalamityConfig.Instance.Screenshake)
+                if (universalAttackTimer == HolySpinningFireBeam.TelegraphTime && commanderHasAlreadyDoneBoom == 0)
                 {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
+                    // Check this here so that the flag gets set regardless, stopping it happening if the player enables screenshake after the first attack.
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                    }
+                    commanderHasAlreadyDoneBoom = 1;
                 }
             }
             // The defender hovers to your top left, not dealing contact damage and occasionally firing rocks at you.
@@ -1005,7 +1012,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
                         spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
                         
-
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (localAttackTimer >= recoilLength)
@@ -1063,7 +1069,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float afterSlamWaitLength = 60f;
                 float slamSpeed = 35f;
                 float flySpeed = 19f;
-                float maxSlams = 3f;
+                float maxSlams = 2f;
                 float pillarAmount = 12f;
                 float rockAmount = 2f;
 
@@ -1167,7 +1173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
 
-                        if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || universalAttackTimer >= slamLength)
+                        if ((Collision.SolidCollision(npc.Center, (int)(npc.width * 0.85f), (int)(npc.height * 0.85f)) && npc.Center.Y > target.Center.Y) || universalAttackTimer >= slamLength)
                         {
                             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
@@ -1179,7 +1185,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
                             }
 
-                            npc.life -= (int)(npc.lifeMax * 0.001f);
+                            npc.life -= (int)(npc.lifeMax * 0.01f);
                             npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
 
                             float yPos = (Main.maxTilesY * 16f) - 50f;
@@ -1506,19 +1512,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             // Create a bunch of rock particles to indicate a heavy impact.
                             Vector2 impactCenter = (npc.Center + defender.Center) / 2f;
-                            for (int j = 0; j < 20; j++)
+                            for (int i = 0; i < 20; i++)
                             {
-                                Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(MathF.Tau) * Main.rand.NextFloat(6f, 9f), Color.White, Main.rand.NextFloat(0.85f, 1.15f), 60, Main.rand.NextFloat(0f, 0.2f), false);
+                                Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(MathF.Tau) * Main.rand.NextFloat(6f, 9f),
+                                    Color.White, Main.rand.NextFloat(0.85f, 1.15f), 60, Main.rand.NextFloat(0f, 0.2f), false);
                                 GeneralParticleHandler.SpawnParticle(rock);
+                            }
+
+                            // Spawn a bunch of light particles.
+                            for (int i = 0; i < 20; i++)
+                            {
+                                Vector2 position = impactCenter + Main.rand.NextVector2Circular(20f, 20f);
+                                Particle light = new GlowyLightParticle(position, impactCenter.DirectionTo(position) * Main.rand.NextFloat(3f, 5f),
+                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : Color.OrangeRed, 60, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(0.95f, 1.05f), true);
+                                GeneralParticleHandler.SpawnParticle(light);
+                            }
+
+                            // Create a fire explosion.
+                            for (int i = 0; i < 30; i++)
+                            {
+                                MediumMistParticle fireExplosion = new(impactCenter + Main.rand.NextVector2Circular(80f, 80f), Vector2.Zero,
+                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
+                                    Color.Gray, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(220f, 250f));
+                                GeneralParticleHandler.SpawnParticle(fireExplosion);
                             }
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
-                                {
-                                    explosion.ModProjectile<HolySunExplosion>().MaxRadius = 160f;
-                                });
-                                Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
 
                                 // Also spawn a bunch of rocks with slightly random direction and speed.
                                 for (int i = 0; i < rockAmount; i++)
@@ -1526,7 +1546,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock =>
                                     {
-                                        rock.ModProjectile<ProfanedRock>().SpeedUp = true;
+                                        rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Accelerating;
                                     });
 
                                     Vector2 direction = impactCenter + ((MathHelper.TwoPi * i / rockAmount) + Main.rand.NextFloat(-0.4f, 0.4f)).ToRotationVector2();
@@ -1548,8 +1568,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             if (CalamityConfig.Instance.Screenshake)
                             {
-                                ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
-                                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
+                                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.65f, 45);
                             }
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
@@ -1701,24 +1720,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     GeneralParticleHandler.SpawnParticle(jojo);
                 }
 
-                Vector2 hoverDestination = target.Center + new Vector2(800f, -325f);
-                if (universalAttackTimer == 1)
-                    npc.Center = hoverDestination;
-
-                if (npc.Distance(hoverDestination) > 2f)
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
-                else
-                    npc.Center = hoverDestination;
-                npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
-
                 switch (substate)
                 {
                     // Move to the top right of the target.
                     case 0:
+                    case 1:
+                    case 2:
+                    case 6:
+                        Vector2 hoverDestination = target.Center + new Vector2(800f, -325f);
+                        if (universalAttackTimer == 1)
+                            npc.Center = hoverDestination;
+
+                        if (npc.Distance(hoverDestination) > 2f)
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        else
+                            npc.Center = hoverDestination;
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
                         // Despawn the spear if it is active.
                         if ((DefenderShieldStatus)spearStatus != DefenderShieldStatus.Inactive || Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))
                             // Mark the spear for removal.
                             spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        npc.velocity *= 0.9f;
                         break;
                 }
             }
@@ -1888,7 +1915,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             localAttackTimer = 0;
                             substate++;
                             commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] = 1f;
-                            SelectNewAttack(commander, ref universalAttackTimer);
+                            //SelectNewAttack(commander, ref universalAttackTimer);
                             return;
                         }
                         break;
@@ -1900,12 +1927,207 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region Commander Attacks
-        public static void DoBehavior_RapidSpearCharges(NPC npc, Player target, ref float universalAttackTimer)
+        public static void DoBehavior_LargeGeyserAndFireCharge(NPC npc, Player target, ref float universalAttackTimer)
         {
-            float flySpeed = 25f;
-            Vector2 hoverDestination = target.Center + new Vector2(0, -400f);
+            ref float substate = ref npc.Infernum().ExtraAI[0];
 
-            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+            float moveUnderAndWaitTime = 60f;
+            float maxMoveUnderAndWaitTime = 120f;
+            float recoilDownwardsTime = 30f;
+            float flyUpwardsDelay = 60f;
+            float flyUpwardsSpeed = 60f;
+            float curveTowardsTargetDelay = 40f;
+            float completeSlowdownLength = 20f + curveTowardsTargetDelay;
+            float aimTime = 60f + completeSlowdownLength;
+            float aimedChargeSpeed = 70f;
+            float maxChargeLength = 85f;
+            float afterImpactWaitLength = 20f;
+
+            switch (substate)
+            {
+                // Move under the target and telegraph where the geyser will spawn.
+                case 0:
+                    float flySpeed = 25f;
+                    Vector2 hoverDestination = target.Center + new Vector2(0, 400f);
+
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+
+                    // Move out of the way of the target if going around them.
+                    if (npc.WithinRange(target.Center, 150f))
+                        npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                    // If close enough.
+                    if (npc.WithinRange(hoverDestination, 100f))
+                    {
+                        // Create a bunch of lava particles under the commander on the players bottom of the screen.
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Vector2 position = new(npc.Center.X + Main.rand.NextFloat(-200f, 200f), 100f + Main.screenHeight + Main.screenPosition.Y + Main.rand.NextFloat(-70f, 70f));
+                            Particle lavaParticle = new GlowyLightParticle(position, -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(4f, 7f),
+                                Main.rand.NextBool() ? WayfinderSymbol.Colors[2] : Color.OrangeRed, 60, Main.rand.NextFloat(0.75f, 1.25f), Main.rand.NextFloat(0.9f, 1.1f), true);
+                            GeneralParticleHandler.SpawnParticle(lavaParticle);
+                        }
+                        
+                        if (universalAttackTimer >= moveUnderAndWaitTime)
+                        {
+                            universalAttackTimer = 0;
+                            substate++;
+                        }
+                    }
+                    // If it takes too long, move onto the next phase.
+                    else if (universalAttackTimer >= maxMoveUnderAndWaitTime)
+                    {
+                        universalAttackTimer = 0;
+                        substate++;
+                    }
+                    break;
+
+                // Prepare to launch upwards alongside a huge lava geyser.
+                case 1:
+                    if (universalAttackTimer < recoilDownwardsTime)
+                    {
+                        npc.velocity.X *= 0.85f;
+                        npc.velocity.Y = 3.4f;
+                    }
+                    else if (universalAttackTimer == recoilDownwardsTime)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
+                            Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
+                            Utilities.NewProjectileBetter(center, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+                            int rockAmount = 25;
+                            // Also spawn a bunch of rocks with slightly random direction and speed.
+                            for (int i = 0; i < rockAmount; i++)
+                            {
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock =>
+                                {
+                                    rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Gravity;
+                                });
+
+                                Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f));
+                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 45f);
+
+                                Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
+                            }
+                        }
+                    }
+
+                    if (universalAttackTimer >= recoilDownwardsTime + flyUpwardsDelay)
+                    {
+                        float lerpValue = MathHelper.Clamp(Utils.GetLerpValue(300, 500, npc.Center.Y - target.Center.Y, false), 0f, 0.35f);
+                        npc.velocity = -Vector2.UnitY * flyUpwardsSpeed * (1 + lerpValue);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
+                            int rockAmount = 25;
+                            // Also spawn a bunch of rocks with slightly random direction and speed.
+                            for (int i = 0; i < rockAmount; i++)
+                            {
+
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock =>
+                                {
+                                    rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Gravity;
+                                });
+
+                                Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f));
+                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 45f);
+
+                                Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
+                            }
+                        }
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            target.Infernum_Camera().CurrentScreenShakePower = 6f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.75f, 45);
+                        }
+                        universalAttackTimer = 0;
+                        substate++;
+                    }
+                    break;
+
+                // Start to curve towards the target, before slowing to a halt and aiming at them, and then charging rapidly.
+                case 2:
+                    if (universalAttackTimer < curveTowardsTargetDelay)
+                        npc.velocity.Y *= 0.96f;
+                    if (universalAttackTimer > curveTowardsTargetDelay && universalAttackTimer <= completeSlowdownLength)
+                    {
+                        float interpolant = (universalAttackTimer - curveTowardsTargetDelay) / (completeSlowdownLength - curveTowardsTargetDelay);
+                        float xAmount = MathHelper.Lerp(1.2f, 0f, interpolant);
+                        npc.velocity.X += npc.SafeDirectionTo(target.Center).X * xAmount;
+                        npc.velocity.Y += 0.35f;
+
+                        // Set the aim telegraph.
+                    }
+                    else if (universalAttackTimer >= aimTime)
+                    {
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * aimedChargeSpeed;
+                        universalAttackTimer = 0;
+                        substate++;
+                    }
+                    break;
+
+                case 3:
+                    // Create particles to indicate the sudden speed.
+                    if (Main.rand.NextBool())
+                    {
+                        Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                        Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                        GeneralParticleHandler.SpawnParticle(energyLeak);
+                    }
+
+                    if ((Collision.SolidCollision(npc.Center, (int)(npc.width * 0.85f), (int)(npc.height * 0.85f)) && npc.Center.Y > target.Center.Y) || universalAttackTimer >= maxChargeLength)
+                    {
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+                        SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
+
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.5f, 45);
+                        }
+                        // Hurt itself.
+                        //npc.life -= (int)(npc.lifeMax * 0.002f);
+                        npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
+                        Vector2 impactCenter = npc.Bottom + new Vector2(0f, -15f);
+
+                        for (int j = 0; j < 40; j++)
+                        {
+                            Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.9f, 0.9f)) * Main.rand.NextFloat(6f, 9f), Color.White, Main.rand.NextFloat(0.85f, 1.15f), 60, Main.rand.NextFloat(0f, 0.2f));
+                            GeneralParticleHandler.SpawnParticle(rock);
+                        }
+
+                        // Spawn a bunch of light particles.
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 position = impactCenter + Main.rand.NextVector2Circular(20f, 20f);
+                            Particle light = new GlowyLightParticle(position, impactCenter.DirectionTo(position) * Main.rand.NextFloat(3f, 5f),
+                                Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : Color.OrangeRed, 60, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(0.95f, 1.05f), true);
+                            GeneralParticleHandler.SpawnParticle(light);
+                        }
+
+                        // Create a fire explosion.
+                        for (int i = 0; i < 30; i++)
+                        {
+                            MediumMistParticle fireExplosion = new(impactCenter + Main.rand.NextVector2Circular(80f, 80f), Vector2.Zero,
+                                Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
+                                Color.Gray, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(220f, 250f));
+                            GeneralParticleHandler.SpawnParticle(fireExplosion);
+                        }
+                        substate++;
+                        universalAttackTimer = 0f;
+                    }
+                    break;
+
+                case 4:
+                    if (universalAttackTimer >= afterImpactWaitLength)
+                    {
+                        SelectNewAttack(npc, ref universalAttackTimer, (float)GuardiansAttackType.LargeGeyserAndFireCharge);
+                    }
+                    break;
+            }
+
         }
         #endregion
 

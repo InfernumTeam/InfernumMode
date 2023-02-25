@@ -155,6 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
                 }
             }
+
             // Messy hack to stop the healer connecting to the commander immediately after the crystal dies. This should be made nicer.
             else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) && (((GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloHealer && commander.ai[1] > 15) || (GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloDefender))
             {
@@ -165,7 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
 
             Vector2 startPos = npc.Center + new Vector2(npc.spriteDirection * 32f, 12f);
-            Vector2 endPos = npcToConnectTo.Top;
+            Vector2 endPos = npcToConnectTo.type == CommanderType ? npcToConnectTo.Top + new Vector2(-50, 50) : npcToConnectTo.Top;
 
             InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBubbleGlow);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], Color.White, 0.1f));
@@ -179,7 +180,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
 
             ShieldEnergyDrawer.Draw(drawPositions, -Main.screenPosition, 30);
-            endPos = npcToConnectTo.Bottom;
+            endPos = npcToConnectTo.type == CommanderType ? npcToConnectTo.Bottom - new Vector2(50, 50) : npcToConnectTo.Bottom;
             for (int i = 0; i < drawPositions.Length; i++)
                 drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
             ShieldEnergyDrawer.Draw(drawPositions, -Main.screenPosition, 30);
@@ -273,7 +274,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 shieldOpacity = CalamityUtils.ExpInEasing(opacity0to1, 0);
 
             // Draw the shield, as if its trying to protect itself in its last moments instead of the commander.
-            AttackerGuardianBehaviorOverride.DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity * 1.15f);
+            AttackerGuardianBehaviorOverride.DrawHealerShield(npc, spriteBatch, 3.3f, shieldOpacity * 1.15f);
         }
         #endregion
 

@@ -18,6 +18,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class ProfanedRock : ModProjectile
     {
+        public enum RockType
+        {
+            Aimed,
+            Accelerating,
+            Gravity
+        }
+
         public static string[] Textures => new string[4]
         {
             "ProfanedRock",
@@ -30,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const int RedHotGlowTimer = 30;
 
-        public bool SpeedUp = false;
+        public int RockTypeVarient = (int)RockType.Aimed;
 
         public ref float Timer => ref Projectile.ai[0];
 
@@ -100,25 +107,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Player target = Main.player[Owner.target];
 
-            if (Timer == 0 && !SpeedUp)
+            switch ((RockType)RockTypeVarient)
             {
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.95f, Volume = 0.9f }, target.Center);
-                for (int i = 0; i < 20; i++)
-                {
-                    Vector2 velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(4f, 6f);
-                    Particle rock = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
-                    GeneralParticleHandler.SpawnParticle(rock);
+                case RockType.Aimed:
+                    if (Timer == 0)
+                    {
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.95f, Volume = 0.9f }, target.Center);
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(4f, 6f);
+                            Particle rock = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
+                            GeneralParticleHandler.SpawnParticle(rock);
 
-                    Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true, rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
-                    GeneralParticleHandler.SpawnParticle(fire);
-                }
-                if (CalamityConfig.Instance.Screenshake)
-                    target.Infernum_Camera().CurrentScreenShakePower = 2f;
-            }
-            else if (SpeedUp)
-            {
-                if (Projectile.velocity.Length() < 30f)
-                    Projectile.velocity *= 1.035f;
+                            Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true, rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
+                            GeneralParticleHandler.SpawnParticle(fire);
+                        }
+                        if (CalamityConfig.Instance.Screenshake)
+                            target.Infernum_Camera().CurrentScreenShakePower = 2f;
+                    }
+                    break;
+
+                case RockType.Accelerating:
+                    if (Projectile.velocity.Length() < 30f)
+                        Projectile.velocity *= 1.035f;
+                    break;
+
+                case RockType.Gravity:
+                    Projectile.velocity.X *= 0.995f;
+                    Projectile.velocity.Y += 0.3f;
+                    break;
             }
 
             Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);

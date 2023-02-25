@@ -21,11 +21,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public static float MaxLength => 4000f;
+        public float MaxLength => BigVersion ? 5000f : 4000f;
 
-        public float TelegraphLength => BigVersion ? 60 : 30;
+        public float TelegraphLength => 30;
 
-        public float MaxTime => BigVersion? 300 : 180;
+        public float MaxTime => BigVersion? 240 : 180;
 
         public bool BigVersion;
 
@@ -35,13 +35,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float StretchOffset => ref Projectile.localAI[0];
 
-        public float Width => BigVersion ? 400 : 160f;
+        public float Width => BigVersion ? 700 : 160f;
 
         public float VariableWidth => Width * Utilities.EaseInOutCubic(CurrentLength / MaxLength);
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Wall");
+            DisplayName.SetDefault("Lava Geyser");
         }
 
         public override void SetDefaults()
@@ -110,12 +110,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 TelegraphDrawer.DrawPixelated(drawPositionsT, -Main.screenPosition, 20);
 
                 Texture2D warningSymbol = InfernumTextureRegistry.VolcanoWarning.Value;
-                Vector2 drawPosition = (startT - Vector2.UnitY * MaxLength * 0.575f) - Main.screenPosition;
+                Vector2 drawPosition = (startT - Vector2.UnitY * 4000 * 0.575f) - Main.screenPosition;
                 Color drawColor = Color.Lerp(TelegraphColorFunction(0.5f), Color.Orange, 0.5f) * Projectile.Opacity;
                 drawColor.A = 0;
                 Vector2 origin = warningSymbol.Size() * 0.5f;
+                float scale = BigVersion ? 3f : 0.8f;
 
-                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * opacityScalar, 0f, origin, 0.8f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * opacityScalar, 0f, origin, scale, SpriteEffects.None, 0f);
             }
             if (Timer > TelegraphLength)
             {
@@ -126,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.UseColor(Color.LightGoldenrodYellow);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["flipY"].SetValue(false);
                 float lengthScalar = CurrentLength / MaxLength;
-                InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue(2f + StretchOffset * lengthScalar);
+                InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue((BigVersion ? 0.8f : 2f) + StretchOffset * lengthScalar);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["pillarVarient"].SetValue(true);
 
                 Vector2 start = Projectile.Center;

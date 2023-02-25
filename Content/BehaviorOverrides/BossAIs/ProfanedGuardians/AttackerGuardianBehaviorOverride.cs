@@ -169,8 +169,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, npc);
                     break;
 
-                case GuardiansAttackType.TempAttack:
-                    DoBehavior_RapidSpearCharges(npc, target, ref attackTimer);
+                case GuardiansAttackType.LargeGeyserAndFireCharge:
+                    DoBehavior_LargeGeyserAndFireCharge(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.CommanderDeathAnimation:
@@ -303,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 DrawAngerOverlay(npc, spriteBatch, texture, glowmask, lightColor, direction, glowAmount);
 
             if (shouldDrawShield)
-                DrawHealerShield(npc, spriteBatch, 2.3f, shieldOpacity);
+                DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
             return false;
         }
 

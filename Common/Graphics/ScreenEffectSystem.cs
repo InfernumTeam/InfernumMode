@@ -163,7 +163,7 @@ namespace InfernumMode.Common.Graphics
                 Main.instance.GraphicsDevice.SetRenderTarget(null);
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                Color drawColor = new(1f, 1f, 1f, MathHelper.Clamp(FlashIntensity + (1f - FlashLifetimeRatio), 0f, 1f));
+                Color drawColor = new(1f, 1f, 1f, MathHelper.Clamp(MathHelper.Lerp(0.5f, 1f, (1f - FlashLifetimeRatio) * FlashIntensity), 0f, 1f));
 
                 // Not doing this causes it to not properly fit on the screen. This extends it to be 100 extra in either direction.
                 Rectangle frameOffset = new(-100, -100, Main.screenWidth + 200, Main.screenHeight + 200);

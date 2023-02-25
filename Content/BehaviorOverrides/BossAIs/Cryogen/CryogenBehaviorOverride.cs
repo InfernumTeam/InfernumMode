@@ -371,6 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             if (attackTimer >= burstCreationRate * burstCount + 60f)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<IcicleSpike>());
                 attackTimer = 0f;
                 attackState++;
                 npc.TargetClosest();
@@ -590,6 +591,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             if (attackTimer >= burstCreationRate * burstCount + 204f)
             {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<IcicleSpike>());
                 icePillarCreationTimer = 0f;
                 attackTimer = 0f;
                 attackState++;

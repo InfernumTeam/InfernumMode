@@ -870,7 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         public static bool DoBehavior_ChaoticFireAndDownwardLaser(NPC npc, bool isSpazmatism, ref float chargingFlag)
         {
             int shootDelay = 60;
-            int attackDuration = 360;
+            int attackDuration = 540;
             int attackCycleTime = 120;
             int slowdownTime = 15;
             int laserChargeUpTime = 36;
@@ -891,7 +891,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             // Easy temporary variable to allow vector math to be done more efficiently. The X and Y values inherit whatever this becomes at the end of the update frame.
             Vector2 nextCenterOfMass = new(centerOfMassX, centerOfMassY);
-            if (nextCenterOfMass == Vector2.Zero)
+            if (nextCenterOfMass == Vector2.Zero || UniversalAttackTimer <= 1f)
                 nextCenterOfMass = npc.Center;
 
             // Spazmatism stores the relevant update information. To prevent two updates per frame, only it will perform those updates.
@@ -1008,7 +1008,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 laserSpawnOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 1080f;
+                            Utilities.NewProjectileBetter(Target.Center + laserSpawnOffset, -laserSpawnOffset.SafeNormalize(Vector2.UnitY) * 5f, ProjectileID.DeathLaser, 140, 0f);
+                        }
                         Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<RetinazerGroundDeathray>(), 200, 0f, -1, 0f, npc.whoAmI);
+                    }
                 }
             }
 
@@ -1693,7 +1700,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             if (UniversalStateIndex % 5 == 4 && !InPhase2 && !BossRushEvent.BossRushActive)
                 CurrentAttackState = TwinsAttackState.LazilyObserve;
-            CurrentAttackState = TwinsAttackState.ChaoticFireAndDownwardLaser;
         }
 
         public static NPC GetOtherTwin(NPC npc)

@@ -12,8 +12,10 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rail;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -553,6 +555,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 npc.Center = teleportDestination;
             }
 
+            // Create heat effects in accordance with the percussions of Brimmy's theme.
+            if (CalamityConfig.Instance.Screenshake && TrackedMusicManager.TryGetSongInformation(out BaseTrackedMusic songInfo) && songInfo.HighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)))
+            {
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 1f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.7f, 25);
+            }
+
             // Have a small delay prior to the bullet hell to allow the target to prepare.
             if (attackTimer < bulletHellShootDelay)
                 return;
@@ -900,6 +909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             do
                 npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
             while (previousAttack == (BrimmyAttackType)npc.ai[0]);
+
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

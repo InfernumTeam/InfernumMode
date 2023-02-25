@@ -109,29 +109,44 @@ namespace InfernumMode.Content.Tiles
             return false;
         }
 
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            bool insidePortal = MathHelper.Distance(Main.LocalPlayer.Center.X, i * 16f) <= 108f && Main.LocalPlayer.Center.Y >= j * 16f - 250f;
+            ref float teleportInterpolant = ref Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant;
+            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            if (!insidePortal || !WorldSaveSystem.HasOpenedLostColosseumPortal || t.TileFrameX != 36 || t.TileFrameY != 18)
+                return;
+
+            if (teleportInterpolant <= 1f)
+            {
+                teleportInterpolant += 0.028f;
+                return;
+            }
+
+            teleportInterpolant = 0f;
+            if (SubworldSystem.IsActive<LostColosseum>())
+                SubworldSystem.Exit();
+            else
+            {
+                // Don't allow the player to use the portal if Infernum is not active.
+                if (!InfernumMode.CanUseCustomAIs)
+                {
+                    CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
+                    return;
+                }
+
+                Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
+                SubworldSystem.Enter<LostColosseum>();
+            }
+        }
+
         public override bool RightClick(int i, int j)
         {
             if (!Main.LocalPlayer.HasItem(ModContent.ItemType<SandstormsCore>()) && !WorldSaveSystem.HasOpenedLostColosseumPortal)
                 return true;
 
             if (WorldSaveSystem.HasOpenedLostColosseumPortal)
-            {
-                if (SubworldSystem.IsActive<LostColosseum>())
-                    SubworldSystem.Exit();
-                else
-                {
-                    // Don't allow the player to use the portal if Infernum is not active.
-                    if (!InfernumMode.CanUseCustomAIs)
-                    {
-                        CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
-                        return true;
-                    }
-
-                    Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;
-                    SubworldSystem.Enter<LostColosseum>();
-                }
                 return true;
-            }
 
             SoundEngine.PlaySound(AstralBeacon.UseSound);
             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen);

@@ -10,7 +10,7 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override float BeatsPerMinute => 167f;
 
-        public override List<SongSection> HighPoints => new()
+        public override List<SongSection> HeadphonesHighPoints => new()
         {
             new(TimeFormat(0, 10, 916), TimeFormat(0, 21, 622)),
 
@@ -18,5 +18,7 @@ namespace InfernumMode.Core.TrackedMusic
 
             new(TimeFormat(1, 27, 850), TimeFormat(1, 48, 622)),
         };
+
+        public override List<SongSection> HighPoints => new();
     }
 }

@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (PlaySoundOnFiring && Time == FireDelay)
                     SoundEngine.PlaySound(SoundID.Item163 with { Pitch = SoundPitch }, Main.LocalPlayer.Center);
             }
-            Projectile.alpha = Utils.Clamp(Projectile.alpha - 20, 0, 255);
+            Projectile.alpha = Utils.Clamp(Projectile.alpha - 14, 0, 255);
             Projectile.rotation = Projectile.ai[0];
             Time++;
         }
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             Vector2 origin = tex.Size() / 2f;
             float scale = MathHelper.Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
-            float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false);
+            float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false) * Projectile.Opacity;
             if (telegraphInterpolant > 0f)
             {
                 for (float i = 1f; i > 0f; i -= 1f / 16f)

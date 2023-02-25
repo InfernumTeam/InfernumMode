@@ -25,6 +25,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
         public static MiscShaderData CyclicHueShader => GameShaders.Misc["Infernum:CyclicHueShader"];
         public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
+        public static MiscShaderData DoGDashIndicatorVertexShader => GameShaders.Misc["Infernum:DoGDashIndicatorShader"];
         public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
@@ -69,6 +70,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
+        public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];
         public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
         public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
         public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
@@ -97,6 +99,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
+
+            Ref<Effect> dashIndicator = new(assets.Request<Effect>("Assets/Effects/DoGDashIndicatorShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:DoGDashIndicatorShader"] = new MiscShaderData(dashIndicator, "TrailPass");
 
             Ref<Effect> waterShader = new(assets.Request<Effect>("Assets/Effects/WaterShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:WaterShader"] = new MiscShaderData(waterShader, "WaterPass");
@@ -218,6 +223,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Screen Border Shader
+            Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenBorder"] = new Filter(new ScreenShaderData(screenBorderShader, "ScreenPass"), EffectPriority.VeryHigh);
+
             Filters.Scene["InfernumMode:GuardianCommander"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0.4f, 0.1f, 1.0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:GuardianCommander"] = new ProfanedGuardiansSky();
             // Ares (ultimate attack).

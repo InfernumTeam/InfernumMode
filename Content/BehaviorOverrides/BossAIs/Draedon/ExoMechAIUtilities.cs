@@ -11,6 +11,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 {
     public static class ExoMechAIUtilities
     {
+        public enum ExoMechMusicPhases
+        {
+            Draedon,
+            Thanatos,
+            Twins,
+            Ares,
+            AllThree
+        }
+
         public static void DoSnapHoverMovement(NPC npc, Vector2 destination, float flySpeed, float hyperSpeedCap)
         {
             float distanceFromDestination = npc.Distance(destination);

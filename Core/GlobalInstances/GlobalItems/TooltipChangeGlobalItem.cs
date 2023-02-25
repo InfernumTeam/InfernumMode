@@ -26,6 +26,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             [ItemID.BloodySpine] = "Enrages outside of the Crimson\n",
             [ModContent.ItemType<Teratoma>()] = "Enrages outside of the Corruption",
             [ModContent.ItemType<BloodyWormFood>()] = "Enrages outside of the Crimson",
+            [ModContent.ItemType<Seafood>()] = "Enrages outside of the waters of the Sulphurous Sea",
             [ItemID.MechanicalEye] = null,
             [ItemID.MechanicalSkull] = null,
             [ItemID.MechanicalWorm] = null,

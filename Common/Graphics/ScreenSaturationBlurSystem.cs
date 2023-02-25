@@ -127,9 +127,12 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, Color.White);
             Main.spriteBatch.End();
 
+            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
+            foreach (Point p in ColosseumPortal.PortalCache)
+                ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
-            orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
+            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -147,10 +150,6 @@ namespace InfernumMode.Common.Graphics
             // Regularly reset the crystal cache.
             if (Main.GameUpdateCount % 120 == 119)
                 LargeLumenylCrystal.CrystalCache.Clear();
-
-            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
-            foreach (Point p in ColosseumPortal.PortalCache)
-                ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 
             DrawAdditiveCache();
             DrawAEW();

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Twins.TwinsAttackSynchronizer;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
@@ -18,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         public override int NPCOverrideType => NPCID.Spazmatism;
 
         #region AI
-        public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
+        public override bool PreAI(NPC npc) => DoAI(npc);
         #endregion AI
 
         #region Frames and Drawcode
@@ -38,37 +39,56 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             return color;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static void DrawChainsBetweenTwins(NPC npc)
         {
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (!Main.npc[i].active || npc.whoAmI == i || Main.npc[i].type != NPCID.Retinazer || Main.npc[i].type != NPCID.Spazmatism)
+                NPC n = Main.npc[i];
+                if (!n.active || npc.whoAmI == i || n.type != NPCID.Retinazer || n.type != NPCID.Spazmatism)
                     continue;
 
-                float rotation = npc.AngleTo(Main.npc[i].Center) - MathHelper.PiOver2;
-
+                bool chainIsTooLong = !npc.WithinRange(n.Center, 2000f);
+                float rotation = npc.AngleTo(n.Center) - MathHelper.PiOver2;
                 Vector2 currentChainPosition = npc.Center;
-                bool chainIsTooLong = Vector2.Distance(currentChainPosition, Main.npc[i].Center) > 2000f;
-
                 Texture2D chainTexture = TextureAssets.Chain12.Value;
+
+                // Iteratively draw the chain until it's sufficiently close to the other twin.
                 while (!chainIsTooLong)
                 {
-                    float distanceFromDestination = Vector2.Distance(currentChainPosition, Main.npc[i].Center);
+                    float distanceFromDestination = Vector2.Distance(currentChainPosition, n.Center);
                     if (distanceFromDestination < 40f)
                         break;
 
-                    currentChainPosition += (Main.npc[i].Center - currentChainPosition).SafeNormalize(Vector2.Zero) * chainTexture.Height;
-                    Color chainColor = npc.GetAlpha(lightColor);
+                    currentChainPosition += (n.Center - currentChainPosition).SafeNormalize(Vector2.Zero) * chainTexture.Height;
+                    Color chainColor = npc.GetAlpha(Color.White);
                     Main.spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
+        }
 
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            // Reset afterimage lengths.
+            NPCID.Sets.TrailingMode[npc.type] = 3;
+            NPCID.Sets.TrailCacheLength[npc.type] = 5;
+            if (npc.oldPos.Length != NPCID.Sets.TrailCacheLength[npc.type])
+            {
+                npc.oldPos = new Vector2[NPCID.Sets.TrailCacheLength[npc.type]];
+                npc.oldRot = new float[NPCID.Sets.TrailCacheLength[npc.type]];
+            }
+
+            // Have Spazmatism draw the chain between the two twins.
+            DrawChainsBetweenTwins(npc);
+
+            // Initialize the flame tail drawer.
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => FlameTrailWidthFunctionBig(npc, completionRatio),
                     completionRatio => FlameTrailColorFunctionBig(npc, completionRatio),
                     null, true, InfernumEffectsRegistry.TwinsFlameTrailVertexShader);
             }
+
+            // Draw the flame tail if necessary.
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
                 InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
@@ -94,13 +114,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
             }
 
+            // Draw afterimages if necessary. This must be drawn before the main instance is.
+            float afterimageInterpolant = npc.Infernum().ExtraAI[AfterimageDrawInterpolantIndex];
+            if (afterimageInterpolant > 0f)
+            {
+                for (int i = npc.oldPos.Length - 1; i >= 1; i--)
+                {
+                    Color afterimageColor = lightColor * (1f - i / (float)npc.oldPos.Length) * 0.6f;
+                    Vector2 afterimageDrawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 1f - afterimageInterpolant);
+                    drawInstance(afterimageDrawPosition, afterimageColor, npc.oldRot[i]);
+                }
+            }
+
+            // Draw more instances with increasingly powerful additive blending to create a glow effect.
             int totalInstancesToDraw = 1;
             Color color = lightColor;
             float overdriveTimer = npc.Infernum().ExtraAI[4];
-            if (!BossRushEvent.BossRushActive && (TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.RedirectingLasersAndFlameCharge || overdriveTimer > 0f))
+            if (!BossRushEvent.BossRushActive && overdriveTimer > 0f)
             {
                 color = Color.YellowGreen;
-                float fadeCompletion = Utils.GetLerpValue(0f, 60f, TwinsAttackSynchronizer.UniversalAttackTimer, true);
+                float fadeCompletion = Utils.GetLerpValue(0f, 60f, UniversalAttackTimer, true);
                 if (overdriveTimer > 0f)
                     fadeCompletion = overdriveTimer / TwinsShield.HealTime;
 
@@ -116,14 +149,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 color = Color.Lerp(color, endColor * (4f / totalInstancesToDraw), fadeCompletion);
                 color.A = 0;
             }
-
-            color *= npc.Opacity;
-
+            
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
                 drawOffset *= MathHelper.Lerp(0.85f, 1.2f, (float)Math.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
-                drawInstance(npc.Center + drawOffset, color, npc.rotation);
+                drawInstance(npc.Center + drawOffset, color * npc.Opacity, npc.rotation);
             }
             return false;
         }
@@ -133,7 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             npc.frameCounter++;
             npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
 
-            if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
+            if (PersonallyInPhase2(npc))
                 npc.frame.Y += frameHeight * 3;
         }
         #endregion Frames and Drawcode
@@ -146,7 +177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion Tips
 
         #region Death Effects
-        public override bool CheckDead(NPC npc) => TwinsAttackSynchronizer.HandleDeathEffects(npc);
+        public override bool CheckDead(NPC npc) => HandleDeathEffects(npc);
         #endregion Death Effects
     }
 }

@@ -23,6 +23,7 @@ float4 uShaderSpecificData;
 
 float distortionAmount;
 float wiggleSpeed;
+float2 uvSampleFactors;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
@@ -35,7 +36,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     // Get the amount to multiply the distorted coords by.
     float distortionScalar = lerp(-0.001 * distortionAmount, 0.001 * distortionAmount, sine);
     // Get the distorted coords, using a texture for the distortion.
-    float2 distortedUV = coords + tex2D(uImage1, float2(frac(uvCoords.x * 0.5 + uTime * 0.1), uvCoords.y)).r * distortionScalar;
+    float2 distortedUV = coords + tex2D(uImage1, float2(frac(uvCoords.x * (uvSampleFactors.x + 1) * 0.5 + uTime * 0.1), uvCoords.y * (uvSampleFactors.y + 1))).r * float2(1, 0.2) * distortionScalar;
     // Return the original texture with the distorted coords.
     float4 color = tex2D(uImage0, distortedUV);
     

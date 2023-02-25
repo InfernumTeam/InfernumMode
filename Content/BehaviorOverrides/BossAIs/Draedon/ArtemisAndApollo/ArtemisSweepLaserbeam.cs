@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public const float MaxLaserRayConst = 6000f;
 
-        public override float MaxScale => 1f;
+        public override float MaxScale => 1.5f;
         public override float MaxLaserLength => MaxLaserRayConst;
         public override float Lifetime => LifetimeConst;
         public override Color LaserOverlayColor => new(250, 180, 100, 100);

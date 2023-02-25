@@ -82,7 +82,7 @@ namespace InfernumMode.Core.Balancing
             [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
             [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? PrimeHeadBehaviorOverride.BaseCollectiveCannonHPBossRush : CalculateMechHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP),
             [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 1110580 : CalculateMechHP(111000),
-            [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
+            [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(40),
             [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 85515,
             [ModContent.NPCType<CalamitasClone>()] = BossRushEvent.BossRushActive ? 485000 : 76250,
             [ModContent.NPCType<Cataclysm>()] = BossRushEvent.BossRushActive ? 193380 : 20600,

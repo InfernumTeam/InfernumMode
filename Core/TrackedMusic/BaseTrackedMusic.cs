@@ -1,3 +1,4 @@
+using CalamityMod;
 using System;
 using System.Collections.Generic;
 
@@ -20,10 +21,20 @@ namespace InfernumMode.Core.TrackedMusic
             get;
         }
 
+        public abstract List<SongSection> HeadphonesHighPoints
+        {
+            get;
+        }
+
         public abstract List<SongSection> HighPoints
         {
             get;
         }
+
+        public virtual Dictionary<SongSection, int> SongSections
+        {
+            get;
+        } = null;
 
         internal void Load()
         {
@@ -31,9 +42,6 @@ namespace InfernumMode.Core.TrackedMusic
             TrackedMusicManager.TrackInformation[MusicPath] = this;
         }
 
-        public static TimeSpan TimeFormat(int minutes, int seconds, int milliseconds)
-        {
-            return new TimeSpan(0, 0, minutes, seconds, milliseconds);
-        }
+        public static TimeSpan TimeFormat(int minutes, int seconds, int milliseconds) => new(0, 0, minutes, seconds, milliseconds);
     }
 }

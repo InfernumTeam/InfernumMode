@@ -899,8 +899,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
         public static void CreateTeleportTelegraph(Vector2 teleportPosition)
         {
             Color fireColor = Main.rand.NextBool() ? Color.Purple : Color.Lime;
-            CloudParticle bloodCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
-            GeneralParticleHandler.SpawnParticle(bloodCloud);
+            CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
+            GeneralParticleHandler.SpawnParticle(noxiousCloud);
 
             Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), 75);
             fire.velocity = -Vector2.UnitY.RotateRandom(0.5f) * Main.rand.NextFloat(1f, 5f);

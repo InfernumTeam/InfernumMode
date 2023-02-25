@@ -17,6 +17,8 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static CalamityMod.World.SulphurousSea;
+using CalamityMod.Tiles.Abyss.AbyssAmbient;
+using Terraria.ObjectData;
 
 namespace InfernumMode.Content.WorldGeneration
 {
@@ -54,7 +56,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public const float Layer1ForestMinNoiseValue = 0.235f;
 
-        public const int Layer1KelpCreationChance = 8;
+        public const int Layer1KelpCreationChance = 18;
 
         public static int Layer2TrenchCount => (int)Math.Sqrt(Main.maxTilesX / 176f);
 
@@ -74,7 +76,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public const int MaxTrenchOffset = 28;
 
-        public const int Layer2WildlifeSpawnAttempts = 95200;
+        public const int Layer2WildlifeSpawnAttempts = 35200;
 
         public const int Layer3CaveCarveoutSteps = 124;
 
@@ -233,6 +235,44 @@ namespace InfernumMode.Content.WorldGeneration
             // Generate scenic tiles.
             GeneratePostSkeletronTiles(layer1Area);
             GenerateAbyssalKelp(layer1Area);
+
+            // Create random blobs of planty mush.
+            GeneratePlantyMushClumps(layer1Area);
+
+            GenerateScenicTilesInArea(layer1Area, 10, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<AbyssGiantKelp1>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp2>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp3>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp4>()
+            });
+            GenerateScenicTilesInArea(layer1Area, 9, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<AbyssVent1>(),
+                (ushort)ModContent.TileType<AbyssVent2>(),
+                (ushort)ModContent.TileType<AbyssVent3>()
+            });
+            GenerateScenicTilesInArea(layer1Area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<GravelPile1>(),
+                (ushort)ModContent.TileType<GravelPile2>(),
+                (ushort)ModContent.TileType<GravelPile3>()
+            });
+            GenerateScenicTilesInArea(layer1Area, 20, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<PirateCrate1>(),
+                (ushort)ModContent.TileType<PirateCrate2>(),
+                (ushort)ModContent.TileType<PirateCrate3>(),
+                (ushort)ModContent.TileType<PirateCrate4>(),
+                (ushort)ModContent.TileType<PirateCrate5>(),
+                (ushort)ModContent.TileType<PirateCrate6>()
+            });
+            GenerateScenicTilesInArea(layer1Area, 8, 1, new ushort[] { (ushort)ModContent.TileType<SulphurousShale>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<ShalePile1>(),
+                (ushort)ModContent.TileType<ShalePile2>(),
+                (ushort)ModContent.TileType<ShalePile3>()
+            });
         }
 
         public static void GenerateLayer1SulphurousGravel(Rectangle layer1Area)
@@ -241,7 +281,7 @@ namespace InfernumMode.Content.WorldGeneration
             WorldSaveSystem.AbyssLayer1ForestSeed = WorldGen.genRand.Next();
 
             ushort abyssGravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort sulphuricGravelID = (ushort)ModContent.TileType<SulphurousGravel>();
+            ushort sulphuricShaleID = (ushort)ModContent.TileType<SulphurousShale>();
 
             // Edge score evaluation function that determines the propensity a tile has to become sandstone.
             // This is based on how much nearby empty areas there are, allowing for "edges" to appear.
@@ -277,10 +317,10 @@ namespace InfernumMode.Content.WorldGeneration
                     // Make the sandstone appearance chance dependant on the edge score.
                     sulphurousConvertChance *= Utils.GetLerpValue(4f, 11f, getEdgeScore(x, y), true);
 
-                    if (WorldGen.genRand.NextFloat() > sulphurousConvertChance || sulphurousConvertChance < 0.5f)
+                    if (WorldGen.genRand.NextFloat() > sulphurousConvertChance || sulphurousConvertChance < 0.57f)
                         continue;
 
-                    // Convert to sulphuric gravel as necessary.
+                    // Convert to sulphuric shale as necessary.
                     for (int dx = -2; dx <= 2; dx++)
                     {
                         for (int dy = -2; dy <= 2; dy++)
@@ -289,7 +329,7 @@ namespace InfernumMode.Content.WorldGeneration
                             {
                                 if (CalamityUtils.ParanoidTileRetrieval(x + dx, y + dy).TileType == abyssGravelID)
                                 {
-                                    Main.tile[x + dx, y + dy].TileType = sulphuricGravelID;
+                                    Main.tile[x + dx, y + dy].TileType = sulphuricShaleID;
 
                                     // Encourage the growth of ground vines.
                                     if (InsideOfLayer1Forest(new(x + dx, y + dy)))
@@ -305,10 +345,6 @@ namespace InfernumMode.Content.WorldGeneration
                                                 SulphurousGroundVines.AttemptToGrowVine(new(vinePosition.X, vinePosition.Y - ddy));
                                         }
                                     }
-
-                                    // Try to grow small plants.
-                                    if (WorldGen.genRand.NextBool(Layer1SmallPlantCreationChance) && SulphurousGravel.TryToGrowSmallPlantAbove(new(x + dx, y + dy)))
-                                    { }
                                 }
                             }
                         }
@@ -365,6 +401,25 @@ namespace InfernumMode.Content.WorldGeneration
                         }
                     }
                 }
+            }
+        }
+
+        public static void GeneratePlantyMushClumps(Rectangle layer1Area)
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                int x = GetActualX(WorldGen.genRand.Next(layer1Area.Left + 90, layer1Area.Right - 70));
+                int y = WorldGen.genRand.Next(layer1Area.Top + 40, layer1Area.Bottom - 15);
+                Point p = new(x, y);
+
+                // Make the surrounding pyre molten.
+                WorldUtils.Gen(p, new Shapes.Circle(WorldGen.genRand.Next(14, 18)), Actions.Chain(new GenAction[]
+                {
+                    new Modifiers.RadialDither(12f, 18f),
+                    new Modifiers.Conditions(new Conditions.IsTile((ushort)ModContent.TileType<AbyssGravel>(), (ushort)ModContent.TileType<SulphurousShale>())),
+                    new Actions.SetTile((ushort)ModContent.TileType<PlantyMush>()),
+                    new Actions.PlaceWall((ushort)ModContent.WallType<AbyssGravelWall>()),
+                }));
             }
         }
 
@@ -549,6 +604,40 @@ namespace InfernumMode.Content.WorldGeneration
                 Point potentialPosition = new(GetActualX(WorldGen.genRand.Next(area.Left + 30, area.Right - 30)), WorldGen.genRand.Next(area.Top, area.Bottom));
                 WorldGen.PlaceTile(potentialPosition.X, potentialPosition.Y, WorldGen.genRand.Next(wildlifeVariants));
             }
+
+            GenerateScenicTilesInArea(area, 10, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<AbyssGiantKelp1>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp2>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp3>(),
+                (ushort)ModContent.TileType<AbyssGiantKelp4>()
+            });
+            GenerateScenicTilesInArea(area, 9, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<AbyssVent1>(),
+                (ushort)ModContent.TileType<AbyssVent2>(),
+                (ushort)ModContent.TileType<AbyssVent3>()
+            });
+            GenerateScenicTilesInArea(area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<BulbTree1>(),
+                (ushort)ModContent.TileType<BulbTree2>(),
+                (ushort)ModContent.TileType<BulbTree3>()
+            });
+            GenerateScenicTilesInArea(area, 7, 1, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<GravelPile1>(),
+                (ushort)ModContent.TileType<GravelPile2>(),
+                (ushort)ModContent.TileType<GravelPile3>()
+            });
+            GenerateScenicTilesInArea(area, 10, 5, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<TenebrisRemnant>()
+            });
+            GenerateScenicTilesInArea(area, 5, 16, new ushort[] { (ushort)ModContent.TileType<AbyssGravel>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<AbyssalKelp>()
+            });
         }
 
         public static void GenerateLayer3(List<Point> trenchBottoms, out Point layer4ConvergencePoint)
@@ -676,8 +765,8 @@ namespace InfernumMode.Content.WorldGeneration
 
             WorldSaveSystem.AbyssLayer3CavernSeed = WorldGen.genRand.Next();
 
-            // Generate deepwater basalt in the hydrothermic zone.
-            GenerateLayer3DeepwaterBasalt(layer3Area);
+            // Generate pyre mantle in the hydrothermic zone.
+            GenerateLayer3PyreMantle(layer3Area);
 
             // Generate scenic hydrothermal vents.
             GenerateLayer3Vents(layer3Area);
@@ -687,11 +776,26 @@ namespace InfernumMode.Content.WorldGeneration
 
             // Generate the squid den.
             GenerateLayer3SquidDen(layer3Area);
+
+            // Create scenic tiles.
+            GenerateScenicTilesInArea(layer3Area, 12, 1, new ushort[] { (ushort)ModContent.TileType<PyreMantle>(), (ushort)ModContent.TileType<PyreMantleMolten>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<SpiderCoral1>(),
+                (ushort)ModContent.TileType<SpiderCoral2>(),
+                (ushort)ModContent.TileType<SpiderCoral3>(),
+                (ushort)ModContent.TileType<SpiderCoral4>(),
+                (ushort)ModContent.TileType<SpiderCoral5>()
+            });
+            GenerateScenicTilesInArea(layer3Area, 14, 1, new ushort[] { (ushort)ModContent.TileType<PyreMantle>(), (ushort)ModContent.TileType<PyreMantleMolten>() }, new ushort[]
+            {
+                (ushort)ModContent.TileType<ThermalVent1>(),
+                (ushort)ModContent.TileType<ThermalVent2>(),
+                (ushort)ModContent.TileType<ThermalVent3>()
+            });
         }
 
         public static void GenerateLayer3Vents(Rectangle area)
         {
-            ushort ventID = (ushort)ModContent.TileType<HydrothermalVent>();
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
             ushort scoriaOre = (ushort)ModContent.TileType<ScoriaOre>();
             List<Point> ventPositions = new();
@@ -751,6 +855,15 @@ namespace InfernumMode.Content.WorldGeneration
                     continue;
                 }
 
+                // Make the surrounding pyre molten.
+                WorldUtils.Gen(floor, new Shapes.Circle(WorldGen.genRand.Next(15, 22)), Actions.Chain(new GenAction[]
+                {
+                    new Modifiers.Conditions(new Conditions.IsTile((ushort)ModContent.TileType<PyreMantle>())),
+                    new Actions.SetTile((ushort)ModContent.TileType<PyreMantleMolten>()),
+
+                    new Actions.PlaceWall((ushort)ModContent.WallType<PyreMantleWall>())
+                }));
+
                 // Generate a stand of scoria.
                 // TODO -- Make the scoria ore a resource inside a shell of abyssal magma blocks.
                 int moundHeight = WorldGen.genRand.Next(4, 9);
@@ -764,8 +877,15 @@ namespace InfernumMode.Content.WorldGeneration
                     new Actions.SetTile(gravelID, true),
                 }));
 
+                ushort ventID = (ushort)WorldGen.genRand.Next(new int[]
+                {
+                    ModContent.TileType<ThermalVent1>(),
+                    ModContent.TileType<ThermalVent2>(),
+                    ModContent.TileType<ThermalVent3>()
+                });
                 if (MathHelper.Distance(Utilities.GetGroundPositionFrom(new Point(floor.X, floor.Y - moundHeight), new Searches.Up(50)).Y, floor.Y - moundHeight) >= 7f)
-                    WorldGen.PlacePot(floor.X, floor.Y - moundHeight, ventID);
+                    PlaceObjectWithGoddamnForce(floor.X, floor.Y - moundHeight, ventID, 0);
+
                 ventPositions.Add(floor);
             }
         }
@@ -870,11 +990,13 @@ namespace InfernumMode.Content.WorldGeneration
             }
         }
 
-        public static void GenerateLayer3DeepwaterBasalt(Rectangle area)
+        public static void GenerateLayer3PyreMantle(Rectangle area)
         {
             int top = Layer3Top - 10;
+            int wallSeed = WorldGen.genRand.Next();
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
+            ushort pyreID = (ushort)ModContent.TileType<PyreMantle>();
+            ushort pyreWallID = (ushort)ModContent.WallType<PyreMantleWall>();
             FastRandom rng = new(WorldGen.genRand.Next());
 
             for (int i = area.Left; i < area.Right + 36; i++)
@@ -888,13 +1010,16 @@ namespace InfernumMode.Content.WorldGeneration
                     if (!InsideOfLayer3HydrothermalZone(new(i, y)))
                         continue;
 
-                    float ditherChance = Utils.GetLerpValue(top, top + 25f, y, true);
+                    float ditherChance = Utils.GetLerpValue(top, top + 50f, y, true) * Utils.GetLerpValue(area.Right - 25f, area.Right - 60f, i, true);
 
                     // Perform dithering.
                     if (rng.NextFloat() > ditherChance)
                         continue;
 
-                    Main.tile[x, y].TileType = basaltID;
+                    Main.tile[x, y].TileType = pyreID;
+
+                    if (FractalBrownianMotion(x * Layer3CrystalCaveMagnificationFactor * 4f, y * Layer3CrystalCaveMagnificationFactor * 4f, wallSeed, 5) >= 0f)
+                        Main.tile[x, y].WallType = pyreWallID;
                 }
             }
         }
@@ -1015,7 +1140,7 @@ namespace InfernumMode.Content.WorldGeneration
             ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
             ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
-            ushort basaltID = (ushort)ModContent.TileType<DeepwaterBasalt>();
+            ushort pyreID = (ushort)ModContent.TileType<PyreMantle>();
             FastRandom rng = new(WorldGen.genRand.Next());
 
             for (int y = top; y < bottom; y++)
@@ -1029,8 +1154,8 @@ namespace InfernumMode.Content.WorldGeneration
                     if ((t.TileType != gravelID || !t.HasTile) && t.WallType != gravelWallID)
                         continue;
 
-                    // Don't convert deepwater basalt.
-                    if (t.TileType == basaltID)
+                    // Don't convert pyre mantle.
+                    if (t.TileType == pyreID)
                         continue;
 
                     // Perform dithering.
@@ -1113,6 +1238,71 @@ namespace InfernumMode.Content.WorldGeneration
 
             if (p.X >= 5 && p.Y < Main.maxTilesX - 5)
                 Tile.SmoothSlope(p.X, p.Y);
+        }
+
+        public static void GenerateScenicTilesInArea(Rectangle area, int chance, int variants, ushort[] groundTiles, ushort[] tileVariants)
+        {
+            for (int i = area.Left; i < area.Right; i++)
+            {
+                int x = GetActualX(i);
+                for (int y = area.Top; y < area.Bottom; y++)
+                {
+                    Tile t = CalamityUtils.ParanoidTileRetrieval(x, y);
+                    Tile below = CalamityUtils.ParanoidTileRetrieval(x, y + 1);
+                    if (!WorldGen.SolidTile(below) || t.HasTile)
+                        continue;
+
+                    if (!WorldGen.genRand.NextBool(chance))
+                        continue;
+
+                    if (!groundTiles.Contains(below.TileType))
+                        continue;
+
+                    ushort tileID = WorldGen.genRand.Next(tileVariants);
+                    PlaceObjectWithGoddamnForce(x, y, tileID, WorldGen.genRand.Next(variants));
+                }
+            }
+        }
+
+        public static void PlaceObjectWithGoddamnForce(int x, int y, ushort tileID, int variant)
+        {
+            if (!TileObject.CanPlace(x, y, tileID, variant, 0, out _, true, true))
+                return;
+
+            int width = 1;
+            int height = 1;
+            var tileData = TileObjectData.GetTileData(tileID, variant);
+            if (tileData is not null)
+            {
+                width = tileData.CoordinateFullWidth / 18;
+                height = tileData.CoordinateFullHeight / 18;
+            }
+            
+            for (int i = 0; i < width; i++)
+            {
+                if (!WorldGen.SolidTile(x + i, y + 1))
+                    return;
+            }
+
+            // Clear out tiles that were in the area previously, to prevent overlap.
+            for (int i = x; i < x + width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                    WorldGen.KillTile(i, y - j);
+            }
+
+            for (int i = x; i < x + width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    Main.tile[i, y - j].TileType = tileID;
+                    Main.tile[i, y - j].Get<TileWallWireStateData>().HasTile = true;
+                    Main.tile[i, y - j].Get<TileWallWireStateData>().TileFrameX = (short)((i - x + variant * width) * 18);
+                    Main.tile[i, y - j].Get<TileWallWireStateData>().TileFrameY = (short)((height - j - 1) * 18);
+                    Main.tile[i, y - j].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                    Main.tile[i, y - j].Get<TileWallWireStateData>().IsHalfBlock = false;
+                }
+            }
         }
 
         public static bool InsideOfLayer1Forest(Point p)

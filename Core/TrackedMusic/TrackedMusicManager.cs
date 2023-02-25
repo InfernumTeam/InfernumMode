@@ -1,4 +1,3 @@
-using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
@@ -20,22 +19,24 @@ namespace InfernumMode.Core.TrackedMusic
 
         internal static Dictionary<int, Song> CustomTracks = new();
 
+        internal static Dictionary<int, string> CustomTrackDiskPositions = new();
+
         internal static ConstructorInfo SongConstructor;
 
         public static readonly List<string> CustomTrackPaths = new()
         {
             // Grief.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas1",
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas1_FullIntro",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase1",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase1_FullIntro",
 
             // Lament.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas2",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase2",
 
             // Epiphany.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas3",
+            "CalamityModMusic/Sounds/Music/CalamitasPhase3",
 
             // Acceptance.
-            "CalamityModMusic/Sounds/Music/SupremeCalamitas4",
+            "CalamityModMusic/Sounds/Music/CalamitasDefeat",
         };
 
         public static readonly Dictionary<string, BaseTrackedMusic> TrackInformation = new();
@@ -76,21 +77,27 @@ namespace InfernumMode.Core.TrackedMusic
                     break;
 
                 string modName = path.Split('/').First();
+                string fileName = string.Empty;
+                foreach (string part in path.Split('/').Skip(1))
+                    fileName += part + "/";
+                fileName = string.Concat(fileName.Take(fileName.Length - 1)) + ".ogg";
+
                 if (!ModLoader.TryGetMod(modName, out Mod mod))
                     continue;
 
+                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 string musicPath = AssetPathHelper.CleanPath($"{MusicDirectory}/{path}.ogg");
+                CustomTrackDiskPositions[musicSlotIndex] = musicPath;
 
                 // Write the music to a permanent file if it hasn't been placed there yet.
                 if (!File.Exists(musicPath))
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
                     using FileStream saveStream = File.Create(musicPath);
-                    using Stream musicStream = mod.GetFileStream(path.Replace(modName + "/", string.Empty) + ".ogg", true);
+                    using Stream musicStream = mod.GetFileStream(fileName, true);
                     musicStream.CopyTo(saveStream);
                 }
 
-                int musicSlotIndex = MusicLoader.GetMusicSlot(path);
                 TracksThatDontUseTerrariasSystem.Add(musicSlotIndex);
                 CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
             }
@@ -120,6 +127,13 @@ namespace InfernumMode.Core.TrackedMusic
         {
             if (TracksThatDontUseTerrariasSystem.Contains(i))
             {
+                // If for some reason the file isn't present, just use the default system.
+                if (!File.Exists(CustomTrackDiskPositions[i]))
+                {
+                    orig(self, active, i, totalVolume, ref tempFade);
+                    return;
+                }
+
                 if (self.AudioTracks[i].IsPlaying)
                 {
                     self.AudioTracks[i].SetVariable("Volume", 0f);
@@ -174,7 +188,7 @@ namespace InfernumMode.Core.TrackedMusic
                 }
             }
 
-            if (TrackedSong is null)
+            if (TrackedSong is null || !File.Exists(CustomTrackDiskPositions[CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First()]))
                 return;
 
             if (MediaPlayer.State == MediaState.Stopped)

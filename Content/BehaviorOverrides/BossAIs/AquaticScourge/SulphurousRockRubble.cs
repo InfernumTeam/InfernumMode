@@ -39,7 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override void AI()
         {
             // Accelerate.
-            Projectile.velocity *= 1.023f;
+            if (Projectile.velocity.Length() < 20f)
+                Projectile.velocity *= 1.023f;
             Projectile.rotation += Projectile.velocity.X * 0.014f;
 
             // Interact with tiles after enough time has passed.
@@ -76,13 +77,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-                Effect laserScopeEffect = Filters.Scene["PixelatedSightLine"].GetShader().Shader;
+                Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
                 laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.003f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Lime, Color.Olive, 0.7f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Lerp(Color.Yellow, Color.SaddleBrown, 0.8f).ToVector3());
@@ -93,10 +94,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
 
                 laserScopeEffect.CurrentTechnique.Passes[0].Apply();
-                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, opacity * 1900f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, opacity * 2500f, SpriteEffects.None, 0f);
                 Main.spriteBatch.ExitShaderRegion();
             }
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
+            Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.Lime with { A = 0 } * opacity, lightColor, opacity * 6f);
 
             return false;
         }

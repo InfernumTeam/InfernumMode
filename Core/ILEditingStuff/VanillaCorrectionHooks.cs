@@ -35,13 +35,10 @@ using CalamityMod.Systems;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using Mono.Cecil;
-using MonoMod.Utils;
-using MonoMod.RuntimeDetour.HookGen;
-using CecilMethodBody = Mono.Cecil.Cil.MethodBody;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
+using CalamityMod.TileEntities;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -659,7 +656,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ReplaceAbyssWorldgen : IHookEdit
     {
-        internal static void ChangeAbyssGen(Action orig) => orig();
+        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
 
         public void Load() => GenerateAbyss += ChangeAbyssGen;
 
@@ -1012,12 +1009,17 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Unload()
         {
-            UpdateBadLifeRegen += AdjustTimers;
+            UpdateBadLifeRegen -= AdjustTimers;
         }
 
         private void AdjustTimers(ILContext il)
         {
             ILCursor cursor = new(il);
+            cursor.EmitDelegate(() =>
+            {
+                if (!MakeSulphSeaWaterEasierToSeeInHook.CanUseHighQualityWater)
+                    WaterClearingBubble.ClaimAllBubbles();
+            });
 
             int poisonIncrementIndex = 0;
             cursor.GotoNext(i => i.MatchLdcR4(1f / CalamityPlayer.SulphSeaWaterSafetyTime));
@@ -1027,13 +1029,12 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.GotoNext(i => i.MatchLdfld<CalamityPlayer>("SulphWaterPoisoningLevel"));
             cursor.GotoNext(MoveType.After, i => i.MatchLdloc(poisonIncrementIndex));
 
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate((CalamityPlayer calamityPlayer) =>
+            cursor.EmitDelegate(() =>
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
                 {
                     NPC scourge = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>())];
-                    Player player = calamityPlayer.Player;
+                    Player player = Main.LocalPlayer;
                     float acidVerticalLine = scourge.Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidVerticalLineIndex];
                     if (acidVerticalLine > 0f && player.Top.Y >= acidVerticalLine)
                         return AquaticScourgeHeadBehaviorOverride.PoisonChargeUpSpeedFactorFinalPhase;
@@ -1062,36 +1063,64 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class MakeDungeonSpawnAtLeftSideHook : IHookEdit
     {
-        internal static MethodReference ResetWorld;
-
-        private void SearchForResetWorldDelegate(ILContext il)
-        {
-            ILCursor cursor = new(il);
-
-            // Find the first AddGenerationPass call in the world generation method and store the associated delegate it searches for.
-            cursor.GotoNext(i => i.MatchCall<WorldGen>("AddGenerationPass"));
-            cursor.GotoPrev(i => i.MatchLdftn(out ResetWorld));
-        }
-
-        private static void MakeDungeonLeftSide()
-        {
-            ILCursor cursor = new(new ILContext(ResetWorld.SafeResolve()));
-
-            // Find the storage value of the dungeon side and discard it in favor of a consistent -1 value, making it always generate on the left.
-            cursor.GotoNext(MoveType.Before, i => i.MatchStsfld<WorldGen>("dungeonSide"));
-            cursor.Emit(OpCodes.Pop);
-            cursor.Emit(OpCodes.Ldc_I4_M1);
-        }
+        // This is so fucking hideous but the alternative is IL editing on anonymous methods.
+        internal static bool ReturnZeroInRandomness = false;
 
         public void Load()
         {
-            IL.Terraria.WorldGen.GenerateWorld += SearchForResetWorldDelegate;
-            MakeDungeonLeftSide();
+            On.Terraria.WorldGen.RandomizeMoonState += PrepareDungeonSide;
+            On.Terraria.Utilities.UnifiedRandom.Next_int += HijackRNG;
         }
 
         public void Unload()
         {
-            IL.Terraria.WorldGen.GenerateWorld -= SearchForResetWorldDelegate;
+            On.Terraria.WorldGen.RandomizeMoonState -= PrepareDungeonSide;
+            On.Terraria.Utilities.UnifiedRandom.Next_int -= HijackRNG;
+        }
+
+        private void PrepareDungeonSide(On.Terraria.WorldGen.orig_RandomizeMoonState orig)
+        {
+            orig();
+            ReturnZeroInRandomness = true;
+        }
+
+        private int HijackRNG(On.Terraria.Utilities.UnifiedRandom.orig_Next_int orig, Terraria.Utilities.UnifiedRandom self, int maxValue)
+        {
+            if (ReturnZeroInRandomness)
+            {
+                ReturnZeroInRandomness = false;
+                return 0;
+            }
+
+            return orig(self, maxValue);
+        }
+    }
+
+    public class AllowTalkingToDraedonGook : IHookEdit
+    {
+        public void Load()
+        {
+            if (DraetingSimSystem.ShouldEnableDraedonDialog)
+                DrawCodebreakerUI += ChangeTalkCondition;
+        }
+
+        public void Unload()
+        {
+            if (DraetingSimSystem.ShouldEnableDraedonDialog)
+                DrawCodebreakerUI -= ChangeTalkCondition;
+        }
+
+        private void ChangeTalkCondition(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(i => i.MatchCallOrCallvirt<TECodebreaker>("get_ReadyToSummonDraedon"));
+
+            for (int i = 0; i < 2; i++)
+                cursor.GotoNext(j => j.MatchStloc(out _));
+
+            cursor.GotoPrev(MoveType.After, i => i.MatchLdcI4(0));
+            cursor.Emit(OpCodes.Pop);
+            cursor.EmitDelegate(() => DownedBossSystem.downedExoMechs.ToInt());
         }
     }
 }

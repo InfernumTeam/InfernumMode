@@ -465,6 +465,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                         EnrageTimer = 1500f;
                     }
+
+                    if (CalamityConfig.Instance.Screenshake)
+                        target.Infernum_Camera().CurrentScreenShakePower = 2f;
                 }
 
                 // Decide rotation.

@@ -36,6 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()
@@ -96,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 for (int i = 0; i <= 8; i++)
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
 
-                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 30, adjustedAngle);
+                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 15, adjustedAngle);
             }
         }
 

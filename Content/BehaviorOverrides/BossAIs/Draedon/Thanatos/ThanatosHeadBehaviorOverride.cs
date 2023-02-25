@@ -26,6 +26,7 @@ using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using InfernumMode.Core.GlobalInstances.Systems;
 using System.IO;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -615,7 +616,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a telegraph sound to alert the player of the impending charge.
             if (attackTimer == slowdownTime + chargePreparationTime / 2)
+            {
                 SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
+
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    target.Infernum_Camera().CurrentScreenShakePower = 6f;
+                }
+            }
 
             // Begin the charge.
             if (attackTimer >= slowdownTime + chargePreparationTime && attackTimer < slowdownTime + chargePreparationTime + redirectTime)
@@ -772,6 +780,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<OverloadBoom>(), 0, 0f);
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), PowerfulShotDamage, 0f, -1, 0f, lightRaySpread * 0.53f);
+                }
+
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1.7f, 45);
+                    target.Infernum_Camera().CurrentScreenShakePower = 7f;
                 }
             }
 
@@ -1032,6 +1046,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
                 npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
+
+            if (oldAttackType == ThanatosHeadAttackType.RefractionRotorRays)
+                npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
 
             // In the final phase a preset order is established, ending with the ultimate attack.
             if (ExoMechManagement.CurrentThanatosPhase >= 6)

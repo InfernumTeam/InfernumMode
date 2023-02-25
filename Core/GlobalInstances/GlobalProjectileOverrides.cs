@@ -222,7 +222,7 @@ namespace InfernumMode.Core.GlobalInstances
                 if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
                     return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, Main.spriteBatch, lightColor);
             }
-            return base.PreDraw(projectile, ref lightColor);
+            return true;
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

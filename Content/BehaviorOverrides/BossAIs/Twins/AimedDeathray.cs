@@ -81,7 +81,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * Projectile.localAI[1] * 0.5f;
 
         public Color LaserColorFunction(float completionRatio)

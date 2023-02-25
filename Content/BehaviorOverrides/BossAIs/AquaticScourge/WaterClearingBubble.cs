@@ -34,11 +34,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             On.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += PrepareWater;
         }
 
-        public void PrepareWater(On.Terraria.GameContent.Liquid.LiquidRenderer.orig_InternalDraw orig, Terraria.GameContent.Liquid.LiquidRenderer self, SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
+        public static void PrepareWater(On.Terraria.GameContent.Liquid.LiquidRenderer.orig_InternalDraw orig, Terraria.GameContent.Liquid.LiquidRenderer self, SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
+        {
+            ClaimAllBubbles();
+            orig(self, spriteBatch, drawOffset, waterStyle, globalAlpha, isBackgroundDraw);
+        }
+
+        public static void ClaimAllBubbles()
         {
             // Make the nearby water clear.
             SulphuricWaterSafeZoneSystem.NearbySafeTiles.Clear();
-            foreach (Projectile bubble in Utilities.AllProjectilesByID(Type))
+            foreach (Projectile bubble in Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterClearingBubble>()))
             {
                 if (bubble.Opacity <= 0f || !bubble.WithinRange(Main.LocalPlayer.Center, 2000f))
                     continue;
@@ -50,8 +56,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 SulphuricWaterSafeZoneSystem.NearbySafeTiles[p] = MathHelper.Max(power, bubble.scale);
             }
-
-            orig(self, spriteBatch, drawOffset, waterStyle, globalAlpha, isBackgroundDraw);
         }
 
         public override void SetDefaults()
@@ -140,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
                 }
 
-                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 20, adjustedAngle);
+                WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 12, adjustedAngle);
             }
         }
 

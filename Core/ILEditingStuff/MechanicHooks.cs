@@ -7,6 +7,7 @@ using CalamityMod.Particles;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -376,9 +377,16 @@ namespace InfernumMode.Core.ILEditingStuff
             set;
         }
 
+        public static bool CanUseHighQualityWater => Main.gfxQuality >= 0.75f && !InfernumConfig.Instance.ReducedGraphicsConfig;
+
         private void MakeWaterEasierToSeeIn(ILContext il)
         {
             ILCursor c = new(il);
+            c.EmitDelegate(() =>
+            {
+                if (!CanUseHighQualityWater)
+                    SulphuricWaterSafeZoneSystem.NearbySafeTiles.Clear();
+            });
 
             for (int i = 0; i < 4; i++)
             {

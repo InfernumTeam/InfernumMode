@@ -9,7 +9,10 @@ using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
+using System;
 using Terraria;
+using Terraria.GameContent.Events;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -18,8 +21,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
 {
     public class BiomeEffectsPlayer : ModPlayer
     {
-        // This exists because the crystal door in the profaned temple uses the shatter timer as a ref local for readability, which is not possible on properties.
+        // These exist because the crystal door in the profaned temple uses the shatter timer as a ref local for readability, which is not possible on properties.
         internal int providenceRoomShatterTimer;
+
+        internal float lostColosseumTeleportInterpolant;
 
         public int ProvidenceRoomShatterTimer
         {
@@ -93,6 +98,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             }
         }
 
+        internal float LostColosseumTeleportInterpolant
+        {
+            get => lostColosseumTeleportInterpolant;
+            set => lostColosseumTeleportInterpolant = value;
+        }
+
         public override void ResetEffects()
         {
             // Disable block placement and destruction in the profaned temple and lost colosseum.
@@ -134,6 +145,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Disable Acid Rain in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
                 Player.Calamity().noStupidNaturalARSpawns = true;
+
+            LostColosseumTeleportInterpolant = MathHelper.Clamp(LostColosseumTeleportInterpolant - 0.008f, 0f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.
@@ -186,8 +199,18 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Player.Calamity().momentumCapacitorBoost = 1.8f;
 
             // Reset the screen distortion shader for the next frame.
-            if (Main.netMode != NetmodeID.Server && InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
-                InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
+            if (Main.netMode != NetmodeID.Server)
+            { 
+                if (InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
+                    InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
+                if (InfernumEffectsRegistry.ScreenBorderShader.IsActive())
+                {
+                    InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseOpacity(0f);
+                    InfernumEffectsRegistry.ScreenBorderShader.GetShader().UseIntensity(0f);
+                    InfernumEffectsRegistry.ScreenBorderShader.Deactivate();
+                }
+            }
+            UpdatePortalDistortionEffects();
 
             // Check whether to change the boss rush list.
 
@@ -199,6 +222,26 @@ namespace InfernumMode.Core.GlobalInstances.Players
             //    BossRushChanges.SwapToOrder(false);            
         }
 
+        public void UpdatePortalDistortionEffects()
+        {
+            if (LostColosseumTeleportInterpolant <= 0f || Main.netMode == NetmodeID.Server || Main.myPlayer != Player.whoAmI)
+                return;
+
+            if (!InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
+                Filters.Scene.Activate("InfernumMode:ScreenDistortion", Player.Center);
+            PrepareScreenDistortionShaderParameters();
+            if (lostColosseumTeleportInterpolant >= 0.67f)
+                MoonlordDeathDrama.RequestLight(1f, Player.Center);
+        }
+
+        public void PrepareScreenDistortionShaderParameters()
+        {
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue((float)Math.Pow(LostColosseumTeleportInterpolant, 0.89) * 50f);
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["uvSampleFactors"].SetValue(new Vector2(1f, 5f));
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(6f);
+        }
+
         public override void UpdateDead()
         {
             // Ensure that the player respawns at the campfire in the Lost Colosseum.
@@ -208,6 +251,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;
                 Main.spawnTileY = LostColosseum.CampfirePosition.Y;
             }
+
+            LostColosseumTeleportInterpolant = 0f;
         }
     }
 }

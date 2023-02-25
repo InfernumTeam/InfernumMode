@@ -21,7 +21,7 @@ namespace InfernumMode
         public static Vector2 GetGroundPositionFrom(Vector2 v, GenSearch search = null)
         {
             search ??= new Searches.Down(9001);
-            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated()), out Point result))
+            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated(), new CustomTileConditions.NotPlatform()), out Point result))
                 return v;
             return result.ToWorldCoordinates();
         }

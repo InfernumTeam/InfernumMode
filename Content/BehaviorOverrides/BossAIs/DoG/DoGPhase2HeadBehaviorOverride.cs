@@ -6,6 +6,8 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
@@ -24,6 +26,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Common.Graphics.PrimitiveTrailCopy;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.DoG.DoGPhase1HeadBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
@@ -198,6 +201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
                     sentinelAttackTimer = 0f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.2f, 30);
                 }
                 return false;
             }
@@ -563,6 +567,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             int lastSegmentsDestructionDelay = 30;
             int lastSegmentsDestructionTime = 60;
             float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.GetLerpValue(15f, 210f, deathAnimationTimer, true));
+            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(Main.player[npc.target].Center), 0.02f);
             if (npc.velocity.Length() != idealSpeed)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
 
@@ -574,10 +579,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (deathAnimationTimer == textDelay + 100f)
                 Utilities.DisplayText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
 
-            if (deathAnimationTimer == deathAnimationTimer + segmentDestructionTime - 50f)
+            if (deathAnimationTimer == textDelay + 200f)
                 Utilities.DisplayText("I WILL NOT...", Color.Cyan);
 
-            if (deathAnimationTimer == deathAnimationTimer + segmentDestructionTime + 40f)
+            if (deathAnimationTimer == textDelay + 270f)
                 Utilities.DisplayText("I...", Color.Cyan);
 
             // Destroy most of DoG's first segments.
@@ -749,8 +754,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             else
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
             
-            float slitherOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * universalFightTimer / 160f) * Utils.GetLerpValue(400f, 540f, distanceFromBaseDestination, true) * 0.19f;
-
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
@@ -787,7 +790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 14.333f, flySpeedFactor * 32f);
 
                 // And handle movement.
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + slitherOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * speed;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 25f);
             }
 
@@ -1172,7 +1175,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             SoundEngine.PlaySound(YanmeisKnife.HitSound with { Volume = 1.7f }, target.Center);
                             SoundEngine.PlaySound(TeslaCannon.FireSound with { Volume = 1.7f }, target.Center);
-                            target.Calamity().GeneralScreenShakePower = 10f;
+                            if (CalamityConfig.Instance.Screenshake)
+                            {
+                                target.Calamity().GeneralScreenShakePower = 10f;
+                                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
+                            }
                         }
                     }
 
@@ -1397,6 +1404,96 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Main.spriteBatch.Draw(headTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             Main.spriteBatch.Draw(glowTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(Color.White) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
+        }
+
+        public static float PrimitiveWidthFunction(float completionRatio) => 35f;
+
+        public static Color PrimitiveColorFunction(float completionRatio) => Color.Fuchsia;
+
+        public static void DrawDashTimingIndicator(NPC npc, SpriteBatch spriteBatch)
+        {
+            npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.DoGDashIndicatorVertexShader);
+            Player target;
+            if (Main.player.IndexInRange(npc.target))
+                target = Main.player[npc.target];
+            else
+                return;
+            ref float outerRingOpacity = ref npc.Infernum().ExtraAI[DashTelegraphOuterOpacityIndex];
+            ref float innerRingOpacity = ref npc.Infernum().ExtraAI[DashTelegraphInnerOpacityIndex];
+            bool doNotChangeOpacities = false;
+
+            if (npc.Infernum().ExtraAI[PerformingSpecialAttackFlagIndex] != 0 || !(npc.Infernum().ExtraAI[PhaseCycleTimerIndex] % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < AggressiveMovementTimeP1))
+            {
+                if (outerRingOpacity > 0f || innerRingOpacity > 0f)
+                {
+                    outerRingOpacity = MathHelper.Clamp(outerRingOpacity - 0.05f, 0f, 1.1f);
+                    innerRingOpacity = MathHelper.Clamp(innerRingOpacity - 0.05f, 0f, 1.1f);
+                    doNotChangeOpacities = true;
+                }
+                else
+                    return;
+            }
+
+            float distanceToTarget = npc.Distance(target.Center);
+
+            float maxDistanceToDraw = 1500f;
+            float outerRingFullyDrawDistance = 1000f;
+            float innerRingFullyDrawDistance = 240f;
+            float ringsShineDistance = 230f;
+
+            // Do nothing if far enough away.
+            if (distanceToTarget > maxDistanceToDraw)
+                return;
+
+            if (!doNotChangeOpacities)
+            {
+                // If inbetween the max distance, and the minimum distance for the outer ring to fully draw, lerp its opacity between 0 and 1.
+                if (distanceToTarget <= maxDistanceToDraw && distanceToTarget > outerRingFullyDrawDistance)
+                    outerRingOpacity = MathHelper.Lerp(0f, 1f, 1f - (distanceToTarget - outerRingFullyDrawDistance) / (outerRingFullyDrawDistance));
+
+                else if (distanceToTarget <= outerRingFullyDrawDistance && distanceToTarget > innerRingFullyDrawDistance)
+                {
+                    outerRingOpacity = 1f;
+                    float interpolant = 1f - ((distanceToTarget - innerRingFullyDrawDistance) / (outerRingFullyDrawDistance));
+                    innerRingOpacity = MathHelper.Lerp(0f, 1f, interpolant);
+                }
+                else if (distanceToTarget <= innerRingFullyDrawDistance && distanceToTarget > ringsShineDistance)
+                {
+                    float interpolant = 1f - ((distanceToTarget - ringsShineDistance) / (innerRingFullyDrawDistance));
+                    innerRingOpacity = outerRingOpacity = MathHelper.Lerp(1f, 1f, interpolant);
+                }
+                else if (distanceToTarget <= ringsShineDistance)
+                    innerRingOpacity = outerRingOpacity = 1.1f;
+            }
+
+            float maxDrawDistanceFromPlayer = 105f;
+
+            // Draw the inner ring.
+            if (innerRingOpacity > 0f)
+            {
+                float radius = MathHelper.Clamp(MathHelper.Lerp(0f, maxDrawDistanceFromPlayer, innerRingOpacity), 0f, maxDrawDistanceFromPlayer);
+                Vector2[] drawPoints = new Vector2[20];
+                for (int i = 0; i < drawPoints.Length; i++)
+                    drawPoints[i] = target.Center + Vector2.UnitY.RotatedBy(0.62f + (5.4f * ((float)i / drawPoints.Length))) * radius;
+
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseOpacity(innerRingOpacity);
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseImage1("Images/Extra_194");
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseColor(Color.Cyan);
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(drawPoints, -Main.screenPosition, 50);
+            }
+
+            // Draw the outer ring.
+            if (outerRingOpacity > 0f)
+            {
+                Vector2[] drawPoints = new Vector2[20];
+                for (int i = 0; i < drawPoints.Length; i++)
+                    drawPoints[i] = target.Center + Vector2.UnitY.RotatedBy(0.62f + (5.4f * ((float)i / drawPoints.Length))) * maxDrawDistanceFromPlayer;
+
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseOpacity(outerRingOpacity);
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseImage1("Images/Extra_194");
+                InfernumEffectsRegistry.DoGDashIndicatorVertexShader.UseColor(Color.Lerp(Color.Fuchsia, Color.White, 0.35f));
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(drawPoints, -Main.screenPosition, 50);
+            }
         }
         #endregion Drawing
     }

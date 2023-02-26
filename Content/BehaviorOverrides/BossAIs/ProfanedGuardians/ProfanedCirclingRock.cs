@@ -1,8 +1,10 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
+using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -68,10 +70,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 for (int i = 0; i < 20; i++)
                 {
                     Vector2 velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(4f, 6f);
-                    Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
+                    Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, 
+                        Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
                     GeneralParticleHandler.SpawnParticle(rockParticle);
 
-                    Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true, rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
+                    Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, 
+                        Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true,
+                        rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
                     GeneralParticleHandler.SpawnParticle(fire);                 
                 }
                 if (CalamityConfig.Instance.Screenshake)
@@ -79,9 +84,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
             if (Timer > WaitTime + ReelbackTime)
             {
-                Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
+                Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero,
+                    Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
                 GeneralParticleHandler.SpawnParticle(rockParticle);
                 Projectile.rotation -= 0.1f;
+                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center,
+                0f, Projectile.scale, 15f, 170);
             }
         }
 

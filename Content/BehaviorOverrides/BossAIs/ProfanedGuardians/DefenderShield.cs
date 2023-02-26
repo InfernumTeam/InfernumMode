@@ -94,10 +94,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 backglowColor.A = 0;
-                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * MathHelper.Clamp(Projectile.Opacity * 2f, 0f, 1f), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, spriteEffects, 0);
+                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * MathHelper.Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, spriteEffects, 0);
             }
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, spriteEffects, 0);
             return false;
         }
     }

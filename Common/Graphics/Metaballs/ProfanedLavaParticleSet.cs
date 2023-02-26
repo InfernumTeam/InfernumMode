@@ -17,9 +17,9 @@ namespace InfernumMode.Common.Graphics.Metaballs
     {
         public override Color BorderColor => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0f);
 
-        public override bool BorderShouldBeSolid => false;
+        public override bool BorderShouldBeSolid => true;
 
-        public override float BorderSize => 1f;
+        public override float BorderSize => 2f;
 
         public override List<Effect> BackgroundShaders => new()
         {

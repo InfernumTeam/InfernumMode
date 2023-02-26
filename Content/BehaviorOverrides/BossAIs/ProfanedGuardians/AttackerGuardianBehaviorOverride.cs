@@ -327,14 +327,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 backglowColor.A = 0;
                 SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
             }
         }
 
         public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Color lightColor, SpriteEffects direction, float glowAmount)
         {
-            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * glowAmount, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
-            spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 } * glowAmount, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
         }
 
         public static void PrepareFireAfterimages(NPC npc, SpriteBatch spriteBatch, SpriteEffects direction)
@@ -363,7 +363,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Vector2 basePosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
                 Vector2 positionOffset = (npc.velocity * MathHelper.Lerp(0f, 8f, (float)i / npc.oldPos.Length));
-                spriteBatch.Draw(afterTexture, basePosition + positionOffset, null, WayfinderSymbol.Colors[1] with { A = 0 } * 0.8f, npc.rotation, afterTexture.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
+                spriteBatch.Draw(afterTexture, basePosition + positionOffset, null, WayfinderSymbol.Colors[1] with { A = 0 } * 0.8f * npc.Opacity, npc.rotation, afterTexture.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
             }
         }
 

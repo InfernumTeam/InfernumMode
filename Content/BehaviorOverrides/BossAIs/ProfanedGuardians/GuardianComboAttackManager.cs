@@ -2,8 +2,11 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
+using CalamityMod.Particles.Metaballs;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -11,6 +14,7 @@ using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -221,7 +225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
                     {
                         NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
-                        Vector2 hoverPosition = CrystalPosition + new Vector2(125f, 475f);
+                        Vector2 hoverPosition = CrystalPosition + new Vector2(155f, 475f);
                         // Sit still behind and beneath the crystal.
                         if (npc.Distance(hoverPosition) > 7f && movedToPosition == 0f)
                             npc.velocity = npc.SafeDirectionTo(hoverPosition, Vector2.UnitY) * 5f;
@@ -572,6 +576,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
+                        }
                         substate++;
                         universalAttackTimer = 0;
                         break;
@@ -730,6 +740,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
+                        }
                         substate++;
                         localAttackTimer = 0;
                         break;
@@ -1399,10 +1415,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             float maxRamsToComplete = 4f;
             float hoverWaitTime = 45f;
-            float maxMoveTime = 120f;
             float flySpeed = 25f;
+            float fadeInTime = 16f;
             // Get faster if taking too long to get into position.
-            float flySpeedScaled = universalAttackTimer > maxMoveTime ? flySpeed + (universalAttackTimer - maxMoveTime) : flySpeed;
+            //float flySpeedScaled = universalAttackTimer > maxMoveTime ? flySpeed + (universalAttackTimer - maxMoveTime) : flySpeed;
 
             float commanderHoverDistance = 600f;
             float defenderHoverDistance = commanderHoverDistance * 0.75f;
@@ -1432,16 +1448,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // Get an offset from the player.
                     case 0:
-                        commanderOffset += Main.rand.NextFloat(MathHelper.PiOver4, MathHelper.PiOver2) * Main.rand.NextFromList(-1f, 1f);
-                        substate++;
-                        universalAttackTimer = 0f;
+                        commanderOffset += Main.rand.NextFloat(0f, MathHelper.TwoPi) * Main.rand.NextFromList(-1f, 1f);
+                        if (universalAttackTimer <= fadeInTime)
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.0625f, 0f, 1f);
+                        else
+                        {
+                            substate++;
+                            universalAttackTimer = 0f;
+                        }
                         break;
 
-                    // Move to said offset.
+                    // Teleport and stick to said offset.
                     case 1:
                         Vector2 hoverDestination = target.Center + commanderOffset.ToRotationVector2() * commanderHoverDistance;
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeedScaled)) / 8f;
+                        if (universalAttackTimer == 1)
+                        {
+                            if (CalamityConfig.Instance.Screenshake)
+                                ScreenEffectSystem.SetFlashEffect(target.Center, 1f, 30);
+
+                            for (int i = 0; i < 75; i++)
+                            {
+                                Particle fire = new HeavySmokeParticle(hoverDestination + Main.rand.NextVector2Circular(npc.width * 0.75f, npc.height * 0.75f), Vector2.Zero,
+                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 60, Main.rand.NextFloat(0.75f, 1f), 1f, glowing: true,
+                                    rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
+                                GeneralParticleHandler.SpawnParticle(fire);
+                            }
+
+                            CreateFireExplosion(hoverDestination);
+                            npc.Center = hoverDestination;
+                        }
+
+                        if (universalAttackTimer <= fadeInTime)
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -1496,6 +1537,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
 
+                        InfernumTextureRegistry.Arrow.Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, npc.Center,
+                            0f, 3f, 16f, 40);
+
                         if (npc.WithinRange(defender.Center, 180f) || universalAttackTimer >= 240f)
                         {
                             substate++;
@@ -1519,23 +1563,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 GeneralParticleHandler.SpawnParticle(rock);
                             }
 
-                            // Spawn a bunch of light particles.
-                            for (int i = 0; i < 20; i++)
-                            {
-                                Vector2 position = impactCenter + Main.rand.NextVector2Circular(20f, 20f);
-                                Particle light = new GlowyLightParticle(position, impactCenter.DirectionTo(position) * Main.rand.NextFloat(3f, 5f),
-                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : Color.OrangeRed, 60, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(0.95f, 1.05f), true);
-                                GeneralParticleHandler.SpawnParticle(light);
-                            }
-
-                            // Create a fire explosion.
-                            for (int i = 0; i < 30; i++)
-                            {
-                                MediumMistParticle fireExplosion = new(impactCenter + Main.rand.NextVector2Circular(80f, 80f), Vector2.Zero,
-                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
-                                    Color.Gray, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(220f, 250f));
-                                GeneralParticleHandler.SpawnParticle(fireExplosion);
-                            }
+                            CreateFireExplosion(impactCenter);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -1567,12 +1595,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
                             if (CalamityConfig.Instance.Screenshake)
-                            {
-                                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.65f, 45);
-                            }
+                                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
-                            defender.life -= (int)(defender.lifeMax * 0.003f);
+                            defender.life -= (int)(defender.lifeMax * 0.001f);
                         }
 
                         npc.velocity *= 0.99f;
@@ -1584,7 +1610,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             ramsCompleted++;
                             if (ramsCompleted >= maxRamsToComplete)
                             {
-                                SelectNewAttack(commander, ref universalAttackTimer);
+                                SelectNewAttack(commander, ref universalAttackTimer, (float)GuardiansAttackType.CrashRam);
                                 return;
                             }
 
@@ -1602,11 +1628,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 switch (substate)
                 {
+                    case 0:
+                        if (universalAttackTimer <= fadeInTime)
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.0625f, 0f, 1f);
+                        break;
                     // Move to said offset.
                     case 1:
                         Vector2 hoverDestination = target.Center + (commanderOffset + MathF.PI).ToRotationVector2() * defenderHoverDistance;
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeedScaled)) / 8f;
+                        if (universalAttackTimer == 1)
+                        {
+                            npc.Center = hoverDestination;
+                            for (int i = 0; i < 75; i++)
+                            {
+                                Particle fire = new HeavySmokeParticle(hoverDestination + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f), Vector2.Zero,
+                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 60, Main.rand.NextFloat(0.75f, 1f), 1f, glowing: true,
+                                    rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
+                                GeneralParticleHandler.SpawnParticle(fire);
+                            }
+                            CreateFireExplosion(hoverDestination);
+                        }
+
+                        if (universalAttackTimer <= (int)(fadeInTime))
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -1996,21 +2042,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
                             Utilities.NewProjectileBetter(center, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
-                            int rockAmount = 25;
-                            // Also spawn a bunch of rocks with slightly random direction and speed.
-                            for (int i = 0; i < rockAmount; i++)
-                            {
-
-                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock =>
-                                {
-                                    rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Gravity;
-                                });
-
-                                Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f));
-                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 45f);
-
-                                Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
-                            }
                         }
                     }
 
@@ -2021,7 +2052,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
-                            int rockAmount = 25;
+                            int rockAmount = 35;
                             // Also spawn a bunch of rocks with slightly random direction and speed.
                             for (int i = 0; i < rockAmount; i++)
                             {
@@ -2031,8 +2062,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                     rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Gravity;
                                 });
 
-                                Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f));
-                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 45f);
+                                Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.7f, 0.7f));
+                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(39f, 45f);
 
                                 Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
                             }
@@ -2132,6 +2163,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region AI Utilities
+        public static void CreateFireExplosion(Vector2 impactCenter, bool bigExplosion = true)
+        {
+            float scaleModifier = bigExplosion ? 1f : 0.75f;
+            // Spawn a bunch of light particles.
+            for (int i = 0; i < 20; i++)
+            {
+                Vector2 position = impactCenter + Main.rand.NextVector2Circular(20f, 20f);
+                Particle light = new GlowyLightParticle(position, impactCenter.DirectionTo(position) * Main.rand.NextFloat(3f, 5f),
+                    Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : Color.OrangeRed, 60, Main.rand.NextFloat(0.85f, 1.15f) * scaleModifier, Main.rand.NextFloat(0.95f, 1.05f), true);
+                GeneralParticleHandler.SpawnParticle(light);
+            }
+
+            // Create a fire explosion.
+            for (int i = 0; i < 30; i++)
+            {
+                MediumMistParticle fireExplosion = new(impactCenter + Main.rand.NextVector2Circular(80f, 80f), Vector2.Zero,
+                    Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
+                    Color.Gray, Main.rand.NextFloat(0.85f, 1.15f) * scaleModifier, Main.rand.NextFloat(220f, 250f));
+                GeneralParticleHandler.SpawnParticle(fireExplosion);
+            }
+        }
         public static float GetLavaWaveHeightFromWorldBottom(NPC defender)
         {
             ProfanedLavaWave lavaWave = null;

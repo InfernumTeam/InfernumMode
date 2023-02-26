@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float Width => BigVersion ? 700 : 160f;
 
-        public float VariableWidth => Width * Utilities.EaseInOutCubic(CurrentLength / MaxLength);
+        public float VariableWidth => Width * (BigVersion ? CalamityUtils.ExpInEasing(CurrentLength / MaxLength, 0) :Utilities.EaseInOutCubic(CurrentLength / MaxLength));
 
         public override void SetStaticDefaults()
         {
@@ -60,7 +60,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             if (StretchOffset == 0)
-                StretchOffset = Main.rand.NextFloat(-0.1f, 0.1f);
+            {
+                Projectile.timeLeft = Lifetime;
+                StretchOffset = Main.rand.NextFloat(-0.1f, 0f) * Main.rand.NextFromList(-1, 1);
+            }
             if (Timer >= TelegraphLength - 20)
                 CurrentLength = MaxLength * MathF.Sin((Timer - TelegraphLength - 10) / (Lifetime - TelegraphLength - 10) * MathF.PI);
             Timer++;

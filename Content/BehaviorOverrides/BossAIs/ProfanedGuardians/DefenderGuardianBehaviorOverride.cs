@@ -261,8 +261,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             FireDrawer ??= new PrimitiveTrailCopy((float completionRatio) => commander.Infernum().ExtraAI[DefenderFireSuckupWidthIndex] * 50f,
                 FireColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
 
-            Vector2 startPos = npc.Center;
-            Vector2 endPos = npc.Center + new Vector2(0f, 700f);
+            Vector2 startPos = npc.Center + new Vector2(-26, 0);
+            Vector2 endPos = startPos + new Vector2(0f, 700f);
             Vector2[] drawPositions = new Vector2[8];
             for (int i = 0; i < drawPositions.Length; i++)
                 drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
@@ -299,7 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 backglowColor.A = 0;
                 SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
             }
         }
 

@@ -25,6 +25,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.Map;
 using Terraria.ModLoader;
+using static CalamityMod.Particles.Metaballs.BaseFusableParticleSet;
 
 namespace InfernumMode
 {
@@ -533,6 +534,37 @@ namespace InfernumMode
             // "Flush" the screen, removing any previous things drawn to it.
             flushColor ??= Color.Transparent;
             graphicsDevice.Clear(flushColor.Value);
+        }
+
+        public static void CreateMetaballsFromTexture(this Texture2D texture, ref List<FusableParticle> particleList, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35)
+        {
+            // Leave if this is null.
+            if (particleList is null)
+                return;
+
+            // Get the dimensions of the texture.
+            int textureWidth = texture.Width;
+            int textureHeight = texture.Height;
+
+            // Get the data of every color in the texture.
+            Color[] colorData = new Color[textureWidth * textureHeight];
+            texture.GetData(colorData);
+
+            // Loop across the texture lengthways, one row at a time.
+            for (int h = 0; h < textureHeight; h++)
+            {
+                for (int w = 0; w < textureWidth; w++)
+                {
+                    // If the current pixel has any alpha, and the chance is selected (this exists to add variation and prevent having way too many metaballs spawn)
+                    if (colorData[w * h].A > 0 && Main.rand.NextBool(spawnChance))
+                    {
+                        Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f);
+                        Vector2 metaballSpawnPosition = texturePosition -positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
+                        FusableParticle particle = new(metaballSpawnPosition, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f) * colorData[w * h].A / 255);
+                        particleList.Add(particle);
+                    }
+                }
+            }
         }
     }
 }

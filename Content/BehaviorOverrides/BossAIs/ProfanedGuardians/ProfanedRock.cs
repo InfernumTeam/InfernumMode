@@ -1,8 +1,10 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
+using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public string CurrentVarient = Textures[0];
 
-        public const int RedHotGlowTimer = 30;
+        public int RedHotGlowTimer = 30;
 
         public int RockTypeVarient = (int)RockType.Aimed;
 
@@ -69,32 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void OnSpawn(IEntitySource source)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                int varient = Main.rand.Next(4);
-                switch (varient)
-                {
-                    case 0:
-                        CurrentVarient = Textures[varient];
-                        break;
-                    case 1:
-                        CurrentVarient = Textures[varient];
-                        Projectile.width = 34;
-                        Projectile.height = 38;
-                        break;
-                    case 2:
-                        CurrentVarient = Textures[varient];
-                        Projectile.width = 36;
-                        Projectile.height = 46;
-                        break;
-                    case 3:
-                        CurrentVarient = Textures[varient];
-                        Projectile.width = 28;
-                        Projectile.height = 36;
-                        break;
-                }
-                Projectile.netUpdate = true;
-            }
+            
         }
 
         public override void AI()
@@ -103,6 +80,43 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Projectile.Kill();
                 return;
+            }
+
+            if (Projectile.localAI[0] == 0)
+            {
+                Projectile.localAI[0] = 1;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int varient = Main.rand.Next(4);
+                    switch (varient)
+                    {
+                        case 0:
+                            CurrentVarient = Textures[varient];
+                            break;
+                        case 1:
+                            CurrentVarient = Textures[varient];
+                            Projectile.width = 34;
+                            Projectile.height = 38;
+                            break;
+                        case 2:
+                            CurrentVarient = Textures[varient];
+                            Projectile.width = 36;
+                            Projectile.height = 46;
+                            break;
+                        case 3:
+                            CurrentVarient = Textures[varient];
+                            Projectile.width = 28;
+                            Projectile.height = 36;
+                            break;
+                    }
+                    Projectile.netUpdate = true;
+                }
+
+                if ((RockType)RockTypeVarient == RockType.Gravity)
+                {
+                    RedHotGlowTimer = 120;
+                    Projectile.timeLeft = 360;
+                }
             }
 
             Player target = Main.player[Owner.target];
@@ -116,10 +130,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < 20; i++)
                         {
                             Vector2 velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(4f, 6f);
-                            Particle rock = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
+                            Particle rock = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, Color.SandyBrown,
+                                Main.rand.NextFloat(1.25f, 1.55f), 90);
                             GeneralParticleHandler.SpawnParticle(rock);
 
-                            Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true, rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
+                            Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero,
+                                Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true,
+                                rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
                             GeneralParticleHandler.SpawnParticle(fire);
                         }
                         if (CalamityConfig.Instance.Screenshake)
@@ -138,8 +155,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
             }
 
-            Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
+            Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown,
+                Main.rand.NextFloat(0.45f, 0.75f), 30);
             GeneralParticleHandler.SpawnParticle(rockParticle);
+            ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center + Projectile.velocity * 0.5f,
+                0f, Projectile.scale, 15f, 170);
             Projectile.rotation -= 0.1f;
             Timer++;
         }

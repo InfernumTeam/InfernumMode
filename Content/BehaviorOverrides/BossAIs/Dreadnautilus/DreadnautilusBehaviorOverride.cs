@@ -719,7 +719,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
                 if (attackTimer == 1f)
                 {
-                    npc.Center = target.Center - Vector2.UnitY * 875f;
+                    npc.Center = target.Center - Vector2.UnitY * 500f;
                     npc.netUpdate = true;
                 }
             }

@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -39,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.alpha = 255;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -71,8 +73,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Time > 80f && Projectile.velocity.Length() < SpeedPower * 33f)
                 Projectile.velocity *= 1f + SpeedPower * 0.03f;
 
+            bool fadingAway = Projectile.Infernum().FadeAwayTimer >= 1;
             if (Time <= 80f)
-                Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * (MathHelper.Lerp(110f, 72f, SpeedPower) - InwardRadiusOffset);
+            {
+                // Make the bomb radius fade away if the projectile itself is fading away.
+                float offsetRadius = MathHelper.Lerp(110f, 72f, SpeedPower) - InwardRadiusOffset;
+                if (fadingAway)
+                    offsetRadius = Projectile.Infernum().FadeAwayTimer / (float)GlobalProjectileOverrides.FadeAwayTime;
+                Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * offsetRadius;
+            }
             else if (Time % 10 == 0)
             {
                 // Leave a trail of particles.

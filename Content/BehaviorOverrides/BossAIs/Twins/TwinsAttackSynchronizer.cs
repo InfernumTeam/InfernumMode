@@ -423,9 +423,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             npc.damage = 0;
 
             // Fly towards the destination.
-            if (!npc.WithinRange(hoverDestination, 72f))
+            if (!npc.WithinRange(hoverDestination, 96f))
             {
-                npc.Center = Vector2.Lerp(npc.Center, Target.Center, Utils.GetLerpValue(npc.Distance(Target.Center), 72f, 250f) * 0.0425f);
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, Utils.GetLerpValue(npc.Distance(Target.Center), 96f, 360f) * 0.0425f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.8f);
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
             }
@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
 
             // Relase some projectiles while hovering to pass the time.
-            if (UniversalAttackTimer % 30 == 29 && npc.WithinRange(hoverDestination, 160f))
+            if (UniversalAttackTimer % 30f == 29f && npc.WithinRange(hoverDestination, 160f) && UniversalAttackTimer >= 60f)
             {
                 if (!isSpazmatism)
                     SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, npc.Center);
@@ -595,7 +595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     otherEye.ai[0] = spinRotation + MathHelper.Pi;
                     otherEye.netUpdate = true;
                 }
-                spinDirection = 0f;
+                spinDirection = 1.1f;
                 npc.netUpdate = true;
             }
 
@@ -605,7 +605,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Update the spin direction for both eyes.
             if (spinDirection >= 1.1f && isSpazmatism)
             {
-                spinDirection = (Math.Cos(npc.AngleTo(Target.Center)) > 0).ToDirectionInt();
+                spinDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
                 if (otherEye != null)
                     otherEye.ai[1] = spinDirection;
             }
@@ -613,14 +613,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Vector2 destination = Target.Center + spinRotation.ToRotationVector2() * 610f;
             if (UniversalAttackTimer >= redirectTime && UniversalAttackTimer <= redirectTime + spinTime)
             {
-                // Update the spin direction for both eyes.
-                if (spinDirection == 0f && isSpazmatism)
-                {
-                    spinDirection = (Math.Cos(npc.AngleTo(Target.Center)) > 0).ToDirectionInt();
-                    if (otherEye != null)
-                        otherEye.ai[1] = spinDirection;
-                }
-
                 // Increment the spin rotation.
                 spinRotation += spinAngularVelocity * spinDirection * spinSlowdownInterpolant;
 
@@ -1379,7 +1371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     // Charge and release the laserbeam.
                     if (attackTimer == chargeUpTime)
                     {
-                        Utilities.CreateShockwave(npc.Center, 2, 8, 112f, false);
+                        Utilities.CreateShockwave(npc.Center, 2, 8, 145f, false);
                         if (CalamityConfig.Instance.Screenshake)
                         {
                             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
@@ -1649,15 +1641,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 case SpazmatismAttackState.CursedFlameSpin:
                     int windUpTime = 67;
                     int spinTime = 360;
-                    int cinderReleaseRate = 30;
-                    int cinderReleaseCount = 16;
+                    int cinderReleaseRate = 60;
+                    int cinderReleaseCount = 12;
                     ref float flamethrowerIntroSoundSlot = ref npc.localAI[0];
                     ref float flamethrowerSoundSlot = ref npc.localAI[1];
 
                     // Attempt to fly near the target while spinning and releasing fire outward.
                     float windUpInterpolant = Utils.GetLerpValue(0f, windUpTime, attackTimer, true);
                     if (!npc.WithinRange(Target.Center, 300f))
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(Target.Center) * windUpInterpolant * 18f, windUpInterpolant * 0.3f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(Target.Center) * windUpInterpolant * 15f, windUpInterpolant * 0.24f);
 
                     // SPEEEEEEEEEEEEEEEEEEEEN
                     npc.rotation += windUpInterpolant * 0.18f;

@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.penetrate = -3;
             Projectile.MaxUpdates = 10;
             Projectile.timeLeft = Lifetime;
+            CooldownSlot = 1;
         }
 
         public override void AI()

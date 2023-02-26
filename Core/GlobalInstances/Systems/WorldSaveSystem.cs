@@ -201,7 +201,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasGeneratedColosseumEntrance = downed.Contains("HasGeneratedColosseumEntrance");
 
             // This used to be internally represented with a spelling error in the NBT data.
-            // As such, a legacy check it used to ensure that world data that has the old string is not discarded.
+            // As such, a legacy check is used to ensure that world data that has the old string is not discarded.
             HasBeatenInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly") || downed.Contains("HasBeatenInfernumProvRegularly");
             HasBeatenInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay") || downed.Contains("HasBeatenInfernumNightProvBeforeDay");
 

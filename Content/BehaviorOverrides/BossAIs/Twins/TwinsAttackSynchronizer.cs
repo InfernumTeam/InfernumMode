@@ -18,6 +18,7 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using InfernumMode.Common.Graphics;
 using CalamityMod.NPCs.ProfanedGuardians;
 using ReLogic.Utilities;
+using System.Linq;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
@@ -684,13 +685,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             int redirectTime = 90;
             int attackTelegraphTime = 36;
-            int chargeTime = 84;
+            int chargeTime = 104;
             int totalCharges = 6;
             int totalLaserBurstsUntilExhaustion = 5;
             int baseExhaustCountdown = 90;
             int telegraphTime = (int)MathHelper.Lerp(42f, 28f, 1f - CombinedLifeRatio);
             float laserShootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
-            float chargeSpeed = MathHelper.Lerp(16.25f, 20.5f, 1f - CombinedLifeRatio);
+            float chargeSpeed = MathHelper.Lerp(15f, 18.75f, 1f - CombinedLifeRatio);
             float chargeAngularVelocity = MathHelper.Lerp(0.006f, 0.0093f, 1f - CombinedLifeRatio);
 
             // Only applies to Spazmatism.
@@ -1013,10 +1014,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<RetinazerLaser>()).Where(p => p.ai[1] == 1f))
+                            laser.Kill();
+
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 laserSpawnOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 950f;
-                            Utilities.NewProjectileBetter(Target.Center + laserSpawnOffset, -laserSpawnOffset.SafeNormalize(Vector2.UnitY) * 3f, ModContent.ProjectileType<RetinazerLaser>(), 140, 0f);
+                            Utilities.NewProjectileBetter(Target.Center + laserSpawnOffset, -laserSpawnOffset.SafeNormalize(Vector2.UnitY) * 4.5f, ModContent.ProjectileType<RetinazerLaser>(), 140, 0f, -1, 0f, 1f);
                         }
                         Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<RetinazerGroundDeathray>(), 200, 0f, -1, 0f, npc.whoAmI);
                     }
@@ -1028,7 +1032,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             centerOfMassY = nextCenterOfMass.Y;
 
             if (UniversalAttackTimer >= attackDuration && !isAttacking)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<RetinazerLaser>());
                 SelectNextAttack();
+            }
 
             return true;
         }
@@ -1196,7 +1203,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                                     {
                                         laser.tileCollide = false;
                                     });
-                                    Utilities.NewProjectileBetter(Target.Center + (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 750f, (MathHelper.TwoPi * i / 4f).ToRotationVector2() * -7f, ModContent.ProjectileType<RetinazerLaser>(), 145, 0f);
+                                    Utilities.NewProjectileBetter(Target.Center + (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 750f, (MathHelper.TwoPi * i / 4f).ToRotationVector2() * -7f, ModContent.ProjectileType<RetinazerLaser>(), 145, 0f, -1, 0f, 1f);
                                 }
                             }
                         }
@@ -1323,15 +1330,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     break;
                 case RetinazerAttackState.AgileLaserbeamSweeps:
                     int chargeCount = 5;
-                    int chargeUpTime = 26;
+                    int chargeUpTime = 36;
                     int chargeTime = RetinazerAimedDeathray2.LifetimeConst;
                     int laserCircleCount = 7;
                     int laserCircleReleaseRate = 15;
                     float chargeSpeed = 29f;
-                    float arcAngularVelocity = 0.03f;
+                    float arcAngularVelocity = 0.0243f;
 
                     if (chargeCounter <= 0f)
-                        chargeUpTime += 48;
+                        chargeUpTime += 42;
 
                     // Attempt to loosely hover near the target and charge up energy before charging and releasing a laser.
                     if (attackTimer <= chargeUpTime)
@@ -1362,7 +1369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                         // Attempt to look at the target.
                         float idealRotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         float turnSpeedFactor = Utils.Remap(attackTimer, 0f, 7f, 16f, 1f);
-                        npc.rotation = npc.rotation.AngleLerp(idealRotation, turnSpeedFactor * 0.01f).AngleTowards(idealRotation, turnSpeedFactor * 0.02f);
+                        npc.rotation = npc.rotation.AngleLerp(idealRotation, turnSpeedFactor * 0.008f).AngleTowards(idealRotation, turnSpeedFactor * 0.014f);
 
                         // Telegraph the aim direction to the target.
                         telegraphOpacity = Utils.GetLerpValue(0f, chargeUpTime * 0.6f, attackTimer, true);

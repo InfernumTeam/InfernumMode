@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 for (int direction = -1; direction <= 1; direction += 2)
                 {
                     Vector2 shootVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * direction) * 4.2f;
-                    Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity * i, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity * i, shootVelocity, ModContent.ProjectileType<RetinazerLaser>(), 140, 0f);
                 }
             }
         }

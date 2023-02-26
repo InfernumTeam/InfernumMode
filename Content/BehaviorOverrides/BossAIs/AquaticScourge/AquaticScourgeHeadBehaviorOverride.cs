@@ -1083,7 +1083,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int lungeCount = 2;
             int vomitShootRate = 15;
             int vomitBurstCount = 3;
-            int acidPerVomitBurst = 25;
+            int acidPerVomitBurst = 20;
             int bubbleReleaseRate = 45;
             float upwardLungeDistance = 450f;
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
@@ -1105,6 +1105,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     bubbleSpawnPosition = result.ToWorldCoordinates();
                 Utilities.NewProjectileBetter(bubbleSpawnPosition + Vector2.UnitY * 136f, -Vector2.UnitY * 6f, ModContent.ProjectileType<AcidBubble>(), 140, 0f);
             }
+
+            // Roar at the start of the first charge.
+            if (lungeCounter <= 0f && attackTimer == 1f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.DesertScourgeShortRoar, target.Center);
 
             switch ((int)attackSubstate)
             {

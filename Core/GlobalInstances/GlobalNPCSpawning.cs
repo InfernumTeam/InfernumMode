@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -23,6 +24,10 @@ namespace InfernumMode.GlobalInstances
 
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
+            // Disable natural Aquatic Scourge spawns.
+            if (InfernumMode.CanUseCustomAIs)
+                pool.Remove(ModContent.NPCType<AquaticScourgeHead>());
+
             // Don't mess with abyss spawns in worlds without a reworked abyss.
             if (!WorldSaveSystem.InPostAEWUpdateWorld)
                 return;

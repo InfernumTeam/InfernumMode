@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -7,6 +8,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
     public class RetinazerLaser : ModProjectile
     {
+        public ref float Time => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Death Laser");
@@ -24,6 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.timeLeft = 600;
             Projectile.scale = 0.75f;
             Projectile.Opacity = 0f;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
         public override void AI()
@@ -45,10 +49,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
+
+            Time++;
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
+            if (lightColor.A != 255)
+                return lightColor * Projectile.Opacity;
+
             return Color.White * Projectile.Opacity;
         }
 
@@ -59,10 +68,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 drawOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * Projectile.scale * -30f;
-            Projectile.Center += drawOffset;
-            Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.OrangeRed with { A = 0 }, lightColor, 2f);
-            Projectile.Center -= drawOffset;
+            Vector2 backOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * Projectile.scale * -30f;
+            Vector2 oldCenter = Projectile.Center;
+
+            float materializeInterpolant = Utils.GetLerpValue(0f, 64f, Time, true);
+            if (Projectile.ai[1] == 0f)
+                materializeInterpolant = 1f;
+
+            for (int i = 0; i < (Projectile.ai[1] == 0f ? 1 : 6); i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * (1f - materializeInterpolant) * 12f + backOffset;
+                lightColor = Color.Lerp(lightColor, Color.Wheat with { A = 0 }, (1f - materializeInterpolant) * 0.6f) * Utils.GetLerpValue(0.1f, 0.5f, materializeInterpolant, true);
+                Projectile.Center = oldCenter + drawOffset;
+                Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.OrangeRed with { A = 0 } * (float)Math.Pow(materializeInterpolant, 4D), lightColor, 2f);
+            }
+            Projectile.Center = oldCenter;
             return false;
         }
     }

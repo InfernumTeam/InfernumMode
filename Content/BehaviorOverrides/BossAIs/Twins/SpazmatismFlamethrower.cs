@@ -60,6 +60,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 GeneralParticleHandler.SpawnParticle(particle);
             }
 
+            // Adjust the hitbox.
+            Projectile.Size = Vector2.One * particleScale * 40f;
+
             Timer++;
         }
     }

@@ -377,7 +377,8 @@ namespace InfernumMode.Core.ILEditingStuff
             set;
         }
 
-        public static bool CanUseHighQualityWater => Main.gfxQuality >= 0.75f && !InfernumConfig.Instance.ReducedGraphicsConfig;
+        // WHY IS THIS SO LAGGY WHAT THE ACTUAL FUCK???
+        public static bool CanUseHighQualityWater => false;
 
         private void MakeWaterEasierToSeeIn(ILContext il)
         {

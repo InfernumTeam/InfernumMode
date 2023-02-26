@@ -101,6 +101,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override bool? CanDamage() => false;
+        public override bool? CanDamage() => null;
     }
 }

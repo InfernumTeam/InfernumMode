@@ -1413,8 +1413,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float defenderIsReady = ref commander.Infernum().ExtraAI[2];
             ref float ramsCompleted = ref commander.Infernum().ExtraAI[3];
 
-            float maxRamsToComplete = 4f;
-            float hoverWaitTime = 45f;
+            float maxRamsToComplete = 3f;
+            float hoverWaitTime = 35f;
             float flySpeed = 25f;
             float fadeInTime = 16f;
             // Get faster if taking too long to get into position.
@@ -1537,10 +1537,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
 
-                        InfernumTextureRegistry.Arrow.Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, npc.Center,
-                            0f, 3f, 16f, 40);
+                        for (int i = 0; i < 30; i++)
+                        {
+                            // Bias towards lower values. 
+                            float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
+                                Main.rand.NextFloat(15f, 20f));
+                        }
 
-                        if (npc.WithinRange(defender.Center, 180f) || universalAttackTimer >= 240f)
+                        if (npc.WithinRange(defender.Center, 230f) || universalAttackTimer >= 240f)
                         {
                             substate++;
                             universalAttackTimer = 0f;
@@ -1687,6 +1692,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
                             Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
                             GeneralParticleHandler.SpawnParticle(energyLeak);
+                        }
+
+                        for (int i = 0; i < 30; i++)
+                        {
+                            float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
+                                Main.rand.NextFloat(15f, 20f));
                         }
                         break;
                 }

@@ -50,6 +50,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> HolyFireLayer => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HolyFireLayer");
 
+        public static Asset<Texture2D> HolyFirePixelLayer => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HolyFirePixelLayer");
+
         public static Asset<Texture2D> HyperplaneMatrixCode => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HyperplaneMatrixCode");
 
         public static Asset<Texture2D> Invisible => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Invisible");

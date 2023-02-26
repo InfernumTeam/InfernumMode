@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void CreateTileHitEffects()
         {
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (CurrentLaserLength);
-            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), 135f);
+            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), 135f);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

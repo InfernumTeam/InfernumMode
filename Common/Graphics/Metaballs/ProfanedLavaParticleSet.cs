@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
     {
-        public override Color BorderColor => Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0f);
+        public override Color BorderColor => Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0f);
 
         public override bool BorderShouldBeSolid => true;
 
@@ -29,8 +29,8 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override List<Texture2D> BackgroundTextures => new()
         {
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFireLayer.Value,
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFireLayer.Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value,
         };
 
         public override void DrawParticles()

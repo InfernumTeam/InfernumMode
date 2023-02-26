@@ -159,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Main.rand.NextFloat(0.45f, 0.75f), 30);
             GeneralParticleHandler.SpawnParticle(rockParticle);
             ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center + Projectile.velocity * 0.5f,
-                0f, Projectile.scale, 15f, 170);
+                0f, Projectile.scale, 12f, 190);
             Projectile.rotation -= 0.1f;
             Timer++;
         }

@@ -27,6 +27,7 @@ namespace InfernumMode.Content.Skies
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
+            return;
             player.ManageSpecialBiomeVisuals("InfernumMode:GuardianCommander", isActive);
             // GO AWAY.
             SkyManager.Instance["CalamityMod:DevourerofGodsHead"].Deactivate();

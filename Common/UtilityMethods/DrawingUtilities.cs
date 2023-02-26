@@ -538,8 +538,8 @@ namespace InfernumMode
 
         public static void CreateMetaballsFromTexture(this Texture2D texture, ref List<FusableParticle> particleList, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35)
         {
-            // Leave if this is null.
-            if (particleList is null)
+            // Leave if this is null, or this is a server.
+            if (particleList is null || Main.netMode == NetmodeID.Server)
                 return;
 
             // Get the dimensions of the texture.
@@ -559,7 +559,7 @@ namespace InfernumMode
                     if (colorData[w * h].A > 0 && Main.rand.NextBool(spawnChance))
                     {
                         Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f);
-                        Vector2 metaballSpawnPosition = texturePosition -positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
+                        Vector2 metaballSpawnPosition = texturePosition - positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
                         FusableParticle particle = new(metaballSpawnPosition, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f) * colorData[w * h].A / 255);
                         particleList.Add(particle);
                     }

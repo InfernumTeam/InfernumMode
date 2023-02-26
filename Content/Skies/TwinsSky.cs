@@ -11,7 +11,8 @@ namespace InfernumMode.Content.Skies
 {
     public class TwinsSkySkyScene : ModSceneEffect
     {
-        public override bool IsSceneEffectActive(Player player) => TwinsAttackSynchronizer.BackgroundColorIntensity >= 0.01f;
+        // This doesn't work well. If it can be made to be a better effect feel free to enable it again.
+        public override bool IsSceneEffectActive(Player player) => false;
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
@@ -38,7 +39,7 @@ namespace InfernumMode.Content.Skies
                 else
                     previousScreenBackgroundColor = baseColor;
 
-                return baseColor * TwinsAttackSynchronizer.BackgroundColorIntensity * 0.16f;
+                return baseColor * TwinsAttackSynchronizer.BackgroundColorIntensity * 0.45f;
             }
         }
 

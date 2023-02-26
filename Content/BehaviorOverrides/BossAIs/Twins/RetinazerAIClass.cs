@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
-                Vector2 scaleInner = new(telegraphOpacity * 0.3f, AimedDeathray.LaserLengthConst / laserTelegraph.Height);
+                Vector2 scaleInner = new(telegraphOpacity * 0.3f, RetinazerAimedDeathray.LaserLengthConst / laserTelegraph.Height);
                 Vector2 scaleOuter = scaleInner * new Vector2(2.2f, 1f);
 
                 Color colorOuter = Color.Lerp(Color.Red, Color.White, 0.32f);

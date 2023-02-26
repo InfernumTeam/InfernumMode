@@ -25,8 +25,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
-            if (Projectile.velocity.Length() < 26f)
-                Projectile.velocity *= 1.02f;
+            if (Projectile.velocity.Length() < 21f)
+                Projectile.velocity *= 1.01f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 

@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
-    public class AimedDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
+    public class RetinazerAimedDeathray : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy LaserDrawer
         {

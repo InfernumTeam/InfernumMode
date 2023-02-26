@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float Width => BigVersion ? 700 : 160f;
 
-        public float VariableWidth => Width * (BigVersion ? CalamityUtils.ExpInEasing(CurrentLength / MaxLength, 0) :Utilities.EaseInOutCubic(CurrentLength / MaxLength));
+        public float VariableWidth => Width * (BigVersion ? CalamityUtils.SineInOutEasing(CurrentLength / MaxLength, 0) :Utilities.EaseInOutCubic(CurrentLength / MaxLength));
 
         public override void SetStaticDefaults()
         {
@@ -125,14 +125,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 LavaDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.GuardiansLaserVertexShader);
 
-                InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.CrustyNoise);
+                InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.LavaNoise);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.SetShaderTexture2(InfernumTextureRegistry.CultistRayMap);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.UseColor(Color.LightGoldenrodYellow);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["flipY"].SetValue(false);
                 float lengthScalar = CurrentLength / MaxLength;
-                InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue((BigVersion ? 0.8f : 2f) + StretchOffset * lengthScalar);
+                InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue((BigVersion ? 0.6f : 1.3f) + StretchOffset * lengthScalar);
                 InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["pillarVarient"].SetValue(true);
-
+                InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["scrollSpeed"].SetValue(BigVersion ? 1f : 1.8f);
                 Vector2 start = Projectile.Center;
                 Vector2 end = start - Vector2.UnitY * CurrentLength;
                 Vector2[] drawPositions = new Vector2[8];

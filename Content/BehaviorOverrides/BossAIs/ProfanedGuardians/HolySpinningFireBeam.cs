@@ -233,6 +233,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float lengthScalar = CurrentLaserLength / MaxLaserLength;
             InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["stretchAmount"].SetValue(4f * lengthScalar);
             InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["pillarVarient"].SetValue(false);
+            InfernumEffectsRegistry.GuardiansLaserVertexShader.Shader.Parameters["scrollSpeed"].SetValue(1.8f);
 
             Vector2 startPos = Projectile.Center - Projectile.velocity * 2f;
             Vector2 endPos = Projectile.Center + Projectile.velocity * CurrentLaserLength * (0.2f * (1f - (lengthScalar * 0.8f)) + 1f);

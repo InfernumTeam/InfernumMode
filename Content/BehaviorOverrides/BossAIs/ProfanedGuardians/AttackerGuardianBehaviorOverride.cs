@@ -18,6 +18,7 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using CalamityMod.Buffs.StatDebuffs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -84,15 +85,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFireWall>());
                 return false;
             }
+
             float lifeRatio = (float)npc.life / npc.lifeMax;
+
             // Don't take damage if other guardians are around.
             npc.dontTakeDamage = false;
             if (TotalRemaininGuardians == 3f || (TotalRemaininGuardians == 2f && lifeRatio < 0.75f))
                 npc.dontTakeDamage = true;
+
             else if (TotalRemaininGuardians == 2f)
                 npc.Calamity().DR = 0.9999f;
             else
                 npc.Calamity().DR = 0.4f;
+
+            // Why does this exist.
+            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
 
             // Reset fields.
             npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;
@@ -317,6 +324,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 origin = glow.Size() * 0.5f;
             spriteBatch.Draw(glow, drawPosition, null, drawColor, 0f, origin, 3.5f, SpriteEffects.None, 0f);
 
+            // Draw a glow effect at the end of the laser.
+            Texture2D glowBloom = ModContent.Request<Texture2D>("CalamityMod/UI/ModeIndicator/BloomFlare").Value;
+            Texture2D glowCircle = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
+            Vector2 glowPosition = npc.Center - Main.screenPosition;
+            Color glowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.3f);
+            glowColor.A = 0;
+            float glowRotation = Main.GlobalTimeWrappedHourly * 3;
+            float scaleInterpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
+            float scale = MathHelper.Lerp(3.6f, 4.1f, scaleInterpolant);
+            Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor, glowRotation, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor, glowRotation * -1, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
             // Backglow
             int backglowAmount = 12;
             float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;

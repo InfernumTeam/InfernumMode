@@ -899,6 +899,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.velocity *= 0.97f;
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
+                npc.Calamity().ShouldCloseHPBar = true;
 
                 if (universalAttackTimer <= whiteGlowTime)
                     whiteGlowOpacity = CalamityUtils.ExpInEasing(MathHelper.Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
@@ -1615,7 +1616,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             ramsCompleted++;
                             if (ramsCompleted >= maxRamsToComplete)
                             {
-                                SelectNewAttack(commander, ref universalAttackTimer, (float)GuardiansAttackType.CrashRam);
+                                SelectNewAttack(commander, ref universalAttackTimer);
                                 return;
                             }
 
@@ -1784,6 +1785,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 0:
                     case 1:
                     case 2:
+                    case 4:
+                    case 5:
                     case 6:
                         Vector2 hoverDestination = target.Center + new Vector2(800f, -325f);
                         if (universalAttackTimer == 1)
@@ -1801,8 +1804,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
                         break;
                     case 3:
-                    case 4:
-                    case 5:
                         npc.velocity *= 0.9f;
                         break;
                 }
@@ -2018,10 +2019,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (npc.WithinRange(hoverDestination, 100f))
                     {
                         // Create a bunch of lava particles under the commander on the players bottom of the screen.
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 6; i++)
                         {
-                            Vector2 position = new(npc.Center.X + Main.rand.NextFloat(-200f, 200f), 100f + Main.screenHeight + Main.screenPosition.Y + Main.rand.NextFloat(-70f, 70f));
-                            Particle lavaParticle = new GlowyLightParticle(position, -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(4f, 7f),
+                            Vector2 position = new(npc.Center.X + Main.rand.NextFloat(-200f, 200f), Main.screenHeight + - 100f + Main.screenPosition.Y + Main.rand.NextFloat(-70f, 70f));
+                            Particle lavaParticle = new GlowyLightParticle(position, -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(6f, 9f),
                                 Main.rand.NextBool() ? WayfinderSymbol.Colors[2] : Color.OrangeRed, 60, Main.rand.NextFloat(0.75f, 1.25f), Main.rand.NextFloat(0.9f, 1.1f), true);
                             GeneralParticleHandler.SpawnParticle(lavaParticle);
                         }
@@ -2054,6 +2055,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
                             Utilities.NewProjectileBetter(center, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
+                            Utilities.NewProjectileBetter(center + new Vector2(-2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
+                            Utilities.NewProjectileBetter(center + new Vector2(2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
                         }
                     }
 
@@ -2064,7 +2070,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
-                            int rockAmount = 35;
+                            int rockAmount = 33;
                             // Also spawn a bunch of rocks with slightly random direction and speed.
                             for (int i = 0; i < rockAmount; i++)
                             {
@@ -2075,15 +2081,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 });
 
                                 Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.7f, 0.7f));
-                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(39f, 45f);
-
+                                Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 40f);
+                                velocity.Y *= 1.16f;
                                 Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
                             }
                         }
                         if (CalamityConfig.Instance.Screenshake)
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 6f;
-                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.75f, 45);
+                            ScreenEffectSystem.SetBlurEffect(npc.Center, 0.75f, 45);
                         }
                         universalAttackTimer = 0;
                         substate++;
@@ -2133,7 +2139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Hurt itself.
                         //npc.life -= (int)(npc.lifeMax * 0.002f);
                         npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
-                        Vector2 impactCenter = npc.Bottom + new Vector2(0f, -15f);
+                        Vector2 impactCenter = npc.Center + new Vector2(0f, 55f);
 
                         for (int j = 0; j < 40; j++)
                         {
@@ -2158,6 +2164,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Color.Gray, Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(220f, 250f));
                             GeneralParticleHandler.SpawnParticle(fireExplosion);
                         }
+
+                        // Spawn a large crack.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<ProfanedCrack>(), 0, 0f);
+
                         substate++;
                         universalAttackTimer = 0f;
                     }

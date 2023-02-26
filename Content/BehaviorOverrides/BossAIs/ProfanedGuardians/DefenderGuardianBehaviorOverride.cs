@@ -27,6 +27,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Common.Graphics.Particles;
 using Terraria.GameContent.Events;
 using InfernumMode.Core;
+using CalamityMod.Buffs.StatDebuffs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -79,6 +80,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // If the healer is dead, resume taking damage.
             if (CalamityGlobalNPC.doughnutBossHealer == -1)
                 npc.Calamity().DR = 0.3f;
+
+            // Why does this exist.
+            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
 
             if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)
             {

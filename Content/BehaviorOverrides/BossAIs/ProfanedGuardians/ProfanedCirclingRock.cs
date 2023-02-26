@@ -88,8 +88,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
                 GeneralParticleHandler.SpawnParticle(rockParticle);
                 Projectile.rotation -= 0.1f;
-                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center,
-                0f, Projectile.scale, 15f, 170);
+                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Left
+                    - Projectile.velocity * 0.5f,
+                0f, Projectile.scale * 0.8f, 15f, 170);
             }
         }
 

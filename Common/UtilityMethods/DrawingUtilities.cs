@@ -555,8 +555,9 @@ namespace InfernumMode
             {
                 for (int w = 0; w < textureWidth; w++)
                 {
+                    Color color = colorData[w * h];
                     // If the current pixel has any alpha, and the chance is selected (this exists to add variation and prevent having way too many metaballs spawn)
-                    if (colorData[w * h].A > 0 && Main.rand.NextBool(spawnChance))
+                    if (color.A > 0 && (color.R > 0 && color.G > 0 && color.B > 0) && Main.rand.NextBool(spawnChance))
                     {
                         Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f);
                         Vector2 metaballSpawnPosition = texturePosition - positionOffset + new Vector2(w, h).RotatedBy(textureRotation);

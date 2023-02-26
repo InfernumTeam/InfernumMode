@@ -12,8 +12,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             BitsByte flags = new();
             BitsByte flags2 = new();
             flags[0] = WorldSaveSystem.InfernumMode;
-            flags[1] = HasBeatedInfernumNightProvBeforeDay;
-            flags[2] = HasBeatedInfernumProvRegularly;
+            flags[1] = HasBeatenInfernumNightProvBeforeDay;
+            flags[2] = HasBeatenInfernumProvRegularly;
             flags[3] = HasProvidenceDoorShattered;
             flags[4] = HasSepulcherAnimationBeenPlayed;
             flags[5] = InPostAEWUpdateWorld;
@@ -48,8 +48,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             BitsByte flags = reader.ReadByte();
             BitsByte flags2 = reader.ReadByte();
             WorldSaveSystem.InfernumMode = flags[0];
-            HasBeatedInfernumNightProvBeforeDay = flags[1];
-            HasBeatedInfernumProvRegularly = flags[2];
+            HasBeatenInfernumNightProvBeforeDay = flags[1];
+            HasBeatenInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];
             HasSepulcherAnimationBeenPlayed = flags[4];
             InPostAEWUpdateWorld = flags[5];

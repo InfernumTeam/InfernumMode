@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Items.Relics
         {
             get
             {
-                if (WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay)
+                if (WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay)
                 {
                     return "Bruh? What the heck? Are you OK?\n" +
                         "You were supposed to fight her at night AFTER beating her during the day first!";
@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Items.Relics
             }
         }
 
-        public override Color? PersonalMessageColor => WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay ?
+        public override Color? PersonalMessageColor => WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay ?
             Color.Lerp(Color.Cyan, Color.Green, 0.15f) :
             Color.Lerp(Color.Orange, Color.Yellow, 0.35f);
 

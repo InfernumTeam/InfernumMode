@@ -278,9 +278,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Providence>())
             {
-                if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)
-                    WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = true;
-                WorldSaveSystem.HasBeatedInfernumProvRegularly = true;
+                if (!Main.dayTime && !WorldSaveSystem.HasBeatenInfernumProvRegularly)
+                    WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = true;
+                WorldSaveSystem.HasBeatenInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
             }
 

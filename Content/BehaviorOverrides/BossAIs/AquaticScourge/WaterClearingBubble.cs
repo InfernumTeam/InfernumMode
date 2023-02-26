@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.Cyan, Color.Wheat, 0.6f)) * 0.7f;
+            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.DeepSkyBlue, Color.Wheat, 0.4f)) * 0.9f;
             Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.8f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.04f);
 
             // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.

@@ -821,7 +821,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                         Vector2 aimDirection = telegraphDirection.ToRotationVector2();
                         for (int i = 0; i < 5; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / 4f);
+                            float shootOffsetAngle = MathHelper.Lerp(-0.95f, 0.95f, i / 4f);
                             Vector2 laserShootVelocity = aimDirection.RotatedBy(shootOffsetAngle) * laserShootSpeed;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>

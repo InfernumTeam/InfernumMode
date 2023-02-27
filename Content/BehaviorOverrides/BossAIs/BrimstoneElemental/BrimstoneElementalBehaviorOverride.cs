@@ -351,6 +351,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             roseCreationCounter = 0f;
                             circleCenterX = 0f;
                             circleCenterY = 0f;
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneRose>(), ModContent.ProjectileType<BrimstonePetal>());
                             SelectNextAttack(npc);
                         }
                         npc.netUpdate = true;
@@ -466,7 +467,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Release waving skulls.
-                            int skullCount = (int)MathHelper.Lerp(4f, 9f, 1f - lifeRatio);
+                            int skullCount = (int)MathHelper.Lerp(5f, 11f, 1f - lifeRatio);
                             int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
                             float skullShootSpeed = 10f;
 
@@ -480,7 +481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                             for (int i = 0; i < skullCount; i++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.74f, 0.74f, i / (float)(skullCount - 1f));
+                                float offsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(skullCount - 1f));
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * skullShootSpeed;
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneSkull>(), skullDamage, 0f);
                             }
@@ -925,7 +926,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             do
                 npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
             while (previousAttack == (BrimmyAttackType)npc.ai[0]);
-            npc.ai[0] = (int)BrimmyAttackType.EyeLaserbeams;
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;

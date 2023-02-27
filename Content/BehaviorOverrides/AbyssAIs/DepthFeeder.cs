@@ -240,11 +240,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return;
             }
             NPC.frameCounter += 0.15f;
-            NPC.frameCounter %= Main.npcFrameCount[NPC.type] - 1f;
+            NPC.frameCounter %= Main.npcFrameCount[NPC.type] - 2f;
             int frame = (int)NPC.frameCounter;
 
             if (!NPC.wet && !NPC.IsABestiaryIconDummy)
-                frame = Main.npcFrameCount[NPC.type] - 1;
+                frame = Main.npcFrameCount[NPC.type] - 2;
 
             NPC.frame.Y = frame * frameHeight;
         }

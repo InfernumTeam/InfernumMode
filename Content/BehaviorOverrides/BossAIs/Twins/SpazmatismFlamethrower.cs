@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utilities.CircularCollision(Projectile.Center - Projectile.velocity * Projectile.MaxUpdates * 2f, projHitbox, Projectile.Size.Length() * 0.707f);
+            return Utilities.CircularCollision(Projectile.Center - Projectile.velocity * Projectile.MaxUpdates * 2f, targetHitbox, Projectile.Size.Length() * 0.707f);
         }
     }
 }

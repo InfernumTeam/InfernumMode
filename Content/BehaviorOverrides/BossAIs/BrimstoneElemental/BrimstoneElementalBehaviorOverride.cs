@@ -24,6 +24,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -104,7 +105,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.damage = 0;
             npc.dontTakeDamage = pissedOff;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
-
             if (spawnAnimationTimer < 240f)
             {
                 DoBehavior_SpawnAnimation(npc, target, spawnAnimationTimer, ref frameType);
@@ -340,7 +340,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 case 0:
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * new Vector2(8f, 4f), 0.13f);
-                    if (attackTimer >= 125f || npc.WithinRange(target.Center, 105f))
+                    if (attackTimer >= 125f)
                     {
                         attackTimer = 0f;
                         attackState = 1f;
@@ -664,6 +664,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         chargeDust.noGravity = true;
                     }
 
+                    // Look at the target.
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
                     // Go to the next attack state after hovering for a small amount of time.
                     if (attackTimer >= hoverTime)
                     {
@@ -681,6 +684,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     if (wrappedTime == 1f)
                     {
                         HatGirl.SayThingWhileOwnerIsAlive(target, "The beam predicts your position, try baiting it into shooting away from you!");
+                        SoundEngine.PlaySound(SoundID.Item72, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             deathrayDirection = npc.SafeDirectionTo(target.Center);
@@ -697,7 +701,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         int laserbeamDamage = 215;
                         if (wrappedTime % 120f == 119f)
                         {
-                            SoundEngine.PlaySound(SoundID.Item74, npc.Center);
+                            if (CalamityConfig.Instance.Screenshake)
+                            {
+                                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
+                                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.84f, 25);
+                            }
+
+                            SoundEngine.PlaySound(InfernumSoundRegistry.BrimstoneLaser, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f, -1, 0f, npc.whoAmI);
                         }
@@ -725,13 +735,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         deathrayDirection = Vector2.Lerp(deathrayDirection, idealDirection, 0.02f).MoveTowards(idealDirection, 0.012f);
                         telegraphDirectionX = deathrayDirection.X;
                         telegraphDirectionY = deathrayDirection.Y;
+
+                        // Look at the target.
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     }
 
                     npc.rotation = npc.velocity.X * 0.04f;
                     break;
             }
-
-            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float frameType)
@@ -909,6 +920,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             do
                 npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
             while (previousAttack == (BrimmyAttackType)npc.ai[0]);
+            npc.ai[0] = (int)BrimmyAttackType.EyeLaserbeams;
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;
@@ -1024,6 +1036,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 ModContent.ProjectileType<HomingBrimstoneSkull>());
 
             SelectNextAttack(npc);
+
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+
             npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
             npc.life = npc.lifeMax;
             npc.active = true;

@@ -6,6 +6,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using CalamityMod.UI.CalamitasEnchants;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
@@ -15,7 +16,6 @@ using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using rail;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.Events;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -610,6 +610,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.OpenEye;
             ref float telegraphDirectionX = ref npc.Infernum().ExtraAI[0];
             ref float telegraphDirectionY = ref npc.Infernum().ExtraAI[1];
+            ref float attackState = ref npc.Infernum().ExtraAI[2];
+            ref float warningTelegraphOpacity = ref npc.Infernum().ExtraAI[3];
 
             int hoverTime = (int)MathHelper.Lerp(105f, 200f, 1f - lifeRatio);
             int totalLaserbeamBursts = 2;
@@ -617,8 +619,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             if (pissedOff || BossRushEvent.BossRushActive)
                 hoverTime -= 25;
-
-            ref float attackState = ref npc.Infernum().ExtraAI[2];
 
             switch ((int)attackState)
             {
@@ -667,6 +667,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     // Look at the target.
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
+                    warningTelegraphOpacity = 0f;
+
                     // Go to the next attack state after hovering for a small amount of time.
                     if (attackTimer >= hoverTime)
                     {
@@ -678,6 +680,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                 // Sit for a short amount of time and release laserbeams.
                 case 2:
+                    int attackDuration = (int)((totalLaserbeamBursts - 0.035f) * 210f);
                     float wrappedTime = attackTimer % 210f;
                     Vector2 deathrayDirection = new Vector2(telegraphDirectionX, telegraphDirectionY).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
 
@@ -691,6 +694,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
+
+                    warningTelegraphOpacity = Utils.GetLerpValue(0f, 35f, wrappedTime, true) * Utils.GetLerpValue(205f, 190f, wrappedTime, true);
 
                     if (wrappedTime < 35f)
                         npc.velocity *= 0.9f;
@@ -719,7 +724,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
                         }
 
-                        if (attackTimer >= (totalLaserbeamBursts - 0.02f) * 210f)
+                        if (attackTimer >= attackDuration)
                         {
                             attackState = 0f;
                             telegraphDirectionX = 0f;
@@ -1010,10 +1015,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 }
             }
 
+            // Draw a warning effect for the player during the laser ray attack.
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            if (attackState == BrimmyAttackType.EyeLaserbeams)
+            {
+                float opacity = npc.Infernum().ExtraAI[3];
+                Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
+
+                Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
+                laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
+                laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
+                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
+                laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
+                laserScopeEffect.Parameters["laserAngle"].SetValue(MathHelper.Pi - new Vector2(npc.Infernum().ExtraAI[0], npc.Infernum().ExtraAI[1]).ToRotation());
+                laserScopeEffect.Parameters["laserWidth"].SetValue(opacity * 0.01f);
+                laserScopeEffect.Parameters["laserLightStrenght"].SetValue(10f);
+                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Red, Color.Yellow, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.075f + 0.24f).ToVector3());
+                laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Red.ToVector3());
+                laserScopeEffect.Parameters["bloomSize"].SetValue(0.4f + (1f - opacity) * 0.18f);
+                laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(1f);
+                laserScopeEffect.Parameters["bloomFadeStrenght"].SetValue(3f);
+
+                Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
+
+                laserScopeEffect.CurrentTechnique.Passes[0].Apply();
+                Main.spriteBatch.Draw(invisible, drawPosition - Vector2.UnitY * 50f, null, Color.White, 0f, invisible.Size() * 0.5f, opacity * 4750f, SpriteEffects.None, 0f);
+                Main.spriteBatch.ExitShaderRegion();
+            }
+
             float stoneFormInterpolant = npc.ai[0] == (int)BrimmyAttackType.DeathAnimation ? npc.Infernum().ExtraAI[1] : 0f;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D stoneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneElementalStone").Value;
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor) * (1f - stoneFormInterpolant), npc.rotation, origin, npc.scale, direction, 0f);

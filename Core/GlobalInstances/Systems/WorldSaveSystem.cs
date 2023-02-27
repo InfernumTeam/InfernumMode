@@ -33,13 +33,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
-        public static bool HasBeatedInfernumProvRegularly
+        public static bool HasBeatenInfernumProvRegularly
         {
             get;
             set;
         }
 
-        public static bool HasBeatedInfernumNightProvBeforeDay
+        public static bool HasBeatenInfernumNightProvBeforeDay
         {
             get;
             set;
@@ -156,10 +156,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("HasGeneratedProfanedShrine");
             if (HasGeneratedColosseumEntrance)
                 downed.Add("HasGeneratedColosseumEntrance");
-            if (HasBeatedInfernumProvRegularly)
-                downed.Add("HasBeatedInfernumProvRegularly");
-            if (HasBeatedInfernumNightProvBeforeDay)
-                downed.Add("HasBeatedInfernumNightProvBeforeDay");
+            if (HasBeatenInfernumProvRegularly)
+                downed.Add("HasBeatenInfernumProvRegularly");
+            if (HasBeatenInfernumNightProvBeforeDay)
+                downed.Add("HasBeatenInfernumNightProvBeforeDay");
             if (HasProvidenceDoorShattered)
                 downed.Add("HasProvidenceDoorShattered");
             if (HasSepulcherAnimationBeenPlayed)
@@ -199,8 +199,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             InfernumMode = downed.Contains("InfernumModeActive");
             HasGeneratedProfanedShrine = downed.Contains("HasGeneratedProfanedShrine");
             HasGeneratedColosseumEntrance = downed.Contains("HasGeneratedColosseumEntrance");
-            HasBeatedInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly");
-            HasBeatedInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay");
+
+            // This used to be internally represented with a spelling error in the NBT data.
+            // As such, a legacy check is used to ensure that world data that has the old string is not discarded.
+            HasBeatenInfernumProvRegularly = downed.Contains("HasBeatedInfernumProvRegularly") || downed.Contains("HasBeatenInfernumProvRegularly");
+            HasBeatenInfernumNightProvBeforeDay = downed.Contains("HasBeatedInfernumNightProvBeforeDay") || downed.Contains("HasBeatenInfernumNightProvBeforeDay");
+
             HasProvidenceDoorShattered = downed.Contains("HasProvidenceDoorShattered");
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             InPostAEWUpdateWorld = downed.Contains("InPostAEWUpdateWorld");
@@ -225,8 +229,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             InfernumMode = false;
             HasGeneratedProfanedShrine = false;
             HasGeneratedColosseumEntrance = false;
-            HasBeatedInfernumProvRegularly = false;
-            HasBeatedInfernumNightProvBeforeDay = false;
+            HasBeatenInfernumProvRegularly = false;
+            HasBeatenInfernumNightProvBeforeDay = false;
             HasProvidenceDoorShattered = false;
             HasSepulcherAnimationBeenPlayed = false;
             HasOpenedLostColosseumPortal = false;

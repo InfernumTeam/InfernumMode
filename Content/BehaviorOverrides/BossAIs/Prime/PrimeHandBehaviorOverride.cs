@@ -148,7 +148,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 Main.spriteBatch.ResetBlendState();
             }
 
-            Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            // Draw backglow telegraphs.
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            if (telegraphIntensity > 0f)
+            {
+                float opacity = Utils.GetLerpValue(0f, 0.25f, telegraphIntensity, true) * Utils.GetLerpValue(1f, 0.9f, telegraphIntensity, true);
+                Color backglowColor = Color.Lerp(Color.OrangeRed, Color.Red, 0.75f) with { A = 0 };
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * telegraphIntensity * 8f;
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
+
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             if (npc.ai[3] == 0f && npc.type == NPCID.PrimeLaser)
                 Main.spriteBatch.Draw(TextureAssets.BoneLaser.Value, drawPosition, npc.frame, new Color(200, 200, 200, 0), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;

@@ -16,7 +16,6 @@ namespace InfernumMode.Content.Projectiles.Melee
     {
         private readonly List<int> PossibleDebuffs = new()
         {
-            ModContent.BuffType<ExoFreeze>(),
             ModContent.BuffType<Nightwither>(),
             ModContent.BuffType<HolyFlames>(),
             ModContent.BuffType<GodSlayerInferno>(),

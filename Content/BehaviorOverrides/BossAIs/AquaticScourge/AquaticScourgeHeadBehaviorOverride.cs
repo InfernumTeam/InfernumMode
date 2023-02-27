@@ -594,7 +594,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int chargeCount = 5;
             int chargeDelay = 30;
             int minChargeTime = 36;
-            int maxChargeTime = 67;
+            int maxChargeTime = 59;
             int stunTime = 60;
             int rubbleCount = 9;
             bool insideBlocks = Collision.SolidCollision(npc.TopLeft, npc.width, npc.height);
@@ -1034,7 +1034,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.netUpdate = true;
             }
 
-            float lineTop = SulphurousSea.YStart * 16f + 300f;
+            float lineTop = SulphurousSea.YStart * 16f + 20f;
             bool soundIsValid = SoundEngine.TryGetActiveSound(SlotId.FromFloat(rumbleSoundSlot), out ActiveSound rumbleSound);
             bool needsToPlayRumble = !soundIsValid || rumbleSoundSlot == 0f;
             float rumbleVolume = Utils.GetLerpValue(acidVerticalLine - 2900f, acidVerticalLine - 1650f, target.Center.Y, true) * Utils.GetLerpValue(lineTop + 300f, lineTop + 800f, acidVerticalLine, true) * 1.8f + 0.001f;
@@ -1083,7 +1083,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int lungeCount = 2;
             int vomitShootRate = 15;
             int vomitBurstCount = 3;
-            int acidPerVomitBurst = 25;
+            int acidPerVomitBurst = 20;
             int bubbleReleaseRate = 45;
             float upwardLungeDistance = 450f;
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
@@ -1105,6 +1105,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     bubbleSpawnPosition = result.ToWorldCoordinates();
                 Utilities.NewProjectileBetter(bubbleSpawnPosition + Vector2.UnitY * 136f, -Vector2.UnitY * 6f, ModContent.ProjectileType<AcidBubble>(), 140, 0f);
             }
+
+            // Roar at the start of the first charge.
+            if (lungeCounter <= 0f && attackTimer == 1f && attackSubstate == 0f)
+                SoundEngine.PlaySound(Mauler.RoarSound, target.Center);
 
             switch ((int)attackSubstate)
             {
@@ -1142,6 +1146,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 // Vomit bursts of acid into the air.
                 case 1:
+                    // Disable damage.
+                    npc.damage = 0;
+
                     // Gain horizontal momentum in anticipation of the upcoming fall.
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 7.5f, 0.064f);
 
@@ -1172,8 +1179,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                     break;
 
-                // Fall into the ground in anticipation of the next rise.
+                // Fall into the ground in anticipation of the next rise. The scourge does not do damage during this subphase.
                 case 2:
+                    // Disable damage.
+                    npc.damage = 0;
+
                     npc.velocity.X *= 0.99f;
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
                     if (npc.Center.Y >= target.Center.Y + 1450f)

@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override bool PreDraw(ref Color lightColor)
         {
             lightColor.R = (byte)(255 * Projectile.Opacity);
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.White with { A = 0 }, lightColor, 4f);
             return false;
         }
 

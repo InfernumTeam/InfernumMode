@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.penetrate = -3;
             Projectile.MaxUpdates = 10;
             Projectile.timeLeft = Lifetime;
+            CooldownSlot = 1;
         }
 
         public override void AI()
@@ -60,7 +61,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 GeneralParticleHandler.SpawnParticle(particle);
             }
 
+            // Adjust the hitbox.
+            Projectile.Size = Vector2.One * particleScale * 40f;
+
             Timer++;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            return Utilities.CircularCollision(Projectile.Center - Projectile.velocity * Projectile.MaxUpdates * 2f, targetHitbox, Projectile.Size.Length() * 0.707f);
         }
     }
 }

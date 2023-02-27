@@ -242,7 +242,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, NPCID.Spazmatism);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, NPCID.Retinazer);
-                }, permittedNPCs: new int[] { NPCID.Retinazer, ModContent.NPCType<EnergyOrb>(), ModContent.NPCType<CursedOrb>() }),
+                }, permittedNPCs: new int[] { NPCID.Retinazer }),
 
                 new Boss(ModContent.NPCType<Polterghast>(), TimeChangeContext.Day, permittedNPCs: new int[]
                     { ModContent.NPCType<PhantomFuckYou>(), ModContent.NPCType<PolterghastHook>(), ModContent.NPCType<PolterPhantom>(), ModContent.NPCType<PolterghastLeg>() }),

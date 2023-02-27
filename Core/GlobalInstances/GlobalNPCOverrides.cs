@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
@@ -230,6 +231,16 @@ namespace InfernumMode.GlobalInstances
                         npc.Center = MotionCharacteristic.PreviousOutputPosition;
                     }
 
+                    // Disable the effects of certain unpredictable freeze debuffs.
+                    // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
+                    // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
+                    npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
+                    npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
+                    npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
+                    npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
+                    npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+                    npc.buffImmune[BuffID.Webbed] = true;
+
                     return result;
                 }
             }
@@ -272,9 +283,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Providence>())
             {
-                if (!Main.dayTime && !WorldSaveSystem.HasBeatedInfernumProvRegularly)
-                    WorldSaveSystem.HasBeatedInfernumNightProvBeforeDay = true;
-                WorldSaveSystem.HasBeatedInfernumProvRegularly = true;
+                if (!Main.dayTime && !WorldSaveSystem.HasBeatenInfernumProvRegularly)
+                    WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = true;
+                WorldSaveSystem.HasBeatenInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
             }
 

@@ -123,8 +123,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 drawInstance(npc.Center + drawOffset, color, npc.rotation);
             }
 
-            float telegraphDirection = npc.Infernum().ExtraAI[14];
-            float telegraphOpacity = npc.Infernum().ExtraAI[15];
+            float telegraphDirection = npc.Infernum().ExtraAI[RetinazerTelegraphDirectionIndex];
+            float telegraphOpacity = npc.Infernum().ExtraAI[RetinazerTelegraphOpacityIndex];
             bool validTelegraphAttack = InFinalPhase || CurrentAttackState == TwinsAttackState.FlamethrowerBurst;
             if (CurrentAttackState == TwinsAttackState.DeathAnimation && !InFinalPhase)
                 telegraphOpacity = 0f;
@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
                 Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
-                Vector2 scaleInner = new(telegraphOpacity * 0.3f, AimedDeathray.LaserLengthConst / laserTelegraph.Height);
+                Vector2 scaleInner = new(telegraphOpacity * 0.3f, RetinazerAimedDeathray.LaserLengthConst / laserTelegraph.Height);
                 Vector2 scaleOuter = scaleInner * new Vector2(2.2f, 1f);
 
                 Color colorOuter = Color.Lerp(Color.Red, Color.White, 0.32f);

@@ -335,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             npc.rotation = npc.velocity.X * 0.02f;
             npc.damage = 0;
 
-            if (attackTimer % burstCreationRate == burstCreationRate - 1f)
+            if (attackTimer % burstCreationRate == burstCreationRate - 1f && attackTimer < burstCreationRate * burstCount + 60f)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
                 SoundEngine.PlaySound(SoundID.Item28, npc.Center);
@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 }
             }
 
-            if (attackTimer >= burstCreationRate * burstCount + 60f)
+            if (attackTimer >= burstCreationRate * burstCount + 150f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<IcicleSpike>());
                 attackTimer = 0f;

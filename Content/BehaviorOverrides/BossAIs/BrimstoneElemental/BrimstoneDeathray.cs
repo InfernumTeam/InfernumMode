@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * 3;
+        public float LaserWidthFunction(float completionRatio) => Projectile.scale * Projectile.width * Utils.GetLerpValue(0.02f, 0.05f, completionRatio, true) * 3f;
 
         public static Color LaserColorFunction(float completionRatio)
         {

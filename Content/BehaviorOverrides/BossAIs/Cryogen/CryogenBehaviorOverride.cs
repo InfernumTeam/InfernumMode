@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 }
             }
 
-            if (attackTimer >= burstCreationRate * burstCount + 150f)
+            if (attackTimer >= burstCreationRate * burstCount + 108f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<IcicleSpike>());
                 attackTimer = 0f;

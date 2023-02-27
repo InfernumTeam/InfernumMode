@@ -599,7 +599,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.netUpdate = true;
             }
 
-            if (spinDirection == 0f && otherEye is not null && otherEye.ai[1] != 0f)
+            if (!isSpazmatism)
                 spinDirection = otherEye.ai[1];
 
             // Update the spin direction for both eyes.
@@ -678,7 +678,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int redirectTime = 90;
             int attackTelegraphTime = 36;
             int chargeTime = 104;
-            int totalCharges = 6;
+            int totalCharges = 4;
             int totalLaserBurstsUntilExhaustion = 5;
             int baseExhaustCountdown = 90;
             int telegraphTime = (int)MathHelper.Lerp(42f, 28f, 1f - CombinedLifeRatio);

@@ -412,7 +412,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Opacity = 1f;
 
             // Create the lava on the first frame.
-            if (localAttackTimer == 1)
+            if (localAttackTimer == 1 && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProfanedLava>()))
             {
                 // Play the burn sound universally.
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);

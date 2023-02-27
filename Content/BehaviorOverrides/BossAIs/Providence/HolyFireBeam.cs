@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             if (CalamityGlobalNPC.holyBoss == -1 ||
                 !Main.npc[CalamityGlobalNPC.holyBoss].active ||
-                Main.npc[CalamityGlobalNPC.holyBoss].ai[0] != (int)ProvidenceBehaviorOverride.ProvidenceAttackType.CrystalBladesWithLaser)
+                Main.npc[CalamityGlobalNPC.holyBoss].ai[0] != (int)ProvidenceBehaviorOverride.ProvidenceAttackType.LaserBursts)
             {
                 Projectile.Kill();
                 return;

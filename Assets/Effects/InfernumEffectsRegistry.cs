@@ -40,6 +40,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
         public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
+        public static MiscShaderData ProfanedLavaVertexShader => GameShaders.Misc["Infernum:ProfanedLava"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
         public static MiscShaderData PulsatingLaserVertexShader => GameShaders.Misc["Infernum:PulsatingLaserShader"];
         public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
@@ -207,6 +208,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> noiseDisplacementShader = new(assets.Request<Effect>("Assets/Effects/NoiseDisplacement", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:NoiseDisplacement"] = new MiscShaderData(noiseDisplacementShader, "GlitchPass");
+
+            Ref<Effect> profanedLavaShader = new(assets.Request<Effect>("Assets/Effects/ProfanedLava", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ProfanedLava"] = new MiscShaderData(profanedLavaShader, "TrailPass");
         }
 
         public static void LoadScreenShaders(AssetRepository assets)

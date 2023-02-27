@@ -22,6 +22,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using System.Linq;
+using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -93,6 +94,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int CocoonDefense = 620;
 
+        public const int DeathEffectTimerIndex = 5;
+
+        public const int WasSummonedAtNightFlagIndex = 6;
+
+        public const int LavaHeightIndex = 7;
+
         public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
@@ -160,12 +167,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float attackStateTimer = ref npc.ai[2];
-            ref float rainbowVibrance = ref npc.Infernum().ExtraAI[5];
             ref float drawState = ref npc.localAI[0];
             ref float burnIntensity = ref npc.localAI[3];
-            ref float deathEffectTimer = ref npc.Infernum().ExtraAI[6];
-            ref float wasSummonedAtNight = ref npc.Infernum().ExtraAI[7];
-            ref float phase2AnimationTimer = ref npc.Infernum().ExtraAI[8];
+            ref float deathEffectTimer = ref npc.Infernum().ExtraAI[DeathEffectTimerIndex];
+            ref float wasSummonedAtNight = ref npc.Infernum().ExtraAI[WasSummonedAtNightFlagIndex];
+            ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
 
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
@@ -205,6 +211,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 player.wingTime = player.wingTimeMax;
                 player.AddBuff(ModContent.BuffType<ElysianGrace>(), 10);
             }
+
+            // For a few frames Providence will play Boss 1 due to the custom music system. Don't allow this.
+            if (Main.netMode != NetmodeID.Server)
+                Main.musicFade[MusicID.Boss1] = 0f;
 
             // Despawn if the nearest target is incredibly far away.
             if (!npc.WithinRange(target.Center, 9600f))
@@ -385,8 +395,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Execute attack patterns.
             switch ((ProvidenceAttackType)attackType)
             {
-                case ProvidenceAttackType.DogmaLaserBursts:
-                    DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState);
+                case ProvidenceAttackType.EnterFireFormBulletHell:
+                    DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -394,10 +404,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public static void DoBehavior_EnterFireFormBulletHell(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        public static void DoBehavior_EnterFireFormBulletHell(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float lavaHeight)
         {
             // Enter the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            npc.Opacity = 1f;
+
+            // Create the lava on the first frame.
+            if (localAttackTimer == 1)
+            {
+                // Play the burn sound universally.
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
+
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedLava>(), 350, 0f);
+
+                // Rise above the lava.
+                npc.velocity = Vector2.UnitY * -13f;
+                npc.netUpdate = true;
+            }
+
+            lavaHeight = MathHelper.Lerp(lavaHeight, 1400f, 0.012f);
+
+            npc.velocity.Y *= 0.97f;
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
@@ -506,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (useDefenseFrames)
                     npc.localAI[1] = 0f;
 
-                npc.frameCounter += npc.Infernum().ExtraAI[6] > 0f ? 0.6 : 1.0;
+                npc.frameCounter += npc.Infernum().ExtraAI[DeathEffectTimerIndex] > 0f ? 0.6 : 1.0;
                 if (npc.frameCounter > 5.0)
                 {
                     npc.frameCounter = 0.0;
@@ -526,7 +562,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DrawProvidenceWings(NPC npc, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
         {
             Color deathEffectColor = new(6, 6, 6, 0);
-            float deathEffectInterpolant = Utils.GetLerpValue(0f, 35f, npc.Infernum().ExtraAI[6], true);
+            float deathEffectInterpolant = Utils.GetLerpValue(0f, 35f, npc.Infernum().ExtraAI[DeathEffectTimerIndex], true);
 
             if (!IsEnraged)
             {

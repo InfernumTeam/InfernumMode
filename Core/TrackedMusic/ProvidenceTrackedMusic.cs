@@ -8,7 +8,7 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override BPMHeadBobState HeadBobState => BPMHeadBobState.Half;
 
-        public override float BeatsPerMinute => 180f;
+        public override float BeatsPerMinute => BeatsPerMinuteStatic;
 
         public override List<SongSection> HeadphonesHighPoints => new();
 
@@ -45,5 +45,7 @@ namespace InfernumMode.Core.TrackedMusic
             WithMSDelay(1, 57, 895, 50),
             WithMSDelay(1, 58, 549, 50),
         };
+
+        public static float BeatsPerMinuteStatic => 180f;
     }
 }

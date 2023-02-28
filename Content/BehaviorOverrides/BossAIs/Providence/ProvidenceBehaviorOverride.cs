@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             bool syncsWithMusic = Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f;
             ref float attackTimer = ref npc.ai[1];
             if (syncsWithMusic)
-                attackTimer = (int)(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
+                attackTimer = (int)Math.Round(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
 
             // Increment the attack timer manually if it shouldn't sync with the music.
             else
@@ -215,6 +215,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // For a few frames Providence will play Boss 1 due to the custom music system. Don't allow this.
             if (Main.netMode != NetmodeID.Server)
                 Main.musicFade[MusicID.Boss1] = 0f;
+
+            // This screen shader kind of sucks. Please turn it off.
+            if (Main.netMode != NetmodeID.Server)
+                Filters.Scene["CalamityMod:Providence"].Deactivate();
 
             // Despawn if the nearest target is incredibly far away.
             if (!npc.WithinRange(target.Center, 9600f))
@@ -406,13 +410,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_EnterFireFormBulletHell(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float lavaHeight)
         {
+            int shootDelay = 75;
+            int startingShootCycle = 96;
+            int endingShootCycle = 42;
+            int starCircleShootRate = GetBPMTimeMultiplier(3);
+            float idealLavaHeight = 1400f;
+            float attackCompletion = localAttackTimer / (float)localAttackDuration;
+            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+            ref float cycleTimer = ref npc.Infernum().ExtraAI[1];
+            ref float shootCycle = ref npc.Infernum().ExtraAI[2];
+            ref float performedInitializations = ref npc.Infernum().ExtraAI[3];
+
+            // Initialize the shoot cycle value.
+            if (shootCycle <= 0f)
+                shootCycle = startingShootCycle;
+
+            int starCircleShootCount = (int)MathHelper.Lerp(14f, 24f, attackCompletion);
+            int shootRate = (int)MathHelper.Lerp(6f, 3f, attackCompletion);
+            float spiralShootSpeed = MathHelper.Lerp(2.6f, 4.23f, attackCompletion);
+            float circleShootSpeed = spiralShootSpeed * 1.36f;
+            bool canShootCircle = attackCompletion >= 0.5f;
+
             // Enter the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
 
             npc.Opacity = 1f;
 
             // Create the lava on the first frame.
-            if (localAttackTimer == 1 && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProfanedLava>()))
+            if (performedInitializations == 0f && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProfanedLava>()))
             {
                 // Play the burn sound universally.
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
@@ -427,13 +452,69 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedLava>(), 350, 0f);
 
                 // Rise above the lava.
+                performedInitializations = 1f;
                 npc.velocity = Vector2.UnitY * -13f;
                 npc.netUpdate = true;
             }
 
-            lavaHeight = MathHelper.Lerp(lavaHeight, 1400f, 0.012f);
-
+            // Slow down after the initial rise effect.
             npc.velocity.Y *= 0.97f;
+
+            // Make the lava rise upward.
+            lavaHeight = MathHelper.Lerp(lavaHeight, idealLavaHeight, 0.013f);
+
+            // Begin firing bursts of holy stars once the shoot delay has elapsed.
+            int starDamage = IsEnraged ? 450 : 250;
+            if (localAttackTimer >= shootDelay)
+            {
+                shootTimer++;
+                cycleTimer++;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && shootTimer >= shootRate)
+                {
+                    Vector2 starSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle) * spiralShootSpeed;
+                    Utilities.NewProjectileBetter(npc.Center, starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
+
+                    shootTimer = 0f;
+
+                    // The frequency of these projectile firing conditions may be enough to trigger the anti NPC packet spam system that Terraria uses.
+                    // Consequently, that system is ignored for this specific sync.
+                    npc.netSpam = 0;
+                    npc.netUpdate = true;
+                }
+
+                // Reset the cycle and calculate the duration of the next one if it's finished.
+                if (cycleTimer >= shootCycle)
+                {
+                    shootCycle = MathHelper.Lerp(startingShootCycle, endingShootCycle, attackCompletion);
+                    cycleTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Release star circles if necessary.
+            if (canShootCircle && localAttackTimer % starCircleShootRate == 0f)
+            {
+                // Play a sizzle sound and create light effects to accompany the circle.
+                SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, starCircleShootRate / 3);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = (localAttackTimer % (starCircleShootRate * 2f) == 0f) ? MathHelper.Pi / starCircleShootCount : 0f;
+                    for (int i = 0; i < starCircleShootCount; i++)
+                    {
+                        Vector2 starSpiralVelocity = (MathHelper.TwoPi * i / starCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
+                    }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+                }
+            }
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
@@ -489,6 +570,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -6f, 6f);
         }
+
+        // A value of two would be half beat, a value of four would be quarter beat, etc.
+        public static int GetBPMTimeMultiplier(int beatFactor) =>
+            (int)Math.Round(3600f / ProvidenceTrackedMusic.BeatsPerMinuteStatic * beatFactor);
 
         public static void ReleaseSparkles(Vector2 sparkleSpawnPosition, int sparkleCount, float maxSpraySpeed)
         {
@@ -720,7 +805,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
             float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
-            ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0));
+            Main.spriteBatch.Draw(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
 
             return false;
         }

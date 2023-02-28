@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             npc.damage = 0;
 
             // Fly towards the destination.
-            if (!npc.WithinRange(hoverDestination, 96f))
+            if (!npc.WithinRange(hoverDestination, 96f) || UniversalAttackTimer <= 80f)
             {
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, Utils.GetLerpValue(npc.Distance(Target.Center), 96f, 360f) * 0.0425f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.8f);

@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     explosionTelegraphColor = Color.Lerp(Color.Cyan, Color.Lime, colorPulse * 0.67f) * circleFadeinInterpolant;
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
-                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.scale * 20f, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 

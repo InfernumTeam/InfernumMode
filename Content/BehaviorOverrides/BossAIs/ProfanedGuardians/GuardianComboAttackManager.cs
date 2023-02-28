@@ -2189,29 +2189,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DoBehavior_ReleaseAimingFireballs(NPC npc, Player target, ref float universalAttackTimer)
         {
-            float releaseDelay = 30f;
-            float releaseTime = releaseDelay + 20f;
-            float attackLength = releaseDelay + releaseTime + 120f;
-            float releaseRate = 2f;
-            float fireballSpeed = 15f;
-            float flySpeed = 5f;
+            float initialDelay = 90f;
+            float releaseRate = 30f;
+            float releaseTime = initialDelay + releaseRate * 4f;
+            float attackLength = releaseTime + 100f;
+            float fireballCount = 5f;
+            float fireballSpeed = 6f;
+            float flySpeed = 19f;
 
-            if (universalAttackTimer <= releaseDelay)
-                npc.velocity *= 0.99f;
+            Vector2 hoverPosition = target.Center + new Vector2(0f, -400f);
+            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), flySpeed)) / 8f;
 
-            else if (universalAttackTimer > releaseDelay && universalAttackTimer <= releaseTime)
+            if (universalAttackTimer >= initialDelay && universalAttackTimer % releaseRate == 0 && universalAttackTimer < releaseTime)
             {
-                npc.velocity *= 0.99f;
-                if (universalAttackTimer % releaseRate == releaseRate - 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 velocity = npc.SafeDirectionTo(target.Center).RotatedBy(Main.rand.NextFloat(-1.5f, 1.5f)) * fireballSpeed * Main.rand.NextFloat(0.5f, 1.5f);
-                    Utilities.NewProjectileBetter(npc.Center, velocity, ModContent.ProjectileType<HolyAimingFireballs>(), 300, 0f);
+                    for (int i = 0; i < fireballCount; i++)
+                    {
+                        Vector2 velocity = npc.SafeDirectionTo(target.Center).RotatedBy(Main.rand.NextFloat(1.1f, 2.5f) * Main.rand.NextFromList(-1f, 1f)) * fireballSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, velocity, ModContent.ProjectileType<HolyAimingFireballs>(), 300, 0f);
+                    }
                 }
-            }
-
-            else if (universalAttackTimer > releaseDelay + releaseTime && universalAttackTimer < attackLength)
-            {
-                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(target.Center) * MathHelper.Min(npc.Distance(target.Center), flySpeed)) / 8f;
             }
 
             if (universalAttackTimer >= attackLength)

@@ -84,6 +84,9 @@ namespace InfernumMode.Common.Graphics
             Main.OnResolutionChanged -= ResizeRenderTarget;
         }
 
+        public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
+
+
         public override void PostUpdateEverything()
         {
             if (BlurActive)

@@ -109,6 +109,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> StreakLightning => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/ZapTrail");
 
+        public static Asset<Texture2D> StreakMagma => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakMagma");
+
         public static Asset<Texture2D> StreakSolid => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakSolid");
 
         public static Asset<Texture2D> StreakThickGlow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/Streak2");

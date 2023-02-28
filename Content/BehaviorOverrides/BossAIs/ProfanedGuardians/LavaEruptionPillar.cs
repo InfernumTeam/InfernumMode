@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float Width => BigVersion ? 700 : 160f;
 
-        public float VariableWidth => Width * (BigVersion ? CalamityUtils.SineInOutEasing(CurrentLength / MaxLength, 0) :Utilities.EaseInOutCubic(CurrentLength / MaxLength));
+        public float VariableWidth => Width * (BigVersion ? CalamityUtils.SineInOutEasing(CurrentLength / MaxLength, 0) : Utilities.EaseInOutCubic(CurrentLength / MaxLength));
 
         public override void SetStaticDefaults()
         {

@@ -62,7 +62,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
-        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !WeakReferenceSupport.InAnySubworld();
+        public bool ZoneProfaned => Player.InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !SubworldSystem.IsActive<LostColosseum>();
 
         public bool InLayer3HadalZone => CustomAbyss.InsideOfLayer3HydrothermalZone(Player.Center.ToTileCoordinates());
 

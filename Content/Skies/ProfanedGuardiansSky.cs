@@ -17,6 +17,10 @@ namespace InfernumMode.Content.Skies
 {
     public class ProfanedGuardiansSkyScene : ModSceneEffect
     {
+        public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
+
+        public override float GetWeight(Player player) => 0.6f;
+
         public override bool IsSceneEffectActive(Player player)
         {
             int ID = GuardianComboAttackManager.CommanderType;

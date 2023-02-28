@@ -81,9 +81,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (CalamityGlobalNPC.doughnutBossHealer == -1)
                 npc.Calamity().DR = 0.3f;
 
-            // Why does this exist.
-            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
-
             if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)
             {
                 DoBehavior_DefenderYeetEffects(npc, target, ref attackTimer, commander);

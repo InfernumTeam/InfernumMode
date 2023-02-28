@@ -161,8 +161,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 3f, Projectile.height / 3f), Vector2.Zero, Color.SandyBrown,
                 Main.rand.NextFloat(0.45f, 0.75f), 30);
             GeneralParticleHandler.SpawnParticle(rockParticle);
-            ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center + Projectile.velocity * 0.5f,
-                0f, Projectile.scale * 0.8f, 12f, 190);
+
+            if (Main.rand.NextBool())
+            {
+                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, 
+                    Projectile.Center + Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 12f, 190);
+            }
+
             Projectile.rotation -= 0.1f;
             Timer++;
         }

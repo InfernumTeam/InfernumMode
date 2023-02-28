@@ -59,9 +59,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset taking damage.
             npc.dontTakeDamage = false;
 
-            // Why does this exist.
-            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
-
             switch ((GuardiansAttackType)attackState)
             {
                 case GuardiansAttackType.SpawnEffects:

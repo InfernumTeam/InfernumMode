@@ -98,9 +98,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else
                 npc.Calamity().DR = 0.4f;
 
-            // Why does this exist.
-            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
-
             // Reset fields.
             npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;
 
@@ -178,6 +175,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case GuardiansAttackType.LargeGeyserAndFireCharge:
                     DoBehavior_LargeGeyserAndFireCharge(npc, target, ref attackTimer);
+                    break;
+
+                case GuardiansAttackType.ReleaseAimingFireballs:
+                    DoBehavior_ReleaseAimingFireballs(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.CommanderDeathAnimation:

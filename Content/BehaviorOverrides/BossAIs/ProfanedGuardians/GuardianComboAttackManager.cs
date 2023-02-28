@@ -51,6 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Commander solo attacks.
             LargeGeyserAndFireCharge,
+            ReleaseAimingFireballs,
 
             CommanderDeathAnimation
         }
@@ -2169,19 +2170,54 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<ProfanedCrack>(), 0, 0f);
 
+                        // Recoil backwards.
+                        npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 3.5f;
+
                         substate++;
                         universalAttackTimer = 0f;
                     }
                     break;
 
                 case 4:
+                    npc.velocity *= 0.98f;
                     if (universalAttackTimer >= afterImpactWaitLength)
-                    {
-                        SelectNewAttack(npc, ref universalAttackTimer, (float)GuardiansAttackType.LargeGeyserAndFireCharge);
-                    }
+                        SelectNewAttack(npc, ref universalAttackTimer);
                     break;
             }
 
+        }
+
+        public static void DoBehavior_ReleaseAimingFireballs(NPC npc, Player target, ref float universalAttackTimer)
+        {
+            float releaseDelay = 30f;
+            float releaseTime = releaseDelay + 20f;
+            float attackLength = releaseDelay + releaseTime + 120f;
+            float releaseRate = 2f;
+            float fireballSpeed = 15f;
+            float flySpeed = 5f;
+
+            if (universalAttackTimer <= releaseDelay)
+                npc.velocity *= 0.99f;
+
+            else if (universalAttackTimer > releaseDelay && universalAttackTimer <= releaseTime)
+            {
+                npc.velocity *= 0.99f;
+                if (universalAttackTimer % releaseRate == releaseRate - 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 velocity = npc.SafeDirectionTo(target.Center).RotatedBy(Main.rand.NextFloat(-1.5f, 1.5f)) * fireballSpeed * Main.rand.NextFloat(0.5f, 1.5f);
+                    Utilities.NewProjectileBetter(npc.Center, velocity, ModContent.ProjectileType<HolyAimingFireballs>(), 300, 0f);
+                }
+            }
+
+            else if (universalAttackTimer > releaseDelay + releaseTime && universalAttackTimer < attackLength)
+            {
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(target.Center) * MathHelper.Min(npc.Distance(target.Center), flySpeed)) / 8f;
+            }
+
+            if (universalAttackTimer >= attackLength)
+            {
+                SelectNewAttack(npc, ref universalAttackTimer);
+            }
         }
         #endregion
 
@@ -2324,6 +2360,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Else if its in the commander + defender combos, remain in them.
             else if ((GuardiansAttackType)commander.ai[0] < GuardiansAttackType.CrashRam)
+                commander.ai[0]++;
+
+            // Else if its at the end of the commander solo attacks, reset back to the start.
+            else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.ReleaseAimingFireballs)
+                commander.ai[0] = (float)GuardiansAttackType.LargeGeyserAndFireCharge;
+
+            // Else if its in the commander solo attacks, remain in them.
+            else if ((GuardiansAttackType)commander.ai[0] < GuardiansAttackType.ReleaseAimingFireballs)
                 commander.ai[0]++;
         }
 

@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
 
             // Draw an orange backglow.
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, WayfinderSymbol.Colors[0] * Projectile.Opacity, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.26f, 0, 0f);
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, WayfinderSymbol.Colors[2] * Projectile.Opacity, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.26f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, drawPosition, null, WayfinderSymbol.Colors[1] * Projectile.Opacity * 0.67f, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.52f, 0, 0f);
 
             // Draw strong red lightning zaps above the ground.

@@ -9,10 +9,12 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using CalamityMod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
-    public class HolyBurningStar : ModProjectile
+    public class HolyBasicFireball : ModProjectile
     {
         public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged ? ProvidenceBoss.BossMode.Night : ProvidenceBoss.BossMode.Day);
 
@@ -25,13 +27,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 30;
+            Projectile.width = Projectile.height = 36;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.Opacity = 0f;
             Projectile.penetrate = 1;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 240;
+            Projectile.scale = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
@@ -40,16 +43,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             Lighting.AddLight(Projectile.Center, 0.45f, 0.35f, 0f);
 
-            if (Projectile.ai[0] == 0f && BossRushEvent.BossRushActive)
-                Projectile.velocity *= 1.25f;
-
-            if (Projectile.ai[0] < 240f)
+            // Release fire particles.
+            for (int i = 0; i < 3; i++)
             {
-                Projectile.ai[0] += 1f;
-
-                if (Projectile.timeLeft < 160)
-                    Projectile.timeLeft = 160;
+                Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.2f, 0.4f));
+                fireColor = Color.Lerp(fireColor, Color.White, Main.rand.NextFloat(0.4f));
+                float angularVelocity = Main.rand.NextFloat(0.035f, 0.08f);
+                FireballParticle fire = new(Projectile.Center, Projectile.velocity * 0.6f, fireColor, 10, Main.rand.NextFloat(0.52f, 0.68f) * Projectile.scale, 1f, true, Main.rand.NextBool().ToDirectionInt() * angularVelocity);
+                GeneralParticleHandler.SpawnParticle(fire);
             }
+
+            // Make the fire grow in size.
+            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.067f, 0f, 1.2f);
+            Vector2 newScale = Vector2.One * Projectile.scale * 36f;
+            if (Projectile.Size != newScale)
+                Projectile.Size = newScale;
 
             if (Projectile.velocity.Length() < 16f)
                 Projectile.velocity *= 1.01f;
@@ -58,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f * (float)Math.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (MathHelper.Pi * 2f) * 3f)) * 0.8f;
+            float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f * (float)Math.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (MathHelper.Pi * 2f) * 3f)) * 0.225f;
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
@@ -69,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             colorA *= scaleInterpolant;
             colorB *= scaleInterpolant;
             Vector2 origin = texture.Size() / 2f;
-            Vector2 scale = new Vector2(0.5f, 2f) * scaleInterpolant;
+            Vector2 scale = new Vector2(0.5f, 2f) * Projectile.scale * scaleInterpolant;
 
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)

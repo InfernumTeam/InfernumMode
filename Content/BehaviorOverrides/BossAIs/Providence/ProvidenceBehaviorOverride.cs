@@ -402,6 +402,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 case ProvidenceAttackType.EnterFireFormBulletHell:
                     DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
                     break;
+                case ProvidenceAttackType.EnvironmentalFireEffects:
+                    DoBehavior_EnvironmentalFireEffects(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState);
+                    break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
 
@@ -413,7 +416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             int shootDelay = 75;
             int startingShootCycle = 96;
             int endingShootCycle = 42;
-            int starCircleShootRate = GetBPMTimeMultiplier(3);
+            int fireballCircleShootRate = GetBPMTimeMultiplier(3);
             float idealLavaHeight = 1400f;
             float attackCompletion = localAttackTimer / (float)localAttackDuration;
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
@@ -425,7 +428,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (shootCycle <= 0f)
                 shootCycle = startingShootCycle;
 
-            int starCircleShootCount = (int)MathHelper.Lerp(14f, 24f, attackCompletion);
+            int fireballCircleShootCount = (int)MathHelper.Lerp(14f, 24f, attackCompletion);
             int shootRate = (int)MathHelper.Lerp(6f, 3f, attackCompletion);
             float spiralShootSpeed = MathHelper.Lerp(2.6f, 4.23f, attackCompletion);
             float circleShootSpeed = spiralShootSpeed * 1.36f;
@@ -434,6 +437,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Enter the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
 
+            // Be fully opaque from the start.
             npc.Opacity = 1f;
 
             // Create the lava on the first frame.
@@ -449,7 +453,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Utilities.DisplayText("Lava is rising from below!", Color.Orange);
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedLava>(), 350, 0f);
+                }
 
                 // Rise above the lava.
                 performedInitializations = 1f;
@@ -461,10 +468,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity.Y *= 0.97f;
 
             // Make the lava rise upward.
-            lavaHeight = MathHelper.Lerp(lavaHeight, idealLavaHeight, 0.013f);
+            lavaHeight = MathHelper.Lerp(lavaHeight, idealLavaHeight, 0.006f);
 
-            // Begin firing bursts of holy stars once the shoot delay has elapsed.
-            int starDamage = IsEnraged ? 450 : 250;
+            // Begin firing bursts of holy fireballs once the shoot delay has elapsed.
+            int fireballDamage = IsEnraged ? 450 : 250;
             if (localAttackTimer >= shootDelay)
             {
                 shootTimer++;
@@ -472,9 +479,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && shootTimer >= shootRate)
                 {
-                    Vector2 starSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle) * spiralShootSpeed;
-                    Utilities.NewProjectileBetter(npc.Center, starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, -starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
+                    Vector2 fireballSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle) * spiralShootSpeed;
+                    Utilities.NewProjectileBetter(npc.Center, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
 
                     shootTimer = 0f;
 
@@ -493,26 +500,93 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            // Release star circles if necessary.
-            if (canShootCircle && localAttackTimer % starCircleShootRate == 0f)
+            // Release fireball circles if necessary.
+            if (canShootCircle && localAttackTimer % fireballCircleShootRate == 0f)
             {
                 // Play a sizzle sound and create light effects to accompany the circle.
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
                 if (CalamityConfig.Instance.Screenshake)
                 {
                     target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, starCircleShootRate / 3);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = (localAttackTimer % (starCircleShootRate * 2f) == 0f) ? MathHelper.Pi / starCircleShootCount : 0f;
-                    for (int i = 0; i < starCircleShootCount; i++)
+                    float shootOffsetAngle = (localAttackTimer % (fireballCircleShootRate * 2f) == 0f) ? MathHelper.Pi / fireballCircleShootCount : 0f;
+                    for (int i = 0; i < fireballCircleShootCount; i++)
                     {
-                        Vector2 starSpiralVelocity = (MathHelper.TwoPi * i / starCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, starSpiralVelocity, ModContent.ProjectileType<HolyBurningStar>(), starDamage, 0f);
+                        Vector2 fireballCircleVelocity = (MathHelper.TwoPi * i / fireballCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, fireballCircleVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
                     }
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+                }
+            }
+        }
+
+        public static void DoBehavior_EnvironmentalFireEffects(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        {
+            float attackCompletion = localAttackTimer / (float)localAttackDuration;
+            float bombExplosionRadius = 560f;
+            bool doneAttacking = attackCompletion >= 0.98f;
+            ref float bombCreationTimer = ref npc.Infernum().ExtraAI[0];
+            ref float hasDonePhaseTransitionEffects = ref npc.Infernum().ExtraAI[1];
+
+            int bombReleaseRate = (int)MathHelper.Lerp(22f, 15f, attackCompletion);
+
+            // Stay in the cocoon.
+            drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            if (!doneAttacking)
+                bombCreationTimer++;
+            if (bombCreationTimer >= bombReleaseRate)
+            {
+                // Release the bombs. They spawn in general a bit ahead of the player so that you can just run back and forth on the arena.
+                // Also shoot a single holy fireball from below, as though it's from the lava.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int fireballDamage = IsEnraged ? 450 : 250;
+                    Vector2 aimAheadOffset = target.velocity * new Vector2(60f, 10f);
+                    Vector2 bombSpawnPosition = target.Center + aimAheadOffset + Main.rand.NextVector2Unit() * Main.rand.NextFloat(120f, 650f);
+                    Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY * 0.01f, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
+                    Utilities.NewProjectileBetter(target.Center + new Vector2(Main.rand.NextFloatDirection() * 100f, 640f), -Vector2.UnitY * 6.4f, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
+
+                    bombCreationTimer = 0f;
+
+                    // The frequency of these projectile firing conditions may be enough to trigger the anti NPC packet spam system that Terraria uses.
+                    // Consequently, that system is ignored for this specific sync.
+                    npc.netSpam = 0;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Delete everything when ready to transition to the next attack.
+            // Also do some very, very strong transition effects.
+            if (doneAttacking)
+            {
+                // Make all bombs that aren't close to the target explode.
+                // Once that are close to the target simply disappear, since the player can't reasonably expect the sudden explosion in their face.
+                foreach (Projectile bomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<HolyBomb>()))
+                {
+                    if (bomb.WithinRange(target.Center, bombExplosionRadius + 100f))
+                        bomb.active = false;
+                    else
+                        bomb.Kill();
+                }
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyBasicFireball>());
+
+                if (hasDonePhaseTransitionEffects == 0f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound);
+
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 40);
+                    }
+                    hasDonePhaseTransitionEffects = 1f;
+                    npc.netUpdate = true;
                 }
             }
         }

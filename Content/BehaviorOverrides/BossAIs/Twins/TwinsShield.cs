@@ -61,21 +61,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             if (!alone && Projectile.timeLeft < HealTime)
                 Projectile.timeLeft = HealTime;
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                if (!Main.projectile[i].active || !Main.projectile[i].friendly || !Projectile.WithinRange(Main.projectile[i].Center, Radius * 0.9f))
-                    continue;
-
-                Projectile proj = Main.projectile[i];
-                if (proj.timeLeft > 10 && proj.damage > 0)
-                {
-                    proj.friendly = false;
-                    proj.velocity = Vector2.Reflect(proj.velocity, Projectile.SafeDirectionTo(Main.player[Player.FindClosest(proj.Center, 1, 1)].Center));
-                    proj.penetrate = 1;
-                    proj.netUpdate = true;
-                }
-            }
-
             Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(ref Color lightColor)

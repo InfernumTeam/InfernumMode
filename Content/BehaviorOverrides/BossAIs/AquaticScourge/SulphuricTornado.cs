@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Fade in and grow to the appropriate size.
             Projectile.Opacity = Utils.GetLerpValue(0f, 120f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
-            Projectile.scale = Utils.GetLerpValue(0f, 60f, Time, true);
+            Projectile.scale = Utils.GetLerpValue(0f, 108f, Time, true);
 
             // Move upward.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

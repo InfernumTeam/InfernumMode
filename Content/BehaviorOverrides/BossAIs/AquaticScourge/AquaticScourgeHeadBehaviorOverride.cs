@@ -608,7 +608,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 chargeDelay -= 4;
                 stunTime -= 15;
-                chargeSpeed += 5f;
+                chargeSpeed += 2.75f;
                 rubbleArc += 0.09f;
                 bubbleSpacing -= 35f;
             }
@@ -915,9 +915,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
             if (phase3)
             {
-                rubbleReleaseRate -= 5;
+                rubbleReleaseRate -= 8;
                 turnAngularVelocity += 0.0098f;
-                movementSpeed += 7f;
+                movementSpeed += 5.6f;
             }
             if (enraged)
             {
@@ -927,10 +927,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[0];
-
-            // Slither around when not close to the target.
-            float slitherInterpolant = Utils.GetLerpValue(250f, 540f, npc.Distance(target.Center), true);
-            idealRotation += (float)Math.Sin(MathHelper.TwoPi * attackTimer / 145f) * slitherInterpolant * 0.6f;
 
             // Fly more aggressively if the target is close to the safety bubble.
             Projectile closestBubble = null;

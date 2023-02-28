@@ -1,4 +1,6 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 using CalamityMod.NPCs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,10 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-using CalamityMod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using CalamityMod.Particles;
-using InfernumMode.Common.Graphics.Particles;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -32,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.Opacity = 0f;
-            Projectile.penetrate = 1;
+            Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
             Projectile.scale = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;

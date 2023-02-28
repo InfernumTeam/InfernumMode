@@ -1,9 +1,11 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Particles;
 using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -88,6 +90,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.Bottom = WorldSaveSystem.ProvidenceArena.BottomRight() * 16f - Vector2.UnitX * 3000f;
             Projectile.height = (int)LavaHeight;
             Time++;
+
+            // Emit smoke and fire at the very top of the lava.
+            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            if (Main.myPlayer == closestPlayer.whoAmI)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(1f, 4f);
+                    Vector2 smokeSpawnPosition = new(closestPlayer.Center.X + Main.rand.NextFloatDirection() * 1200f, Projectile.Top.Y + Main.rand.NextFloatDirection() * 15f + 35f);
+                    CloudParticle smoke = new(smokeSpawnPosition, smokeVelocity, Color.Orange, Color.DarkGray, 45, 0.8f);
+                    GeneralParticleHandler.SpawnParticle(smoke);
+                }
+            }
 
             // Initialize the lava sound.
             LavaSound ??= SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.BurnLoopSound, Main.LocalPlayer.Center);

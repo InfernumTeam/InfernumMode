@@ -127,9 +127,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 fireballShader.Parameters["dist"].SetValue(60f);
                 fireballShader.Parameters["opacity"].SetValue(circleFadeinInterpolant * Projectile.Opacity * 0.335f);
                 fireballShader.CurrentTechnique.Passes[0].Apply();
-                Main.spriteBatch.Draw(invisible, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale, 0, 0f);
-                Main.spriteBatch.Draw(invisible, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.5f, 0, 0f);
-                Main.spriteBatch.Draw(invisible, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.32f, 0, 0f);
+
+                Vector2 drawPosition = Projectile.Center + Vector2.UnitY * Projectile.scale * 18f - Main.screenPosition;
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.5f, 0, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.32f, 0, 0f);
             }
         }
 

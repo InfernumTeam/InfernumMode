@@ -64,9 +64,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             EnterFireFormBulletHell,
             EnvironmentalFireEffects,
-            ExplodingSpears,
             CleansingFireballBombardment,
             CooldownState,
+            ExplodingSpears,
             SpiralOfExplodingHolyBombs,
 
             EnterHolyMagicForm,
@@ -164,6 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override bool PreAI(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            float lifeRatioP2Adjusted = lifeRatio / Phase2LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float attackStateTimer = ref npc.ai[2];
@@ -386,6 +387,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
+            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects)
+                currentAttack = ProvidenceAttackType.CleansingFireballBombardment;
+
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
             {
@@ -397,13 +401,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Execute attack patterns.
+            // TODO -- A bunch of these should be using lifeRatioP2Adjusted. Change this once the lava section is properly moved to the second phase.
             switch ((ProvidenceAttackType)attackType)
             {
                 case ProvidenceAttackType.EnterFireFormBulletHell:
                     DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
                     break;
                 case ProvidenceAttackType.EnvironmentalFireEffects:
-                    DoBehavior_EnvironmentalFireEffects(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState);
+                    DoBehavior_EnvironmentalFireEffects(npc, target, localAttackTimer, localAttackDuration, ref drawState);
+                    break;
+                case ProvidenceAttackType.CleansingFireballBombardment:
+                    DoBehavior_CleansingFireballBombardment(npc, target, lifeRatio, localAttackTimer, localAttackDuration);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -416,7 +424,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             int shootDelay = 75;
             int startingShootCycle = 96;
             int endingShootCycle = 42;
-            int fireballCircleShootRate = GetBPMTimeMultiplier(3);
+            int fireballCircleShootRate = GetBPMTimeMultiplier(4);
             float idealLavaHeight = 1400f;
             float attackCompletion = localAttackTimer / (float)localAttackDuration;
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
@@ -433,6 +441,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float spiralShootSpeed = MathHelper.Lerp(2.6f, 4.23f, attackCompletion);
             float circleShootSpeed = spiralShootSpeed * 1.36f;
             bool canShootCircle = attackCompletion >= 0.5f;
+
+            // Make the attack faster according to life ratio.
+            // This may seem unintuitive since it's a "quiet" attack but there's always the possibility that the player won't kill Providence within one
+            // music cycle, meaning that she could have significantly weakened HP by the time this happens a second or third time.
+            spiralShootSpeed += (1f - lifeRatio) * 2.85f;
+            circleShootSpeed += (1f - lifeRatio) * 3.72f;
 
             // Enter the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
@@ -465,7 +479,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Slow down after the initial rise effect.
-            npc.velocity.Y *= 0.97f;
+            npc.velocity *= 0.97f;
 
             // Make the lava rise upward.
             lavaHeight = MathHelper.Lerp(lavaHeight, idealLavaHeight, 0.006f);
@@ -524,7 +538,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void DoBehavior_EnvironmentalFireEffects(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        public static void DoBehavior_EnvironmentalFireEffects(NPC npc, Player target, int localAttackTimer, int localAttackDuration, ref float drawState)
         {
             float attackCompletion = localAttackTimer / (float)localAttackDuration;
             float bombExplosionRadius = 560f;
@@ -591,6 +605,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
+        public static void DoBehavior_CleansingFireballBombardment(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration)
+        {
+            int attackDelay = GetBPMTimeMultiplier(4);
+            int fireballBPMShootMultiplier = 2;
+            if (lifeRatio < 0.5f)
+                fireballBPMShootMultiplier = 1;
+            int fireballShootRate = GetBPMTimeMultiplier(fireballBPMShootMultiplier);
+            float fireballSpeed = MathHelper.Lerp(18.5f, 25f, 1f - lifeRatio);
+            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+            ref float flightPath = ref npc.Infernum().ExtraAI[1];
+
+            // Fly above the target.
+            DoVanillaFlightMovement(npc, target, true, ref flightPath);
+
+            // Release the fireballs.
+            if (localAttackTimer >= attackDelay && localAttackTimer % fireballShootRate == 0f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int fireballDamage = IsEnraged ? 480 : 275;
+                    Vector2 fireballVelocity = npc.SafeDirectionTo(target.Center) * fireballSpeed;
+                    Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ModContent.ProjectileType<CleansingFireball>(), fireballDamage, 0f);
+                }
+            }
+
+            shootTimer++;
+        }
+
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
         {
             // Reset the flight path direction.
@@ -646,7 +689,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         }
 
         // A value of two would be half beat, a value of four would be quarter beat, etc.
-        public static int GetBPMTimeMultiplier(int beatFactor) =>
+        public static int GetBPMTimeMultiplier(float beatFactor) =>
             (int)Math.Round(3600f / ProvidenceTrackedMusic.BeatsPerMinuteStatic * beatFactor);
 
         public static void ReleaseSparkles(Vector2 sparkleSpawnPosition, int sparkleCount, float maxSpraySpeed)

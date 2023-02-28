@@ -111,18 +111,20 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/PrimeSaw");
 
+        public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceBlender") with { Volume = 2f };
+
         public static readonly SoundStyle ProvidenceBurnSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceBurn");
+
+        public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceDoorSoundLoop");
+
+        public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceDoorShatter");
 
         public static readonly SoundStyle ProvidenceHolyBlastShootSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceHolyBlastShoot");
 
-        public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/ProvidenceBlender") with { Volume = 2f };
-
         public static readonly SoundStyle ProvidenceHolyRaySound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceHolyRay");
 
-        public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorSoundLoop");
+        public static readonly SoundStyle ProvidenceLavaEruptionSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceLavaEruption");
 
-        public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Assets/Sounds/Custom/ProvidenceDoorShatter");
-        
         public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
         
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");

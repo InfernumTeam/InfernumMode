@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Reset things every frame.
             npc.damage = 0;
             npc.dontTakeDamage = false;
-            npc.Opacity = Utils.GetLerpValue(1260f, 1000f, offsetRadius, true);
+            npc.Opacity = Utils.GetLerpValue(1180f, 1000f, offsetRadius, true);
 
             // Only damage damage once really close to Providence.
             if (offsetRadius >= idealRadius + 100f)
@@ -45,10 +45,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             if (flyAway == 1f)
             {
-                npc.damage = 225;
+                if (npc.Opacity >= 1f)
+                    npc.damage = 225;
 
-                offsetRadius += 11f;
-                if (offsetRadius >= 1275f)
+                offsetRadius += 9f;
+                if (offsetRadius >= 1200f)
                     npc.active = false;
             }
             

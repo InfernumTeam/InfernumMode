@@ -404,9 +404,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
-            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CooldownState)
-                currentAttack = ProvidenceAttackType.ErraticMagicBursts;
-
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
             {
@@ -1059,7 +1056,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -6f, 6f);
         }
 
-        // A value of two would be half beat, a value of four would be quarter beat, etc.
+        // A value of two would be double beat, a value of four would be quadruple beat, etc.
         public static int GetBPMTimeMultiplier(float beatFactor) =>
             (int)Math.Round(3600f / ProvidenceTrackedMusic.BeatsPerMinuteStatic * beatFactor);
 

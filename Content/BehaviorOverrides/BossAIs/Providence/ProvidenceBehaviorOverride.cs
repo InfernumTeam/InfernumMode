@@ -20,12 +20,12 @@ using InfernumMode.Core.TrackedMusic;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using System.Linq;
 using InfernumMode.Common.Graphics;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using CalamityMod.NPCs.ProfanedGuardians;
+using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -405,7 +405,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
             if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CooldownState)
-                currentAttack = ProvidenceAttackType.RockMagicRitual;
+                currentAttack = ProvidenceAttackType.ErraticMagicBursts;
 
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
@@ -444,7 +444,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_EnterHolyMagicForm(npc, target, localAttackTimer, localAttackDuration, ref drawState);
                     break;
                 case ProvidenceAttackType.RockMagicRitual:
-                    DoBehavior_RockMagicRitual(npc, target, localAttackTimer, localAttackDuration);
+                    DoBehavior_RockMagicRitual(npc, target, localAttackTimer);
+                    break;
+                case ProvidenceAttackType.ErraticMagicBursts:
+                    DoBehavior_ErraticMagicBursts(npc, target, arenaTopCenter, lifeRatio, localAttackTimer, localAttackDuration);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -877,12 +880,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Opacity = Utils.GetLerpValue(0.95f, 0.7f, attackCompletion, true);
         }
 
-        public static void DoBehavior_RockMagicRitual(NPC npc, Player target, int localAttackTimer, int localAttackDuration)
+        public static void DoBehavior_RockMagicRitual(NPC npc, Player target, int localAttackTimer)
         {
-            // DEBUG BEHAVIOR -- This should not be necessary in the natural attack order, but since I'm skipping things so that I don't have to wait 2 minutes to test attacks, it's necessary.
-            npc.Opacity = 0f;
-            npc.Size = new Vector2(48, 108);
-
             int ritualTime = HolyRitual.Lifetime;
             int rockCount = 13;
             int crossShootRate = GetBPMTimeMultiplier(4);
@@ -997,6 +996,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     }
                 }
             }
+        }
+
+        public static void DoBehavior_ErraticMagicBursts(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        {
+            // DEBUG BEHAVIOR -- This should not be necessary in the natural attack order, but since I'm skipping things so that I don't have to wait 2 minutes to test attacks, it's necessary.
+            npc.Opacity = 0f;
+            npc.Size = new Vector2(48f, 108f);
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)

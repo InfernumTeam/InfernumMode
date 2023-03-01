@@ -145,6 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         }
 
         // Draw the telegraphs before the lasers go outward.
+        // This technically also draws when the lasers are shot, since the bloom looks super cool.
         public void SpecialDraw(SpriteBatch spriteBatch)
         {
             float opacity = (float)Math.Pow(Time / LaserTelegraphTime, 0.4);

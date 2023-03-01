@@ -60,6 +60,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
+        public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
@@ -211,6 +212,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Fireball shader.
+            Ref<Effect> fireballShader = new(assets.Request<Effect>("Assets/Effects/FireballShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["Infernum:FireballShader"] = new Filter(new(fireballShader, "FirePass"), EffectPriority.VeryHigh);
+
             // Screen Border Shader
             Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenBorder"] = new Filter(new ScreenShaderData(screenBorderShader, "ScreenPass"), EffectPriority.VeryHigh);

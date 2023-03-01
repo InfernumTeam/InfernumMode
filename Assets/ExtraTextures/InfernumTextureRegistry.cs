@@ -52,6 +52,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> LaserCircle => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/LaserCircle");
 
+        public static Asset<Texture2D> LavaNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/LavaNoise");
+
         public static Asset<Texture2D> LightningStreak => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakLightning");
 
         public static Asset<Texture2D> Line => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/Line");
@@ -97,6 +99,8 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> TelegraphLine => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
 
         public static Asset<Texture2D> TrypophobiaNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/TrypophobiaNoise");
+
+        public static Asset<Texture2D> VolcanoWarning => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/VolcanoWarningBlack");
 
         public static Asset<Texture2D> VoronoiLoop => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiLoop");
 

@@ -1,7 +1,5 @@
 using CalamityMod.Particles;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -108,15 +106,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             if (Main.rand.NextBool(6))
                                 blobSize *= 1.4f;
                             Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);
-                            Utilities.NewProjectileBetter(Projectile.Center + Main.rand.NextVector2Circular(40f, 40f), lavaVelocity, ModContent.ProjectileType<ProfanedLavaBlob>(), 0, 0f, -1, lavaLifetime, blobSize);
+                            Utilities.NewProjectileBetter(Projectile.Center + Main.rand.NextVector2Circular(40f, 40f), lavaVelocity, ModContent.ProjectileType<ProfanedLavaBlob>(), ProvidenceBehaviorOverride.SmallLavaBlobDamage, 0f, -1, lavaLifetime, blobSize);
                         }
-
-                        // Release three cinders up from below as well.
-                        int cinderDamage = ProvidenceBehaviorOverride.IsEnraged ? 400 : 225;
-                        for (int i = 0; i < 3; i++)
+                        
+                        // Release five cinders up from below as well.
+                        for (int i = 0; i < 5; i++)
                         {
-                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.3f, 0.3f, i / 2f)) * 6f;
-                            Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<HolyCinder>(), cinderDamage, 0f);
+                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.58f, 0.58f, i / 4f)) * 5.4f;
+                            Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<HolyCinder>(), ProvidenceBehaviorOverride.CinderDamage, 0f);
                         }
                     }
 
@@ -124,14 +121,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            // Fade in and accelerate if none of the above conditions were met.
+            // Fade in if none of the above conditions were met.
             else
             {
                 Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true);
                 Projectile.scale = Projectile.Opacity;
-
-                if (Time >= 36f && Projectile.velocity.Length() < 27f)
-                    Projectile.velocity *= 1.009f;
             }
 
             Time++;

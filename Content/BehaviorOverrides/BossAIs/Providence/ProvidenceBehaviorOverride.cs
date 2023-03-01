@@ -23,6 +23,8 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using System.Linq;
 using InfernumMode.Common.Graphics;
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -100,6 +102,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int LavaHeightIndex = 7;
 
+        public const int FlightPathIndex = 8;
+
         public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
@@ -132,6 +136,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Cycle restart.
             new(new(BaseTrackedMusic.TimeFormat(2, 21, 0), BaseTrackedMusic.TimeFormat(2, 23, 0)), ProvidenceAttackType.RestartCycle),
         };
+
+        public static int CinderDamage => IsEnraged ? 420 : 225;
+
+        public static int SmallLavaBlobDamage => IsEnraged ? 420 : 225;
+
+        public static int BasicFireballDamage => IsEnraged ? 450 : 250;
+
+        public static int BigFireballDamage => IsEnraged ? 490 : 280;
+
+        public static int HolySpearDamage => IsEnraged ? 500 : 300;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -173,6 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float deathEffectTimer = ref npc.Infernum().ExtraAI[DeathEffectTimerIndex];
             ref float wasSummonedAtNight = ref npc.Infernum().ExtraAI[WasSummonedAtNightFlagIndex];
             ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
+            ref float flightPath = ref npc.Infernum().ExtraAI[FlightPathIndex];
 
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
@@ -387,8 +402,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
-            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects)
-                currentAttack = ProvidenceAttackType.CleansingFireballBombardment;
+            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CooldownState)
+                currentAttack = ProvidenceAttackType.ExplodingSpears;
 
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
@@ -411,7 +426,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_EnvironmentalFireEffects(npc, target, localAttackTimer, localAttackDuration, ref drawState);
                     break;
                 case ProvidenceAttackType.CleansingFireballBombardment:
-                    DoBehavior_CleansingFireballBombardment(npc, target, lifeRatio, localAttackTimer, localAttackDuration);
+                    DoBehavior_CleansingFireballBombardment(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref flightPath);
+                    break;
+                case ProvidenceAttackType.CooldownState:
+                    DoBehavior_CooldownState(npc);
+                    break;
+                case ProvidenceAttackType.ExplodingSpears:
+                    DoBehavior_ExplodingSpears(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref flightPath);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -485,7 +506,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             lavaHeight = MathHelper.Lerp(lavaHeight, idealLavaHeight, 0.006f);
 
             // Begin firing bursts of holy fireballs once the shoot delay has elapsed.
-            int fireballDamage = IsEnraged ? 450 : 250;
             if (localAttackTimer >= shootDelay)
             {
                 shootTimer++;
@@ -494,8 +514,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (Main.netMode != NetmodeID.MultiplayerClient && shootTimer >= shootRate)
                 {
                     Vector2 fireballSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle) * spiralShootSpeed;
-                    Utilities.NewProjectileBetter(npc.Center, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, -fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
 
                     shootTimer = 0f;
 
@@ -531,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     for (int i = 0; i < fireballCircleShootCount; i++)
                     {
                         Vector2 fireballCircleVelocity = (MathHelper.TwoPi * i / fireballCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, fireballCircleVelocity, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, fireballCircleVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
                     }
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
                 }
@@ -559,11 +579,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Also shoot a single holy fireball from below, as though it's from the lava.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireballDamage = IsEnraged ? 450 : 250;
                     Vector2 aimAheadOffset = target.velocity * new Vector2(60f, 10f);
                     Vector2 bombSpawnPosition = target.Center + aimAheadOffset + Main.rand.NextVector2Unit() * Main.rand.NextFloat(120f, 650f);
                     Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.UnitY * 0.01f, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
-                    Utilities.NewProjectileBetter(target.Center + new Vector2(Main.rand.NextFloatDirection() * 100f, 640f), -Vector2.UnitY * 6.4f, ModContent.ProjectileType<HolyBasicFireball>(), fireballDamage, 0f);
+                    Utilities.NewProjectileBetter(target.Center + new Vector2(Main.rand.NextFloatDirection() * 100f, 640f), -Vector2.UnitY * 6.4f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
 
                     bombCreationTimer = 0f;
 
@@ -605,33 +624,100 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void DoBehavior_CleansingFireballBombardment(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration)
+        public static void DoBehavior_CleansingFireballBombardment(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float flightPath)
         {
             int attackDelay = GetBPMTimeMultiplier(4);
             int fireballBPMShootMultiplier = 2;
+            int timeToReachLava = 40;
             if (lifeRatio < 0.5f)
+            {
                 fireballBPMShootMultiplier = 1;
+                timeToReachLava /= 2;
+            }
             int fireballShootRate = GetBPMTimeMultiplier(fireballBPMShootMultiplier);
-            float fireballSpeed = MathHelper.Lerp(18.5f, 25f, 1f - lifeRatio);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
-            ref float flightPath = ref npc.Infernum().ExtraAI[1];
 
             // Fly above the target.
             DoVanillaFlightMovement(npc, target, true, ref flightPath);
 
             // Release the fireballs.
-            if (localAttackTimer >= attackDelay && localAttackTimer % fireballShootRate == 0f)
+            if (localAttackTimer >= attackDelay && localAttackTimer <= localAttackDuration - attackDelay && shootTimer % fireballShootRate == 0f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireballDamage = IsEnraged ? 480 : 275;
+                    Vector2 fireballDirection = npc.SafeDirectionTo(target.Center);
+                    IEnumerable<Projectile> lavaProjectiles = Utilities.AllProjectilesByID(ModContent.ProjectileType<ProfanedLava>());
+
+                    // If there is lava, check to see the distance it'll take for the fireball to reach it.
+                    // This distance calculation will be used to determine the speed of the fireball.
+                    float distanceToLava = 500f;
+                    if (lavaProjectiles.Any())
+                    {
+                        Projectile lava = lavaProjectiles.First();
+
+                        for (distanceToLava = 0f; distanceToLava < 3000f; distanceToLava += 10f)
+                        {
+                            Rectangle checkArea = Utils.CenteredRectangle(npc.Center + fireballDirection * distanceToLava, Vector2.One);
+                            if (lava.Colliding(lava.Hitbox, checkArea))
+                                break;
+                        }
+                    }
+
+                    // Calculate the speed of the fireball such that it reaches the lava in a certain amount of time.
+                    // This value has hard limits to prevent comically sluggish movement and outright telefrags.
+                    float fireballSpeed = MathHelper.Clamp(distanceToLava / timeToReachLava, 7f, 27f);
                     Vector2 fireballVelocity = npc.SafeDirectionTo(target.Center) * fireballSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ModContent.ProjectileType<CleansingFireball>(), fireballDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, fireballVelocity, ModContent.ProjectileType<CleansingFireball>(), BigFireballDamage, 0f);
                 }
             }
 
             shootTimer++;
+        }
+
+        public static void DoBehavior_CooldownState(NPC npc)
+        {
+            // Simply slow down.
+            npc.velocity *= 0.94f;
+        }
+
+        public static void DoBehavior_ExplodingSpears(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float flightPath)
+        {
+            int shootDelay = GetBPMTimeMultiplier(4);
+            int shootRate = GetBPMTimeMultiplier(8);
+            float spearShootSpeed = MathHelper.Lerp(14.5f, 17.5f, 1f - lifeRatio);
+            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+
+            // Fly above the target.
+            DoVanillaFlightMovement(npc, target, true, ref flightPath);
+
+            // Release spears at the target. This waits until Providence isn't inside of blocks.
+            shootTimer++;
+            if (Collision.SolidCollision(npc.Center - Vector2.UnitY * 10f, npc.width, 10) && shootTimer >= shootRate - 1f && npc.Center.Y >= WorldSaveSystem.ProvidenceArena.Top * 16f + 400f)
+                shootTimer = shootRate - 1f;
+
+            if (localAttackTimer >= shootDelay && shootTimer >= shootRate)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 7.5f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1.2f, 35);
+                }
+
+                for (int i = 0; i < 32; i++)
+                {
+                    Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Orange;
+                    CloudParticle fireCloud = new(npc.Center, (MathHelper.TwoPi * i / 32f).ToRotationVector2() * 14.5f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(2.5f, 3.2f));
+                    GeneralParticleHandler.SpawnParticle(fireCloud);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * spearShootSpeed, ModContent.ProjectileType<HolySpear>(), HolySpearDamage, 0f);
+
+                shootTimer = 0f;
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
@@ -645,11 +731,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             float verticalDistanceFromTarget = target.position.Y - npc.Bottom.Y;
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
-            float horizontalDistanceDirChangeThreshold = 800f;
+            float horizontalDistanceDirChangeThreshold = 350f;
 
             // Increase distance from target as necessary.
             if (stayAwayFromTarget)
-                horizontalDistanceDirChangeThreshold += 240f;
+                horizontalDistanceDirChangeThreshold += 200f;
 
             // Change X movement path if far enough away from target.
             if (npc.Center.X < target.Center.X && flightPath < 0 && horizontalDistanceFromTarget > horizontalDistanceDirChangeThreshold)

@@ -30,6 +30,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
         public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
+        public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
         public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
         public static MiscShaderData LinearTransformationVertexShader => GameShaders.Misc["Infernum:LinearTransformation"];
@@ -90,6 +91,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
+
             Ref<Effect> dashIndicator = new(assets.Request<Effect>("Assets/Effects/DoGDashIndicatorShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:DoGDashIndicatorShader"] = new MiscShaderData(dashIndicator, "TrailPass");
 

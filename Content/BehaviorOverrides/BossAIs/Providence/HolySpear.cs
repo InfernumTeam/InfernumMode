@@ -132,6 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     }
                 }
 
+                Projectile.velocity *= 0.93f;
                 DeathCountdown--;
                 if (DeathCountdown <= 0f)
                     Projectile.Kill();
@@ -162,7 +163,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { Volume = 2f }, Projectile.Center);
-            Projectile.velocity = Vector2.Zero;
+            Projectile.velocity *= InLava ? 0.6f : 0f;
             Projectile.Center += oldVelocity.SafeNormalize(Vector2.Zero) * 50f;
             DeathCountdown = DeathDelay;
         }

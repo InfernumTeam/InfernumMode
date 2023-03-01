@@ -106,6 +106,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int FlightPathIndex = 8;
 
+        public const int RockReformOffsetIndex = 9;
+
+        public static int CinderDamage => IsEnraged ? 420 : 225;
+
+        public static int SmallLavaBlobDamage => IsEnraged ? 420 : 225;
+
+        public static int BasicFireballDamage => IsEnraged ? 450 : 250;
+
+        public static int BigFireballDamage => IsEnraged ? 490 : 280;
+
+        public static int HolySpearDamage => IsEnraged ? 500 : 300;
+
+        public static int HolyCrossDamage => IsEnraged ? 450 : 250;
+
+        public static int CrystalMagicDamage => IsEnraged ? 450 : 250;
+
+        public static int MagicLaserbeamDamage => IsEnraged ? 1000 : 450;
+
         public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
@@ -126,45 +144,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Holy magic form.
             new(new(BaseTrackedMusic.TimeFormat(1, 11, 0), BaseTrackedMusic.TimeFormat(1, 16, 360)), ProvidenceAttackType.EnterHolyMagicForm),
-            new(new(BaseTrackedMusic.TimeFormat(1, 16, 360), BaseTrackedMusic.TimeFormat(1, 28, 0)), ProvidenceAttackType.RockMagicRitual),
-            new(new(BaseTrackedMusic.TimeFormat(1, 28, 0), BaseTrackedMusic.TimeFormat(1, 41, 0)), ProvidenceAttackType.ErraticMagicBursts),
-            new(new(BaseTrackedMusic.TimeFormat(1, 41, 0), BaseTrackedMusic.TimeFormat(1, 56, 0)), ProvidenceAttackType.DogmaLaserBursts),
+            new(new(BaseTrackedMusic.TimeFormat(1, 16, 360), BaseTrackedMusic.TimeFormat(1, 29, 0)), ProvidenceAttackType.RockMagicRitual),
+            new(new(BaseTrackedMusic.TimeFormat(1, 29, 0), BaseTrackedMusic.TimeFormat(1, 37, 0)), ProvidenceAttackType.ErraticMagicBursts),
+            new(new(BaseTrackedMusic.TimeFormat(1, 37, 0), BaseTrackedMusic.TimeFormat(1, 58, 0)), ProvidenceAttackType.DogmaLaserBursts),
 
             // Light form.
-            new(new(BaseTrackedMusic.TimeFormat(1, 56, 0), BaseTrackedMusic.TimeFormat(1, 58, 0)), ProvidenceAttackType.EnterLightForm),
-            new(new(BaseTrackedMusic.TimeFormat(1, 58, 0), BaseTrackedMusic.TimeFormat(2, 10, 0)), ProvidenceAttackType.LavaGeysersWithLightShards),
+            new(new(BaseTrackedMusic.TimeFormat(1, 58, 0), BaseTrackedMusic.TimeFormat(2, 1, 0)), ProvidenceAttackType.EnterLightForm),
+            new(new(BaseTrackedMusic.TimeFormat(2, 1, 0), BaseTrackedMusic.TimeFormat(2, 10, 0)), ProvidenceAttackType.LavaGeysersWithLightShards),
             new(new(BaseTrackedMusic.TimeFormat(2, 10, 0), BaseTrackedMusic.TimeFormat(2, 21, 0)), ProvidenceAttackType.FinalPhaseRadianceBursts),
 
             // Cycle restart.
             new(new(BaseTrackedMusic.TimeFormat(2, 21, 0), BaseTrackedMusic.TimeFormat(2, 23, 0)), ProvidenceAttackType.RestartCycle),
         };
 
-        public static int CinderDamage => IsEnraged ? 420 : 225;
-
-        public static int SmallLavaBlobDamage => IsEnraged ? 420 : 225;
-
-        public static int BasicFireballDamage => IsEnraged ? 450 : 250;
-
-        public static int BigFireballDamage => IsEnraged ? 490 : 280;
-
-        public static int HolySpearDamage => IsEnraged ? 500 : 300;
-
-        public static int HolyCrossDamage => IsEnraged ? 450 : 250;
-
-        public static int CrystalMagicDamage => IsEnraged ? 450 : 250;
-
-        public static int MagicLaserbeamDamage => IsEnraged ? 1000 : 450;
-
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio
         };
 
+        public static bool SyncAttacksWithMusic => Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f;
+
         public static void GetLocalAttackInformation(NPC npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration)
         {
-            bool syncsWithMusic = Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f;
             ref float attackTimer = ref npc.ai[1];
-            if (syncsWithMusic)
+            if (SyncAttacksWithMusic)
                 attackTimer = (int)Math.Round(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
 
             // Increment the attack timer manually if it shouldn't sync with the music.
@@ -196,6 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float wasSummonedAtNight = ref npc.Infernum().ExtraAI[WasSummonedAtNightFlagIndex];
             ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
             ref float flightPath = ref npc.Infernum().ExtraAI[FlightPathIndex];
+            ref float rockReformOffset = ref npc.Infernum().ExtraAI[RockReformOffsetIndex];
 
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.SpawnEffect;
@@ -328,7 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.DeleteAllProjectiles(false, typesToDelete);
                 }
 
-                burnIntensity = Utils.GetLerpValue(0f, 45f, deathEffectTimer, true);
+                burnIntensity = MathHelper.Max(burnIntensity, Utils.GetLerpValue(0f, 45f, deathEffectTimer, true));
                 npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.04f - 1f, 1f, Utils.GetLerpValue(0f, 435f, deathEffectTimer, true));
                 npc.dontTakeDamage = true;
                 npc.velocity *= 0.9f;
@@ -409,9 +413,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
-            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell)
-                currentAttack = ProvidenceAttackType.DogmaLaserBursts;
-
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
             {
@@ -427,6 +428,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             switch ((ProvidenceAttackType)attackType)
             {
                 case ProvidenceAttackType.EnterFireFormBulletHell:
+
+                    if (lifeRatio > 0.04f)
+                    {
+                        burnIntensity *= 0.94f;
+                        if (burnIntensity < 0.004f)
+                            burnIntensity = 0f;
+                    }
                     DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
                     break;
                 case ProvidenceAttackType.EnvironmentalFireEffects:
@@ -449,13 +457,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_EnterHolyMagicForm(npc, target, localAttackTimer, localAttackDuration, ref drawState);
                     break;
                 case ProvidenceAttackType.RockMagicRitual:
-                    DoBehavior_RockMagicRitual(npc, target, localAttackTimer);
+                    DoBehavior_RockMagicRitual(npc, target, localAttackTimer, localAttackDuration);
                     break;
                 case ProvidenceAttackType.ErraticMagicBursts:
                     DoBehavior_ErraticMagicBursts(npc, target, lifeRatio, localAttackTimer, localAttackDuration);
                     break;
                 case ProvidenceAttackType.DogmaLaserBursts:
-                    DoBehavior_DogmaLaserBursts(npc, target, lifeRatio, localAttackTimer, localAttackDuration);
+                    DoBehavior_DogmaLaserBursts(npc, target, lifeRatio, (int)attackTimer, localAttackTimer, localAttackDuration);
+                    break;
+
+                case ProvidenceAttackType.EnterLightForm:
+                    DoBehavior_EnterLightForm(npc, target, localAttackTimer, ref drawState, ref burnIntensity, ref rockReformOffset);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -699,7 +711,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_CooldownState(NPC npc)
         {
             // Simply slow down.
-            npc.velocity *= 0.94f;
+            npc.velocity *= 0.9f;
         }
 
         public static void DoBehavior_ExplodingSpears(NPC npc, Player target, float lifeRatio, int localAttackTimer, ref float flightPath)
@@ -774,7 +786,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     // Release a spiral of three bombs.
                     for (int i = 0; i < 3; i++)
                     {
-                        Vector2 bombSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle + MathHelper.TwoPi * i / 3f) * spiralShootSpeed;
+                        Vector2 bombSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle + MathHelper.TwoPi * i / 3f) * Main.rand.NextFloat(0.75f, 1f) * spiralShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, -bombSpiralVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
                     }
 
@@ -888,12 +900,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Opacity = Utils.GetLerpValue(0.95f, 0.7f, attackCompletion, true);
         }
 
-        public static void DoBehavior_RockMagicRitual(NPC npc, Player target, int localAttackTimer)
+        public static void DoBehavior_RockMagicRitual(NPC npc, Player target, int localAttackTimer, int localAttackDuration)
         {
             int ritualTime = HolyRitual.Lifetime;
             int rockCount = 13;
             int crossShootRate = GetBPMTimeMultiplier(4);
-            int rockCycleTime = 330;
+            int rockCycleTime = 300;
             ref float hasPerformedRitual = ref npc.Infernum().ExtraAI[0];
             ref float runeStripOpacity = ref npc.Infernum().ExtraAI[1];
             ref float backglowTelegraphInterpolant = ref npc.Infernum().ExtraAI[2];
@@ -989,11 +1001,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Make all rocks fuck off in anticipation of the new ones when necessary.
-            if (rockCycleTimer == rockCycleTime - 120f && NPC.AnyNPCs(ModContent.NPCType<ProfanedRocks>()))
+            if ((rockCycleTimer == rockCycleTime - 120f || localAttackTimer == localAttackDuration - 30) && NPC.AnyNPCs(ModContent.NPCType<ProfanedRocks>()))
             {
-                SoundEngine.PlaySound(ProfanedGuardianDefender.ShieldDeathSound with { Volume = 2f }, target.Center);
-
                 int rockID = ModContent.NPCType<ProfanedRocks>();
+                bool rockWasChanged = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
@@ -1001,8 +1012,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         n.Infernum().ExtraAI[0] = 1f;
                         n.netUpdate = true;
+                        rockWasChanged = true;
                     }
                 }
+
+                if (rockWasChanged)
+                    SoundEngine.PlaySound(ProfanedGuardianDefender.ShieldDeathSound with { Volume = 2f }, target.Center);
             }
         }
 
@@ -1130,18 +1145,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyBomb>());
         }
 
-        public static void DoBehavior_DogmaLaserBursts(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration)
+        public static void DoBehavior_DogmaLaserBursts(NPC npc, Player target, float lifeRatio, int attackTimer, int localAttackTimer, int localAttackDuration)
         {
-            // DEBUG BEHAVIOR -- This should not be necessary in the natural attack order, but since I'm skipping things so that I don't have to wait 2 minutes to test attacks, it's necessary.
-            npc.Opacity = 0f;
-            npc.Size = new Vector2(48f, 108f);
-
-            int energyChargeupTime = 60;
+            int energyChargeupTime = 30;
             int laserCount = (int)MathHelper.Lerp(14f, 21f, 1f - lifeRatio);
-            int cycleTime = HolyMagicLaserbeam.LaserLifetime;
             float telegraphMaxAngularVelocity = MathHelper.ToRadians(2f);
-            bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration - cycleTime - 12;
-            ref float attackCycleTimer = ref npc.Infernum().ExtraAI[0];
+            bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration - 90;
+            ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[0];
+            ref float countdownUntilNextLaser = ref npc.Infernum().ExtraAI[1];
 
             // Charge up energy before attacking.
             if (localAttackTimer < energyChargeupTime)
@@ -1159,12 +1170,46 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     GeneralParticleHandler.SpawnParticle(laserEnergy);
                 }
                 npc.velocity = Vector2.Zero;
+                countdownUntilNextLaser = 96f;
                 return;
             }
 
             // Cast the laser telegraphs.
-            attackCycleTimer++;
-            if (attackCycleTimer % cycleTime == 1f && !attackIsAboutToEnd)
+            int telegraphTime = 45;
+            int laserShootTime = 35;
+            bool bellIsPlaying = SyncAttacksWithMusic && ProvidenceTrackedMusic.Bells.Any(b => attackTimer >= b.StartInFrames && attackTimer < b.EndInFrames);
+            bool shootLaser = bellIsPlaying;
+            if (bellIsPlaying)
+            {
+                int bellIndex = ProvidenceTrackedMusic.Bells.FindIndex(b => attackTimer >= b.StartInFrames && attackTimer < b.EndInFrames);
+                if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 1)
+                    telegraphTime = ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex].StartInFrames;
+                if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 2)
+                    laserShootTime = ProvidenceTrackedMusic.Bells[bellIndex + 2].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames;
+
+                if (telegraphTime >= 76)
+                    telegraphTime = 76;
+                if (laserShootTime >= 76)
+                    laserShootTime = 76;
+            }
+
+            // Force a laser to be shot if there hasn't been one in a while. This is done to prevent awkward transition points in the song without bells from messing with fight flow.
+            if (countdownUntilNextLaser > 0f)
+            {
+                countdownUntilNextLaser--;
+                if (countdownUntilNextLaser <= 0f)
+                    shootLaser = true;
+            }
+
+            // Release slow fireballs from the lava below.
+            if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 12 == 11)
+            {
+                Vector2 fireballSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 300f, 800f);
+                Utilities.NewProjectileBetter(fireballSpawnPosition, -Vector2.UnitY * 5f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+            }
+
+
+            if (shootLaser && !attackIsAboutToEnd && !Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, npc.Center);
 
@@ -1174,18 +1219,83 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         float angularVelocity = Main.rand.NextFloat(0.65f, 1f) * Main.rand.NextFromList(-1f, 1f) * telegraphMaxAngularVelocity;
                         Vector2 laserDirection = (MathHelper.TwoPi * i / laserCount + Main.rand.NextFloatDirection() * 0.16f).ToRotationVector2();
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
+                        {
+                            laser.ModProjectile<HolyMagicLaserbeam>().LaserTelegraphTime = telegraphTime;
+                            laser.ModProjectile<HolyMagicLaserbeam>().LaserShootTime = laserShootTime;
+                        });
                         Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), MagicLaserbeamDamage, 0f, -1, angularVelocity);
                     }
+                    countdownUntilNextLaser = 96f;
+                    vfxDelayCountdown = telegraphTime;
+                    npc.netUpdate = true;
                 }
             }
 
             // Perform intensity effects and an explosion sound to go with the firing of the lasers.
-            if (CalamityConfig.Instance.Screenshake && attackCycleTimer % cycleTime == HolyMagicLaserbeam.LaserTelegraphTime && !attackIsAboutToEnd && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
+            if (vfxDelayCountdown > 0f)
             {
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, HolyMagicLaserbeam.LaserShootTime);
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.85f, Pitch = -0.3f }, target.Center);
+                vfxDelayCountdown--;
+                if (vfxDelayCountdown <= 0f && CalamityConfig.Instance.Screenshake && !attackIsAboutToEnd && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 30);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.55f, Pitch = -0.3f }, target.Center);
+                }
             }
+        }
+
+        public static void DoBehavior_EnterLightForm(NPC npc, Player target, int localAttackTimer, ref float drawState, ref float burnIntensity, ref float rockReformOffset)
+        {
+            int rockReformDelay = 60;
+            int rockReformTime = 75;
+            int burnDelay = 45;
+
+            // Hover above the target.
+            float moveSpeedInterpolant = Utils.GetLerpValue(60f, 150f, localAttackTimer, true);
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 360f;
+            npc.velocity *= 0.9f;
+            if (moveSpeedInterpolant > 0f)
+                npc.Center = Vector2.Lerp(npc.Center.MoveTowards(hoverDestination, moveSpeedInterpolant * 11f), hoverDestination, moveSpeedInterpolant * 0.123f);
+
+            // Stay in the cocoon during this attack by default.
+            drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            // Play a rock reform sound once the shell is about to come back.
+            if (localAttackTimer == rockReformDelay)
+                SoundEngine.PlaySound(ProfanedGuardianDefender.RockShieldSpawnSound);
+
+            // Make Provi's rock shell reappear.
+            rockReformOffset = 10000000f;
+            if (localAttackTimer >= rockReformDelay)
+            {
+                float rockReformInterpolant = MathF.Pow(Utils.GetLerpValue(rockReformDelay, rockReformDelay + rockReformTime - 30f, localAttackTimer, true), 0.05f);
+                rockReformOffset = (1f - rockReformInterpolant) * 6600f + 0.01f;
+            }
+
+            // Create violent effects when the rock is sufficiently reformed.
+            // This is half done for aesthetic purposes, half done to obscure the fact that Providence suddenly jumps back to her fire wings animation in a way that looks jank lol
+            if (localAttackTimer == rockReformDelay + rockReformTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 5f, 45);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+            }
+
+            // Begin burning once the shell is back.
+            if (localAttackTimer >= rockReformDelay + rockReformTime)
+            {
+                rockReformOffset = 0f;
+                burnIntensity = Utils.GetLerpValue(rockReformDelay + rockReformTime, rockReformDelay + rockReformTime + burnDelay, localAttackTimer, true) * 0.87f;
+                drawState = (int)ProvidenceFrameDrawingType.WingFlapping;
+                npc.Opacity = 1f;
+            }
+            else
+                burnIntensity = 0f;
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
@@ -1318,7 +1428,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DrawProvidenceWings(NPC npc, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
         {
             Color deathEffectColor = new(6, 6, 6, 0);
-            float deathEffectInterpolant = Utils.GetLerpValue(0f, 35f, npc.Infernum().ExtraAI[DeathEffectTimerIndex], true);
+            float deathEffectInterpolant = npc.localAI[3];
 
             if (!IsEnraged)
             {
@@ -1462,9 +1572,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 Rectangle frame = generalTexture.Frame(1, 3, 0, (npc.frame.Y / frameHeight + frameOffset) % 3);
 
+                // Draw the converging shell if applicable.
+                float rockReformOffset = npc.Infernum().ExtraAI[RockReformOffsetIndex];
+                if (rockReformOffset > 0f)
+                {
+                    Texture2D headRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock1").Value;
+                    Texture2D leftBodyRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock2").Value;
+                    Texture2D rightBodyRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock3").Value;
+
+                    float rockOffsetRotation = MathHelper.TwoPi * rockReformOffset / 2500f;
+                    float rockOpacity = Utils.GetLerpValue(700f, 300f, rockReformOffset, true);
+                    Vector2 crystalOffsetCorrection = -Vector2.UnitY.RotatedBy(npc.rotation * npc.spriteDirection) * npc.scale * 40f;
+                    Vector2 headDrawPosition = baseDrawPosition - new Vector2(0.1f, 1f).RotatedBy(npc.rotation * npc.spriteDirection) * (npc.scale * 60f + rockReformOffset) + crystalOffsetCorrection;
+                    Vector2 leftDrawPosition = baseDrawPosition - Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 10f) + crystalOffsetCorrection;
+                    Vector2 rightDrawPosition = baseDrawPosition + Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 12f) + crystalOffsetCorrection;
+                    Main.spriteBatch.Draw(headRock, headDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, headRock.Size() * new Vector2(0.5f, 1f), npc.scale * 2f, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(leftBodyRock, leftDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(1f, 0.5f), npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(rightBodyRock, rightDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(0f, 0.5f), npc.scale, spriteEffects, 0f);
+                }
+
                 // Draw the base texture.
-                baseDrawColor *= npc.Opacity;
-                Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, npc.GetAlpha(baseDrawColor), npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
 
                 // Draw the wings.
                 DrawProvidenceWings(npc, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
@@ -1473,7 +1601,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 9; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 2f;
-                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition + drawOffset, frame, Color.White with { A = 0 } * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition + drawOffset, frame, Color.White with { A = 0 } * npc.Opacity * MathF.Pow(1f - npc.localAI[3], 3f), npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }
             }
 
@@ -1482,7 +1610,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 float offsetAngle = MathHelper.TwoPi * i * 2f / totalProvidencesToDraw;
                 float drawOffsetScalar = (float)Math.Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * MathHelper.Pi);
-                drawOffsetScalar *= (float)Math.Pow(burnIntensity, 3f) * 36f;
+                drawOffsetScalar *= (float)Math.Pow(burnIntensity, 1.4f) * 36f;
                 drawOffsetScalar *= MathHelper.Lerp(1f, 2f, 1f - lifeRatio);
 
                 Vector2 drawOffset = offsetAngle.ToRotationVector2() * drawOffsetScalar;
@@ -1502,7 +1630,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
-            float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
+            float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * (1f - npc.localAI[3]) * 0.6f;
             Main.spriteBatch.Draw(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
 
             // Draw the rune strip on top of everything else during the ritual attack.

@@ -24,14 +24,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             set;
         }
 
-        public static int LaserTelegraphTime => 45;
+        public int LaserTelegraphTime
+        {
+            get;
+            set;
+        } = 45;
 
-        public static int LaserShootTime => 35;
+        public int LaserShootTime
+        {
+            get;
+            set;
+        } = 35;
 
-        // Adds up to 80, or 4x the beats per frame.
-        public static int LaserLifetime => LaserTelegraphTime + LaserShootTime;
-
-        public override float Lifetime => LaserLifetime;
+        public override float Lifetime => LaserTelegraphTime + LaserShootTime;
 
         public override Color LaserOverlayColor => Color.White;
 
@@ -58,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = (int)Lifetime;
+            Projectile.timeLeft = 600;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = 1;
         }
@@ -67,12 +72,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             writer.Write(Projectile.localAI[0]);
             writer.Write(Projectile.localAI[1]);
+            writer.Write(LaserTelegraphTime);
+            writer.Write(LaserShootTime);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Projectile.localAI[0] = reader.ReadSingle();
             Projectile.localAI[1] = reader.ReadSingle();
+            LaserTelegraphTime = reader.ReadInt32();
+            LaserShootTime = reader.ReadInt32();
         }
 
         public override void AttachToSomething()
@@ -115,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
-            return Color.Lerp(Color.Orange, Color.Wheat, colorInterpolant * 0.67f);
+            return Color.Lerp(Color.Orange, Color.Pink, colorInterpolant * 0.67f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -160,7 +169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
             laserScopeEffect.Parameters["laserWidth"].SetValue(0.002f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f));
             laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
-            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Yellow, Color.HotPink, Projectile.identity / 7f % 1f * 0.6f).ToVector3());
+            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Pink, Color.Yellow, Projectile.identity / 7f % 1f * 0.84f).ToVector3());
             laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Lerp(Color.Orange, Color.Red, 0.24f).ToVector3());
             laserScopeEffect.Parameters["bloomSize"].SetValue(0.28f + (1f - opacity) * 0.18f);
             laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(0.4f);

@@ -100,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         for (int i = 0; i < 15; i++)
                         {
-                            // Release a bunch of lava particles from below. They are purely aesthetic.
+                            // Release a bunch of lava particles from below.
                             int lavaLifetime = Main.rand.Next(120, 167);
                             float blobSize = MathHelper.Lerp(12f, 34f, (float)Math.Pow(Main.rand.NextFloat(), 1.85));
                             if (Main.rand.NextBool(6))

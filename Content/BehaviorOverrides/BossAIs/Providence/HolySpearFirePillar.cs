@@ -121,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 TelegraphDrawer.DrawPixelated(drawPositionsT, -Main.screenPosition, 20);
 
                 Texture2D warningSymbol = InfernumTextureRegistry.VolcanoWarning.Value;
-                Vector2 drawPosition = startT + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 900f - Main.screenPosition;
+                Vector2 drawPosition = startT + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 1200f - Main.screenPosition;
                 Color drawColor = Color.Lerp(TelegraphColorFunction(0.5f), Color.Orange, 0.5f) * Projectile.Opacity;
                 drawColor.A = 0;
                 Vector2 origin = warningSymbol.Size() * 0.5f;

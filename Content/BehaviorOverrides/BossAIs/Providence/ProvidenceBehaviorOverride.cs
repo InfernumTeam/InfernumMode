@@ -998,7 +998,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void DoBehavior_ErraticMagicBursts(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        public static void DoBehavior_ErraticMagicBursts(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration)
         {
             // DEBUG BEHAVIOR -- This should not be necessary in the natural attack order, but since I'm skipping things so that I don't have to wait 2 minutes to test attacks, it's necessary.
             npc.Opacity = 0f;

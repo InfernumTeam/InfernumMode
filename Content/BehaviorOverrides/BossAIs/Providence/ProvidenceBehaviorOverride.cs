@@ -203,8 +203,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Rectangle arenaArea = new((int)arenaTopLeft.X, (int)arenaTopLeft.Y, (int)(arenaBottomRight.X - arenaTopLeft.X), (int)(arenaBottomRight.Y - arenaTopLeft.Y));
 
             // Reset various things every frame. They can be changed later as needed.
-            npc.width = 600;
-            npc.height = 450;
             npc.defense = 50;
             npc.dontTakeDamage = false;
             npc.Calamity().DR = BossRushEvent.BossRushActive ? 0.65f : 0.35f;
@@ -403,8 +401,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
+            /*
             if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CleansingFireballBombardment and not ProvidenceAttackType.CooldownState)
                 currentAttack = ProvidenceAttackType.ExplodingSpears;
+            */
 
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
@@ -437,6 +437,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     break;
                 case ProvidenceAttackType.SpiralOfExplodingHolyBombs:
                     DoBehavior_SpiralOfExplodingHolyBombs(npc, target, arenaTopCenter, lifeRatio, localAttackTimer, localAttackDuration, ref drawState);
+                    break;
+
+                case ProvidenceAttackType.EnterHolyMagicForm:
+                    DoBehavior_EnterHolyMagicForm(npc, target, localAttackTimer, localAttackDuration, ref drawState);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -802,6 +806,70 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyBomb>());
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyCinder>());
             }
+        }
+
+        public static void DoBehavior_EnterHolyMagicForm(NPC npc, Player target, int localAttackTimer, int localAttackDuration, ref float drawState)
+        {
+            float attackCompletion = localAttackTimer / (float)localAttackDuration;
+            bool attackIsAlmostDone = attackCompletion >= 0.97f;
+            ref float startingY = ref npc.Infernum().ExtraAI[0];
+            ref float hasPerformedTeleport = ref npc.Infernum().ExtraAI[1];
+
+            // Stay in the cocoon during this attack.
+            drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            // Slow down.
+            npc.velocity.X *= 0.85f;
+
+            if (hasPerformedTeleport == 0f)
+            {
+                // Perform the teleport effect once ready.
+                if (attackIsAlmostDone)
+                {
+                    npc.Center = target.Center - Vector2.UnitY * 400f;
+                    npc.velocity = Vector2.Zero;
+
+                    ReleaseSparkles(npc.Center, 100, 35f);
+
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.75f, 45);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound with { Volume = 2f });
+                    hasPerformedTeleport = 1f;
+                    npc.netUpdate = true;
+                }
+                else
+                {
+                    // Initialize the Y position keyframe.
+                    if (localAttackTimer <= 8f)
+                    {
+                        startingY = npc.position.Y;
+                        npc.netUpdate = true;
+                    }
+                    else
+                        npc.position.Y = MathHelper.Lerp(startingY, WorldSaveSystem.ProvidenceArena.Top * 16f + 1650f, (float)Math.Pow(attackCompletion, 1.54));
+                }
+            }
+
+            // Play a rumble sound.
+            if (npc.Infernum().ExtraAI[2] == 0f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound);
+                npc.Infernum().ExtraAI[2] = 1f;
+            }
+
+            // Create screenshake effects.
+            if (!attackIsAlmostDone)
+                target.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(1f, 10f, (float)Math.Pow(attackCompletion, 2.1));
+
+            // Transform into the crystal at the end of the attack.
+            npc.Opacity = Utils.GetLerpValue(0.95f, 0.7f, attackCompletion, true);
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)

@@ -199,6 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 arenaTopLeft = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(68f, 32f);
             Vector2 arenaBottomRight = WorldSaveSystem.ProvidenceArena.BottomRight() * 16f + new Vector2(8f, 52f);
             Vector2 arenaCenter = WorldSaveSystem.ProvidenceArena.Center() * 16f + Vector2.One * 8f;
+            Vector2 arenaTopCenter = new Vector2(WorldSaveSystem.ProvidenceArena.Center().X + 405f, WorldSaveSystem.ProvidenceArena.Top + 56) * 16f + Vector2.One * 8f;
             Rectangle arenaArea = new((int)arenaTopLeft.X, (int)arenaTopLeft.Y, (int)(arenaBottomRight.X - arenaTopLeft.X), (int)(arenaBottomRight.Y - arenaTopLeft.Y));
 
             // Reset various things every frame. They can be changed later as needed.
@@ -402,7 +403,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
-            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CooldownState)
+            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CleansingFireballBombardment and not ProvidenceAttackType.CooldownState)
                 currentAttack = ProvidenceAttackType.ExplodingSpears;
 
             // Reset things if the attack changed.
@@ -432,7 +433,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_CooldownState(npc);
                     break;
                 case ProvidenceAttackType.ExplodingSpears:
-                    DoBehavior_ExplodingSpears(npc, target, lifeRatio, localAttackTimer, localAttackDuration, ref flightPath);
+                    DoBehavior_ExplodingSpears(npc, target, lifeRatio, localAttackTimer, ref flightPath);
+                    break;
+                case ProvidenceAttackType.SpiralOfExplodingHolyBombs:
+                    DoBehavior_SpiralOfExplodingHolyBombs(npc, target, arenaTopCenter, lifeRatio, localAttackTimer, localAttackDuration, ref drawState);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -628,12 +632,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int attackDelay = GetBPMTimeMultiplier(4);
             int fireballBPMShootMultiplier = 2;
-            int timeToReachLava = 40;
+            int timeToReachLava = 56;
             if (lifeRatio < 0.5f)
-            {
-                fireballBPMShootMultiplier = 1;
-                timeToReachLava /= 2;
-            }
+                timeToReachLava -= 8;
+
             int fireballShootRate = GetBPMTimeMultiplier(fireballBPMShootMultiplier);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
@@ -681,7 +683,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity *= 0.94f;
         }
 
-        public static void DoBehavior_ExplodingSpears(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float flightPath)
+        public static void DoBehavior_ExplodingSpears(NPC npc, Player target, float lifeRatio, int localAttackTimer, ref float flightPath)
         {
             int shootDelay = GetBPMTimeMultiplier(4);
             int shootRate = GetBPMTimeMultiplier(8);
@@ -720,10 +722,92 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
+        public static void DoBehavior_SpiralOfExplodingHolyBombs(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        {
+            int shootCycle = GetBPMTimeMultiplier(8);
+            int cinderShootRate = GetBPMTimeMultiplier(4);
+            int shootRate = (int)MathHelper.Lerp(11f, 9f, 1f - lifeRatio);
+            float spiralShootSpeed = MathHelper.Lerp(17f, 20f, 1f - lifeRatio);
+            float bombExplosionRadius = MathHelper.Lerp(875f, 1240f, 1f - lifeRatio);
+            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+            ref float cycleTimer = ref npc.Infernum().ExtraAI[1];
+            ref float hasDoneAttackEndEffects = ref npc.Infernum().ExtraAI[2];
+
+            // Stay in the cocoon once close enough to the top-center of the arena.
+            bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration * 0.96f;
+            bool canAttack = !attackIsAboutToEnd && npc.WithinRange(arenaTopCenter, 96f);
+            if (canAttack)
+            {
+                drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+                npc.velocity *= 0.85f;
+            }
+            else
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(arenaTopCenter) * 26f, 0.3f);
+
+            if (canAttack)
+            {
+                hasDoneAttackEndEffects = 0f;
+                shootTimer++;
+                cycleTimer++;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && shootTimer >= shootRate)
+                {
+                    // Release a spiral of three bombs.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 bombSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle + MathHelper.TwoPi * i / 3f) * spiralShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, -bombSpiralVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
+                    }
+
+                    shootTimer = 0f;
+                }
+
+                // Release cinders from the ceiling periodically.
+                if (cycleTimer % cinderShootRate == cinderShootRate - 1f)
+                {
+                    bool targetIsCloseToCeiling = MathHelper.Distance(target.Center.Y, WorldSaveSystem.ProvidenceArena.Y * 16f + 700f) < 450f;
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (float dx = -1400f; dx < 1400f; dx += Main.rand.NextFloat(108f, 136f))
+                        {
+                            float ySpawnPosition = WorldSaveSystem.ProvidenceArena.Y * 16f + 48f;
+                            Vector2 cinderVelocity = Vector2.UnitY * 4f;
+                            if (targetIsCloseToCeiling)
+                            {
+                                ySpawnPosition = target.Center.Y + 1000f;
+                                cinderVelocity.Y *= -1f;
+                            }
+
+                            Utilities.NewProjectileBetter(new Vector2(target.Center.X + dx, ySpawnPosition), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
+                        }
+                    }
+                }
+            }
+
+            // Make all bombs that aren't close to the target explode when the attack is almost done.
+            if (attackIsAboutToEnd)
+            {
+                if (hasDoneAttackEndEffects == 0f)
+                {
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 32);
+                    }
+                    hasDoneAttackEndEffects = 1f;
+                    npc.netUpdate = true;
+                }
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyBomb>());
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyCinder>());
+            }
+        }
+
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
         {
             // Reset the flight path direction.
-            if (flightPath == 0)
+            if (flightPath == 0f)
             {
                 flightPath = (npc.Center.X < target.Center.X).ToDirectionInt();
                 npc.netUpdate = true;
@@ -739,9 +823,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Change X movement path if far enough away from target.
             if (npc.Center.X < target.Center.X && flightPath < 0 && horizontalDistanceFromTarget > horizontalDistanceDirChangeThreshold)
-                flightPath = 0;
+                flightPath = 0f;
             if (npc.Center.X > target.Center.X && flightPath > 0 && horizontalDistanceFromTarget > horizontalDistanceDirChangeThreshold)
-                flightPath = 0;
+                flightPath = 0f;
 
             // Velocity and acceleration.
             float lifeRatio = npc.life / (float)npc.lifeMax;

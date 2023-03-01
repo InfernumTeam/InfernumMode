@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Color drawColor = Color.Lerp(TelegraphColorFunction(0.5f), Color.Orange, 0.5f) * Projectile.Opacity;
                 drawColor.A = 0;
                 Vector2 origin = warningSymbol.Size() * 0.5f;
-                float scale = 0.7f;
+                float scale = 0.38f;
 
                 spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * (float)Math.Sqrt(opacityScalar), 0f, origin, scale, SpriteEffects.None, 0f);
             }

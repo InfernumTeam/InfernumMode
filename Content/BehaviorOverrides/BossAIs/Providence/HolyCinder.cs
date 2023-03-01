@@ -54,11 +54,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphInterpolant = Utils.GetLerpValue(0f, 32f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(0f, 42f, Time, true);
             if (telegraphInterpolant >= 1f)
                 telegraphInterpolant = 0f;
 
-            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, Color.Yellow * telegraphInterpolant, telegraphInterpolant * 6f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, Color.Orange * telegraphInterpolant, telegraphInterpolant * 10f);
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
 

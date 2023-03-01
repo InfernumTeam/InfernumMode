@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
                 if (Projectile.Opacity <= 0f)
                 {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound, Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.6f }, Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -109,10 +109,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             Utilities.NewProjectileBetter(Projectile.Center + Main.rand.NextVector2Circular(40f, 40f), lavaVelocity, ModContent.ProjectileType<ProfanedLavaBlob>(), ProvidenceBehaviorOverride.SmallLavaBlobDamage, 0f, -1, lavaLifetime, blobSize);
                         }
                         
-                        // Release five cinders up from below as well.
-                        for (int i = 0; i < 5; i++)
+                        // Release four cinders up from below as well.
+                        for (int i = 0; i < 4; i++)
                         {
-                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.58f, 0.58f, i / 4f)) * 5.4f;
+                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.51f, 0.51f, i / 3f)) * 4.25f;
                             Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<HolyCinder>(), ProvidenceBehaviorOverride.CinderDamage, 0f);
                         }
                     }

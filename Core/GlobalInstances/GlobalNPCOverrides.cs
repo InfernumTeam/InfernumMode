@@ -67,6 +67,8 @@ namespace InfernumMode.GlobalInstances
 
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
 
+        public Primitive3DStrip Optional3DStripDrawer;
+
         public MotionCharacteristicSolver MotionCharacteristic
         {
             get;
@@ -121,6 +123,7 @@ namespace InfernumMode.GlobalInstances
             IsAbyssPrey = false;
             HasResetHP = false;
             OptionalPrimitiveDrawer = null;
+            Optional3DStripDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
             {

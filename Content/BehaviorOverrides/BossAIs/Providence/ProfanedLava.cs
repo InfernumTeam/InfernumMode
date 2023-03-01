@@ -88,7 +88,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Stick at the bottom of the arena.
             LavaHeight = Providence.Infernum().ExtraAI[ProvidenceBehaviorOverride.LavaHeightIndex];
             Projectile.Bottom = WorldSaveSystem.ProvidenceArena.BottomRight() * 16f - Vector2.UnitX * 3000f;
-            Projectile.height = (int)LavaHeight;
+
+            if (Projectile.height != (int)LavaHeight)
+                Projectile.height = (int)LavaHeight;
             Time++;
 
             // Emit smoke and fire at the very top of the lava.

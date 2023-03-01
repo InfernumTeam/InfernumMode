@@ -25,6 +25,7 @@ using System.Linq;
 using InfernumMode.Common.Graphics;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
+using CalamityMod.NPCs.ProfanedGuardians;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -123,8 +124,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             new(new(BaseTrackedMusic.TimeFormat(1, 3, 0), BaseTrackedMusic.TimeFormat(1, 11, 0)), ProvidenceAttackType.ExplodingSpears),
 
             // Holy magic form.
-            new(new(BaseTrackedMusic.TimeFormat(1, 11, 0), BaseTrackedMusic.TimeFormat(1, 16, 0)), ProvidenceAttackType.EnterHolyMagicForm),
-            new(new(BaseTrackedMusic.TimeFormat(1, 16, 0), BaseTrackedMusic.TimeFormat(1, 28, 0)), ProvidenceAttackType.RockMagicRitual),
+            new(new(BaseTrackedMusic.TimeFormat(1, 11, 0), BaseTrackedMusic.TimeFormat(1, 16, 360)), ProvidenceAttackType.EnterHolyMagicForm),
+            new(new(BaseTrackedMusic.TimeFormat(1, 16, 360), BaseTrackedMusic.TimeFormat(1, 28, 0)), ProvidenceAttackType.RockMagicRitual),
             new(new(BaseTrackedMusic.TimeFormat(1, 28, 0), BaseTrackedMusic.TimeFormat(1, 41, 0)), ProvidenceAttackType.ErraticMagicBursts),
             new(new(BaseTrackedMusic.TimeFormat(1, 41, 0), BaseTrackedMusic.TimeFormat(1, 56, 0)), ProvidenceAttackType.DogmaLaserBursts),
 
@@ -146,6 +147,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static int BigFireballDamage => IsEnraged ? 490 : 280;
 
         public static int HolySpearDamage => IsEnraged ? 500 : 300;
+
+        public static int HolyCrossDamage => IsEnraged ? 450 : 250;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -401,10 +404,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine attack information based on the current music, if it's playing.
             GetLocalAttackInformation(npc, out ProvidenceAttackType currentAttack, out int localAttackTimer, out int localAttackDuration);
 
-            /*
-            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CleansingFireballBombardment and not ProvidenceAttackType.CooldownState)
-                currentAttack = ProvidenceAttackType.ExplodingSpears;
-            */
+            if (currentAttack is not ProvidenceAttackType.EnterFireFormBulletHell and not ProvidenceAttackType.EnvironmentalFireEffects and not ProvidenceAttackType.CooldownState)
+                currentAttack = ProvidenceAttackType.RockMagicRitual;
 
             // Reset things if the attack changed.
             if (attackType != (int)currentAttack)
@@ -441,6 +442,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 case ProvidenceAttackType.EnterHolyMagicForm:
                     DoBehavior_EnterHolyMagicForm(npc, target, localAttackTimer, localAttackDuration, ref drawState);
+                    break;
+                case ProvidenceAttackType.RockMagicRitual:
+                    DoBehavior_RockMagicRitual(npc, target, localAttackTimer, localAttackDuration);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -826,6 +830,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Perform the teleport effect once ready.
                 if (attackIsAlmostDone)
                 {
+                    npc.Size = new Vector2(48, 108);
                     npc.Center = target.Center - Vector2.UnitY * 400f;
                     npc.velocity = Vector2.Zero;
 
@@ -870,6 +875,128 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Transform into the crystal at the end of the attack.
             npc.Opacity = Utils.GetLerpValue(0.95f, 0.7f, attackCompletion, true);
+        }
+
+        public static void DoBehavior_RockMagicRitual(NPC npc, Player target, int localAttackTimer, int localAttackDuration)
+        {
+            // DEBUG BEHAVIOR -- This should not be necessary in the natural attack order, but since I'm skipping things so that I don't have to wait 2 minutes to test attacks, it's necessary.
+            npc.Opacity = 0f;
+            npc.Size = new Vector2(48, 108);
+
+            int ritualTime = HolyRitual.Lifetime;
+            int rockCount = 13;
+            int crossShootRate = GetBPMTimeMultiplier(4);
+            int rockCycleTime = 330;
+            ref float hasPerformedRitual = ref npc.Infernum().ExtraAI[0];
+            ref float runeStripOpacity = ref npc.Infernum().ExtraAI[1];
+            ref float backglowTelegraphInterpolant = ref npc.Infernum().ExtraAI[2];
+            ref float crossShootCounter = ref npc.Infernum().ExtraAI[3];
+            ref float rockCounter = ref npc.Infernum().ExtraAI[4];
+
+            // Make the rune fade in.
+            runeStripOpacity = Utils.GetLerpValue(0f, 45f, localAttackTimer, true);
+
+            // Create the ritual.
+            if (hasPerformedRitual == 0f)
+            {
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 36);
+                }
+                
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Volume = 1.5f });
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolyRitual>(), 0, 0f);
+
+                hasPerformedRitual = 1f;
+            }
+
+            // Loosely hover above the player after the ritual.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
+            hoverDestination.X += (float)Math.Sin(MathHelper.TwoPi * localAttackTimer / 180f) * 180f;
+            hoverDestination.Y += (float)Math.Sin(MathHelper.TwoPi * localAttackTimer / 105f + 0.75f) * 40f;
+            if (localAttackTimer >= ritualTime)
+            {
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.11f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 12f, 0.18f);
+                crossShootCounter++;
+                rockCounter++;
+                backglowTelegraphInterpolant = Utils.GetLerpValue(crossShootRate - 40f, crossShootRate, crossShootCounter, true);
+            }
+            else
+                npc.velocity *= 0.8f;
+
+            // Shoot crosses at the target in bursts.
+            if (crossShootCounter >= crossShootRate)
+            {
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 15);
+                }
+
+                SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int crossCount = (int)MathHelper.Lerp(18f, 7f, i / 3f);
+
+                        // Every second burst should vary in direction for more interesting spacing.
+                        float shootOffsetAngle = MathHelper.Pi / crossCount;
+                        float crossShootSpeed = MathHelper.Lerp(1.85f, 4.2f, i / 3f);
+                        if (i % 2 == 0)
+                            shootOffsetAngle = 0f;
+
+                        for (int j = 0; j < crossCount; j++)
+                        {
+                            Vector2 crossVelocity = (MathHelper.TwoPi * j / crossCount + shootOffsetAngle).ToRotationVector2() * crossShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + crossVelocity, crossVelocity, ModContent.ProjectileType<HolyCross>(), HolyCrossDamage, 0f);
+                        }
+                    }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+                    ReleaseSparkles(npc.Center, 35, 16f);
+                }
+
+                crossShootCounter = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Summon rocks that circle around the crystal after the ritual ends.
+            int rockCycleTimer = (int)rockCounter % rockCycleTime;
+            if (localAttackTimer >= ritualTime && rockCycleTimer == 0f)
+            {
+                SoundEngine.PlaySound(ProfanedGuardianDefender.RockShieldSpawnSound with { Volume = 2f }, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float rockSpawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < rockCount; i++)
+                    {
+                        int rockType = Main.rand.Next(1, 7);
+                        int rocc = NPC.NewNPC(npc.GetSource_FromThis(), 50, 50, ModContent.NPCType<ProfanedRocks>(), npc.whoAmI, 1080f, MathHelper.TwoPi * i / rockCount + rockSpawnOffsetAngle, rockType);
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, rocc);
+                    }
+                }
+            }
+
+            // Make all rocks fuck off in anticipation of the new ones when necessary.
+            if (rockCycleTimer == rockCycleTime - 120f && NPC.AnyNPCs(ModContent.NPCType<ProfanedRocks>()))
+            {
+                SoundEngine.PlaySound(ProfanedGuardianDefender.ShieldDeathSound with { Volume = 2f }, target.Center);
+
+                int rockID = ModContent.NPCType<ProfanedRocks>();
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (n.active && n.type == rockID && n.Infernum().ExtraAI[0] == 0f)
+                    {
+                        n.Infernum().ExtraAI[0] = 1f;
+                        n.netUpdate = true;
+                    }
+                }
+            }
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath, float speedFactor = 1f)
@@ -1021,8 +1148,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
+        public static float RuneHeightFunction(float _) => 26f;
+
+        public static Color RuneColorFunction(NPC n, float _) => Color.Lerp(Color.Yellow, Color.Wheat, 0.8f) * (1f - n.Opacity) * n.Infernum().ExtraAI[1];
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Initialize the 3D strip.
+            npc.Infernum().Optional3DStripDrawer ??= new(RuneHeightFunction, c => RuneColorFunction(npc, c));
+
             string baseTextureString = "CalamityMod/NPCs/Providence/";
             string baseGlowTextureString = baseTextureString + "Glowmasks/";
             string rockTextureString = "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock";
@@ -1108,9 +1242,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Draw the crystal behind everything. It will appear if providence is herself invisible.
                 if (npc.localAI[3] <= 0f)
                 {
+                    float backglowTelegraphInterpolant = 0f;
+                    if (npc.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
+                        backglowTelegraphInterpolant = npc.Infernum().ExtraAI[2];
+
                     Vector2 crystalOrigin = fatCrystalTexture.Size() * 0.5f;
-                    Vector2 crystalDrawPosition = npc.Center - Main.screenPosition;
-                    Main.spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, Color.White, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
+
+                    // Draw a backglow if necessary.
+                    if (backglowTelegraphInterpolant > 0f)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * backglowTelegraphInterpolant * 12f;
+                            Color backglowColor = Color.Pink with { A = 0 };
+                            Main.spriteBatch.Draw(fatCrystalTexture, npc.Center - Main.screenPosition + drawOffset, null, backglowColor, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
+                        }
+                    }
+
+                    for (int i = 4; i >= 0; i--)
+                    {
+                        Color afterimageColor = Color.White * (1f - i / 5f);
+                        Vector2 crystalDrawPosition = Vector2.Lerp(npc.oldPos[i], npc.position, 0.4f) + npc.Size * 0.5f - Main.screenPosition;
+                        Main.spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, afterimageColor, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
+                    }
                 }
 
                 int frameHeight = generalTexture.Height / 3;
@@ -1161,6 +1315,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
             float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * 0.6f;
             Main.spriteBatch.Draw(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+
+            // Draw the rune strip on top of everything else during the ritual attack.
+            if (npc.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
+            {
+                Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
+                npc.Infernum().Optional3DStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
+                npc.Infernum().Optional3DStripDrawer.Draw(npc.Center - Vector2.UnitX * 80f - Main.screenPosition, npc.Center + Vector2.UnitX * 80f - Main.screenPosition, 0.4f, 0f, 0f);
+                Main.spriteBatch.ExitShaderRegion();
+            }
 
             return false;
         }

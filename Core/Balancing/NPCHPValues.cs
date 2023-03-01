@@ -120,6 +120,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<ProfanedGuardianHealer>()] = BossRushEvent.BossRushActive ? 205000 : 56000,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 256000,
             [ModContent.NPCType<Bumblefuck2>()] = BossRushEvent.BossRushActive ? -1 : 14300,
+            [ModContent.NPCType<ProfanedRocks>()] = BossRushEvent.BossRushActive ? 4800 : 1200,
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 3900000 : 864000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 1232100 : 646400,
             [ModContent.NPCType<CeaselessVoid>()] = BossRushEvent.BossRushActive ? -1 : 455525,

@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float crystalsFired = ref npc.Infernum().ExtraAI[1];
                 ref float connectionsWidthScale = ref commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
                 float crystalReleaseRate = 120f;
-                float crystalAmount = 10f;
+                float crystalAmount = 16f;
                 float maxCrystalsFired = 4f;
 
                 Vector2 hoverPosition = CrystalPosition - new Vector2(50f, 0f);
@@ -450,13 +450,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 4.6f }, target.Center);
                     }
 
+                    ScreenEffectSystem.SetFlashEffect(commander.Center, 0.8f, 45);
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projectileSpawnPosition = commander.Center;
                         for (int i = 0; i < crystalAmount; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 15f;
-                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), 230, 0f, -1, 0f, crystalsFired % 2f == 0f ? -1f : 1f);
+                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), 230, 0f, -1, 0f, i % 2f == 0f ? -1f : 1f);
                         }
                         if (crystalsFired >= maxCrystalsFired)
                             universalAttackTimer = 0;
@@ -1203,7 +1205,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
                             }
 
-                            npc.life -= (int)(npc.lifeMax * 0.01f);
+                            if (npc.life > (npc.lifeMax * 0.1f))
+                                npc.life -= (int)(npc.lifeMax * 0.01f);
                             npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
 
                             float yPos = (Main.maxTilesY * 16f) - 50f;
@@ -2241,6 +2244,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 GeneralParticleHandler.SpawnParticle(fireExplosion);
             }
         }
+
         public static float GetLavaWaveHeightFromWorldBottom(NPC defender)
         {
             ProfanedLavaWave lavaWave = null;

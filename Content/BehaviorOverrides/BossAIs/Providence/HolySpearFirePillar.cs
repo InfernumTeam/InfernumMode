@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static int Lifetime => MaxTime + TelegraphTime;
 
-        public static float MaxLength => 4500f;
+        public static float MaxLength => 6000f;
 
         public static int TelegraphTime => 32;
 

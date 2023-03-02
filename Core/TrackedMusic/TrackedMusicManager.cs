@@ -160,7 +160,7 @@ namespace InfernumMode.Core.TrackedMusic
             if (TrackedSong is not null)
             {
                 if (isMainTrackAudible)
-                    tempFade -= 0.004f;
+                    tempFade -= 0.0075f;
 
                 if (tempFade <= 0f)
                 {

@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Rotate during the telegraph.
             float telegraphCompletion = Utils.GetLerpValue(0f, LaserTelegraphTime, Time, true);
             if (telegraphCompletion < 1f)
-                Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 3.5f));
+                Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 4.8f));
             Projectile.velocity = Projectile.velocity.RotatedBy(-RotationalSpeed);
         }
 

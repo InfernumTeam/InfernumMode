@@ -638,6 +638,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 bombExplosionRadius += 196f;
             }
 
+            // Clear fireballs from the previous attack at first.
+            if (localAttackTimer <= 5)
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyBasicFireball>());
+
             // Stay in the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
 
@@ -759,7 +763,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 shootDelay /= 2;
                 shootRate /= 2;
-                spearShootSpeed += 4f;
+                spearShootSpeed += 10f;
             }
 
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
@@ -1039,7 +1043,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Summon rocks that circle around the crystal after the ritual ends.
             int rockCycleTimer = (int)rockCounter % rockCycleTime;
-            if (localAttackTimer >= ritualTime && rockCycleTimer == 0f)
+            if (localAttackTimer >= ritualTime && rockCycleTimer == 1f)
             {
                 SoundEngine.PlaySound(ProfanedGuardianDefender.RockShieldSpawnSound with { Volume = 2f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1203,7 +1207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int energyChargeupTime = 30;
             int laserCount = (int)MathHelper.Lerp(14f, 21f, 1f - lifeRatio);
-            float telegraphMaxAngularVelocity = MathHelper.ToRadians(2f);
+            float telegraphMaxAngularVelocity = MathHelper.ToRadians(1.2f);
             bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration - 90;
             ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[0];
             ref float countdownUntilNextLaser = ref npc.Infernum().ExtraAI[1];
@@ -1237,9 +1241,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 int bellIndex = ProvidenceTrackedMusic.Bells.FindIndex(b => attackTimer >= b.StartInFrames && attackTimer < b.EndInFrames);
                 if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 1)
-                    telegraphTime = ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex].StartInFrames;
+                    telegraphTime = ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex].StartInFrames + 8;
                 if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 2)
-                    laserShootTime = ProvidenceTrackedMusic.Bells[bellIndex + 2].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames;
+                    laserShootTime = ProvidenceTrackedMusic.Bells[bellIndex + 2].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - 8;
 
                 if (telegraphTime >= 76)
                     telegraphTime = 76;

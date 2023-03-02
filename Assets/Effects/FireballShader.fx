@@ -49,13 +49,15 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     float2 blownUpUV = float2(-blownUpUVY * blowUpSize * 0.5 + coords.x * (1 + blownUpUVY * blowUpSize), -blownUpUVX * blowUpSize * 0.5 + coords.y * (1 + blownUpUVX * blowUpSize));
 
     // Get the texture coords from the modified coords.
-    float2 textureCoord = float2(blownUpUV.x, blownUpUV.y + time * speed);
-    float4 noiseTexture = tex2D(NoiseMap, textureCoord);
+    float noiseAmount = tex2D(NoiseMap, float2(blownUpUV.x, blownUpUV.y + time * speed)).r;
+    float noiseAmount2 = tex2D(NoiseMap, float2(blownUpUV.x, blownUpUV.y - time * speed)).r;
+    float noiseAmount3 = tex2D(NoiseMap, float2(blownUpUV.x + time * speed, blownUpUV.y)).r;
+    float noiseAmount4 = tex2D(NoiseMap, float2(blownUpUV.x - time * speed, blownUpUV.y)).r;
+    float finalNoiseAmount = noiseAmount * 0.20 + noiseAmount2 * 0.30 + noiseAmount3 * 0.20 + noiseAmount4 * 0.30;
     
     // Modify the opacity by the noisemap.
-    float i = noiseTexture.r;
     mainOpacity *= mainOpacity;
-    mainOpacity /= i;
+    mainOpacity /= finalNoiseAmount;
 
     // Fade the edges.
     if (distanceFromCenter > 0.6)
@@ -72,6 +74,6 @@ technique Technique1
 {
     pass FirePass
     {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
     }
 }

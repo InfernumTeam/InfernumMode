@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public ref float DeathCountdown => ref Projectile.ai[1];
 
-        public static int DeathDelay => 50;
+        public static int DeathDelay => 90;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
 

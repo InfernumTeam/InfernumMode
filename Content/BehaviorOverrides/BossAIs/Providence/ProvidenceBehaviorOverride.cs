@@ -709,7 +709,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             DoVanillaFlightMovement(npc, target, true, ref flightPath);
 
             // Release the fireballs.
-            if (localAttackTimer >= attackDelay && localAttackTimer <= localAttackDuration - attackDelay && shootTimer % fireballShootRate == 0f)
+            if (localAttackTimer >= attackDelay && localAttackTimer <= localAttackDuration - attackDelay && shootTimer % fireballShootRate == 0f && !npc.WithinRange(target.Center, 280f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -800,7 +800,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int shootRateMultipler = lifeRatio < 0.5f ? 3 : 4;
             int shootCycle = GetBPMTimeMultiplier(8);
-            int cinderShootRate = GetBPMTimeMultiplier(shootRateMultipler);
+            int cinderShootRate = GetBPMTimeMultiplier(shootRateMultipler) - 9;
             int shootRate = (int)MathHelper.Lerp(11f, 9f, 1f - lifeRatio);
             float spiralShootSpeed = MathHelper.Lerp(17f, 20f, 1f - lifeRatio);
             float bombExplosionRadius = MathHelper.Lerp(875f, 1240f, 1f - lifeRatio);
@@ -836,7 +836,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     // Release a spiral of three bombs.
                     for (int i = 0; i < 3; i++)
                     {
-                        Vector2 bombSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle + MathHelper.TwoPi * i / 3f) * Main.rand.NextFloat(0.75f, 1f) * spiralShootSpeed;
+                        Vector2 bombSpiralVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * cycleTimer / shootCycle + MathHelper.TwoPi * i / 3f) * Main.rand.NextFloat(0.5f, 1f) * spiralShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, -bombSpiralVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
                     }
 
@@ -1256,10 +1256,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Release slow fireballs from the lava below.
-            if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 12 == 11)
+            if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 15 == 14)
             {
                 Vector2 fireballSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 300f, 800f);
-                Utilities.NewProjectileBetter(fireballSpawnPosition, -Vector2.UnitY * 5f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                Utilities.NewProjectileBetter(fireballSpawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
             }
 
             if (shootLaser && !attackIsAboutToEnd && !Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
@@ -1361,8 +1361,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_FinalPhaseRadianceBursts(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float flightPath, ref float lavaHeight)
         {
             int shootDelay = 75;
-            int startingBombShootRate = 12;
-            int endingBombShootRate = 5;
+            int startingBombShootRate = 10;
+            int endingBombShootRate = 4;
             int startingLaserShootRate = 180;
             int endingLaserShootRate = 120;
             float holyBombRadius = 600f;
@@ -1402,7 +1402,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 holyBombShootVelocity = -Vector2.UnitY.RotatedByRandom(0.13f) * 18f;
-                        Vector2 holyBombSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 510f, npc.Center.Y + 860f);
+                        Vector2 holyBombSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 510f + target.velocity.X * 60f, npc.Center.Y + 860f);
 
                         Utilities.NewProjectileBetter(holyBombSpawnPosition, holyBombShootVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, holyBombRadius);
                         for (int i = 0; i < 12; i++)

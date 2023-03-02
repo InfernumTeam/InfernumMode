@@ -899,7 +899,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Perform the teleport effect once ready.
                 if (attackIsAlmostDone)
                 {
-                    npc.Size = new Vector2(48, 108);
+                    npc.Size = new Vector2(48f, 108f);
                     npc.Center = target.Center - Vector2.UnitY * 400f;
                     npc.velocity = Vector2.Zero;
 
@@ -1307,6 +1307,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.velocity *= 0.9f;
             if (moveSpeedInterpolant > 0f)
                 npc.Center = Vector2.Lerp(npc.Center.MoveTowards(hoverDestination, moveSpeedInterpolant * 11f), hoverDestination, moveSpeedInterpolant * 0.123f);
+
+            if (localAttackTimer <= 5f)
+                npc.Size = new Vector2(600f, 450f);
 
             // Stay in the cocoon during this attack by default.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;

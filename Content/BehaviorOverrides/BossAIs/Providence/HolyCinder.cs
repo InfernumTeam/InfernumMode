@@ -58,7 +58,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (telegraphInterpolant >= 1f)
                 telegraphInterpolant = 0f;
 
-            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, Color.Orange * telegraphInterpolant, telegraphInterpolant * 10f);
+            Color telegraphColor = ProvidenceBehaviorOverride.IsEnraged ? Color.SeaGreen : Color.Orange;
+            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, telegraphColor * telegraphInterpolant, telegraphInterpolant * 10f);
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
 

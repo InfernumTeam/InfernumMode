@@ -23,6 +23,8 @@ namespace InfernumMode.Core.TrackedMusic
 
         internal static ConstructorInfo SongConstructor;
 
+        internal static bool PausedBecauseOfUI;
+
         public static readonly List<string> CustomTrackPaths = new()
         {
             // Grief.
@@ -119,7 +121,7 @@ namespace InfernumMode.Core.TrackedMusic
         {
             orig(self);
 
-            if (MediaPlayer.State == MediaState.Paused)
+            if (MediaPlayer.State == MediaState.Paused && !PausedBecauseOfUI)
                 MediaPlayer.Resume();
         }
 
@@ -179,6 +181,21 @@ namespace InfernumMode.Core.TrackedMusic
             {
                 int musicIndex = CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First();
                 volume = Main.musicFade[musicIndex];
+
+                if (TrackedSong.Name.Contains("Providence"))
+                {
+                    if (!PausedBecauseOfUI && Main.gamePaused)
+                    {
+                        if (MediaPlayer.State == MediaState.Playing)
+                            MediaPlayer.Pause();
+                        PausedBecauseOfUI = true;
+                    }
+                    else if (PausedBecauseOfUI && MediaPlayer.State == MediaState.Paused && !Main.gamePaused)
+                    {
+                        MediaPlayer.Resume();
+                        PausedBecauseOfUI = false;
+                    }
+                }
 
                 if (volume <= 0.0001f)
                 {

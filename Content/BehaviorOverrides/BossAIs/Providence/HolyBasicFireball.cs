@@ -46,6 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < 3; i++)
             {
                 Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.2f, 0.4f));
+                if (ProvidenceBehaviorOverride.IsEnraged)
+                    fireColor = Color.Lerp(fireColor, Color.SkyBlue, 0.7f);
+
                 fireColor = Color.Lerp(fireColor, Color.White, Main.rand.NextFloat(0.4f));
                 float angularVelocity = Main.rand.NextFloat(0.035f, 0.08f);
                 FireballParticle fire = new(Projectile.Center, Projectile.velocity * 0.6f, fireColor, 10, Main.rand.NextFloat(0.52f, 0.68f) * Projectile.scale, 1f, true, Main.rand.NextBool().ToDirectionInt() * angularVelocity);

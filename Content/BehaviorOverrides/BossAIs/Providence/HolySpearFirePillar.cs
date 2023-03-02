@@ -90,6 +90,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
             float colorInterpolant = MathHelper.Lerp(0.3f, 0.5f, interpolant);
+
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                return Color.Lerp(Color.DeepSkyBlue, Color.Cyan, colorInterpolant);
+
             return Color.Lerp(Color.OrangeRed, Color.Gold, colorInterpolant);
         }
 
@@ -97,8 +101,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static Color TelegraphColorFunction(float completionRatio)
         {
-            Color orange = Color.Lerp(Color.OrangeRed, WayfinderSymbol.Colors[2], 0.5f);
-            return Color.Lerp(orange, WayfinderSymbol.Colors[0], completionRatio) * Utils.GetLerpValue(0f, 0.12f, completionRatio, true) * 0.2f;
+            Color c = Color.Lerp(Color.OrangeRed, WayfinderSymbol.Colors[2], 0.5f);
+            c = Color.Lerp(c, WayfinderSymbol.Colors[0], completionRatio);
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                c = Color.Lerp(c, Color.Cyan, 0.7f);
+
+            return c * Utils.GetLerpValue(0f, 0.12f, completionRatio, true) * 0.2f;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

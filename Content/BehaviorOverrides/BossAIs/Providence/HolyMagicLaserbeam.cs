@@ -59,6 +59,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 36;
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                Projectile.Size *= 1.5f;
+
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
@@ -99,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Rotate during the telegraph.
             float telegraphCompletion = Utils.GetLerpValue(0f, LaserTelegraphTime, Time, true);
             if (telegraphCompletion < 1f)
-                Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 2));
+                Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 3.5f));
             Projectile.velocity = Projectile.velocity.RotatedBy(-RotationalSpeed);
         }
 
@@ -124,7 +127,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
-            return Color.Lerp(Color.Orange, Color.Pink, colorInterpolant * 0.67f);
+            Color c = Color.Lerp(Color.Orange, Color.Pink, colorInterpolant * 0.67f);
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                c = Color.Lerp(c, Color.SkyBlue, 0.55f);
+
+            return c;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -162,14 +169,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             
             Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
+            float width = (0.002f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
             laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
             laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
             laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
             laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(1500f));
             laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
-            laserScopeEffect.Parameters["laserWidth"].SetValue(0.002f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f));
+            laserScopeEffect.Parameters["laserWidth"].SetValue(width);
             laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
-            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Pink, Color.Yellow, Projectile.identity / 7f % 1f * 0.84f).ToVector3());
+            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Pink, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Yellow, Projectile.identity / 7f % 1f * 0.84f).ToVector3());
             laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Lerp(Color.Orange, Color.Red, 0.24f).ToVector3());
             laserScopeEffect.Parameters["bloomSize"].SetValue(0.28f + (1f - opacity) * 0.18f);
             laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(0.4f);

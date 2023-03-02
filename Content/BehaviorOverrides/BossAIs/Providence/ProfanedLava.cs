@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         smokeVelocity *= 3f;
 
                     Vector2 smokeSpawnPosition = new(closestPlayer.Center.X + Main.rand.NextFloatDirection() * 1200f, Projectile.Top.Y + Main.rand.NextFloatDirection() * 15f + 35f);
-                    CloudParticle smoke = new(smokeSpawnPosition, smokeVelocity, Color.Orange, Color.DarkGray, 45, 0.8f);
+                    CloudParticle smoke = new(smokeSpawnPosition, smokeVelocity, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Orange, Color.DarkGray, 45, 0.8f);
                     GeneralParticleHandler.SpawnParticle(smoke);
                 }
             }
@@ -131,6 +131,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             float colorInterpolant = (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi * 8f + Main.GlobalTimeWrappedHourly));
             Color c = Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.4f);
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                c = Color.Lerp(c, Color.SkyBlue, 0.7f);
             return c * Projectile.Opacity;
         }
 

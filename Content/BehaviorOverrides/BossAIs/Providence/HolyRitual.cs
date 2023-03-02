@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 scale1 = Vector2.One * Projectile.scale * 240f / ritual2.Size() * 2f;
 
             float colorInterpolant = (float)Math.Cos(MathHelper.TwoPi * Time / 60f) * 0.5f + 0.5f;
-            Color color1 = Color.Lerp(Color.Wheat, Color.Yellow, colorInterpolant * 0.6f) * Projectile.scale;
+            Color color1 = Color.Lerp(Color.Wheat, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Yellow, colorInterpolant * 0.6f) * Projectile.scale;
 
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             Main.EntitySpriteDraw(ritual1, drawPosition, null, color1 * 1.35f, 0f, ritual1.Size() * 0.5f, scale1 * 2.22f, 0, 0);

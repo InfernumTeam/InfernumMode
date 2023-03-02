@@ -125,10 +125,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 pillarSpawnPosition = Projectile.Center + CurrentDirectionEdge.RotatedBy(MathHelper.PiOver2) * perpendicularOffset - pillarDirection * 800f;
-                        Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 500, 0f);
+                        Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 400, 0f);
 
                         pillarSpawnPosition = Projectile.Center - CurrentDirectionEdge.RotatedBy(MathHelper.PiOver2) * perpendicularOffset - pillarDirection * 800f;
-                        Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 500, 0f);
+                        Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 400, 0f);
                     }
                 }
 

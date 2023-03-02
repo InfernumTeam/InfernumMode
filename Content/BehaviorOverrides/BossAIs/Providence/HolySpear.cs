@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Release fire pillars.
                 if (DeathCountdown % 5f == 3f)
                 {
-                    float perpendicularOffset = Utils.Remap(DeathCountdown, DeathDelay, 0f, 0f, 2000f);
+                    float perpendicularOffset = Utils.Remap(DeathCountdown, DeathDelay, 0f, 0f, 3600f);
                     Vector2 pillarDirection = -(Projectile.rotation - MathHelper.PiOver4).ToRotationVector2();
                     if (InLava)
                         pillarDirection = -Vector2.UnitY;

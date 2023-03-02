@@ -20,9 +20,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool TextShouldBeCentered => true;
 
-        public override bool ShouldCoverScreen => true;
-
-        public override Color ScreenCoverColor => Color.White;
+        public override bool ShouldCoverScreen => false;
 
         public override string TextToDisplay
         {

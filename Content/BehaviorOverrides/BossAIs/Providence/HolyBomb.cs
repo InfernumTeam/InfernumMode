@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 0.67f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 0.48f);
 
             Projectile.velocity *= 0.99f;
             Projectile.frameCounter++;
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 fireballShader.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
                 fireballShader.Parameters["zoom"].SetValue(0.0004f);
                 fireballShader.Parameters["dist"].SetValue(60f);
-                fireballShader.Parameters["opacity"].SetValue(circleFadeinInterpolant * Projectile.Opacity / 0.67f * 0.335f);
+                fireballShader.Parameters["opacity"].SetValue(circleFadeinInterpolant * Projectile.Opacity / 0.48f * 0.335f);
                 fireballShader.CurrentTechnique.Passes[0].Apply();
 
                 Vector2 drawPosition = Projectile.Center + Vector2.UnitY * Projectile.scale * 18f - Main.screenPosition;

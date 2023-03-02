@@ -490,7 +490,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Split the attack timer into sections, and then calculate the local attack timer and current attack based on that.
             // attackTimer isn't used in the queries here since those cannot take ref local variables.
-            var attackSection = AttackStates.First(a => npc.ai[1] >= a.StartingTime && npc.ai[1] < a.EndingTime);
+            var attackSection = AttackStates.FirstOrDefault(a => npc.ai[1] >= a.StartingTime && npc.ai[1] < a.EndingTime);
+            if (attackSection.StartingTime == 0 && attackSection.EndingTime == 0)
+                attackSection = AttackStates[0];
+
             currentAttack = attackSection.AttackToUse;
             localAttackTimer = (int)(attackTimer - attackSection.StartingTime);
             localAttackDuration = attackSection.EndingTime - attackSection.StartingTime;
@@ -1602,12 +1605,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
             else
             {
-                Color nightWingColor = Color.Lerp(new Color(0, 255, 191, 0), deathEffectColor, deathEffectInterpolant) * npc.Opacity;
+                Color nightWingColor = Color.Lerp(new Color(0, 204, 191, 0), deathEffectColor, deathEffectInterpolant) * npc.Opacity;
                 Main.spriteBatch.Draw(wingTexture, baseDrawPosition, frame, nightWingColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 wingOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.72f).ToRotationVector2() * npc.Opacity * wingVibrance * 4f;
-                    Main.spriteBatch.Draw(wingTexture, baseDrawPosition + wingOffset, frame, nightWingColor * 0.55f, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(wingTexture, baseDrawPosition + wingOffset, frame, nightWingColor * 0.8f, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }
             }
         }

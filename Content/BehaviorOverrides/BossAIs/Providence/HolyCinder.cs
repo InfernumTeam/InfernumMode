@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphInterpolant = Utils.GetLerpValue(0f, 42f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(0f, 36f, Time, true) * Utils.GetLerpValue(42f, 36f, Time, true);
             if (telegraphInterpolant >= 1f)
                 telegraphInterpolant = 0f;
 

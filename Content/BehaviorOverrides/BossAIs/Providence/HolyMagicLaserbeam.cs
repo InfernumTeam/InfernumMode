@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lasers/OrangeLaserbeamEnd", AssetRequestMode.ImmediateLoad).Value;
 
-        public override float MaxLaserLength => 3200f;
+        public override float MaxLaserLength => 5000f;
 
         public override float MaxScale => 1f;
 

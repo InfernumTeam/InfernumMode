@@ -106,25 +106,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         smokeVelocity *= 3f;
 
                     Vector2 smokeSpawnPosition = new(closestPlayer.Center.X + Main.rand.NextFloatDirection() * 1200f, Projectile.Top.Y + Main.rand.NextFloatDirection() * 15f + 35f);
-                    CloudParticle smoke = new(smokeSpawnPosition, smokeVelocity, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Orange, Color.DarkGray, 45, 0.8f);
+                    CloudParticle smoke = new(smokeSpawnPosition, smokeVelocity, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Orange, Color.DarkGray, 26, 0.8f, true);
                     GeneralParticleHandler.SpawnParticle(smoke);
                 }
             }
 
             // Initialize the lava sound.
-            LavaSound ??= SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.BurnLoopSound, Main.LocalPlayer.Center);
-            if (SoundEngine.TryGetActiveSound(LavaSound.Value, out ActiveSound lavaActiveSound2) && lavaActiveSound2.IsPlaying)
+            if (LavaSound is not null && SoundEngine.TryGetActiveSound(LavaSound.Value, out ActiveSound lavaActiveSound2) && lavaActiveSound2.IsPlaying)
             {
                 float verticalDistanceFromLava = MathHelper.Distance(Main.LocalPlayer.Center.Y, Projectile.Top.Y);
-                float volume = Utils.GetLerpValue(250f, 500f, verticalDistanceFromLava, true);
-                if (Main.LocalPlayer.Center.Y >= Projectile.Top.Y)
-                    volume = 1f;
-
+                float volume = Utils.GetLerpValue(8000f, 5400f, verticalDistanceFromLava, true) * 0.85f;
                 if (!Main.LocalPlayer.Infernum_Biome().ZoneProfaned)
                     volume = 0.0001f;
 
                 lavaActiveSound2.Volume = volume;
             }
+            else
+                LavaSound = SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.BurnLoopSound with { IsLooped = true }, Main.LocalPlayer.Center);
         }
 
         public Color ColorFunction(float completionRatio)

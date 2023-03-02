@@ -105,6 +105,7 @@ namespace InfernumMode.Core.TrackedMusic
             }
 
             On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
+            On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
             On.Terraria.Audio.LegacyAudioSystem.PauseAll += PauseMainTrack;
             On.Terraria.Audio.LegacyAudioSystem.ResumeAll += ResumeMainTrack;
         }
@@ -152,6 +153,24 @@ namespace InfernumMode.Core.TrackedMusic
             }
 
             orig(self, active, i, totalVolume, ref tempFade);
+        }
+
+        private static void PermitVolumeFadeoutForCustomTracks(On.Terraria.Audio.LegacyAudioSystem.orig_UpdateCommonTrackTowardStopping orig, Terraria.Audio.LegacyAudioSystem self, int i, float totalVolume, ref float tempFade, bool isMainTrackAudible)
+        {
+            if (TrackedSong is not null)
+            {
+                if (isMainTrackAudible)
+                    tempFade -= 0.004f;
+
+                if (tempFade <= 0f)
+                {
+                    tempFade = 0f;
+                    self.AudioTracks[i].SetVariable("Volume", 0f);
+                    self.AudioTracks[i].Stop(AudioStopOptions.Immediate);
+                }
+                return;
+            }
+            orig(self, i, totalVolume, ref tempFade, isMainTrackAudible);
         }
 
         public static bool TryGetSongInformation(out BaseTrackedMusic information)

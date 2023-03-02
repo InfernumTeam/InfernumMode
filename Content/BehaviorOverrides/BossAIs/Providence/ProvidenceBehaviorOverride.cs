@@ -28,6 +28,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework.Media;
+using CalamityMod.NPCs.TownNPCs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -1308,8 +1309,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (moveSpeedInterpolant > 0f)
                 npc.Center = Vector2.Lerp(npc.Center.MoveTowards(hoverDestination, moveSpeedInterpolant * 11f), hoverDestination, moveSpeedInterpolant * 0.123f);
 
-            if (localAttackTimer <= 5f)
+            if (localAttackTimer <= 5f && npc.width != 600f)
+            {
+                npc.position = npc.Center;
                 npc.Size = new Vector2(600f, 450f);
+                npc.position -= npc.Size * 0.5f;
+            }
 
             // Stay in the cocoon during this attack by default.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;

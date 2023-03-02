@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float colorInterpolant = (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi * 8f + Main.GlobalTimeWrappedHourly));
             Color c = Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.4f);
             if (ProvidenceBehaviorOverride.IsEnraged)
-                c = Color.Lerp(c, Color.Blue, 0.78f);
+                c = Color.Lerp(c, Color.Blue, 0.95f);
             return c * Projectile.Opacity;
         }
 

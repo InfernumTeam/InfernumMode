@@ -43,5 +43,12 @@ namespace InfernumMode.Core.TrackedMusic
         }
 
         public static TimeSpan TimeFormat(int minutes, int seconds, int milliseconds) => new(0, 0, minutes, seconds, milliseconds);
+
+        public static SongSection WithMSDelay(int minutes, int seconds, int milliseconds, int delayInMilliseconds)
+        {
+            TimeSpan start = new(0, 0, minutes, seconds, milliseconds);
+            TimeSpan end = start.Add(new(0, 0, 0, 0, delayInMilliseconds));
+            return new(start, end);
+        }
     }
 }

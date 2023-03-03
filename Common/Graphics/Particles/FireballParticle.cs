@@ -13,8 +13,13 @@ namespace InfernumMode.Common.Graphics.Particles
 
         private float Spin;
 
-
         private static int FrameAmount = 6;
+
+        public bool IsImportant
+        {
+            get;
+            set;
+        }
 
         public override bool SetLifetime => true;
 
@@ -24,9 +29,11 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override bool UseAdditiveBlend => true;
 
+        public override bool Important => IsImportant;
+
         public override string Texture => "CalamityMod/Particles/HeavySmoke";
 
-        public FireballParticle(Vector2 position, Vector2 velocity, Color color, int lifetime, float scale, float opacity, float rotationSpeed = 0f)
+        public FireballParticle(Vector2 position, Vector2 velocity, Color color, int lifetime, float scale, float opacity, bool important, float rotationSpeed = 0f)
         {
             Position = position;
             Velocity = velocity;
@@ -36,18 +43,15 @@ namespace InfernumMode.Common.Graphics.Particles
             Lifetime = lifetime;
             Opacity = opacity;
             Spin = rotationSpeed;
+            IsImportant = important;
         }
 
         public override void Update()
         {
-            if (Time / (float)Lifetime < 0.1f)
-            {
+            if (LifetimeCompletion < 0.1f)
                 Scale += 0.01f;
-            }
-            if (Time / (float)Lifetime > 0.9f)
-            {
+            if (LifetimeCompletion > 0.9f)
                 Scale *= 0.975f;
-            }
 
             Color = Main.hslToRgb(Main.rgbToHsl(Color).X % 1f, Main.rgbToHsl(Color).Y, Main.rgbToHsl(Color).Z);
             Opacity *= 0.98f;

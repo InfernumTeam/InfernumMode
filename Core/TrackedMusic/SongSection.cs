@@ -16,6 +16,10 @@ namespace InfernumMode.Core.TrackedMusic
             internal set;
         }
 
+        public int StartInFrames => ConvertTimeSpanToFrames(Start);
+
+        public int EndInFrames => ConvertTimeSpanToFrames(End);
+
         public SongSection(int minutes, int seconds, int milliseconds, TimeSpan duration)
         {
             Start = BaseTrackedMusic.TimeFormat(minutes, seconds, milliseconds);
@@ -29,5 +33,11 @@ namespace InfernumMode.Core.TrackedMusic
         }
 
         public bool WithinRange(TimeSpan time) => time >= Start && time <= End;
+
+        public static int ConvertTimeSpanToFrames(TimeSpan span)
+        {
+            // 60 frames in 1000 milliseconds (60/1000).
+            return (int)(span.TotalMilliseconds * 0.06f);
+        }
     }
 }

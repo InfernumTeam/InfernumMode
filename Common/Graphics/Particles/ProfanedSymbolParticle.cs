@@ -39,7 +39,8 @@ namespace InfernumMode.Common.Graphics.Particles
                 Opacity = MathHelper.Clamp(Opacity - 0.1f, 0f, 1f);
 
             // Rapidly affect the scale.
-            float scaleSine = (1f +  MathF.Sin(Time * 0.25f)) / 2f;
+            float scaleSine = (1f + MathF.Sin(Time * 0.25f)) / 2f;
+
             Scale = MathHelper.Lerp(MaxScale * 0.85f, MaxScale, scaleSine);
         }
 

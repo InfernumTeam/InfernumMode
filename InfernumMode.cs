@@ -36,6 +36,12 @@ namespace InfernumMode
             private set;
         }
 
+        public static bool CalMusicModIsActive
+        {
+            get;
+            private set;
+        }
+
         public static bool CanUseCustomAIs => WorldSaveSystem.InfernumMode;
 
         public static float BlackFade
@@ -74,6 +80,7 @@ namespace InfernumMode
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
             MusicModIsActive = ModLoader.TryGetMod("InfernumModeMusic", out InfernumMusicMod);
+            CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out _);
 
             BalancingChangesManager.Load();
             Main.RunOnMainThread(HookManager.Load);

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Skies
         {
             UseTargetPosition(Main.LocalPlayer.Center);
             UseColor(new Color(100, 150, 255));
-            UseOpacity(0.36f);
+            UseOpacity(0.2f);
             base.Apply();
         }
     }

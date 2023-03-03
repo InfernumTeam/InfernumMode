@@ -23,6 +23,8 @@ namespace InfernumMode.Core.TrackedMusic
 
         internal static ConstructorInfo SongConstructor;
 
+        internal static bool PausedBecauseOfUI;
+
         public static readonly List<string> CustomTrackPaths = new()
         {
             // Grief.
@@ -103,6 +105,7 @@ namespace InfernumMode.Core.TrackedMusic
             }
 
             On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
+            On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
             On.Terraria.Audio.LegacyAudioSystem.PauseAll += PauseMainTrack;
             On.Terraria.Audio.LegacyAudioSystem.ResumeAll += ResumeMainTrack;
         }
@@ -119,7 +122,7 @@ namespace InfernumMode.Core.TrackedMusic
         {
             orig(self);
 
-            if (MediaPlayer.State == MediaState.Paused)
+            if (MediaPlayer.State == MediaState.Paused && !PausedBecauseOfUI)
                 MediaPlayer.Resume();
         }
 
@@ -152,6 +155,24 @@ namespace InfernumMode.Core.TrackedMusic
             orig(self, active, i, totalVolume, ref tempFade);
         }
 
+        private static void PermitVolumeFadeoutForCustomTracks(On.Terraria.Audio.LegacyAudioSystem.orig_UpdateCommonTrackTowardStopping orig, Terraria.Audio.LegacyAudioSystem self, int i, float totalVolume, ref float tempFade, bool isMainTrackAudible)
+        {
+            if (TrackedSong is not null)
+            {
+                if (isMainTrackAudible)
+                    tempFade -= 0.0075f;
+
+                if (tempFade <= 0f)
+                {
+                    tempFade = 0f;
+                    self.AudioTracks[i].SetVariable("Volume", 0f);
+                    self.AudioTracks[i].Stop(AudioStopOptions.Immediate);
+                }
+                return;
+            }
+            orig(self, i, totalVolume, ref tempFade, isMainTrackAudible);
+        }
+
         public static bool TryGetSongInformation(out BaseTrackedMusic information)
         {
             information = null;
@@ -179,6 +200,22 @@ namespace InfernumMode.Core.TrackedMusic
             {
                 int musicIndex = CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First();
                 volume = Main.musicFade[musicIndex];
+
+                // TODO -- Make this not hardcoded.
+                if (TrackedSong.Name.Contains("Providence") || TrackedSong.Name.Contains("Guardians"))
+                {
+                    if (!PausedBecauseOfUI && Main.gamePaused)
+                    {
+                        if (MediaPlayer.State == MediaState.Playing)
+                            MediaPlayer.Pause();
+                        PausedBecauseOfUI = true;
+                    }
+                    else if (PausedBecauseOfUI && MediaPlayer.State == MediaState.Paused && !Main.gamePaused)
+                    {
+                        MediaPlayer.Resume();
+                        PausedBecauseOfUI = false;
+                    }
+                }
 
                 if (volume <= 0.0001f)
                 {

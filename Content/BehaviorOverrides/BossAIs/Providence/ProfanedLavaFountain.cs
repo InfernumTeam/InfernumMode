@@ -1,5 +1,7 @@
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,23 +9,30 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
+namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
-    public class CursedGeyser : ModProjectile, IPixelPrimitiveDrawer
+    public class ProfanedLavaFountain : ModProjectile, IPixelPrimitiveDrawer
     {
-        internal PrimitiveTrailCopy TentacleDrawer;
-        internal ref float Time => ref Projectile.ai[0];
-        internal ref float GeyserHeight => ref Projectile.ai[1];
-        internal const float MaxGeyserHeight = 660f;
-        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+        public PrimitiveTrailCopy LavaDrawer
+        {
+            get;
+            set;
+        }
+
+        public ref float Time => ref Projectile.ai[0];
+
+        public ref float GeyserHeight => ref Projectile.ai[1];
+
+        public const float MaxGeyserHeight = 660f;
+
+        public override string Texture => InfernumTextureRegistry.InvisPath;
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Fountain of Pain");
+            DisplayName.SetDefault("Profaned Lava Fountain");
         }
 
         public override void SetDefaults()
@@ -50,6 +59,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             else
                 Projectile.timeLeft++;
 
+            // Create a splash of lava blobs.
+            if (Time == 55f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSmallSound, Projectile.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 15; i++)
+                    {
+                        // Release a bunch of lava particles from below.
+                        int lavaLifetime = Main.rand.Next(120, 167);
+                        float blobSize = MathHelper.Lerp(12f, 34f, (float)Math.Pow(Main.rand.NextFloat(), 1.85));
+                        if (Main.rand.NextBool(6))
+                            blobSize *= 1.4f;
+                        Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);
+                        Utilities.NewProjectileBetter(Projectile.Center + Main.rand.NextVector2Circular(40f, 40f), lavaVelocity, ModContent.ProjectileType<ProfanedLavaBlob>(), ProvidenceBehaviorOverride.SmallLavaBlobDamage, 0f, -1, lavaLifetime, blobSize);
+                    }
+                }
+            }
+
             if (Time == 0f)
             {
                 Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -57,41 +86,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             Time++;
-
-            CreateVisuals();
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time >= 60f && Time <= 80f && Time % 6f == 5f)
-                Utilities.NewProjectileBetter(Projectile.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
         }
 
-        internal void CreateVisuals()
+        public Color ColorFunction(float completionRatio)
         {
-            if (Main.netMode == NetmodeID.Server)
-                return;
-
-            // Making bubbling lava as a subtle indicator.
-            if (Time % 4f == 3f && Time < 60f)
-            {
-                Vector2 dustSpawnPosition = Projectile.Center - Vector2.UnitY * (GeyserHeight + 8f);
-                dustSpawnPosition.X += Main.rand.NextFloatDirection() * WidthFunction(1f);
-                Dust bubble = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.UnitY * -12f);
-                bubble.noGravity = true;
-                bubble.scale = 2.6f;
-                bubble.color = ColorFunction(1f);
-            }
-
-            // As well as liquid disruption.
-            WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-            Vector2 ripplePos = Projectile.Center - Vector2.UnitY * (GeyserHeight + 45f);
-            Color waveData = ColorFunction(1f);
-            ripple.QueueRipple(ripplePos, waveData, Vector2.One * 75f, RippleShape.Square, -MathHelper.PiOver2);
+            return Color.Wheat * Projectile.Opacity * 1.5f;
         }
 
-        internal Color ColorFunction(float completionRatio)
-        {
-            return Color.OrangeRed * Projectile.Opacity;
-        }
-
-        internal float WidthFunction(float completionRatio) => MathHelper.Lerp(56f, 63f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 2f))) * Projectile.Opacity;
+        public float WidthFunction(float completionRatio) => MathHelper.Lerp(26f, 33f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 2f))) * Projectile.Opacity;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -107,8 +109,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             if (Time < 55f)
             {
                 float telegraphFade = Utils.GetLerpValue(0f, 8f, Time, true) * Utils.GetLerpValue(55f, 45f, Time, true);
-                float telegraphWidth = telegraphFade * 4f;
-                Color telegraphColor = Color.Crimson * telegraphFade;
+                float telegraphWidth = telegraphFade * 7.5f;
+                Color telegraphColor = Color.Orange * telegraphFade;
                 Vector2 start = Projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = Projectile.Center + Vector2.UnitY * 2000f;
                 Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
@@ -118,19 +120,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            TentacleDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
+            LavaDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.WoFGeyserVertexShader);
 
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(-1f);
-            InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
+            InfernumEffectsRegistry.WoFGeyserVertexShader.UseColor(Color.Lerp(Color.Orange, Color.Yellow, 0.6f));
             InfernumEffectsRegistry.WoFGeyserVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center - Vector2.UnitY * GeyserHeight, i / 8f));
-            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
+            LavaDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
 
             InfernumEffectsRegistry.WoFGeyserVertexShader.UseSaturation(1f);
-            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
+            LavaDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
         }
     }
 }

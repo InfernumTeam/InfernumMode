@@ -10,7 +10,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-
 namespace InfernumMode.Common.Graphics.Metaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
@@ -54,22 +53,23 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void UpdateBehavior(FusableParticle particle)
         {
-            particle.Size = MathHelper.Clamp(particle.Size - 1.5f, 0f, 400f) * 0.97f;
+            particle.Size = MathHelper.Clamp(particle.Size - 0.5f, 0f, 400f) * 0.978f;
         }
 
         public override void PrepareOptionalShaderData(Effect effect, int index)
         {
+            effect.Parameters["upscaleFactor"].SetValue(Vector2.One * 0.36f);
             switch (index)
             {
                 // Background 1.
                 case 0:
-                    Vector2 offset = Vector2.UnitX * Main.GlobalTimeWrappedHourly * 0.03f;
+                    Vector2 offset = Vector2.UnitX * Main.GlobalTimeWrappedHourly * 0.12f;
                     effect.Parameters["generalBackgroundOffset"].SetValue(offset);
                     break;
 
                 // Background 2.
                 case 1:
-                    offset = -Vector2.UnitY * Main.GlobalTimeWrappedHourly * 0.027f;
+                    offset = -Vector2.UnitY * Main.GlobalTimeWrappedHourly * 0.13f;
                     effect.Parameters["generalBackgroundOffset"].SetValue(offset);
                     break;
             }

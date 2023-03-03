@@ -57,6 +57,7 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> HolyFireLayer => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HolyFireLayer");
 
         public static Asset<Texture2D> HolyFirePixelLayer => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HolyFirePixelLayer");
+
         public static Asset<Texture2D> HyperplaneMatrixCode => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/HyperplaneMatrixCode");
 
         public static Asset<Texture2D> Invisible => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Invisible");
@@ -91,6 +92,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> SolidEdgeGradient => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient");
 
+        public static Asset<Texture2D> Smudges => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/Smudges");
+
         public static Asset<Texture2D> Stars => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Stars");
 
         public static Asset<Texture2D> StreakBigBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/MegaStreakBacking");
@@ -108,6 +111,8 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> StreakGeneric => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/GenericStreak");
 
         public static Asset<Texture2D> StreakLightning => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/ZapTrail");
+        
+        public static Asset<Texture2D> StreakMagma => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakMagma");
 
         public static Asset<Texture2D> StreakMagma => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/StreakMagma");
 
@@ -126,7 +131,6 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> VoronoiCelluar => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiCellular");
 
         public static Asset<Texture2D> VoronoiLoop => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiLoop");
-
 
         public static Asset<Texture2D> VoronoiShapes => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiShapes");
 

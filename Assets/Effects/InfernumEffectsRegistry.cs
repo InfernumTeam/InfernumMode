@@ -31,6 +31,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
         public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
+        public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
@@ -43,6 +44,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
         public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
+        public static MiscShaderData ProfanedLavaVertexShader => GameShaders.Misc["Infernum:ProfanedLava"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
         public static MiscShaderData PulsatingLaserVertexShader => GameShaders.Misc["Infernum:PulsatingLaserShader"];
         public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
@@ -224,20 +226,24 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> noiseDisplacementShader = new(assets.Request<Effect>("Assets/Effects/NoiseDisplacement", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:NoiseDisplacement"] = new MiscShaderData(noiseDisplacementShader, "GlitchPass");
+
+            Ref<Effect> profanedLavaShader = new(assets.Request<Effect>("Assets/Effects/ProfanedLava", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ProfanedLava"] = new MiscShaderData(profanedLavaShader, "TrailPass");
         }
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
-            // Fireball shader
+            // Fireball shader.
             Ref<Effect> fireballShader = new(assets.Request<Effect>("Assets/Effects/FireballShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["Infernum:FireballShader"] = new Filter(new(fireballShader, "FirePass"), EffectPriority.VeryHigh);
 
-            // Screen Border Shader
+            // Screen Border Shader.
             Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenBorder"] = new Filter(new ScreenShaderData(screenBorderShader, "ScreenPass"), EffectPriority.VeryHigh);
 
             Filters.Scene["InfernumMode:GuardianCommander"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0.4f, 0.1f, 1.0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:GuardianCommander"] = new ProfanedGuardiansSky();
+
             // Ares (ultimate attack).
             Filters.Scene["InfernumMode:Ares"] = new Filter(new AresScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Ares"] = new AresSky();

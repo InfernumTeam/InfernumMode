@@ -31,8 +31,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < 25f && Time >= 25f)
-                Projectile.velocity *= 1.035f;
+            if (Projectile.velocity.Length() < 25f && Time >= 15f)
+                Projectile.velocity *= 1.026f;
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
@@ -54,11 +54,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphInterpolant = Utils.GetLerpValue(0f, 45f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(0f, 36f, Time, true) * Utils.GetLerpValue(42f, 36f, Time, true);
             if (telegraphInterpolant >= 1f)
                 telegraphInterpolant = 0f;
 
-            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, Color.Yellow * telegraphInterpolant, telegraphInterpolant * 3f);
+            Color telegraphColor = ProvidenceBehaviorOverride.IsEnraged ? Color.SeaGreen : Color.Orange;
+            Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 6000f, telegraphColor * telegraphInterpolant, telegraphInterpolant * 10f);
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
 

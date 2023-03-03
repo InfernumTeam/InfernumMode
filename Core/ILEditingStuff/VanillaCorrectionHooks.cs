@@ -1096,7 +1096,7 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class AllowTalkingToDraedonGook : IHookEdit
+    public class AllowTalkingToDraedonHook : IHookEdit
     {
         public void Load()
         {

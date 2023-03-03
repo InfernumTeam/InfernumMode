@@ -21,7 +21,7 @@ float opacity;
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
 {
-    //Pixelate
+    // Pixelate.
     coords.x -= coords.x % (1 / (resolution.x * 2));
     coords.y -= coords.y % (1 / (resolution.y * 2));
     float2 mappedUv = float2(coords.x - 0.5, (1 - coords.y) - 0.5);
@@ -29,7 +29,7 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     // Get the length of the doubled distance, so that 0 = at the center of the sprite and 1 = at the very edge of the circle
     float distanceFromCenter = length(mappedUv) * 2;
     
-    // Crop the sprite into a circle
+    // Crop the sprite into a circle.
     if (distanceFromCenter > 1)
         return float4(0, 0, 0, 0);
     
@@ -41,7 +41,7 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
         mainOpacity /= pow(distanceFromCenter / 0.8, 3.5);
     
     // From Iban's RoverDriveShield shader:
-    //"Blow up" the noise map so it looks circular.
+    // "Blow up" the noise map so it looks circular.
     float blowUpPower = 2.5;
     float blowUpSize = 0.5;
     float blownUpUVX = pow(abs(coords.x - 0.5), blowUpPower);
@@ -49,13 +49,15 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     float2 blownUpUV = float2(-blownUpUVY * blowUpSize * 0.5 + coords.x * (1 + blownUpUVY * blowUpSize), -blownUpUVX * blowUpSize * 0.5 + coords.y * (1 + blownUpUVX * blowUpSize));
 
     // Get the texture coords from the modified coords.
-    float2 textureCoord = float2(blownUpUV.x, blownUpUV.y + time * speed);
-    float4 noiseTexture = tex2D(NoiseMap, textureCoord);
+    float noiseAmount = tex2D(NoiseMap, float2(blownUpUV.x, blownUpUV.y + time * speed)).r;
+    float noiseAmount2 = tex2D(NoiseMap, float2(blownUpUV.x, blownUpUV.y - time * speed)).r;
+    float noiseAmount3 = tex2D(NoiseMap, float2(blownUpUV.x + time * speed, blownUpUV.y)).r;
+    float noiseAmount4 = tex2D(NoiseMap, float2(blownUpUV.x - time * speed, blownUpUV.y)).r;
+    float finalNoiseAmount = noiseAmount * 0.20 + noiseAmount2 * 0.30 + noiseAmount3 * 0.20 + noiseAmount4 * 0.30;
     
     // Modify the opacity by the noisemap.
-    float i = noiseTexture.r;
     mainOpacity *= mainOpacity;
-    mainOpacity /= i;
+    mainOpacity /= finalNoiseAmount;
 
     // Fade the edges.
     if (distanceFromCenter > 0.6)
@@ -63,6 +65,7 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
 
     // Modify the color by the opacity, toned down and clamped to allow for more of the main color to show.
     float3 color = mainColor * clamp(pow(mainOpacity, 0.5), 0, 2.7);
+    
     // Multiply the final color by a provided opacity.
     return float4(color, 1) * opacity;
 }
@@ -71,6 +74,6 @@ technique Technique1
 {
     pass FirePass
     {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
     }
 }

@@ -538,7 +538,7 @@ namespace InfernumMode
 
         public static void CreateMetaballsFromTexture(this Texture2D texture, ref List<FusableParticle> particleList, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35)
         {
-            // Leave if this is null, or this is a server.
+            // Leave if this is null, or this is called on the server.
             if (particleList is null || Main.netMode == NetmodeID.Server)
                 return;
 
@@ -555,13 +555,14 @@ namespace InfernumMode
             {
                 for (int w = 0; w < textureWidth; w++)
                 {
-                    Color color = colorData[w * h];
+                    Color color = colorData[w + h * textureWidth];
+
                     // If the current pixel has any alpha, and the chance is selected (this exists to add variation and prevent having way too many metaballs spawn)
                     if (color.A > 0 && (color.R > 0 && color.G > 0 && color.B > 0) && Main.rand.NextBool(spawnChance))
                     {
-                        Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f);
+                        Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f).RotatedBy(textureRotation);
                         Vector2 metaballSpawnPosition = texturePosition - positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
-                        FusableParticle particle = new(metaballSpawnPosition, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f) * colorData[w * h].A / 255);
+                        FusableParticle particle = new(metaballSpawnPosition, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f) * color.A / 255);
                         particleList.Add(particle);
                     }
                 }

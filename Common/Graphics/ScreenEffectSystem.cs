@@ -56,6 +56,8 @@ namespace InfernumMode.Common.Graphics
 
         private static float FlashLifetimeRatio => (float)FlashTime / FlashLifeTime;
 
+        public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
+
         /// <summary>
         /// Call this to set a flash effect. Any existing ones will be replaced.
         /// </summary>

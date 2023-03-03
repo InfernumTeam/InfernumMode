@@ -9,6 +9,12 @@ namespace InfernumMode.Common.Graphics.Particles
 {
     public class CloudParticle : Particle
     {
+        public bool IsImportant
+        {
+            get;
+            set;
+        }
+
         public float StartingScale
         {
             get;
@@ -33,9 +39,11 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override bool UseAdditiveBlend => true;
 
+        public override bool Important => IsImportant;
+
         public override string Texture => "InfernumMode/Common/Graphics/Particles/CloudParticle";
 
-        public CloudParticle(Vector2 relativePosition, Vector2 velocity, Color startingColor, Color endingColor, int lifetime, float scale)
+        public CloudParticle(Vector2 relativePosition, Vector2 velocity, Color startingColor, Color endingColor, int lifetime, float scale, bool isImportant = false)
         {
             Position = relativePosition;
             Velocity = velocity;
@@ -44,6 +52,7 @@ namespace InfernumMode.Common.Graphics.Particles
             EndingColor = endingColor;
             Scale = 0.01f;
             Lifetime = lifetime;
+            IsImportant = isImportant;
         }
 
         public override void Update()

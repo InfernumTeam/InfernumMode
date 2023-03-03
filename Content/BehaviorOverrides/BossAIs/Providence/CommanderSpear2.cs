@@ -76,6 +76,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Projectile.tileCollide = true;
                     if (Projectile.timeLeft >= 240)
                         Projectile.timeLeft = 240;
+
+                    if (Projectile.velocity.Length() < 38f)
+                        Projectile.velocity *= 1.0094f;
                     stickToOwner = false;
                     break;
             }
@@ -108,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 spearDirection = (MathHelper.TwoPi * i / 12f + shootOffsetAngle).ToRotationVector2();
-                    Utilities.NewProjectileBetter(Projectile.Center, spearDirection * 0.01f, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f, -1, 0f, 45f);
+                    Utilities.NewProjectileBetter(Projectile.Center, spearDirection * 0.01f, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f, -1, 0f, 54f);
                     Utilities.NewProjectileBetter(Projectile.Center, spearDirection * 8f, ModContent.ProjectileType<ProfanedSpearInfernum>(), HolySpearDamage, 0f);
                 }
             }

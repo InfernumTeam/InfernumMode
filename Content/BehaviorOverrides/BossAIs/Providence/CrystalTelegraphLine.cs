@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw a telegraph line outward.
             Color telegraphColor = !ProvidenceBehaviorOverride.IsEnraged ? Color.Yellow : Color.Lerp(Color.Cyan, Color.Green, 0.15f);
             Vector2 start = Projectile.Center;
-            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
             Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
             return false;
         }

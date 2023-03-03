@@ -194,8 +194,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Attack sections.
             new(new(BaseTrackedMusic.TimeFormat(0, 21, 0), BaseTrackedMusic.TimeFormat(0, 32, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(0, 32, 0), BaseTrackedMusic.TimeFormat(0, 42, 667)), ProvidenceAttackType.AcceleratingCrystalFan),
-            new(new(BaseTrackedMusic.TimeFormat(0, 42, 667), BaseTrackedMusic.TimeFormat(0, 53, 333)), ProvidenceAttackType.AttackGuardiansSpearSlam),
-            new(new(BaseTrackedMusic.TimeFormat(0, 53, 333), BaseTrackedMusic.TimeFormat(1, 4, 0)), ProvidenceAttackType.AcceleratingCrystalFan),
+            new(new(BaseTrackedMusic.TimeFormat(0, 42, 667), BaseTrackedMusic.TimeFormat(0, 54, 333)), ProvidenceAttackType.AttackGuardiansSpearSlam),
+            new(new(BaseTrackedMusic.TimeFormat(0, 54, 333), BaseTrackedMusic.TimeFormat(1, 4, 0)), ProvidenceAttackType.AcceleratingCrystalFan),
             new(new(BaseTrackedMusic.TimeFormat(1, 4, 0), BaseTrackedMusic.TimeFormat(1, 13, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(1, 13, 0), BaseTrackedMusic.TimeFormat(1, 25, 333)), ProvidenceAttackType.AcceleratingCrystalFan),
             new(new(BaseTrackedMusic.TimeFormat(1, 25, 333), BaseTrackedMusic.TimeFormat(1, 46, 667)), ProvidenceAttackType.AttackGuardiansSpearSlam),
@@ -250,21 +250,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float hasCompletedCycle = ref npc.Infernum().ExtraAI[HasCompletedCycleIndex];
             ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
 
-            if (initialized == 0f)
-            {
-                // Reset the music if the player tries to be clever and fuck up the patterns by using a music box.
-                bool playingSpecialSong = TrackedMusicManager.TrackedSong is not null && (TrackedMusicManager.TrackedSong.Name.Contains("Providence") || TrackedMusicManager.TrackedSong.Name.Contains("Guardians"));
-                if (Main.netMode == NetmodeID.SinglePlayer && playingSpecialSong && MediaPlayer.State == MediaState.Playing)
-                {
-                    MediaPlayer.Stop();
-                    MediaPlayer.Play(TrackedMusicManager.TrackedSong);
-                }
-
-                initialized = 1f;
-                wasSummonedAtNight = Main.dayTime ? 0f : 1f;
-                npc.netUpdate = true;
-            }
-
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnBecauseOfTime = shouldDespawnAtNight || shouldDespawnAtDay;
@@ -285,6 +270,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = hasCompletedCycle == 1f ? CocoonDefenseAfterFullCycle : CocoonDefense;
+
+            // Handle intialization effects.
+            if (initialized == 0f)
+            {
+                // Reset the music if the player tries to be clever and fuck up the patterns by using a music box.
+                bool playingSpecialSong = TrackedMusicManager.TrackedSong is not null && (TrackedMusicManager.TrackedSong.Name.Contains("Providence") || TrackedMusicManager.TrackedSong.Name.Contains("Guardians"));
+                if (Main.netMode == NetmodeID.SinglePlayer && playingSpecialSong && MediaPlayer.State == MediaState.Playing)
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(TrackedMusicManager.TrackedSong);
+                }
+
+                initialized = 1f;
+                wasSummonedAtNight = Main.dayTime ? 0f : 1f;
+                npc.netUpdate = true;
+            }
 
             // Handle phase 2 transition effects.
             if (hasEnteredPhase2 == 0f && lifeRatio < Phase2LifeRatio)
@@ -315,6 +316,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     hasCompletedCycle = 0f;
                     npc.netUpdate = true;
                 }
+
+                if (Main.netMode != NetmodeID.Server)
+                    MediaPlayer.Stop();
             }
 
             drawState = (int)ProvidenceFrameDrawingType.WingFlapping;
@@ -678,7 +682,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Ensure that the fireball dies exactly as it lands on Providence.
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball =>
                 {
-                    fireball.timeLeft = (int)(npc.Distance(fireballSpawnPosition) / fireballShootSpeed) - 32;
+                    fireball.timeLeft = (int)(npc.Distance(fireballSpawnPosition) / fireballShootSpeed) - 27;
                 });
                 Utilities.NewProjectileBetter(fireballSpawnPosition, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
 
@@ -738,8 +742,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             bool doneAttacking = localAttackTimer >= localAttackDuration - 10;
             float cinderSpacing = MathHelper.Lerp(225f, 180f, 1f - lifeRatio);
             float bombShootSpeed = MathHelper.Lerp(17f, 21.5f, 1f - lifeRatio);
-            float bombExplosionRadius = MathHelper.Lerp(1600f, 2080f, 1f - lifeRatio);
+            float bombExplosionRadius = MathHelper.Lerp(1300f, 1776f, 1f - lifeRatio);
             ref float hasDonePhaseTransitionEffects = ref npc.Infernum().ExtraAI[0];
+            ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
 
             // Fly above the target.
             DoVanillaFlightMovement(npc, target, true, ref flightPath);
@@ -778,8 +783,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center) * bombShootSpeed;
+                    Vector2 aimDestination = target.Center;
+                    if (bombShootCounter % 2f == 1f)
+                    {
+                        aimDestination += target.velocity * 50f;
+                        bombShootSpeed *= 0.667f;
+                    }
+
+                    Vector2 bombShootVelocity = npc.SafeDirectionTo(aimDestination) * bombShootSpeed;
                     Utilities.NewProjectileBetter(npc.Center + bombShootVelocity, bombShootVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, bombExplosionRadius);
+
+                    bombShootCounter++;
+                    npc.netUpdate = true;
                 }
             }
 
@@ -1347,7 +1362,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int shootDelay = GetBPMTimeMultiplier(4);
             int shootRate = GetBPMTimeMultiplier(8);
-            float spearShootSpeed = MathHelper.Lerp(14.5f, 17.5f, 1f - lifeRatio);
+            float spearShootSpeed = MathHelper.Lerp(18.5f, 21.5f, 1f - lifeRatio);
 
             if (IsEnraged)
             {
@@ -1672,7 +1687,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_ErraticMagicBursts(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration)
         {
             int energyChargeupTime = 90;
-            int hoverRedirectDelay = GetBPMTimeMultiplier(IsEnraged ? 2 : 4);
+            int hoverRedirectDelay = GetBPMTimeMultiplier(IsEnraged ? 2 : 3);
             int magicBurstCount = 11;
             float magicBurstSpeed = MathHelper.Lerp(11f, 17.5f, 1f - lifeRatio);
             float fieldExplosionRadius = MathHelper.Lerp(1000f, 1275f, 1f - lifeRatio);

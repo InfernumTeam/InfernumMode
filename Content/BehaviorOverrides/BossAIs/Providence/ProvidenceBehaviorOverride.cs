@@ -681,7 +681,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Ensure that the fireball dies exactly as it lands on Providence.
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball =>
                 {
-                    fireball.timeLeft = (int)(npc.Distance(fireballSpawnPosition) / fireballShootSpeed) - 27;
+                    fireball.timeLeft = (int)(npc.Distance(fireballSpawnPosition) / fireballShootSpeed) - (IsEnraged ? -3 : 27);
                 });
                 Utilities.NewProjectileBetter(fireballSpawnPosition, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
 

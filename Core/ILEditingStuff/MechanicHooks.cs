@@ -1,8 +1,14 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Events;
+using CalamityMod.Items.SummonItems;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.Signus;
+using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Particles;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
@@ -11,6 +17,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -23,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -435,6 +443,103 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             SelectSulphuricWaterColor -= MakeWaterEasierToSeeIn;
             On.Terraria.Graphics.Light.TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
+        }
+    }
+
+    public class ChangeRuneOfKosUsageHook : IHookEdit
+    {
+        private void ChangeUsageCondition(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                bool correctBiome = player.ZoneSkyHeight || player.ZoneUnderworldHeight || player.ZoneDungeon;
+                bool bossIsNotPresent = !NPC.AnyNPCs(ModContent.NPCType<StormWeaverHead>()) && !NPC.AnyNPCs(ModContent.NPCType<CeaselessVoid>()) && !NPC.AnyNPCs(ModContent.NPCType<Signus>());
+                return correctBiome && (bossIsNotPresent || InfernumMode.CanUseCustomAIs) && !BossRushEvent.BossRushActive;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        private void ChangeItemUsage(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                if (player.ZoneDungeon)
+                {
+                    SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
+
+                    // TODO -- Add CV start.
+                    if (CalamityGlobalNPC.voidBoss != -1)
+                    {
+
+                    }
+                    else
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<CeaselessVoid>());
+                        else
+                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<CeaselessVoid>());
+                    }
+                }
+                else if (player.ZoneUnderworldHeight)
+                {
+                    // Anger Signus if he's around but not attacking.
+                    if (CalamityGlobalNPC.signus != -1)
+                    {
+                        NPC signus = Main.npc[CalamityGlobalNPC.signus];
+                        if (signus.ai[1] == (int)SignusBehaviorOverride.SignusAttackType.Patrol)
+                        {
+                            SoundEngine.PlaySound(RuneofKos.SignutSound, player.Center);
+                            SignusBehaviorOverride.SelectNextAttack(signus);
+                            signus.ai[1] = (int)SignusBehaviorOverride.SignusAttackType.KunaiDashes;
+                            signus.Infernum().ExtraAI[9] = 0f;
+                            signus.netUpdate = true;
+                        }
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(RuneofKos.SignutSound, player.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Signus>());
+                        else
+                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<Signus>());
+                    }
+                }
+                else if (player.ZoneSkyHeight)
+                {
+                    // TODO -- Add SW start.
+                    int weaverIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverHead>());
+                    if (weaverIndex != -1)
+                    {
+
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(RuneofKos.StormSound, player.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<StormWeaverHead>());
+                        else
+                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<StormWeaverHead>());
+                    }
+                }
+            });
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load()
+        {
+            RuneOfKosCanUseItem += ChangeUsageCondition;
+            RuneOfKosUseItem += ChangeItemUsage;
+        }
+
+        public void Unload()
+        {
+            RuneOfKosCanUseItem -= ChangeUsageCondition;
+            RuneOfKosUseItem -= ChangeItemUsage;
         }
     }
 }

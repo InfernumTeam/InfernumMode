@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "The Fathomless Assassin\nSignus";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Signus>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Signus>()) && Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Signus>())].ai[1] != 0f;
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
     }

@@ -1,5 +1,7 @@
 using CalamityMod.CalPlayer;
+using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.Projectiles;

@@ -259,7 +259,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Define arena variables.
             Vector2 arenaTopLeft = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(68f, 32f);
             Vector2 arenaBottomRight = WorldSaveSystem.ProvidenceArena.BottomRight() * 16f + new Vector2(8f, 52f);
-            Vector2 arenaCenter = WorldSaveSystem.ProvidenceArena.Center() * 16f + Vector2.One * 8f;
             Vector2 arenaTopCenter = new Vector2(WorldSaveSystem.ProvidenceArena.Center().X + 405f, WorldSaveSystem.ProvidenceArena.Top + 56) * 16f + Vector2.One * 8f;
             Rectangle arenaArea = new((int)arenaTopLeft.X, (int)arenaTopLeft.Y, (int)(arenaBottomRight.X - arenaTopLeft.X), (int)(arenaBottomRight.Y - arenaTopLeft.Y));
 
@@ -1318,7 +1317,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             DoVanillaFlightMovement(npc, target, true, ref flightPath);
 
             // Release the fireballs.
-            if (localAttackTimer >= attackDelay && localAttackTimer <= localAttackDuration - attackDelay && shootTimer % fireballShootRate == 0f && !npc.WithinRange(target.Center, 280f))
+            if (localAttackTimer >= attackDelay && localAttackTimer <= localAttackDuration - attackDelay && shootTimer % fireballShootRate == 0f && !npc.WithinRange(target.Center, 400f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

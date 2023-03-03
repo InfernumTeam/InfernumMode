@@ -65,6 +65,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
+        #endregion AI
+
+        #region Drawcode
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             int npcType = (int)npc.ai[2];
@@ -78,7 +82,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             spriteBatch.Draw(texture, drawPos, frame, npc.GetAlpha(lightColor), npc.rotation, drawOrigin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
-
-        #endregion
+        #endregion Drawcode
     }
 }

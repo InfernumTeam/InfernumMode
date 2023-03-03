@@ -121,6 +121,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (InLava)
                         pillarDirection = -Vector2.UnitY;
 
+                    // Make the gaps a bit wider if the pillars will spawn at around a 45-degree inclination, since it's a bit too tight without this.
+                    float evenAngle = pillarDirection.ToRotation();
+                    if (evenAngle < 0f)
+                        evenAngle += MathHelper.TwoPi;
+                    bool closeTo45DegreeGap = MathHelper.Distance(evenAngle % MathHelper.PiOver2, MathHelper.PiOver4) < MathHelper.ToRadians(20f);
+                    if (closeTo45DegreeGap)
+                        perpendicularOffset *= 1.6f;
+
                     SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -153,7 +161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (DeathCountdown > 0f)
                 return;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.Server)
                 Utilities.NewProjectileBetter(Projectile.Center + oldVelocity.SafeNormalize(Vector2.UnitY) * 60f, oldVelocity, ModContent.ProjectileType<StrongProfanedCrack>(), 0, 0f);
 
             if (CalamityConfig.Instance.Screenshake)

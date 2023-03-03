@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using System.IO;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -21,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Orb");
+            DisplayName.SetDefault("Holy Fireball");
         }
 
         public override void SetDefaults()
@@ -37,6 +38,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.timeLeft = reader.ReadInt32();
 
         public override void AI()
         {
@@ -107,6 +112,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             Projectile.ExpandHitboxBy(50);
             int dustType = ProvUtils.GetDustID(Variant);
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                dustType = 187;
+
             for (int d = 0; d < 5; d++)
             {
                 int holy = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, 0f, 100, default, 2f);

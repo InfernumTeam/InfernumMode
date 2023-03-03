@@ -201,7 +201,8 @@ namespace InfernumMode.Core.TrackedMusic
                 int musicIndex = CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First();
                 volume = Main.musicFade[musicIndex];
 
-                if (TrackedSong.Name.Contains("Providence"))
+                // TODO -- Make this not hardcoded.
+                if (TrackedSong.Name.Contains("Providence") || TrackedSong.Name.Contains("Guardians"))
                 {
                     if (!PausedBecauseOfUI && Main.gamePaused)
                     {

@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * CurrentLength;
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, VariableWidth * 0.8f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, VariableWidth * 0.67f, ref _);
         }
 
         public float WidthFunction(float _) => VariableWidth * Utils.GetLerpValue(0f, 0.12f, _, true);

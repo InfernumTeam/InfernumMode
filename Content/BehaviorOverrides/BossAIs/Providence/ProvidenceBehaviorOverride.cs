@@ -301,6 +301,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int guardianID = ModContent.NPCType<ProvSpawnOffense>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+                        if (n.active && n.type == guardianID)
+                            n.active = false;
+                    }
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CommanderSpear2>());
+
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
                     hasEnteredPhase2 = 1f;
                     hasCompletedCycle = 0f;
@@ -828,6 +837,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
+                    {
+                        bomb.timeLeft = 95;
+                    });
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 0.001f, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, 1360f);
+                }
             }
 
             // Release a fan of crystals.

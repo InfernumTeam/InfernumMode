@@ -46,6 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Disable contact damage.
             npc.damage = 0;
 
+            // Disable HP bar effects since these things die quickly.
+            npc.Calamity().ShouldCloseHPBar = true;
+
             // Create a spear on the first frame for this guardian.
             if (npc.localAI[0] == 0f)
             {

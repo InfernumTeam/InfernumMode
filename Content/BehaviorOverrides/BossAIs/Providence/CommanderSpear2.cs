@@ -54,7 +54,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void AI()
         {
             // Disappear if the owner or Providence are not present.
-            if (OwnerIndex == -1 || CalamityGlobalNPC.holyBoss == -1 || (!Owner.active && CurrentBehavior != SpearAttackState.Charge))
+            bool notActuallyCharging = CurrentBehavior == SpearAttackState.Charge && Projectile.velocity == Vector2.Zero;
+            if (OwnerIndex == -1 || CalamityGlobalNPC.holyBoss == -1 || (!Owner.active && CurrentBehavior != SpearAttackState.Charge) || notActuallyCharging)
             {
                 Projectile.active = false;
                 return;

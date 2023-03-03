@@ -26,12 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             set;
         }
 
-        public SlotId? LavaSound
-        {
-            get;
-            set;
-        }
-
         public Vector2[] SamplePoints
         {
             get
@@ -75,9 +69,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Drain and eventually disappear once Providence is dead.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss))
             {
-                if (SoundEngine.TryGetActiveSound(LavaSound.Value, out ActiveSound lavaActiveSound) && lavaActiveSound.IsPlaying)
-                    lavaActiveSound.Stop();
-
                 LavaHeight = MathHelper.Clamp(LavaHeight - 16f, 0f, 16000f) * 0.98f;
                 if (LavaHeight <= 1f)
                     Projectile.Kill();
@@ -110,19 +101,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     GeneralParticleHandler.SpawnParticle(smoke);
                 }
             }
-
-            // Initialize the lava sound.
-            if (LavaSound is not null && SoundEngine.TryGetActiveSound(LavaSound.Value, out ActiveSound lavaActiveSound2) && lavaActiveSound2.IsPlaying)
-            {
-                float verticalDistanceFromLava = MathHelper.Distance(Main.LocalPlayer.Center.Y, Projectile.Top.Y);
-                float volume = Utils.GetLerpValue(8000f, 5400f, verticalDistanceFromLava, true) * 0.85f;
-                if (!Main.LocalPlayer.Infernum_Biome().ZoneProfaned)
-                    volume = 0.0001f;
-
-                lavaActiveSound2.Volume = volume;
-            }
-            else
-                LavaSound = SoundEngine.PlaySound(CalamityMod.NPCs.Providence.Providence.BurnLoopSound with { IsLooped = true }, Main.LocalPlayer.Center);
         }
 
         public Color ColorFunction(float completionRatio)

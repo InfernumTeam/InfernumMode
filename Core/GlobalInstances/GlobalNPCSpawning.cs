@@ -46,8 +46,8 @@ namespace InfernumMode.GlobalInstances
             }
 
             // The sentinels occasionally spawn naturally in their respective biomes if they haven't been defeated yet.
-            bool sentinelsCanSpawn = NPC.downedGolemBoss && InfernumMode.CanUseCustomAIs;
-            if (sentinelsCanSpawn && !DownedBossSystem.downedSignus && spawnInfo.Player.ZoneUnderworldHeight && !NPC.AnyNPCs(ModContent.NPCType<Signus>()))
+            bool sentinelsCanSpawn = NPC.downedGolemBoss && InfernumMode.CanUseCustomAIs && !spawnInfo.Player.Infernum_Biome().ZoneProfaned;
+            if (sentinelsCanSpawn && !DownedBossSystem.downedSignus && spawnInfo.Player.ZoneUnderworldHeight && !WorldSaveSystem.MetSignusAtProfanedGarden && !NPC.AnyNPCs(ModContent.NPCType<Signus>()))
                 pool[ModContent.NPCType<Signus>()] = 0.0032f;
 
             // Clear abyss miniboss spawns from the pool. They are always spawned manually, since traditional enemy spawns have a

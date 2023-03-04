@@ -58,6 +58,9 @@ namespace InfernumMode.Content.Tiles
             // This is necessary to ensure that the primitives properly render.
             TileID.Sets.DrawTileInSolidLayer[Type] = true;
 
+            // Apparently this is necessary in multiplayer for some reason???
+            MinPick = int.MaxValue;
+
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
             TileObjectData.newTile.Width = Width;
             TileObjectData.newTile.Height = Height;

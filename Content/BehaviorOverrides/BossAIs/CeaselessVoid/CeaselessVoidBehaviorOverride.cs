@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
@@ -6,6 +7,8 @@ using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -14,10 +17,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -32,6 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         #region Enumerations
         public enum CeaselessVoidAttackType
         {
+            ChainedUp,
             DarkEnergySwirl,
             RealityRendCharge,
             ConvergingEnergyBarrages,
@@ -42,6 +48,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         #endregion
 
         #region Set Defaults
+
+        public static List<List<VerletSimulatedSegment>> Chains
+        {
+            get;
+            internal set;
+        } = null;
 
         public const float Phase2LifeRatio = 0.65f;
 
@@ -149,6 +161,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             switch ((CeaselessVoidAttackType)(int)attackType)
             {
+                case CeaselessVoidAttackType.ChainedUp:
+                    DoBehavior_ChainedUp(npc, ref attackTimer);
+                    break;
                 case CeaselessVoidAttackType.DarkEnergySwirl:
                     DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
                     break;
@@ -173,6 +188,106 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
 
+        public static void UpdateChains(NPC npc)
+        {
+            // Get out of here if the chains are not initialized yet.
+            if (Chains is null)
+                return;
+
+            for (int i = 0; i < Chains.Count; i++)
+            {
+                // Check to see if a player is moving through the chains.
+                for (int j = 0; j < Main.maxPlayers; j++)
+                {
+                    Player p = Main.player[j];
+                    if (!p.active || p.dead)
+                        continue;
+
+                    MoveChainBasedOnEntity(Chains[i], p, npc);
+                }
+
+                Vector2 chainStart = Chains[i][0].position;
+                Vector2 chainEnd = Chains[i].Last().position;
+                float segmentDistance = Vector2.Distance(chainStart, chainEnd) / Chains[i].Count;
+                Chains[i] = VerletSimulatedSegment.SimpleSimulation(Chains[i], segmentDistance, 10, 0.6f);
+            }
+        }
+
+        public static void MoveChainBasedOnEntity(List<VerletSimulatedSegment> chain, Entity e, NPC npc)
+        {
+            Vector2 entityVelocity = e.velocity * 0.425f;
+            for (int i = 1; i < chain.Count - 1; i++)
+            {
+                VerletSimulatedSegment segment = chain[i];
+                VerletSimulatedSegment next = chain[i + 1];
+
+                float _ = 0f;
+                if (Collision.CheckAABBvLineCollision(e.TopLeft, e.Size, segment.position, next.position, 30f, ref _))
+                {
+                    float distanceBetweenSegments = segment.position.Distance(next.position);
+                    float currentMovementOffsetInterpolant = Utils.GetLerpValue(e.Distance(segment.position), distanceBetweenSegments, distanceBetweenSegments * 0.2f, true);
+                    float nextMovementOffsetInterpolant = 1f - currentMovementOffsetInterpolant;
+
+                    segment.position += entityVelocity * currentMovementOffsetInterpolant;
+
+                    if (!next.locked)
+                        next.position += entityVelocity * nextMovementOffsetInterpolant;
+
+                    if (npc.soundDelay <= 0 && entityVelocity.Length() >= 0.1f)
+                    {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.5f }, e.Center);
+                        npc.soundDelay = 27;
+                    }
+                }
+            }
+        }
+
+        public static void DoBehavior_ChainedUp(NPC npc, ref float attackTimer)
+        {
+            // Initialize Ceaseless Void's binding chains on the first frame.
+            if (attackTimer <= 1f)
+            {
+                Chains = new();
+
+                int segmentCount = 32;
+                for (int i = 0; i < 4; i++)
+                {
+                    Chains.Add(new());
+
+                    // Determine how far off the chains should go.
+                    Vector2 checkDirection = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, 1.2f);
+                    if (checkDirection.Y > 0f)
+                        checkDirection.Y *= 0.3f;
+
+                    Vector2 chainStart = npc.Center;
+                    float[] laserScanDistances = new float[16];
+                    Collision.LaserScan(chainStart, checkDirection, 16f, 5000f, laserScanDistances);
+                    Vector2 chainEnd = chainStart + checkDirection.SafeNormalize(Vector2.UnitY) * (laserScanDistances.Average() + 32f);
+
+                    for (int j = 0; j < segmentCount; j++)
+                    {
+                        Vector2 chainPosition = Vector2.Lerp(chainStart, chainEnd, j / (float)(segmentCount - 1f));
+                        Chains[i].Add(new(chainPosition, j == 0 || j == segmentCount - 1));
+                    }
+                }
+            }
+
+            // Update chains.
+            UpdateChains(npc);
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Prevent hovering over the Void's name to reveal what it is.
+            npc.ShowNameOnHover = false;
+
+            // Disable boss behaviors.
+            npc.boss = false;
+            npc.Calamity().ShouldCloseHPBar = true;
+            npc.Calamity().ProvidesProximityRage = false;
+        }
+
         public static void DoBehavior_DarkEnergySwirl(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)
         {
             int totalRings = 4;
@@ -186,6 +301,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 energyCountPerRing++;
                 totalRings++;
+            }
+
+            // Destroy the chains if they are present.
+            if (Main.netMode != NetmodeID.Server && Chains is not null)
+            {
+                SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound);
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 16f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.5f, 45);
+                }
+
+                foreach (var chain in Chains)
+                {
+                    Vector2[] bezierPoints = chain.Select(x => x.position).ToArray();
+                    BezierCurve bezierCurve = new(bezierPoints);
+
+                    int totalChains = (int)(Vector2.Distance(chain.First().position, chain.Last().position) / 22.4f);
+                    totalChains = (int)MathHelper.Clamp(totalChains, 30f, 1200f);
+                    for (int i = 0; i < totalChains - 1; i++)
+                    {
+                        Vector2 chainPosition = bezierCurve.Evaluate(i / (float)totalChains);
+                        Vector2 chainVelocity = npc.SafeDirectionTo(chainPosition).RotatedByRandom(0.8f) * Main.rand.NextFloat(2f, 12f);
+
+                        for (int j = 1; j <= 2; j++)
+                            Gore.NewGore(npc.GetSource_FromAI(), chainPosition, chainVelocity, InfernumMode.Instance.Find<ModGore>($"CeaselessVoidChain{j}").Type, 0.8f);
+                    }
+                }
+
+                Chains = null;
             }
 
             ref float hasCreatedDarkEnergy = ref npc.Infernum().ExtraAI[0];
@@ -203,7 +348,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, darkEnergyID, npc.whoAmI, offsetAngle, spinMovementSpeed, offsetRadius);
                     }
                 }
-                npc.Center = target.Center - Vector2.UnitY * 300f;
                 hasCreatedDarkEnergy = 1f;
                 npc.netUpdate = true;
             }
@@ -695,6 +839,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Draw chains.
+            if (Chains is not null)
+            {
+                foreach (var chain in Chains)
+                    DrawChain(chain);
+            }
+
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/CeaselessVoid/CeaselessVoidGlow").Value;
             Texture2D voidTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidVoidStuff").Value;
@@ -708,7 +859,69 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
             drawData.Draw(Main.spriteBatch);
             Main.spriteBatch.ExitShaderRegion();
+
+            if (npc.ai[0] == (int)CeaselessVoidAttackType.ChainedUp)
+                DrawSeal(npc);
             return false;
+        }
+
+        public static void DrawSeal(NPC npc)
+        {
+            float scale = MathHelper.Lerp(0.15f, 0.16f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * 1.4f;
+            float noiseScale = MathHelper.Lerp(0.4f, 0.8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
+
+            Effect shieldEffect = Filters.Scene["CalamityMod:RoverDriveShield"].GetShader().Shader;
+            shieldEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.15f);
+            shieldEffect.Parameters["blowUpPower"].SetValue(2.5f);
+            shieldEffect.Parameters["blowUpSize"].SetValue(0.5f);
+            shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
+
+            // Prepare the forcefield opacity.
+            float baseShieldOpacity = 0.9f + 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2f);
+            shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (npc.Opacity * 0.9f + 0.1f) * 0.8f);
+            shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
+
+            Color edgeColor = Color.Lerp(Color.Purple, Color.Black, 0.65f);
+            Color shieldColor = Color.DarkBlue;
+
+            // Prepare the forcefield colors.
+            shieldEffect.Parameters["shieldColor"].SetValue(shieldColor.ToVector3());
+            shieldEffect.Parameters["shieldEdgeColor"].SetValue(edgeColor.ToVector3());
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, shieldEffect, Main.GameViewMatrix.TransformationMatrix);
+
+            // Draw the forcefield. This doesn't happen if the lighting behind the vassal is too low, to ensure that it doesn't draw if underground or in a darkly lit area.
+            Texture2D noise = InfernumTextureRegistry.WavyNoise.Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            if (shieldColor.ToVector4().Length() > 0.02f)
+                Main.spriteBatch.Draw(noise, drawPosition, null, Color.White * npc.Opacity, 0, noise.Size() / 2f, scale * 2f, 0, 0);
+
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
+        public static void DrawChain(List<VerletSimulatedSegment> chain)
+        {
+            Texture2D chainTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidChain").Value;
+
+            // Collect chain draw positions.
+            Vector2[] bezierPoints = chain.Select(x => x.position).ToArray();
+            BezierCurve bezierCurve = new(bezierPoints);
+
+            float chainScale = 0.8f;
+            int totalChains = (int)(Vector2.Distance(chain.First().position, chain.Last().position) / chainTexture.Height / chainScale);
+            totalChains = (int)MathHelper.Clamp(totalChains, 30f, 1200f);
+            for (int i = 0; i < totalChains - 1; i++)
+            {
+                Vector2 drawPosition = bezierCurve.Evaluate(i / (float)totalChains);
+                float completionRatio = i / (float)totalChains + 1f / totalChains;
+                float angle = (bezierCurve.Evaluate(completionRatio) - drawPosition).ToRotation() - MathHelper.PiOver2;
+
+                float brightnessInterpolant1 = MathF.Pow(MathF.Sin(12f * MathHelper.Pi * completionRatio - Main.GlobalTimeWrappedHourly * 9f) * 0.5f + 0.5f, 4f);
+                float brightnessInterpolant2 = MathF.Pow(MathF.Sin(15f * MathHelper.Pi * completionRatio - Main.GlobalTimeWrappedHourly * 13.5f) * 0.5f + 0.5f, 4.4f);
+                Color baseChainColor = Lighting.GetColor((int)drawPosition.X / 16, (int)drawPosition.Y / 16) * 2f;
+                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, baseChainColor, angle, chainTexture.Size() * 0.5f, chainScale, SpriteEffects.None, 0);
+            }
         }
         #endregion Drawing
 

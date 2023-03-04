@@ -380,5 +380,11 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator PlaceForbiddenArchive
+        {
+            add => HookEndpointManager.Modify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

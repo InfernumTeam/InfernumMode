@@ -10,10 +10,12 @@ using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Particles;
+using CalamityMod.Schematics;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -21,6 +23,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -29,6 +32,7 @@ using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -469,15 +473,21 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 if (player.ZoneDungeon)
                 {
-                    SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
-
-                    // TODO -- Add CV start.
+                    // Anger the Ceaseless Void if it's around but not attacking.
                     if (CalamityGlobalNPC.voidBoss != -1)
                     {
-
+                        NPC ceaselessVoid = Main.npc[CalamityGlobalNPC.voidBoss];
+                        if (ceaselessVoid.ai[0] == (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.ChainedUp)
+                        {
+                            SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
+                            CeaselessVoidBehaviorOverride.SelectNewAttack(ceaselessVoid);
+                            ceaselessVoid.ai[0] = (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl;
+                            ceaselessVoid.netUpdate = true;
+                        }
                     }
                     else
                     {
+                        SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<CeaselessVoid>());
                         else
@@ -541,5 +551,45 @@ namespace InfernumMode.Core.ILEditingStuff
             RuneOfKosCanUseItem -= ChangeUsageCondition;
             RuneOfKosUseItem -= ChangeItemUsage;
         }
+    }
+
+    public class StoreForbiddenArchivePositionHook : IHookEdit
+    {
+        private void StorePosition(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            int xLocalIndex = 0;
+            int yLocalIndex = 0;
+            ConstructorInfo pointConstructor = typeof(Point).GetConstructor(new Type[] { typeof(int), typeof(int) });
+            MethodInfo placementMethod = typeof(SchematicManager).GetMethods().First(m => m.Name == "PlaceSchematic");
+
+            // Find the first instance of the schematic placement call. There are three, but they all take the same information so it doesn't matter which one is used as a reference.
+            cursor.GotoNext(i => i.MatchLdstr(SchematicManager.BlueArchiveKey));
+
+            // Find the part of the method call where the placement Point type is made, and read off the IL indices for the X and Y coordinates with intent to store them elsewhere.
+            cursor.GotoNext(i => i.MatchNewobj(pointConstructor));
+            cursor.GotoPrev(i => i.MatchLdloc(out yLocalIndex));
+            cursor.GotoPrev(i => i.MatchLdloc(out xLocalIndex));
+
+            // Go back to the beginning of the method and store the placement position so that it isn't immediately discarded after world generation- Ceaseless Void's natural spawning needs it.
+            // This needs to be done at each of hte three schematic placement variants since sometimes post-compilation optimizations can scatter about return instructions.
+            cursor.Index = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                cursor.GotoNext(i => i.MatchLdftn(out _));
+                cursor.GotoNext(MoveType.After, i => i.MatchCallOrCallvirt(out _));
+                cursor.Emit(OpCodes.Ldloc, xLocalIndex);
+                cursor.Emit(OpCodes.Ldloc, yLocalIndex);
+                cursor.EmitDelegate((int x, int y) =>
+                {
+                    WorldSaveSystem.ForbiddenArchiveCenter = new(x, y);
+                });
+            }
+        }
+
+        public void Load() => PlaceForbiddenArchive += StorePosition;
+
+        public void Unload() => PlaceForbiddenArchive -= StorePosition;
     }
 }

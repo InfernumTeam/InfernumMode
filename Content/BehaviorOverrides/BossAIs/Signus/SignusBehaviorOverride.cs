@@ -885,7 +885,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
                 float opacity = npc.Opacity * 4f;
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.3f) * opacity;
-                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, frame, glowmaskColor, rotation, origin, scale, direction, 0));
+
+                if (npc.ai[1] != (int)SignusAttackType.ShadowDash)
+                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, frame, glowmaskColor, rotation, origin, scale, direction, 0));
             }
 
             Player target = Main.player[npc.target];

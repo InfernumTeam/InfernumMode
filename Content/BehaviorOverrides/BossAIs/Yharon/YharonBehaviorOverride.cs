@@ -319,21 +319,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        public const float Subphase2LifeRatio = 0.9375f;
+        public const float Subphase2LifeRatio = 0.875f;
 
-        public const float Subphase3LifeRatio = 0.825f;
+        public const float Subphase3LifeRatio = 0.65f;
 
-        public const float Subphase4LifeRatio = 0.675f;
+        public const float Subphase4LifeRatio = 0.35f;
 
         public const float Subphase5LifeRatio = Phase2LifeRatio;
 
-        public const float Subphase6LifeRatio = 0.4f;
+        public const float Subphase6LifeRatio = 0.8f;
 
-        public const float Subphase7LifeRatio = 0.3f;
+        public const float Subphase7LifeRatio = 0.6f;
 
-        public const float Subphase8LifeRatio = 0.2f;
+        public const float Subphase8LifeRatio = 0.4f;
 
-        public const float Subphase9LifeRatio = 0.1f;
+        public const float Subphase9LifeRatio = 0.2f;
 
         public const float Subphase10LifeRatio = 0.025f;
 
@@ -410,7 +410,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int PlayerChargeMarkCenterYIndex = 23;
 
-        public const float Phase2LifeRatio = 0.5f;
+        public const float Phase2LifeRatio = 0.1f;
 
         public const float BaseDR = 0.3f;
 
@@ -691,7 +691,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Multiplicatively reduce the fast charge speed multiplier. This is easier than changing individual variables above when testing.
             fastChargeSpeedMultiplier *= 0.875f;
 
-            // Disable damage for a while in phase 2. Also release some sparkles for visual flair.
+            // Disable damage for a while and heal in phase 2. Also release some sparkles for visual flair.
             if (invincibilityTime > 0f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -701,6 +701,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
                 npc.dontTakeDamage = true;
                 invincibilityTime--;
+
+                // Heal up again.
+                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.1f, npc.lifeMax, 1f - invincibilityTime / Phase2InvincibilityTime);
             }
 
             switch ((YharonAttackType)(int)attackType)

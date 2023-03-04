@@ -423,8 +423,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Vector2 pushAway = Vector2.Zero;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type == npc.type && i != npc.whoAmI)
-                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.GetLerpValue(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
+                NPC n = Main.npc[i];
+                bool isEoW = n.type is NPCID.EaterofWorldsHead or NPCID.EaterofWorldsHead;
+                if (isEoW && i != npc.whoAmI)
+                    pushAway += npc.SafeDirectionTo(n.Center, Vector2.UnitY) * Utils.GetLerpValue(190f, 90f, npc.Distance(n.Center), true) * -4f;
             }
             idealVelocity += pushAway;
 

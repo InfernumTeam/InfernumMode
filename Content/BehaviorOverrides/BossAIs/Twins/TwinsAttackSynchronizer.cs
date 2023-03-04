@@ -1009,11 +1009,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                         foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<RetinazerLaser>()).Where(p => p.ai[1] == 1f))
                             laser.Kill();
 
-                        for (int i = 0; i < 8; i++)
-                        {
-                            Vector2 laserSpawnOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 950f;
-                            Utilities.NewProjectileBetter(Target.Center + laserSpawnOffset, -laserSpawnOffset.SafeNormalize(Vector2.UnitY) * 4.5f, ModContent.ProjectileType<RetinazerLaser>(), 140, 0f, -1, 0f, 1f);
-                        }
                         Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<RetinazerGroundDeathray>(), 200, 0f, -1, 0f, npc.whoAmI);
                     }
                 }

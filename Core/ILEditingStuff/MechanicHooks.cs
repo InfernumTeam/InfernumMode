@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
@@ -20,6 +21,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
+using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -37,6 +39,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
@@ -331,28 +334,100 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class DrawCherishedSealocketHook : IHookEdit
     {
+        public static RenderTarget2D PlayerForcefieldTarget
+        {
+            get;
+            internal set;
+        }
+
+        public static ArmorShaderData ForcefieldShader
+        {
+            get;
+            internal set;
+        }
+
         private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
+            if (PlayerForcefieldTarget is null)
+                return;
+
+            // Draw the render target, optionally with a dye shader.
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            float shieldScale = 0.3f * Main.LocalPlayer.GetModPlayer<SealocketPlayer>().ForcefieldOpacity;
+            Vector2 shieldSize = Vector2.One * shieldScale * 512f;
+            Rectangle shaderArea = Utils.CenteredRectangle(PlayerForcefieldTarget.Size(), shieldSize);
+            ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget, Vector2.Zero, shaderArea, Color.White));
+            Main.spriteBatch.Draw(PlayerForcefieldTarget, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, PlayerForcefieldTarget.Size() * 0.5f, 1f, 0, 0f);
+
+            Main.spriteBatch.ExitShaderRegion();
+
+            orig(self);
+        }
+
+        private void PrepareSealocketTarget(On.Terraria.Main.orig_CheckMonoliths orig)
+        {
+            InitializeTargetIfNecessary();
+
+            var device = Main.instance.GraphicsDevice;
+            RenderTargetBinding[] bindings = device.GetRenderTargets();
+            device.SetRenderTarget(PlayerForcefieldTarget);
+            device.Clear(Color.Transparent);
+
+            // Draw forcefields to the render target.
+            Main.spriteBatch.Begin();
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (!Main.player[i].active || Main.player[i].outOfRange || Main.player[i].dead)
                     continue;
 
-                SealocketPlayer modPlayer = Main.player[i].GetModPlayer<SealocketPlayer>();
-                modPlayer.ForcefieldOpacity = 1f;
-                if (modPlayer.ForcefieldOpacity <= 0.01f || modPlayer.ForcefieldDissipationInterpolant >= 0.99f)
-                    continue;
-
-                float forcefieldOpacity = (1f - modPlayer.ForcefieldDissipationInterpolant) * modPlayer.ForcefieldOpacity;
-                Vector2 forcefieldDrawPosition = Main.player[i].Center + Vector2.UnitY * Main.player[i].gfxOffY - Main.screenPosition;
-                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, modPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+                DrawForcefield(Main.player[i]);
             }
-            orig(self);
+            Main.spriteBatch.End();
+            device.SetRenderTargets(bindings);
         }
 
-        public void Load() => On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+        internal static void FindSealocketItemDyeShader(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)
+        {
+            orig(self, isNotInVanitySlot, isSetToHidden, armorItem, dyeItem);
+            if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
+                ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
+        }
 
-        public void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
+        public static void InitializeTargetIfNecessary()
+        {
+            if (PlayerForcefieldTarget is not null || Main.netMode == NetmodeID.Server)
+                return;
+
+            PlayerForcefieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+        }
+
+        public static void DrawForcefield(Player player)
+        {
+            SealocketPlayer modPlayer = player.GetModPlayer<SealocketPlayer>();
+            modPlayer.ForcefieldOpacity = 1f;
+            if (modPlayer.ForcefieldOpacity <= 0.01f || modPlayer.ForcefieldDissipationInterpolant >= 0.99f)
+                return;
+
+            float forcefieldOpacity = (1f - modPlayer.ForcefieldDissipationInterpolant) * modPlayer.ForcefieldOpacity;
+            Vector2 forcefieldDrawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f + Vector2.UnitY * player.gfxOffY;
+            BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, modPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+        }
+
+        public void Load()
+        {
+            On.Terraria.Main.CheckMonoliths += PrepareSealocketTarget;
+            On.Terraria.Player.UpdateItemDye += FindSealocketItemDyeShader;
+            On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+        }
+
+        public void Unload()
+        {
+            On.Terraria.Main.CheckMonoliths -= PrepareSealocketTarget;
+            On.Terraria.Player.UpdateItemDye -= FindSealocketItemDyeShader;
+            On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
+        }
     }
 
     public class DisableWaterEffectsInFightsHook : IHookEdit

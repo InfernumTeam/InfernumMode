@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Rotate.
-            Projectile.rotation += MathHelper.Lerp(0f, 0.015f, Projectile.Opacity);
+            Projectile.rotation += MathHelper.Lerp(0f, 0.014f, Projectile.Opacity);
             Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
             Projectile.Center = owner.Center + Projectile.velocity;
 

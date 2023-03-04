@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class TelegraphedProfanedSpearInfernum : ModProjectile
+    public class TelegraphedProfanedSpearInfernum : ModProjectile, IScreenCullDrawer
     {
         public ref float Timer => ref Projectile.ai[0];
 
@@ -78,6 +79,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Timer >= TelegraphDuration)
+            {
+                CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * Projectile.Opacity, 1);
+                Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
+            }
+            return false;
+        }
+
+        public void CullDraw(SpriteBatch spriteBatch)
+        {
             if (Timer < TelegraphDuration)
             {
                 Texture2D texture = InfernumTextureRegistry.BloomLineSmall.Value;
@@ -89,18 +100,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float rotation = MathHelper.PiOver2;
 
                 float scaleInterpolant = MathHelper.Clamp(MathF.Sin(Timer / TelegraphDuration * MathHelper.Pi) * 3f, 0f, 1f);
-                Vector2 scaleInner = new(0.75f * scaleInterpolant, 2550f / texture.Height);
+                Vector2 scaleInner = new(0.75f * scaleInterpolant, 5550f / texture.Height);
                 Vector2 scaleOuter = scaleInner * new Vector2(1.5f, 1f);
                 Vector2 origin = texture.Size() * new Vector2(0.5f, 0f);
                 Main.EntitySpriteDraw(texture, position, null, colorOuter, rotation, origin, scaleOuter, SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(texture, position, null, colorInner, rotation, origin, scaleInner, SpriteEffects.None, 0);
             }
-            else
-            {
-                CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * Projectile.Opacity, 1);
-                Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
-            }
-            return false;
         }
     }
 }

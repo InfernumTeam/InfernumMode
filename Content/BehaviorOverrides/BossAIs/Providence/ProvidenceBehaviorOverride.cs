@@ -552,7 +552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         if (burnIntensity < 0.004f)
                             burnIntensity = 0f;
                     }
-                    DoBehavior_EnterFireFormBulletHell(npc, target, lifeRatioP2Adjusted, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
+                    DoBehavior_EnterFireFormBulletHell(npc, target, arenaTopCenter, lifeRatioP2Adjusted, localAttackTimer, localAttackDuration, ref drawState, ref lavaHeight);
                     break;
                 case ProvidenceAttackType.EnvironmentalFireEffects:
                     DoBehavior_EnvironmentalFireEffects(npc, target, localAttackTimer, localAttackDuration, ref drawState);
@@ -989,7 +989,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         Vector2 ashSpawnPosition = guardianSpawnPosition + Main.rand.NextVector2Circular(100f, 100f);
                         Vector2 ashVelocity = npc.SafeDirectionTo(ashSpawnPosition) * Main.rand.NextFloat(1.5f, 2f);
-                        Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.75f, 0.95f), 400f, Main.rand.NextFloat(-0.04f, 0.04f));
+                        Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
                         GeneralParticleHandler.SpawnParticle(ash);
                     }
 
@@ -1103,7 +1103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             DoVanillaFlightMovement(npc, target, false, ref flightPath, flightSpeedFactor);
         }
 
-        public static void DoBehavior_EnterFireFormBulletHell(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float lavaHeight)
+        public static void DoBehavior_EnterFireFormBulletHell(NPC npc, Player target, Vector2 arenaTopCenter, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float lavaHeight)
         {
             int shootDelay = 75;
             int startingShootCycle = 67;
@@ -1164,6 +1164,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 // Rise above the lava.
                 performedInitializations = 1f;
+                npc.Center = arenaTopCenter + Vector2.UnitY * 600f;
+                ReleaseSparkles(npc.Center, 100, 90f);
+
                 npc.velocity = Vector2.UnitY * -13f;
                 npc.netUpdate = true;
             }
@@ -1864,9 +1867,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Release slow fireballs from the lava below.
-            if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 15 == 14)
+            if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 18 == 17)
             {
-                Vector2 fireballSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 300f, 800f);
+                Vector2 fireballSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, 800f);
                 Utilities.NewProjectileBetter(fireballSpawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
             }
 

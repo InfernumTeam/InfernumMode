@@ -349,8 +349,11 @@ namespace InfernumMode.Core.ILEditingStuff
         private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
             if (PlayerForcefieldTarget is null)
+            {
+                // Ensure orig is called regardless.
+                orig(self);
                 return;
-
+            }
             // Draw the render target, optionally with a dye shader.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

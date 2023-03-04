@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -120,33 +121,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             // Draw a backglow and laser telegraph before doing the kamikaze charge.
             if (telegraphInterpolant > 0f)
             {
-                Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
-                Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
-
+                // Draw the bloom laser line telegraph.
                 float laserRotation = -npc.rotation;
                 if (npc.spriteDirection == -1)
                     laserRotation += MathHelper.Pi;
 
-                laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
-                laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.004f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(telegraphInterpolant));
-                laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
-                laserScopeEffect.Parameters["laserAngle"].SetValue(laserRotation);
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.002f + (float)Math.Pow(telegraphInterpolant, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f));
-                laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
-                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f).ToVector3());
-                laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Orange.ToVector3());
-                laserScopeEffect.Parameters["bloomSize"].SetValue(0.3f + (1f - telegraphInterpolant) * 0.1f);
-                laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(0.45f);
-                laserScopeEffect.Parameters["bloomFadeStrenght"].SetValue(3f);
-
-                Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
-
-                laserScopeEffect.CurrentTechnique.Passes[0].Apply();
-
-                float telegraphScale = telegraphInterpolant * MathHelper.Clamp(npc.Distance(Main.player[npc.target].Center) * 2.4f, 10f, 1600f);
-                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, telegraphScale, SpriteEffects.None, 0f);
-                Main.spriteBatch.ExitShaderRegion();
+                BloomLineDrawInfo lineInfo = new()
+                {
+                    LineRotation = laserRotation,
+                    WidthFactor = 0.002f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                    Scale = Vector2.One * telegraphInterpolant * MathHelper.Clamp(npc.Distance(Main.player[npc.target].Center) * 2.4f, 10f, 1600f),
+                    MainColor = Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f),
+                    DarkerColor = Color.Orange,
+                    Opacity = MathF.Sqrt(telegraphInterpolant),
+                    BloomOpacity = 0.35f,
+                    LightStrength = 5f
+                };
+                Utilities.DrawBloomLineTelegraph(drawPosition, lineInfo);
 
                 // Draw the backglow.
                 Color backglowColor = Color.Red with { A = 0 } * telegraphInterpolant;

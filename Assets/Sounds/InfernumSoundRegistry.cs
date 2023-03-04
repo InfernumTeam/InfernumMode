@@ -117,6 +117,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ProvidenceBurnSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceBurn");
 
+        public static readonly SoundStyle ProvidenceCrystalPillarShatterSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceCrystalPillarShatter");
+
         public static readonly SoundStyle ProvidenceDoorShimmerSoundLoop = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceDoorSoundLoop");
 
         public static readonly SoundStyle ProvidenceDoorShatterSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceDoorShatter");

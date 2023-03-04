@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
@@ -60,6 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

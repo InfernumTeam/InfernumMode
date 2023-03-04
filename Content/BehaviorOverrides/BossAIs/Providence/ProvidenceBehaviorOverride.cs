@@ -293,7 +293,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     MediaPlayer.Play(TrackedMusicManager.TrackedSong);
                 }
 
-                attackTimer = 0f;
                 initialized = 1f;
                 wasSummonedAtNight = Main.dayTime ? 0f : 1f;
                 npc.netUpdate = true;
@@ -330,6 +329,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
                     hasEnteredPhase2 = 1f;
                     hasCompletedCycle = 0f;
+                    attackTimer = 0f;
                     npc.netUpdate = true;
                 }
 
@@ -355,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // For a few frames Providence will play Boss 1 due to the custom music system. Don't allow this.
-            if (Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.Server && InfernumMode.CalMusicModIsActive)
                 Main.musicFade[MusicID.Boss1] = 0f;
 
             // This screen shader kind of sucks. Please turn it off.

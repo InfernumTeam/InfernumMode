@@ -166,6 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     break;
                 case CeaselessVoidAttackType.DarkEnergySwirl:
                     DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
+                    npc.boss = true;
                     break;
                 case CeaselessVoidAttackType.RealityRendCharge:
                     DoBehavior_RealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);

@@ -1,13 +1,16 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,13 +18,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
     public class AcceleratingMagicProfanedRock : ModProjectile
     {
-        public int CurrentVarient = 1;
+        public int CurrentVarient
+        { 
+            get;
+            set;
+        } = 1;
 
-        public int MagicGlowTimer = 30;
+        public int MagicGlowTimer
+        {
+            get;
+            set;
+        } = 30;
+
+        public PrimitiveTrailCopy AfterimageTrail
+        {
+            get;
+            set;
+        }
 
         public ref float Timer => ref Projectile.ai[0];
-
-        public NPC Owner => Main.npc[(int)Projectile.ai[1]];
 
         public override string Texture => "CalamityMod/Projectiles/Typeless/ArtifactOfResilienceShard" + CurrentVarient;
 
@@ -29,12 +44,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             DisplayName.SetDefault("Profaned Rock");
             ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 6;
+            ProjectileID.Sets.TrailCacheLength[Type] = 12;
         }
 
         public override void SetDefaults()
         {
-            // These get changed later, but are this be default.
+            // The size gets changed later, but is this be default.
             Projectile.width = 42;
             Projectile.height = 36;
 
@@ -42,9 +57,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.penetrate = 1;
-            Projectile.Opacity = 1;
+            Projectile.penetrate = -1;
+            Projectile.Opacity = 1f;
             Projectile.timeLeft = 240;
+            ProjectileID.Sets.TrailCacheLength[Type] = 12;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(CurrentVarient);
+            writer.Write(MagicGlowTimer);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            CurrentVarient = reader.ReadInt32();
+            MagicGlowTimer = reader.ReadInt32();
         }
 
         public override void AI()
@@ -103,6 +131,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Timer++;
         }
 
+        public float PrimitiveWidthFunction(float _) => Projectile.scale * 30f;
+
+        public Color PrimitiveColorFunction(float _) => Color.HotPink * Projectile.Opacity * 1.3f;
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
@@ -111,6 +143,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             Color backglowColor = Color.Lerp(WayfinderSymbol.Colors[0], Color.Pink, 0.5f);
             backglowColor.A = 0;
+
+            // Draw the afterimage trail first.
+            DrawAfterimageTrail();
 
             // Draw the bloom line telegraph.
             if (Timer <= MagicGlowTimer)
@@ -145,6 +180,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Main.EntitySpriteDraw(texture, drawPosition, null, backglowColor * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             }
             return false;
+        }
+
+        public void DrawAfterimageTrail()
+        {
+            // Initialize the trail.
+            var trailShader = GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"];
+            AfterimageTrail ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, trailShader);
+
+            float localIdentityOffset = Projectile.identity * 0.1372f;
+            Color mainColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset + 0.2f) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+
+            mainColor = Color.Lerp(Color.White, mainColor, 0.85f);
+            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.85f);
+
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition;
+            trailShader.SetShaderTexture(InfernumTextureRegistry.FireNoise);
+            trailShader.UseImage2("Images/Extra_189");
+            trailShader.UseColor(mainColor);
+            trailShader.UseSecondaryColor(secondaryColor);
+            trailShader.Apply();
+            AfterimageTrail.Draw(Projectile.oldPos, trailOffset, 40);
         }
     }
 }

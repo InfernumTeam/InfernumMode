@@ -93,6 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     break;
                 case SignusAttackType.KunaiDashes:
                     DoAttack_KunaiDashes(npc, target, lifeRatio, ref attackTimer);
+                    npc.boss = true;
                     npc.ai[0] = 0f;
                     break;
                 case SignusAttackType.ScytheTeleportThrow:
@@ -539,6 +540,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == telegraphTime + blackTime - 1f)
                     {
                         npc.Center = target.Center + (target.Center - new Vector2(slashPositionX, slashPositionY)).SafeNormalize(Main.rand.NextVector2Unit()) * 450f;
+                        if (!npc.WithinRange(target.Center, 900f))
+                            npc.Center = target.Center - Vector2.UnitY * 500f;
 
                         // Retain a little bit of movement to add to the atmosphere. This is quickly slowed down in above code.
                         npc.velocity = npc.SafeDirectionTo(target.Center) * -18f;

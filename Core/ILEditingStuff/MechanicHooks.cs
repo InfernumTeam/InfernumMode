@@ -389,6 +389,7 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             Main.spriteBatch.End();
             device.SetRenderTargets(bindings);
+            orig();
         }
 
         internal static void FindSealocketItemDyeShader(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)

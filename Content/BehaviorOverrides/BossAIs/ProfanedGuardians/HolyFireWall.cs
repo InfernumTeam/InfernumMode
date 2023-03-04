@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float WidthFunction(float completionRatio) => 150f * Projectile.scale;
 
-        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73);
+        public Color ColorFunction(float completionRatio) => new(255, 191, 73);
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {

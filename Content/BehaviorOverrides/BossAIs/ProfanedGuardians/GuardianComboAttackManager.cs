@@ -278,7 +278,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Create walls of fire with a random gap in them based off of the last one.
                         if (attackTimer % wallCreationRate == 0f && Main.netMode != NetmodeID.MultiplayerClient && crystal.ai[0] == 0f)
                         {
-                            Vector2 velocity = -Vector2.UnitX * 10f;
+                            Vector2 velocity = -Vector2.UnitX * 9f;
                             Vector2 baseCenter = CrystalPosition + new Vector2(220f, 0f);
                             // Create a random offset.
                             float yRandomOffset;

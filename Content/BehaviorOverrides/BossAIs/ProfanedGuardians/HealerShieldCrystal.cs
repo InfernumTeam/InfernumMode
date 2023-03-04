@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DoBehavior_SitStill(Player target)
         {
             // If the target is close enough, take damage.
-            if (target.WithinRange(NPC.Center * NPC.Opacity, 800))
+            if (target.WithinRange(NPC.Center * NPC.Opacity, 1300))
                 NPC.dontTakeDamage = false;
         }
 
